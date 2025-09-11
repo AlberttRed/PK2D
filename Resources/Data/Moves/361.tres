@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cyy1yghmuxmvf"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_g4wts"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_6k7nb"]
+
+[resource]
+resource_name = "361 - Deseo Cura"
+script = ExtResource("1_g4wts")
+internal_name = "healing-wish"
+Name = "Deseo Cura"
+id = 361
+description = "El Pokémon cae debilitado, pero su sustituto recupera
+su estado y los PS."
+type = ExtResource("2_6k7nb")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "User faints.  Its replacement has its HP fully restored and any major status effect removed. User faints.  Its replacement's HP is fully restored, and any major status effect is removed.  If the replacement Pokémon is immediately fainted by a switch-in effect, the next replacement is healed by this move instead."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

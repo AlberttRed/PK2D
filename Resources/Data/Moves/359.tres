@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bc4txaelk058v"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ys7jq"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_4olur"]
+
+[resource]
+resource_name = "359 - Machada"
+script = ExtResource("1_ys7jq")
+internal_name = "hammer-arm"
+Name = "Machada"
+id = 359
+description = "Gira con fuerza el puño y da un gran golpe. No
+obstante, baja la Velocidad."
+type = ExtResource("2_4olur")
+power = 100
+accuracy = 90
+pp = 10
+effect_chance = 100
+priority = 0
+damage_class_id = 2
+effect_entries = "Lowers user's Speed by one stage. Inflicts regular damage, then lowers the user's Speed by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+4: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 7
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 100
+contact_flag = false

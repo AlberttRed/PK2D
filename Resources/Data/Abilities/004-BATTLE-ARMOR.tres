@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d380selieyfhv"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ebf04"]
+
+[resource]
+script = ExtResource("1_ebf04")
+id = 4
+internal_name = "battle-armor"
+display_name = "Armadura Batalla"
+description = "Bloquea golpes críticos."

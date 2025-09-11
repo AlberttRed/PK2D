@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b7i1yh064rh1f"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_2hogf"]
+
+[resource]
+script = ExtResource("1_2hogf")
+id = 80
+internal_name = "steadfast"
+display_name = "Impasible"
+description = "Cada vez que retrocede sube su Velocidad."

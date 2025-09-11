@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://c0t6eyoupuj0s"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gl4tb"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_k68tj"]
+
+[resource]
+resource_name = "388 - Abatidoras"
+script = ExtResource("1_gl4tb")
+internal_name = "worry-seed"
+Name = "Abatidoras"
+id = 388
+description = "Planta una semilla en el objetivo que le causa pesar.
+Sustituye la habilidad del objetivo por Insomnio y le
+impide dormirse."
+type = ExtResource("2_k68tj")
+power = 0
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Changes the target's ability to Insomnia. Changes the target's ability to insomnia.
+
+If the target's ability is truant or multitype, this move will fail."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://baxvylwwdkaja"]
+
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_3rg2g"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_36rb5"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_tvej5"]
+
+[resource]
+resource_name = "257 - Onda Ígnea"
+script = ExtResource("1_36rb5")
+internal_name = "heat-wave"
+Name = "Onda Ígnea"
+id = 257
+description = "Provoca un viento abrasador que puede quemar al 
+objetivo."
+type = ExtResource("2_tvej5")
+power = 95
+accuracy = 90
+pp = 10
+effect_chance = 10
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to burn the target. Inflicts regular damage.  Has a $effect_chance% chance to burn the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 11
+meta_ailment_id = 4
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 10
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_3rg2g")

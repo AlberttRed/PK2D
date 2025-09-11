@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://d28yoo6he8a57"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_f6pdu"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_6nres"]
+
+[resource]
+resource_name = "380 - Bilis"
+script = ExtResource("1_f6pdu")
+internal_name = "gastro-acid"
+Name = "Bilis"
+id = 380
+description = "El usuario arroja sus jugos biliares al objetivo, lo que
+anula el efecto de la habilidad en uso."
+type = ExtResource("2_6nres")
+power = 0
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Nullifies target's ability until it leaves battle. The target's ability is disabled as long as it remains on the field.
+
+This effect is passed on by baton pass."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://csoe8pjfaycu"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_s7wn5"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_0lxf2"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_tqn28"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_caf35"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_k20yw"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="6_h5h8c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s7wn5"]
+atlas = ExtResource("1_s7wn5")
+region = Rect2(1588, 2092, 154, 128)
+margin = Rect2(2, 32, 6, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0lxf2"]
+atlas = ExtResource("1_s7wn5")
+region = Rect2(1752, 2092, 154, 128)
+margin = Rect2(2, 32, 6, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tqn28"]
+atlas = ExtResource("1_s7wn5")
+region = Rect2(816, 784, 152, 144)
+margin = Rect2(4, 8, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_caf35"]
+atlas = ExtResource("1_s7wn5")
+region = Rect2(172, 788, 152, 144)
+margin = Rect2(4, 8, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k20yw"]
+atlas = ExtResource("2_0lxf2")
+region = Rect2(4, 164, 22, 28)
+margin = Rect2(6, 2, 10, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h5h8c"]
+atlas = ExtResource("3_tqn28")
+region = Rect2(1012, 1096, 112, 40)
+margin = Rect2(8, 20, 16, 24)
+
+[resource]
+resource_name = "18 - Pidgeot"
+script = ExtResource("4_caf35")
+id = 18
+internal_name = "pidgeot"
+Name = "Pidgeot"
+type_a = ExtResource("5_k20yw")
+type_b = ExtResource("6_h5h8c")
+base_exprience = 216
+height = 15.0
+weight = 395.0
+is_default = true
+abilities = ["51", "77", "145"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "1", "1", "1", "4", "1", "4", "1", "4", "4", "4", "4", "1", "1", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "3", "4", "4", "1", "3", "4", "1", "4", "4", "1", "4", "1", "4", "4", "4", "3", "4", "4", "1", "4"]
+learn_lvl = [0, 1, 31, 21, 0, 1, 0, 1, 0, 0, 0, 0, 44, 1, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 34, 0, 0, 44, 0, 0, 50, 0, 62, 0, 0, 0, 0, 0, 0, 68, 0]
+learn_move_id = ["13", "16", "17", "18", "19", "28", "29", "33", "36", "38", "63", "92", "97", "98", "99", "102", "104", "115", "117", "119", "129", "143", "156", "164", "168", "173", "174", "182", "189", "197", "203", "207", "211", "213", "214", "216", "218", "237", "239", "240", "241", "253", "257", "263", "290", "297", "314", "332", "355", "363", "365", "366", "369", "403", "416", "432", "445", "466", "496", "526", "542", "590"]
+hp_base = 83
+attack_base = 80
+defense_base = 75
+special_attack_base = 70
+special_defense_base = 70
+speed_base = 101
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 3
+gender_rate = 4
+capture_rate = 45
+base_happiness = 70
+is_baby = false
+hatch_counter = 15
+has_gender_differences = false
+forms_switchable = true
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Este Pokémon vuela a una velocidad de 2 mach
+en busca de presas. Sus grandes garras son armas
+muy peligrosas."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_h5h8c")
+footprint_sprite = SubResource("AtlasTexture_k20yw")
+battle_front_sprite = SubResource("AtlasTexture_caf35")
+battle_back_sprite = SubResource("AtlasTexture_0lxf2")
+battle_front_shiny_sprite = SubResource("AtlasTexture_tqn28")
+battle_back_shiny_sprite = SubResource("AtlasTexture_s7wn5")

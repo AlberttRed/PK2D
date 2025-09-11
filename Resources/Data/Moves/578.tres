@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://s87rknttcdah"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_tvdis"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_kvw2o"]
+
+[resource]
+resource_name = "578 - Truco Defensa"
+script = ExtResource("1_tvdis")
+internal_name = "crafty-shield"
+Name = "Truco Defensa"
+id = 578
+description = "Usa unos misteriosos poderes para protegerse a sí 
+mismo y a sus aliados de movimientos de estado, pero
+no de otro tipo de ataques."
+type = ExtResource("2_kvw2o")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 3
+damage_class_id = 1
+effect_entries = "Protects all friendly Pokémon from non-damaging moves. Protects all friendly Pokémon from non-damaging moves for the rest of the turn.
+
+Unlike other blocking moves, this move may be used consecutively without its chance of success falling."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 4
+meta_ailment_id = 0
+meta_category_id = 11
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

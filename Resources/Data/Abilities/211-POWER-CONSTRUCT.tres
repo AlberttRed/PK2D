@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bv1jsdpr2ra45"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ea1xp"]
+
+[resource]
+script = ExtResource("1_ea1xp")
+id = 211
+internal_name = "power-construct"
+display_name = "Agrupamiento"
+description = "Cuando sus PS se ven reducidos a la mitad, las células se reagrupan y adopta su Forma Completa."

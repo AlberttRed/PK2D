@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://d2lm3c3x3y2cn"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_axw80"]
+[ext_resource type="Resource" uid="uid://pxq1boh748y0" path="res://Resources/Data/Ailments/NO-TYPE-IMMUNITY.tres" id="1_gnumt"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_5j14e"]
+
+[resource]
+resource_name = "357 - Gran Ojo"
+script = ExtResource("1_axw80")
+internal_name = "miracle-eye"
+Name = "Gran Ojo"
+id = 357
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_5j14e")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Forces the target to have no evasion, and allows it to be hit by Psychic moves even if it's Dark. Resets the target's evasion to normal and prevents any further boosting until the target leaves the field.  A dark Pokémon under this effect takes normal damage from psychic moves.  This move itself ignores accuracy and evasion modifiers."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 17
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_gnumt")

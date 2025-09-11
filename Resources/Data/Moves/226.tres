@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://d18vm5xxpganl"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ncujh"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_j4ply"]
+
+[resource]
+resource_name = "226 - Relevo"
+script = ExtResource("1_ncujh")
+internal_name = "baton-pass"
+Name = "Relevo"
+id = 226
+description = "Cambia el puesto con otro miembro del equipo y le
+pasa los cambios de características."
+type = ExtResource("2_j4ply")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Allows the trainer to switch out the user and pass effects along to its replacement. User switches out, and the trainer selects a replacement Pokémon from the party.  Stat changes, confusion, and persistent move effects are passed along to the replacement Pokémon.
+
+The following move effects are passed:
+
+* aqua ring
+* both the user's and target's effect of block, mean look, and spider web
+* the curse effect of curse
+* embargo
+* focus energy or an activated lansat berry
+* gastro acid
+* ingrain
+* being sapped by leech seed
+* being targeted by lock on or mind reader
+* magnet rise
+* perish song's counter
+* power trick
+* substitute; the doll's HP is unchanged
+
+The replacement Pokémon does not trigger effects that respond to Pokémon switching in."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

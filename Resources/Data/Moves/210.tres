@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cnipu4qsu8kxw"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_tsb4q"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_3xyi5"]
+
+[resource]
+resource_name = "210 - Corte Furia"
+script = ExtResource("1_tsb4q")
+internal_name = "fury-cutter"
+Name = "Corte Furia"
+id = 210
+description = "Ataque con garras o guadaña que crece en intensidad
+si se usa repetidas veces."
+type = ExtResource("2_3xyi5")
+power = 40
+accuracy = 95
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Power doubles every turn this move is used in succession after the first, maxing out after five turns. Inflicts regular damage.  Power doubles after every time this move is used, whether consecutively or not, maxing out at 16x.  If this move misses or the user leaves the field, power resets."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

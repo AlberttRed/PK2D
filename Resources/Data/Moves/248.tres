@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://wtpgh382ir4d"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_11d68"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_1lbus"]
+
+[resource]
+resource_name = "248 - Premonición"
+script = ExtResource("1_11d68")
+internal_name = "future-sight"
+Name = "Premonición"
+id = 248
+description = "Concentra energía psíquica para golpear al objetivo dos
+turnos después."
+type = ExtResource("2_1lbus")
+power = 120
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Hits the target two turns later. Inflicts typeless regular damage at the end of the third turn, starting with this one.  This move cannot score a critical hit.  If the target switches out, its replacement will be hit instead.  Damage is calculated at the time this move is used; stat changes and switching out during the delay won't change the damage inflicted.  No move with this effect can be used against the same target again until after the end of the third turn.
+
+This effect breaks through wonder guard.
+
+If the target is protected by protect or detect on the turn this move is used, this move will fail.  However, the damage on the third turn will break through protection.
+
+The damage is applied at the end of the turn, so it ignores endure and focus sash.
+
+This move cannot be copied by mirror move."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

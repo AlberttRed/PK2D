@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://moxkim0nfw5n"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_64ho3"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_uf2gx"]
+
+[resource]
+resource_name = "242 - Triturar"
+script = ExtResource("1_64ho3")
+internal_name = "crunch"
+Name = "Triturar"
+id = 242
+description = "Tritura con afilados colmillos y puede bajar la Defensa
+del objetivo."
+type = ExtResource("2_uf2gx")
+power = 80
+accuracy = 100
+pp = 15
+effect_chance = 20
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to lower the target's Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Defense by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 20
+contact_flag = false

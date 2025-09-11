@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://pt4qm706kqfx"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xvoay"]
+
+[resource]
+script = ExtResource("1_xvoay")
+id = 90
+internal_name = "poison-heal"
+display_name = "Antídoto"
+description = "Recupera PS si el Pokémon ha sido envenenado."

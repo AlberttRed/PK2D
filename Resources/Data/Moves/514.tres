@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bxpwfralk0n1m"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_fhlp1"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_1meb5"]
+
+[resource]
+resource_name = "514 - Represalia"
+script = ExtResource("1_fhlp1")
+internal_name = "retaliate"
+Name = "Represalia"
+id = 514
+description = "Venga a los amigos caídos. Si en el turno anterior han
+derrotado a alguno, la potencia del ataque aumentará."
+type = ExtResource("2_1meb5")
+power = 70
+accuracy = 100
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Has double power if a friendly Pokémon fainted last turn. Inflicts regular damage.  If a friendly Pokémon fainted on the previous turn, this move has double power."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

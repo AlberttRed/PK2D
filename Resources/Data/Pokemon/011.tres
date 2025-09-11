@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://bus3i066md5kf"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ssw74"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_bsnuf"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_lq8iu"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_sy0jy"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_ahhi8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssw74"]
+atlas = ExtResource("1_ssw74")
+region = Rect2(1176, 5964, 82, 120)
+margin = Rect2(38, 40, 78, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bsnuf"]
+atlas = ExtResource("1_ssw74")
+region = Rect2(1880, 5960, 82, 120)
+margin = Rect2(38, 40, 78, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lq8iu"]
+atlas = ExtResource("1_ssw74")
+region = Rect2(1240, 6556, 72, 68)
+margin = Rect2(44, 46, 88, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sy0jy"]
+atlas = ExtResource("1_ssw74")
+region = Rect2(1440, 6568, 72, 68)
+margin = Rect2(44, 46, 88, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ahhi8"]
+atlas = ExtResource("2_bsnuf")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hq180"]
+atlas = ExtResource("3_lq8iu")
+region = Rect2(404, 2032, 88, 36)
+margin = Rect2(20, 22, 40, 28)
+
+[resource]
+resource_name = "11 - Metapod"
+script = ExtResource("4_sy0jy")
+id = 11
+internal_name = "metapod"
+Name = "Metapod"
+type_a = ExtResource("5_ahhi8")
+base_exprience = 72
+height = 7.0
+weight = 99.0
+is_default = true
+abilities = ["61", null, null]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["3", "1", "3", "3", "3"]
+learn_lvl = [0, 1, 0, 0, 0]
+learn_move_id = ["81", "106", "334", "450", "527"]
+hp_base = 50
+attack_base = 20
+defense_base = 55
+special_attack_base = 25
+special_defense_base = 25
+speed_base = 30
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 2
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 120
+base_happiness = 50
+is_baby = false
+hatch_counter = 15
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Aunque cuenta con una coraza muy dura, tiene
+un cuerpo bastante blando. Un ataque violento
+puede acabar con él."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_hq180")
+footprint_sprite = SubResource("AtlasTexture_ahhi8")
+battle_front_sprite = SubResource("AtlasTexture_sy0jy")
+battle_back_sprite = SubResource("AtlasTexture_bsnuf")
+battle_front_shiny_sprite = SubResource("AtlasTexture_lq8iu")
+battle_back_shiny_sprite = SubResource("AtlasTexture_ssw74")

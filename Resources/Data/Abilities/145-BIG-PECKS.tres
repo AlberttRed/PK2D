@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bd8xs4rk8cc3x"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_qh5y3"]
+
+[resource]
+script = ExtResource("1_qh5y3")
+id = 145
+internal_name = "big-pecks"
+display_name = "Sacapecho"
+description = "Protege de los ataques que bajan la Defensa."

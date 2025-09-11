@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dvnrfitpoqev3"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_xbtx3"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_3x8gp"]
+
+[resource]
+resource_name = "62 - Rayo Aurora"
+script = ExtResource("1_xbtx3")
+internal_name = "aurora-beam"
+Name = "Rayo Aurora"
+id = 62
+description = "Rayo multicolor que puede reducir el Ataque."
+type = ExtResource("2_3x8gp")
+power = 65
+accuracy = 100
+pp = 20
+effect_chance = 10
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Attack by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Attack by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 10
+contact_flag = false

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bojljgmnvtn70"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ck8bl"]
+
+[resource]
+script = ExtResource("1_ck8bl")
+id = 220
+internal_name = "soul-heart"
+display_name = "Coránima"
+description = "Aumenta el Ataque Especial cada vez que un Pokémon cae debilitado."

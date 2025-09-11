@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://igfn83nomm5r"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5mc1o"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_1a7k5"]
+
+[resource]
+resource_name = "101 - Tinieblas"
+script = ExtResource("1_5mc1o")
+internal_name = "night-shade"
+Name = "Tinieblas"
+id = 101
+description = "Produce un espejismo ante el objetivo, que pierde
+tantos PS como nivel tenga el usuario."
+type = ExtResource("2_1a7k5")
+power = 0
+accuracy = 100
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Inflicts damage equal to the user's level. Inflicts damage equal to the user's level.  Type immunity applies, but other type effects are ignored."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

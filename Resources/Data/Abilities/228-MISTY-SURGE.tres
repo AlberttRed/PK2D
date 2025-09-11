@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbe62pjf0mvjm"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_as17c"]
+
+[resource]
+script = ExtResource("1_as17c")
+id = 228
+internal_name = "misty-surge"
+display_name = "Nebulogénesis"
+description = "Crea un campo de niebla al entrar en combate."

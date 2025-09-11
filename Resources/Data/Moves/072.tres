@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dovipnhbavq1"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gwo56"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_n1akh"]
+
+[resource]
+resource_name = "72 - Megaagotar"
+script = ExtResource("1_gwo56")
+internal_name = "mega-drain"
+Name = "Megaagotar"
+id = 72
+description = "Un ataque que absorbe nutrientes. Quien lo usa
+recupera la mitad de los PS del daño que produce."
+type = ExtResource("2_n1akh")
+power = 40
+accuracy = 100
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Drains half the damage inflicted to heal the user. Inflicts regular damage.  Drains half the damage inflicted to heal the user."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 8
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 50
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

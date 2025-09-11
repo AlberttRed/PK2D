@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dld3yrgio5sur"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_hcq01"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_papjp"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_hfned"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_lsrdg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_gkqlf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hmew0"]
+atlas = ExtResource("1_hcq01")
+region = Rect2(1032, 5888, 134, 76)
+margin = Rect2(12, 84, 26, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0o25s"]
+atlas = ExtResource("1_hcq01")
+region = Rect2(128, 5864, 134, 76)
+margin = Rect2(12, 84, 26, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nckmj"]
+atlas = ExtResource("1_hcq01")
+region = Rect2(236, 6612, 72, 58)
+margin = Rect2(44, 50, 88, 102)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqmjs"]
+atlas = ExtResource("1_hcq01")
+region = Rect2(1796, 6612, 72, 58)
+margin = Rect2(44, 50, 88, 102)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8aal"]
+atlas = ExtResource("2_papjp")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2i116"]
+atlas = ExtResource("3_hfned")
+region = Rect2(1420, 2068, 96, 30)
+margin = Rect2(16, 24, 32, 34)
+
+[resource]
+resource_name = "132 - Ditto"
+script = ExtResource("4_lsrdg")
+id = 132
+internal_name = "ditto"
+Name = "Ditto"
+type_a = ExtResource("5_gkqlf")
+base_exprience = 101
+height = 3.0
+weight = 40.0
+is_default = true
+abilities = ["7", null, "150"]
+forms = []
+held_items_id = ["234", "251"]
+held_items_rarity = [5.0, 50.0]
+learn_type = ["1"]
+learn_lvl = [1]
+learn_move_id = ["144"]
+hp_base = 48
+attack_base = 48
+defense_base = 48
+special_attack_base = 48
+special_defense_base = 48
+speed_base = 48
+total_base = 0
+hp_effort_EVs = 1
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = -1
+capture_rate = 35
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Cuando se encuentra con otro Ditto, se mueve
+más rápido de lo normal para intentar adoptar
+su aspecto."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_2i116")
+footprint_sprite = SubResource("AtlasTexture_y8aal")
+battle_front_sprite = SubResource("AtlasTexture_gqmjs")
+battle_back_sprite = SubResource("AtlasTexture_0o25s")
+battle_front_shiny_sprite = SubResource("AtlasTexture_nckmj")
+battle_back_shiny_sprite = SubResource("AtlasTexture_hmew0")

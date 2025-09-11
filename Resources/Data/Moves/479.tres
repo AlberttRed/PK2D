@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://8vjaixupekku"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_416tr"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_s6tqo"]
+
+[resource]
+resource_name = "479 - Antiaéreo"
+script = ExtResource("1_416tr")
+internal_name = "smack-down"
+Name = "Antiaéreo"
+id = 479
+description = "Ataca lanzando una piedra o un proyectil. Si el objetivo
+está en el aire, lo estrella contra el suelo."
+type = ExtResource("2_s6tqo")
+power = 50
+accuracy = 100
+pp = 15
+effect_chance = 100
+priority = 0
+damage_class_id = 2
+effect_entries = "Removes any immunity to Ground damage. Inflicts regular damage.  Removes the target's immunity to ground-type damage.  This effect removes any existing Ground immunity due to levitate, magnet rise, or telekinesis, and causes the target's flying type to be ignored when it takes Ground damage.
+
+If the target isn't immune to Ground damage, this move will fail.
+
+This move can hit Pokémon under the effect of bounce, fly, or sky drop, and ends the effect of Bounce or Fly."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = -1
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 100
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

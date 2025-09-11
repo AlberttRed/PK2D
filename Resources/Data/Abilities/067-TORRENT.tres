@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cfy4lht10f5y8"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ldtu0"]
+
+[resource]
+script = ExtResource("1_ldtu0")
+id = 67
+internal_name = "torrent"
+display_name = "Torrente"
+description = "Potencia los ataques de tipo Agua en un apuro."

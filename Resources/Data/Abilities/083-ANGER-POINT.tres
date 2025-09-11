@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://5m4p75ub7pty"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xy1gq"]
+
+[resource]
+script = ExtResource("1_xy1gq")
+id = 83
+internal_name = "anger-point"
+display_name = "Irascible"
+description = "Sube el Ataque al máximo tras un golpe crítico."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cjvkor0yq1gk"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_w78cq"]
+
+[resource]
+script = ExtResource("1_w78cq")
+id = 54
+internal_name = "truant"
+display_name = "Ausente"
+description = "El Pokémon no atacará en turnos consecutivos."

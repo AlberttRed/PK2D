@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dwkp0u3ob0bq3"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_mi11c"]
+
+[resource]
+script = ExtResource("1_mi11c")
+id = 180
+internal_name = "symbiosis"
+display_name = "Simbiosis"
+description = "El Pokémon puede pasar su objeto a un aliado."

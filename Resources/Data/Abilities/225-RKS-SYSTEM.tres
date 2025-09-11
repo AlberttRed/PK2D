@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://p2ywtnxh6nc7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_hi30t"]
+
+[resource]
+script = ExtResource("1_hi30t")
+id = 225
+internal_name = "rks-system"
+display_name = "Sistema Alfa"
+description = "Cambia su tipo según el disco que lleve instalado."

@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dxg4ro17f5d8y"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_1wq4t"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_glva8"]
+
+[resource]
+resource_name = "617 - Luz Aniquiladora"
+script = ExtResource("1_1wq4t")
+internal_name = "light-of-ruin"
+Name = "Luz Aniquiladora"
+id = 617
+description = "El usuario emplea el poder de la Flor Eterna para lanzar
+un potente rayo de luz, pero sufre bastante daño al
+hacerlo."
+type = ExtResource("2_glva8")
+power = 140
+accuracy = 90
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "User receives 1/2 the damage inflicted in recoil. Inflicts regular damage.  User takes 1/2 the damage it inflicts in recoil."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = -50
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

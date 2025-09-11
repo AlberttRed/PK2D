@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b8xcowijs4jt2"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_pghld"]
+
+[resource]
+script = ExtResource("1_pghld")
+id = 19
+internal_name = "shield-dust"
+display_name = "Polvo Escudo"
+description = "Anula el efecto secundario del ataque sufrido."

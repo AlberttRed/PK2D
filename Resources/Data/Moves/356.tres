@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://c2mbvt8wae22b"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_bfvsb"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_wwtuv"]
+
+[resource]
+resource_name = "356 - Gravedad"
+script = ExtResource("1_bfvsb")
+internal_name = "gravity"
+Name = "Gravedad"
+id = 356
+description = "Durante cinco turnos, se anulan los movimientos que
+alzan el vuelo y los Pokémon de tipo Volador o que
+levitan son vulnerables a movimientos de tipo Tierra."
+type = ExtResource("2_wwtuv")
+power = 0
+accuracy = 0
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Disables moves and immunities that involve flying or levitating for five turns. For five turns (including this one), all immunities to ground moves are disabled.  For the duration of this effect, the evasion of every Pokémon on the field is lowered by two stages.  Cancels the effects of bounce, fly, and sky drop.
+
+Specifically, flying Pokémon and those with levitate or that have used magnet rise are no longer immune to ground attacks, arena trap, spikes, or toxic spikes.
+
+bounce, fly, sky drop, high jump kick, jump kick, and splash cannot be used while this move is in effect.
+
+*Bug*: If this move is used during a double or triple battle while Pokémon are under the effect of sky drop, Sky Drop's effect is not correctly canceled on its target, and it remains high in the air indefinitely.  As Sky Drop prevents the target from acting, the only way to subsequently remove it from the field is to faint it."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

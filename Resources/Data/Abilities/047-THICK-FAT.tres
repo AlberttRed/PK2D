@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://t081ytgaca4g"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jqrad"]
+
+[resource]
+script = ExtResource("1_jqrad")
+id = 47
+internal_name = "thick-fat"
+display_name = "Sebo"
+description = "Atenúa los ataques de tipo Fuego y Hielo."

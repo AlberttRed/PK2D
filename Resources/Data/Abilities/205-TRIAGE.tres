@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dy86wi6uigrq6"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_0asbh"]
+
+[resource]
+script = ExtResource("1_0asbh")
+id = 205
+internal_name = "triage"
+display_name = "Primer Auxilio"
+description = "Da prioridad a los movimientos que curan PS directamente al Pokémon."

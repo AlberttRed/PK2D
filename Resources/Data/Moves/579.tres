@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://10mkqewlftfu"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_xubj8"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_tsi5j"]
+
+[resource]
+resource_name = "579 - Defensa Floral"
+script = ExtResource("1_xubj8")
+internal_name = "flower-shield"
+Name = "Defensa Floral"
+id = 579
+description = "Aumenta la Defensa de todos los Pokémon de tipo
+Planta que hay en el combate usando unos misteriosos
+poderes."
+type = ExtResource("2_tsi5j")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 100
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises the Defense of all grass Pokémon in battle. Raises the Defense of all grass Pokémon in battle."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: 1
+})
+target_id = 14
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 100
+contact_flag = false

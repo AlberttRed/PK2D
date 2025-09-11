@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bsqkxfdo5mpu7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_iyo53"]
+
+[resource]
+script = ExtResource("1_iyo53")
+id = 38
+internal_name = "poison-point"
+display_name = "Punto Tóxico"
+description = "Puede envenenar al mínimo contacto."

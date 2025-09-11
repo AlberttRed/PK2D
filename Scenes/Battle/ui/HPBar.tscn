@@ -1,0 +1,89 @@
+[gd_scene load_steps=12 format=3 uid="uid://dniko84d5byyb"]
+
+[ext_resource type="Texture2D" uid="uid://b8ovhsr861ugj" path="res://Sprites/Pictures/battlePlayerBoxS.png" id="1_pin0n"]
+[ext_resource type="Script" uid="uid://bpc8w47kho03v" path="res://Scripts/Battle/ui/HPBar.gd" id="2_pin0n"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="3_smnl1"]
+[ext_resource type="Texture2D" uid="uid://6s4ko21ivsiy" path="res://Sprites/Pictures/Nv_icon_black.png" id="4_stmy4"]
+[ext_resource type="FontFile" uid="uid://cefelqhb6o2me" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="5_ump82"]
+[ext_resource type="PackedScene" uid="uid://b0ajmrb8a7e0r" path="res://Scenes/Battle/ui/AnimatedProgressBar.tscn" id="7_pin0n"]
+[ext_resource type="Texture2D" uid="uid://ds2nqorvg7ok" path="res://Sprites/Pictures/EXPbar_background.png" id="9_83cp1"]
+[ext_resource type="Texture2D" uid="uid://dbnnetnk6i26s" path="res://Sprites/Pictures/EXPbar_overlay.png" id="10_7xxgi"]
+[ext_resource type="Texture2D" uid="uid://0ldm4ismhwn8" path="res://Sprites/Pictures/EXPbar_progress.png" id="11_o1cti"]
+
+[sub_resource type="FontVariation" id="FontVariation_kynk5"]
+base_font = ExtResource("5_ump82")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_4f188"]
+default_font = SubResource("FontVariation_kynk5")
+default_font_size = 16
+
+[node name="HPBar" type="Sprite2D"]
+z_index = 6
+z_as_relative = false
+texture = ExtResource("1_pin0n")
+script = ExtResource("2_pin0n")
+metadata/_edit_lock_ = true
+
+[node name="lblName" parent="." instance=ExtResource("3_smnl1")]
+offset_left = -90.0
+offset_top = -35.0
+offset_right = 52.0
+offset_bottom = -8.0
+theme_override_colors/default_color = Color(0.301961, 0.301961, 0.301961, 1)
+theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
+text = "TYPHLOSION"
+
+[node name="lblGender" parent="." instance=ExtResource("3_smnl1")]
+offset_left = 33.0
+offset_top = -37.0
+offset_right = 120.0
+offset_bottom = -12.0
+theme_override_colors/default_color = Color(0.188235, 0.376471, 0.847059, 1)
+theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
+text = "♂"
+
+[node name="lblNv" type="Sprite2D" parent="."]
+position = Vector2(57.5, -20)
+texture = ExtResource("4_stmy4")
+
+[node name="lblLevel" parent="." instance=ExtResource("3_smnl1")]
+offset_left = 66.0
+offset_top = -31.0
+offset_right = 184.0
+offset_bottom = -13.0
+theme = SubResource("Theme_4f188")
+theme_override_colors/default_color = Color(0.301961, 0.301961, 0.301961, 1)
+theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
+text = "20"
+
+[node name="Status" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-50, 1)
+region_rect = Rect2(0, 16, 44, 16)
+metadata/_edit_lock_ = true
+
+[node name="health_bar" parent="." instance=ExtResource("7_pin0n")]
+position = Vector2(-26, -7)
+
+[node name="exp_bar" parent="." instance=ExtResource("7_pin0n")]
+position = Vector2(-55, 36)
+
+[node name="Label" parent="exp_bar" index="0"]
+visible = false
+
+[node name="TextureProgressBar" parent="exp_bar" index="1"]
+offset_left = -39.0
+offset_top = -7.0
+offset_right = 161.0
+offset_bottom = 33.0
+max_value = 0.0
+value = 0.0
+texture_under = ExtResource("9_83cp1")
+texture_over = ExtResource("10_7xxgi")
+texture_progress = ExtResource("11_o1cti")
+texture_progress_offset = Vector2(0, 0)
+tint_progress = Color(1, 1, 1, 1)
+
+[editable path="health_bar"]
+[editable path="exp_bar"]

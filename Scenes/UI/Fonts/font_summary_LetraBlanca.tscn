@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://df3yw23qlg5dw"]
+
+[ext_resource type="FontFile" uid="uid://bg2qmq8nwewnl" path="res://Escenas/UI/Fonts/pkmnem.ttf" id="1"]
+
+[sub_resource type="FontFile" id="1"]
+fallbacks = Array[Font]([ExtResource("1")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[sub_resource type="FontFile" id="2"]
+fallbacks = Array[Font]([ExtResource("1")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[node name="Label" type="Label"]
+margin_left = 45.0
+margin_top = 65.0
+margin_right = 194.0
+margin_bottom = 96.0
+custom_fonts/font = SubResource("1")
+custom_colors/font_color = Color(0.972549, 0.972549, 0.972549, 1)
+custom_colors/font_color_shadow = Color(0.407843, 0.407843, 0.407843, 1)
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 2
+text = "Pikachu
+"
+
+[node name="Outline" type="Label" parent="."]
+margin_right = 149.0
+margin_bottom = 29.0
+custom_fonts/font = SubResource("2")
+custom_colors/font_color_shadow = Color(0.407843, 0.407843, 0.407843, 1)
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 0
+text = "Pikachu"
+__meta__ = {
+"_edit_lock_": true
+}

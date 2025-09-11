@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cr8cw0svogv1v"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5nrgf"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_icr61"]
+
+[resource]
+resource_name = "524 - Vaho Gélido"
+script = ExtResource("1_5nrgf")
+internal_name = "frost-breath"
+Name = "Vaho Gélido"
+id = 524
+description = "Quien lo usa ataca lanzando un aliento gélido. Siempre
+asesta un golpe crítico."
+type = ExtResource("2_icr61")
+power = 60
+accuracy = 90
+pp = 10
+effect_chance = 100
+priority = 0
+damage_class_id = 3
+effect_entries = "Always scores a critical hit. Inflicts regular damage.  Always scores a critical hit."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 6
+meta_ailment_chance = 100
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

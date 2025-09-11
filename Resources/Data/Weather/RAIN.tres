@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://cuma2yb7yqge6"]
+
+[ext_resource type="Script" uid="uid://c3ykal5rqqt2m" path="res://Scripts/Resources/Classes/Weather.gd" id="1_ftq15"]
+
+[resource]
+script = ExtResource("1_ftq15")
+id = -1
+internal_name = "rain"
+display_name = "Lluvia"
+metadata/_custom_type_script = "uid://c3ykal5rqqt2m"

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dweamba01nit0"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_q8bm3"]
+
+[resource]
+script = ExtResource("1_q8bm3")
+id = 131
+internal_name = "healer"
+display_name = "Alma Cura"
+description = "A veces cura los cambios de estado de un aliado."

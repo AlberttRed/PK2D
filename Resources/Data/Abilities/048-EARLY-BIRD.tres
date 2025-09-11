@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dg2y3d3oimssq"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_tqsht"]
+
+[resource]
+script = ExtResource("1_tqsht")
+id = 48
+internal_name = "early-bird"
+display_name = "Madrugar"
+description = "El Pokémon se despierta rápidamente."

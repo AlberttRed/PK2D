@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://re4c2bgwv4l5"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_kuu34"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_vuprt"]
+
+[resource]
+resource_name = "161 - Triataque"
+script = ExtResource("1_kuu34")
+internal_name = "tri-attack"
+Name = "Triataque"
+id = 161
+description = "Ataque triple que puede paralizar, quemar o congelar
+al objetivo."
+type = ExtResource("2_vuprt")
+power = 80
+accuracy = 100
+pp = 10
+effect_chance = 20
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to burn, freeze, or paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to burn, freeze, or paralyze the target.  One of these effects is selected at random; they do not each have independent chances to occur."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = -1
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 20
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

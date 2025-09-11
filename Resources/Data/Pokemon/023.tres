@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://gam4byen4it0"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_d102c"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_lxccw"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_h7ytc"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_1ngj5"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="5_4l25x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d102c"]
+atlas = ExtResource("1_d102c")
+region = Rect2(1540, 4140, 140, 110)
+margin = Rect2(10, 50, 20, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxccw"]
+atlas = ExtResource("1_d102c")
+region = Rect2(1392, 4140, 140, 110)
+margin = Rect2(10, 50, 20, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7ytc"]
+atlas = ExtResource("1_d102c")
+region = Rect2(720, 6352, 78, 88)
+margin = Rect2(42, 34, 82, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ngj5"]
+atlas = ExtResource("1_d102c")
+region = Rect2(808, 6368, 78, 88)
+margin = Rect2(42, 34, 82, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4l25x"]
+atlas = ExtResource("2_lxccw")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0xqug"]
+atlas = ExtResource("3_h7ytc")
+region = Rect2(244, 1304, 96, 42)
+margin = Rect2(16, 20, 32, 22)
+
+[resource]
+resource_name = "23 - Ekans"
+script = ExtResource("4_1ngj5")
+id = 23
+internal_name = "ekans"
+Name = "Ekans"
+type_a = ExtResource("5_4l25x")
+base_exprience = 58
+height = 20.0
+weight = 69.0
+is_default = true
+abilities = ["22", "61", "127"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["3", "2", "4", "4", "1", "4", "4", "1", "1", "1", "2", "1", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "2", "4", "2", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "4", "4", "4", "4", "2", "2", "1", "1", "1", "4", "4", "4", "4", "4", "2", "4", "4", "2", "4", "4", "1", "2", "4", "4", "4", "3", "3", "2", "4", "1", "1", "4", "4", "4", "1", "1", "4", "4", "4", "1", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 1, 0, 0, 10, 1, 17, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 43, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 37, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 28, 41, 0, 0, 0, 44, 28, 0, 0, 0, 38, 0, 0]
+learn_move_id = ["20", "21", "29", "34", "35", "36", "38", "40", "43", "44", "50", "51", "70", "72", "89", "90", "91", "92", "99", "102", "103", "104", "114", "117", "130", "137", "141", "156", "157", "164", "168", "173", "174", "180", "182", "184", "188", "189", "202", "203", "207", "213", "214", "216", "218", "228", "231", "237", "240", "241", "242", "251", "254", "255", "256", "259", "263", "282", "289", "290", "305", "317", "341", "342", "363", "371", "380", "389", "390", "398", "399", "401", "402", "415", "424", "426", "441", "445", "474", "482", "489", "491", "496", "523", "555", "562", "590", "611"]
+hp_base = 35
+attack_base = 60
+defense_base = 44
+special_attack_base = 40
+special_defense_base = 54
+speed_base = 55
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 1
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 255
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "La longitud de este Pokémon aumenta con el
+tiempo. Por la noche, se enrosca en las ramas
+de los árboles para descansar."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_0xqug")
+footprint_sprite = SubResource("AtlasTexture_4l25x")
+battle_front_sprite = SubResource("AtlasTexture_1ngj5")
+battle_back_sprite = SubResource("AtlasTexture_lxccw")
+battle_front_shiny_sprite = SubResource("AtlasTexture_h7ytc")
+battle_back_shiny_sprite = SubResource("AtlasTexture_d102c")

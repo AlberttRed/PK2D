@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://d07w5uikyo7is"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_rjrw2"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_icpil"]
+
+[resource]
+resource_name = "487 - Anegar"
+script = ExtResource("1_rjrw2")
+internal_name = "soak"
+Name = "Anegar"
+id = 487
+description = "Potente lluvia que transforma al objetivo en un 
+Pokémon de tipo Agua."
+type = ExtResource("2_icpil")
+power = 0
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Changes the target's type to Water. Changes the target to pure water-type until it leaves the field.  If the target has multitype, this move will fail."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

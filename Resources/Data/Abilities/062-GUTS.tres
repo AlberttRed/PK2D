@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bnalpgneml1c3"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_y863x"]
+
+[resource]
+script = ExtResource("1_y863x")
+id = 62
+internal_name = "guts"
+display_name = "Agallas"
+description = "Sube el Ataque si sufre un problema de estado."

@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://v5ynqi3us6c"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_l0i0e"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_aujig"]
+
+[resource]
+resource_name = "290 - Daño Secreto"
+script = ExtResource("1_l0i0e")
+internal_name = "secret-power"
+Name = "Daño Secreto"
+id = 290
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_aujig")
+power = 70
+accuracy = 100
+pp = 20
+effect_chance = 30
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to inflict a status effect which depends upon the terrain. Inflicts regular damage.  Has a $effect_chance% chance to inflict an effect chosen according to the terrain.
+
+Terrain        | Effect
+-------------- | -------------------------------------------------------------
+Building       | Paralyzes target
+Cave           | Makes target flinch
+Deep water     | Lowers target's Attack by one stage
+Desert         | Lowers target's accuracy by one stage
+Grass          | Puts target to sleep
+Mountain       | Makes target flinch
+Road           | Lowers target's accuracy by one stage
+Shallow water  | Lowers target's Attack by one stage
+Snow           | Freezes target
+Tall grass     | Puts target to sleep
+
+In Pokémon Battle Revolution:
+
+Terrain        | Effect
+-------------- | -------------------------------------------------------------
+Courtyard      | Paralyzes target
+Crystal        | Makes target flinch
+Gateway        | Lowers target's Attack by one stage
+Magma          | Makes target flinch
+Main Street    | Paralyzes target
+Neon           | Paralyzes target
+Stargazer      | Makes target flinch
+Sunny Park     | Puts target to sleep
+Sunset         | Lowers target's accuracy by one stage
+Waterfall      | Puts target to sleep
+"
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

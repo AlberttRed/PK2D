@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://ir0kw4cuqc56"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_6woi1"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_i3wod"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_3rqag"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_dyytm"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="5_k0l8d"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="6_cd8px"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kyqjx"]
+atlas = ExtResource("1_6woi1")
+region = Rect2(168, 2392, 156, 122)
+margin = Rect2(2, 38, 4, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2trxf"]
+atlas = ExtResource("1_6woi1")
+region = Rect2(4, 2392, 156, 122)
+margin = Rect2(2, 38, 4, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hx47"]
+atlas = ExtResource("1_6woi1")
+region = Rect2(4, 4048, 128, 122)
+margin = Rect2(16, 18, 32, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuphx"]
+atlas = ExtResource("1_6woi1")
+region = Rect2(1256, 4040, 128, 122)
+margin = Rect2(16, 18, 32, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwjtq"]
+atlas = ExtResource("2_i3wod")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldumr"]
+atlas = ExtResource("3_3rqag")
+region = Rect2(748, 480, 114, 44)
+margin = Rect2(6, 18, 14, 20)
+
+[resource]
+resource_name = "91 - Cloyster"
+script = ExtResource("4_dyytm")
+id = 91
+internal_name = "cloyster"
+Name = "Cloyster"
+type_a = ExtResource("5_k0l8d")
+type_b = ExtResource("6_cd8px")
+base_exprience = 184
+height = 15.0
+weight = 1325.0
+is_default = true
+abilities = ["75", "92", "142"]
+forms = []
+held_items_id = ["88", "89"]
+held_items_rarity = [50.0, 5.0]
+learn_type = ["4", "1", "4", "4", "4", "1", "4", "1", "1", "4", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "1", "1", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "1", "3", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "1", "4", "4", "1", "4", "4", "1", "1", "4"]
+learn_lvl = [0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 50, 0, 0, 0, 0, 0, 0, 1, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 52, 0]
+learn_move_id = ["29", "33", "34", "36", "38", "41", "42", "43", "48", "55", "56", "57", "58", "59", "61", "62", "63", "92", "99", "100", "102", "103", "104", "110", "112", "113", "115", "117", "120", "127", "128", "129", "131", "153", "156", "161", "164", "173", "174", "182", "184", "191", "196", "203", "207", "213", "214", "216", "218", "237", "240", "250", "258", "259", "263", "270", "290", "291", "311", "324", "333", "334", "341", "350", "352", "362", "363", "371", "390", "398", "416", "419", "420", "445", "496", "504", "524", "529", "534", "556", "590"]
+hp_base = 50
+attack_base = 95
+defense_base = 180
+special_attack_base = 85
+special_defense_base = 45
+speed_base = 70
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 2
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 60
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Una vez que ha cerrado la concha, es imposible
+abrirla, independientemente de la fuerza que se
+ejerza."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_ldumr")
+footprint_sprite = SubResource("AtlasTexture_vwjtq")
+battle_front_sprite = SubResource("AtlasTexture_uuphx")
+battle_back_sprite = SubResource("AtlasTexture_2trxf")
+battle_front_shiny_sprite = SubResource("AtlasTexture_4hx47")
+battle_back_shiny_sprite = SubResource("AtlasTexture_kyqjx")

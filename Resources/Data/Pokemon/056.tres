@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dkmx5unpibiya"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_bu7g1"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_av82c"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_jyw08"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_qdrn3"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="5_ir2kf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nyl84"]
+atlas = ExtResource("1_bu7g1")
+region = Rect2(1876, 3780, 140, 118)
+margin = Rect2(10, 42, 20, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bmocw"]
+atlas = ExtResource("1_bu7g1")
+region = Rect2(1348, 3800, 140, 118)
+margin = Rect2(10, 42, 20, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ouc1n"]
+atlas = ExtResource("1_bu7g1")
+region = Rect2(4, 5808, 116, 90)
+margin = Rect2(22, 34, 44, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_68trw"]
+atlas = ExtResource("1_bu7g1")
+region = Rect2(800, 5824, 116, 90)
+margin = Rect2(22, 34, 44, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rnduf"]
+atlas = ExtResource("2_av82c")
+region = Rect2(68, 232, 24, 28)
+margin = Rect2(4, 2, 8, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_igkwt"]
+atlas = ExtResource("3_jyw08")
+region = Rect2(348, 1492, 112, 34)
+margin = Rect2(10, 24, 16, 30)
+
+[resource]
+resource_name = "56 - Mankey"
+script = ExtResource("4_qdrn3")
+id = 56
+internal_name = "mankey"
+Name = "Mankey"
+type_a = ExtResource("5_ir2kf")
+base_exprience = 61
+height = 5.0
+weight = 280.0
+is_default = true
+abilities = ["72", "83", "128"]
+forms = []
+held_items_id = ["170"]
+held_items_rarity = [5.0]
+learn_type = ["1", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "1", "4", "1", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "2", "4", "4", "1", "4", "4", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "2", "3", "4", "4", "4", "2", "4", "3", "4", "4", "4", "4", "4", "4", "4", "2", "1", "4", "4", "1", "4", "4", "4", "4", "2", "3", "4", "4", "2", "4", "3", "3", "2", "4", "3", "4", "4", "4", "4", "4", "1", "4", "4", "1", "4", "1", "4", "1", "4", "2", "3", "4", "3", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "4", "4"]
+learn_lvl = [15, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 39, 0, 1, 0, 9, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 27, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 49, 0, 25, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0]
+learn_move_id = ["2", "5", "6", "7", "8", "9", "10", "25", "29", "34", "36", "37", "38", "43", "66", "67", "68", "69", "70", "85", "87", "89", "91", "92", "96", "99", "102", "103", "104", "111", "116", "117", "118", "129", "130", "154", "156", "157", "164", "168", "173", "174", "179", "180", "182", "184", "189", "193", "197", "200", "203", "207", "213", "214", "216", "218", "223", "227", "228", "231", "237", "238", "240", "241", "244", "249", "251", "253", "263", "264", "265", "269", "270", "272", "279", "280", "283", "290", "315", "317", "332", "339", "343", "363", "369", "370", "371", "372", "374", "386", "398", "400", "402", "409", "410", "411", "421", "431", "441", "444", "445", "468", "479", "490", "496", "512", "514", "515", "523", "526", "530", "590", "612"]
+hp_base = 40
+attack_base = 80
+defense_base = 35
+special_attack_base = 35
+special_defense_base = 45
+speed_base = 70
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 1
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 190
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Este ágil Pokémon vive en los árboles. Se enfada
+con facilidad y, cuando lo hace, se abalanza
+contra todo lo que se encuentre a su alrededor."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_igkwt")
+footprint_sprite = SubResource("AtlasTexture_rnduf")
+battle_front_sprite = SubResource("AtlasTexture_68trw")
+battle_back_sprite = SubResource("AtlasTexture_bmocw")
+battle_front_shiny_sprite = SubResource("AtlasTexture_ouc1n")
+battle_back_shiny_sprite = SubResource("AtlasTexture_nyl84")

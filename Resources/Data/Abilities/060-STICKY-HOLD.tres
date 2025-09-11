@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://6ehq7homtsk4"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_hb6lc"]
+
+[resource]
+script = ExtResource("1_hb6lc")
+id = 60
+internal_name = "sticky-hold"
+display_name = "Viscosidad"
+description = "Protege al Pokémon del robo de objetos."

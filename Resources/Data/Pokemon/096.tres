@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dulps0vkjfltw"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_vyra0"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_wlto6"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_kkumw"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_a3jst"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="5_prwvq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yogrw"]
+atlas = ExtResource("1_vyra0")
+region = Rect2(772, 4356, 132, 116)
+margin = Rect2(12, 44, 28, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2g83i"]
+atlas = ExtResource("1_vyra0")
+region = Rect2(1224, 4364, 132, 116)
+margin = Rect2(12, 44, 28, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kxpv"]
+atlas = ExtResource("1_vyra0")
+region = Rect2(968, 5712, 102, 104)
+margin = Rect2(26, 28, 58, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_57gvn"]
+atlas = ExtResource("1_vyra0")
+region = Rect2(856, 5712, 102, 104)
+margin = Rect2(26, 28, 58, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tt74q"]
+atlas = ExtResource("2_wlto6")
+region = Rect2(120, 428, 18, 24)
+margin = Rect2(8, 6, 14, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kksha"]
+atlas = ExtResource("3_kkumw")
+region = Rect2(1008, 1248, 108, 40)
+margin = Rect2(10, 20, 20, 24)
+
+[resource]
+resource_name = "96 - Drowzee"
+script = ExtResource("4_a3jst")
+id = 96
+internal_name = "drowzee"
+Name = "Drowzee"
+type_a = ExtResource("5_prwvq")
+base_exprience = 66
+height = 10.0
+weight = 324.0
+is_default = true
+abilities = ["15", "108", "39"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["1", "4", "4", "4", "4", "4", "1", "4", "4", "4", "1", "1", "4", "3", "4", "4", "4", "4", "1", "1", "1", "1", "4", "4", "4", "4", "4", "2", "2", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "2", "4", "4", "4", "4", "3", "2", "2", "3", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "1", "4", "4", "2", "4", "4", "1", "2", "1", "4", "4", "4", "2", "1", "4", "3", "1", "4", "3", "4", "4", "3", "4", "4", "4", "4"]
+learn_lvl = [1, 0, 0, 0, 0, 0, 24, 0, 0, 0, 12, 26, 0, 0, 0, 0, 0, 0, 17, 32, 1, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 43, 0, 50, 0, 0, 0, 0, 57, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["1", "5", "7", "8", "9", "25", "29", "34", "36", "38", "50", "60", "66", "67", "68", "69", "86", "92", "93", "94", "95", "96", "99", "100", "101", "102", "104", "112", "113", "114", "115", "117", "118", "129", "130", "138", "139", "148", "149", "156", "161", "164", "168", "170", "171", "173", "174", "182", "192", "203", "207", "213", "214", "216", "218", "219", "223", "227", "237", "240", "241", "244", "247", "248", "259", "260", "263", "264", "269", "270", "271", "272", "274", "277", "278", "280", "282", "283", "285", "286", "289", "290", "324", "347", "358", "363", "374", "385", "409", "411", "417", "427", "428", "433", "445", "447", "471", "473", "477", "478", "485", "490", "492", "496", "500", "502", "577", "590", "605", "612"]
+hp_base = 60
+attack_base = 48
+defense_base = 45
+special_attack_base = 43
+special_defense_base = 90
+speed_base = 42
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 1
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 190
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Si se duerme siempre en compañía de un
+Pokémon de esta especie, puede mostrar
+sueños que haya ingerido con anterioridad."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_kksha")
+footprint_sprite = SubResource("AtlasTexture_tt74q")
+battle_front_sprite = SubResource("AtlasTexture_57gvn")
+battle_back_sprite = SubResource("AtlasTexture_2g83i")
+battle_front_shiny_sprite = SubResource("AtlasTexture_0kxpv")
+battle_back_shiny_sprite = SubResource("AtlasTexture_yogrw")

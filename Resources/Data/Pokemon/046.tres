@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://cpcbhkiv02rb8"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_qww4w"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_th3ye"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_j4b1h"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_hpwkd"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_t5fvq"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="6_6bbkk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hj6wi"]
+atlas = ExtResource("1_qww4w")
+region = Rect2(232, 6004, 142, 68)
+margin = Rect2(8, 92, 18, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gkeh7"]
+atlas = ExtResource("1_qww4w")
+region = Rect2(1408, 6008, 142, 68)
+margin = Rect2(8, 92, 18, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lhheb"]
+atlas = ExtResource("1_qww4w")
+region = Rect2(1108, 6384, 96, 70)
+margin = Rect2(32, 44, 64, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pnve5"]
+atlas = ExtResource("1_qww4w")
+region = Rect2(1648, 6380, 96, 70)
+margin = Rect2(32, 44, 64, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p0b0e"]
+atlas = ExtResource("2_th3ye")
+region = Rect2(52, 788, 8, 8)
+margin = Rect2(14, 14, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ppret"]
+atlas = ExtResource("3_j4b1h")
+region = Rect2(668, 1440, 104, 40)
+margin = Rect2(12, 20, 24, 24)
+
+[resource]
+resource_name = "46 - Paras"
+script = ExtResource("4_hpwkd")
+id = 46
+internal_name = "paras"
+Name = "Paras"
+type_a = ExtResource("5_t5fvq")
+type_b = ExtResource("6_6bbkk")
+base_exprience = 57
+height = 3.0
+weight = 54.0
+is_default = true
+abilities = ["27", "87", "6"]
+forms = []
+held_items_id = ["86", "87", "621"]
+held_items_rarity = [50.0, 5.0, 1.0]
+learn_type = ["1", "4", "4", "4", "4", "4", "4", "2", "2", "1", "4", "2", "1", "4", "1", "1", "1", "3", "4", "4", "2", "4", "4", "2", "4", "2", "4", "4", "4", "1", "1", "4", "1", "4", "1", "4", "4", "4", "4", "2", "4", "4", "1", "4", "2", "4", "4", "4", "4", "4", "4", "2", "2", "2", "3", "4", "4", "4", "4", "4", "4", "3", "4", "1", "4", "4", "4", "3", "3", "1", "4", "2", "4", "4", "2", "4", "2", "4", "1", "3", "4", "4", "2", "2", "2", "4"]
+learn_lvl = [1, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 41, 0, 13, 13, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 27, 0, 15, 0, 34, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["10", "14", "15", "29", "34", "36", "38", "60", "68", "71", "72", "73", "74", "76", "77", "78", "79", "81", "91", "92", "97", "99", "102", "103", "104", "113", "115", "117", "130", "141", "147", "148", "154", "156", "163", "164", "168", "173", "174", "175", "182", "188", "202", "203", "206", "207", "210", "213", "214", "216", "218", "228", "230", "232", "235", "237", "241", "249", "263", "267", "280", "282", "290", "312", "331", "332", "363", "388", "402", "404", "412", "440", "445", "447", "450", "468", "469", "474", "476", "495", "496", "522", "563", "565", "580", "590"]
+hp_base = 35
+attack_base = 70
+defense_base = 55
+special_attack_base = 45
+special_defense_base = 55
+speed_base = 25
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 1
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 190
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Escarba en el suelo para extraer nutrientes de
+las raíces de los árboles, que las setas del lomo
+absorben después casi por completo."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_ppret")
+footprint_sprite = SubResource("AtlasTexture_p0b0e")
+battle_front_sprite = SubResource("AtlasTexture_pnve5")
+battle_back_sprite = SubResource("AtlasTexture_gkeh7")
+battle_front_shiny_sprite = SubResource("AtlasTexture_lhheb")
+battle_back_shiny_sprite = SubResource("AtlasTexture_hj6wi")

@@ -1,0 +1,10 @@
+[gd_resource type="DynamicFont" load_steps=2 format=3]
+
+[ext_resource type="DynamicFontData" uid="uid://cbwrrag6123rb" path="res://Escenas/UI/Fonts/pkmnfl.ttf" id="1"]
+
+
+[resource]
+size = 24
+extra_spacing_top = 5
+font_data = ExtResource( 1 )
+

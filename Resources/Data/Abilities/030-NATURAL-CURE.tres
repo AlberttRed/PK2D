@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbhoxebuafn11"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xfx7m"]
+
+[resource]
+script = ExtResource("1_xfx7m")
+id = 30
+internal_name = "natural-cure"
+display_name = "Cura Natural"
+description = "Cura problemas de estado al cambiar de Pokémon."

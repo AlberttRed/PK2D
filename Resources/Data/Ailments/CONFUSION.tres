@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=3 format=3 uid="uid://cgmfhfx43byjx"]
+
+[ext_resource type="Script" uid="uid://b3ygcov781h3" path="res://NEW/Scripts/Battle/core/Battle Effects/Persistent/Ailments/ConfusionAilmentEffect.gd" id="1_21a6o"]
+[ext_resource type="Script" uid="uid://ctn5nkcm5a6ci" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_rox0k"]
+
+[resource]
+script = ExtResource("1_rox0k")
+id = "confusion"
+display_name = "Confundir"
+description = ""
+is_persistent = false
+effect = ExtResource("1_21a6o")

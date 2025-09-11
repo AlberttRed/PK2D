@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://biwlspt6bqbv4"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_hl7tf"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_vqkdq"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_fnd3c"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_byxfa"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="5_ca4cb"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_l7v0i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6smn"]
+atlas = ExtResource("1_hl7tf")
+region = Rect2(1572, 4024, 148, 108)
+margin = Rect2(0, 52, 12, 52)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0vfa"]
+atlas = ExtResource("1_hl7tf")
+region = Rect2(1416, 4024, 148, 108)
+margin = Rect2(0, 52, 12, 52)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okg1t"]
+atlas = ExtResource("1_hl7tf")
+region = Rect2(800, 6040, 104, 92)
+margin = Rect2(28, 32, 56, 68)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8b8eu"]
+atlas = ExtResource("1_hl7tf")
+region = Rect2(112, 6048, 104, 92)
+margin = Rect2(28, 32, 56, 68)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rp4gw"]
+atlas = ExtResource("2_vqkdq")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nmfsp"]
+atlas = ExtResource("3_fnd3c")
+region = Rect2(516, 372, 120, 42)
+margin = Rect2(4, 18, 8, 22)
+
+[resource]
+resource_name = "92 - Gastly"
+script = ExtResource("4_byxfa")
+id = 92
+internal_name = "gastly"
+Name = "Gastly"
+type_a = ExtResource("5_ca4cb")
+type_b = ExtResource("6_l7v0i")
+base_exprience = 62
+height = 13.0
+weight = 1.0
+is_default = true
+abilities = ["26", null, null]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["2", "2", "2", "4", "2", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "2", "4", "4", "1", "2", "1", "1", "4", "4", "4", "4", "4", "4", "4", "1", "1", "4", "2", "4", "4", "1", "2", "3", "4", "4", "4", "1", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "3", "4", "2", "4", "4", "3", "3", "4", "4", "2", "4", "4", "2", "4", "1", "4", "1", "4", "1", "4", "4", "4", "4", "4", "3", "3", "4", "4", "4", "4", "3", "4", "2", "3", "1", "2", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 35, 7, 0, 0, 0, 0, 0, 0, 0, 16, 8, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 22, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0]
+learn_move_id = ["7", "8", "9", "29", "50", "72", "85", "87", "92", "94", "95", "99", "101", "102", "104", "109", "114", "117", "120", "122", "123", "138", "139", "149", "153", "156", "164", "168", "171", "173", "174", "180", "182", "184", "188", "192", "194", "195", "196", "202", "203", "207", "212", "213", "214", "216", "218", "220", "237", "240", "241", "244", "247", "253", "259", "261", "263", "269", "271", "282", "285", "286", "288", "289", "290", "310", "363", "371", "373", "389", "398", "399", "412", "417", "433", "441", "445", "466", "472", "474", "477", "482", "491", "492", "496", "499", "502", "506", "513", "590", "605", "611"]
+hp_base = 30
+attack_base = 35
+defense_base = 30
+special_attack_base = 100
+special_defense_base = 35
+speed_base = 80
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 1
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 190
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Con su cuerpo gaseoso puede colarse por donde
+quiera, aunque con un golpe de viento sale
+despedido."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_nmfsp")
+footprint_sprite = SubResource("AtlasTexture_rp4gw")
+battle_front_sprite = SubResource("AtlasTexture_8b8eu")
+battle_back_sprite = SubResource("AtlasTexture_j0vfa")
+battle_front_shiny_sprite = SubResource("AtlasTexture_okg1t")
+battle_back_shiny_sprite = SubResource("AtlasTexture_o6smn")

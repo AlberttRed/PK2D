@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d3ugkgceuj0fk"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_f6y60"]
+
+[resource]
+script = ExtResource("1_f6y60")
+id = 199
+internal_name = "water-bubble"
+display_name = "Pompa"
+description = "Reduce el daño que le provocan los movimientos de tipo Fuego e impide que sufra quemaduras."

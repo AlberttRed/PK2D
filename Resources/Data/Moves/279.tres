@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://s2k3nmxse83p"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_cgiys"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_v0f17"]
+
+[resource]
+resource_name = "279 - Desquite"
+script = ExtResource("1_cgiys")
+internal_name = "revenge"
+Name = "Desquite"
+id = 279
+description = "Ataque que produce el doble de daño si el usuario
+resulta herido en el mismo turno."
+type = ExtResource("2_v0f17")
+power = 60
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = -4
+damage_class_id = 2
+effect_entries = "Inflicts double damage if the user takes damage before attacking this turn. Inflicts regular damage.  If the target damaged the user this turn and was the last to do so, this move has double power.
+
+pain split does not count as damaging the user."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

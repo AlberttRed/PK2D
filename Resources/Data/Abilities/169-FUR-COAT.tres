@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://blh3cxy426wp6"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_321of"]
+
+[resource]
+script = ExtResource("1_321of")
+id = 169
+internal_name = "fur-coat"
+display_name = "Pelaje Recio"
+description = "Reduce a la mitad el daño recibido por ataques físicos."

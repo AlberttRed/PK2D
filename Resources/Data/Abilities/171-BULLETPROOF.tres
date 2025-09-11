@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c0c67c61ybae7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_1eukc"]
+
+[resource]
+script = ExtResource("1_1eukc")
+id = 171
+internal_name = "bulletproof"
+display_name = "Antibalas"
+description = "No le afectan las bombas ni algunos proyectiles."

@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://ceqswsg05rll5"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_3bbbj"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_gsikd"]
+
+[resource]
+resource_name = "168 - Ladrón"
+script = ExtResource("1_3bbbj")
+internal_name = "thief"
+Name = "Ladrón"
+id = 168
+description = "El agresor ataca y le quita el objeto al objetivo siempre
+y cuando no lleve ninguno."
+type = ExtResource("2_gsikd")
+power = 60
+accuracy = 100
+pp = 25
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Takes the target's item. Inflicts regular damage.  If the target is holding an item and the user is not, the user will permanently take the item.  Damage is still inflicted if an item cannot be taken.
+
+Pokémon with sticky hold or multitype are immune to the item theft effect.
+
+The target cannot recover its item with recycle.
+
+This move cannot be selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

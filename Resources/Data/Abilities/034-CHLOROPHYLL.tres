@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbm48jm716gm0"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_6pcss"]
+
+[resource]
+script = ExtResource("1_6pcss")
+id = 34
+internal_name = "chlorophyll"
+display_name = "Clorofila"
+description = "Sube la Velocidad cuando hay sol."

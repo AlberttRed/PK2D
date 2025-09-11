@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://k87p71mrctk5"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_f7pgf"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_t3ajd"]
+
+[resource]
+resource_name = "376 - As Oculto"
+script = ExtResource("1_f7pgf")
+internal_name = "trump-card"
+Name = "As Oculto"
+id = 376
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_t3ajd")
+power = 0
+accuracy = 0
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Power increases when this move has less PP, up to a maximum of 200. Inflicts regular damage.  Power is determined by the PP remaining for this move, after its PP cost is deducted.  Ignores accuracy and evasion modifiers.
+
+PP remaining | Power
+------------ | ----:
+4 or more    |    40
+3            |    50
+2            |    60
+1            |    80
+0            |   200
+
+If this move is activated by another move, the activating move's PP is used to calculate power."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

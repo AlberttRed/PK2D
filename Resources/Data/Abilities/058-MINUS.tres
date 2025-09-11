@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dp8l6dxtc7icp"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ns7hy"]
+
+[resource]
+script = ExtResource("1_ns7hy")
+id = 58
+internal_name = "minus"
+display_name = "Menos"
+description = "Potencia el At. Esp. si algún otro Pokémon tiene Más o Menos."

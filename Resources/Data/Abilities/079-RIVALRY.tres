@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b1xs8ntrugpdo"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_8fefp"]
+
+[resource]
+script = ExtResource("1_8fefp")
+id = 79
+internal_name = "rivalry"
+display_name = "Rivalidad"
+description = "Si el objetivo es del mismo sexo, inflige más daño."

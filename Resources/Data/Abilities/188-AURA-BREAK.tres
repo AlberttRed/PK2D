@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bvmj14cy2whad"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_g1tm3"]
+
+[resource]
+script = ExtResource("1_g1tm3")
+id = 188
+internal_name = "aura-break"
+display_name = "Rompeaura"
+description = "Invierte los efectos que causan las auras."

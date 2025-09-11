@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cix4xwlawxsi6"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kjsme"]
+
+[resource]
+script = ExtResource("1_kjsme")
+id = 226
+internal_name = "electric-surge"
+display_name = "Electrogénesis"
+description = "Crea un campo eléctrico al entrar en combate."

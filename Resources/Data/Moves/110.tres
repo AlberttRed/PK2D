@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://i3jgby74ew4v"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_qx45s"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_pgppd"]
+
+[resource]
+resource_name = "110 - Refugio"
+script = ExtResource("1_qx45s")
+internal_name = "withdraw"
+Name = "Refugio"
+id = 110
+description = "El usuario se resguarda en su coraza, por lo que le sube
+la Defensa."
+type = ExtResource("2_pgppd")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises the user's Defense by one stage. Raises the user's Defense by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: 1
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

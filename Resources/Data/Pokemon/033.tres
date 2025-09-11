@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dsoros2lievxh"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ntaeb"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_jx2q7"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_j28ji"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_0u08k"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="5_ym4cb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_friu6"]
+atlas = ExtResource("1_ntaeb")
+region = Rect2(164, 2112, 160, 122)
+margin = Rect2(0, 38, 0, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e056y"]
+atlas = ExtResource("1_ntaeb")
+region = Rect2(1588, 2228, 160, 122)
+margin = Rect2(0, 38, 0, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8etmy"]
+atlas = ExtResource("1_ntaeb")
+region = Rect2(1716, 5728, 106, 98)
+margin = Rect2(28, 32, 54, 62)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fud8b"]
+atlas = ExtResource("1_ntaeb")
+region = Rect2(1832, 5744, 106, 98)
+margin = Rect2(28, 32, 54, 62)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ltyja"]
+atlas = ExtResource("2_jx2q7")
+region = Rect2(296, 436, 20, 24)
+margin = Rect2(6, 4, 12, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sxlsc"]
+atlas = ExtResource("3_j28ji")
+region = Rect2(1164, 996, 102, 42)
+margin = Rect2(14, 20, 26, 22)
+
+[resource]
+resource_name = "33 - Nidorino"
+script = ExtResource("4_0u08k")
+id = 33
+internal_name = "nidorino"
+Name = "Nidorino"
+type_a = ExtResource("5_ym4cb")
+base_exprience = 128
+height = 9.0
+weight = 195.0
+is_default = true
+abilities = ["38", "79", "55"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "1", "4", "1", "1", "1", "1", "4", "4", "4", "1", "1", "4", "4", "4", "4", "1", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "3", "1", "1", "1", "4", "1", "4", "4", "4", "4", "3", "4", "4"]
+learn_lvl = [0, 50, 0, 1, 32, 41, 1, 0, 0, 0, 14, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 26, 0, 0, 0, 0, 0, 35, 43, 71, 0, 50, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["15", "24", "29", "30", "31", "32", "33", "34", "36", "38", "40", "43", "55", "58", "59", "61", "64", "68", "70", "85", "87", "91", "92", "99", "102", "104", "111", "115", "116", "117", "130", "133", "156", "162", "164", "168", "173", "174", "182", "188", "189", "197", "203", "207", "213", "214", "216", "218", "231", "237", "240", "241", "249", "251", "260", "263", "270", "290", "351", "352", "363", "389", "390", "398", "414", "421", "445", "468", "474", "496", "497", "529", "590", "599"]
+hp_base = 61
+attack_base = 72
+defense_base = 57
+special_attack_base = 55
+special_defense_base = 55
+speed_base = 65
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 2
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 0
+capture_rate = 120
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Es nervioso y agresivo por naturaleza. Cuando
+suben sus niveles de adrenalina, la concentración
+de toxinas en su veneno aumenta."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_sxlsc")
+footprint_sprite = SubResource("AtlasTexture_ltyja")
+battle_front_sprite = SubResource("AtlasTexture_fud8b")
+battle_back_sprite = SubResource("AtlasTexture_e056y")
+battle_front_shiny_sprite = SubResource("AtlasTexture_8etmy")
+battle_back_shiny_sprite = SubResource("AtlasTexture_friu6")

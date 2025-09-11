@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cwmbvtmk1m11i"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_gk477"]
+
+[resource]
+script = ExtResource("1_gk477")
+id = 123
+internal_name = "bad-dreams"
+display_name = "Mal Sueño"
+description = "Reduce los PS de cualquier rival que esté dormido."

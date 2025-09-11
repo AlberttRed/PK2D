@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cyhgs7m42frnd"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_m0ehd"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oiae8"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_esijh"]
+
+[resource]
+resource_name = "137 - Deslumbrar"
+script = ExtResource("1_oiae8")
+internal_name = "glare"
+Name = "Deslumbrar"
+id = 137
+description = "Intimida y asusta al objetivo con la mirada para dejarlo
+paralizado."
+type = ExtResource("2_esijh")
+power = 0
+accuracy = 100
+pp = 30
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Paralyzes the target. Paralyzes the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_m0ehd")

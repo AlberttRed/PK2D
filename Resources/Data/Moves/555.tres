@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bh1xg7tja7aha"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_d8cib"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_3jsu0"]
+
+[resource]
+resource_name = "555 - Alarido"
+script = ExtResource("1_d8cib")
+internal_name = "snarl"
+Name = "Alarido"
+id = 555
+description = "Chillido desagradable que baja el Ataque Especial del
+rival."
+type = ExtResource("2_3jsu0")
+power = 55
+accuracy = 95
+pp = 15
+effect_chance = 100
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Special Attack by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Attack by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+2: -1
+})
+target_id = 11
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 100
+contact_flag = false

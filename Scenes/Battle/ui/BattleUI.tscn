@@ -1,0 +1,56 @@
+[gd_scene load_steps=10 format=3 uid="uid://djqyc10nosdl"]
+
+[ext_resource type="Script" uid="uid://fue81u7lotyd" path="res://Scripts/Battle/ui/BattleUI.gd" id="1_cwigb"]
+[ext_resource type="Script" uid="uid://ciwn5vywclehe" path="res://Scripts/Battle/ui/BattleMessageController.gd" id="2_gtgo1"]
+[ext_resource type="PackedScene" uid="uid://ui53do2ck5tn" path="res://Scenes/Battle/ui/FieldUI.tscn" id="2_yxxch"]
+[ext_resource type="PackedScene" uid="uid://bwgrjg6m68rr" path="res://Scenes/Battle/core/BattleTargetSelector.tscn" id="3_0scdk"]
+[ext_resource type="PackedScene" uid="uid://btj5i08qahepp" path="res://Scenes/Battle/ui/ActionMenu.tscn" id="4_hkwg8"]
+[ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_alpup"]
+[ext_resource type="PackedScene" uid="uid://dauokklht8873" path="res://Scenes/Battle/ui/MoveMenu.tscn" id="6_x8cud"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_8fm4l"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wab0d"]
+texture = SubResource("CanvasTexture_8fm4l")
+modulate_color = Color(0, 0, 0, 1)
+
+[node name="BattleUI" type="Control"]
+custom_minimum_size = Vector2(512, 384)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cwigb")
+
+[node name="MessageController" type="Node" parent="."]
+script = ExtResource("2_gtgo1")
+
+[node name="TargetSelectorUI" parent="." instance=ExtResource("3_0scdk")]
+visible = false
+layout_mode = 1
+
+[node name="FieldUI" parent="." instance=ExtResource("2_yxxch")]
+layout_mode = 1
+
+[node name="ActionsMenu" parent="." instance=ExtResource("4_hkwg8")]
+visible = false
+layout_mode = 1
+
+[node name="MessageBox" parent="." instance=ExtResource("5_alpup")]
+visible = false
+z_index = 6
+layout_mode = 1
+
+[node name="MovesMenu" parent="." instance=ExtResource("6_x8cud")]
+visible = false
+layout_mode = 1
+
+[node name="back" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_top = 288.0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_wab0d")

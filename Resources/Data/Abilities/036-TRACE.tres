@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dxu5mtxgrcp4e"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_nb68l"]
+
+[resource]
+script = ExtResource("1_nb68l")
+id = 36
+internal_name = "trace"
+display_name = "Rastro"
+description = "Copia la habilidad del rival."

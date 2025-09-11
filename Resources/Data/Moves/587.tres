@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dte7fiwx4loyp"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5vwj4"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_oka7i"]
+
+[resource]
+resource_name = "587 - Cerrojo Feérico"
+script = ExtResource("1_5vwj4")
+internal_name = "fairy-lock"
+Name = "Cerrojo Feérico"
+id = 587
+description = "Consigue que ningún Pokémon pueda huir en el 
+siguiente turno echando un cerrojo."
+type = ExtResource("2_oka7i")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Prevents all Pokémon from fleeing or switching out during the next turn. Prevents all Pokémon from fleeing or switching out during the next turn."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

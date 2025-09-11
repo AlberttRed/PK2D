@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bc0dwfb5qg1ja"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_kvhmq"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_gcrkk"]
+
+[resource]
+resource_name = "253 - Alboroto"
+script = ExtResource("1_kvhmq")
+internal_name = "uproar"
+Name = "Alboroto"
+id = 253
+description = "Ataca de forma alborotada durante tres turnos. 
+Mantiene despiertos a todos."
+type = ExtResource("2_gcrkk")
+power = 90
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Forced to use this move for several turns.  Pokémon cannot fall asleep in that time. Inflicts regular damage.  User is forced to use this move for 2–5 turns, selected at random.  All Pokémon on the field wake up, and none can fall to sleep until the lock-in ends.
+
+Pokémon cannot use rest during this effect.
+
+This move cannot be selected by sleep talk."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 8
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

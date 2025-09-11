@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d0p1bbb0uheek"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_6kyus"]
+
+[resource]
+script = ExtResource("1_6kyus")
+id = 190
+internal_name = "desolate-land"
+display_name = "Tierra del Ocaso"
+description = "Altera el clima para anular los ataques de tipo Agua."

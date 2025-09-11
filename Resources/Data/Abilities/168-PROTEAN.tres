@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://baq5yjnc7tkwp"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_o1e0w"]
+
+[resource]
+script = ExtResource("1_o1e0w")
+id = 168
+internal_name = "protean"
+display_name = "Mutatipo"
+description = "Cambia su tipo al del movimiento que acaba de usar."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bb3p2of84fy6k"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_bhmbn"]
+
+[resource]
+script = ExtResource("1_bhmbn")
+id = 71
+internal_name = "arena-trap"
+display_name = "Trampa Arena"
+description = "Evita que el rival huya."

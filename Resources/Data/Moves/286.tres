@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bfa1qduigt3e6"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_xo0iw"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_8yvut"]
+
+[resource]
+resource_name = "286 - Sellar"
+script = ExtResource("1_xo0iw")
+internal_name = "imprison"
+Name = "Sellar"
+id = 286
+description = "Impide a los contrincantes usar ataques conocidos por
+el usuario durante el combate."
+type = ExtResource("2_8yvut")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Prevents the target from using any moves that the user also knows. Prevents any Pokémon on the opposing side of the field from using any move the user knows until the user leaves the field.  This effect is live; if the user obtains new moves while on the field, these moves become restricted.  If no opposing Pokémon knows any of the user's moves when this move is used, this move will fail."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

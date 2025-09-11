@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://i6u4blofwlmx"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_a2eap"]
+
+[resource]
+script = ExtResource("1_a2eap")
+id = 222
+internal_name = "receiver"
+display_name = "Receptor"
+description = "Adquiere la habilidad de un aliado debilitado."

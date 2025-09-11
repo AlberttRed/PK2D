@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://dw0wyvloll48a"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_yspmv"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_ca4v1"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_6luy7"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_omvam"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="5_lnaa2"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="6_xv13c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4dt8l"]
+atlas = ExtResource("1_yspmv")
+region = Rect2(1780, 496, 156, 142)
+margin = Rect2(2, 18, 4, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i2b7e"]
+atlas = ExtResource("1_yspmv")
+region = Rect2(324, 636, 156, 142)
+margin = Rect2(2, 18, 4, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kra41"]
+atlas = ExtResource("1_yspmv")
+region = Rect2(924, 5824, 98, 102)
+margin = Rect2(30, 28, 62, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0v36e"]
+atlas = ExtResource("1_yspmv")
+region = Rect2(1204, 5852, 98, 102)
+margin = Rect2(30, 28, 62, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5hene"]
+atlas = ExtResource("2_ca4v1")
+region = Rect2(112, 796, 8, 8)
+margin = Rect2(12, 12, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7q63a"]
+atlas = ExtResource("3_6luy7")
+region = Rect2(456, 1724, 104, 36)
+margin = Rect2(12, 24, 24, 28)
+
+[resource]
+resource_name = "121 - Starmie"
+script = ExtResource("4_omvam")
+id = 121
+internal_name = "starmie"
+Name = "Starmie"
+type_a = ExtResource("5_lnaa2")
+type_b = ExtResource("6_xv13c")
+base_exprience = 182
+height = 11.0
+weight = 800.0
+is_default = true
+abilities = ["35", "30", "148"]
+forms = []
+held_items_id = ["90", "91"]
+held_items_rarity = [50.0, 5.0]
+learn_type = ["4", "1", "4", "4", "1", "1", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "1", "1", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "3", "1", "4", "3", "4", "4", "4", "4", "4", "3", "3", "4", "4", "4", "4", "1", "3", "4", "3", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "3", "4", "4", "4"]
+learn_lvl = [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["29", "33", "36", "38", "55", "56", "57", "58", "59", "60", "61", "63", "85", "86", "87", "92", "94", "97", "99", "100", "102", "104", "105", "106", "107", "109", "113", "115", "117", "127", "129", "130", "138", "148", "149", "156", "161", "164", "171", "173", "174", "182", "192", "196", "203", "205", "207", "213", "214", "216", "218", "220", "229", "237", "239", "240", "244", "250", "258", "263", "271", "277", "278", "285", "290", "291", "322", "324", "352", "356", "360", "362", "363", "408", "416", "419", "427", "430", "433", "447", "472", "473", "477", "496", "502", "503", "590", "605"]
+hp_base = 60
+attack_base = 75
+defense_base = 85
+special_attack_base = 100
+special_defense_base = 85
+speed_base = 115
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 2
+gender_rate = -1
+capture_rate = 60
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Starmie absorbe plancton al tiempo que nada
+por el mar haciendo girar su cuerpo a gran
+velocidad."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_7q63a")
+footprint_sprite = SubResource("AtlasTexture_5hene")
+battle_front_sprite = SubResource("AtlasTexture_0v36e")
+battle_back_sprite = SubResource("AtlasTexture_i2b7e")
+battle_front_shiny_sprite = SubResource("AtlasTexture_kra41")
+battle_back_shiny_sprite = SubResource("AtlasTexture_4dt8l")

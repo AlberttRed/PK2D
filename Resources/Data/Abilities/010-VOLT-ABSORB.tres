@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cs1aabphjf4vx"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_pb4mg"]
+
+[resource]
+script = ExtResource("1_pb4mg")
+id = 10
+internal_name = "volt-absorb"
+display_name = "Absorbe Elec"
+description = "Recupera PS al recibir ataques de tipo Eléctrico."

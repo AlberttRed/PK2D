@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://xrlfew3fv7jw"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_tf2pc"]
+
+[resource]
+script = ExtResource("1_tf2pc")
+id = 204
+internal_name = "liquid-voice"
+display_name = "Voz Fluida"
+description = "Hace que todos los movimientos del Pokémon basados en sonido pasen a ser de tipo Agua."

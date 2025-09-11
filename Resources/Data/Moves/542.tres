@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dcel4vumwrg4r"]
+
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_ejpaa"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_iqdyy"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_0wq3u"]
+
+[resource]
+resource_name = "542 - Vendaval"
+script = ExtResource("1_iqdyy")
+internal_name = "hurricane"
+Name = "Vendaval"
+id = 542
+description = "Golpea al objetivo con un fuerte torbellino que
+envuelve al rival y puede confundirlo."
+type = ExtResource("2_0wq3u")
+power = 110
+accuracy = 70
+pp = 10
+effect_chance = 30
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to confuse the target. Inflicts regular damage.  Has a $effect_chance% chance to confuse the target.
+
+This move can hit Pokémon under the effect of bounce, fly, or sky drop.
+
+During rain dance, this move has 100% accuracy.  During sunny day, this move has 50% accuracy."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 6
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 2
+meta_max_turns = 5
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_ejpaa")

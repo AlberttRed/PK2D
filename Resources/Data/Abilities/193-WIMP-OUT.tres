@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://df4je8c5vkeoe"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_btird"]
+
+[resource]
+script = ExtResource("1_btird")
+id = 193
+internal_name = "wimp-out"
+display_name = "Huida"
+description = "Se asusta y abandona el terreno de combate cuando sus PS se ven reducidos a la mitad."

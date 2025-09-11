@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dov182sf1icgp"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_uoyhd"]
+
+[resource]
+script = ExtResource("1_uoyhd")
+id = 158
+internal_name = "prankster"
+display_name = "Bromista"
+description = "Permite lanzar ataques de estado en primer lugar."

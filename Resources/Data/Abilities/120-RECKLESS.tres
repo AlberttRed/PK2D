@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://uxcih3fcbcc8"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ulrsd"]
+
+[resource]
+script = ExtResource("1_ulrsd")
+id = 120
+internal_name = "reckless"
+display_name = "Audaz"
+description = "Potencia los movimientos que dañan al usuario."

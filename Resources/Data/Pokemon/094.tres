@@ -1,0 +1,96 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://dutgyxa1ujlfi"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_gp3lo"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_dtgfv"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_glyau"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_emax0"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="5_7amn3"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_m57qs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7do0q"]
+atlas = ExtResource("1_gp3lo")
+region = Rect2(332, 2500, 160, 120)
+margin = Rect2(0, 40, 0, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vw73t"]
+atlas = ExtResource("1_gp3lo")
+region = Rect2(836, 2512, 160, 120)
+margin = Rect2(0, 40, 0, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpa3q"]
+atlas = ExtResource("1_gp3lo")
+region = Rect2(776, 5492, 112, 104)
+margin = Rect2(24, 28, 48, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ln7l6"]
+atlas = ExtResource("1_gp3lo")
+region = Rect2(1780, 5528, 112, 104)
+margin = Rect2(24, 28, 48, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tga2j"]
+atlas = ExtResource("2_dtgfv")
+region = Rect2(484, 596, 16, 20)
+margin = Rect2(8, 6, 16, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_33ihl"]
+atlas = ExtResource("3_glyau")
+region = Rect2(1696, 688, 112, 44)
+margin = Rect2(8, 18, 16, 20)
+
+[resource]
+resource_name = "94 - Gengar"
+script = ExtResource("4_emax0")
+id = 94
+internal_name = "gengar"
+Name = "Gengar"
+type_a = ExtResource("5_7amn3")
+type_b = ExtResource("6_m57qs")
+base_exprience = 250
+height = 15.0
+weight = 405.0
+is_default = true
+abilities = ["130", null, null]
+forms = []
+held_items_id = ["224"]
+held_items_rarity = [5.0]
+learn_type = ["4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "1", "4", "4", "4", "1", "1", "4", "1", "1", "4", "4", "4", "4", "4", "4", "4", "1", "1", "4", "4", "4", "4", "1", "1", "3", "4", "4", "4", "1", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "3", "3", "4", "3", "4", "4", "4", "4", "1", "1", "4", "1", "4", "4", "1", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "3", "4", "4", "4", "4", "3", "4", "3", "1", "1", "4", "4", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 38, 7, 0, 0, 0, 0, 0, 0, 0, 16, 1, 0, 0, 0, 0, 48, 1, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 25, 0, 28, 0, 0, 22, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 1, 0, 0, 0, 0, 0]
+learn_move_id = ["5", "7", "8", "9", "25", "29", "34", "36", "38", "50", "63", "66", "68", "69", "70", "72", "85", "86", "87", "92", "94", "95", "99", "101", "102", "104", "109", "114", "117", "118", "120", "122", "123", "130", "138", "139", "149", "153", "156", "164", "168", "171", "173", "174", "180", "182", "184", "188", "192", "194", "195", "196", "202", "203", "207", "212", "213", "214", "216", "218", "220", "223", "227", "237", "240", "241", "244", "247", "249", "253", "259", "261", "263", "264", "269", "271", "272", "280", "282", "285", "286", "289", "290", "310", "325", "363", "371", "373", "374", "389", "390", "398", "399", "409", "411", "412", "416", "417", "421", "433", "441", "445", "466", "472", "474", "477", "482", "491", "492", "496", "502", "506", "513", "566", "590", "605", "611", "612"]
+hp_base = 60
+attack_base = 65
+defense_base = 60
+special_attack_base = 130
+special_defense_base = 75
+speed_base = 110
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 3
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 45
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = true
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Dicen que sale de la oscuridad para robarles el
+alma a los que se pierden por las montañas."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_33ihl")
+footprint_sprite = SubResource("AtlasTexture_tga2j")
+battle_front_sprite = SubResource("AtlasTexture_ln7l6")
+battle_back_sprite = SubResource("AtlasTexture_vw73t")
+battle_front_shiny_sprite = SubResource("AtlasTexture_dpa3q")
+battle_back_shiny_sprite = SubResource("AtlasTexture_7do0q")

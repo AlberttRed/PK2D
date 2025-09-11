@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://lqviuxh15mc4"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_uuxlw"]
+
+[resource]
+script = ExtResource("1_uuxlw")
+id = 84
+internal_name = "unburden"
+display_name = "Liviano"
+description = "Sube la Velocidad si usa o pierde el objeto que lleve."

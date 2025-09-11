@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c8josl0mx0k4n"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_cuhlg"]
+
+[resource]
+script = ExtResource("1_cuhlg")
+id = 85
+internal_name = "heatproof"
+display_name = "Ignífugo"
+description = "Atenúa los movimientos de tipo Fuego."

@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://bqvpgf125sedn"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_m27jd"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_t5u4s"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_le2i7"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_h3uh7"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="5_avfy6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwhxj"]
+atlas = ExtResource("1_m27jd")
+region = Rect2(1836, 3524, 158, 106)
+margin = Rect2(2, 54, 2, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vusr0"]
+atlas = ExtResource("1_m27jd")
+region = Rect2(1068, 3528, 158, 106)
+margin = Rect2(2, 54, 2, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yr1yi"]
+atlas = ExtResource("1_m27jd")
+region = Rect2(900, 4508, 128, 114)
+margin = Rect2(12, 22, 32, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r60oy"]
+atlas = ExtResource("1_m27jd")
+region = Rect2(1200, 4488, 128, 114)
+margin = Rect2(12, 22, 32, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67vqx"]
+atlas = ExtResource("2_t5u4s")
+region = Rect2(480, 332, 20, 28)
+margin = Rect2(6, 2, 12, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3uenw"]
+atlas = ExtResource("3_le2i7")
+region = Rect2(132, 788, 120, 38)
+margin = Rect2(4, 22, 8, 26)
+
+[resource]
+resource_name = "57 - Primeape"
+script = ExtResource("4_h3uh7")
+id = 57
+internal_name = "primeape"
+Name = "Primeape"
+type_a = ExtResource("5_avfy6")
+base_exprience = 159
+height = 10.0
+weight = 320.0
+is_default = true
+abilities = ["72", "83", "128"]
+forms = []
+held_items_id = ["170"]
+held_items_rarity = [5.0]
+learn_type = ["1", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "1", "1", "4", "4", "1", "4", "4", "4", "4", "3", "4", "4", "4", "3", "3", "4", "3", "4", "4", "4", "4", "4", "3", "4", "4", "1", "4", "1", "1", "1", "4", "3", "4", "3", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "4", "4"]
+learn_lvl = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 46, 0, 1, 0, 0, 1, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 27, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 25, 1, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0]
+learn_move_id = ["2", "5", "6", "7", "8", "9", "10", "25", "29", "34", "36", "37", "38", "43", "63", "66", "67", "68", "69", "70", "85", "87", "89", "91", "92", "99", "102", "103", "104", "111", "116", "117", "118", "129", "130", "154", "156", "157", "164", "168", "173", "174", "179", "180", "182", "184", "189", "197", "200", "203", "207", "213", "214", "216", "218", "223", "227", "228", "231", "237", "238", "240", "241", "244", "249", "253", "263", "264", "269", "270", "272", "280", "283", "290", "315", "317", "332", "339", "343", "363", "369", "370", "371", "372", "374", "386", "398", "402", "409", "410", "411", "416", "421", "431", "441", "444", "445", "446", "468", "479", "490", "496", "512", "514", "515", "523", "526", "530", "590", "612"]
+hp_base = 65
+attack_base = 105
+defense_base = 60
+special_attack_base = 60
+special_defense_base = 70
+speed_base = 95
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 2
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 75
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Solo se calma cuando no hay nadie cerca,
+por lo que llegar a ver ese momento resulta
+verdaderamente difícil."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_3uenw")
+footprint_sprite = SubResource("AtlasTexture_67vqx")
+battle_front_sprite = SubResource("AtlasTexture_r60oy")
+battle_back_sprite = SubResource("AtlasTexture_vusr0")
+battle_front_shiny_sprite = SubResource("AtlasTexture_yr1yi")
+battle_back_shiny_sprite = SubResource("AtlasTexture_bwhxj")

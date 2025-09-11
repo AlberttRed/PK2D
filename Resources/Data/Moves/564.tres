@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bl0aldp1d01og"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_c7hdh"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_3n4jp"]
+
+[resource]
+resource_name = "564 - Red Viscosa"
+script = ExtResource("1_c7hdh")
+internal_name = "sticky-web"
+Name = "Red Viscosa"
+id = 564
+description = "Coloca una red pegajosa alrededor del equipo rival que
+baja la Velocidad de cualquier adversario que entre a
+combatir."
+type = ExtResource("2_3n4jp")
+power = 0
+accuracy = 0
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Covers the opposing field, lowering opponents' Speed by one stage upon switching in. Shoots a web over the opponents' side of the field, which lowers the Speed of any opposing Pokémon that enters the field by one stage.
+
+Pokémon in the air, such as flying-types and those with levitate, are unaffected.  rapid spin removes Sticky Web from the user's side of the field; defog removes it from both sides."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 6
+meta_ailment_id = 0
+meta_category_id = 11
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

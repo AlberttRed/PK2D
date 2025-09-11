@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cigb0ybfamvuf"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_2gcqk"]
+
+[resource]
+script = ExtResource("1_2gcqk")
+id = 109
+internal_name = "unaware"
+display_name = "Ignorante"
+description = "No tiene en cuenta las mejoras en las características del rival."

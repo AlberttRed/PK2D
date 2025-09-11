@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://7djwq67oy6q5"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_bq46g"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_yyan2"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_bn58m"]
+
+[resource]
+resource_name = "78 - Paralizador"
+script = ExtResource("1_yyan2")
+internal_name = "stun-spore"
+Name = "Paralizador"
+id = 78
+description = "Esparce polvo que paraliza al objetivo."
+type = ExtResource("2_bn58m")
+power = 0
+accuracy = 75
+pp = 30
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Paralyzes the target. Paralyzes the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_bq46g")

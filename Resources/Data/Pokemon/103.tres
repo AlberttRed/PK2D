@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://b0jctm7e0vvcu"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_8aqkf"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_opjnh"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_3h1d7"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_rn3g0"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="5_k1exd"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="6_6vl5c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ycra"]
+atlas = ExtResource("1_8aqkf")
+region = Rect2(1876, 2496, 160, 120)
+margin = Rect2(0, 40, 0, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kim24"]
+atlas = ExtResource("1_8aqkf")
+region = Rect2(1616, 2504, 160, 120)
+margin = Rect2(0, 40, 0, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7h2wq"]
+atlas = ExtResource("1_8aqkf")
+region = Rect2(632, 1376, 140, 146)
+margin = Rect2(8, 8, 20, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v4omt"]
+atlas = ExtResource("1_8aqkf")
+region = Rect2(992, 1380, 140, 146)
+margin = Rect2(8, 8, 20, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5bbc7"]
+atlas = ExtResource("2_opjnh")
+region = Rect2(444, 196, 24, 28)
+margin = Rect2(4, 2, 8, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aoe56"]
+atlas = ExtResource("3_3h1d7")
+region = Rect2(1672, 1196, 100, 42)
+margin = Rect2(14, 18, 28, 22)
+
+[resource]
+resource_name = "103 - Exeggutor"
+script = ExtResource("4_rn3g0")
+id = 103
+internal_name = "exeggutor"
+Name = "Exeggutor"
+type_a = ExtResource("5_k1exd")
+type_b = ExtResource("6_6vl5c")
+base_exprience = 186
+height = 20.0
+weight = 1200.0
+is_default = true
+abilities = ["34", null, "139"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "1", "4", "4", "4", "4", "4", "4", "3", "4", "1", "4", "1", "4", "1", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "3", "4", "1", "4", "4", "4", "4", "4", "4", "4", "1", "4", "3", "4", "4", "3", "4", "4", "3", "1", "4", "4", "4", "3", "4", "1", "1", "4", "4", "1", "1", "4", "4", "4", "4", "4", "4", "4"]
+learn_lvl = [0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 47, 1, 0, 0, 37, 17, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["14", "23", "29", "34", "36", "38", "60", "63", "67", "70", "71", "72", "73", "76", "78", "89", "92", "93", "94", "95", "99", "100", "102", "104", "113", "115", "117", "120", "121", "138", "140", "148", "149", "153", "156", "164", "168", "171", "173", "174", "182", "188", "202", "203", "205", "207", "213", "214", "216", "218", "235", "237", "241", "244", "246", "248", "253", "263", "267", "270", "271", "285", "286", "290", "326", "331", "335", "345", "347", "356", "363", "384", "388", "402", "412", "416", "427", "428", "433", "437", "438", "445", "447", "452", "473", "477", "496", "500", "523", "580", "590", "611"]
+hp_base = 95
+attack_base = 95
+defense_base = 85
+special_attack_base = 125
+special_defense_base = 75
+speed_base = 55
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 2
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 45
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Puede lanzar ataques psíquicos de gran potencia
+si sus tres cabezas se ponen de acuerdo. Cuando
+se nubla el cielo, sus movimientos se ralentizan."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_aoe56")
+footprint_sprite = SubResource("AtlasTexture_5bbc7")
+battle_front_sprite = SubResource("AtlasTexture_v4omt")
+battle_back_sprite = SubResource("AtlasTexture_kim24")
+battle_front_shiny_sprite = SubResource("AtlasTexture_7h2wq")
+battle_back_shiny_sprite = SubResource("AtlasTexture_2ycra")

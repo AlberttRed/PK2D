@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://ce3xldepkody8"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_vsp7x"]
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_x817t"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_jm1ji"]
+
+[resource]
+resource_name = "87 - Trueno"
+script = ExtResource("1_vsp7x")
+internal_name = "thunder"
+Name = "Trueno"
+id = 87
+description = "Un poderoso rayo que daña al objetivo y puede 
+paralizarlo."
+type = ExtResource("2_jm1ji")
+power = 110
+accuracy = 70
+pp = 10
+effect_chance = 30
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target.
+
+During rain dance, this move has 100% accuracy.  It also has a (100 - accuracy)% chance to break through the protection of protect and detect.
+
+During sunny day, this move has 50% accuracy."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_x817t")

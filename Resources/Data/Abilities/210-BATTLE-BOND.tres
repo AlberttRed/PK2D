@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://clr2nf3xy5w5g"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xf2xn"]
+
+[resource]
+script = ExtResource("1_xf2xn")
+id = 210
+internal_name = "battle-bond"
+display_name = "Fuerte Afecto"
+description = "Al derrotar a un rival, los vínculos con su Entrenador se refuerzan y se convierte en Greninja Ash. Su Shuriken de Agua también se ve potenciado."

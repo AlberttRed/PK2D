@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://j180506l2wyw"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_niqit"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_v8jw7"]
+
+[resource]
+resource_name = "267 - Adaptación"
+script = ExtResource("1_niqit")
+internal_name = "nature-power"
+Name = "Adaptación"
+id = 267
+description = "Usa el poder de la naturaleza para atacar. Su efecto
+varía según el entorno de combate."
+type = ExtResource("2_v8jw7")
+power = 0
+accuracy = 0
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Uses a move which depends upon the terrain. Uses another move chosen according to the terrain.
+
+Terrain                   | Selected move
+------------------------- | ------------------
+Building                  | tri attack
+Cave                      | rock slide
+Deep water                | hydro pump
+Desert                    | earthquake
+Grass                     | seed bomb
+Mountain                  | rock slide
+Road                      | earthquake
+Shallow water             | hydro pump
+Snow                      | blizzard
+Tall grass                | seed bomb
+electric terrain | thunderbolt
+grassy terrain   | energy ball
+misty terrain    | moonblast
+
+In Pokémon Battle Revolution:
+
+Terrain        | Selected move
+-------------- | ------------------
+Courtyard      | tri attack
+Crystal        | rock slide
+Gateway        | hydro pump
+Magma          | rock slide
+Main Street    | tri attack
+Neon           | tri attack
+Stargazer      | rock slide
+Sunny Park     | seed bomb
+Sunset         | earthquake
+Waterfall      | seed bomb
+
+This move cannot be copied by mirror move."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

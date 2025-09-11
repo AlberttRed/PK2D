@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dy1wimc4b5bun"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gb86j"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_35j34"]
+
+[resource]
+resource_name = "227 - Otra Vez"
+script = ExtResource("1_gb86j")
+internal_name = "encore"
+Name = "Otra Vez"
+id = 227
+description = "El objetivo repite su último movimiento durante tres 
+turnos."
+type = ExtResource("2_35j34")
+power = 0
+accuracy = 100
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Forces the target to repeat its last used move every turn for 2 to 6 turns. The next 4–8 times (selected at random) the target attempts to move, it is forced to repeat its last used move.  If the selected move allows the trainer to select a target, an opponent will be selected at random each turn.  If the target is prevented from using the selected move by some other effect, struggle will be used instead.  This effect ends if the selected move runs out of PP.
+
+If the target hasn't used a move since entering the field, if it tried to use a move this turn and failed, if it does not know the selected move, or if the selected move has 0 PP remaining, this move will fail.  If the target's last used move was encore, mimic, mirror move, sketch, struggle, or transform, this move will fail."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

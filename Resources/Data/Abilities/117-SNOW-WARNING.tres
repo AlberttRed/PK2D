@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://onns7v704m3q"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_l8v2h"]
+
+[resource]
+script = ExtResource("1_l8v2h")
+id = 117
+internal_name = "snow-warning"
+display_name = "Nevada"
+description = "El Pokémon invoca una tormenta de granizo."

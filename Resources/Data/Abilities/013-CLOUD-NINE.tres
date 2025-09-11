@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d3l4usmew0epd"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_hwqax"]
+
+[resource]
+script = ExtResource("1_hwqax")
+id = 13
+internal_name = "cloud-nine"
+display_name = "Aclimatación"
+description = "Anula los efectos del tiempo atmosférico."

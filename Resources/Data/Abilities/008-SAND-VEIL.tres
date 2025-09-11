@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bst024oprnssi"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_swfbi"]
+
+[resource]
+script = ExtResource("1_swfbi")
+id = 8
+internal_name = "sand-veil"
+display_name = "Velo Arena"
+description = "Aumenta la Evasión en las tormentas de arena."

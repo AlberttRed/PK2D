@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dmywlupsd3nk1"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_hp738"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ute6d"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_kqai4"]
+
+[resource]
+resource_name = "553 - Rayo Gélido"
+script = ExtResource("1_ute6d")
+internal_name = "freeze-shock"
+Name = "Rayo Gélido"
+id = 553
+description = "El usuario carga un bloque de hielo con electricidad en
+el primer turno y ataca con él en el segundo. Puede
+paralizar."
+type = ExtResource("2_kqai4")
+power = 140
+accuracy = 90
+pp = 5
+effect_chance = 30
+priority = 0
+damage_class_id = 2
+effect_entries = "Requires a turn to charge before attacking.  Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target.  User charges for one turn before attacking."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_hp738")

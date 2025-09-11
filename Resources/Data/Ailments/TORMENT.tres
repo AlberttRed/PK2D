@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=2 format=3 uid="uid://dnsnvqip0m7rb"]
+
+[ext_resource type="Script" uid="uid://ctn5nkcm5a6ci" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_acc0y"]
+
+[resource]
+script = ExtResource("1_acc0y")
+id = "torment"
+display_name = "Tormento"
+description = ""
+is_persistent = false

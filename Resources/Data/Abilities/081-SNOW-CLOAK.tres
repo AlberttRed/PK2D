@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbay2gtdq3p2t"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_fn7oo"]
+
+[resource]
+script = ExtResource("1_fn7oo")
+id = 81
+internal_name = "snow-cloak"
+display_name = "Manto Níveo"
+description = "Sube la Evasión durante una tormenta de granizo."

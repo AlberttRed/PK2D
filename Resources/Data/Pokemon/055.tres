@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://bxy8bmtftpknx"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ueq4u"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_mwk1c"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_f8kax"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_wosjf"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="5_fgvlo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poigw"]
+atlas = ExtResource("1_ueq4u")
+region = Rect2(1664, 796, 152, 144)
+margin = Rect2(4, 16, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qoni2"]
+atlas = ExtResource("1_ueq4u")
+region = Rect2(4, 792, 152, 144)
+margin = Rect2(4, 16, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jx8u7"]
+atlas = ExtResource("1_ueq4u")
+region = Rect2(4, 4832, 116, 118)
+margin = Rect2(22, 20, 44, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qgeop"]
+atlas = ExtResource("1_ueq4u")
+region = Rect2(128, 4836, 116, 118)
+margin = Rect2(22, 20, 44, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iqe4n"]
+atlas = ExtResource("2_mwk1c")
+region = Rect2(188, 84, 26, 28)
+margin = Rect2(2, 0, 6, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fcjoy"]
+atlas = ExtResource("3_f8kax")
+region = Rect2(352, 840, 108, 42)
+margin = Rect2(12, 20, 20, 22)
+
+[resource]
+resource_name = "55 - Golduck"
+script = ExtResource("4_wosjf")
+id = 55
+internal_name = "golduck"
+Name = "Golduck"
+type_a = ExtResource("5_fgvlo")
+base_exprience = 175
+height = 17.0
+weight = 766.0
+is_default = true
+abilities = ["6", "13", "33"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "4", "4", "1", "4", "4", "4", "4", "4", "1", "1", "4", "1", "4", "4", "4", "1", "4", "4", "4", "3", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "1", "4", "4", "4", "4", "4", "3", "4", "4", "4", "1", "4", "4", "4", "4", "4", "1", "3", "3", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "1", "4", "1", "4", "4", "1", "4", "4", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 59, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 18, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 1, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 1, 0, 69, 0, 0, 37, 0, 0, 0, 0, 0]
+learn_move_id = ["5", "6", "8", "10", "25", "29", "34", "36", "38", "39", "50", "55", "56", "57", "58", "59", "60", "61", "63", "66", "67", "68", "69", "70", "91", "92", "93", "94", "95", "99", "102", "103", "104", "109", "113", "114", "117", "118", "127", "129", "130", "133", "145", "148", "154", "156", "164", "168", "173", "174", "182", "189", "196", "203", "207", "210", "213", "214", "216", "218", "223", "227", "231", "237", "240", "244", "248", "249", "250", "258", "263", "264", "269", "270", "272", "280", "281", "282", "283", "285", "290", "291", "324", "330", "332", "341", "346", "347", "352", "362", "363", "374", "382", "388", "401", "408", "410", "411", "416", "417", "421", "428", "431", "445", "447", "453", "468", "472", "473", "477", "487", "490", "496", "503", "590", "612"]
+hp_base = 80
+attack_base = 82
+defense_base = 78
+special_attack_base = 95
+special_defense_base = 80
+speed_base = 85
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 2
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 75
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Cuenta una antigua leyenda que los Golduck
+arrastraban a quienes contaminaran sus ríos al
+fondo de las aguas."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_fcjoy")
+footprint_sprite = SubResource("AtlasTexture_iqe4n")
+battle_front_sprite = SubResource("AtlasTexture_qgeop")
+battle_back_sprite = SubResource("AtlasTexture_qoni2")
+battle_front_shiny_sprite = SubResource("AtlasTexture_jx8u7")
+battle_back_shiny_sprite = SubResource("AtlasTexture_poigw")

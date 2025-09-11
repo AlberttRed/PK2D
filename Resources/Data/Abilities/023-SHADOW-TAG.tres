@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://co6g0tc80pu30"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xnm2e"]
+
+[resource]
+script = ExtResource("1_xnm2e")
+id = 23
+internal_name = "shadow-tag"
+display_name = "Sombra Trampa"
+description = "Evita que el enemigo huya."

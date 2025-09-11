@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cpx1hckqsk77d"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_2ju1x"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_54bnl"]
+
+[resource]
+resource_name = "583 - Carantoña"
+script = ExtResource("1_2ju1x")
+internal_name = "play-rough"
+Name = "Carantoña"
+id = 583
+description = "El Pokémon que lo usa le hace cucamonas al objetivo y
+lo ataca. Puede disminuir el Ataque del objetivo."
+type = ExtResource("2_54bnl")
+power = 90
+accuracy = 90
+pp = 10
+effect_chance = 10
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to lower the target's Attack by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Attack by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 10
+contact_flag = false

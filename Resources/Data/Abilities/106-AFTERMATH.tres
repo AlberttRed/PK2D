@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cq32uyqx3ubma"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_vrpwi"]
+
+[resource]
+script = ExtResource("1_vrpwi")
+id = 106
+internal_name = "aftermath"
+display_name = "Detonación"
+description = "Daña al agresor que le ha dado el golpe de gracia."

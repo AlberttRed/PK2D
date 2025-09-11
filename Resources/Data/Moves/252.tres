@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://buuwpnmv6nctl"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_217yg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8pjt3"]
+
+[resource]
+resource_name = "252 - Sorpresa"
+script = ExtResource("1_217yg")
+internal_name = "fake-out"
+Name = "Sorpresa"
+id = 252
+description = "Amedrenta al objetivo con este movimiento de
+prioridad alta. Solo sirve en el primer turno."
+type = ExtResource("2_8pjt3")
+power = 40
+accuracy = 100
+pp = 10
+effect_chance = 100
+priority = 3
+damage_class_id = 2
+effect_entries = "Can only be used as the first move after the user enters battle.  Causes the target to flinch. Inflicts regular damage.  Causes the target to flinch.  Can only be used on the user's first turn after entering the field."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 100
+meta_stat_chance = 0
+contact_flag = false

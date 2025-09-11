@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://hhcxe6lmalnp"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ba0re"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_5p6ox"]
+
+[resource]
+resource_name = "534 - Concha Filo"
+script = ExtResource("1_ba0re")
+internal_name = "razor-shell"
+Name = "Concha Filo"
+id = 534
+description = "Una afilada vieira ataca al objetivo. También puede 
+hacer disminuir su Defensa."
+type = ExtResource("2_5p6ox")
+power = 75
+accuracy = 95
+pp = 10
+effect_chance = 50
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to lower the target's Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Defense by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 50
+contact_flag = false

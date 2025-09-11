@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bwj8whrbrunmd"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_j3w5h"]
+
+[resource]
+script = ExtResource("1_j3w5h")
+id = 112
+internal_name = "slow-start"
+display_name = "Inicio Lento"
+description = "Baja a la mitad el Ataque y la Velocidad durante un rato."

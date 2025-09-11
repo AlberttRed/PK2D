@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cqbrt5d5dmijs"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_o73iq"]
+
+[resource]
+script = ExtResource("1_o73iq")
+id = 91
+internal_name = "adaptability"
+display_name = "Adaptable"
+description = "Potencia los movimientos del mismo tipo del Pokémon."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cxj1jgv6kt53w"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_e4rqh"]
+
+[resource]
+script = ExtResource("1_e4rqh")
+id = 17
+internal_name = "immunity"
+display_name = "Inmunidad"
+description = "Evita el envenenamiento."

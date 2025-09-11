@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dxicn6v5mos6e"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_bb7lx"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_4jmd3"]
+
+[resource]
+resource_name = "496 - Canon"
+script = ExtResource("1_bb7lx")
+internal_name = "round"
+Name = "Canon"
+id = 496
+description = "Un canto que ataca al objetivo. Cuantos más Pokémon
+lo usan, más aumenta de potencia."
+type = ExtResource("2_4jmd3")
+power = 60
+accuracy = 100
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Has double power if it's used more than once per turn. Inflicts regular damage.  If round has already been used this turn, this move's power is doubled.  After this move is used, any other Pokémon using it this turn will immediately do so (in the order they would otherwise act), regardless of Speed or priority.  Pokémon using other moves will then continue to act as usual."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

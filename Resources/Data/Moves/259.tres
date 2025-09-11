@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cyyxdcklb3nii"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5xcyf"]
+[ext_resource type="Resource" uid="uid://dnsnvqip0m7rb" path="res://Resources/Data/Ailments/TORMENT.tres" id="1_7o10n"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_mrhfh"]
+
+[resource]
+resource_name = "259 - Tormento"
+script = ExtResource("1_5xcyf")
+internal_name = "torment"
+Name = "Tormento"
+id = 259
+description = "Atormenta y enfurece al objetivo, que no puede usar
+dos veces seguidas el mismo movimiento. "
+type = ExtResource("2_mrhfh")
+power = 0
+accuracy = 100
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Prevents the target from using the same move twice in a row. Prevents the target from attempting to use the same move twice in a row.  When the target leaves the field, this effect ends.
+
+If the target is forced to attempt a repeated move due to choice band, choice scarf, choice specs, disable, encore, taunt, only having PP remaining for one move, or any other effect, the target will use struggle instead.  The target is then free to use the forced move next turn, as it didn't use that move this turn."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 12
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_7o10n")

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://drkj23e2a0g3p"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_vvfhk"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_43fwy"]
+
+[resource]
+resource_name = "399 - Pulso Umbrío"
+script = ExtResource("1_vvfhk")
+internal_name = "dark-pulse"
+Name = "Pulso Umbrío"
+id = 399
+description = "Libera una horrible aura llena de malos pensamientos
+que puede amedrentar al objetivo."
+type = ExtResource("2_43fwy")
+power = 80
+accuracy = 100
+pp = 15
+effect_chance = 20
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 20
+meta_stat_chance = 0
+contact_flag = false

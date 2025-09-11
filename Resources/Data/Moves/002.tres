@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dpwudn6unhgq"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_k0hmp"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_33w0g"]
+
+[resource]
+resource_name = "2 - Golpe Kárate"
+script = ExtResource("1_k0hmp")
+internal_name = "karate-chop"
+Name = "Golpe Kárate"
+id = 2
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_33w0g")
+power = 50
+accuracy = 100
+pp = 25
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 1
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

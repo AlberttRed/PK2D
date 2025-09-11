@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dm0s6phhjb72c"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_wlebe"]
+
+[resource]
+script = ExtResource("1_wlebe")
+id = 96
+internal_name = "normalize"
+display_name = "Normalidad"
+description = "Todos los movimientos se vuelven de tipo Normal."

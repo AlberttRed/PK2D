@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bn7pp3xxfp4x"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_5ujks"]
+
+[resource]
+script = ExtResource("1_5ujks")
+id = 221
+internal_name = "tangling-hair"
+display_name = "Rizos Rebeldes"
+description = "Baja la Velocidad del rival cuando este ataca al Pokémon con un movimiento de contacto."

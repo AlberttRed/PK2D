@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dcyi60diexu15"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_i1vw7"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_bo30d"]
+
+[resource]
+resource_name = "96 - Meditación"
+script = ExtResource("1_i1vw7")
+internal_name = "meditate"
+Name = "Meditación"
+id = 96
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_bo30d")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises the user's Attack by one stage. Raises the user's Attack by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: 1
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

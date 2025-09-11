@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://3mb5iagpx76n"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_56of8"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_2uown"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_inih6"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_kag7j"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_lbbjg"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_hm8ra"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_56of8"]
+atlas = ExtResource("1_56of8")
+region = Rect2(500, 936, 158, 136)
+margin = Rect2(0, 24, 2, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2uown"]
+atlas = ExtResource("1_56of8")
+region = Rect2(668, 936, 158, 136)
+margin = Rect2(0, 24, 2, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_inih6"]
+atlas = ExtResource("1_56of8")
+region = Rect2(1560, 4848, 124, 112)
+margin = Rect2(16, 26, 36, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kag7j"]
+atlas = ExtResource("1_56of8")
+region = Rect2(1428, 4848, 124, 112)
+margin = Rect2(16, 26, 36, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lbbjg"]
+atlas = ExtResource("2_2uown")
+region = Rect2(276, 764, 8, 12)
+margin = Rect2(12, 10, 24, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hm8ra"]
+atlas = ExtResource("3_inih6")
+region = Rect2(1736, 428, 114, 44)
+margin = Rect2(8, 18, 14, 20)
+
+[resource]
+resource_name = "15 - Beedrill"
+script = ExtResource("4_kag7j")
+id = 15
+internal_name = "beedrill"
+Name = "Beedrill"
+type_a = ExtResource("5_lbbjg")
+type_b = ExtResource("6_hm8ra")
+base_exprience = 178
+height = 10.0
+weight = 295.0
+is_default = true
+abilities = ["68", null, "97"]
+forms = []
+held_items_id = ["222"]
+held_items_rarity = [5.0]
+learn_type = ["4", "4", "4", "1", "4", "4", "1", "1", "1", "4", "1", "4", "4", "3", "4", "1", "1", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "3", "1", "4", "3", "4", "4", "4", "4", "3", "4", "4", "1", "1", "1", "4", "4", "4", "4", "3", "3", "4", "4", "4", "4", "3", "3", "1", "4", "4"]
+learn_lvl = [0, 0, 0, 1, 0, 0, 1, 20, 30, 0, 1, 0, 0, 0, 0, 35, 25, 0, 0, 1, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 25, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0]
+learn_move_id = ["14", "15", "29", "31", "36", "38", "40", "41", "42", "63", "64", "72", "76", "81", "92", "97", "99", "102", "104", "106", "115", "116", "117", "129", "130", "148", "156", "164", "168", "173", "174", "182", "188", "200", "202", "203", "206", "207", "210", "213", "214", "216", "218", "228", "230", "237", "241", "249", "263", "280", "282", "283", "290", "314", "318", "332", "355", "363", "366", "369", "371", "372", "390", "398", "404", "416", "432", "445", "450", "466", "474", "496", "512", "522", "527", "529", "565", "590", "611"]
+hp_base = 65
+attack_base = 90
+defense_base = 40
+special_attack_base = 45
+special_defense_base = 80
+speed_base = 75
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 2
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 1
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 45
+base_happiness = 70
+is_baby = false
+hatch_counter = 15
+has_gender_differences = false
+forms_switchable = true
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Tiene tres aguijones venenosos, dos en las patas
+anteriores y uno en la parte baja del abdomen,
+con los que ataca a sus enemigos una y otra vez."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_hm8ra")
+footprint_sprite = SubResource("AtlasTexture_lbbjg")
+battle_front_sprite = SubResource("AtlasTexture_kag7j")
+battle_back_sprite = SubResource("AtlasTexture_2uown")
+battle_front_shiny_sprite = SubResource("AtlasTexture_inih6")
+battle_back_shiny_sprite = SubResource("AtlasTexture_56of8")

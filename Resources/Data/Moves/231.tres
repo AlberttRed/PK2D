@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cuv270hoe2rj"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_i33s2"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_ifh11"]
+
+[resource]
+resource_name = "231 - Cola Férrea"
+script = ExtResource("1_i33s2")
+internal_name = "iron-tail"
+Name = "Cola Férrea"
+id = 231
+description = "Ataca con una cola férrea y puede bajar la Defensa 
+del objetivo."
+type = ExtResource("2_ifh11")
+power = 100
+accuracy = 75
+pp = 15
+effect_chance = 30
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to lower the target's Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Defense by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 30
+contact_flag = false

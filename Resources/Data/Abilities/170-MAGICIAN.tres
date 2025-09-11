@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c3vlu6q6smfh4"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_k6xcd"]
+
+[resource]
+script = ExtResource("1_k6xcd")
+id = 170
+internal_name = "magician"
+display_name = "Prestidigitador"
+description = "Roba el objeto del Pokémon al que alcance con un movimiento."

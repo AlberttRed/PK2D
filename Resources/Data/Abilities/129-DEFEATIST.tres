@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bg2xle48sb6dp"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_p6yb1"]
+
+[resource]
+script = ExtResource("1_p6yb1")
+id = 129
+internal_name = "defeatist"
+display_name = "Flaqueza"
+description = "Baja las características al llegar a la mitad los PS."

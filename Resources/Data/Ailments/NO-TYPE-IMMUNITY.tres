@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=2 format=3 uid="uid://pxq1boh748y0"]
+
+[ext_resource type="Script" uid="uid://ctn5nkcm5a6ci" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_aquvd"]
+
+[resource]
+script = ExtResource("1_aquvd")
+id = "no-type-immunity"
+display_name = "No type immunity"
+description = ""
+is_persistent = false

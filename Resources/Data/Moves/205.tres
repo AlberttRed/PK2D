@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bak6ivep53dwa"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_8tm21"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_8qu04"]
+
+[resource]
+resource_name = "205 - Rodar"
+script = ExtResource("1_8tm21")
+internal_name = "rollout"
+Name = "Rodar"
+id = 205
+description = "El atacante rueda contra el objetivo durante cinco 
+turnos, cada vez con mayor fuerza."
+type = ExtResource("2_8qu04")
+power = 30
+accuracy = 90
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Power doubles every turn this move is used in succession after the first, resetting after five turns. Inflicts regular damage.  User is forced to use this move for five turns.  Power doubles every time this move is used in succession to a maximum of 16x, and resets to normal after the lock-in ends.  If this move misses or becomes unusable, the lock-in ends.
+
+If the user has used defense curl since entering the field, this move has double power."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

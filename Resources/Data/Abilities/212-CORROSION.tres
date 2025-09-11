@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cegvsjo0dfsfj"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_5kdtg"]
+
+[resource]
+script = ExtResource("1_5kdtg")
+id = 212
+internal_name = "corrosion"
+display_name = "Corrosión"
+description = "Permite envenenar incluso a rivales de tipo Acero o Veneno."

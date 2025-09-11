@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://2fe0unp8wxi3"]
+
+[node name="BattleAnimationController" type="Node2D"]

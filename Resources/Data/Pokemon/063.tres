@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://cf7oxwf4nmiqs"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_v6wyg"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_euswn"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_woy6p"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_hygbu"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="5_0lbh4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r6jhs"]
+atlas = ExtResource("1_v6wyg")
+region = Rect2(148, 5128, 126, 100)
+margin = Rect2(18, 60, 34, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qje8s"]
+atlas = ExtResource("1_v6wyg")
+region = Rect2(832, 5164, 126, 100)
+margin = Rect2(18, 60, 34, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_io1nx"]
+atlas = ExtResource("1_v6wyg")
+region = Rect2(224, 6080, 108, 88)
+margin = Rect2(24, 36, 52, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0d6s"]
+atlas = ExtResource("1_v6wyg")
+region = Rect2(1664, 6060, 108, 88)
+margin = Rect2(24, 36, 52, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptfel"]
+atlas = ExtResource("2_euswn")
+region = Rect2(452, 504, 14, 22)
+margin = Rect2(8, 6, 18, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8nang"]
+atlas = ExtResource("3_woy6p")
+region = Rect2(780, 1440, 102, 38)
+margin = Rect2(16, 20, 26, 26)
+
+[resource]
+resource_name = "63 - Abra"
+script = ExtResource("4_hygbu")
+id = 63
+internal_name = "abra"
+Name = "Abra"
+type_a = ExtResource("5_0lbh4")
+base_exprience = 62
+height = 9.0
+weight = 195.0
+is_default = true
+abilities = ["28", "39", "98"]
+forms = []
+held_items_id = ["225"]
+held_items_rarity = [5.0]
+learn_type = ["4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "4", "4", "1", "4", "4", "2", "2", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "3", "3", "4", "2", "4", "4", "4", "3", "4", "4", "3", "4", "4", "4", "2", "2", "4", "2", "4", "4", "3", "4", "4", "4", "4", "2", "3", "4", "4", "3", "3", "4", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["5", "7", "8", "9", "25", "29", "34", "36", "38", "66", "68", "69", "86", "92", "93", "94", "99", "100", "102", "104", "112", "113", "115", "117", "118", "129", "130", "138", "148", "149", "156", "161", "164", "168", "171", "173", "174", "182", "192", "203", "207", "213", "214", "216", "218", "219", "223", "227", "231", "237", "240", "241", "244", "247", "259", "263", "264", "269", "271", "272", "277", "278", "282", "285", "289", "290", "324", "347", "351", "356", "363", "373", "374", "375", "379", "384", "385", "409", "412", "428", "433", "445", "447", "451", "470", "472", "473", "477", "478", "492", "496", "502", "590", "605"]
+hp_base = 25
+attack_base = 20
+defense_base = 15
+special_attack_base = 105
+special_defense_base = 55
+speed_base = 90
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 1
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 2
+capture_rate = 200
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Puede teletransportarse mientras duerme. Se
+dice que, cuanto más profundo sea su sueño,
+mayor será la distancia a la que se desplace."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_8nang")
+footprint_sprite = SubResource("AtlasTexture_ptfel")
+battle_front_sprite = SubResource("AtlasTexture_f0d6s")
+battle_back_sprite = SubResource("AtlasTexture_qje8s")
+battle_front_shiny_sprite = SubResource("AtlasTexture_io1nx")
+battle_back_shiny_sprite = SubResource("AtlasTexture_r6jhs")

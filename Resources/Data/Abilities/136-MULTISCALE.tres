@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cnal0c5ct7yl6"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jvcmi"]
+
+[resource]
+script = ExtResource("1_jvcmi")
+id = 136
+internal_name = "multiscale"
+display_name = "Multiescamas"
+description = "Reduce el daño sufrido si los PS están al máximo."

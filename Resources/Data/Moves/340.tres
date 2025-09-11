@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://c20wo8bdcjg4s"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_4uxcg"]
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_xormt"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_35iin"]
+
+[resource]
+resource_name = "340 - Bote"
+script = ExtResource("1_4uxcg")
+internal_name = "bounce"
+Name = "Bote"
+id = 340
+description = "El usuario bota en el primer turno y golpea al objetivo
+en el segundo y puede llegar a paralizarlo."
+type = ExtResource("2_35iin")
+power = 85
+accuracy = 85
+pp = 5
+effect_chance = 30
+priority = 0
+damage_class_id = 2
+effect_entries = "User bounces high into the air, dodging all attacks, and hits next turn. Inflicts regular damage.  User bounces high into the air for one turn, becoming immune to attack, and hits on the second turn.  Has a $effect_chance% chance to paralyze the target.
+
+During the immune turn, gust, hurricane, sky uppercut, smack down, thunder, and twister still hit the user normally.  gust and twister also have double power against the user.
+
+The damage from hail and sandstorm still applies during the immune turn.
+
+The user may be hit during its immune turn if under the effect of lock on, mind reader, or no guard.
+
+This move cannot be used while gravity is in effect.
+
+This move cannot be selected by sleep talk."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_xormt")

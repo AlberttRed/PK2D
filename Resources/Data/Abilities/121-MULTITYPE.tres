@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dswab4i2pw6au"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_t7kld"]
+
+[resource]
+script = ExtResource("1_t7kld")
+id = 121
+internal_name = "multitype"
+display_name = "Multitipo"
+description = "Cambia el tipo al de la tabla que lleve."

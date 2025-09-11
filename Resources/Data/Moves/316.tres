@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://60xshby5ex6s"]
+
+[ext_resource type="Resource" uid="uid://pxq1boh748y0" path="res://Resources/Data/Ailments/NO-TYPE-IMMUNITY.tres" id="1_1qjd2"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_u3qbj"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_cnadw"]
+
+[resource]
+resource_name = "316 - Rastreo"
+script = ExtResource("1_u3qbj")
+internal_name = "odor-sleuth"
+Name = "Rastreo"
+id = 316
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_cnadw")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Forces the target to have no Evade, and allows it to be hit by Normal and Fighting moves even if it's a Ghost. Resets the target's evasion to normal and prevents any further boosting until the target leaves the field.  A ghost under this effect takes normal damage from normal and fighting moves.  This move itself ignores accuracy and evasion modifiers."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 17
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_1qjd2")

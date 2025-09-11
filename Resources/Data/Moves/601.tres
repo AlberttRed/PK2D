@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://ccq87buel8yy5"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_hd34r"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_pl4k6"]
+
+[resource]
+resource_name = "601 - Geocontrol"
+script = ExtResource("1_hd34r")
+internal_name = "geomancy"
+Name = "Geocontrol"
+id = 601
+description = "Concentra energía durante el primer turno, de forma
+que su Velocidad, Ataque Especial y Defensa Especial
+aumenten mucho en el segundo."
+type = ExtResource("2_pl4k6")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Takes one turn to charge, then raises the user's Special Attack, Special Defense, and Speed by two stages. Takes one turn to charge, then raises the user's Special Attack, Special Defense, and Speed by two stages."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+2: 2,
+3: 2,
+4: 2
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

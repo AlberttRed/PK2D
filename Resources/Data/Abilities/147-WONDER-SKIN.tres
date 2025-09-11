@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cvuabkydr3cvd"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_3ikdd"]
+
+[resource]
+script = ExtResource("1_3ikdd")
+id = 147
+internal_name = "wonder-skin"
+display_name = "Piel Milagro"
+description = "Dificulta que le afecten los ataques de estado."

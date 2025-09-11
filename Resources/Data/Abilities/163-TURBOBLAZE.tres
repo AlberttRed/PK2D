@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b1mo0miw84w4m"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_g3fcf"]
+
+[resource]
+script = ExtResource("1_g3fcf")
+id = 163
+internal_name = "turboblaze"
+display_name = "Turbollama"
+description = "Usa movimientos sin que importen las habilidades."

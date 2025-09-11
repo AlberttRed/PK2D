@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c6owxsk41ie1r"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_26w7h"]
+
+[resource]
+script = ExtResource("1_26w7h")
+id = 116
+internal_name = "solid-rock"
+display_name = "Roca Sólida"
+description = "Mitiga los movimientos supereficaces."

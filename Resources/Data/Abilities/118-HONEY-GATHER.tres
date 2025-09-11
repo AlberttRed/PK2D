@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://di7mhdxb76hk7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_et24r"]
+
+[resource]
+script = ExtResource("1_et24r")
+id = 118
+internal_name = "honey-gather"
+display_name = "Recogemiel"
+description = "El Pokémon recoge Miel de donde puede."

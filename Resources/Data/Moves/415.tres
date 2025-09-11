@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://v4l3p0oiodnf"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_q7grf"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_tjuwx"]
+
+[resource]
+resource_name = "415 - Trapicheo"
+script = ExtResource("1_q7grf")
+internal_name = "switcheroo"
+Name = "Trapicheo"
+id = 415
+description = "Intercambia con el objetivo los objetos que llevan tan
+rápido que es imposible verlo a simple vista."
+type = ExtResource("2_tjuwx")
+power = 0
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "User and target swap items. User and target permanently swap held items.  Works even if one of the Pokémon isn't holding anything.  If either Pokémon is holding mail, this move will fail.
+
+If either Pokémon has multitype or sticky hold, this move will fail.
+
+If this move results in a Pokémon obtaining choice band, choice scarf, or choice specs, and that Pokémon was the latter of the pair to move this turn, then the move it used this turn becomes its chosen forced move.  This applies even if both Pokémon had a choice item before this move was used.  If the first of the two Pokémon gains a choice item, it may select whatever choice move it wishes next turn.
+
+Neither the user nor the target can recover its item with recycle.
+
+This move cannot be selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

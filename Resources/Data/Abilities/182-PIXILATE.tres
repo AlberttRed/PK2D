@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b0q215atopbxr"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_abx13"]
+
+[resource]
+script = ExtResource("1_abx13")
+id = 182
+internal_name = "pixilate"
+display_name = "Piel Feérica"
+description = "Convierte movimientos de tipo Normal en tipo Hada."

@@ -1,0 +1,28 @@
+[gd_resource type="AnimatedTexture" load_steps=9 format=3 uid="uid://dw16k6vxj5kjg"]
+
+[ext_resource type="Texture2D" uid="uid://bxc0f40v37l2h" path="res://Sprites/Tilesets/Animated tiles/Sea/tile000.png" id="1_ensoj"]
+[ext_resource type="Texture2D" uid="uid://d30whtdqrk1jy" path="res://Sprites/Tilesets/Animated tiles/Sea/tile001.png" id="2_mbo22"]
+[ext_resource type="Texture2D" uid="uid://dv5mk874lofqk" path="res://Sprites/Tilesets/Animated tiles/Sea/tile002.png" id="3_yys66"]
+[ext_resource type="Texture2D" uid="uid://wvhdgfxmbupr" path="res://Sprites/Tilesets/Animated tiles/Sea/tile003.png" id="4_wibb6"]
+[ext_resource type="Texture2D" uid="uid://e38it8vmaaix" path="res://Sprites/Tilesets/Animated tiles/Sea/tile004.png" id="5_201ud"]
+[ext_resource type="Texture2D" uid="uid://cxxk2uy2hcj6j" path="res://Sprites/Tilesets/Animated tiles/Sea/tile005.png" id="6_b3ect"]
+[ext_resource type="Texture2D" uid="uid://bv1hlgyymd2wi" path="res://Sprites/Tilesets/Animated tiles/Sea/tile006.png" id="7_1ykhc"]
+[ext_resource type="Texture2D" uid="uid://1q2cyiabpb71" path="res://Sprites/Tilesets/Animated tiles/Sea/tile007.png" id="8_annjf"]
+
+[resource]
+frames = 8
+frame_0/texture = ExtResource("1_ensoj")
+frame_1/texture = ExtResource("2_mbo22")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("3_yys66")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("4_wibb6")
+frame_3/duration = 1.0
+frame_4/texture = ExtResource("5_201ud")
+frame_4/duration = 1.0
+frame_5/texture = ExtResource("6_b3ect")
+frame_5/duration = 1.0
+frame_6/texture = ExtResource("7_1ykhc")
+frame_6/duration = 1.0
+frame_7/texture = ExtResource("8_annjf")
+frame_7/duration = 1.0

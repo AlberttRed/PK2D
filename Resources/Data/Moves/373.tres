@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dijqyf12uv8nt"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_aqrju"]
+[ext_resource type="Resource" uid="uid://cpwtm52644vtl" path="res://Resources/Data/Ailments/EMBARGO.tres" id="1_vvv2u"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_ibumy"]
+
+[resource]
+resource_name = "373 - Embargo"
+script = ExtResource("1_aqrju")
+internal_name = "embargo"
+Name = "Embargo"
+id = 373
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_ibumy")
+power = 0
+accuracy = 100
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Target cannot use held items. Target cannot use its held item for five turns.  If the target leaves the field, this effect ends.
+
+If a Pokémon under this effect uses bug bite or pluck on a Pokémon holding a berry, the berry is destroyed but not used.  If a Pokémon under this effect uses fling, it will fail.
+
+This effect is passed by baton pass."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 19
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 5
+meta_max_turns = 5
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_vvv2u")

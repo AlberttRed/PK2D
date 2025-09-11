@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://d3hmcmmgfhl35"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_emieb"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_6eyx7"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_xpdcs"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_n601h"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="5_5yyp0"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="6_cfkga"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuj31"]
+atlas = ExtResource("1_emieb")
+region = Rect2(476, 1376, 148, 138)
+margin = Rect2(6, 22, 12, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fqjif"]
+atlas = ExtResource("1_emieb")
+region = Rect2(1448, 1376, 148, 138)
+margin = Rect2(6, 22, 12, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u36ql"]
+atlas = ExtResource("1_emieb")
+region = Rect2(836, 2800, 134, 136)
+margin = Rect2(16, 14, 26, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1sovg"]
+atlas = ExtResource("1_emieb")
+region = Rect2(4, 2780, 134, 136)
+margin = Rect2(16, 14, 26, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pg4tc"]
+atlas = ExtResource("2_6eyx7")
+region = Rect2(200, 236, 24, 28)
+margin = Rect2(4, 2, 8, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ci1sh"]
+atlas = ExtResource("3_xpdcs")
+region = Rect2(968, 892, 108, 44)
+margin = Rect2(10, 18, 20, 20)
+
+[resource]
+resource_name = "31 - Nidoqueen"
+script = ExtResource("4_n601h")
+id = 31
+internal_name = "nidoqueen"
+Name = "Nidoqueen"
+type_a = ExtResource("5_5yyp0")
+type_b = ExtResource("6_cfkga")
+base_exprience = 253
+height = 13.0
+weight = 600.0
+is_default = true
+abilities = ["38", "79", "125"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "1", "1", "4", "4", "1", "1", "1", "1", "4", "1", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "3", "4", "1", "4", "4", "4", "3", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "3", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "3", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 1, 0, 12, 0, 0, 0, 1, 1, 0, 0, 1, 14, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["5", "6", "7", "8", "9", "10", "15", "24", "25", "29", "32", "33", "34", "36", "38", "39", "40", "44", "45", "46", "48", "53", "55", "57", "58", "59", "61", "63", "66", "68", "69", "70", "85", "87", "89", "90", "91", "92", "99", "102", "104", "111", "115", "116", "117", "126", "130", "154", "156", "157", "162", "164", "168", "173", "174", "182", "188", "189", "196", "197", "200", "201", "203", "204", "207", "210", "213", "214", "216", "218", "223", "231", "237", "240", "241", "242", "247", "249", "250", "251", "253", "259", "260", "263", "264", "269", "270", "276", "280", "290", "317", "328", "332", "341", "350", "351", "352", "363", "374", "390", "398", "401", "406", "411", "414", "416", "419", "421", "431", "444", "445", "446", "468", "474", "479", "482", "496", "497", "498", "506", "510", "511", "523", "525", "529", "590", "599", "612"]
+hp_base = 90
+attack_base = 92
+defense_base = 87
+special_attack_base = 75
+special_defense_base = 85
+speed_base = 76
+total_base = 0
+hp_effort_EVs = 3
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 8
+capture_rate = 45
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Para mecer a sus crías, las coloca en los huecos
+que tiene entre las púas dorsales, momento
+durante el cual no secretan veneno."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_ci1sh")
+footprint_sprite = SubResource("AtlasTexture_pg4tc")
+battle_front_sprite = SubResource("AtlasTexture_1sovg")
+battle_back_sprite = SubResource("AtlasTexture_fqjif")
+battle_front_shiny_sprite = SubResource("AtlasTexture_u36ql")
+battle_back_shiny_sprite = SubResource("AtlasTexture_cuj31")

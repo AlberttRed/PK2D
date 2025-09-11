@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://cqmlkjrrrb1mg"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_bjxif"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_lgkro"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_pcbvm"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_nrs7j"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_7p1k4"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_b3gdk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r17xi"]
+atlas = ExtResource("1_bjxif")
+region = Rect2(152, 2244, 138, 140)
+margin = Rect2(10, 20, 22, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2d63h"]
+atlas = ExtResource("1_bjxif")
+region = Rect2(1424, 2232, 138, 140)
+margin = Rect2(10, 20, 22, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ikgbo"]
+atlas = ExtResource("1_bjxif")
+region = Rect2(772, 4132, 152, 104)
+margin = Rect2(4, 28, 8, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmr17"]
+atlas = ExtResource("1_bjxif")
+region = Rect2(1728, 4128, 152, 104)
+margin = Rect2(4, 28, 8, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cm3ai"]
+atlas = ExtResource("2_lgkro")
+region = Rect2(48, 804, 4, 4)
+margin = Rect2(14, 14, 28, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ya35r"]
+atlas = ExtResource("3_pcbvm")
+region = Rect2(236, 836, 108, 44)
+margin = Rect2(10, 18, 20, 20)
+
+[resource]
+resource_name = "49 - Venomoth"
+script = ExtResource("4_nrs7j")
+id = 49
+internal_name = "venomoth"
+Name = "Venomoth"
+type_a = ExtResource("5_7p1k4")
+type_b = ExtResource("6_b3gdk")
+base_exprience = 158
+height = 15.0
+weight = 125.0
+is_default = true
+abilities = ["19", "110", "147"]
+forms = []
+held_items_id = ["199", "272"]
+held_items_rarity = [5.0, 5.0]
+learn_type = ["4", "1", "4", "4", "1", "4", "4", "1", "1", "1", "4", "4", "4", "1", "1", "1", "3", "4", "1", "1", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "1", "3", "1", "1", "4", "4", "4", "3", "4", "4", "1", "1", "4", "4", "1", "4", "4", "3", "3", "4", "4", "1", "4", "4", "4", "4", "4", "4"]
+learn_lvl = [0, 31, 0, 0, 1, 0, 0, 1, 1, 38, 0, 0, 0, 1, 30, 43, 0, 0, 1, 50, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 1, 37, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 41, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0]
+learn_move_id = ["13", "16", "18", "29", "33", "36", "38", "48", "50", "60", "63", "72", "76", "77", "78", "79", "81", "92", "93", "94", "97", "99", "100", "101", "102", "103", "104", "109", "115", "117", "129", "138", "141", "148", "149", "156", "164", "168", "173", "174", "182", "188", "193", "202", "203", "207", "213", "214", "216", "218", "226", "230", "237", "239", "241", "263", "283", "285", "290", "305", "314", "318", "324", "332", "355", "363", "366", "369", "390", "403", "405", "412", "416", "428", "432", "445", "450", "466", "474", "482", "483", "491", "496", "512", "522", "590", "611"]
+hp_base = 70
+attack_base = 65
+defense_base = 60
+special_attack_base = 90
+special_defense_base = 75
+speed_base = 90
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 1
+special_effort_defense_EVs = 0
+speed_effort_EVs = 1
+gender_rate = 4
+capture_rate = 75
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Las alas desprenden un polvillo de escamas
+impregnado de toxinas que se adhiere al
+contacto y resulta difícil de quitar."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_ya35r")
+footprint_sprite = SubResource("AtlasTexture_cm3ai")
+battle_front_sprite = SubResource("AtlasTexture_qmr17")
+battle_back_sprite = SubResource("AtlasTexture_2d63h")
+battle_front_shiny_sprite = SubResource("AtlasTexture_ikgbo")
+battle_back_shiny_sprite = SubResource("AtlasTexture_r17xi")

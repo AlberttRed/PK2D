@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dsuccslkpendy"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_14ewo"]
+
+[resource]
+script = ExtResource("1_14ewo")
+id = 95
+internal_name = "quick-feet"
+display_name = "Pies Rápidos"
+description = "Potencia la Velocidad si hay problemas de estado."

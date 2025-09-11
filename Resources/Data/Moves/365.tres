@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://crvvnny5iyfk0"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_phidt"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_oqtm3"]
+
+[resource]
+resource_name = "365 - Picoteo"
+script = ExtResource("1_phidt")
+internal_name = "pluck"
+Name = "Picoteo"
+id = 365
+description = "Picotea al objetivo. Si este sostiene una baya, la picotea
+también y obtiene sus efectos."
+type = ExtResource("2_oqtm3")
+power = 60
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "If target has a berry, inflicts double damage and uses the berry. Inflicts regular damage.  If the target is holding a berry, this move has double power, and the user takes the berry and uses it immediately.
+
+If the target is holding a jaboca berry or rowap berry, the berry is still removed, but has no effect.
+
+If this move is super effective and the target is holding a berry that can reduce this move's damage, it will do so, and will not be stolen."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

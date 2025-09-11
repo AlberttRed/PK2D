@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b8r2cvto0mnnc"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_uh5ii"]
+
+[resource]
+script = ExtResource("1_uh5ii")
+id = 200
+internal_name = "steelworker"
+display_name = "Acero Templado"
+description = "Potencia los movimientos de tipo Acero."

@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dy1b2rv4agtsm"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_2r13k"]
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_77e0d"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_2oa78"]
+
+[resource]
+resource_name = "324 - Doble Rayo"
+script = ExtResource("1_2r13k")
+internal_name = "signal-beam"
+Name = "Doble Rayo"
+id = 324
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type = ExtResource("2_2oa78")
+power = 75
+accuracy = 100
+pp = 15
+effect_chance = 10
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to confuse the target. Inflicts regular damage.  Has a $effect_chance% chance to confuse the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 6
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 2
+meta_max_turns = 5
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 10
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_77e0d")

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://doh2c42p4tpx7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kx85s"]
+
+[resource]
+script = ExtResource("1_kx85s")
+id = 50
+internal_name = "run-away"
+display_name = "Fuga"
+description = "Permite escapar de todos los Pokémon salvajes."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c6lgy7888bwuh"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_or0rc"]
+
+[resource]
+script = ExtResource("1_or0rc")
+id = 21
+internal_name = "suction-cups"
+display_name = "Ventosas"
+description = "Anula movimientos y objetos que fuerzan el relevo."

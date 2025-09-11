@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cps8588t2do8x"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_e6857"]
+
+[resource]
+script = ExtResource("1_e6857")
+id = 122
+internal_name = "flower-gift"
+display_name = "Don Floral"
+description = "Potencia los Pokémon del equipo si está soleado."

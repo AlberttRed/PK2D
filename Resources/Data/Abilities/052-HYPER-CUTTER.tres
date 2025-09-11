@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://w5cdmadxdjwm"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_oq8ja"]
+
+[resource]
+script = ExtResource("1_oq8ja")
+id = 52
+internal_name = "hyper-cutter"
+display_name = "Corte Fuerte"
+description = "Evita que disminuya el Ataque."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dnu236q5mhyu"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jfc18"]
+
+[resource]
+script = ExtResource("1_jfc18")
+id = 214
+internal_name = "queenly-majesty"
+display_name = "Regia Presencia"
+description = "Intimida al rival y le impide usar movimientos con prioridad dirigidos al Pokémon."

@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cgkp4nxrleycg"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_1dxxt"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_woeih"]
+
+[resource]
+resource_name = "475 - Aligerar"
+script = ExtResource("1_1dxxt")
+internal_name = "autotomize"
+Name = "Aligerar"
+id = 475
+description = "El usuario se desprende de partes prescindibles de
+su cuerpo para hacerse más ligero y aumentar mucho
+su Velocidad."
+type = ExtResource("2_woeih")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises the user's Speed by two stages and halves the user's weight. Raises the user's Speed by two stages.  Halves the user's weight; this effect does not stack."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+4: 2
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

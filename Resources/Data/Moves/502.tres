@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://djby0n0eacmso"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_jhfce"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_tfsfk"]
+
+[resource]
+resource_name = "502 - Cambio de Banda"
+script = ExtResource("1_jhfce")
+internal_name = "ally-switch"
+Name = "Cambio de Banda"
+id = 502
+description = "Extraño poder que intercambia la posición del usuario
+con la de un aliado sobre el terreno de combate."
+type = ExtResource("2_tfsfk")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 2
+damage_class_id = 1
+effect_entries = "User switches places with the friendly Pokémon opposite it. User switches position on the field with the friendly Pokémon opposite it.  If the user is in the middle position in a triple battle, or there are no other friendly Pokémon, this move will fail."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

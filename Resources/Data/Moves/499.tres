@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://caueeum0cdvxi"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_dibcl"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_qwn8v"]
+
+[resource]
+resource_name = "499 - Niebla Clara"
+script = ExtResource("1_dibcl")
+internal_name = "clear-smog"
+Name = "Niebla Clara"
+id = 499
+description = "Ataca al objetivo con una singular bola de lodo que
+elimina cualquier cambio en sus características."
+type = ExtResource("2_qwn8v")
+power = 50
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "Removes all of the target's stat modifiers. Inflicts regular damage.  All of the target's stat modifiers are reset to zero."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

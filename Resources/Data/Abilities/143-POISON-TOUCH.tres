@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b11wme36u2f8b"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_cyc8v"]
+
+[resource]
+script = ExtResource("1_cyc8v")
+id = 143
+internal_name = "poison-touch"
+display_name = "Toque Tóxico"
+description = "Puede envenenar al objetivo con solo tocarlo."

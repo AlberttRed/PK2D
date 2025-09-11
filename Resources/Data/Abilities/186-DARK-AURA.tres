@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c23hmv6nkte2n"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_28dct"]
+
+[resource]
+script = ExtResource("1_28dct")
+id = 186
+internal_name = "dark-aura"
+display_name = "Aura Oscura"
+description = "Aumenta la potencia de todos los movimientos de tipo Siniestro."

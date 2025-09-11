@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://c4qwe4cqtnn1h"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oniyn"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_nb72s"]
+
+[resource]
+resource_name = "471 - Isofuerza"
+script = ExtResource("1_oniyn")
+internal_name = "power-split"
+Name = "Isofuerza"
+id = 471
+description = "El usuario emplea sus poderes para hacer la media de
+su Ataque y Ataque Especial con los de su objetivo y
+compartirlos."
+type = ExtResource("2_nb72s")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Averages Attack and Special Attack with the target. Averages the user's unmodified Attack with the target's unmodified Attack; the value becomes the unmodified Attack for both Pokémon. Unmodified Special Attack is averaged the same way.
+
+This effect applies before any other persistent changes to unmodified Attack or Special Attack, such as flower gift during sunny day."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

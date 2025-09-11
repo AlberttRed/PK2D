@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://7k6tpsswsyir"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_81mkj"]
+
+[resource]
+script = ExtResource("1_81mkj")
+id = 73
+internal_name = "white-smoke"
+display_name = "Humo Blanco"
+description = "Evita que bajen las características."

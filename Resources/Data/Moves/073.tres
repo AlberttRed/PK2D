@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dsl4paa7gmq7u"]
+
+[ext_resource type="Resource" uid="uid://dh0q578jon3ki" path="res://Resources/Data/Ailments/LEECH-SEED.tres" id="1_c7dhu"]
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_odhfe"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_d3p0u"]
+
+[resource]
+resource_name = "73 - Drenadoras"
+script = ExtResource("1_odhfe")
+internal_name = "leech-seed"
+Name = "Drenadoras"
+id = 73
+description = "Planta semillas que absorben PS del objetivo en cada
+turno y que le sirven para recuperarse."
+type = ExtResource("2_d3p0u")
+power = 0
+accuracy = 90
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Seeds the target, stealing HP from it every turn. Plants a seed on the target that drains 1/8 of its max HP at the end of every turn and heals the user for the amount taken.  Has no effect on grass Pokémon.  The seed remains until the target leaves the field.
+
+The user takes damage instead of being healed if the target has liquid ooze.
+
+rapid spin will remove this effect.
+
+This effect is passed on by baton pass."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 18
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_c7dhu")

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bsrdyyr2y5kfu"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_qh8ao"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_ykq0d"]
+
+[resource]
+resource_name = "162 - Superdiente"
+script = ExtResource("1_qh8ao")
+internal_name = "super-fang"
+Name = "Superdiente"
+id = 162
+description = "Finos colmillos que reducen a la mitad los PS del
+objetivo."
+type = ExtResource("2_ykq0d")
+power = 0
+accuracy = 90
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Inflicts damage equal to half the target's HP. Inflicts typeless damage equal to half the target's remaining HP."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

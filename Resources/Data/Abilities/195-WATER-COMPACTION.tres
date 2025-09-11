@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b7tyemorf7py6"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xb6co"]
+
+[resource]
+script = ExtResource("1_xb6co")
+id = 195
+internal_name = "water-compaction"
+display_name = "Hidrorrefuerzo"
+description = "Aumenta mucho la Defensa si le alcanza un movimiento de tipo Agua."

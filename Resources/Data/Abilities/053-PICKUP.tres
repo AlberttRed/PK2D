@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://ckyrqxu3t08dq"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_qgi1i"]
+
+[resource]
+script = ExtResource("1_qgi1i")
+id = 53
+internal_name = "pickup"
+display_name = "Recogida"
+description = "El Pokémon puede encontrar objetos."

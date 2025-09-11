@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=4 format=3 uid="uid://d3gp5fdyknbo7"]
+
+[ext_resource type="Script" uid="uid://b1vlm4qgwlct4" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/PoisonAilmentEffect.gd" id="1_blhvb"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="3_e7ob0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g6qng"]
+region = Rect2(0, 16, 44, 16)
+
+[resource]
+script = ExtResource("3_e7ob0")
+id = "poison"
+display_name = "Envenenar"
+description = ""
+icon = SubResource("AtlasTexture_g6qng")
+is_persistent = true
+effect = ExtResource("1_blhvb")

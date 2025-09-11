@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bbp6jvnna058b"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_o68uf"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_bvm52"]
+
+[resource]
+resource_name = "366 - Viento Afín"
+script = ExtResource("1_o68uf")
+internal_name = "tailwind"
+Name = "Viento Afín"
+id = 366
+description = "Crea un fuerte remolino que aumenta la Velocidad de
+los Pokémon de tu equipo durante cuatro turnos."
+type = ExtResource("2_bvm52")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "For three turns, friendly Pokémon have doubled Speed. For the next three turns, all Pokémon on the user's side of the field have their original Speed doubled.  This effect remains if the user leaves the field."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 4
+meta_ailment_id = 0
+meta_category_id = 11
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

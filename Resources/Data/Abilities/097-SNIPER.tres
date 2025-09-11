@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c0o01rg8wvexn"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_2q73c"]
+
+[resource]
+script = ExtResource("1_2q73c")
+id = 97
+internal_name = "sniper"
+display_name = "Francotirador"
+description = "Potencia los movimientos si se vuelven críticos."

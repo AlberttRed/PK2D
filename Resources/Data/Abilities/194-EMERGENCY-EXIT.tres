@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dxiy8q7k2junm"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xr513"]
+
+[resource]
+script = ExtResource("1_xr513")
+id = 194
+internal_name = "emergency-exit"
+display_name = "Retirada"
+description = "Abandona el terreno de combate cuando sus PS se ven reducidos a la mitad para evitar males mayores."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://s3b6do617dn1"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_l7biv"]
+
+[resource]
+script = ExtResource("1_l7biv")
+id = 113
+internal_name = "scrappy"
+display_name = "Intrépido"
+description = "Movimientos tipo Normal y Lucha golpean a Pokémon Fantasma."

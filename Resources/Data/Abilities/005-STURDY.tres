@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://jr0r27t7kh8j"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_h40cg"]
+
+[resource]
+script = ExtResource("1_h40cg")
+id = 5
+internal_name = "sturdy"
+display_name = "Robustez"
+description = "Evita que el rival pueda debilitarle de un solo golpe."

@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://bq5wv52hknvcl"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_nrj47"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_mcqre"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_olnuf"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_k40kh"]
+[ext_resource type="Resource" uid="uid://81m8cd1k8t8y" path="res://Resources/Data/Types/16.tres" id="5_ddvnn"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="6_fuap1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vka68"]
+atlas = ExtResource("1_nrj47")
+region = Rect2(1516, 4, 160, 156)
+margin = Rect2(0, 4, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h0ufb"]
+atlas = ExtResource("1_nrj47")
+region = Rect2(1684, 4, 160, 156)
+margin = Rect2(0, 4, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f3h0e"]
+atlas = ExtResource("1_nrj47")
+region = Rect2(4, 1532, 132, 156)
+margin = Rect2(14, 2, 28, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fs1np"]
+atlas = ExtResource("1_nrj47")
+region = Rect2(796, 1540, 132, 156)
+margin = Rect2(14, 2, 28, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rr1vo"]
+atlas = ExtResource("2_mcqre")
+region = Rect2(36, 156, 22, 30)
+margin = Rect2(6, 2, 10, 2)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bv0vd"]
+atlas = ExtResource("3_olnuf")
+region = Rect2(1364, 420, 116, 42)
+margin = Rect2(6, 18, 12, 22)
+
+[resource]
+resource_name = "149 - Dragonite"
+script = ExtResource("4_k40kh")
+id = 149
+internal_name = "dragonite"
+Name = "Dragonite"
+type_a = ExtResource("5_ddvnn")
+type_b = ExtResource("6_fuap1")
+base_exprience = 300
+height = 22.0
+weight = 2100.0
+is_default = true
+abilities = ["39", null, "136"]
+forms = []
+held_items_id = ["212", "227"]
+held_items_rarity = [5.0, 5.0]
+learn_type = ["4", "4", "4", "4", "4", "4", "1", "4", "3", "1", "4", "4", "4", "4", "1", "4", "4", "1", "4", "3", "1", "4", "4", "4", "4", "4", "4", "1", "4", "4", "1", "4", "4", "1", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "1", "4", "4", "1", "4", "4", "3", "4", "4", "4", "4", "3", "4", "4", "4", "4", "3", "4", "4", "4", "1", "4", "4", "1", "4", "3", "4", "1", "4", "4", "1", "4", "4", "4", "3", "3", "4", "4", "1", "3", "4", "4", "4", "4", "4", "1", "1", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 0, 55, 0, 0, 35, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 60, 0, 0, 45, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 1, 0, 0, 0, 33, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 33, 81, 0, 0]
+learn_move_id = ["5", "7", "8", "9", "13", "15", "17", "19", "20", "21", "25", "29", "32", "34", "35", "36", "38", "43", "46", "53", "54", "55", "56", "57", "58", "59", "61", "63", "67", "70", "82", "83", "85", "86", "87", "89", "92", "97", "99", "102", "104", "113", "114", "115", "117", "118", "126", "127", "129", "130", "156", "157", "164", "173", "174", "182", "184", "189", "192", "196", "197", "200", "201", "203", "207", "210", "211", "213", "214", "216", "218", "219", "223", "225", "227", "231", "237", "239", "240", "241", "245", "249", "250", "257", "258", "263", "264", "270", "276", "280", "290", "291", "311", "314", "317", "332", "337", "349", "351", "352", "355", "363", "366", "374", "401", "403", "406", "407", "411", "416", "432", "434", "442", "444", "445", "453", "466", "468", "496", "507", "510", "523", "525", "542", "590", "612"]
+hp_base = 91
+attack_base = 134
+defense_base = 95
+special_attack_base = 100
+special_defense_base = 100
+speed_base = 80
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 3
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 45
+base_happiness = 35
+is_baby = false
+hatch_counter = 40
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Se lo conoce como el Avatar de la Mar. Muchos
+barcos lucen una talla de Dragonite como
+mascarón de proa."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_bv0vd")
+footprint_sprite = SubResource("AtlasTexture_rr1vo")
+battle_front_sprite = SubResource("AtlasTexture_fs1np")
+battle_back_sprite = SubResource("AtlasTexture_h0ufb")
+battle_front_shiny_sprite = SubResource("AtlasTexture_f3h0e")
+battle_back_shiny_sprite = SubResource("AtlasTexture_vka68")

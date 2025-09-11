@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c75u2krndsnc0"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kymbq"]
+
+[resource]
+script = ExtResource("1_kymbq")
+id = 12
+internal_name = "oblivious"
+display_name = "Despiste"
+description = "Evita que el Pokémon sea atraído o provocado."

@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cdeig1m882yib"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_w750q"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_rvj4d"]
+
+[resource]
+resource_name = "580 - Campo de Hierba"
+script = ExtResource("1_w750q")
+internal_name = "grassy-terrain"
+Name = "Campo de Hierba"
+id = 580
+description = "Durante cinco turnos, se potencian los movimientos de
+tipo Planta y los Pokémon que están en contacto con el
+suelo recuperan PS en cada turno."
+type = ExtResource("2_rvj4d")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "For five turns, heals all Pokémon on the ground for 1/16 max HP each turn and strengthens their grass moves to 1.5× their power. For five turns, heals all Pokémon on the ground for 1/16 their max HP each turn and strengthens their grass moves to 1.5× their power.
+
+Changes nature power to energy ball."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

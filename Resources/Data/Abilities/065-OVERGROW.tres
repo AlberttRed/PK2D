@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dvsipr8iv1uno"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_eosoy"]
+
+[resource]
+script = ExtResource("1_eosoy")
+id = 65
+internal_name = "overgrow"
+display_name = "Espesura"
+description = "Potencia los ataques de tipo Planta en un apuro."

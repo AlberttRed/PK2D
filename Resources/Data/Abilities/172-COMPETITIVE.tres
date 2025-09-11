@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bcwyp3tpwu1w"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_5c1mu"]
+
+[resource]
+script = ExtResource("1_5c1mu")
+id = 172
+internal_name = "competitive"
+display_name = "Tenacidad"
+description = "Aumenta su At. Esp. cuando disminuyen otras características."

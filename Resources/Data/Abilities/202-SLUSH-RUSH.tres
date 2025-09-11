@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bmam6ropr6so1"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_m0if1"]
+
+[resource]
+script = ExtResource("1_m0if1")
+id = 202
+internal_name = "slush-rush"
+display_name = "Quitanieves"
+description = "Aumenta su Velocidad si está granizando."

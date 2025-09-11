@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://crftglmlfufp7"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_3pdfm"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_b0g1j"]
+
+[resource]
+resource_name = "102 - Mimético"
+script = ExtResource("1_3pdfm")
+internal_name = "mimic"
+Name = "Mimético"
+id = 102
+description = "Copia el último movimiento usado por el objetivo, y 
+puede utilizarlo mientras esté en el combate."
+type = ExtResource("2_b0g1j")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Copies the target's last used move. This move is replaced by the target's last successfully used move, and its PP changes to 5.  If the target hasn't used a move since entering the field, if it tried to use a move this turn and failed, or if the user already knows the targeted move, this move will fail.  This effect vanishes when the user leaves the field.
+
+If chatter, metronome, mimic, sketch, or struggle is selected, this move will fail.
+
+This move cannot be copied by mirror move, nor selected by assist or metronome, nor forced by encore."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

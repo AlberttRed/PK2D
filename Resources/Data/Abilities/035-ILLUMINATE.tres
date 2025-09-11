@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cj18wh0t7e1y7"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_6f772"]
+
+[resource]
+script = ExtResource("1_6f772")
+id = 35
+internal_name = "illuminate"
+display_name = "Iluminación"
+description = "Aumenta la probabilidad de encontrar Pokémon."

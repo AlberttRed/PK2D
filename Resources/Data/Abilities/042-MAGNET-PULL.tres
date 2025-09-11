@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dioyy2vvaieph"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_vi307"]
+
+[resource]
+script = ExtResource("1_vi307")
+id = 42
+internal_name = "magnet-pull"
+display_name = "Imán"
+description = "Impide huir a los Pokémon de tipo Acero."

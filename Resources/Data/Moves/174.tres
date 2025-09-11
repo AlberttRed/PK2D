@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b4qs1frr2h8q2"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7nsp4"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_l8i35"]
+
+[resource]
+resource_name = "174 - Maldición"
+script = ExtResource("1_7nsp4")
+internal_name = "curse"
+Name = "Maldición"
+id = 174
+description = "Un movimiento que tiene efectos distintos si el usuario
+es de tipo Fantasma o no."
+type = ExtResource("2_l8i35")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Ghosts pay half their max HP to hurt the target every turn.  Others decrease Speed but raise Attack and Defense. If the user is a ghost: user pays half its max HP to place a curse on the target, damaging it for 1/4 its max HP every turn.
+Otherwise: Lowers the user's Speed by one stage, and raises its Attack and Defense by one stage each.
+
+The curse effect is passed on by baton pass.
+
+This move cannot be copied by mirror move."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 1
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

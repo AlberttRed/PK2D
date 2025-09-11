@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c3qx21q3w88p1"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_x2t6q"]
+
+[resource]
+script = ExtResource("1_x2t6q")
+id = 142
+internal_name = "overcoat"
+display_name = "Funda"
+description = "Protege del polvo, la arena y el granizo."

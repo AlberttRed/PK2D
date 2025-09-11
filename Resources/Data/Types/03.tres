@@ -1,0 +1,675 @@
+[gd_resource type="Resource" script_class="Type" load_steps=62 format=3 uid="uid://cvbopjxbt76ho"]
+
+[ext_resource type="Texture2D" uid="uid://iuwf0e47o00v" path="res://Sprites/Pictures/types.png" id="1_d3bv3"]
+[ext_resource type="Script" uid="uid://bf8vu0ooo504r" path="res://Scripts/Resources/Classes/type_resource.gd" id="2_qan74"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8b51h"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 84, 64, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4on7r"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 168, 64, 28)
+
+[sub_resource type="Resource" id="Resource_x7r6t"]
+resource_local_to_scene = true
+resource_name = "Roca"
+script = ExtResource("2_qan74")
+internal_name = "rock"
+Name = "Roca"
+id = 6
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_4on7r")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_chh5g"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 252, 64, 28)
+
+[sub_resource type="Resource" id="Resource_n7oa8"]
+resource_local_to_scene = true
+resource_name = "Acero"
+script = ExtResource("2_qan74")
+internal_name = "steel"
+Name = "Acero"
+id = 9
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_chh5g")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67ecp"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 364, 64, 28)
+
+[sub_resource type="Resource" id="Resource_5t2ek"]
+resource_local_to_scene = true
+resource_name = "Eléctrico"
+script = ExtResource("2_qan74")
+internal_name = "electric"
+Name = "Eléctrico"
+id = 13
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_67ecp")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dxqps"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 140, 64, 28)
+
+[sub_resource type="Resource" id="Resource_h76bv"]
+resource_local_to_scene = true
+resource_name = "Tierra"
+script = ExtResource("2_qan74")
+internal_name = "ground"
+Name = "Tierra"
+id = 5
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_dxqps")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_thuu0"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 56, 64, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jch7c"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 84, 64, 28)
+
+[sub_resource type="Resource" id="Resource_ddsx0"]
+resource_local_to_scene = true
+resource_name = "Volador"
+script = ExtResource("2_qan74")
+internal_name = "flying"
+Name = "Volador"
+id = 3
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_jch7c")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ilu3v"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 112, 64, 28)
+
+[sub_resource type="Resource" id="Resource_5se01"]
+resource_local_to_scene = true
+resource_name = "Veneno"
+script = ExtResource("2_qan74")
+internal_name = "poison"
+Name = "Veneno"
+id = 4
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_ilu3v")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4x2fa"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 196, 64, 28)
+
+[sub_resource type="Resource" id="Resource_br03h"]
+resource_local_to_scene = true
+resource_name = "Bicho"
+script = ExtResource("2_qan74")
+internal_name = "bug"
+Name = "Bicho"
+id = 7
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_4x2fa")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7oqyi"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 392, 64, 28)
+
+[sub_resource type="Resource" id="Resource_w5w1o"]
+resource_local_to_scene = true
+resource_name = "Psíquico"
+script = ExtResource("2_qan74")
+internal_name = "psychic"
+Name = "Psíquico"
+id = 14
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_7oqyi")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckpgr"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 504, 64, 28)
+
+[sub_resource type="Resource" id="Resource_6aiao"]
+resource_local_to_scene = true
+resource_name = "Hada"
+script = ExtResource("2_qan74")
+internal_name = "fairy"
+Name = "Hada"
+id = 18
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_ckpgr")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hjkdp"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 224, 64, 28)
+
+[sub_resource type="Resource" id="Resource_nytfl"]
+resource_local_to_scene = true
+resource_name = "Fantasma"
+script = ExtResource("2_qan74")
+internal_name = "ghost"
+Name = "Fantasma"
+id = 8
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_hjkdp")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fluiv"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 168, 64, 28)
+
+[sub_resource type="Resource" id="Resource_exnw3"]
+resource_local_to_scene = true
+resource_name = "Roca"
+script = ExtResource("2_qan74")
+internal_name = "rock"
+Name = "Roca"
+id = 6
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_fluiv")
+
+[sub_resource type="Resource" id="Resource_wh2th"]
+resource_local_to_scene = true
+resource_name = "Bicho"
+script = ExtResource("2_qan74")
+internal_name = "bug"
+Name = "Bicho"
+id = 7
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_4x2fa")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8rdnl"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 476, 64, 28)
+
+[sub_resource type="Resource" id="Resource_jf56b"]
+resource_local_to_scene = true
+resource_name = "Siniestro"
+script = ExtResource("2_qan74")
+internal_name = "dark"
+Name = "Siniestro"
+id = 17
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_8rdnl")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fdbi1"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 28, 64, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ftx4x"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 168, 64, 28)
+
+[sub_resource type="Resource" id="Resource_mg1dl"]
+resource_local_to_scene = true
+resource_name = "Roca"
+script = ExtResource("2_qan74")
+internal_name = "rock"
+Name = "Roca"
+id = 6
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_ftx4x")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rjc8a"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 252, 64, 28)
+
+[sub_resource type="Resource" id="Resource_3x8hv"]
+resource_local_to_scene = true
+resource_name = "Acero"
+script = ExtResource("2_qan74")
+internal_name = "steel"
+Name = "Acero"
+id = 9
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_rjc8a")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1sfi"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 224, 64, 28)
+
+[sub_resource type="Resource" id="Resource_fh02l"]
+resource_local_to_scene = true
+resource_name = "Fantasma"
+script = ExtResource("2_qan74")
+internal_name = "ghost"
+Name = "Fantasma"
+id = 8
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_d1sfi")
+
+[sub_resource type="Resource" id="Resource_4qo1v"]
+resource_local_to_scene = true
+resource_name = "Fantasma"
+script = ExtResource("2_qan74")
+internal_name = "ghost"
+Name = "Fantasma"
+id = 8
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_d1sfi")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kdrir"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 56, 64, 28)
+
+[sub_resource type="Resource" id="Resource_gr7e2"]
+resource_local_to_scene = true
+resource_name = "Lucha"
+script = ExtResource("2_qan74")
+internal_name = "fighting"
+Name = "Lucha"
+id = 2
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_kdrir")
+
+[sub_resource type="Resource" id="Resource_u6pyp"]
+resource_local_to_scene = true
+resource_name = "Normal"
+script = ExtResource("2_qan74")
+internal_name = "normal"
+Name = "Normal"
+id = 1
+ineffective = Array[Resource]([SubResource("Resource_mg1dl"), SubResource("Resource_3x8hv")])
+no_effect_to = Array[Resource]([SubResource("Resource_4qo1v")])
+no_effect_from = Array[Resource]([SubResource("Resource_fh02l")])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([SubResource("Resource_gr7e2")])
+panelMove_y = 0
+image = SubResource("AtlasTexture_fdbi1")
+
+[sub_resource type="Resource" id="Resource_uh6nb"]
+resource_local_to_scene = true
+resource_name = "Roca"
+script = ExtResource("2_qan74")
+internal_name = "rock"
+Name = "Roca"
+id = 6
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_fluiv")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y3xbl"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 252, 64, 28)
+
+[sub_resource type="Resource" id="Resource_iqw5l"]
+resource_local_to_scene = true
+resource_name = "Acero"
+script = ExtResource("2_qan74")
+internal_name = "steel"
+Name = "Acero"
+id = 9
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_y3xbl")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m0snp"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 420, 64, 28)
+
+[sub_resource type="Resource" id="Resource_n5gyp"]
+resource_local_to_scene = true
+resource_name = "Hielo"
+script = ExtResource("2_qan74")
+internal_name = "ice"
+Name = "Hielo"
+id = 15
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_m0snp")
+
+[sub_resource type="Resource" id="Resource_xwjtd"]
+resource_local_to_scene = true
+resource_name = "Siniestro"
+script = ExtResource("2_qan74")
+internal_name = "dark"
+Name = "Siniestro"
+id = 17
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_8rdnl")
+
+[sub_resource type="Resource" id="Resource_xdt08"]
+resource_local_to_scene = true
+resource_name = "Volador"
+script = ExtResource("2_qan74")
+internal_name = "flying"
+Name = "Volador"
+id = 3
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_jch7c")
+
+[sub_resource type="Resource" id="Resource_eyl3m"]
+resource_local_to_scene = true
+resource_name = "Psíquico"
+script = ExtResource("2_qan74")
+internal_name = "psychic"
+Name = "Psíquico"
+id = 14
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_7oqyi")
+
+[sub_resource type="Resource" id="Resource_bgwh1"]
+resource_local_to_scene = true
+resource_name = "Hada"
+script = ExtResource("2_qan74")
+internal_name = "fairy"
+Name = "Hada"
+id = 18
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_ckpgr")
+
+[sub_resource type="Resource" id="Resource_i82t3"]
+resource_local_to_scene = true
+resource_name = "Lucha"
+script = ExtResource("2_qan74")
+internal_name = "fighting"
+Name = "Lucha"
+id = 2
+ineffective = Array[Resource]([SubResource("Resource_ddsx0"), SubResource("Resource_5se01"), SubResource("Resource_br03h"), SubResource("Resource_w5w1o"), SubResource("Resource_6aiao")])
+no_effect_to = Array[Resource]([SubResource("Resource_nytfl")])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([SubResource("Resource_exnw3"), SubResource("Resource_wh2th"), SubResource("Resource_jf56b")])
+super_effective = Array[Resource]([SubResource("Resource_u6pyp"), SubResource("Resource_uh6nb"), SubResource("Resource_iqw5l"), SubResource("Resource_n5gyp"), SubResource("Resource_xwjtd")])
+weakness = Array[Resource]([SubResource("Resource_xdt08"), SubResource("Resource_eyl3m"), SubResource("Resource_bgwh1")])
+panelMove_y = 0
+image = SubResource("AtlasTexture_thuu0")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rkq38"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 196, 64, 28)
+
+[sub_resource type="Resource" id="Resource_bx17q"]
+resource_local_to_scene = true
+resource_name = "Bicho"
+script = ExtResource("2_qan74")
+internal_name = "bug"
+Name = "Bicho"
+id = 7
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_rkq38")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sokn1"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 336, 64, 28)
+
+[sub_resource type="Resource" id="Resource_7pxg2"]
+resource_local_to_scene = true
+resource_name = "Planta"
+script = ExtResource("2_qan74")
+internal_name = "grass"
+Name = "Planta"
+id = 12
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_sokn1")
+
+[sub_resource type="Resource" id="Resource_e4mft"]
+resource_local_to_scene = true
+resource_name = "Lucha"
+script = ExtResource("2_qan74")
+internal_name = "fighting"
+Name = "Lucha"
+id = 2
+ineffective = Array[Resource]([SubResource("Resource_ddsx0"), SubResource("Resource_5se01"), SubResource("Resource_br03h"), SubResource("Resource_w5w1o"), SubResource("Resource_6aiao")])
+no_effect_to = Array[Resource]([SubResource("Resource_nytfl")])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([SubResource("Resource_exnw3"), SubResource("Resource_wh2th"), SubResource("Resource_jf56b")])
+super_effective = Array[Resource]([SubResource("Resource_u6pyp"), SubResource("Resource_uh6nb"), SubResource("Resource_iqw5l"), SubResource("Resource_n5gyp"), SubResource("Resource_xwjtd")])
+weakness = Array[Resource]([SubResource("Resource_xdt08"), SubResource("Resource_eyl3m"), SubResource("Resource_bgwh1")])
+panelMove_y = 0
+image = SubResource("AtlasTexture_thuu0")
+
+[sub_resource type="Resource" id="Resource_ux5fk"]
+resource_local_to_scene = true
+resource_name = "Bicho"
+script = ExtResource("2_qan74")
+internal_name = "bug"
+Name = "Bicho"
+id = 7
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_rkq38")
+
+[sub_resource type="Resource" id="Resource_idf2r"]
+resource_local_to_scene = true
+resource_name = "Planta"
+script = ExtResource("2_qan74")
+internal_name = "grass"
+Name = "Planta"
+id = 12
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_sokn1")
+
+[sub_resource type="Resource" id="Resource_cepgn"]
+resource_local_to_scene = true
+resource_name = "Roca"
+script = ExtResource("2_qan74")
+internal_name = "rock"
+Name = "Roca"
+id = 6
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_4on7r")
+
+[sub_resource type="Resource" id="Resource_kvxmr"]
+resource_local_to_scene = true
+resource_name = "Eléctrico"
+script = ExtResource("2_qan74")
+internal_name = "electric"
+Name = "Eléctrico"
+id = 13
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_67ecp")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocs3d"]
+atlas = ExtResource("1_d3bv3")
+region = Rect2(0, 420, 64, 28)
+
+[sub_resource type="Resource" id="Resource_vro3u"]
+resource_local_to_scene = true
+resource_name = "Hielo"
+script = ExtResource("2_qan74")
+internal_name = "ice"
+Name = "Hielo"
+id = 15
+ineffective = Array[Resource]([])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([])
+resistance = Array[Resource]([])
+super_effective = Array[Resource]([])
+weakness = Array[Resource]([])
+panelMove_y = 0
+image = SubResource("AtlasTexture_ocs3d")
+
+[resource]
+resource_name = "Volador"
+script = ExtResource("2_qan74")
+internal_name = "flying"
+Name = "Volador"
+id = 3
+ineffective = Array[Resource]([SubResource("Resource_x7r6t"), SubResource("Resource_n7oa8"), SubResource("Resource_5t2ek")])
+no_effect_to = Array[Resource]([])
+no_effect_from = Array[Resource]([SubResource("Resource_h76bv")])
+resistance = Array[Resource]([SubResource("Resource_i82t3"), SubResource("Resource_bx17q"), SubResource("Resource_7pxg2")])
+super_effective = Array[Resource]([SubResource("Resource_e4mft"), SubResource("Resource_ux5fk"), SubResource("Resource_idf2r")])
+weakness = Array[Resource]([SubResource("Resource_cepgn"), SubResource("Resource_kvxmr"), SubResource("Resource_vro3u")])
+panelMove_y = 0
+image = SubResource("AtlasTexture_8b51h")

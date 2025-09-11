@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dll7iridu81bg"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7psdk"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_7j068"]
+
+[resource]
+resource_name = "277 - Capa Mágica"
+script = ExtResource("1_7psdk")
+internal_name = "magic-coat"
+Name = "Capa Mágica"
+id = 277
+description = "Barrera capaz de devolver al agresor movimientos 
+como Drenadoras y otros que alteran el estado o 
+las características."
+type = ExtResource("2_7j068")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 4
+damage_class_id = 1
+effect_entries = "Reflects back the first effect move used on the user this turn. The first non-damaging move targeting the user this turn that inflicts major status effects, stat changes, or trapping effects will be reflected at its user.
+
+defog, memento, and teeter dance are not reflected.
+
+attract, flatter, gastro acid, leech seed, swagger, worry seed, and yawn are reflected.
+
+This move cannot be copied by mirror move."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

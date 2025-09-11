@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dqcnw5gccmwtq"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_enlf6"]
+
+[resource]
+script = ExtResource("1_enlf6")
+id = 207
+internal_name = "surge-surfer"
+display_name = "Cola Surf"
+description = "Duplica la Velocidad si hay un campo eléctrico en el terreno de combate."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://duv8dkr3tyfuo"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kbrgw"]
+
+[resource]
+script = ExtResource("1_kbrgw")
+id = 18
+internal_name = "flash-fire"
+display_name = "Absorbe Fuego"
+description = "Potencia movimientos de tipo Fuego si ha sufrido antes alguno."

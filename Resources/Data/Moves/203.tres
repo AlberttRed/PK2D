@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b5uah2y2f1tow"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_g71sg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_m0cnn"]
+
+[resource]
+resource_name = "203 - Aguante"
+script = ExtResource("1_g71sg")
+internal_name = "endure"
+Name = "Aguante"
+id = 203
+description = "Resiste cualquier ataque y deja al menos 1 PS. 
+Puede fallar si se usa repetidamente."
+type = ExtResource("2_m0cnn")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 4
+damage_class_id = 1
+effect_entries = "Prevents the user's HP from lowering below 1 this turn. The user's HP cannot be lowered below 1 by any means for the remainder of this turn.
+
+If the user successfully used detect, endure, protect, quick guard, or wide guard on the last turn, this move has a 50% chance to fail.
+
+This move cannot be selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

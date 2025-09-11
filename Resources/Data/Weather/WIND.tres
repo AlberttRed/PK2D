@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://cgjy5ty75t74o"]
+
+[ext_resource type="Script" uid="uid://c3ykal5rqqt2m" path="res://Scripts/Resources/Classes/Weather.gd" id="1_qgoah"]
+
+[resource]
+script = ExtResource("1_qgoah")
+id = 7
+internal_name = "wind"
+display_name = "Viento"
+metadata/_custom_type_script = "uid://c3ykal5rqqt2m"

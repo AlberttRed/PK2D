@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://ckj7qtyy7vmha"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_d5xrm"]
+
+[resource]
+script = ExtResource("1_d5xrm")
+id = 89
+internal_name = "iron-fist"
+display_name = "Puño Férreo"
+description = "Aumenta la fuerza de los puñetazos."

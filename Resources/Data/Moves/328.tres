@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cpa8mc1rh5pa1"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_2hfb7"]
+[ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_kistg"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_unwn2"]
+
+[resource]
+resource_name = "328 - Bucle Arena"
+script = ExtResource("1_2hfb7")
+internal_name = "sand-tomb"
+Name = "Bucle Arena"
+id = 328
+description = "Enreda al objetivo en un remolino de arena de cuatro a
+cinco turnos."
+type = ExtResource("2_unwn2")
+power = 35
+accuracy = 85
+pp = 15
+effect_chance = 100
+priority = 0
+damage_class_id = 2
+effect_entries = "Prevents the target from fleeing and inflicts damage for 2-5 turns. Inflicts regular damage.  For the next 2–5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.  The user continues to use other moves during this time.  If the user leaves the field, this effect ends.
+
+Has a 3/8 chance each to hit 2 or 3 times, and a 1/8 chance each to hit 4 or 5 times.  Averages to 3 hits per use.
+
+rapid spin cancels this effect."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 8
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 5
+meta_max_turns = 6
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 100
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_kistg")

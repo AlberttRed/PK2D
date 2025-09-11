@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://iohyicww5b07"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_87t1t"]
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_uphta"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_s5pxs"]
+
+[resource]
+resource_name = "93 - Confusión"
+script = ExtResource("1_87t1t")
+internal_name = "confusion"
+Name = "Confusión"
+id = 93
+description = "Débil ataque telequinético que puede causar confusión."
+type = ExtResource("2_s5pxs")
+power = 50
+accuracy = 100
+pp = 25
+effect_chance = 10
+priority = 0
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to confuse the target. Inflicts regular damage.  Has a $effect_chance% chance to confuse the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 6
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 2
+meta_max_turns = 5
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 10
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_uphta")

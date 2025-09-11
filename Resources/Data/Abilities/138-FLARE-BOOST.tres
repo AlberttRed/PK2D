@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://0501u1bnxd6p"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_wjk58"]
+
+[resource]
+script = ExtResource("1_wjk58")
+id = 138
+internal_name = "flare-boost"
+display_name = "Ímpetu Ardiente"
+description = "Potencia los ataques especiales cuando el Pokémon se quema."

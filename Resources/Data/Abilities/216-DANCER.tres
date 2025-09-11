@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://nqb6yjw60fle"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_7bhu1"]
+
+[resource]
+script = ExtResource("1_7bhu1")
+id = 216
+internal_name = "dancer"
+display_name = "Pareja de Baile"
+description = "Permite copiar inmediatamente cualquier movimiento de baile que haya usado otro Pokémon presente en el combate."

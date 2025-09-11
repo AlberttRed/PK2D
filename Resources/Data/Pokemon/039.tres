@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://cckxx0jppeufv"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_j0s62"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_v3aia"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_21e37"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_yfv3s"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_4enhy"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="6_t1i0h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j8k5e"]
+atlas = ExtResource("1_j0s62")
+region = Rect2(960, 5412, 128, 90)
+margin = Rect2(14, 70, 32, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_toony"]
+atlas = ExtResource("1_j0s62")
+region = Rect2(1096, 5412, 128, 90)
+margin = Rect2(14, 70, 32, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0yqq"]
+atlas = ExtResource("1_j0s62")
+region = Rect2(1040, 6552, 68, 70)
+margin = Rect2(46, 44, 92, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vujyr"]
+atlas = ExtResource("1_j0s62")
+region = Rect2(1116, 6584, 68, 70)
+margin = Rect2(46, 44, 92, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kae4e"]
+atlas = ExtResource("2_v3aia")
+region = Rect2(144, 620, 10, 24)
+margin = Rect2(12, 4, 22, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_thcda"]
+atlas = ExtResource("3_21e37")
+region = Rect2(220, 1860, 98, 36)
+margin = Rect2(16, 22, 30, 28)
+
+[resource]
+resource_name = "39 - Jigglypuff"
+script = ExtResource("4_yfv3s")
+id = 39
+internal_name = "jigglypuff"
+Name = "Jigglypuff"
+type_a = ExtResource("5_4enhy")
+type_b = ExtResource("6_t1i0h")
+base_exprience = 95
+height = 5.0
+weight = 55.0
+is_default = true
+abilities = ["56", "172", "132"]
+forms = []
+held_items_id = ["81", "132"]
+held_items_rarity = [5.0, 50.0]
+learn_type = ["1", "1", "4", "4", "4", "4", "4", "4", "1", "4", "1", "1", "1", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "4", "4", "4", "1", "1", "4", "4", "4", "3", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "1", "1", "4", "4", "4", "3", "3", "3", "4", "4", "3", "3", "4", "4", "4", "1", "4", "3", "3", "4", "4", "4", "4", "3", "1", "1", "4", "4", "1", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "1", "4", "4", "3", "4", "4", "4", "4", "1", "4", "4", "4", "1", "4", "4", "4"]
+learn_lvl = [9, 24, 0, 0, 0, 0, 0, 0, 34, 0, 39, 1, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 37, 33, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 10, 0, 0, 0]
+learn_move_id = ["1", "3", "5", "7", "8", "9", "25", "29", "34", "36", "38", "47", "50", "53", "55", "58", "59", "61", "66", "68", "69", "70", "76", "85", "86", "87", "91", "92", "94", "99", "100", "102", "103", "104", "111", "113", "115", "117", "118", "120", "126", "129", "130", "133", "138", "148", "149", "156", "161", "164", "168", "171", "173", "174", "182", "186", "189", "192", "196", "197", "201", "203", "204", "205", "207", "213", "214", "215", "216", "218", "219", "220", "223", "226", "227", "237", "240", "241", "244", "247", "253", "254", "255", "256", "263", "264", "269", "270", "272", "277", "278", "280", "282", "283", "285", "289", "290", "304", "313", "340", "343", "345", "347", "351", "352", "356", "358", "360", "363", "374", "383", "387", "399", "409", "412", "417", "428", "445", "446", "447", "451", "473", "477", "496", "497", "500", "502", "510", "514", "526", "528", "574", "577", "581", "583", "589", "590", "605", "612"]
+hp_base = 115
+attack_base = 45
+defense_base = 20
+special_attack_base = 45
+special_defense_base = 25
+speed_base = 20
+total_base = 0
+hp_effort_EVs = 2
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 6
+capture_rate = 170
+base_happiness = 50
+is_baby = false
+hatch_counter = 10
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 3
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Posee la capacidad de modular su voz a voluntad
+cambiando la longitud de onda para entonar una
+melodía misteriosa que provoca adormecimiento."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_thcda")
+footprint_sprite = SubResource("AtlasTexture_kae4e")
+battle_front_sprite = SubResource("AtlasTexture_vujyr")
+battle_back_sprite = SubResource("AtlasTexture_toony")
+battle_front_shiny_sprite = SubResource("AtlasTexture_b0yqq")
+battle_back_shiny_sprite = SubResource("AtlasTexture_j8k5e")

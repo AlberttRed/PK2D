@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cenqq34h4uq6o"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_bw4lq"]
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_mpr7r"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_wxh76"]
+
+[resource]
+resource_name = "298 - Danza Caos"
+script = ExtResource("1_bw4lq")
+internal_name = "teeter-dance"
+Name = "Danza Caos"
+id = 298
+description = "Danza histérica que confunde a los Pokémon que están
+alrededor del usuario."
+type = ExtResource("2_wxh76")
+power = 0
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Confuses the target. Confuses all targets."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 9
+meta_ailment_id = 6
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 2
+meta_max_turns = 5
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_mpr7r")

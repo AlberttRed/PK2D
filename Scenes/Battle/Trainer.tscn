@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://c22wi0px6h3ic"]
+
+[ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://NEW/Scripts/Battler.gd" id="1_28gro"]
+[ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Database/Instances/pokemon_instance.gd" id="3"]
+
+[node name="Trainer" type="Node"]
+script = ExtResource("1_28gro")
+
+[node name="pkm1" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null
+
+[node name="pkm2" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null
+
+[node name="pkm3" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null
+
+[node name="pkm4" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null
+
+[node name="pkm5" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null
+
+[node name="pkm6" type="Node" parent="."]
+script = ExtResource("3")
+rotate_hp_EVs = null

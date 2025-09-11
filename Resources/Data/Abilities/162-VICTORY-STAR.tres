@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d1elms7y0o3yj"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_2db7y"]
+
+[resource]
+script = ExtResource("1_2db7y")
+id = 162
+internal_name = "victory-star"
+display_name = "Tinovictoria"
+description = "Sube la Precisión de todo el equipo."

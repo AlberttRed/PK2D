@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dmpvtujg7x7g3"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jnu1i"]
+
+[resource]
+script = ExtResource("1_jnu1i")
+id = 29
+internal_name = "clear-body"
+display_name = "Cuerpo Puro"
+description = "Evita que bajen las características."

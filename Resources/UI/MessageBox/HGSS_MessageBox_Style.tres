@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://08dr8fiwcu28"]
+
+[ext_resource type="Texture2D" uid="uid://bvg72vqi6p66n" path="res://Sprites/UI/MessageBox/speech hgss 1.png" id="1_xhta3"]
+
+[resource]
+texture = ExtResource("1_xhta3")
+texture_margin_left = 23.2424
+texture_margin_top = 20.675
+texture_margin_right = 43.7823
+texture_margin_bottom = 14.0536
+region_rect = Rect2(0, 0, 96, 48)

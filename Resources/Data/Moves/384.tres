@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://brfqexduef10n"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_b6nfi"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_476lm"]
+
+[resource]
+resource_name = "384 - Cambiafuerza"
+script = ExtResource("1_b6nfi")
+internal_name = "power-swap"
+Name = "Cambiafuerza"
+id = 384
+description = "El usuario emplea su poder mental para intercambiar los
+cambios en el Ataque y Ataque Especial con el objetivo."
+type = ExtResource("2_476lm")
+power = 0
+accuracy = 0
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "User swaps Attack and Special Attack changes with the target. User swaps its Attack and Special Attack stat modifiers modifiers with the target."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

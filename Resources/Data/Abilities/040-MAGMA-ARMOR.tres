@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c07dbgwh6d73y"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_1emau"]
+
+[resource]
+script = ExtResource("1_1emau")
+id = 40
+internal_name = "magma-armor"
+display_name = "Escudo Magma"
+description = "Evita la congelación."

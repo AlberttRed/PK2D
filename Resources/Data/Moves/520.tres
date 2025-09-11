@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dr2406utkng1g"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_pnykn"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_fmch6"]
+
+[resource]
+resource_name = "520 - Voto Planta"
+script = ExtResource("1_pnykn")
+internal_name = "grass-pledge"
+Name = "Voto Planta"
+id = 520
+description = "Ataca con columnas de hojas. Combinado con
+Voto Agua, crea un pantano y aumenta su potencia."
+type = ExtResource("2_fmch6")
+power = 80
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "With Fire Pledge, damages opposing Pokémon for 1/8 their max HP every turn for four turns. Inflicts regular damage.  If a friendly Pokémon used fire pledge earlier this turn, all opposing Pokémon will take 1/8 their max HP in damage at the end of every turn for four turns (including this one)."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

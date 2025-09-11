@@ -1,0 +1,94 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dy0ltyiicsq3f"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_cs7mu"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_kr22l"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_bfb20"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_tkq5i"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="5_7cv1k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3nvc"]
+atlas = ExtResource("1_cs7mu")
+region = Rect2(1280, 1240, 160, 130)
+margin = Rect2(0, 30, 0, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3r6x8"]
+atlas = ExtResource("1_cs7mu")
+region = Rect2(1112, 1240, 160, 130)
+margin = Rect2(0, 30, 0, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nmr61"]
+atlas = ExtResource("1_cs7mu")
+region = Rect2(788, 3432, 130, 130)
+margin = Rect2(16, 16, 30, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_epwfm"]
+atlas = ExtResource("1_cs7mu")
+region = Rect2(168, 3432, 130, 130)
+margin = Rect2(16, 16, 30, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7r44"]
+atlas = ExtResource("2_kr22l")
+region = Rect2(424, 472, 20, 20)
+margin = Rect2(6, 6, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7dvk"]
+atlas = ExtResource("3_bfb20")
+region = Rect2(532, 216, 122, 44)
+margin = Rect2(4, 18, 6, 20)
+
+[resource]
+resource_name = "38 - Ninetales"
+script = ExtResource("4_tkq5i")
+id = 38
+internal_name = "ninetales"
+Name = "Ninetales"
+type_a = ExtResource("5_7cv1k")
+base_exprience = 177
+height = 11.0
+weight = 199.0
+is_default = true
+abilities = ["18", null, "70"]
+forms = []
+held_items_id = ["129", "226"]
+held_items_rarity = [100.0, 5.0]
+learn_type = ["4", "1", "4", "4", "4", "1", "1", "1", "1", "3", "4", "4", "1", "4", "4", "1", "4", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "2", "3", "4", "4", "4", "4", "4", "4", "4", "4", "1", "3", "4", "4", "4", "4", "4", "4", "4", "3", "4", "2", "4", "4", "3", "1", "1", "4", "4", "4", "4", "1", "2", "3", "4", "2", "4", "4", "4", "4", "4", "4", "4", "1", "3", "4", "3", "4", "4", "3", "4", "4", "4", "4", "1", "4", "4", "4", "4", "3"]
+learn_lvl = [0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 43, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+learn_move_id = ["29", "33", "34", "36", "38", "39", "46", "50", "52", "53", "63", "76", "83", "91", "92", "95", "97", "98", "99", "101", "102", "104", "109", "115", "117", "126", "129", "130", "138", "156", "164", "172", "173", "174", "175", "180", "182", "203", "204", "207", "213", "214", "216", "218", "219", "220", "226", "227", "231", "237", "241", "244", "247", "257", "261", "262", "263", "270", "272", "286", "288", "290", "311", "313", "315", "326", "336", "343", "347", "361", "363", "371", "384", "394", "399", "412", "416", "417", "428", "445", "466", "473", "488", "492", "496", "500", "506", "510", "517", "541", "555", "590", "595", "608"]
+hp_base = 73
+attack_base = 76
+defense_base = 75
+special_attack_base = 81
+special_defense_base = 100
+speed_base = 100
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 1
+speed_effort_EVs = 1
+gender_rate = 6
+capture_rate = 75
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Muy inteligente y vengativo. Agarrar una de sus
+colas podría traer 1000 años de mala suerte."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_x7dvk")
+footprint_sprite = SubResource("AtlasTexture_u7r44")
+battle_front_sprite = SubResource("AtlasTexture_epwfm")
+battle_back_sprite = SubResource("AtlasTexture_3r6x8")
+battle_front_shiny_sprite = SubResource("AtlasTexture_nmr61")
+battle_back_shiny_sprite = SubResource("AtlasTexture_l3nvc")

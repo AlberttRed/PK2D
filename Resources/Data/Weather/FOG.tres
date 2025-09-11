@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://b1qu2ycjt5avr"]
+
+[ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/Weather.gd" id="1_1qoww"]
+
+[resource]
+script = ExtResource("1_1qoww")
+id = 6
+internal_name = "fog"
+display_name = "Niebla"
+metadata/_custom_type_script = "uid://c3ykal5rqqt2m"

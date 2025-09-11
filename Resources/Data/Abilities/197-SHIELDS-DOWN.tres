@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dnyjcuny8qwj8"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_mo6bj"]
+
+[resource]
+script = ExtResource("1_mo6bj")
+id = 197
+internal_name = "shields-down"
+display_name = "Escudo Limitado"
+description = "Rompe su coraza cuando sus PS se ven reducidos a la mitad y adopta una forma ofensiva."

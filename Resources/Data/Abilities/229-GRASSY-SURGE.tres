@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dx5kovm52044l"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ul3kr"]
+
+[resource]
+script = ExtResource("1_ul3kr")
+id = 229
+internal_name = "grassy-surge"
+display_name = "Herbogénesis"
+description = "Crea un campo de hierba al entrar en combate."

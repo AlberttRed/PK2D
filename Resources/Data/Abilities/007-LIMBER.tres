@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://du667sssvt3lo"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_yli8v"]
+
+[resource]
+script = ExtResource("1_yli8v")
+id = 7
+internal_name = "limber"
+display_name = "Flexibilidad"
+description = "Evita ser paralizado."

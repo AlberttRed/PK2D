@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bmv45g8upj80i"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_01d2e"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_r7pbk"]
+
+[resource]
+resource_name = "14 - Danza Espada"
+script = ExtResource("1_01d2e")
+internal_name = "swords-dance"
+Name = "Danza Espada"
+id = 14
+description = "Baile frenético que aumenta mucho el Ataque."
+type = ExtResource("2_r7pbk")
+power = 0
+accuracy = 0
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises the user's Attack by two stages. Raises the user's Attack by two stages."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: 2
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

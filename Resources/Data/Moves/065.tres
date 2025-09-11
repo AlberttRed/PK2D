@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://didqyrnnvbua4"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_jmbtp"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_glv6p"]
+
+[resource]
+resource_name = "65 - Pico Taladro"
+script = ExtResource("1_jmbtp")
+internal_name = "drill-peck"
+Name = "Pico Taladro"
+id = 65
+description = "Picotazo giratorio y perforador muy potente."
+type = ExtResource("2_glv6p")
+power = 80
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dirx3t2qynu3d"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_3hqgt"]
+
+[resource]
+script = ExtResource("1_3hqgt")
+id = 230
+internal_name = "full-metal-body"
+display_name = "Guardia Metálica"
+description = "Evita que bajen sus características a causa de movimientos o habilidades de otros Pokémon."

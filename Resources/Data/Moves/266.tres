@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dvnbmn6llx8ej"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_qp85g"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_a8gn0"]
+
+[resource]
+resource_name = "266 - Señuelo"
+script = ExtResource("1_qp85g")
+internal_name = "follow-me"
+Name = "Señuelo"
+id = 266
+description = "Llama la atención para concentrar todos los ataques de
+todos los del equipo rival hacia sí mismo."
+type = ExtResource("2_a8gn0")
+power = 0
+accuracy = 0
+pp = 20
+effect_chance = 0
+priority = 2
+damage_class_id = 1
+effect_entries = "Redirects the target's single-target effects to the user for this turn. Until the end of this turn, any moves that opposing Pokémon target solely at the user's ally will instead target the user.  If both Pokémon on the same side of the field use this move on the same turn, the Pokémon that uses it last will become the target.
+
+This effect takes priority over lightning rod and storm drain.
+
+If the user's ally switches out, opposing Pokémon may still hit it with pursuit.
+
+This move cannot be selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

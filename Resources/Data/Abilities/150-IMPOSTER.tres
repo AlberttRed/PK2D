@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cou2cno6itkpu"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_bg78x"]
+
+[resource]
+script = ExtResource("1_bg78x")
+id = 150
+internal_name = "imposter"
+display_name = "Impostor"
+description = "Se transforma en el Pokémon que tiene enfrente."

@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://do3ygdc3a2vf1"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_s67xl"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_8hs5l"]
+
+[resource]
+resource_name = "68 - Contraataque"
+script = ExtResource("1_s67xl")
+internal_name = "counter"
+Name = "Contraataque"
+id = 68
+description = "Devuelve un golpe físico por duplicado."
+type = ExtResource("2_8hs5l")
+power = 0
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = -5
+damage_class_id = 2
+effect_entries = "Inflicts twice the damage the user received from the last physical hit it took. Targets the last opposing Pokémon to hit the user with a physical move this turn.  Inflicts twice the damage that move did to the user.  If there is no eligible target, this move will fail.  Type immunity applies, but other type effects are ignored.
+
+This move cannot be copied by mirror move, nor selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 1
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

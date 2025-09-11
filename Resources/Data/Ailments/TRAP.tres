@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=2 format=3 uid="uid://bdh8a5rhvppwm"]
+
+[ext_resource type="Script" uid="uid://ctn5nkcm5a6ci" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_qh3qr"]
+
+[resource]
+script = ExtResource("1_qh3qr")
+id = "trap"
+display_name = "Atrapado"
+description = ""
+is_persistent = false

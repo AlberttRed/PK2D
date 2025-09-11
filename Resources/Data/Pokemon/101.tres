@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://dhomgg77pm2uf"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_7vofb"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_jy87j"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_210jo"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_51nr6"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="5_6kghp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t2g2s"]
+atlas = ExtResource("1_7vofb")
+region = Rect2(812, 4760, 146, 96)
+margin = Rect2(6, 64, 14, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4asp"]
+atlas = ExtResource("1_7vofb")
+region = Rect2(1604, 4744, 146, 96)
+margin = Rect2(6, 64, 14, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5g6e"]
+atlas = ExtResource("1_7vofb")
+region = Rect2(328, 6220, 92, 92)
+margin = Rect2(34, 34, 68, 68)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ulmur"]
+atlas = ExtResource("1_7vofb")
+region = Rect2(572, 6224, 92, 92)
+margin = Rect2(34, 34, 68, 68)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2h4j7"]
+atlas = ExtResource("2_jy87j")
+region = Rect2(4, 4, 0, 0)
+margin = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0quuy"]
+atlas = ExtResource("3_210jo")
+region = Rect2(1296, 1904, 96, 36)
+margin = Rect2(16, 20, 32, 28)
+
+[resource]
+resource_name = "101 - Electrode"
+script = ExtResource("4_51nr6")
+id = 101
+internal_name = "electrode"
+Name = "Electrode"
+type_a = ExtResource("5_6kghp")
+base_exprience = 172
+height = 12.0
+weight = 666.0
+is_default = true
+abilities = ["43", "9", "106"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["4", "1", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "1", "1", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "1", "4", "4", "1", "4", "4", "3", "4", "4", "3", "4", "1", "4", "3", "1", "4", "1", "1", "3", "1", "3", "4", "4", "4", "4", "4", "1", "1", "4"]
+learn_lvl = [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 29, 0, 0, 22, 40, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 21, 0, 0, 0, 0, 0, 48, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 40, 0, 41, 26, 0, 29, 0, 0, 0, 0, 0, 0, 8, 1, 0]
+learn_move_id = ["29", "33", "36", "38", "49", "63", "84", "85", "86", "87", "92", "97", "99", "100", "102", "103", "104", "113", "115", "117", "120", "129", "130", "148", "153", "156", "164", "168", "173", "174", "182", "184", "192", "203", "205", "207", "209", "214", "216", "218", "237", "240", "243", "259", "263", "268", "269", "270", "277", "290", "319", "324", "351", "360", "363", "389", "393", "416", "435", "451", "477", "486", "492", "496", "521", "527", "528", "590", "598", "602", "604"]
+hp_base = 60
+attack_base = 50
+defense_base = 70
+special_attack_base = 80
+special_defense_base = 80
+speed_base = 150
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 2
+gender_rate = -1
+capture_rate = 60
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Almacena tal cantidad de energía eléctrica en
+su cuerpo que el más leve impacto puede
+provocar una gran explosión."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_0quuy")
+footprint_sprite = SubResource("AtlasTexture_2h4j7")
+battle_front_sprite = SubResource("AtlasTexture_ulmur")
+battle_back_sprite = SubResource("AtlasTexture_n4asp")
+battle_front_shiny_sprite = SubResource("AtlasTexture_s5g6e")
+battle_back_shiny_sprite = SubResource("AtlasTexture_t2g2s")

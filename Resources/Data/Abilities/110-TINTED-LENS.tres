@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dfi7fkmarhavd"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_c0kfc"]
+
+[resource]
+script = ExtResource("1_c0kfc")
+id = 110
+internal_name = "tinted-lens"
+display_name = "Cromolente"
+description = "Potencia los movimientos que no son muy eficaces."

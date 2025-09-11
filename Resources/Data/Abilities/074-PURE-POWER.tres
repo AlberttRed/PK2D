@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b4fvy3s8o17yl"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ps3uq"]
+
+[resource]
+script = ExtResource("1_ps3uq")
+id = 74
+internal_name = "pure-power"
+display_name = "Energía Pura"
+description = "Aumenta el Ataque."

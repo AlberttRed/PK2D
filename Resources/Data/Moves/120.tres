@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://clp4q1ll6bpm1"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_th0j7"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_10upw"]
+
+[resource]
+resource_name = "120 - Autodestrucción"
+script = ExtResource("1_th0j7")
+internal_name = "self-destruct"
+Name = "Autodestrucción"
+id = 120
+description = "El atacante explota y hiere a todos a su alrededor. 
+El usuario se debilita de inmediato."
+type = ExtResource("2_10upw")
+power = 200
+accuracy = 100
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "User faints. User faints, even if the attack fails or misses.  Inflicts regular damage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 9
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

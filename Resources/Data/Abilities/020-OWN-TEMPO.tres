@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cuotpjnk6fdbn"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_rdoxg"]
+
+[resource]
+script = ExtResource("1_rdoxg")
+id = 20
+internal_name = "own-tempo"
+display_name = "Ritmo Propio"
+description = "Evita ser confundido."

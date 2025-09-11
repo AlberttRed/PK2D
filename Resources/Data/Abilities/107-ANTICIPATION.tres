@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cyq0n86q1jiyr"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_cc2j4"]
+
+[resource]
+script = ExtResource("1_cc2j4")
+id = 107
+internal_name = "anticipation"
+display_name = "Anticipación"
+description = "Prevé los movimientos peligrosos del rival."

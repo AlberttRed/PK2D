@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cjrhsdu7bj1ej"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xmp5u"]
+
+[resource]
+script = ExtResource("1_xmp5u")
+id = 160
+internal_name = "iron-barbs"
+display_name = "Punta Acero"
+description = "Hiere al hacer contacto."

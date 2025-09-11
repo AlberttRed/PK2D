@@ -1,0 +1,132 @@
+[gd_scene load_steps=13 format=3 uid="uid://btj5i08qahepp"]
+
+[ext_resource type="StyleBox" uid="uid://cpxaac6mtjqnu" path="res://Resources/UI/Battle/BattleActions_Panel.tres" id="1_kketv"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_eob2g"]
+[ext_resource type="Script" uid="uid://nmns50ki7hc6" path="res://Scripts/Battle/ui/ActionsMenu.gd" id="2_x0gi5"]
+[ext_resource type="Texture2D" uid="uid://cvcukpof2s52k" path="res://Sprites/Pictures/battleCommandButtons.png" id="3_x0gi5"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kketv"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(130, 0, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wb151"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_eob2g"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(130, 46, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ytfwc"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 46, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x0gi5"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(130, 92, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hpv7f"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 92, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7jp8q"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(130, 138, 260, 414)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ey4ts"]
+texture = ExtResource("3_x0gi5")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 138, 260, 414)
+
+[node name="ActionMenu" type="Panel"]
+z_index = 6
+z_as_relative = false
+custom_minimum_size = Vector2(512, 96)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("1_kketv")
+script = ExtResource("2_x0gi5")
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="." instance=ExtResource("2_eob2g")]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 18.0
+offset_right = 232.0
+offset_bottom = 82.0
+text = "¿Qué debería hacer Pikachu?"
+
+[node name="Commands" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="Luchar" type="Button" parent="Commands"]
+offset_left = 252.0
+offset_top = 6.0
+offset_right = 382.0
+offset_bottom = 52.0
+focus_neighbor_right = NodePath("../Pokemon")
+focus_neighbor_bottom = NodePath("../Mochila")
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_kketv")
+theme_override_styles/normal = SubResource("StyleBoxTexture_wb151")
+action_mode = 0
+button_mask = 0
+
+[node name="Pokemon" type="Button" parent="Commands"]
+offset_left = 378.0
+offset_top = 6.0
+offset_right = 508.0
+offset_bottom = 52.0
+focus_neighbor_left = NodePath("../Luchar")
+focus_neighbor_bottom = NodePath("../Huir")
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_eob2g")
+theme_override_styles/normal = SubResource("StyleBoxTexture_ytfwc")
+action_mode = 0
+button_mask = 0
+
+[node name="Mochila" type="Button" parent="Commands"]
+offset_left = 252.0
+offset_top = 48.0
+offset_right = 382.0
+offset_bottom = 94.0
+focus_neighbor_top = NodePath("../Luchar")
+focus_neighbor_right = NodePath("../Huir")
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_x0gi5")
+theme_override_styles/normal = SubResource("StyleBoxTexture_hpv7f")
+action_mode = 0
+button_mask = 0
+
+[node name="Huir" type="Button" parent="Commands"]
+offset_left = 378.0
+offset_top = 48.0
+offset_right = 508.0
+offset_bottom = 94.0
+focus_neighbor_left = NodePath("../Mochila")
+focus_neighbor_top = NodePath("../Pokemon")
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_7jp8q")
+theme_override_styles/normal = SubResource("StyleBoxTexture_ey4ts")
+action_mode = 0
+button_mask = 0

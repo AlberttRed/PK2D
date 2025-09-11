@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://broyuabv46nq5"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_j8um8"]
+
+[resource]
+script = ExtResource("1_j8um8")
+id = 114
+internal_name = "storm-drain"
+display_name = "Colector"
+description = "Atrae y neutraliza los movimientos de tipo Agua y sube el At. Esp."

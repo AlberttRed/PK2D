@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://c8qccckjui6ku"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_4273x"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_fd0xc"]
+
+[resource]
+resource_name = "504 - Rompecoraza"
+script = ExtResource("1_4273x")
+internal_name = "shell-smash"
+Name = "Rompecoraza"
+id = 504
+description = "El usuario rompe su coraza y baja su Defensa y
+Defensa Especial, pero aumenta mucho su Ataque, 
+Ataque Especial y Velocidad."
+type = ExtResource("2_fd0xc")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Raises user's Attack, Special Attack, and Speed by two stages.  Lower user's Defense and Special Defense by one stage. Raises the user's Attack, Special Attack, and Speed by two stages each.  Lowers the user's Defense and Special Defense by one stage each."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: 2,
+1: -1,
+2: 2,
+3: -1,
+4: 2
+})
+target_id = 7
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

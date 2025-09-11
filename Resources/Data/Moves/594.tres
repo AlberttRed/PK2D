@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bm6hv3cfnkn3m"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_wluxi"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_gmm2a"]
+
+[resource]
+resource_name = "594 - Shuriken de Agua"
+script = ExtResource("1_wluxi")
+internal_name = "water-shuriken"
+Name = "Shuriken de Agua"
+id = 594
+description = "Golpea al oponente de dos a cinco veces con estrellas
+arrojadizas hechas de mucosidad. Este movimiento tiene
+prioridad alta."
+type = ExtResource("2_gmm2a")
+power = 15
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 1
+damage_class_id = 3
+effect_entries = "Hits 2–5 times. Inflicts regular damage.  Hits 2–5 times."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 2
+meta_max_hits = 5
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

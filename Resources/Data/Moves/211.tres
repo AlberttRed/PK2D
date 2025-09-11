@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://sbup2ryqoou"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_yvlra"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_ir2qb"]
+
+[resource]
+resource_name = "211 - Ala de Acero"
+script = ExtResource("1_yvlra")
+internal_name = "steel-wing"
+Name = "Ala de Acero"
+id = 211
+description = "Alas macizas que golpean al objetivo y pueden subir 
+la Defensa del usuario."
+type = ExtResource("2_ir2qb")
+power = 70
+accuracy = 90
+pp = 25
+effect_chance = 10
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to raise the user's Defense by one stage. Inflicts regular damage. Has a $effect_chance% chance to raise the user's Defense one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+1: 1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 7
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 10
+contact_flag = false

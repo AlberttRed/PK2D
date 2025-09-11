@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cyf8hmyvqmi2l"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_8hd0m"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_glkhv"]
+
+[resource]
+resource_name = "321 - Cosquillas"
+script = ExtResource("1_8hd0m")
+internal_name = "tickle"
+Name = "Cosquillas"
+id = 321
+description = "Hace reír al objetivo para bajar su Ataque y Defensa."
+type = ExtResource("2_glkhv")
+power = 0
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Lowers the target's Attack and Defense by one stage. Lowers the target's Attack and Defense by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+0: -1,
+1: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 2
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cup253al3q0lk"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kjfsq"]
+
+[resource]
+script = ExtResource("1_kjfsq")
+id = 141
+internal_name = "moody"
+display_name = "Veleta"
+description = "Sube una característica mucho, pero baja otra."

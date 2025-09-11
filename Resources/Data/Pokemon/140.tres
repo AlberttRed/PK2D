@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://dasiyfpvcyyfh"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_p4akg"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_t7iyt"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_nprt3"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_tlur5"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="5_s2acg"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="6_agkt0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ifwjd"]
+atlas = ExtResource("1_p4akg")
+region = Rect2(520, 5308, 134, 86)
+margin = Rect2(12, 74, 26, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2ouo"]
+atlas = ExtResource("1_p4akg")
+region = Rect2(1584, 5324, 134, 86)
+margin = Rect2(12, 74, 26, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2f448"]
+atlas = ExtResource("1_p4akg")
+region = Rect2(1596, 6624, 68, 54)
+margin = Rect2(46, 54, 92, 106)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lb4i7"]
+atlas = ExtResource("1_p4akg")
+region = Rect2(1520, 6624, 68, 54)
+margin = Rect2(46, 54, 92, 106)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plbft"]
+atlas = ExtResource("2_t7iyt")
+region = Rect2(96, 804, 4, 4)
+margin = Rect2(14, 14, 28, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ick4"]
+atlas = ExtResource("3_nprt3")
+region = Rect2(1004, 2076, 96, 28)
+margin = Rect2(16, 28, 32, 36)
+
+[resource]
+resource_name = "140 - Kabuto"
+script = ExtResource("4_tlur5")
+id = 140
+internal_name = "kabuto"
+Name = "Kabuto"
+type_a = ExtResource("5_s2acg")
+type_b = ExtResource("6_agkt0")
+base_exprience = 71
+height = 5.0
+weight = 115.0
+is_default = true
+abilities = ["33", "4", "133"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["1", "1", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "2", "1", "1", "1", "2", "4", "4", "4", "2", "4", "1", "2", "4", "4", "4", "1", "4", "3", "1", "4", "4", "4", "4", "2", "4", "3", "2", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "2", "4", "4", "1", "4", "4", "4", "4", "2", "4", "4", "1", "4", "3", "1", "4", "4", "4", "4", "1", "4", "3", "1", "4", "4", "1", "4", "4", "4", "4", "4"]
+learn_lvl = [1, 28, 0, 0, 0, 0, 44, 0, 49, 0, 0, 0, 0, 0, 34, 46, 30, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 48, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 25, 0, 0, 0, 0, 51, 0, 0, 60, 0, 0, 31, 0, 0, 0, 0, 0]
+learn_move_id = ["10", "28", "29", "34", "36", "38", "43", "55", "56", "57", "58", "59", "61", "62", "71", "72", "88", "91", "92", "99", "102", "103", "104", "106", "109", "115", "117", "127", "141", "156", "157", "163", "164", "168", "173", "174", "175", "182", "189", "193", "196", "201", "202", "203", "205", "207", "213", "214", "216", "218", "229", "237", "240", "246", "249", "250", "258", "263", "282", "290", "317", "319", "332", "334", "341", "350", "352", "362", "363", "378", "397", "414", "444", "445", "446", "453", "468", "479", "496", "503", "590"]
+hp_base = 30
+attack_base = 80
+defense_base = 90
+special_attack_base = 55
+special_defense_base = 45
+speed_base = 55
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 1
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 1
+capture_rate = 45
+base_happiness = 50
+is_baby = false
+hatch_counter = 30
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Se consideraba extinto, pero, al parecer, existen
+determinadas zonas en las que es posible hallar
+ejemplares con facilidad."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_7ick4")
+footprint_sprite = SubResource("AtlasTexture_plbft")
+battle_front_sprite = SubResource("AtlasTexture_lb4i7")
+battle_back_sprite = SubResource("AtlasTexture_v2ouo")
+battle_front_shiny_sprite = SubResource("AtlasTexture_2f448")
+battle_back_shiny_sprite = SubResource("AtlasTexture_ifwjd")

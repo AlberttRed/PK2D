@@ -1,0 +1,22 @@
+class_name BattleEffect
+extends RefCounted
+
+enum Phases {
+	ON_ENTRY,
+	ON_INIT_BATTLE_TURN,
+	ON_INIT_POKEMON_TURN,
+	ON_BEFORE_MOVE,
+	ON_AFTER_MOVE,
+	ON_SWITCH_IN,
+	ON_SWITCH_OUT,
+	ON_ENTRY_BEGIN,
+	ON_END_POKEMON_TURN,
+	ON_END_BATTLE_TURN,
+}
+
+
+enum Modifiers {
+	MOVE_POWER,
+	MOVE_ACCURACY,
+	CRITICAL_CHANCE
+}

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=4 format=3 uid="uid://djlu5d7nxiwrg"]
+
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="1"]
+[ext_resource type="Script" uid="uid://dvkbc2ndmmhjg" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/FreezeAilmentEffect.gd" id="1_f76ff"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f76ff"]
+region = Rect2(0, 64, 44, 16)
+
+[resource]
+script = ExtResource("1")
+id = "freeze"
+display_name = "Congelar"
+description = ""
+icon = SubResource("AtlasTexture_f76ff")
+is_persistent = true
+effect = ExtResource("1_f76ff")

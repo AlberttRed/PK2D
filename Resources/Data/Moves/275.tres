@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dgwev11jsejy4"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_fie28"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_f4vkk"]
+
+[resource]
+resource_name = "275 - Arraigo"
+script = ExtResource("1_fie28")
+internal_name = "ingrain"
+Name = "Arraigo"
+id = 275
+description = "Echa raíces para recuperar PS en cada turno, pero 
+impide el relevo."
+type = ExtResource("2_f4vkk")
+power = 0
+accuracy = 0
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Prevents the user from leaving battle.  User regains 1/16 of its max HP every turn. Prevents the user from switching out.  User regains 1/16 of its max HP at the end of every turn.  If the user was immune to ground attacks, it will now take normal damage from them.
+
+roar and whirlwind will not affect the user.  The user cannot use magnet rise.
+
+The user may still use u turn to leave the field.
+
+This effect can be passed with baton pass."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 7
+meta_ailment_id = 21
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

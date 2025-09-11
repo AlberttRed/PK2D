@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://djn5up6ikwea4"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_8xx4m"]
+
+[resource]
+script = ExtResource("1_8xx4m")
+id = 1
+internal_name = "stench"
+display_name = "Hedor"
+description = "Es posible que el rival retroceda por el mal olor."

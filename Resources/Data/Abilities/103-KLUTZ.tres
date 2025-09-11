@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://hhhyrk7a3bfg"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_vcrk1"]
+
+[resource]
+script = ExtResource("1_vcrk1")
+id = 103
+internal_name = "klutz"
+display_name = "Zoquete"
+description = "El Pokémon no puede usar objetos equipados."

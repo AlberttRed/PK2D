@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cimxvjdel5cuo"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7v54l"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_74fen"]
+
+[resource]
+resource_name = "490 - Puntapié"
+script = ExtResource("1_7v54l")
+internal_name = "low-sweep"
+Name = "Puntapié"
+id = 490
+description = "Ataque rápido dirigido a los pies del objetivo que le
+hace perder Velocidad."
+type = ExtResource("2_74fen")
+power = 65
+accuracy = 100
+pp = 20
+effect_chance = 100
+priority = 0
+damage_class_id = 2
+effect_entries = "Lowers the target's Speed by one stage. Lowers the target's Speed by one stage."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+4: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 6
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 100
+contact_flag = false

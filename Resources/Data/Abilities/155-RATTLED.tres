@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dejtyc6rm0hwh"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_kbh2b"]
+
+[resource]
+script = ExtResource("1_kbh2b")
+id = 155
+internal_name = "rattled"
+display_name = "Cobardía"
+description = "El miedo a algunos ataques sube su Velocidad."

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://clqnahpa7fwpl"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ee185"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_qka80"]
+
+[resource]
+resource_name = "501 - Anticipo"
+script = ExtResource("1_ee185")
+internal_name = "quick-guard"
+Name = "Anticipo"
+id = 501
+description = "Se protege a sí mismo y a sus aliados de movimientos
+con prioridad."
+type = ExtResource("2_qka80")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 3
+damage_class_id = 1
+effect_entries = "Prevents any priority moves from hitting friendly Pokémon this turn. Moves with priority greater than 0 will not hit friendly Pokémon for the remainder of this turn.  If the user is last to act this turn, this move will fail.
+
+This move cannot be selected by assist or metronome."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 4
+meta_ailment_id = 0
+meta_category_id = 11
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

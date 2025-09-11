@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://ceo70ntlbyedj"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_qj85c"]
+
+[resource]
+script = ExtResource("1_qj85c")
+id = 156
+internal_name = "magic-bounce"
+display_name = "Espejo Mágico"
+description = "Permite devolver los ataques de estado."

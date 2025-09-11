@@ -1,0 +1,291 @@
+[gd_scene load_steps=6 format=3 uid="uid://clrnq0wq7bjw7"]
+
+[ext_resource type="Script" uid="uid://dfsjekxx61vm7" path="res://Scripts/Battle/TestBattle.gd" id="1_tse6d"]
+[ext_resource type="PackedScene" path="res://Scenes/Battle/Trainer.tscn" id="2_rfkpo"]
+[ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Scripts/Resources/Instances/pokemon_instance.gd" id="3_p5erh"]
+[ext_resource type="Texture2D" uid="uid://dkoedcae4y1wp" path="res://Sprites/Pictures/trainer000.png" id="3_uewrw"]
+[ext_resource type="Texture2D" uid="uid://dx7t7y2tum7mu" path="res://Sprites/Pictures/trback000.png" id="4_eovwa"]
+
+[node name="TestBattle" type="Node2D"]
+script = ExtResource("1_tse6d")
+
+[node name="Player" parent="." instance=ExtResource("2_rfkpo")]
+Name = "YO"
+battle_front_sprite = ExtResource("3_uewrw")
+battle_back_sprite = ExtResource("4_eovwa")
+is_playable = true
+
+[node name="pkm1" parent="Player" index="0"]
+pokemon = 130
+level = 43
+gender = 1
+hp_EVs = 213
+attack_EVs = 150
+defense_EVs = 55
+spAttack_EVs = 129
+spDefense_EVs = 192
+speed_EVs = 252
+hp_IVs = 27
+attack_IVs = 17
+defense_IVs = 25
+spAttack_IVs = 13
+spDefense_IVs = 30
+speed_IVs = 13
+ability_id = 22
+nature_id = 16
+
+[node name="pkm2" parent="Player" index="1"]
+pokemon = 46
+level = 51
+gender = 2
+hp_EVs = 75
+attack_EVs = 94
+defense_EVs = 224
+spAttack_EVs = 81
+spDefense_EVs = 21
+speed_EVs = 50
+hp_IVs = 10
+attack_IVs = 25
+defense_IVs = 10
+spAttack_IVs = 16
+spDefense_IVs = 19
+speed_IVs = 5
+ability_id = 219
+nature_id = 24
+
+[node name="pkm3" parent="Player" index="2"]
+randomize_pokemon = true
+level = 46
+gender = 1
+hp_EVs = 23
+attack_EVs = 156
+defense_EVs = 224
+spAttack_EVs = 87
+spDefense_EVs = 58
+speed_EVs = 93
+hp_IVs = 8
+attack_IVs = 30
+defense_IVs = 7
+spAttack_IVs = 11
+spDefense_IVs = 4
+speed_IVs = 9
+ability_id = 4
+nature_id = 9
+
+[node name="pkm4" parent="Player" index="3"]
+randomize_pokemon = true
+level = 56
+gender = 2
+hp_EVs = 197
+attack_EVs = 63
+defense_EVs = 131
+spAttack_EVs = 170
+spDefense_EVs = 114
+speed_EVs = 149
+hp_IVs = 16
+attack_IVs = 25
+defense_IVs = 24
+spAttack_IVs = 16
+spDefense_IVs = 29
+speed_IVs = 30
+ability_id = 96
+nature_id = 21
+
+[node name="pkm5" parent="Player" index="4"]
+randomize_pokemon = true
+level = 42
+gender = 2
+hp_EVs = 25
+attack_EVs = 245
+defense_EVs = 81
+spAttack_EVs = 18
+spDefense_EVs = 41
+speed_EVs = 13
+hp_IVs = 27
+attack_IVs = 8
+defense_IVs = 31
+spAttack_IVs = 12
+spDefense_IVs = 30
+speed_IVs = 7
+ability_id = 103
+nature_id = 20
+
+[node name="pkm6" parent="Player" index="5"]
+randomize_pokemon = true
+level = 69
+gender = 2
+hp_EVs = 41
+attack_EVs = 175
+defense_EVs = 214
+spAttack_EVs = 234
+spDefense_EVs = 60
+speed_EVs = 29
+hp_IVs = 18
+attack_IVs = 21
+defense_IVs = 28
+spAttack_IVs = 23
+spDefense_IVs = 28
+ability_id = 49
+nature_id = 4
+
+[node name="SingleTrainer" parent="." instance=ExtResource("2_rfkpo")]
+Name = "AAAA"
+
+[node name="pkm1" parent="SingleTrainer" index="0"]
+randomize_pokemon = true
+level = 68
+gender = 1
+hp_EVs = 195
+attack_EVs = 37
+defense_EVs = 87
+spAttack_EVs = 147
+spDefense_EVs = 68
+speed_EVs = 100
+attack_IVs = 13
+defense_IVs = 20
+spAttack_IVs = 17
+spDefense_IVs = 2
+speed_IVs = 22
+ability_id = 129
+nature_id = 11
+
+[node name="pkm2" parent="SingleTrainer" index="1"]
+randomize_pokemon = true
+level = 18
+gender = 3
+hp_EVs = 89
+attack_EVs = 207
+defense_EVs = 6
+spAttack_EVs = 102
+spDefense_EVs = 168
+speed_EVs = 239
+hp_IVs = 31
+attack_IVs = 18
+defense_IVs = 11
+spAttack_IVs = 11
+spDefense_IVs = 17
+speed_IVs = 24
+ability_id = 222
+nature_id = 15
+
+[node name="pkm3" parent="SingleTrainer" index="2"]
+randomize_pokemon = true
+level = 11
+gender = 1
+hp_EVs = 144
+attack_EVs = 30
+defense_EVs = 114
+spAttack_EVs = 238
+spDefense_EVs = 120
+speed_EVs = 136
+hp_IVs = 4
+attack_IVs = 13
+spAttack_IVs = 4
+spDefense_IVs = 7
+ability_id = 52
+nature_id = 21
+
+[node name="pkm4" parent="SingleTrainer" index="3"]
+randomize_pokemon = true
+level = 37
+gender = 3
+hp_EVs = 241
+attack_EVs = 44
+defense_EVs = 83
+spAttack_EVs = 69
+spDefense_EVs = 175
+speed_EVs = 190
+hp_IVs = 19
+attack_IVs = 30
+defense_IVs = 2
+spDefense_IVs = 10
+speed_IVs = 13
+ability_id = 139
+nature_id = 11
+
+[node name="pkm5" parent="SingleTrainer" index="4"]
+randomize_pokemon = true
+level = 9
+gender = 2
+hp_EVs = 243
+attack_EVs = 215
+defense_EVs = 163
+spAttack_EVs = 104
+spDefense_EVs = 8
+speed_EVs = 144
+hp_IVs = 2
+attack_IVs = 28
+defense_IVs = 6
+spAttack_IVs = 7
+spDefense_IVs = 7
+speed_IVs = 16
+ability_id = 90
+nature_id = 10
+
+[node name="pkm6" parent="SingleTrainer" index="5"]
+randomize_pokemon = true
+level = 8
+gender = 2
+hp_EVs = 8
+attack_EVs = 44
+defense_EVs = 160
+spAttack_EVs = 132
+spDefense_EVs = 96
+speed_EVs = 95
+hp_IVs = 2
+attack_IVs = 6
+defense_IVs = 17
+spAttack_IVs = 30
+spDefense_IVs = 18
+speed_IVs = 25
+ability_id = 92
+nature_id = 10
+
+[node name="WildPokemons" type="Node" parent="."]
+
+[node name="pkm1" type="Node" parent="WildPokemons"]
+script = ExtResource("3_p5erh")
+isWild = true
+pokemon = 22
+level = 43
+gender = 1
+hp_EVs = 87
+attack_EVs = 233
+defense_EVs = 146
+spAttack_EVs = 55
+spDefense_EVs = 43
+speed_EVs = 232
+hp_IVs = 23
+attack_IVs = 20
+defense_IVs = 25
+spAttack_IVs = 8
+spDefense_IVs = 23
+speed_IVs = 13
+ability_id = 8
+nature_id = 2
+rotate_hp_EVs = null
+
+[node name="pkm2" type="Node" parent="WildPokemons"]
+script = ExtResource("3_p5erh")
+isWild = true
+pokemon = 95
+level = 25
+gender = 2
+hp_EVs = 34
+attack_EVs = 232
+defense_EVs = 122
+spAttack_EVs = 145
+spDefense_EVs = 32
+speed_EVs = 123
+hp_IVs = 12
+attack_IVs = 31
+defense_IVs = 11
+spAttack_IVs = 12
+spDefense_IVs = 30
+speed_IVs = 23
+ability_id = 20
+nature_id = 19
+rotate_hp_EVs = null
+
+[editable path="Player"]
+[editable path="SingleTrainer"]

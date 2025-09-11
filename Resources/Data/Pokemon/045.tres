@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://dpi6dy6cntmyc"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_1m8va"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_y5reh"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_uog8e"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_ij1p4"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="5_j6d0g"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_0bx8s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_skyg8"]
+atlas = ExtResource("1_1m8va")
+region = Rect2(1428, 1668, 154, 130)
+margin = Rect2(4, 30, 6, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7iob"]
+atlas = ExtResource("1_1m8va")
+region = Rect2(936, 1680, 154, 130)
+margin = Rect2(4, 30, 6, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frrqc"]
+atlas = ExtResource("1_1m8va")
+region = Rect2(4, 5480, 112, 104)
+margin = Rect2(22, 26, 48, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4dcu8"]
+atlas = ExtResource("1_1m8va")
+region = Rect2(500, 5504, 112, 104)
+margin = Rect2(22, 26, 48, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8tnaw"]
+atlas = ExtResource("2_y5reh")
+region = Rect2(272, 556, 12, 26)
+margin = Rect2(10, 2, 20, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4qyfm"]
+atlas = ExtResource("3_uog8e")
+region = Rect2(468, 844, 108, 42)
+margin = Rect2(8, 18, 20, 22)
+
+[resource]
+resource_name = "45 - Vileplume"
+script = ExtResource("4_ij1p4")
+id = 45
+internal_name = "vileplume"
+Name = "Vileplume"
+type_a = ExtResource("5_j6d0g")
+type_b = ExtResource("6_0bx8s")
+base_exprience = 245
+height = 12.0
+weight = 186.0
+is_default = true
+abilities = ["34", null, "27"]
+forms = []
+held_items_id = ["588"]
+held_items_rarity = [5.0]
+learn_type = ["4", "4", "4", "4", "4", "4", "1", "4", "1", "4", "2", "1", "2", "4", "1", "1", "1", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "3", "1", "4", "4", "4", "4", "4", "2", "4", "2", "4", "1", "2", "4", "4", "4", "4", "3", "3", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "1", "1", "1", "4", "4", "4"]
+learn_lvl = [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 15, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 1, 1, 0, 0, 0]
+learn_move_id = ["14", "15", "29", "34", "36", "38", "51", "63", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "92", "99", "102", "104", "115", "117", "148", "156", "164", "173", "174", "175", "182", "188", "202", "203", "204", "207", "213", "214", "216", "218", "219", "230", "235", "236", "237", "241", "263", "267", "270", "275", "290", "298", "311", "312", "321", "331", "345", "363", "374", "380", "388", "402", "409", "412", "416", "437", "445", "447", "474", "482", "491", "495", "496", "572", "580", "585", "590", "605", "611"]
+hp_base = 75
+attack_base = 80
+defense_base = 85
+special_attack_base = 110
+special_defense_base = 90
+speed_base = 50
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 3
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 45
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = true
+forms_switchable = false
+growth_rate_id = 4
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Cuanto mayores son sus pétalos, más tóxico es su
+polen. Le pesa la cabeza y le cuesta mantenerla
+erguida."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_4qyfm")
+footprint_sprite = SubResource("AtlasTexture_8tnaw")
+battle_front_sprite = SubResource("AtlasTexture_4dcu8")
+battle_back_sprite = SubResource("AtlasTexture_j7iob")
+battle_front_shiny_sprite = SubResource("AtlasTexture_frrqc")
+battle_back_shiny_sprite = SubResource("AtlasTexture_skyg8")

@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://bvvx83p6n4btb"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_bd08s"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_aum3g"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_pu581"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_n0c71"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="5_psedw"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="6_wlh0x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k73pr"]
+atlas = ExtResource("1_bd08s")
+region = Rect2(1876, 3908, 156, 102)
+margin = Rect2(2, 58, 4, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11b4m"]
+atlas = ExtResource("1_bd08s")
+region = Rect2(484, 3928, 156, 102)
+margin = Rect2(2, 58, 4, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dv7bb"]
+atlas = ExtResource("1_bd08s")
+region = Rect2(524, 4960, 128, 108)
+margin = Rect2(16, 26, 32, 52)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8moe"]
+atlas = ExtResource("1_bd08s")
+region = Rect2(252, 4896, 128, 108)
+margin = Rect2(16, 26, 32, 52)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1j5b"]
+atlas = ExtResource("2_aum3g")
+region = Rect2(384, 432, 20, 22)
+margin = Rect2(6, 6, 12, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vck5m"]
+atlas = ExtResource("3_pu581")
+region = Rect2(652, 1900, 106, 32)
+margin = Rect2(6, 28, 22, 32)
+
+[resource]
+resource_name = "111 - Rhyhorn"
+script = ExtResource("4_n0c71")
+id = 111
+internal_name = "rhyhorn"
+Name = "Rhyhorn"
+type_a = ExtResource("5_psedw")
+type_b = ExtResource("6_wlh0x")
+base_exprience = 69
+height = 10.0
+weight = 1150.0
+is_default = true
+abilities = ["31", "69", "120"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["2", "1", "1", "4", "1", "1", "1", "1", "4", "1", "2", "4", "1", "1", "4", "3", "3", "4", "2", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "3", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "2", "1", "2", "4", "4", "4", "4", "2", "3", "4", "3", "4", "3", "3", "4", "2", "4", "4", "1", "4", "4", "2", "4", "4", "4", "3", "4", "2", "3", "1", "2", "2", "2", "4", "1", "4", "4", "2", "1", "4", "4", "1", "4", "1", "1", "2", "4"]
+learn_lvl = [0, 30, 1, 0, 1, 40, 45, 1, 0, 55, 0, 0, 35, 50, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 45, 0, 0, 0, 13, 0, 0, 34, 0, 30, 45, 0, 0]
+learn_move_id = ["14", "23", "28", "29", "30", "31", "32", "33", "34", "36", "37", "38", "39", "43", "46", "53", "58", "59", "68", "70", "85", "87", "88", "89", "90", "91", "92", "99", "102", "104", "117", "126", "130", "156", "157", "164", "168", "173", "174", "179", "180", "182", "184", "189", "192", "196", "201", "203", "205", "207", "213", "214", "216", "218", "222", "224", "228", "231", "237", "240", "241", "242", "246", "249", "253", "263", "276", "283", "290", "306", "317", "341", "350", "351", "363", "368", "371", "397", "398", "401", "406", "407", "414", "416", "422", "423", "424", "431", "444", "445", "446", "470", "479", "484", "496", "498", "510", "523", "529", "563", "590"]
+hp_base = 80
+attack_base = 85
+defense_base = 95
+special_attack_base = 30
+special_defense_base = 30
+speed_base = 25
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 1
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 120
+base_happiness = 50
+is_baby = false
+hatch_counter = 20
+has_gender_differences = true
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "La cabeza no le da para retener más de una cosa.
+Si se pone a correr, se le olvida al instante por
+qué empezó a hacerlo."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_vck5m")
+footprint_sprite = SubResource("AtlasTexture_n1j5b")
+battle_front_sprite = SubResource("AtlasTexture_d8moe")
+battle_back_sprite = SubResource("AtlasTexture_11b4m")
+battle_front_shiny_sprite = SubResource("AtlasTexture_dv7bb")
+battle_back_shiny_sprite = SubResource("AtlasTexture_k73pr")

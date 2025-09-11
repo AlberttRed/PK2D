@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cy2gwhatkbpco"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oeuam"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_qa35g"]
+
+[resource]
+resource_name = "509 - Llave Giro"
+script = ExtResource("1_oeuam")
+internal_name = "circle-throw"
+Name = "Llave Giro"
+id = 509
+description = "Lanza por los aires al objetivo y hace que salga otro 
+Pokémon. Si es uno salvaje, acaba el combate."
+type = ExtResource("2_qa35g")
+power = 60
+accuracy = 90
+pp = 10
+effect_chance = 0
+priority = -6
+damage_class_id = 2
+effect_entries = "Ends wild battles.  Forces trainers to switch Pokémon. Inflicts regular damage, then switches the target out for another of its trainer's Pokémon, selected at random.
+
+If the target is under the effect of ingrain or suction cups, or it has a substitute, or its Trainer has no more usable Pokémon, it will not be switched out.  If the target is a wild Pokémon, the battle ends instead."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

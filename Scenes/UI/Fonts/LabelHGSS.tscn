@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://c4ex854x6yq5d"]
+
+[ext_resource type="FontFile" uid="uid://dqn60qyxkiqon" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="1_186ph"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="2_kjeps"]
+
+[sub_resource type="FontVariation" id="FontVariation_djnq7"]
+base_font = ExtResource("1_186ph")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_x4phv"]
+default_font = SubResource("FontVariation_djnq7")
+default_font_size = 26
+
+[node name="LabelHGSS" type="RichTextLabel"]
+offset_right = 508.0
+offset_bottom = 77.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.345098, 0.345098, 0.313726, 1)
+theme_override_colors/font_shadow_color = Color(0.658824, 0.721569, 0.721569, 1)
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 8
+bbcode_enabled = true
+text = "PRECISIÓN"
+scroll_active = false
+tab_size = 2
+script = ExtResource("2_kjeps")
+
+[node name="Outline" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_right = 508.0
+offset_bottom = 77.0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.345098, 0.345098, 0.313726, 1)
+theme_override_colors/font_shadow_color = Color(0.658824, 0.721569, 0.721569, 1)
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 18
+bbcode_enabled = true
+scroll_active = false
+tab_size = 2
+
+[node name="Outline2" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_right = 508.0
+offset_bottom = 77.0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.345098, 0.345098, 0.313726, 1)
+theme_override_colors/font_shadow_color = Color(0.658824, 0.721569, 0.721569, 1)
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 18
+bbcode_enabled = true
+scroll_active = false
+tab_size = 2

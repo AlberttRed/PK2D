@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://7lykff48tweg"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_0dd5x"]
+[ext_resource type="Resource" uid="uid://cwcxxqx6mbg3b" path="res://Resources/Data/Ailments/SLEEP.tres" id="1_qeuot"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_m68aq"]
+
+[resource]
+resource_name = "95 - Hipnosis"
+script = ExtResource("1_0dd5x")
+internal_name = "hypnosis"
+Name = "Hipnosis"
+id = 95
+description = "Ataque hipnótico que hace dormir profundamente al
+objetivo."
+type = ExtResource("2_m68aq")
+power = 0
+accuracy = 60
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Puts the target to sleep. Puts the target to sleep."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 2
+meta_category_id = 1
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 2
+meta_max_turns = 4
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_qeuot")

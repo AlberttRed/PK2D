@@ -1,0 +1,45 @@
+[gd_scene load_steps=9 format=3 uid="uid://b0ajmrb8a7e0r"]
+
+[ext_resource type="Script" uid="uid://cpr7rnr428tb6" path="res://Scripts/Battle/ui/AnimatedProgressBar.gd" id="1_0brsp"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_i4fpu"]
+[ext_resource type="FontFile" uid="uid://cefelqhb6o2me" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="3_0ieai"]
+[ext_resource type="Texture2D" uid="uid://dqhrc65l8u6am" path="res://Sprites/Pictures/HPbar_background.png" id="4_245vy"]
+[ext_resource type="Texture2D" uid="uid://cdus0uhl7tnql" path="res://Sprites/Pictures/HPbar_overlay.png" id="5_ob3jh"]
+[ext_resource type="Texture2D" uid="uid://x2gt17sm1nc5" path="res://Sprites/Pictures/HPbar_progress.png" id="6_ll6vi"]
+
+[sub_resource type="FontVariation" id="FontVariation_kynk5"]
+base_font = ExtResource("3_0ieai")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_4f188"]
+default_font = SubResource("FontVariation_kynk5")
+default_font_size = 16
+
+[node name="AnimatedProgressBar" type="Node2D"]
+script = ExtResource("1_0brsp")
+metadata/_edit_vertical_guides_ = [-205.084]
+
+[node name="Label" parent="." instance=ExtResource("2_i4fpu")]
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 140.0
+offset_bottom = 34.0
+theme = SubResource("Theme_4f188")
+theme_override_colors/default_color = Color(0.313726, 0.313726, 0.345098, 1)
+theme_override_colors/font_shadow_color = Color(0.627451, 0.627451, 0.658824, 1)
+text = "[center]1/232"
+align = 1
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+offset_right = 132.0
+offset_bottom = 40.0
+step = 0.1
+value = 100.0
+stretch_margin_left = 1
+texture_under = ExtResource("4_245vy")
+texture_over = ExtResource("5_ob3jh")
+texture_progress = ExtResource("6_ll6vi")
+texture_progress_offset = Vector2(32, 0)
+tint_progress = Color(0.0941176, 0.752941, 0.12549, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

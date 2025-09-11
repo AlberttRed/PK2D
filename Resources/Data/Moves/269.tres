@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://guhquc54sw6w"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_0oep8"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_jqvv6"]
+
+[resource]
+resource_name = "269 - Mofa"
+script = ExtResource("1_0oep8")
+internal_name = "taunt"
+Name = "Mofa"
+id = 269
+description = "Enfurece al objetivo para que solo use movimientos de
+ataque durante tres turnos."
+type = ExtResource("2_jqvv6")
+power = 0
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "For the next few turns, the target can only use damaging moves. Target is forced to only use damaging moves for the next 3–5 turns, selected at random.  Moves that select other moves not known in advance do not count as damaging.
+
+assist, copycat, me first, metronome, mirror move, and sleep talk do not directly inflict damage and thus may not be used.
+
+bide, counter, endeavor, metal burst, and mirror coat are allowed."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

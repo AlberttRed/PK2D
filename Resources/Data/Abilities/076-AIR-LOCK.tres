@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bfnw0l4btd7jb"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_1c8re"]
+
+[resource]
+script = ExtResource("1_1c8re")
+id = 76
+internal_name = "air-lock"
+display_name = "Bucle Aire"
+description = "Anula los efectos del tiempo atmosférico."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://locmcl7t2t0g"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_h5px1"]
+
+[resource]
+script = ExtResource("1_h5px1")
+id = 101
+internal_name = "technician"
+display_name = "Experto"
+description = "Potencia los movimientos más débiles del Pokémon."

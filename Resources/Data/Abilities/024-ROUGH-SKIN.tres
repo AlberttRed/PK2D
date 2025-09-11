@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://ce5bsb4vxc18s"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_380r3"]
+
+[resource]
+script = ExtResource("1_380r3")
+id = 24
+internal_name = "rough-skin"
+display_name = "Piel Tosca"
+description = "Hiere al tacto."

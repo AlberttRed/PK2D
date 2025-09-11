@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://gr8b8oiha07t"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_mmubl"]
+
+[resource]
+script = ExtResource("1_mmubl")
+id = 59
+internal_name = "forecast"
+display_name = "Predicción"
+description = "Se transforma según el tiempo atmosférico."

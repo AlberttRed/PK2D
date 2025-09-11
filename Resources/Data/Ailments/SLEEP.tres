@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=4 format=3 uid="uid://cwcxxqx6mbg3b"]
+
+[ext_resource type="Script" uid="uid://bm7ulrgqnogdv" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/SleepAilmentEffect.gd" id="1_g3my3"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="3_qqm7f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nhm54"]
+region = Rect2(0, 0, 44, 16)
+
+[resource]
+script = ExtResource("3_qqm7f")
+id = "sleep"
+display_name = "Dormir"
+description = ""
+icon = SubResource("AtlasTexture_nhm54")
+is_persistent = true
+effect = ExtResource("1_g3my3")

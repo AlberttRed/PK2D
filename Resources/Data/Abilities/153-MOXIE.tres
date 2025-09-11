@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://xy7168urqht5"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_lq3va"]
+
+[resource]
+script = ExtResource("1_lq3va")
+id = 153
+internal_name = "moxie"
+display_name = "Autoestima"
+description = "Potencia el Ataque al debilitar a un objetivo."

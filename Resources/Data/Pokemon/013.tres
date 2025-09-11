@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://cikygfokbshiv"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_0utmr"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_0577g"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_brm30"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_kbu8l"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_cm10v"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="6_rtd40"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8j144"]
+atlas = ExtResource("1_0utmr")
+region = Rect2(328, 4352, 124, 124)
+margin = Rect2(18, 36, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c326a"]
+atlas = ExtResource("1_0utmr")
+region = Rect2(640, 4356, 124, 124)
+margin = Rect2(18, 36, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qneaw"]
+atlas = ExtResource("1_0utmr")
+region = Rect2(928, 6604, 64, 68)
+margin = Rect2(48, 44, 96, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jjcdb"]
+atlas = ExtResource("1_0utmr")
+region = Rect2(1980, 6536, 64, 68)
+margin = Rect2(48, 44, 96, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g75t6"]
+atlas = ExtResource("2_0577g")
+region = Rect2(292, 796, 8, 8)
+margin = Rect2(12, 12, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slfyb"]
+atlas = ExtResource("3_brm30")
+region = Rect2(196, 2076, 92, 32)
+margin = Rect2(18, 24, 36, 32)
+
+[resource]
+resource_name = "13 - Weedle"
+script = ExtResource("4_kbu8l")
+id = 13
+internal_name = "weedle"
+Name = "Weedle"
+type_a = ExtResource("5_cm10v")
+type_b = ExtResource("6_rtd40")
+base_exprience = 39
+height = 3.0
+weight = 32.0
+is_default = true
+abilities = ["19", null, "50"]
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = ["1", "1", "1", "3"]
+learn_lvl = [1, 1, 15, 0]
+learn_move_id = ["40", "81", "450", "527"]
+hp_base = 40
+attack_base = 35
+defense_base = 30
+special_attack_base = 20
+special_defense_base = 20
+speed_base = 50
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 1
+gender_rate = 4
+capture_rate = 255
+base_happiness = 70
+is_baby = false
+hatch_counter = 15
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "El aguijón de la cabeza es muy puntiagudo.
+Se alimenta de hojas oculto en la espesura
+de bosques y praderas."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_slfyb")
+footprint_sprite = SubResource("AtlasTexture_g75t6")
+battle_front_sprite = SubResource("AtlasTexture_jjcdb")
+battle_back_sprite = SubResource("AtlasTexture_c326a")
+battle_front_shiny_sprite = SubResource("AtlasTexture_qneaw")
+battle_back_shiny_sprite = SubResource("AtlasTexture_8j144")

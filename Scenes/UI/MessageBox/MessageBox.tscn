@@ -1,0 +1,185 @@
+[gd_scene load_steps=13 format=3 uid="uid://brvsn2vfev6ng"]
+
+[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/HGSS_MessageBox_Style.tres" id="1_1g85p"]
+[ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_re8jy"]
+[ext_resource type="FontFile" uid="uid://dqn60qyxkiqon" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_15orl"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="4_icamg"]
+[ext_resource type="Texture2D" uid="uid://bdcjsr16vsq3e" path="res://Sprites/UI/MessageBox/next.png" id="5_ugtco"]
+[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_thy6l"]
+
+[sub_resource type="FontVariation" id="FontVariation_djhwc"]
+base_font = ExtResource("3_15orl")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_x4phv"]
+default_font = SubResource("FontVariation_djhwc")
+default_font_size = 26
+
+[sub_resource type="Animation" id="Animation_bs852"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_8ajbi"]
+resource_name = "Scroll"
+length = 0.5
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../ScrollContainer:scroll_vertical")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 32]
+}
+
+[sub_resource type="Animation" id="Animation_mbf3k"]
+resource_name = "Typing"
+length = 4.0
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../ScrollContainer/Container/LabelHGSS:visible_ratio")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5i0nh"]
+_data = {
+&"Idle": ExtResource("6_thy6l"),
+&"RESET": SubResource("Animation_bs852"),
+&"Scroll": SubResource("Animation_8ajbi"),
+&"Typing": SubResource("Animation_mbf3k")
+}
+
+[node name="MSG" type="Panel"]
+custom_minimum_size = Vector2(512, 96)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = ExtResource("1_1g85p")
+script = ExtResource("2_re8jy")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = -1
+offset_left = 32.0
+offset_top = 16.0
+offset_right = 465.0
+offset_bottom = 79.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Container" type="Control" parent="ScrollContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_direction = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LabelHGSS" type="RichTextLabel" parent="ScrollContainer/Container"]
+layout_mode = 2
+offset_right = 433.0
+offset_bottom = 128.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 8
+bbcode_enabled = true
+text = "Esta es la primera línea
+Esta es la segunda línea
+Esta es la tercera línea
+Esta es la cuarta línea"
+fit_content = true
+scroll_active = false
+tab_size = 2
+visible_characters = 0
+visible_characters_behavior = 1
+visible_ratio = 0.0
+script = ExtResource("4_icamg")
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="ScrollContainer/Container/LabelHGSS"]
+layout_mode = 0
+offset_right = 433.0
+offset_bottom = 164.0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 8
+theme_override_font_sizes/normal_font_size = 26
+bbcode_enabled = true
+text = "Esta es la primera línea
+Esta es la segunda línea
+Esta es la tercera línea
+Esta es la cuarta línea
+
+"
+fit_content = true
+scroll_active = false
+tab_size = 2
+visible_characters_behavior = 1
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="ScrollContainer/Container/LabelHGSS"]
+layout_mode = 0
+offset_right = 433.0
+offset_bottom = 164.0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_x4phv")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_separation = 8
+theme_override_font_sizes/normal_font_size = 26
+bbcode_enabled = true
+text = "Esta es la primera línea
+Esta es la segunda línea
+Esta es la tercera línea
+Esta es la cuarta línea
+
+"
+fit_content = true
+scroll_active = false
+tab_size = 2
+visible_characters_behavior = 1
+metadata/_edit_lock_ = true
+
+[node name="next" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(491, 69)
+texture = ExtResource("5_ugtco")
+hframes = 4
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.05
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+root_node = NodePath("../next")
+libraries = {
+&"": SubResource("AnimationLibrary_5i0nh")
+}

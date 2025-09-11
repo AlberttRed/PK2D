@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cpwc1dkv0g0ii"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_jteui"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_4mut0"]
+
+[resource]
+resource_name = "432 - Despejar"
+script = ExtResource("1_jteui")
+internal_name = "defog"
+Name = "Despejar"
+id = 432
+description = "Potente viento que barre el reflejo o la pantalla de luz
+creada por el objetivo. También puede reducir su
+Evasión."
+type = ExtResource("2_4mut0")
+power = 0
+accuracy = 0
+pp = 15
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Lowers the target's evasion by one stage.  Removes field effects from the enemy field. Lowers the target's evasion by one stage.  Clears away fog.  Removes the effects of mist, light screen, reflect, safeguard, spikes, stealth rock, and toxic spikes from the target's side of the field.
+
+If the target is protected by mist, it will prevent the evasion change, then be removed by this move."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+6: -1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

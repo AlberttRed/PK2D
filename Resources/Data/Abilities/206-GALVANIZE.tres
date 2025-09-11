@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bvnq4ja5d7nqe"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_3uqte"]
+
+[resource]
+script = ExtResource("1_3uqte")
+id = 206
+internal_name = "galvanize"
+display_name = "Piel Eléctrica"
+description = "Convierte los movimientos de tipo Normal en tipo Eléctrico y aumenta ligeramente su potencia."

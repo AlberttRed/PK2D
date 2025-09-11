@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=7 format=3 uid="uid://dsdm5mwfr5116"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2iadx"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="2_k1v7i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2iadx"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(1544, 6424, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k1v7i"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(356, 6428, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xd5cx"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(516, 6412, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_da3h5"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(4, 6432, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[resource]
+script = ExtResource("2_k1v7i")
+id = 0
+internal_name = ""
+Name = "None"
+base_exprience = 0
+height = 0.0
+weight = 0.0
+is_default = true
+abilities = []
+forms = []
+held_items_id = []
+held_items_rarity = []
+learn_type = []
+learn_lvl = []
+learn_move_id = []
+hp_base = 0
+attack_base = 0
+defense_base = 0
+special_attack_base = 0
+special_defense_base = 0
+speed_base = 0
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 0
+capture_rate = 0
+base_happiness = 0
+is_baby = false
+hatch_counter = 0
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 1
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = ""
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+battle_front_sprite = SubResource("AtlasTexture_da3h5")
+battle_back_sprite = SubResource("AtlasTexture_k1v7i")
+battle_front_shiny_sprite = SubResource("AtlasTexture_xd5cx")
+battle_back_shiny_sprite = SubResource("AtlasTexture_2iadx")

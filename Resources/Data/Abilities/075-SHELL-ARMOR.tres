@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://karq0xils3vj"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xrgsl"]
+
+[resource]
+script = ExtResource("1_xrgsl")
+id = 75
+internal_name = "shell-armor"
+display_name = "Caparazón"
+description = "Bloquea los golpes críticos."

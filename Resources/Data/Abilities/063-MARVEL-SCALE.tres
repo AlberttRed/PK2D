@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://f8fiiftekxny"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jeee6"]
+
+[resource]
+script = ExtResource("1_jeee6")
+id = 63
+internal_name = "marvel-scale"
+display_name = "Escama Especial"
+description = "Sube la Defensa si sufre un problema de estado."

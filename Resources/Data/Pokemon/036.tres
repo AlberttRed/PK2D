@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=12 format=3 uid="uid://cdb6qb8hbf7wo"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_a1vw5"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_ql3yt"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_lpdy2"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_regp5"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="5_1coe0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qpaws"]
+atlas = ExtResource("1_a1vw5")
+region = Rect2(1504, 3424, 154, 112)
+margin = Rect2(4, 48, 6, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4nn6"]
+atlas = ExtResource("1_a1vw5")
+region = Rect2(4, 3432, 154, 112)
+margin = Rect2(4, 48, 6, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swel4"]
+atlas = ExtResource("1_a1vw5")
+region = Rect2(108, 5696, 104, 102)
+margin = Rect2(26, 24, 56, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmrml"]
+atlas = ExtResource("1_a1vw5")
+region = Rect2(456, 5704, 104, 102)
+margin = Rect2(26, 24, 56, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u2yh5"]
+atlas = ExtResource("2_ql3yt")
+region = Rect2(320, 308, 22, 24)
+margin = Rect2(6, 4, 10, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_anob1"]
+atlas = ExtResource("3_lpdy2")
+region = Rect2(1276, 996, 104, 44)
+margin = Rect2(12, 18, 24, 20)
+
+[resource]
+resource_name = "36 - Clefable"
+script = ExtResource("4_regp5")
+id = 36
+internal_name = "clefable"
+Name = "Clefable"
+type_a = ExtResource("5_1coe0")
+base_exprience = 242
+height = 13.0
+weight = 400.0
+is_default = true
+abilities = ["56", "98", "109"]
+forms = []
+held_items_id = ["81", "131", "624"]
+held_items_rarity = [5.0, 50.0, 1.0]
+learn_type = ["1", "1", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "1", "1", "3", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "1", "4", "4", "4", "4", "3", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "1", "4", "4", "3", "4", "4", "1", "4", "4", "4", "4", "3", "4", "2", "4", "4", "4", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "4", "1", "3", "3", "3", "2", "3", "4", "4", "3", "3", "4", "4", "4", "4", "3", "1", "4", "2", "1", "3", "3", "3", "4", "4", "4", "4", "3", "1", "4", "4", "1", "3", "4", "4", "4", "3", "4", "4", "4", "4", "3", "4", "4", "3", "4", "4", "1", "4", "2", "4", "4", "4", "1", "4", "4", "4", "1", "1", "4", "4", "4", "1", "4"]
+learn_lvl = [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 1, 0, 0, 0, 9, 0]
+learn_move_id = ["1", "3", "5", "7", "8", "9", "25", "29", "33", "34", "36", "38", "45", "47", "53", "55", "58", "59", "60", "61", "63", "66", "68", "69", "70", "76", "85", "86", "87", "91", "92", "94", "99", "100", "101", "102", "104", "107", "111", "113", "115", "117", "118", "126", "129", "130", "133", "135", "138", "148", "149", "150", "156", "161", "164", "168", "171", "173", "174", "182", "186", "189", "192", "196", "197", "203", "204", "205", "207", "213", "214", "215", "216", "217", "218", "219", "223", "226", "227", "231", "236", "237", "240", "241", "244", "247", "248", "249", "253", "263", "264", "266", "270", "271", "272", "273", "277", "278", "280", "282", "283", "285", "286", "289", "290", "304", "309", "313", "321", "322", "324", "340", "343", "345", "347", "351", "352", "356", "361", "363", "374", "383", "387", "409", "411", "416", "428", "445", "446", "447", "451", "472", "473", "477", "495", "496", "497", "500", "502", "505", "510", "514", "526", "574", "577", "581", "583", "584", "585", "590", "595", "605", "608", "612"]
+hp_base = 95
+attack_base = 70
+defense_base = 73
+special_attack_base = 95
+special_defense_base = 90
+speed_base = 60
+total_base = 0
+hp_effort_EVs = 3
+attack_effort_EVs = 0
+defense_effort_EVs = 0
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 6
+capture_rate = 25
+base_happiness = 140
+is_baby = false
+hatch_counter = 10
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 3
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Su oído es tan fino que puede percibir cómo cae
+una aguja a 1 km de distancia. Por eso suele
+habitar en lugares tranquilos."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_anob1")
+footprint_sprite = SubResource("AtlasTexture_u2yh5")
+battle_front_sprite = SubResource("AtlasTexture_tmrml")
+battle_back_sprite = SubResource("AtlasTexture_j4nn6")
+battle_front_shiny_sprite = SubResource("AtlasTexture_swel4")
+battle_back_shiny_sprite = SubResource("AtlasTexture_qpaws")

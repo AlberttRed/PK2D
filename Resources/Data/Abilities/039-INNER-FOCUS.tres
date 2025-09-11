@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://ce2k2svby7yvm"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_h6a4q"]
+
+[resource]
+script = ExtResource("1_h6a4q")
+id = 39
+internal_name = "inner-focus"
+display_name = "Foco Interno"
+description = "Evita el retroceso."

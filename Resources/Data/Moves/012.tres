@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://crcxxxlfafbek"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_rsaii"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_c0gnb"]
+
+[resource]
+resource_name = "12 - Guillotina"
+script = ExtResource("1_rsaii")
+internal_name = "guillotine"
+Name = "Guillotina"
+id = 12
+description = "Ataque cortante que debilita al oponente de un golpe
+si acierta."
+type = ExtResource("2_c0gnb")
+power = 0
+accuracy = 30
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "Causes a one-hit KO. Inflicts damage equal to the target's max HP.  Ignores accuracy and evasion modifiers.  This move's accuracy is 30% plus 1% for each level the user is higher than the target.  If the user is a lower level than the target, this move will fail.
+
+Because this move inflicts a specific and finite amount of damage, endure still prevents the target from fainting.
+
+The effects of lock on, mind reader, and no guard still apply, as long as the user is equal or higher level than the target.  However, they will not give this move a chance to break through detect or protect."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 9
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

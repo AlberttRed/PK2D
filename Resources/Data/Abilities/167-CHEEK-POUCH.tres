@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://d2boka13lsb1q"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_7sq7o"]
+
+[resource]
+script = ExtResource("1_7sq7o")
+id = 167
+internal_name = "cheek-pouch"
+display_name = "Carrillo"
+description = "Recupera PS al comer bayas."

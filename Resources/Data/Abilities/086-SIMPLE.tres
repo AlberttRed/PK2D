@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://covm54h11xgm5"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_lunm3"]
+
+[resource]
+script = ExtResource("1_lunm3")
+id = 86
+internal_name = "simple"
+display_name = "Simple"
+description = "Aumenta los cambios en las características."

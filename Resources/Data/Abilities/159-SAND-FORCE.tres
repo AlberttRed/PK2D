@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://c2oh7daerku81"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_hubsw"]
+
+[resource]
+script = ExtResource("1_hubsw")
+id = 159
+internal_name = "sand-force"
+display_name = "Poder Arena"
+description = "Potencia algunos movimientos durante las tormentas de arena."

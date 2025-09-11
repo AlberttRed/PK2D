@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=2 format=3 uid="uid://cpwtm52644vtl"]
+
+[ext_resource type="Script" uid="uid://ctn5nkcm5a6ci" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_ojx6f"]
+
+[resource]
+script = ExtResource("1_ojx6f")
+id = "embargo"
+display_name = "Embargo"
+description = ""
+is_persistent = false

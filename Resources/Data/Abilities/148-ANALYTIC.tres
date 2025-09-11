@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://eamtcd7syw3v"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_own36"]
+
+[resource]
+script = ExtResource("1_own36")
+id = 148
+internal_name = "analytic"
+display_name = "Cálculo Final"
+description = "Potencia el movimiento si es el último en atacar."

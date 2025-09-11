@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://b4r27ubb46k8b"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_mco5k"]
+
+[resource]
+script = ExtResource("1_mco5k")
+id = 191
+internal_name = "delta-stream"
+display_name = "Ráfaga Delta"
+description = "Altera el clima para anular las vulnerabilidades del tipo Volador."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dwf20txlquctu"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_lygnc"]
+
+[resource]
+script = ExtResource("1_lygnc")
+id = 56
+internal_name = "cute-charm"
+display_name = "Gran Encanto"
+description = "Tocar al Pokémon puede causar enamoramiento."

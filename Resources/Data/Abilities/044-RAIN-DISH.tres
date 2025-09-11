@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cg0qxqwnqfj80"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_8ab1e"]
+
+[resource]
+script = ExtResource("1_8ab1e")
+id = 44
+internal_name = "rain-dish"
+display_name = "Cura Lluvia"
+description = "Recupera PS de forma gradual cuando llueve."

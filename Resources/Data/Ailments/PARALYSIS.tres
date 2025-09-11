@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Ailment" load_steps=4 format=3 uid="uid://c74kascyu4hfe"]
+
+[ext_resource type="Script" uid="uid://iyf3wks88soe" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/ParalysisAilmentEffect.gd" id="1_vfomk"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="3_8yg8h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g0t8o"]
+region = Rect2(0, 48, 44, 16)
+
+[resource]
+script = ExtResource("3_8yg8h")
+id = "paralysis"
+display_name = "Parálisis"
+description = ""
+icon = SubResource("AtlasTexture_g0t8o")
+is_persistent = true
+effect = ExtResource("1_vfomk")

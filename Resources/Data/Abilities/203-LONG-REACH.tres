@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://csa3rioydmobg"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_evnxy"]
+
+[resource]
+script = ExtResource("1_evnxy")
+id = 203
+internal_name = "long-reach"
+display_name = "Remoto"
+description = "Permite usar cualquier movimiento sin entrar en contacto con el rival."

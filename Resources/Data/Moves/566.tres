@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cp25y5r8o6iv6"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_3g6hk"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_wjc0m"]
+
+[resource]
+resource_name = "566 - Golpe Fantasma"
+script = ExtResource("1_3g6hk")
+internal_name = "phantom-force"
+Name = "Golpe Fantasma"
+id = 566
+description = "El usuario desaparece en el primer turno y ataca a su
+objetivo en el segundo. Permite acertar aunque el
+objetivo esté protegiéndose."
+type = ExtResource("2_wjc0m")
+power = 90
+accuracy = 100
+pp = 10
+effect_chance = 0
+priority = 0
+damage_class_id = 2
+effect_entries = "User vanishes, dodging all attacks, and hits next turn.  Hits through Protect and Detect. Inflicts regular damage.  User vanishes for one turn, becoming immune to attack, and hits on the second turn.
+
+This move ignores the effects of detect and protect.
+
+This move cannot be selected by sleep talk."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

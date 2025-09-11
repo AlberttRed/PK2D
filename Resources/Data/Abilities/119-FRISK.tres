@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbomvik0nx1fx"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_xuwb8"]
+
+[resource]
+script = ExtResource("1_xuwb8")
+id = 119
+internal_name = "frisk"
+display_name = "Cacheo"
+description = "El Pokémon puede ver el objeto que lleva el rival."

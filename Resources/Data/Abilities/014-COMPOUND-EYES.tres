@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cpjmiyuaqm8vw"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_qmxoh"]
+
+[resource]
+script = ExtResource("1_qmxoh")
+id = 14
+internal_name = "compound-eyes"
+display_name = "Ojo Compuesto"
+description = "Aumenta la Precisión del Pokémon."

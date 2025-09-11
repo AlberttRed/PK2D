@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=3 format=3 uid="uid://djfye3bvjsx02"]
+
+[ext_resource type="Script" uid="uid://blemebyv5m32b" path="res://Database/Classes/Ability.gd" id="1_v4i76"]
+[ext_resource type="Script" uid="uid://b2tjovb8drlwf" path="res://NEW/Scripts/Battle/core/Battle Effects/Persistent/Abilities/IntimidateAbilityEffect.gd" id="1_w7h61"]
+
+[resource]
+script = ExtResource("1_v4i76")
+id = 22
+internal_name = "intimidate"
+display_name = "Intimidación"
+description = "Baja el Ataque del rival."
+effect_resource = ExtResource("1_w7h61")

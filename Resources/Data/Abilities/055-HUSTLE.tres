@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://dtnoc2u0l14ei"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_jcrhw"]
+
+[resource]
+script = ExtResource("1_jcrhw")
+id = 55
+internal_name = "hustle"
+display_name = "Entusiasmo"
+description = "Aumenta el Ataque, pero reduce la Precisión."

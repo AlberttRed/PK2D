@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bi6nsggemd6nb"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oktvi"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_wklgq"]
+
+[resource]
+resource_name = "521 - Voltiocambio"
+script = ExtResource("1_oktvi")
+internal_name = "volt-switch"
+Name = "Voltiocambio"
+id = 521
+description = "Tras atacar, el usuario vuelve a toda prisa para dar paso
+a otro Pokémon del equipo."
+type = ExtResource("2_wklgq")
+power = 70
+accuracy = 100
+pp = 20
+effect_chance = 0
+priority = 0
+damage_class_id = 3
+effect_entries = "User must switch out after attacking. Inflicts regular damage, then the user immediately switches out, and the trainer selects a replacement Pokémon from the party.  If the target faints from this attack, the user's trainer selects the new Pokémon to send out first.  If the user is the last Pokémon in its party that can battle, it will not switch out.
+
+The user may be hit by pursuit when it switches out, if it has been targeted and pursuit has not yet been used.
+
+This move may be used even if the user is under the effect of ingrain.  ingrain's effect will end."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

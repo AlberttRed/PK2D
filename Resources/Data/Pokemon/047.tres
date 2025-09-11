@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://cdv61ty7xm4hr"]
+
+[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_0kphn"]
+[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_4wk5g"]
+[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_12iop"]
+[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_np7d8"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_e6663"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="6_ots3c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ueuse"]
+atlas = ExtResource("1_0kphn")
+region = Rect2(1272, 4776, 146, 94)
+margin = Rect2(6, 66, 14, 66)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qg5qp"]
+atlas = ExtResource("1_0kphn")
+region = Rect2(1448, 4744, 146, 94)
+margin = Rect2(6, 66, 14, 66)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61px8"]
+atlas = ExtResource("1_0kphn")
+region = Rect2(1868, 5300, 116, 104)
+margin = Rect2(22, 28, 44, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4f2c6"]
+atlas = ExtResource("1_0kphn")
+region = Rect2(268, 5304, 116, 104)
+margin = Rect2(22, 28, 44, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bg0d1"]
+atlas = ExtResource("2_4wk5g")
+region = Rect2(408, 748, 10, 12)
+margin = Rect2(10, 10, 22, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rj6c0"]
+atlas = ExtResource("3_12iop")
+region = Rect2(1904, 840, 106, 42)
+margin = Rect2(10, 20, 22, 22)
+
+[resource]
+resource_name = "47 - Parasect"
+script = ExtResource("4_np7d8")
+id = 47
+internal_name = "parasect"
+Name = "Parasect"
+type_a = ExtResource("5_e6663")
+type_b = ExtResource("6_ots3c")
+base_exprience = 142
+height = 10.0
+weight = 295.0
+is_default = true
+abilities = ["27", "87", "6"]
+forms = []
+held_items_id = ["86", "87", "621"]
+held_items_rarity = [50.0, 5.0, 1.0]
+learn_type = ["1", "4", "4", "4", "4", "4", "4", "4", "3", "1", "4", "1", "1", "4", "1", "1", "1", "3", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "1", "1", "4", "1", "4", "1", "4", "4", "4", "4", "4", "4", "1", "4", "4", "4", "4", "4", "4", "4", "4", "4", "3", "4", "4", "4", "4", "4", "4", "3", "4", "1", "4", "4", "4", "3", "3", "1", "4", "4", "1", "4", "4", "3", "4", "4", "1", "3", "4", "4", "4"]
+learn_lvl = [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 48, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 30, 0, 15, 0, 39, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 0, 55, 0, 0, 1, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0]
+learn_move_id = ["10", "14", "15", "29", "34", "36", "38", "63", "68", "71", "72", "73", "74", "76", "77", "78", "79", "81", "91", "92", "99", "102", "103", "104", "113", "115", "117", "130", "141", "147", "148", "154", "156", "163", "164", "168", "173", "174", "182", "188", "202", "203", "206", "207", "210", "213", "214", "216", "218", "230", "235", "237", "241", "249", "263", "267", "280", "282", "290", "312", "331", "332", "363", "388", "402", "404", "412", "416", "440", "445", "447", "450", "468", "474", "476", "495", "496", "522", "590"]
+hp_base = 60
+attack_base = 95
+defense_base = 80
+special_attack_base = 60
+special_defense_base = 80
+speed_base = 30
+total_base = 0
+hp_effort_EVs = 0
+attack_effort_EVs = 2
+defense_effort_EVs = 1
+special_effort_attack_EVs = 0
+special_effort_defense_EVs = 0
+speed_effort_EVs = 0
+gender_rate = 4
+capture_rate = 75
+base_happiness = 70
+is_baby = false
+hatch_counter = 20
+has_gender_differences = false
+forms_switchable = false
+growth_rate_id = 2
+egg_group_a_id = 0
+egg_group_b_id = 0
+evol_method = []
+evol_lvl = []
+evol_pokemon_id = []
+description = "Tras largo tiempo absorbiendo la energía del
+huésped, la seta parásita del lomo es la que
+parece controlar la voluntad de este Pokémon."
+habitat_id = 1
+battlerPlayerY = 0
+battlerEnemyY = 0
+battlerAltitude = 0
+icon_sprite = SubResource("AtlasTexture_rj6c0")
+footprint_sprite = SubResource("AtlasTexture_bg0d1")
+battle_front_sprite = SubResource("AtlasTexture_4f2c6")
+battle_back_sprite = SubResource("AtlasTexture_qg5qp")
+battle_front_shiny_sprite = SubResource("AtlasTexture_61px8")
+battle_back_shiny_sprite = SubResource("AtlasTexture_ueuse")

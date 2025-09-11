@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://8xaclt27g1po"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_u3txy"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_sl5y6"]
+
+[resource]
+resource_name = "335 - Bloqueo"
+script = ExtResource("1_u3txy")
+internal_name = "block"
+Name = "Bloqueo"
+id = 335
+description = "Le corta el paso al objetivo para que no pueda escapar."
+type = ExtResource("2_sl5y6")
+power = 0
+accuracy = 0
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Prevents the target from leaving battle. The target cannot switch out normally.  Ignores accuracy and evasion modifiers.  This effect ends when the user leaves the field.
+
+The target may still escape by using baton pass, u turn, or a shed shell.
+
+Both the user and the target pass on this effect with baton pass."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

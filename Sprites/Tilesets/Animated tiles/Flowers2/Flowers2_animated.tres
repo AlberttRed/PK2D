@@ -1,0 +1,16 @@
+[gd_resource type="AnimatedTexture" load_steps=5 format=3 uid="uid://d20dtfpulg5sc"]
+
+[ext_resource type="Texture2D" uid="uid://cdixmdqodlcmu" path="res://Sprites/Tilesets/Animated tiles/Flowers2/tile000.png" id="1_o8lr4"]
+[ext_resource type="Texture2D" uid="uid://bq6j4pk8t8g4r" path="res://Sprites/Tilesets/Animated tiles/Flowers2/tile001.png" id="2_vx4kt"]
+[ext_resource type="Texture2D" uid="uid://bj0eh8x2528km" path="res://Sprites/Tilesets/Animated tiles/Flowers2/tile002.png" id="3_fswbd"]
+[ext_resource type="Texture2D" uid="uid://toutuyutq533" path="res://Sprites/Tilesets/Animated tiles/Flowers2/tile003.png" id="4_ttr7p"]
+
+[resource]
+frames = 4
+frame_0/texture = ExtResource("1_o8lr4")
+frame_1/texture = ExtResource("2_vx4kt")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("3_fswbd")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("4_ttr7p")
+frame_3/duration = 1.0

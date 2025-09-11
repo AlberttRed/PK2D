@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dmp5cqnucstq"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_o55kh"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_4ynik"]
+
+[resource]
+resource_name = "114 - Niebla"
+script = ExtResource("1_o55kh")
+internal_name = "haze"
+Name = "Niebla"
+id = 114
+description = "Neblina que elimina los cambios de características
+de todos los Pokémon en combate."
+type = ExtResource("2_4ynik")
+power = 0
+accuracy = 0
+pp = 30
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Resets all Pokémon's stats, accuracy, and evasion. Removes stat, accuracy, and evasion modifiers from every Pokémon on the field.
+
+This does not count as a stat reduction for the purposes of clear body or white smoke."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

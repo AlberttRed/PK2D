@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://b6ocpidj2td0g"]
+
+[node name="Label" type="Label"]
+text = "63"
+
+[node name="Outline" type="Label" parent="."]
+layout_mode = 0
+text = "63"

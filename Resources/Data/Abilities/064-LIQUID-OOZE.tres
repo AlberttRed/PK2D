@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cjmbxg3f0axho"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_ajxb5"]
+
+[resource]
+script = ExtResource("1_ajxb5")
+id = 64
+internal_name = "liquid-ooze"
+display_name = "Lodo Líquido"
+description = "Hiere a los Pokémon que drenan PS."

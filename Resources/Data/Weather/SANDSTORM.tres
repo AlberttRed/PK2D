@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://bcspxmrep6uk7"]
+
+[ext_resource type="Script" uid="uid://c3ykal5rqqt2m" path="res://Scripts/Resources/Classes/Weather.gd" id="1_34o1g"]
+
+[resource]
+script = ExtResource("1_34o1g")
+id = 3
+internal_name = "sandstorm"
+display_name = "Tormenta de arena"
+metadata/_custom_type_script = "uid://c3ykal5rqqt2m"

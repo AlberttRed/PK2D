@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://wmp8ekl3jutd"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_bhx3e"]
+
+[resource]
+script = ExtResource("1_bhx3e")
+id = 165
+internal_name = "aroma-veil"
+display_name = "Velo Aroma"
+description = "Protege al equipo de ataques que impiden elegir movimientos."

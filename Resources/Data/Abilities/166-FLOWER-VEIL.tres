@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://bbncdd8mwky03"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_tvrgt"]
+
+[resource]
+script = ExtResource("1_tvrgt")
+id = 166
+internal_name = "flower-veil"
+display_name = "Velo Flor"
+description = "Evita que bajen las características de Pokémon tipo Planta aliados."

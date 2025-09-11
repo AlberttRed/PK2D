@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dngjmjgunt56b"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_o6gti"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_nlxnd"]
+
+[resource]
+resource_name = "240 - Danza Lluvia"
+script = ExtResource("1_o6gti")
+internal_name = "rain-dance"
+Name = "Danza Lluvia"
+id = 240
+description = "Genera una fuerte lluvia que refuerza los movimientos
+de tipo Agua durante cinco turnos y debilita los de tipo
+Fuego."
+type = ExtResource("2_nlxnd")
+power = 0
+accuracy = 0
+pp = 5
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Changes the weather to rain for five turns. Changes the weather to rain for five turns, during which water moves inflict 50% extra damage, and fire moves inflict half damage.
+
+If the user is holding damp rock, this effect lasts for eight turns.
+
+thunder has 100% accuracy.  If the target has used detect or protect, thunder has a (100 - accuracy)% chance to break through the protection.
+
+solar beam has half power.
+
+moonlight, morning sun, and synthesis heal only 1/4 of the user's max HP.
+
+Pokémon with swift swim have doubled original Speed.
+
+Pokémon with forecast become water.
+
+Pokémon with dry skin heal 1/8 max HP, Pokémon with hydration are cured of major status effects, and Pokémon with rain dish heal 1/16 max HP at the end of each turn."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

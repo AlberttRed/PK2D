@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cl2gfvoxir1k6"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_yb0w7"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_jw74e"]
+
+[resource]
+resource_name = "433 - Espacio Raro"
+script = ExtResource("1_yb0w7")
+internal_name = "trick-room"
+Name = "Espacio Raro"
+id = 433
+description = "Crea un espacio extraño en el que los Pokémon lentos
+se mueven primero durante cinco turnos."
+type = ExtResource("2_jw74e")
+power = 0
+accuracy = 0
+pp = 5
+effect_chance = 0
+priority = -7
+damage_class_id = 1
+effect_entries = "For five turns, slower Pokémon will act before faster Pokémon. For five turns (including this one), slower Pokémon will act before faster Pokémon.  Move priority is not affected.  Using this move when its effect is already active will end the effect.
+
+Pokémon holding full incense, lagging tail, or quick claw and Pokémon with stall ignore this effect."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 12
+meta_ailment_id = 0
+meta_category_id = 10
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false

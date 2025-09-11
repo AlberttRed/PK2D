@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=2 format=3 uid="uid://cbuulgqmwb0g"]
+
+[ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/Ability.gd" id="1_r4nyg"]
+
+[resource]
+script = ExtResource("1_r4nyg")
+id = 70
+internal_name = "drought"
+display_name = "Sequía"
+description = "El sol sale si el Pokémon entra en combate."

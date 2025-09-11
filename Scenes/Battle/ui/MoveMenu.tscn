@@ -1,0 +1,174 @@
+[gd_scene load_steps=15 format=3 uid="uid://dauokklht8873"]
+
+[ext_resource type="StyleBox" uid="uid://bgsm216aqcccn" path="res://Resources/UI/Battle/BattleMoves_Panel.tres" id="1_3c2lq"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_ayfvv"]
+[ext_resource type="Script" uid="uid://c8eqr3jrxv8fi" path="res://Scripts/Battle/ui/MovesMenu.gd" id="2_vbs0g"]
+[ext_resource type="FontFile" uid="uid://b0eoymrw2d1t0" path="res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf" id="3_vbs0g"]
+[ext_resource type="Texture2D" uid="uid://iuwf0e47o00v" path="res://Sprites/Pictures/types.png" id="4_tqxhr"]
+[ext_resource type="Texture2D" uid="uid://b1qihbmhnaikw" path="res://Sprites/Pictures/battleFightButtons.png" id="5_47ip6"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3c2lq"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(192, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4064g"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ayfvv"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(192, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_16ta8"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vbs0g"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(192, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jc8kh"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tqxhr"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(192, 0, 384, 874)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_681qx"]
+texture = ExtResource("5_47ip6")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 384, 874)
+
+[node name="MovesMenu" type="Panel"]
+z_index = 6
+z_as_relative = false
+custom_minimum_size = Vector2(512, 96)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("1_3c2lq")
+script = ExtResource("2_vbs0g")
+metadata/_edit_lock_ = true
+
+[node name="lblPPs" parent="." instance=ExtResource("2_ayfvv")]
+layout_mode = 0
+offset_left = 404.0
+offset_top = 54.0
+offset_right = 492.0
+offset_bottom = 86.0
+theme_override_fonts/normal_font = ExtResource("3_vbs0g")
+text = "[center]PP: 40/40"
+align = 1
+
+[node name="MoveType" type="Sprite2D" parent="."]
+position = Vector2(448, 33.6)
+texture = ExtResource("4_tqxhr")
+vframes = 24
+metadata/_edit_lock_ = true
+
+[node name="Moves" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="Move1" type="Button" parent="Moves"]
+offset_left = 4.0
+offset_top = 6.0
+offset_right = 196.0
+offset_bottom = 52.0
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_3c2lq")
+theme_override_styles/normal = SubResource("StyleBoxTexture_4064g")
+action_mode = 0
+button_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Moves/Move1" instance=ExtResource("2_ayfvv")]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 192.0
+offset_bottom = 44.0
+theme_override_fonts/normal_font = ExtResource("3_vbs0g")
+text = "[center]Onda Trueno"
+align = 1
+
+[node name="Move2" type="Button" parent="Moves"]
+offset_left = 192.0
+offset_top = 6.0
+offset_right = 384.0
+offset_bottom = 52.0
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_ayfvv")
+theme_override_styles/normal = SubResource("StyleBoxTexture_16ta8")
+action_mode = 0
+button_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Moves/Move2" instance=ExtResource("2_ayfvv")]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 192.0
+offset_bottom = 44.0
+theme_override_fonts/normal_font = ExtResource("3_vbs0g")
+text = "[center]Placaje"
+align = 1
+
+[node name="Move3" type="Button" parent="Moves"]
+offset_left = 4.0
+offset_top = 48.0
+offset_right = 196.0
+offset_bottom = 94.0
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_vbs0g")
+theme_override_styles/normal = SubResource("StyleBoxTexture_jc8kh")
+action_mode = 0
+button_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Moves/Move3" instance=ExtResource("2_ayfvv")]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 192.0
+offset_bottom = 44.0
+theme_override_fonts/normal_font = ExtResource("3_vbs0g")
+text = "[center]Placaje"
+align = 1
+
+[node name="Move4" type="Button" parent="Moves"]
+offset_left = 192.0
+offset_top = 48.0
+offset_right = 384.0
+offset_bottom = 94.0
+mouse_filter = 2
+theme_override_styles/focus = SubResource("StyleBoxTexture_tqxhr")
+theme_override_styles/normal = SubResource("StyleBoxTexture_681qx")
+action_mode = 0
+button_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Moves/Move4" instance=ExtResource("2_ayfvv")]
+layout_mode = 0
+offset_top = 10.0
+offset_right = 192.0
+offset_bottom = 44.0
+theme_override_fonts/normal_font = ExtResource("3_vbs0g")
+text = "[center]Placaje"
+align = 1

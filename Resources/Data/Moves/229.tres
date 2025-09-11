@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dgegl6jmtytxi"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ier8f"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_gltmp"]
+
+[resource]
+resource_name = "229 - Giro Rápido"
+script = ExtResource("1_ier8f")
+internal_name = "rapid-spin"
+Name = "Giro Rápido"
+id = 229
+description = "Ataque giratorio que puede eliminar movimientos como
+Atadura, Constricción y Drenadoras. También aumenta
+la Velocidad del usuario."
+type = ExtResource("2_gltmp")
+power = 50
+accuracy = 100
+pp = 40
+effect_chance = 100
+priority = 0
+damage_class_id = 2
+effect_entries = "Frees the user from binding moves, removes Leech Seed, and blows away Spikes. Inflicts regular damage.  Removes leech seed from the user, frees the user from bind, clamp, fire spin, magma storm, sand tomb, whirlpool, and wrap, and clears spikes, stealth rock, and toxic spikes from the user's side of the field.  If this move misses or has no effect, its effect doesn't activate."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({
+4: 1
+})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 7
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 100
+contact_flag = false

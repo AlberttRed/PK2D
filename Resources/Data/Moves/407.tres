@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://boxse0fb47tsb"]
+
+[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_8j5aj"]
+[ext_resource type="Resource" uid="uid://81m8cd1k8t8y" path="res://Resources/Data/Types/16.tres" id="2_aum7u"]
+
+[resource]
+resource_name = "407 - Carga Dragón"
+script = ExtResource("1_8j5aj")
+internal_name = "dragon-rush"
+Name = "Carga Dragón"
+id = 407
+description = "Ataca de forma brutal mientras intimida al objetivo.
+También puede amedrentarlo."
+type = ExtResource("2_aum7u")
+power = 100
+accuracy = 75
+pp = 10
+effect_chance = 20
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
+stat_change_ids = Array[int]([])
+stat_change_valors = Array[int]([])
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 0
+meta_category_id = 0
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 20
+meta_stat_chance = 0
+contact_flag = false
