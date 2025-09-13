@@ -4,7 +4,7 @@ class_name GridMotion
 signal step_started()
 signal step_finished(tile: Vector2i)
 
-@export var step_duration := 0.25
+@export var step_duration := 0.266
 @export var initial_delay := 0.12  # tiempo que hay que mantener pulsado antes de moverse
 var hold_time:float
 
