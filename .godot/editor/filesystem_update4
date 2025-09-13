@@ -3,3 +3,4 @@ res://Scenes/Overworld/Actors/Player.tscn
 res://Scripts/Overworld/Core/GridMotion.gd
 res://Scripts/Overworld/Core/OverworldGrid.gd
 res://Resources/Tilesets/Outside_tileset.tres
+res://Scripts/Overworld/Core/OverworldCamera.gd
