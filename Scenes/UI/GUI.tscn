@@ -11,3 +11,4 @@ script = ExtResource("1")
 visible = false
 
 [node name="BattleNew" parent="." instance=ExtResource("13_n4y00")]
+visible = false
