@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1757776085
+::res://::1757778666
 icon.png::CompressedTexture2D/CompressedTexture2D::8734468848615226941::1647631318::1757598010::1::::<><><>0<>0<>7265f57c21d263217eba25bb8044a6b8<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::7582650708205022961::1757597923::1757597929::1::::<><><>0<>0<>427023a793c0c5d3983876c9979aea09<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 pkmn_icon.png::CompressedTexture2D/CompressedTexture2D::770484439797451974::1665084938::1757598010::1::::<><><>0<>0<>96f2eb9ce8a9222b66808ef76338ab8b<>res://.godot/imported/pkmn_icon.png-382f61162442f5ed447423fcd8d448c6.ctex::
@@ -1094,7 +1094,7 @@ fontMessageBox.tres::Theme/Theme::3802891724560146705::1757593481::0::1::::<><><
 TESTfontMessageBox.tres::Theme/Theme::1766102542596929198::1732363602::0::1::::<><><>0<>0<><>::uid://bg2qmq8nwewnl::::res://Escenas/UI/Fonts/pkmnem.ttf
 ::res://Resources/UI/MessageBox/::1757609093
 HGSS_MessageBox_Style.tres::StyleBoxTexture/StyleBoxTexture::1823059807697027127::1757609093::0::1::::<><><>0<>0<><>::uid://bvg72vqi6p66n::::res://Sprites/UI/MessageBox/speech hgss 1.png
-::res://Scenes/::1757663026
+::res://Scenes/::1757778301
 ::res://Scenes/Battle/::1757625536
 TestBattle.tscn::PackedScene/PackedScene::5580832310671247672::1757625536::0::1::::<><><>0<>0<><>::uid://dfsjekxx61vm7::::res://Scripts/Battle/TestBattle.gd<>res://Scenes/Battle/Trainer.tscn<>uid://bcvomvu36qckp::::res://Scripts/Resources/Instances/pokemon_instance.gd<>uid://dkoedcae4y1wp::::res://Sprites/Pictures/trainer000.png<>uid://dx7t7y2tum7mu::::res://Sprites/Pictures/trback000.png
 Trainer.tscn::PackedScene/PackedScene::-1::1757599008::0::1::::<><><>0<>0<><>::
@@ -1112,20 +1112,20 @@ BattleUI.tscn::PackedScene/PackedScene::230160408004060313::1757610088::0::1::::
 FieldUI.tscn::PackedScene/PackedScene::1422163587232626651::1757609312::0::1::::<><><>0<>0<><>::uid://rdhfue55dpvn::::res://Scripts/Battle/ui/FieldUI.gd<>uid://cku13gor2s5k7::::res://Sprites/Batalla/Battlebacks/battlebgFieldNight.png<>uid://bwca4j4ndf05j::::res://Sprites/Batalla/Battlebacks/playerbaseFieldNight.png<>uid://b4fvdupruunae::::res://Sprites/Batalla/025b.png<>uid://bctyl7571gj7l::::res://Scenes/Battle/ui/BattleSpotUI.tscn<>uid://bx227x378u0s2::::res://Sprites/Batalla/017b.png<>uid://r6j37358g42n::::res://Sprites/Pictures/battlePlayerBoxD.png<>uid://bqk122wixof4i::::res://Sprites/Batalla/Battlebacks/enemybaseFieldNight.png<>uid://ghyefcbolgsf::::res://Sprites/Batalla/007.png<>uid://dltm5uv6db8c::::res://Sprites/Batalla/025.png<>uid://k8t0p58pgch::::res://Sprites/Pictures/battleFoeBoxD.png<>uid://dx7t7y2tum7mu::::res://Sprites/Pictures/trback000.png<>uid://6cpfkdqyugvc::::res://Sprites/Pictures/trback001.png<>uid://mxxcfb0uuiit::::res://Sprites/Pictures/battleFoeBoxS.png<>uid://cubck6nvldnr0::::res://Sprites/Pictures/trainer005.png<>uid://bswf5x8a3euym::::res://Sprites/Pictures/trainer006.png
 HPBar.tscn::PackedScene/PackedScene::8088865989694882585::1757609472::0::1::::<><><>0<>0<><>::uid://b8ovhsr861ugj::::res://Sprites/Pictures/battlePlayerBoxS.png<>uid://bpc8w47kho03v::::res://Scripts/Battle/ui/HPBar.gd<>uid://c4ex854x6yq5d::::res://Scenes/UI/Fonts/LabelHGSS.tscn<>uid://6s4ko21ivsiy::::res://Sprites/Pictures/Nv_icon_black.png<>uid://cefelqhb6o2me::::res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf<>uid://b0ajmrb8a7e0r::::res://Scenes/Battle/ui/AnimatedProgressBar.tscn<>uid://ds2nqorvg7ok::::res://Sprites/Pictures/EXPbar_background.png<>uid://dbnnetnk6i26s::::res://Sprites/Pictures/EXPbar_overlay.png<>uid://0ldm4ismhwn8::::res://Sprites/Pictures/EXPbar_progress.png
 MoveMenu.tscn::PackedScene/PackedScene::7201418044569402808::1757625126::0::1::::<><><>0<>0<><>::uid://bgsm216aqcccn::::res://Resources/UI/Battle/BattleMoves_Panel.tres<>uid://c4ex854x6yq5d::::res://Scenes/UI/Fonts/LabelHGSS.tscn<>uid://c8eqr3jrxv8fi::::res://Scripts/Battle/ui/MovesMenu.gd<>uid://b0eoymrw2d1t0::::res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf<>uid://iuwf0e47o00v::::res://Sprites/Pictures/types.png<>uid://b1qihbmhnaikw::::res://Sprites/Pictures/battleFightButtons.png
-::res://Scenes/Overworld/::1757663455
-::res://Scenes/Overworld/Actors/::1757776017
-Player.tscn::PackedScene::1925483667269774752::1757776017::0::1::::<><><>0<>0<><>::uid://duw6kf82blnay::::res://Scripts/Overworld/Actors/Player.gd<>uid://dale7m71abypb::::res://Scripts/Overworld/Core/GridMotion.gd<>uid://cpbuansglnris::::res://Scripts/Overworld/Core/Occupancy.gd<>uid://b8v3bj2nw2qd::::res://Sprites/Overworlds/Characters/trchar000.png
-::res://Scenes/Overworld/Maps/::1757776017
-MapScene.tscn::PackedScene::4825025180962268866::1757776017::0::1::::<><><>0<>0<><>::uid://dpvawxyt7k0n7::::res://Scripts/Overworld/Core/OverworldGrid.gd<>uid://2oyo1q14ygm7::::res://Scenes/Overworld/Actors/Player.tscn<>uid://b6nt5hnwwqm68::::res://Sprites/Tilesets/Outside.png
-::res://Scenes/UI/::1757689680
-GUI.tscn::PackedScene/PackedScene::6987458014531460350::1757689680::0::1::::<><><>0<>0<><>::uid://b4kjg3acee1ud::::res://Scripts/UI/GUI.gd<>uid://brvsn2vfev6ng::::res://Scenes/UI/MessageBox/MessageBox.tscn<>uid://notumsye5rrv::::res://Scenes/Battle/core/Battle.tscn
+::res://Scenes/Overworld/::1757778301
+::res://Scenes/Overworld/Actors/::1757778629
+Player.tscn::PackedScene::1925483667269774752::1757778629::0::1::::<><><>0<>0<><>::uid://duw6kf82blnay::::res://Scripts/Overworld/Actors/Player.gd<>uid://dale7m71abypb::::res://Scripts/Overworld/Core/GridMotion.gd<>uid://cpbuansglnris::::res://Scripts/Overworld/Core/Occupancy.gd<>uid://b8v3bj2nw2qd::::res://Sprites/Overworlds/Characters/trchar000.png
+::res://Scenes/Overworld/Maps/::1757778629
+MapScene.tscn::PackedScene::4825025180962268866::1757778629::0::1::::<><><>0<>0<><>::uid://dpvawxyt7k0n7::::res://Scripts/Overworld/Core/OverworldGrid.gd<>uid://2oyo1q14ygm7::::res://Scenes/Overworld/Actors/Player.tscn<>uid://b6nt5hnwwqm68::::res://Sprites/Tilesets/Outside.png
+::res://Scenes/UI/::1757778301
+GUI.tscn::PackedScene::6987458014531460350::1757778301::0::1::::<><><>0<>0<><>::uid://b4kjg3acee1ud::::res://Scripts/UI/GUI.gd<>uid://brvsn2vfev6ng::::res://Scenes/UI/MessageBox/MessageBox.tscn<>uid://notumsye5rrv::::res://Scenes/Battle/core/Battle.tscn
 ::res://Scenes/UI/Fonts/::1757609382
 font_summary_LetraBlanca.tscn::PackedScene/PackedScene::7569506803802356308::1757519877::0::1::::<><><>0<>0<><>::uid://bg2qmq8nwewnl::::res://Escenas/UI/Fonts/pkmnem.ttf
 font_summary_LetraNegra.tscn::PackedScene/PackedScene::4591324771190013580::1741201390::0::1::::<><><>0<>0<><>::
 LabelHGSS.tscn::PackedScene/PackedScene::6818032387525106959::1757609382::0::1::::<><><>0<>0<><>::uid://dqn60qyxkiqon::::res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf<>uid://qmvd2w47fx4e::::res://Scripts/UI/Fonts/LabelHGSS.gd
 ::res://Scenes/UI/MessageBox/::1757609093
 MessageBox.tscn::PackedScene/PackedScene::3624100530370197636::1757609093::0::1::::<><><>0<>0<><>::uid://08dr8fiwcu28::::res://Resources/UI/MessageBox/HGSS_MessageBox_Style.tres<>uid://km5j0mltfp5v::::res://Scripts/UI/MessageBox/MessageBox.gd<>uid://dqn60qyxkiqon::::res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf<>uid://qmvd2w47fx4e::::res://Scripts/UI/Fonts/LabelHGSS.gd<>uid://bdcjsr16vsq3e::::res://Sprites/UI/MessageBox/next.png<>uid://beugpt1ql5na2::::res://Resources/Animations/UI/MessageBox/next_animation.tres
-::res://Scripts/::1757663009
+::res://Scripts/::1757778301
 Battler.gd::GDScript/GDScript::6159025862488426397::1757593187::0::1::::Battler<>Node<><>0<>0<><>::
 ::res://Scripts/AutoLoads/::1757613527
 CONST.gd::GDScript/GDScript::2647047540761767455::1757519878::0::1::::<>Node<><>0<>0<><>::
@@ -1235,13 +1235,13 @@ BattleUIRef.gd::GDScript/GDScript::5034947374343857303::1757519877::0::1::::Batt
 FieldUI.gd::GDScript/GDScript::1199838481077128907::1757591613::0::1::::FieldUI<>Control<><>0<>0<><>::
 HPBar.gd::GDScript/GDScript::3445426615074091601::1757598445::0::1::::HPBar<>Node2D<><>0<>0<><>::
 MovesMenu.gd::GDScript/GDScript::7098334034199201966::1757591613::0::1::::<>Panel<><>0<>0<><>::
-::res://Scripts/Overworld/::1757663354
-::res://Scripts/Overworld/Actors/::1757775916
-Player.gd::GDScript::8610355633967911892::1757775916::0::1::::<>Node2D<><>0<>0<><>::
-::res://Scripts/Overworld/Core/::1757776017
-GridMotion.gd::GDScript::7182270900645314855::1757776017::0::1::::GridMotion<>Node<><>0<>0<><>::
-Occupancy.gd::GDScript/GDScript::5828953450463951422::1757663343::0::1::::Occupancy<>Node<><>0<>0<><>::
-OverworldGrid.gd::GDScript/GDScript::8255487171969769454::1757690084::0::1::::OverworldGrid<>Node<><>0<>0<><>::
+::res://Scripts/Overworld/::1757778301
+::res://Scripts/Overworld/Actors/::1757778627
+Player.gd::GDScript::8610355633967911892::1757778627::0::1::::<>Node2D<><>0<>0<><>::
+::res://Scripts/Overworld/Core/::1757778627
+GridMotion.gd::GDScript::7182270900645314855::1757778627::0::1::::GridMotion<>Node<><>0<>0<><>::
+Occupancy.gd::GDScript::5828953450463951422::1757778627::0::1::::Occupancy<>Node<><>0<>0<><>::
+OverworldGrid.gd::GDScript::8255487171969769454::1757778627::0::1::::OverworldGrid<>Node<><>0<>0<><>::
 ::res://Scripts/Resources/::1757598652
 ::res://Scripts/Resources/Classes/::1757623485
 Ability.gd::GDScript/GDScript::1082021550654032824::1757519877::0::1::::Ability<>Resource<><>0<>0<><>::
@@ -1255,8 +1255,8 @@ Weather.gd::GDScript/GDScript::4534745406738334305::1757519877::0::1::::Weather<
 ::res://Scripts/Resources/Instances/::1757623540
 move_instance.gd::GDScript/GDScript::8335424333177618531::1757622919::0::1::::MoveInstance<>Node<><>0<>0<><>::
 pokemon_instance.gd::GDScript/GDScript::2571022906430701531::1757623540::0::1::::PokemonInstance<>Node<><>0<>1<><>::
-::res://Scripts/UI/::1757689505
-GUI.gd::GDScript/GDScript::4443099565185173683::1757689505::0::1::::<>CanvasLayer<><>0<>0<><>::
+::res://Scripts/UI/::1757778627
+GUI.gd::GDScript::4443099565185173683::1757778627::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://Scripts/UI/Fonts/::1757608731
 LabelHGSS.gd::GDScript/GDScript::1149075898963811074::1748547776::0::1::::LabelHGSS<>RichTextLabel<><>0<>0<><>::
 ::res://Scripts/UI/MessageBox/::1757608951
@@ -2583,11 +2583,11 @@ PokemonIconsAtlas.png::CompressedTexture2D/CompressedTexture2D::5217831091728503
 Player_Shadow.png::CompressedTexture2D/CompressedTexture2D::7384287015268469998::1648496088::1757598102::1::::<><><>0<>0<>52137b0652014e85969f4bd9ce5cacc7<>res://.godot/imported/Player_Shadow.png-3705e274358168b9a039674ee96c06ba.ctex::
 Stepped_Tall_Grass.png::CompressedTexture2D/CompressedTexture2D::6573519845144841833::1648509062::1757598102::1::::<><><>0<>0<>149adc2a7ea8d1c3c39bda5bffe74bb1<>res://.godot/imported/Stepped_Tall_Grass.png-e3bee8cd395c9e400bf4f6722c5e7458.ctex::
 ::res://Sprites/Overworlds/::1757598088
-::res://Sprites/Overworlds/Characters/::1757677541
+::res://Sprites/Overworlds/Characters/::1757778301
 boy_run.png::CompressedTexture2D/CompressedTexture2D::2938786421436307840::1413836324::1757598102::1::::<><><>0<>0<>774743ff0a27a59ac42f4168b48308a8<>res://.godot/imported/boy_run.png-1223ea9fce4f34bbd0a9617f8ab4fa4b.ctex::
 boy_surf_offset.png::CompressedTexture2D/CompressedTexture2D::269829807116525038::1413836324::1757598102::1::::<><><>0<>0<>23fba9c90edc7754a103cbbbce4acdb6<>res://.godot/imported/boy_surf_offset.png-b6a6a284cfc75779b7f9b971bb5d95d5.ctex::
 NPC 06.png::CompressedTexture2D/CompressedTexture2D::6471326120159618368::1556364850::1757598102::1::::<><><>0<>0<>cd7174e4c411ad160e3425733da67c38<>res://.godot/imported/NPC 06.png-207e8477efa523f336b544bc1f6041dd.ctex::
-trchar000.png::CompressedTexture2D/CompressedTexture2D::139638436271052975::1556364850::1757677541::1::::<><><>0<>0<>ae52fea1b7202a49103a255bdf059962<>res://.godot/imported/trchar000.png-bbe138647b429d7dbb36ab8fe4298850.ctex::
+trchar000.png::CompressedTexture2D/CompressedTexture2D::139638436271052975::1556364850::1757778301::1::::<><><>0<>0<>ae52fea1b7202a49103a255bdf059962<>res://.godot/imported/trchar000.png-bbe138647b429d7dbb36ab8fe4298850.ctex::
 trchar001.png::CompressedTexture2D/CompressedTexture2D::2734580100587304860::1556364850::1757598102::1::::<><><>0<>0<>6f89bd17e671df623f3008a4fd1cc561<>res://.godot/imported/trchar001.png-f93783297780a93293d090652c2593de.ctex::
 trchar042.png::CompressedTexture2D/CompressedTexture2D::4208572611899215856::1556364850::1757598102::1::::<><><>0<>0<>464cfb3be7284e551f25cb9d1e510b82<>res://.godot/imported/trchar042.png-ac648df27b7631f8f4fdda8d741f26f8.ctex::
 ::res://Sprites/Pictures/::1757609912

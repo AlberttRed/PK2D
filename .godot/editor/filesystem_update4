@@ -1,4 +1,5 @@
 res://Scenes/Overworld/Maps/MapScene.tscn
-res://Scripts/Overworld/Core/GridMotion.gd
 res://Scenes/Overworld/Actors/Player.tscn
-res://Scripts/Overworld/Actors/Player.gd
+res://Scripts/Overworld/Core/GridMotion.gd
+res://Scripts/Overworld/Core/OverworldGrid.gd
+res://Resources/Tilesets/Outside_tileset.tres
