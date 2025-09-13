@@ -1,9 +1,10 @@
-[gd_scene load_steps=30 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=31 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_sxj1f"]
 [ext_resource type="Texture2D" uid="uid://b8v3bj2nw2qd" path="res://Sprites/Overworlds/Characters/trchar000.png" id="4_sxj1f"]
+[ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sxj1f"]
 atlas = ExtResource("4_sxj1f")
@@ -242,3 +243,6 @@ script = ExtResource("3_sxj1f")
 sprite_frames = SubResource("SpriteFrames_slkcw")
 animation = &"step_left_start"
 offset = Vector2(0, -8)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("5_0hlcb")
