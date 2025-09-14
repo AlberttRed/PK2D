@@ -25,6 +25,10 @@ GUI="*res://Scenes/UI/GUI.tscn"
 window/size/viewport_width=512
 window/size/viewport_height=384
 
+[global_group]
+
+OverworldGrid="Group of active OverworldGrids"
+
 [input]
 
 ui_accept={
