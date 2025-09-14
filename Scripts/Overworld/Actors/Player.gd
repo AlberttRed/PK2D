@@ -9,10 +9,10 @@ var holding := false
 func _ready() -> void:
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
+	sprite.animation = "walk_down"
 
 func _process(_delta: float):
-	# lee input continuamente
-	 #print(motion.hold_time)
+
 	input_dir = Vector2.ZERO
 	if Input.is_action_pressed("move_up"):
 		input_dir = Vector2.UP
@@ -33,18 +33,29 @@ func _process(_delta: float):
 		motion.try_step(input_dir)
 
 func _on_step_started() -> void:
+	var anim_prefix = "walk"
+	if motion.speed_multiplier > 1.0:
+		anim_prefix = "run"
 	match motion.dir:
-		Vector2.UP:    sprite.play("walk_up")
-		Vector2.DOWN:  sprite.play("walk_down")
-		Vector2.LEFT:  sprite.play("walk_left")
-		Vector2.RIGHT: sprite.play("walk_right")
+		Vector2.UP:    sprite.play(anim_prefix + "_up")
+		Vector2.DOWN:  sprite.play(anim_prefix + "_down")
+		Vector2.LEFT:  sprite.play(anim_prefix + "_left")
+		Vector2.RIGHT: sprite.play(anim_prefix + "_right")
 
-	sprite.speed_scale = 1.0   # usa el FPS que pusiste en el editor
+	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
 
 func _on_step_finished(tile: Vector2i) -> void:
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
 	and not Input.is_action_pressed("move_right"):
-		sprite.stop()
-		sprite.frame = 0  # idle
+		stop()
+		
+func stop():
+	match motion.dir:
+		Vector2.UP: sprite.animation = "walk_up"
+		Vector2.DOWN: sprite.animation = "walk_down"
+		Vector2.LEFT: sprite.animation = "walk_left"
+		Vector2.RIGHT: sprite.animation = "walk_right"
+	sprite.stop()
+	sprite.frame = 0  # idle

@@ -1,11 +1,11 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1757778666
+::res://::1757844030
 icon.png::CompressedTexture2D/CompressedTexture2D::8734468848615226941::1647631318::1757598010::1::::<><><>0<>0<>7265f57c21d263217eba25bb8044a6b8<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::7582650708205022961::1757597923::1757597929::1::::<><><>0<>0<>427023a793c0c5d3983876c9979aea09<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 pkmn_icon.png::CompressedTexture2D/CompressedTexture2D::770484439797451974::1665084938::1757598010::1::::<><><>0<>0<>96f2eb9ce8a9222b66808ef76338ab8b<>res://.godot/imported/pkmn_icon.png-382f61162442f5ed447423fcd8d448c6.ctex::
 README.md::TextFile/TextFile::-1::1757626560::0::1::::<><><>0<>0<><>::
 ::res://Constants/::1757597967
-::res://Resources/::1757616259
+::res://Resources/::1757783930
 ::res://Resources/Animations/::1757607834
 ::res://Resources/Animations/Battle/::1757607831
 ::res://Resources/Animations/Moves/::1757607824
@@ -1067,6 +1067,8 @@ SANDSTORM.tres::Resource/Weather::2564909655438456812::1757622032::0::1::::<><><
 SNOW.tres::Resource/Weather::3657143491113320218::1757622032::0::1::::<><><>0<>0<><>::uid://c3ykal5rqqt2m::::res://Scripts/Resources/Classes/Weather.gd
 SUN.tres::Resource/Weather::1017400696419885030::1757622032::0::1::::<><><>0<>0<><>::uid://c3ykal5rqqt2m::::res://Scripts/Resources/Classes/Weather.gd
 WIND.tres::Resource/Weather::5214065647158243552::1757622032::0::1::::<><><>0<>0<><>::uid://c3ykal5rqqt2m::::res://Scripts/Resources/Classes/Weather.gd
+::res://Resources/Tilesets/::1757787051
+Outside_tileset.tres::TileSet/TileSet::3430062349045084893::1757787051::0::1::::<><><>0<>0<><>::uid://b6nt5hnwwqm68::::res://Sprites/Tilesets/Outside.png
 ::res://Resources/UI/::1757609703
 ::res://Resources/UI/Battle/::1757610088
 BattleActions_Panel.tres::StyleBoxTexture/StyleBoxTexture::5873154863806688070::1757610088::0::1::::<><><>0<>0<><>::uid://bljv3186fwgcj::::res://Sprites/Pictures/battleCommand.png
@@ -1113,12 +1115,12 @@ FieldUI.tscn::PackedScene/PackedScene::1422163587232626651::1757609312::0::1::::
 HPBar.tscn::PackedScene/PackedScene::8088865989694882585::1757609472::0::1::::<><><>0<>0<><>::uid://b8ovhsr861ugj::::res://Sprites/Pictures/battlePlayerBoxS.png<>uid://bpc8w47kho03v::::res://Scripts/Battle/ui/HPBar.gd<>uid://c4ex854x6yq5d::::res://Scenes/UI/Fonts/LabelHGSS.tscn<>uid://6s4ko21ivsiy::::res://Sprites/Pictures/Nv_icon_black.png<>uid://cefelqhb6o2me::::res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf<>uid://b0ajmrb8a7e0r::::res://Scenes/Battle/ui/AnimatedProgressBar.tscn<>uid://ds2nqorvg7ok::::res://Sprites/Pictures/EXPbar_background.png<>uid://dbnnetnk6i26s::::res://Sprites/Pictures/EXPbar_overlay.png<>uid://0ldm4ismhwn8::::res://Sprites/Pictures/EXPbar_progress.png
 MoveMenu.tscn::PackedScene/PackedScene::7201418044569402808::1757625126::0::1::::<><><>0<>0<><>::uid://bgsm216aqcccn::::res://Resources/UI/Battle/BattleMoves_Panel.tres<>uid://c4ex854x6yq5d::::res://Scenes/UI/Fonts/LabelHGSS.tscn<>uid://c8eqr3jrxv8fi::::res://Scripts/Battle/ui/MovesMenu.gd<>uid://b0eoymrw2d1t0::::res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf<>uid://iuwf0e47o00v::::res://Sprites/Pictures/types.png<>uid://b1qihbmhnaikw::::res://Sprites/Pictures/battleFightButtons.png
 ::res://Scenes/Overworld/::1757778301
-::res://Scenes/Overworld/Actors/::1757778629
-Player.tscn::PackedScene::1925483667269774752::1757778629::0::1::::<><><>0<>0<><>::uid://duw6kf82blnay::::res://Scripts/Overworld/Actors/Player.gd<>uid://dale7m71abypb::::res://Scripts/Overworld/Core/GridMotion.gd<>uid://cpbuansglnris::::res://Scripts/Overworld/Core/Occupancy.gd<>uid://b8v3bj2nw2qd::::res://Sprites/Overworlds/Characters/trchar000.png
-::res://Scenes/Overworld/Maps/::1757778629
-MapScene.tscn::PackedScene::4825025180962268866::1757778629::0::1::::<><><>0<>0<><>::uid://dpvawxyt7k0n7::::res://Scripts/Overworld/Core/OverworldGrid.gd<>uid://2oyo1q14ygm7::::res://Scenes/Overworld/Actors/Player.tscn<>uid://b6nt5hnwwqm68::::res://Sprites/Tilesets/Outside.png
+::res://Scenes/Overworld/Actors/::1757787219
+Player.tscn::PackedScene/PackedScene::1925483667269774752::1757787219::0::1::::<><><>0<>0<><>::uid://duw6kf82blnay::::res://Scripts/Overworld/Actors/Player.gd<>uid://dale7m71abypb::::res://Scripts/Overworld/Core/GridMotion.gd<>uid://cpbuansglnris::::res://Scripts/Overworld/Core/Occupancy.gd<>uid://b8v3bj2nw2qd::::res://Sprites/Overworlds/Characters/trchar000.png<>uid://clglgb2nchng0::::res://Scripts/Overworld/Core/OverworldCamera.gd
+::res://Scenes/Overworld/Maps/::1757787219
+MapScene.tscn::PackedScene/PackedScene::4825025180962268866::1757787219::0::1::::<><><>0<>0<><>::uid://dpvawxyt7k0n7::::res://Scripts/Overworld/Core/OverworldGrid.gd<>uid://2oyo1q14ygm7::::res://Scenes/Overworld/Actors/Player.tscn<>uid://bo4svjmq1mi66::::res://Resources/Tilesets/Outside_tileset.tres
 ::res://Scenes/UI/::1757778301
-GUI.tscn::PackedScene::6987458014531460350::1757778301::0::1::::<><><>0<>0<><>::uid://b4kjg3acee1ud::::res://Scripts/UI/GUI.gd<>uid://brvsn2vfev6ng::::res://Scenes/UI/MessageBox/MessageBox.tscn<>uid://notumsye5rrv::::res://Scenes/Battle/core/Battle.tscn
+GUI.tscn::PackedScene/PackedScene::6987458014531460350::1757778301::0::1::::<><><>0<>0<><>::uid://b4kjg3acee1ud::::res://Scripts/UI/GUI.gd<>uid://brvsn2vfev6ng::::res://Scenes/UI/MessageBox/MessageBox.tscn<>uid://notumsye5rrv::::res://Scenes/Battle/core/Battle.tscn
 ::res://Scenes/UI/Fonts/::1757609382
 font_summary_LetraBlanca.tscn::PackedScene/PackedScene::7569506803802356308::1757519877::0::1::::<><><>0<>0<><>::uid://bg2qmq8nwewnl::::res://Escenas/UI/Fonts/pkmnem.ttf
 font_summary_LetraNegra.tscn::PackedScene/PackedScene::4591324771190013580::1741201390::0::1::::<><><>0<>0<><>::
@@ -1237,11 +1239,12 @@ HPBar.gd::GDScript/GDScript::3445426615074091601::1757598445::0::1::::HPBar<>Nod
 MovesMenu.gd::GDScript/GDScript::7098334034199201966::1757591613::0::1::::<>Panel<><>0<>0<><>::
 ::res://Scripts/Overworld/::1757778301
 ::res://Scripts/Overworld/Actors/::1757778627
-Player.gd::GDScript::8610355633967911892::1757778627::0::1::::<>Node2D<><>0<>0<><>::
-::res://Scripts/Overworld/Core/::1757778627
-GridMotion.gd::GDScript::7182270900645314855::1757778627::0::1::::GridMotion<>Node<><>0<>0<><>::
-Occupancy.gd::GDScript::5828953450463951422::1757778627::0::1::::Occupancy<>Node<><>0<>0<><>::
-OverworldGrid.gd::GDScript::8255487171969769454::1757778627::0::1::::OverworldGrid<>Node<><>0<>0<><>::
+Player.gd::GDScript/GDScript::8610355633967911892::1757778627::0::1::::<>Node2D<><>0<>0<><>::
+::res://Scripts/Overworld/Core/::1757787178
+GridMotion.gd::GDScript/GDScript::7182270900645314855::1757783930::0::1::::GridMotion<>Node<><>0<>0<><>::
+Occupancy.gd::GDScript/GDScript::5828953450463951422::1757778627::0::1::::Occupancy<>Node<><>0<>0<><>::
+OverworldCamera.gd::GDScript/GDScript::5557983610439470417::1757787178::0::1::::OverworldCamera<>Camera2D<><>0<>0<><>::
+OverworldGrid.gd::GDScript/GDScript::8255487171969769454::1757783930::0::1::::OverworldGrid<>Node<><>0<>0<><>::
 ::res://Scripts/Resources/::1757598652
 ::res://Scripts/Resources/Classes/::1757623485
 Ability.gd::GDScript/GDScript::1082021550654032824::1757519877::0::1::::Ability<>Resource<><>0<>0<><>::
@@ -1256,7 +1259,7 @@ Weather.gd::GDScript/GDScript::4534745406738334305::1757519877::0::1::::Weather<
 move_instance.gd::GDScript/GDScript::8335424333177618531::1757622919::0::1::::MoveInstance<>Node<><>0<>0<><>::
 pokemon_instance.gd::GDScript/GDScript::2571022906430701531::1757623540::0::1::::PokemonInstance<>Node<><>0<>1<><>::
 ::res://Scripts/UI/::1757778627
-GUI.gd::GDScript::4443099565185173683::1757778627::0::1::::<>CanvasLayer<><>0<>0<><>::
+GUI.gd::GDScript/GDScript::4443099565185173683::1757778627::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://Scripts/UI/Fonts/::1757608731
 LabelHGSS.gd::GDScript/GDScript::1149075898963811074::1748547776::0::1::::LabelHGSS<>RichTextLabel<><>0<>0<><>::
 ::res://Scripts/UI/MessageBox/::1757608951
