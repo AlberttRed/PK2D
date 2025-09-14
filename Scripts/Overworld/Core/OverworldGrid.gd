@@ -12,7 +12,8 @@ var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 
 func _ready() -> void:
 	# Añade este nodo al grupo para localizarlo fácil
-	add_to_group("OverworldGrid")
+	if !is_in_group("OverworldGrid"):
+		push_error("El grid del mapa %s no está asignado al grupo OverworldGrid" % [name])
 	for path in layer_paths:
 		var node = get_node(path)
 		if node is TileMapLayer:
