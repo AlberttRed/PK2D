@@ -49,9 +49,9 @@ func try_step(d: Vector2) -> bool:
 	var from := current_tile()
 	var to := from + Vector2i(d)
 	var can_step := grid.can_step_to(actor, from, to)
-	var requires_initial_step := requires_initial_step(d)
+	var initial_step := requires_initial_step(d)
 
-	speed_multiplier = get_speed_multiplier(d, can_step, requires_initial_step)
+	speed_multiplier = get_speed_multiplier(d, can_step, initial_step)
 	
 	step_started.emit()
 
@@ -78,6 +78,18 @@ func try_step(d: Vector2) -> bool:
 
 	await grid.on_enter_tile(actor, to)
 	return true
+	
+func event_at_offset(offset: int = 1) -> Event:
+	# offset = 1 → el tile de delante
+	# offset = 2 → dos tiles más adelante
+	# offset = -1 → el tile de detrás
+	print(current_tile())
+	var target_tile = current_tile() + Vector2i(dir) * offset
+	print(target_tile)
+	return grid.event_at(target_tile)
+
+func event_in_front() -> Event:
+	return event_at_offset(1)
 
 ##Checks if actor need to do the first step animation before moving
 func requires_initial_step(dir:Vector2) -> bool:
