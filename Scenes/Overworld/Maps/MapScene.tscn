@@ -54,7 +54,7 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="Event" parent="OverworldGrid/Events" instance=ExtResource("3_7n1ec")]
-position = Vector2(336, 176)
+position = Vector2(240, 144)
 pages = Array[ExtResource("4_honu0")]([SubResource("Resource_5slja")])
 blocks_movement = false
 sprite_frames = SubResource("SpriteFrames_honu0")
