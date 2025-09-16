@@ -3,14 +3,20 @@ class_name OverworldGrid
 
 ## Asigna aquí la capa que usarás para consultas (colisión/terreno)
 @export var layer_paths: Array[NodePath] = []
-@onready var layers: Array[TileMapLayer] = []
+var layers: Array[TileMapLayer] = []
 
-# Ocupación y reservas
+# Ocupación física (solo actores que bloquean paso: Player, NPC, etc.)
 var occ: Dictionary = {}   # {Vector2i: weakref(actor)}
+
+# Eventos (bloqueantes o no)
+var events: Dictionary = {}   # {Vector2i: weakref(Event)}
+
+# Reservas de movimiento
 var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 
 
-func _ready() -> void:
+
+func _enter_tree() -> void:
 	# Añade este nodo al grupo para localizarlo fácil
 	if !is_in_group("OverworldGrid"):
 		push_error("El grid del mapa %s no está asignado al grupo OverworldGrid" % [name])
@@ -54,6 +60,18 @@ func terrain_at(t: Vector2i) -> String:
 		if val is String:
 			return val
 	return "ground"
+	
+func register_event(tile: Vector2i, event: Event) -> void:
+	events[tile] = weakref(event)
+
+func unregister_event(tile: Vector2i, event: Event) -> void:
+	if events.has(tile) and events[tile].get_ref() == event:
+		events.erase(tile)
+
+func event_at(tile: Vector2i) -> Event:
+	if events.has(tile):
+		return events[tile].get_ref()
+	return null
 
 
 func is_blocked(actor: Node, t: Vector2i) -> bool:
@@ -104,8 +122,11 @@ func vacate(tile: Vector2i, actor: Node) -> void:
 
 # --- Triggers / Interact ---
 func on_enter_tile(actor: Node, t: Vector2i) -> void:
-	# Hook para encuentros/trigger/terreno especial (lo añadiremos más adelante)
-	pass
+	if actor.is_in_group("Player"):  # o instanceof Player
+		var e = event_at(t)
+		if e:
+			e.on_player_touch()
+
 
 func interactable_at(t: Vector2i) -> Node:
 	for d in get_tile_data(t):

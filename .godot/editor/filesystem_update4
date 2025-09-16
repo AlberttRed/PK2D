@@ -1,7 +1,0 @@
-res://Scenes/Events/Event.tscn
-res://Resources/Tilesets/Outside_tileset.tres
-res://Scenes/Overworld/Maps/MapScene.tscn
-res://Scripts/Events/Event.gd
-res://Scenes/Overworld/Actors/Player.tscn
-res://Scenes/Overworld/Core/OverworldGrid.tscn
-res://Scripts/Overworld/Core/OverworldGrid.gd

@@ -7,6 +7,8 @@ var input_dir := Vector2.ZERO
 var holding := false
 
 func _ready() -> void:
+	if !is_in_group("Player"):
+		add_to_group("Player")
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
 	sprite.animation = "walk_down"
@@ -59,3 +61,9 @@ func stop():
 		Vector2.RIGHT: sprite.animation = "walk_right"
 	sprite.stop()
 	sprite.frame = 0  # idle
+	
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("interact") and not motion.moving:
+		var e := motion.event_in_front()
+		if e:
+			e.on_player_action()

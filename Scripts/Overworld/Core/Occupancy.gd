@@ -7,12 +7,39 @@ class_name Occupancy
 func _ready() -> void:
 	# Snap al centro de tile y registra ocupación inicial
 	var tile := grid.world_to_tile(actor.global_position)
-	actor.global_position = grid.tile_to_world_center(tile)
-	grid.occupy(tile, actor)
+	#actor.global_position = grid.tile_to_world_center(tile)
+	if actor is Event:
+		# Registrar siempre en events
+		grid.register_event(tile, actor)
+
+		# Registrar en occ solo si bloquea
+		if actor.blocks_movement:
+			grid.occupy(tile, actor)
+	else:
+		# Cualquier otro actor (Player, NPC, etc.)
+		grid.occupy(tile, actor)
+
+func current_tile() -> Vector2i:
+	return grid.world_to_tile(actor.global_position)
 
 ## Si en algún momento teletransportas:
 func teleport_to_tile(t: Vector2i) -> void:
 	var cur := grid.world_to_tile(actor.global_position)
-	grid.vacate(cur, actor)
+	# Limpiar registros previos
+	if actor is Event:
+		grid.unregister_event(cur, actor)
+		if actor.blocks_movement:
+			grid.vacate(cur, actor)
+	else:
+		grid.vacate(cur, actor)
+
+	# Reubicar
 	actor.global_position = grid.tile_to_world_center(t)
-	grid.occupy(t, actor)
+
+	# Registrar de nuevo
+	if actor is Event:
+		grid.register_event(t, actor)
+		if actor.blocks_movement:
+			grid.occupy(t, actor)
+	else:
+		grid.occupy(t, actor)

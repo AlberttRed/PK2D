@@ -7,14 +7,11 @@ signal event_triggered(page)
 
 ##Lista de páginas de evento (EventPage) que puede ejecutar el vento, cada una con su lista de comandos (EventCommand) definida.
 @export var pages: Array[EventPage] = []
-@export var current_page_index: int = 0:
-	set(value):
-		set_current_page(value)
+@export var current_page_index: int = 0
 
 ## Indica si el Event ocupa espacio dentro del gird, por lo que puede bloquear el movimiento a otros actores del mapa
 @export var blocks_movement: bool = true
 var current_page: Resource = null
-@onready var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
 
 # Aquí exponemos el SpriteFrames que usará el AnimatedSprite2D hijo
 @export var sprite_frames: SpriteFrames:
@@ -26,40 +23,41 @@ var current_page: Resource = null
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready() -> void:
-	if pages.size() > 0:
-		set_current_page(0)
-
-	# Snap al grid y registrar ocupación si corresponde
-	var tile := grid.world_to_tile(global_position)
-	if blocks_movement:
-		grid.occupy(tile, self)
-
+	setup_current_page()
+	
 	# Autorun inmediato
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
 		trigger()
 
-func set_current_page(index: int) -> void:
-	if index >= 0 and index < pages.size():
-		current_page_index = index
-		current_page = pages[index]
-	else:
-		current_page_index = -1
+## Configura current_page basado en current_page_index y pages
+func setup_current_page() -> void:
+	if pages.size() == 0:
 		current_page = null
+	elif current_page_index >= 0 and current_page_index < pages.size():
+		current_page = pages[current_page_index]
+	else:
+		current_page_index = 0
+		if pages.size() > 0:
+			current_page = pages[0]
+		else:
+			current_page = null
 
 func trigger() -> void:
 	if current_page:
+		print("Triggered!")
 		event_triggered.emit(current_page)
-
-## --- Helpers ---
-func get_tile() -> Vector2i:
-	return grid.world_to_tile(global_position)
 
 func on_player_action() -> void:
 	# Si el jugador pulsa "A" frente al evento
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.ACTION:
+		print("Interact!")
 		trigger()
 
 func on_player_touch() -> void:
 	# Si el jugador entra en la misma celda
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.TOUCH:
+		print("Touched!")
 		trigger()
+
+func _to_string() -> String:
+	return name
