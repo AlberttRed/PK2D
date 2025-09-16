@@ -5,6 +5,7 @@ extends Node2D
 
 var input_dir := Vector2.ZERO
 var holding := false
+var movement_enabled: bool = true
 
 func _ready() -> void:
 	if !is_in_group("Player"):
@@ -14,6 +15,8 @@ func _ready() -> void:
 	sprite.animation = "walk_down"
 
 func _process(_delta: float):
+	if not movement_enabled:
+		return
 
 	input_dir = Vector2.ZERO
 	if Input.is_action_pressed("move_up"):
@@ -63,7 +66,30 @@ func stop():
 	sprite.frame = 0  # idle
 	
 func _unhandled_input(event: InputEvent) -> void:
+	if not movement_enabled:
+		return
+		
 	if event.is_action_pressed("interact") and not motion.moving:
 		var e := motion.event_in_front()
 		if e:
 			e.on_player_action()
+
+## --- Control de Movimiento ---
+func set_movement_enabled(enabled: bool) -> void:
+	movement_enabled = enabled
+	if not enabled:
+		# Detener movimiento actual si está en curso
+		if motion.moving:
+			motion.moving = false
+		stop()
+
+func teleport_to_tile(tile: Vector2i) -> void:
+	"""Teletransporta al jugador a la posición especificada"""
+	var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
+	if grid:
+		# Usar el método de Occupancy si está disponible
+		if has_node("Occupancy"):
+			$Occupancy.teleport_to_tile(tile)
+		else:
+			# Fallback: teletransporte directo
+			global_position = grid.tile_to_world_center(tile)

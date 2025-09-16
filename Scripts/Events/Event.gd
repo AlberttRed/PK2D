@@ -44,8 +44,11 @@ func setup_current_page() -> void:
 
 func trigger() -> void:
 	if current_page:
-		print("Triggered!")
+		print("Event '%s' triggered!" % event_name)
 		event_triggered.emit(current_page)
+		
+		# Delegar ejecución al EventSystem
+		EventSystem.start_event(self)
 
 func on_player_action() -> void:
 	# Si el jugador pulsa "A" frente al evento
