@@ -1,11 +1,12 @@
-[gd_scene load_steps=10 format=4 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=11 format=4 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
 [ext_resource type="PackedScene" uid="uid://2oyo1q14ygm7" path="res://Scenes/Overworld/Actors/Player.tscn" id="1_di8v1"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_3m0lu"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="3_7n1ec"]
-[ext_resource type="Texture2D" uid="uid://b6nt5hnwwqm68" path="res://Sprites/Tilesets/Outside.png" id="4_cy1pc"]
+[ext_resource type="Texture2D" uid="uid://ccncf5rus5o6e" path="res://Sprites/Tilesets/Outside.png" id="4_cy1pc"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="4_honu0"]
+[ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_honu0")
@@ -55,7 +56,10 @@ metadata/_edit_lock_ = true
 
 [node name="Event" parent="OverworldGrid/Events" instance=ExtResource("3_7n1ec")]
 position = Vector2(240, 144)
+event_name = null
 pages = Array[ExtResource("4_honu0")]([SubResource("Resource_5slja")])
+current_page_index = null
+blocks_movement = null
 sprite_frames = SubResource("SpriteFrames_honu0")
 
 [node name="Player" parent="." instance=ExtResource("1_di8v1")]
@@ -63,5 +67,7 @@ position = Vector2(48, 16)
 
 [node name="Camera2D" parent="Player" index="3"]
 map_layer_path = NodePath("../../OverworldGrid/Terrain")
+
+[node name="EventController" parent="." instance=ExtResource("7_5slja")]
 
 [editable path="Player"]
