@@ -76,7 +76,10 @@ func try_step(d: Vector2) -> bool:
 	
 	step_finished.emit(to)
 
-	await grid.on_enter_tile(actor, to)
+	# Solo llamar on_enter_tile si realmente nos movimos a un tile diferente
+	if to != from:
+		await grid.on_enter_tile(actor, to)
+		
 	return true
 	
 func event_at_offset(offset: int = 1) -> Event:

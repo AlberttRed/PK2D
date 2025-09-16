@@ -7,12 +7,7 @@ signal event_triggered(page)
 
 ##Lista de páginas de evento (EventPage) que puede ejecutar el vento, cada una con su lista de comandos (EventCommand) definida.
 @export var pages: Array[EventPage] = []
-@export var current_page_index: int = 0:
-	set(value):
-		if value >= 0 and value < pages.size():
-			current_page = pages[value]
-		else:
-			current_page = null
+@export var current_page_index: int = 0
 
 ## Indica si el Event ocupa espacio dentro del gird, por lo que puede bloquear el movimiento a otros actores del mapa
 @export var blocks_movement: bool = true
@@ -28,14 +23,24 @@ var current_page: Resource = null
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready() -> void:
-	if pages.size() == 0:
-		current_page = null
-	elif current_page_index < 0 or current_page_index >= pages.size():
-		current_page_index = 0 
-
+	setup_current_page()
+	
 	# Autorun inmediato
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
 		trigger()
+
+## Configura current_page basado en current_page_index y pages
+func setup_current_page() -> void:
+	if pages.size() == 0:
+		current_page = null
+	elif current_page_index >= 0 and current_page_index < pages.size():
+		current_page = pages[current_page_index]
+	else:
+		current_page_index = 0
+		if pages.size() > 0:
+			current_page = pages[0]
+		else:
+			current_page = null
 
 func trigger() -> void:
 	if current_page:

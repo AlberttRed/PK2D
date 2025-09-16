@@ -7,6 +7,8 @@ var input_dir := Vector2.ZERO
 var holding := false
 
 func _ready() -> void:
+	if !is_in_group("Player"):
+		add_to_group("Player")
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
 	sprite.animation = "walk_down"

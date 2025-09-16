@@ -3,7 +3,7 @@ class_name OverworldGrid
 
 ## Asigna aquí la capa que usarás para consultas (colisión/terreno)
 @export var layer_paths: Array[NodePath] = []
-@onready var layers: Array[TileMapLayer] = []
+var layers: Array[TileMapLayer] = []
 
 # Ocupación física (solo actores que bloquean paso: Player, NPC, etc.)
 var occ: Dictionary = {}   # {Vector2i: weakref(actor)}
