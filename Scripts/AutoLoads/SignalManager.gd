@@ -21,9 +21,11 @@ signal event_system_ready(system: Node)
 signal warp_system_ready(system: Node)
 signal map_system_ready(system: Node)
 
-## --- Utilidades ---
+# --- Utilidades ---
+
+##Desconecta todas las conexiones de una señal
 func disconnect_all(signal_obj: Signal) -> void:
-	"""Desconecta todas las conexiones de una señal"""
+
 	for connection in signal_obj.get_connections():
 		signal_obj.disconnect(connection.callable)
 

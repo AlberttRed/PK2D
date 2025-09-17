@@ -49,7 +49,7 @@ func start_event(event: Event) -> bool:
 	if not event.current_page or event.current_page.commands.is_empty():
 		print("EventController: Evento '%s' no tiene comandos para ejecutar" % event.event_name)
 		return false
-	
+	print("Ejecutando event %s", event.event_name)
 	# Configurar estado
 	current_state = State.RUNNING
 	current_event = event

@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_honu0")
-trigger_type = 1
+trigger_type = 0
 commands = Array[Resource]([])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
