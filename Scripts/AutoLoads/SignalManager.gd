@@ -21,6 +21,7 @@ signal event_system_ready(system: Node)
 signal warp_system_ready(system: Node)
 signal map_system_ready(system: Node)
 
+
 # --- Utilidades ---
 
 ##Desconecta todas las conexiones de una señal
