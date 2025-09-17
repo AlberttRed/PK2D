@@ -93,3 +93,7 @@ func teleport_to_tile(tile: Vector2i) -> void:
 		else:
 			# Fallback: teletransporte directo
 			global_position = grid.tile_to_world_center(tile)
+
+func set_facing_direction(new_direction:Vector2):
+	motion.dir = new_direction
+	stop()

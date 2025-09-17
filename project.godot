@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 CONST="*res://Scripts/AutoLoads/CONST.gd"
 SignalManager="*res://Scripts/AutoLoads/SignalManager.gd"
 GUI="*res://Scenes/UI/GUI.tscn"
+GameStateManager="*res://Scripts/AutoLoads/GameStateManager.gd"
 
 [display]
 
@@ -28,6 +29,7 @@ window/size/viewport_height=384
 [global_group]
 
 OverworldGrid="Group of active OverworldGrids"
+Player=""
 
 [input]
 

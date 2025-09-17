@@ -27,6 +27,13 @@ func _enter_tree() -> void:
 		else:
 			push_warning("El nodo en '%s' no es un TileMapLayer" % [path])
 
+func _ready() -> void:
+	
+	var player := get_tree().get_first_node_in_group("Player")
+	#player.set_direction(GameStateManager.get_facing_direction())
+	player.call_deferred("set_facing_direction", GameStateManager.get_facing_direction())
+	player.call_deferred("teleport_to_tile", GameStateManager.get_spawn_position())
+
 ## --- Helpers coord ---
 func reference_layer() -> TileMapLayer:
 	if layers.is_empty():

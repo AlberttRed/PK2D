@@ -62,7 +62,7 @@ current_page_index = null
 blocks_movement = null
 sprite_frames = SubResource("SpriteFrames_honu0")
 
-[node name="Player" parent="." instance=ExtResource("1_di8v1")]
+[node name="Player" parent="." groups=["Player"] instance=ExtResource("1_di8v1")]
 position = Vector2(48, 16)
 
 [node name="Camera2D" parent="Player" index="3"]
