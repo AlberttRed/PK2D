@@ -1,10 +1,8 @@
 extends Node
+class_name EventSystem
 
-## EventSystem - Sistema global que gestiona múltiples EventControllers
+## EventSystem - Sistema que gestiona múltiples EventControllers
 ## Coordina qué EventController está activo y maneja el control del jugador
-
-signal player_control_blocked()
-signal player_control_unblocked()
 
 # Controladores de eventos
 var main_controller: EventController = null  # Mapa actual del jugador
@@ -19,6 +17,13 @@ func _ready() -> void:
 	player = get_tree().get_first_node_in_group("Player")
 	if not player:
 		push_warning("EventSystem: No se encontró el jugador en el grupo 'Player'")
+	
+	# Conectar señales del SignalManager
+	SignalManager.event_requested.connect(_on_event_requested)
+	SignalManager.event_system_ready.connect(_on_system_ready)
+	
+	# Notificar que el sistema está listo
+	SignalManager.event_system_ready.emit(self)
 
 ##Registra un EventController en el sistema
 func register_controller(controller: EventController, is_main: bool = false) -> void:
@@ -73,6 +78,16 @@ func start_event(event: Event) -> bool:
 	# Iniciar evento
 	return target_controller.start_event(event)
 
+## --- Señales del SignalManager ---
+func _on_event_requested(event: Event, controller: EventController) -> void:
+	"""Maneja solicitudes de eventos desde el SignalManager"""
+	start_event(event)
+
+func _on_system_ready(system: Node) -> void:
+	"""Maneja notificaciones de sistemas listos"""
+	if system == self:
+		print("EventSystem: Sistema listo y conectado al SignalManager")
+
 ##Encuentra el controlador responsable de un evento
 func get_controller_for_event(event: Event) -> EventController:
 	# Buscar en el controlador principal
@@ -103,7 +118,7 @@ func block_player_control() -> void:
 		player_control_blocked_by_events = true
 		if player and player.has_method("set_movement_enabled"):
 			player.set_movement_enabled(false)
-		player_control_blocked.emit()
+		SignalManager.player_control_blocked.emit()
 		print("EventSystem: Control del jugador bloqueado")
 
 ##Desbloquea el control del jugador
@@ -112,7 +127,7 @@ func unblock_player_control() -> void:
 		player_control_blocked_by_events = false
 		if player and player.has_method("set_movement_enabled"):
 			player.set_movement_enabled(true)
-		player_control_unblocked.emit()
+		SignalManager.player_control_unblocked.emit()
 		print("EventSystem: Control del jugador desbloqueado")
 
 ## --- Estado del Sistema ---
