@@ -34,7 +34,11 @@ var next = false
 var choices_options = null
 
 func _ready():
-	pass
+	# Conectar señales del SignalManager
+	SignalManager.message_requested.connect(_on_message_requested)
+	
+	# Conectar señales del MessageBox
+	msg.finished.connect(_on_message_finished)
 #	$INTRO.connect("continue", GAME_DATA, "load_game")
 #	$INTRO.connect("new_game", GAME_DATA, "new_game")
 #	add_user_signal("finished")
@@ -197,6 +201,29 @@ func isVisible():
 #
 func isFading():
 	return fading
+
+## --- Señales del SignalManager ---
+## Maneja solicitudes de mensaje desde el SignalManager
+func _on_message_requested(text: String, config: Dictionary = {}) -> void:
+	await show_message_with_config(text, config)
+
+## Notifica que el mensaje terminó
+func _on_message_finished() -> void:
+	SignalManager.message_finished.emit()
+
+## --- Métodos del MessageBox ---
+## Muestra un mensaje con configuración específica
+func show_message_with_config(text: String, config: Dictionary = {}) -> void:
+	var wait_input = config.get("waitInput", true)
+	var close_at_end = config.get("closeAtEnd", true)
+	var wait_time = config.get("waitTime", 0.0)
+	
+	if wait_time > 0.0:
+		await showMessageWait(text, wait_time)
+	elif wait_input:
+		await showMessageInput(text)
+	else:
+		await showMessageNoClose(text)
 
 #
 #func showParty():

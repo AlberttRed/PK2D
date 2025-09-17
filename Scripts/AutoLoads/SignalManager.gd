@@ -21,6 +21,11 @@ signal event_system_ready(system: Node)
 signal warp_system_ready(system: Node)
 signal map_system_ready(system: Node)
 
+# === SEÑALES DEL MESSAGEBOX ===
+signal message_requested(text: String, config: Dictionary)
+signal message_finished()
+signal message_input_received()
+
 
 # --- Utilidades ---
 

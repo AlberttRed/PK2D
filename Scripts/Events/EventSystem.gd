@@ -21,6 +21,8 @@ func _ready() -> void:
 	# Conectar señales del SignalManager
 	SignalManager.event_requested.connect(_on_event_requested)
 	SignalManager.event_system_ready.connect(_on_system_ready)
+	SignalManager.message_requested.connect(_on_message_requested)
+	SignalManager.message_finished.connect(_on_message_finished)
 	
 	# Notificar que el sistema está listo
 	SignalManager.event_system_ready.emit(self)
@@ -79,14 +81,22 @@ func start_event(event: Event) -> bool:
 	return target_controller.start_event(event)
 
 ## --- Señales del SignalManager ---
+## Maneja solicitudes de eventos desde el SignalManager
 func _on_event_requested(event: Event, controller: EventController) -> void:
-	"""Maneja solicitudes de eventos desde el SignalManager"""
 	start_event(event)
 
+## Maneja notificaciones de sistemas listos
 func _on_system_ready(system: Node) -> void:
-	"""Maneja notificaciones de sistemas listos"""
 	if system == self:
 		print("EventSystem: Sistema listo y conectado al SignalManager")
+
+## Bloquea el control del jugador cuando se muestra un mensaje
+func _on_message_requested(text: String, config: Dictionary) -> void:
+	block_player_control()
+
+## Desbloquea el control del jugador cuando termina un mensaje
+func _on_message_finished() -> void:
+	unblock_player_control()
 
 ##Encuentra el controlador responsable de un evento
 func get_controller_for_event(event: Event) -> EventController:

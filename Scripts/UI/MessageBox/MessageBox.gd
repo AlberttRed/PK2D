@@ -216,7 +216,9 @@ func clear():
 	if finsihedTyping.is_connected(_finishedMessage):
 		finsihedTyping.disconnect(_finishedMessage)
 	#$AnimationPlayer.animation_finished.disconnect(_finishedMessage)
-	SignalManager.disconnectAll(finishedAllText)
+	if finishedAllText.is_connected(close):
+		finishedAllText.disconnect(close)
+	#SignalManager.disconnectAll(finishedAllText)
 	if finished.is_connected(onFinish):
 		finished.disconnect(onFinish)
 	waitTime = 0.0
