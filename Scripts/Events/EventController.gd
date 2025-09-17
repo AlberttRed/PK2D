@@ -30,10 +30,8 @@ func _ready() -> void:
 	# Conectar señales
 	event_finished.connect(_on_event_finished)
 	
-	# Registrarse en el EventSystem
-	# Por defecto, el primer controlador se registra como principal
-	# Esto se puede cambiar dinámicamente cuando el jugador cambie de mapa
-	EventSystem.register_controller(self, true)
+	# Conectar señales del SignalManager
+	SignalManager.event_system_ready.connect(_on_event_system_ready)
 
 ## --- Control de Estado ---
 func is_busy() -> bool:
@@ -51,7 +49,7 @@ func start_event(event: Event) -> bool:
 	if not event.current_page or event.current_page.commands.is_empty():
 		print("EventController: Evento '%s' no tiene comandos para ejecutar" % event.event_name)
 		return false
-	
+	print("Ejecutando event %s", event.event_name)
 	# Configurar estado
 	current_state = State.RUNNING
 	current_event = event
@@ -111,12 +109,12 @@ func finish_event() -> void:
 
 ## --- Control del Jugador ---
 func block_player_control() -> void:
-	# Delegar al EventSystem para control global
-	EventSystem.block_player_control()
+	# Emitir señal global para bloquear control del jugador
+	SignalManager.player_control_blocked.emit()
 
 func unblock_player_control() -> void:
-	# Delegar al EventSystem para control global
-	EventSystem.unblock_player_control()
+	# Emitir señal global para desbloquear control del jugador
+	SignalManager.player_control_unblocked.emit()
 
 
 ##Llamado por comandos asíncronos cuando terminan
@@ -130,6 +128,11 @@ func skip_current_command() -> void:
 		current_command_index += 1
 		call_deferred("execute_next_command")
 
-##Notifica al EventSystem que terminó un evento
+##Notifica que terminó un evento
 func _on_event_finished(event: Event) -> void:
-	EventSystem.on_controller_event_finished(self)
+	SignalManager.event_finished.emit(event)
+
+func _on_event_system_ready(system: Node) -> void:
+	"""Se registra en el EventSystem cuando esté listo"""
+	if system.has_method("register_controller"):
+		system.register_controller(self, true)

@@ -47,8 +47,8 @@ func trigger() -> void:
 		print("Event '%s' triggered!" % event_name)
 		event_triggered.emit(current_page)
 		
-		# Delegar ejecución al EventSystem
-		EventSystem.start_event(self)
+		# Emitir señal global para solicitar ejecución del evento
+		SignalManager.event_requested.emit(self, null)
 
 func on_player_action() -> void:
 	# Si el jugador pulsa "A" frente al evento

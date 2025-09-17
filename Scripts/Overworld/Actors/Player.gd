@@ -83,8 +83,8 @@ func set_movement_enabled(enabled: bool) -> void:
 			motion.moving = false
 		stop()
 
+##Teletransporta al jugador a la posición especificada
 func teleport_to_tile(tile: Vector2i) -> void:
-	"""Teletransporta al jugador a la posición especificada"""
 	var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
 	if grid:
 		# Usar el método de Occupancy si está disponible
