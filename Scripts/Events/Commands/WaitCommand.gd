@@ -22,7 +22,7 @@ func execute(context: Node) -> void:
 
 func _on_timer_timeout(context: Node) -> void:
 	# Limpiar timer
-	var timer = get_tree().current_scene.get_children().filter(func(child): return child is Timer and child.one_shot)
+	var timer = context.get_tree().current_scene.get_children().filter(func(child): return child is Timer and child.one_shot)
 	if not timer.is_empty():
 		timer[0].queue_free()
 	
