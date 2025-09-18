@@ -6,7 +6,7 @@ class_name UnblockPlayerCommand
 func execute(context: Node) -> void:
 	print("UnblockPlayer: Desbloqueando control del jugador")
 	context.unblock_player_control()
-	context.continue_execution()
+	# No llamar continue_execution() - el EventController lo maneja automáticamente para comandos síncronos
 
 func is_async() -> bool:
 	return false
