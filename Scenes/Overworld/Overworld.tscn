@@ -9,9 +9,6 @@
 
 [node name="MapScene" parent="MapSystem" instance=ExtResource("1_8h3h6")]
 
-[node name="Event" parent="MapSystem/MapScene/OverworldGrid/Events" index="0"]
-through = false
-
 [node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")
 metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
