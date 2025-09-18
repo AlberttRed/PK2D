@@ -78,7 +78,7 @@ func execute_next_command() -> void:
 		return
 	
 	var command = command_queue[current_command_index]
-	print("EventController: Ejecutando comando %d: %s" % [current_command_index, command.command_name])
+	print("EventController: Ejecutando comando %d/%d: %s" % [current_command_index + 1, command_queue.size(), command.get_command_name()])
 	
 	# Ejecutar comando 
 	command.execute(self)

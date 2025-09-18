@@ -7,9 +7,6 @@ class_name ShowMessageCommand
 @export var close_at_end: bool = true
 @export var wait_time: float = 0.0
 
-func _init():
-	command_name = "ShowMessage"
-
 func execute(context: Node) -> void:
 	print("ShowMessage: %s" % message)
 	

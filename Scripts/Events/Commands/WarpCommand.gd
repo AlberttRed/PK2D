@@ -5,9 +5,6 @@ class_name WarpCommand
 @export var target_scene: String = ""
 @export var target_position: Vector2i = Vector2i.ZERO
 
-func _init():
-	command_name = "Warp"
-
 func execute(context: Node) -> void:
 	print("Warp: Teletransportando a escena '%s' en posición %s" % [target_scene, target_position])
 	

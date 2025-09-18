@@ -5,9 +5,6 @@ class_name SetFlagCommand
 @export var flag_name: String = "test_flag"
 @export var flag_value: bool = true
 
-func _init():
-	command_name = "SetFlag"
-
 func execute(context: Node) -> void:
 	print("SetFlag: Estableciendo flag '%s' a %s" % [flag_name, flag_value])
 	

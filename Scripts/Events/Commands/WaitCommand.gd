@@ -4,9 +4,6 @@ class_name WaitCommand
 ## Comando para esperar un tiempo determinado
 @export var duration: float = 1.0
 
-func _init():
-	command_name = "Wait"
-
 func execute(context: Node) -> void:
 	print("Wait: Esperando %.2f segundos" % duration)
 	
