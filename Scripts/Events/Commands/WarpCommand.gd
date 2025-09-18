@@ -3,23 +3,21 @@ class_name WarpCommand
 
 ## Comando para teletransportar al jugador
 @export var target_scene: String = ""
-@export var target_position: Vector2i = Vector2i.ZERO
+@export var target_spawn: String = ""
 
 func execute(context: Node) -> void:
-	print("Warp: Teletransportando a escena '%s' en posición %s" % [target_scene, target_position])
+	print("Warp: Solicitando teletransporte a escena '%s' en spawn '%s'" % [target_scene, target_spawn])
 	
-	# TODO: Implementar cambio de escena real
-	# Por ahora solo mostramos en consola
+	# Verificar que se especificó la escena de destino
 	if target_scene.is_empty():
 		print("Warp: Error - No se especificó escena de destino")
 		context.continue_execution()
 		return
 	
-	# Placeholder: Simular teletransporte
-	var player = context.get_tree().get_first_node_in_group("Player")
-	if player and player.has_method("teleport_to_tile"):
-		player.teleport_to_tile(target_position)
+	# Emitir señal para solicitar warp
+	SignalManager.warp_requested.emit(target_scene, target_spawn)
 	
+	# Continuar ejecución inmediatamente (el warp será manejado por WarpSystem)
 	context.continue_execution()
 
 func is_async() -> bool:
