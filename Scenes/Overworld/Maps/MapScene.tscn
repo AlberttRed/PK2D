@@ -7,19 +7,23 @@
 [ext_resource type="Texture2D" uid="uid://ccncf5rus5o6e" path="res://Sprites/Tilesets/Outside.png" id="4_cy1pc"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="4_honu0"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="5_lchh5"]
-[ext_resource type="Script" uid="uid://dy36hc326kn7v" path="res://Scripts/Events/Commands/WaitCommand.gd" id="6_s82w2"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="6_s82w2"]
 [ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
 
-[sub_resource type="Resource" id="Resource_dxx2e"]
+[sub_resource type="Resource" id="Resource_s82w2"]
 script = ExtResource("6_s82w2")
-duration = 5.0
+message = "¡Hola mundo!"
+wait_input = true
+close_at_end = true
+wait_time = 0.0
 command_name = "BaseCommand"
-metadata/_custom_type_script = "uid://dy36hc326kn7v"
+metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_honu0")
 trigger_type = 0
-commands = Array[ExtResource("5_lchh5")]([SubResource("Resource_dxx2e")])
+commands = Array[ExtResource("5_lchh5")]([SubResource("Resource_s82w2")])
+blocks_player = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cy1pc"]
@@ -67,7 +71,6 @@ position = Vector2(240, 144)
 event_name = null
 pages = Array[ExtResource("4_honu0")]([SubResource("Resource_5slja")])
 current_page_index = null
-blocks_movement = null
 sprite_frames = SubResource("SpriteFrames_honu0")
 
 [node name="Player" parent="." groups=["Player"] instance=ExtResource("1_di8v1")]

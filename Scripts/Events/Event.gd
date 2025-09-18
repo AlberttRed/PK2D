@@ -9,8 +9,8 @@ signal event_triggered(page)
 @export var pages: Array[EventPage] = []
 @export var current_page_index: int = 0
 
-## Indica si el Event ocupa espacio dentro del gird, por lo que puede bloquear el movimiento a otros actores del mapa
-@export var blocks_movement: bool = true
+## Indica si el Event es "through" (traspasable). Si es true, el jugador puede pasar a través del evento. Si es false, bloquea el paso.
+@export var through: bool = true
 var current_page: Resource = null
 
 # Aquí exponemos el SpriteFrames que usará el AnimatedSprite2D hijo
