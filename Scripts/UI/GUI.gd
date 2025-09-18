@@ -257,47 +257,60 @@ func _input(event: InputEvent):
 	if input_locked or !isVisible() or isFading():
 		return
 
+	var input_consumed = false
+
 	# Evitar repeticiones automáticas manteniendo pulsado
 	if event.is_action_pressed("ui_accept") and !pressed_actions.has("ui_accept"):
 		pressed_actions["ui_accept"] = true
 		print("GUI accept")
 		accept.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_cancel") and !pressed_actions.has("ui_cancel"):
 		pressed_actions["ui_cancel"] = true
 		print("GUI cancel")
 		cancel.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):
 		pressed_actions["ui_start"] = true
 		print("GUI start")
 		start.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_up") and !pressed_actions.has("ui_up"):
 		pressed_actions["ui_up"] = true
 		print("GUI up")
 		up.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_down") and !pressed_actions.has("ui_down"):
 		pressed_actions["ui_down"] = true
 		print("GUI down")
 		down.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_right") and !pressed_actions.has("ui_right"):
 		pressed_actions["ui_right"] = true
 		print("GUI right")
 		right.emit()
+		input_consumed = true
 
 	if event.is_action_pressed("ui_left") and !pressed_actions.has("ui_left"):
 		pressed_actions["ui_left"] = true
 		print("GUI left")
 		left.emit()
+		input_consumed = true
 
 	# Registrar cuándo se sueltan
 	if event is InputEventKey and !event.pressed:
 		for action in ["ui_accept", "ui_cancel", "ui_start", "ui_up", "ui_down", "ui_right", "ui_left"]:
 			if InputMap.event_is_action(event, action):
 				pressed_actions.erase(action)
+
+	# Consumir el input para evitar que llegue al Player
+	if input_consumed:
+		get_viewport().set_input_as_handled()
 
 
 

@@ -56,8 +56,11 @@ func start_event(event: Event) -> bool:
 	command_queue = event.current_page.commands.duplicate()
 	current_command_index = 0
 	
-	# Bloquear control del jugador
-	block_player_control()
+	# Bloquear/desbloquear según configuración de la EventPage
+	if event.current_page.blocks_player:
+		block_player_control()
+	else:
+		unblock_player_control()
 	
 	# Emitir señal
 	event_started.emit(event)
@@ -75,9 +78,9 @@ func execute_next_command() -> void:
 		return
 	
 	var command = command_queue[current_command_index]
-	print("EventController: Ejecutando comando %d: %s" % [current_command_index, command.command_name])
+	print("EventController: Ejecutando comando %d/%d: %s" % [current_command_index + 1, command_queue.size(), command.get_command_name()])
 	
-	# Ejecutar comando
+	# Ejecutar comando 
 	command.execute(self)
 	
 	# Avanzar al siguiente comando
@@ -99,7 +102,7 @@ func finish_event() -> void:
 	command_queue.clear()
 	current_command_index = 0
 	
-	# Desbloquear control del jugador
+	# SIEMPRE desbloquear control del jugador al terminar
 	unblock_player_control()
 	
 	# Emitir señal

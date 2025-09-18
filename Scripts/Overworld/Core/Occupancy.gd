@@ -12,8 +12,8 @@ func _ready() -> void:
 		# Registrar siempre en events
 		grid.register_event(tile, actor)
 
-		# Registrar en occ solo si bloquea
-		if actor.blocks_movement:
+		# Registrar en occ solo si NO es through (bloquea el paso)
+		if not actor.through:
 			grid.occupy(tile, actor)
 	else:
 		# Cualquier otro actor (Player, NPC, etc.)
@@ -28,7 +28,7 @@ func teleport_to_tile(t: Vector2i) -> void:
 	# Limpiar registros previos
 	if actor is Event:
 		grid.unregister_event(cur, actor)
-		if actor.blocks_movement:
+		if not actor.through:
 			grid.vacate(cur, actor)
 	else:
 		grid.vacate(cur, actor)
@@ -39,7 +39,7 @@ func teleport_to_tile(t: Vector2i) -> void:
 	# Registrar de nuevo
 	if actor is Event:
 		grid.register_event(t, actor)
-		if actor.blocks_movement:
+		if not actor.through:
 			grid.occupy(t, actor)
 	else:
 		grid.occupy(t, actor)

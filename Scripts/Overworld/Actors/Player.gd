@@ -12,6 +12,11 @@ func _ready() -> void:
 		add_to_group("Player")
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
+	
+	# Conectar señales de control del jugador
+	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
+	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
+	
 	sprite.animation = "walk_down"
 
 func _process(_delta: float):
@@ -93,6 +98,15 @@ func teleport_to_tile(tile: Vector2i) -> void:
 		else:
 			# Fallback: teletransporte directo
 			global_position = grid.tile_to_world_center(tile)
+
+## --- Señales del SignalManager ---
+## Maneja el bloqueo del control del jugador
+func _on_player_control_blocked() -> void:
+	set_movement_enabled(false)
+
+## Maneja el desbloqueo del control del jugador
+func _on_player_control_unblocked() -> void:
+	set_movement_enabled(true)
 
 func set_facing_direction(new_direction:Vector2):
 	motion.dir = new_direction

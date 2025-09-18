@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=22 format=4 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
 [ext_resource type="PackedScene" uid="uid://2oyo1q14ygm7" path="res://Scenes/Overworld/Actors/Player.tscn" id="1_di8v1"]
@@ -9,20 +9,49 @@
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="5_lchh5"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="6_s82w2"]
 [ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
+[ext_resource type="Script" uid="uid://dy36hc326kn7v" path="res://Scripts/Events/Commands/WaitCommand.gd" id="7_dxx2e"]
+[ext_resource type="Script" uid="uid://bocuxh8svpgvc" path="res://Scripts/Events/Commands/UnblockPlayerCommand.gd" id="8_pga4s"]
+[ext_resource type="Script" uid="uid://nr8r6pek166s" path="res://Scripts/Events/Commands/BlockPlayerCommand.gd" id="9_mv35c"]
 
 [sub_resource type="Resource" id="Resource_dxx2e"]
+script = ExtResource("7_dxx2e")
+duration = 3.0
+metadata/_custom_type_script = "uid://dy36hc326kn7v"
+
+[sub_resource type="Resource" id="Resource_s82w2"]
 script = ExtResource("6_s82w2")
-message = "¡Hola mundo!"
+message = "Espera un momento."
 wait_input = true
-close_at_end = false
+close_at_end = true
 wait_time = 0.0
-command_name = "BaseCommand"
 metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_mnaxd"]
+script = ExtResource("8_pga4s")
+metadata/_custom_type_script = "uid://bocuxh8svpgvc"
+
+[sub_resource type="Resource" id="Resource_pga4s"]
+script = ExtResource("6_s82w2")
+message = "Ya está."
+wait_input = true
+close_at_end = true
+wait_time = 0.0
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_vfkak"]
+script = ExtResource("9_mv35c")
+metadata/_custom_type_script = "uid://nr8r6pek166s"
+
+[sub_resource type="Resource" id="Resource_5cnnv"]
+script = ExtResource("7_dxx2e")
+duration = 5.0
+metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_honu0")
 trigger_type = 0
-commands = Array[ExtResource("5_lchh5")]([SubResource("Resource_dxx2e")])
+commands = Array[ExtResource("5_lchh5")]([SubResource("Resource_dxx2e"), SubResource("Resource_s82w2"), SubResource("Resource_mnaxd"), SubResource("Resource_pga4s"), SubResource("Resource_vfkak"), SubResource("Resource_5cnnv")])
+blocks_player = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cy1pc"]
@@ -67,10 +96,7 @@ metadata/_edit_lock_ = true
 
 [node name="Event" parent="OverworldGrid/Events" instance=ExtResource("3_7n1ec")]
 position = Vector2(240, 144)
-event_name = null
 pages = Array[ExtResource("4_honu0")]([SubResource("Resource_5slja")])
-current_page_index = null
-blocks_movement = null
 sprite_frames = SubResource("SpriteFrames_honu0")
 
 [node name="Player" parent="." groups=["Player"] instance=ExtResource("1_di8v1")]
