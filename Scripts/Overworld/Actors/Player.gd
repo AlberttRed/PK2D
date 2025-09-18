@@ -70,7 +70,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 		
 	if event.is_action_pressed("interact") and not motion.moving:
-		try_message()
 		var e := motion.event_in_front()
 		if e:
 			e.on_player_action()
@@ -98,19 +97,3 @@ func teleport_to_tile(tile: Vector2i) -> void:
 func set_facing_direction(new_direction:Vector2):
 	motion.dir = new_direction
 	stop()
-	
-func try_message():
-	print("ShowMessage: %s" % "Patata")
-	
-	# Configurar parámetros del mensaje
-	var config = {
-		"waitInput": false,
-		"closeAtEnd": true,
-		"waitTime": 1.0
-	}
-	
-	# Emitir señal para mostrar mensaje
-	SignalManager.message_requested.emit("Patata", config)
-	
-	# Esperar a que termine el mensaje
-	await SignalManager.message_finished

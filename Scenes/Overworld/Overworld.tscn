@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbg4p86gatso7"]
+
+[ext_resource type="PackedScene" uid="uid://ca0jpvrn30kqs" path="res://Scenes/Overworld/Maps/MapScene.tscn" id="1_8h3h6"]
+[ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
+
+[node name="Overworld" type="Node"]
+
+[node name="MapSystem" type="Node" parent="."]
+
+[node name="MapScene" parent="MapSystem" instance=ExtResource("1_8h3h6")]
+
+[node name="EventSystem" type="Node" parent="."]
+script = ExtResource("1_fvdb5")
+metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
+
+[node name="WarpSystem" type="Node" parent="."]

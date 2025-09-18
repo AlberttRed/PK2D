@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=14 format=4 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
 [ext_resource type="PackedScene" uid="uid://2oyo1q14ygm7" path="res://Scenes/Overworld/Actors/Player.tscn" id="1_di8v1"]
@@ -6,13 +6,23 @@
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="3_7n1ec"]
 [ext_resource type="Texture2D" uid="uid://ccncf5rus5o6e" path="res://Sprites/Tilesets/Outside.png" id="4_cy1pc"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="4_honu0"]
-[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="5_lchh5"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="5_lchh5"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="6_s82w2"]
 [ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
+
+[sub_resource type="Resource" id="Resource_dxx2e"]
+script = ExtResource("6_s82w2")
+message = "¡Hola mundo!"
+wait_input = true
+close_at_end = false
+wait_time = 0.0
+command_name = "BaseCommand"
+metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_honu0")
 trigger_type = 0
-commands = Array[Resource]([ExtResource("5_lchh5")])
+commands = Array[ExtResource("5_lchh5")]([SubResource("Resource_dxx2e")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cy1pc"]
