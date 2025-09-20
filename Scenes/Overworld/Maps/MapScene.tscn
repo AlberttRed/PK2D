@@ -1,7 +1,6 @@
-[gd_scene load_steps=21 format=4 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=20 format=4 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
-[ext_resource type="PackedScene" uid="uid://2oyo1q14ygm7" path="res://Scenes/Overworld/Actors/Player.tscn" id="1_di8v1"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_3m0lu"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="3_7n1ec"]
 [ext_resource type="Texture2D" uid="uid://ccncf5rus5o6e" path="res://Sprites/Tilesets/Outside.png" id="4_cy1pc"]
@@ -95,12 +94,4 @@ position = Vector2(240, 144)
 pages = Array[ExtResource("4_honu0")]([SubResource("Resource_5slja")])
 sprite_frames = SubResource("SpriteFrames_honu0")
 
-[node name="Player" parent="." groups=["Player"] instance=ExtResource("1_di8v1")]
-position = Vector2(48, 16)
-
-[node name="Camera2D" parent="Player" index="3"]
-map_layer_path = NodePath("../../OverworldGrid/Terrain")
-
 [node name="EventController" parent="." instance=ExtResource("7_5slja")]
-
-[editable path="Player"]
