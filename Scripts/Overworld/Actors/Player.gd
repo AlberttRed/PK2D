@@ -54,7 +54,7 @@ func _on_step_started() -> void:
 
 	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
 
-func _on_step_finished(tile: Vector2i) -> void:
+func _on_step_finished(_tile: Vector2i) -> void:
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
@@ -90,14 +90,22 @@ func set_movement_enabled(enabled: bool) -> void:
 
 ##Teletransporta al jugador a la posición especificada
 func teleport_to_tile(tile: Vector2i) -> void:
-	var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
-	if grid:
-		# Usar el método de Occupancy si está disponible
-		if has_node("Occupancy"):
-			$Occupancy.teleport_to_tile(tile)
-		else:
-			# Fallback: teletransporte directo
-			global_position = grid.tile_to_world_center(tile)
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("Player: No se encontró el MapSystem en la escena")
+		return
+	
+	var grid: OverworldGrid = map_system.get_active_grid()
+	if not grid:
+		push_error("Player: No se pudo obtener el OverworldGrid del MapSystem")
+		return
+	
+	# Usar el método de Occupancy si está disponible
+	if has_node("Occupancy"):
+		$Occupancy.teleport_to_tile(tile)
+	else:
+		# Fallback: teletransporte directo
+		global_position = grid.tile_to_world_center(tile)
 
 ## --- Señales del SignalManager ---
 ## Maneja el bloqueo del control del jugador

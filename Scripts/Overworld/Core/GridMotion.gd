@@ -17,13 +17,25 @@ var dir := Vector2.DOWN
 var previous_dir := dir
 
 @onready var actor := get_parent() as Node2D
-@onready var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
+var grid: OverworldGrid
+
+func _ready() -> void:
+	# Obtener el grid a través del MapSystem
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("GridMotion: No se encontró el MapSystem en la escena")
+		return
+	
+	grid = map_system.get_active_grid()
+	if not grid:
+		push_error("GridMotion: No se pudo obtener el OverworldGrid del MapSystem")
+		return
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
 
 ##Gets de speed scale that will be used to move and animate the actor when moving
-func get_speed_multiplier(d: Vector2, can_step: bool, initial_step: bool) -> float:
+func get_speed_multiplier(_d: Vector2, can_step: bool, initial_step: bool) -> float:
 	if initial_step:
 		return 1.0
 	if Input.is_action_pressed("run") and can_step:
@@ -78,7 +90,7 @@ func try_step(d: Vector2) -> bool:
 
 	# Solo llamar on_enter_tile si realmente nos movimos a un tile diferente
 	if to != from:
-		await grid.on_enter_tile(actor, to)
+		grid.on_enter_tile(actor, to)
 		
 	return true
 	
@@ -95,5 +107,5 @@ func event_in_front() -> Event:
 	return event_at_offset(1)
 
 ##Checks if actor need to do the first step animation before moving
-func requires_initial_step(dir:Vector2) -> bool:
-	return (dir != previous_dir and self.hold_time < initial_delay)
+func requires_initial_step(direction: Vector2) -> bool:
+	return (direction != previous_dir and self.hold_time < initial_delay)

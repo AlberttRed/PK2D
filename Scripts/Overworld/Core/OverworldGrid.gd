@@ -28,11 +28,18 @@ func _enter_tree() -> void:
 			push_warning("El nodo en '%s' no es un TileMapLayer" % [path])
 
 func _ready() -> void:
+	# Buscar el jugador a través del MapSystem
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("OverworldGrid: No se encontró el MapSystem en la escena")
+		return
 	
-	var player := get_tree().get_first_node_in_group("Player")
-	#player.set_direction(GameStateManager.get_facing_direction())
-	player.call_deferred("set_facing_direction", GameStateManager.get_facing_direction())
-	player.call_deferred("teleport_to_tile", GameStateManager.get_spawn_position())
+	var player: Node = map_system.get_player()
+	
+	if player:
+		#player.set_direction(GameStateManager.get_facing_direction())
+		player.call_deferred("set_facing_direction", GameStateManager.get_facing_direction())
+		player.call_deferred("teleport_to_tile", GameStateManager.get_spawn_position())
 
 ## --- Helpers coord ---
 func reference_layer() -> TileMapLayer:
@@ -99,14 +106,14 @@ func is_blocked(actor: Node, t: Vector2i) -> bool:
 func has_actor(t: Vector2i) -> bool:
 	return occ.has(t) and occ[t].get_ref() != null
 
-func can_step_to(actor: Node, from: Vector2i, to: Vector2i) -> bool:
+func can_step_to(actor: Node, _from: Vector2i, to: Vector2i) -> bool:
 	if is_blocked(actor, to): return false
 	if has_actor(to): return false
 	if res.has(to) and res[to].get_ref() != actor: return false
 	return true
 
 # --- Reservas / commit ---
-func reserve(from: Vector2i, to: Vector2i, actor: Node) -> void:
+func reserve(_from: Vector2i, to: Vector2i, actor: Node) -> void:
 	for k in res.keys():
 		if res[k].get_ref() == actor:
 			res.erase(k)

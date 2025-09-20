@@ -1,13 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=5 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="PackedScene" uid="uid://ca0jpvrn30kqs" path="res://Scenes/Overworld/Maps/MapScene.tscn" id="1_8h3h6"]
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
+[ext_resource type="PackedScene" uid="uid://2oyo1q14ygm7" path="res://Scenes/Overworld/Actors/Player.tscn" id="2_di8v1"]
+[ext_resource type="Script" uid="uid://dce34esefkiqj" path="res://Scripts/Overworld/Core/MapSystem.gd" id="3_map_system"]
 
 [node name="Overworld" type="Node"]
 
 [node name="MapSystem" type="Node" parent="."]
+script = ExtResource("3_map_system")
+metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
 [node name="MapScene" parent="MapSystem" instance=ExtResource("1_8h3h6")]
+
+[node name="Player" parent="MapSystem" instance=ExtResource("2_di8v1")]
+position = Vector2(48, 16)
 
 [node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")
@@ -16,4 +23,4 @@ metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 [node name="WarpSystem" type="Node" parent="."]
 
 [editable path="MapSystem/MapScene"]
-[editable path="MapSystem/MapScene/Player"]
+[editable path="MapSystem/Player"]

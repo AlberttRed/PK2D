@@ -2,9 +2,20 @@ extends Node
 class_name Occupancy
 
 @onready var actor := get_parent() as Node2D
-@onready var grid: OverworldGrid = get_tree().get_first_node_in_group("OverworldGrid")
+var grid: OverworldGrid
 
 func _ready() -> void:
+	# Obtener el grid a través del MapSystem
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("Occupancy: No se encontró el MapSystem en la escena")
+		return
+	
+	grid = map_system.get_active_grid()
+	if not grid:
+		push_error("Occupancy: No se pudo obtener el OverworldGrid del MapSystem")
+		return
+	
 	# Snap al centro de tile y registra ocupación inicial
 	var tile := grid.world_to_tile(actor.global_position)
 	#actor.global_position = grid.tile_to_world_center(tile)
