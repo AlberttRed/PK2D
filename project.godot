@@ -30,6 +30,9 @@ window/size/viewport_height=384
 
 OverworldGrid="Group of active OverworldGrids"
 Player=""
+MapSystem=""
+EventSystem=""
+WarpSystem=""
 
 [input]
 

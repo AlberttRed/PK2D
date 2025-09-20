@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://dd2nm1d1v7gfv"]
+
+[ext_resource type="Script" uid="uid://gaqqrnyb1sdp" path="res://Scripts/Overworld/Core/SpawnPoint.gd" id="1_leu81"]
+[ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_dfmx2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c34v6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_dfmx2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="SpawnPoint" type="Node2D"]
+script = ExtResource("1_leu81")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_c34v6")
