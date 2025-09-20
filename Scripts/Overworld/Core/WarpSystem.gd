@@ -47,26 +47,38 @@ func _on_warp_requested(map_id: String, spawn_id: String) -> void:
 	request_warp(map_id, spawn_id)
 
 ## Ejecuta el cambio de mapa/posición
-## TODO: Implementar la lógica completa de cambio de mapa
 func _execute_warp(map_id: String, spawn_id: String) -> void:
 	print("WarpSystem: Ejecutando warp - Mapa: ", map_id, ", Spawn: ", spawn_id)
 	
 	is_warping = true
 	
-	# TODO: Aquí se implementará la lógica completa:
-	# 1. Cargar el nuevo mapa si es diferente
+	# 1. Verificar si necesitamos cambiar de mapa
+	var current_map = map_system.get_active_map()
+	var needs_map_change = not current_map or current_map.name != map_id
+	
+	if needs_map_change:
+		print("WarpSystem: Cambiando de mapa a: ", map_id)
+		var success = map_system.change_to_map(map_id)
+		if not success:
+			push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
+			is_warping = false
+			return
+	
 	# 2. Posicionar al jugador en el spawn point correspondiente
-	# 3. Actualizar referencias y sistemas
+	print("WarpSystem: Posicionando jugador en spawn: ", spawn_id)
+	var spawn_success = map_system.position_player_at_spawn(spawn_id)
+	if not spawn_success:
+		push_warning("WarpSystem: No se pudo posicionar al jugador en el spawn: " + spawn_id)
 	
-	# Por ahora, simular el proceso
-	await get_tree().create_timer(0.1).timeout
+	# 3. Actualizar el estado del juego
+	GameStateManager.change_map(map_id, spawn_id)
 	
-	# Actualizar estado
+	# 4. Actualizar estado interno
 	current_map_id = map_id
 	current_spawn_id = spawn_id
 	is_warping = false
 	
-	# Emitir señal de finalización
+	# 5. Emitir señal de finalización
 	warp_finished.emit(map_id, spawn_id)
 	if SignalManager:
 		SignalManager.warp_finished.emit(map_id, spawn_id)

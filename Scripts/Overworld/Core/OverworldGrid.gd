@@ -11,6 +11,9 @@ var occ: Dictionary = {}   # {Vector2i: weakref(actor)}
 # Eventos (bloqueantes o no)
 var events: Dictionary = {}   # {Vector2i: weakref(Event)}
 
+# SpawnPoints del mapa
+var spawn_points: Dictionary = {}   # {spawn_id: SpawnPoint}
+
 # Reservas de movimiento
 var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 
@@ -35,6 +38,9 @@ func _ready() -> void:
 		return
 	
 	var player: Node = map_system.get_player()
+	
+	# Registrar todos los SpawnPoints del mapa
+	_register_all_spawns()
 	
 	if player:
 		#player.set_direction(GameStateManager.get_facing_direction())
@@ -148,3 +154,47 @@ func interactable_at(t: Vector2i) -> Node:
 		if val is Node:
 			return val
 	return null
+
+# --- SpawnPoints Management ---
+## Registra todos los SpawnPoints del mapa
+func _register_all_spawns() -> void:
+	# Buscar el nodo SpawnPoints
+	var spawn_container = get_node_or_null("SpawnPoints")
+	if spawn_container:
+		_register_spawns_recursive(spawn_container)
+	else:
+		# Si no hay nodo SpawnPoints, buscar en toda la escena
+		_register_spawns_recursive(self)
+
+## Registra SpawnPoints recursivamente
+func _register_spawns_recursive(node: Node) -> void:
+	for child in node.get_children():
+		if child is SpawnPoint:
+			register_spawn_point(child)
+		# Buscar recursivamente en los hijos
+		_register_spawns_recursive(child)
+
+## Registra un SpawnPoint individual
+func register_spawn_point(spawn: SpawnPoint) -> void:
+	if not spawn:
+		return
+	
+	var spawn_id = spawn.get_spawn_id()
+	if spawn_id.is_empty():
+		push_warning("OverworldGrid: SpawnPoint sin ID válido: " + str(spawn))
+		return
+	
+	spawn_points[spawn_id] = spawn
+	print("OverworldGrid: SpawnPoint registrado - ID: ", spawn_id)
+
+## Obtiene un SpawnPoint por su ID
+func get_spawn_point(spawn_id: String) -> SpawnPoint:
+	return spawn_points.get(spawn_id, null)
+
+## Obtiene todos los SpawnPoints del mapa
+func get_all_spawn_points() -> Dictionary:
+	return spawn_points.duplicate()
+
+## Verifica si existe un SpawnPoint con el ID especificado
+func has_spawn_point(spawn_id: String) -> bool:
+	return spawn_points.has(spawn_id)

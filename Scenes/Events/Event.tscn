@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://da2qg21ij71cs"]
 
 [ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="1_s1pap"]
-[ext_resource type="Texture2D" uid="uid://bjpghbgsexudl" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
+[ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_x7w3d"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_s1pap"]
