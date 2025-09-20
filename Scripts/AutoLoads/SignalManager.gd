@@ -8,8 +8,10 @@ signal event_requested(event: Event, controller: EventController)
 signal event_started(event: Event)
 signal event_finished(event: Event)
 
-# === SEÑALES DEL SISTEMA DE WARP (FUTURO) ===
+# === SEÑALES DEL SISTEMA DE WARP ===
 signal warp_requested(map_id: String, spawn_id: String)
+signal warp_started(map_id: String, spawn_id: String)
+signal warp_finished(map_id: String, spawn_id: String)
 signal map_change_requested(from_map: String, to_map: String)
 
 # === SEÑALES DE CONTROL DEL JUGADOR ===
