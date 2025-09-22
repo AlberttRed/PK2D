@@ -118,6 +118,7 @@ pages = Array[ExtResource("4_honu0")]([SubResource("Resource_we81h")])
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="SpawnPoint" parent="OverworldGrid/SpawnPoints" instance=ExtResource("12_mv35c")]
+position = Vector2(112, 16)
 spawn_id = "prova"
 
 [node name="EventController" parent="." instance=ExtResource("7_5slja")]

@@ -37,15 +37,13 @@ func _ready() -> void:
 		push_error("OverworldGrid: No se encontró el MapSystem en la escena")
 		return
 	
-	var player: Node = map_system.get_player()
+	var _player: Node = map_system.get_player()
 	
 	# Registrar todos los SpawnPoints del mapa
 	_register_all_spawns()
 	
-	if player:
-		#player.set_direction(GameStateManager.get_facing_direction())
-		player.call_deferred("set_facing_direction", GameStateManager.get_facing_direction())
-		player.call_deferred("teleport_to_tile", GameStateManager.get_spawn_position())
+	# El player se configura desde MapSystem, no desde aquí
+	# para evitar conflictos con la nueva lógica de GameStart
 
 ## --- Helpers coord ---
 func reference_layer() -> TileMapLayer:
@@ -198,3 +196,64 @@ func get_all_spawn_points() -> Dictionary:
 ## Verifica si existe un SpawnPoint con el ID especificado
 func has_spawn_point(spawn_id: String) -> bool:
 	return spawn_points.has(spawn_id)
+
+# --- Player Positioning ---
+## Posiciona al jugador en una posición específica (Vector2i)
+func position_player_at_tile(tile_position: Vector2i) -> bool:
+	# Buscar el jugador a través del MapSystem
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("OverworldGrid: No se encontró el MapSystem")
+		return false
+	
+	var player: Node = map_system.get_player()
+	if not player:
+		push_error("OverworldGrid: No se encontró el jugador")
+		return false
+	
+	# Teletransportar al jugador a la posición especificada
+	player.teleport_to_tile(tile_position)
+	
+	print("OverworldGrid: Jugador posicionado en tile: ", tile_position)
+	return true
+
+## Posiciona al jugador en un SpawnPoint específico
+func position_player_at_spawn(spawn_id: String) -> bool:
+	var spawn_point = get_spawn_point(spawn_id)
+	if not spawn_point:
+		push_warning("OverworldGrid: No se encontró el spawn point: " + spawn_id)
+		return false
+	
+	# Obtener la posición del spawn point
+	var spawn_position = spawn_point.get_tile_position()
+	
+	# Usar el método de posicionamiento por tile
+	var success = position_player_at_tile(spawn_position)
+	
+	if success:
+		# Actualizar la dirección si el spawn point la especifica
+		var direction = spawn_point.get_facing_direction()
+		print("OverworldGrid: Dirección del SpawnPoint: ", direction)
+		set_player_facing_direction(direction)
+		
+		print("OverworldGrid: Jugador posicionado en spawn: ", spawn_id, " en posición: ", spawn_position, " mirando: ", direction)
+	
+	return success
+
+## Establece la dirección del jugador
+func set_player_facing_direction(direction: Vector2) -> void:
+	# Buscar el jugador a través del MapSystem
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		push_error("OverworldGrid: No se encontró el MapSystem")
+		return
+	
+	var player: Node = map_system.get_player()
+	if not player:
+		push_error("OverworldGrid: No se encontró el jugador")
+		return
+	
+	# Establecer la dirección del jugador
+	player.set_facing_direction(direction)
+	
+	print("OverworldGrid: Dirección del jugador establecida a: ", direction)

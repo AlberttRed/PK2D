@@ -32,6 +32,9 @@ func _ready() -> void:
 	
 	# Conectar señales del SignalManager
 	SignalManager.event_system_ready.connect(_on_event_system_ready)
+	
+	# Registrarse automáticamente en el EventSystem si ya está disponible
+	_register_with_event_system()
 
 ## --- Control de Estado ---
 func is_busy() -> bool:
@@ -134,6 +137,13 @@ func skip_current_command() -> void:
 ##Notifica que terminó un evento
 func _on_event_finished(event: Event) -> void:
 	SignalManager.event_finished.emit(event)
+
+func _register_with_event_system() -> void:
+	"""Se registra en el EventSystem si ya está disponible"""
+	var event_system = get_tree().get_first_node_in_group("EventSystem")
+	if event_system and event_system.has_method("register_controller"):
+		event_system.register_controller(self, true)
+		print("EventController: Registrado automáticamente en EventSystem")
 
 func _on_event_system_ready(system: Node) -> void:
 	"""Se registra en el EventSystem cuando esté listo"""
