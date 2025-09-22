@@ -8,21 +8,85 @@ var active_map: Node = null
 var player: Node = null
 
 func _enter_tree() -> void:
-	# Configurar el mapa inicial ANTES que otros sistemas se inicialicen
-	var map_scene = get_node("MapScene")
+	# Verificar si ya hay un mapa configurado
+	var map_scene = get_node_or_null("MapScene")
 	if map_scene:
 		set_active_map(map_scene)
-		print("MapSystem: Mapa inicial configurado en _enter_tree()")
+		print("MapSystem: Mapa predefinido encontrado y configurado")
 	else:
-		push_warning("MapSystem: No se encontró el nodo MapScene")
+		print("MapSystem: No hay mapa predefinido - se cargará dinámicamente")
 
 func _ready() -> void:
 	# Buscar el jugador en la escena
 	player = get_tree().get_first_node_in_group("Player")
 	if not player:
-		push_error("MapSystem: No se encontró el jugador en la escena")
+		print("MapSystem: No se encontró el jugador en la escena - se cargará dinámicamente")
+	else:
+		print("MapSystem: Jugador predefinido encontrado")
 	
 	print("MapSystem: Inicialización completada")
+
+## Configura el jugador según el estado del GameStateManager
+func configure_player_from_gamestate() -> void:
+	# Obtener datos del GameStateManager
+	var map_id = GameStateManager.get_current_map_id()
+	var position = GameStateManager.get_current_position()
+	var facing_dir = GameStateManager.get_facing_direction()
+	
+	print("MapSystem: Configurando jugador desde GameState - Mapa: %s, Posición: %s, Dirección: %s" % [map_id, position, facing_dir])
+	
+	# Cargar el mapa si no existe o es diferente
+	if !active_map or active_map.name != map_id:
+		print("MapSystem: Cargando mapa según GameState...")
+		var success = change_to_map(map_id)
+		if not success:
+			push_error("MapSystem: No se pudo cargar el mapa del GameState: " + map_id)
+			return
+	
+	# Cargar el jugador si no existe
+	if not player:
+		print("MapSystem: Cargando jugador dinámicamente...")
+		var success = load_player()
+		if not success:
+			push_error("MapSystem: No se pudo cargar el jugador")
+			return
+	
+	# Delegar el posicionamiento al OverworldGrid del mapa activo
+	var grid = get_active_grid()
+	if not grid:
+		push_error("MapSystem: No se pudo obtener el OverworldGrid del mapa activo")
+		return
+	
+	# Posicionar al jugador usando el grid
+	grid.position_player_at_tile(position)
+	
+	# Establecer la dirección del jugador usando el grid
+	grid.set_player_facing_direction(facing_dir)
+	
+	print("MapSystem: Jugador configurado según GameState")
+
+## Carga el jugador dinámicamente
+func load_player() -> bool:
+	print("MapSystem: Cargando jugador dinámicamente...")
+	
+	# Cargar la escena del jugador
+	var player_scene = preload("res://Scenes/Overworld/Actors/Player.tscn")
+	if not player_scene:
+		push_error("MapSystem: No se pudo cargar la escena del jugador")
+		return false
+	
+	# Instanciar el jugador
+	var player_instance = player_scene.instantiate()
+	if not player_instance:
+		push_error("MapSystem: No se pudo instanciar el jugador")
+		return false
+	
+	# Añadir el jugador como hijo del MapSystem
+	add_child(player_instance)
+	player = player_instance
+	
+	print("MapSystem: Jugador cargado dinámicamente")
+	return true
 
 ## Asigna un mapa como activo
 func set_active_map(map_scene: Node) -> void:
@@ -93,7 +157,7 @@ func load_map(map_id: String) -> Node:
 	print("MapSystem: Cargando mapa: ", map_id)
 	
 	# Construir la ruta del mapa
-	var map_path = "res://Scenes/Overworld/Maps/%s/MapScene.tscn" % map_id
+	var map_path = "res://Scenes/Overworld/Maps/%s.tscn" % map_id
 	
 	# Verificar si el archivo existe
 	if not ResourceLoader.exists(map_path):
@@ -137,54 +201,21 @@ func change_to_map(map_id: String) -> bool:
 	
 	# Configurar el nuevo mapa
 	new_map.name = map_id
+	
+	# Establecer como activo ANTES de añadirlo como child
+	# para que los sistemas puedan acceder a active_map en su _ready()
+	active_map = new_map
+	
+	# Añadir como child (esto disparará _ready() en todos los nodos del mapa)
 	add_child(new_map)
+	
+	# Configurar el mapa activo (esto ya no es necesario pero lo mantenemos por compatibilidad)
 	set_active_map(new_map)
 	
 	print("MapSystem: Cambio de mapa completado: ", map_id)
 	return true
 
-## Busca un SpawnPoint en el mapa activo por su ID
-func find_spawn_point(spawn_id: String) -> Node2D:
-	if not active_map:
-		push_warning("MapSystem: No hay mapa activo para buscar spawn point")
-		return null
-	
-	var grid = get_active_grid()
-	if not grid:
-		push_warning("MapSystem: No se encontró el OverworldGrid del mapa activo")
-		return null
-	
-	# Buscar directamente en el grid del mapa activo
-	return grid.get_spawn_point(spawn_id)
 
-## Posiciona al jugador en un SpawnPoint específico
-func position_player_at_spawn(spawn_id: String) -> bool:
-	if not player:
-		push_error("MapSystem: No hay jugador para posicionar")
-		return false
-	
-	var spawn_point = find_spawn_point(spawn_id)
-	if not spawn_point:
-		push_warning("MapSystem: No se encontró el spawn point: " + spawn_id)
-		# Usar posición por defecto del GameStateManager
-		var default_pos = GameStateManager.get_spawn_position()
-		player.teleport_to_tile(default_pos)
-		return false
-	
-	# Obtener la posición del spawn point usando su método
-	var spawn_position = spawn_point.get_tile_position()
-	
-	# Teletransportar al jugador
-	player.teleport_to_tile(spawn_position)
-	
-	# Actualizar la dirección si el spawn point la especifica
-	var direction = spawn_point.get_facing_direction()
-	print("MapSystem: Dirección del SpawnPoint: ", direction)
-	player.set_facing_direction(direction)
-	GameStateManager.set_facing_direction(direction)
-	
-	print("MapSystem: Jugador posicionado en spawn: ", spawn_id, " en posición: ", spawn_position, " mirando: ", direction)
-	return true
 
 ## Limpia la configuración del mapa anterior
 func _cleanup_previous_map() -> void:

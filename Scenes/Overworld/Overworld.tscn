@@ -14,11 +14,7 @@ metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
 [node name="MapScene" parent="MapSystem" instance=ExtResource("1_8h3h6")]
 
-[node name="SpawnPoint" parent="MapSystem/MapScene/OverworldGrid/SpawnPoints" index="0"]
-position = Vector2(48, 16)
-
 [node name="Player" parent="MapSystem" instance=ExtResource("2_di8v1")]
-position = Vector2(48, 16)
 
 [node name="EventSystem" type="Node" parent="." groups=["EventSystem"]]
 script = ExtResource("1_fvdb5")
@@ -26,6 +22,3 @@ metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
 [node name="WarpSystem" type="Node" parent="." groups=["WarpSystem"]]
 script = ExtResource("4_warp_system")
-
-[editable path="MapSystem/MapScene"]
-[editable path="MapSystem/Player"]

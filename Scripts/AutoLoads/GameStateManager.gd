@@ -4,8 +4,8 @@ extends Node
 ## Almacena datos clave del progreso durante la sesión actual
 
 # === DATOS DEL ESTADO DEL JUEGO ===
-var current_map_id: String = "test_map"
-var current_spawn_id: String = "spawn_1"
+var current_map_id: String = ""
+var current_position: Vector2i = Vector2i.ZERO
 var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags de eventos (Dictionary para flexibilidad)
@@ -14,26 +14,32 @@ var event_flags: Dictionary = {}
 # === INICIALIZACIÓN ===
 func _ready() -> void:
 	print("GameStateManager: Inicializado con estado temporal")
-	# Inicializar con datos de ejemplo
-	_initialize_default_state()
+	# No inicializar automáticamente - se hará cuando sea necesario
 
-## Inicializa el estado con valores por defecto
-func _initialize_default_state() -> void:
-	current_map_id = "test_map"
-	current_spawn_id = "spawn_1"
-	facing_dir = Vector2.LEFT
+## Inicializa el estado con valores por defecto para nueva partida
+func initialize_new_game() -> void:
+	current_map_id = "MapScene"
+	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
+	facing_dir = Vector2.DOWN
 	event_flags = {}
 	
-	print("GameStateManager: Estado inicializado - Mapa: %s, Spawn: %s" % [current_map_id, current_spawn_id])
+	print("GameStateManager: Nueva partida inicializada - Mapa: %s, Posición: %s" % [current_map_id, current_position])
+
+## Carga un estado guardado (placeholder para futuro)
+func load_saved_game() -> bool:
+	# TODO: Implementar carga desde archivo de guardado
+	# Por ahora, simular que no hay partida guardada
+	print("GameStateManager: No hay partida guardada disponible")
+	return false
 
 # === MÉTODOS DE LECTURA ===
 ## Retorna el ID del mapa actual
 func get_current_map_id() -> String:
 	return current_map_id
 
-## Retorna el ID del spawn actual
-func get_current_spawn_id() -> String:
-	return current_spawn_id
+## Retorna la posición actual del jugador
+func get_current_position() -> Vector2i:
+	return current_position
 
 ## Retorna la dirección a la que mira el jugador
 func get_facing_direction() -> Vector2:
@@ -53,10 +59,10 @@ func set_current_map_id(map_id: String) -> void:
 	current_map_id = map_id
 	print("GameStateManager: Mapa cambiado a: %s" % map_id)
 
-## Establece el ID del spawn actual
-func set_current_spawn_id(spawn_id: String) -> void:
-	current_spawn_id = spawn_id
-	print("GameStateManager: Spawn cambiado a: %s" % spawn_id)
+## Establece la posición actual del jugador
+func set_current_position(position: Vector2i) -> void:
+	current_position = position
+	print("GameStateManager: Posición cambiada a: %s" % position)
 
 ## Establece la dirección a la que mira el jugador
 func set_facing_direction(direction: Vector2) -> void:
@@ -75,40 +81,26 @@ func clear_event_flag(flag_name: String) -> void:
 		print("GameStateManager: Flag '%s' eliminado" % flag_name)
 
 # === MÉTODOS DE TRANSICIÓN ===
-## Cambia de mapa y actualiza el spawn
-func change_map(map_id: String, spawn_id: String) -> void:
+## Cambia de mapa y actualiza la posición
+func change_map(map_id: String, position: Vector2i) -> void:
 	set_current_map_id(map_id)
-	set_current_spawn_id(spawn_id)
-	print("GameStateManager: Transición a mapa '%s' en spawn '%s'" % [map_id, spawn_id])
+	set_current_position(position)
+	print("GameStateManager: Transición a mapa '%s' en posición '%s'" % [map_id, position])
 
-## Actualiza el spawn después de una transición de mapa
-func update_spawn_after_transition(spawn_id: String) -> void:
-	set_current_spawn_id(spawn_id)
+## Actualiza la posición después de una transición de mapa
+func update_position_after_transition(position: Vector2i) -> void:
+	set_current_position(position)
 
 # === MÉTODOS DE UTILIDAD ===
-## Retorna la posición del spawn actual (placeholder)
-func get_spawn_position() -> Vector2i:
-	# TODO: Integrar con sistema de spawns real
-	# Por ahora retorna una posición por defecto
-	match current_spawn_id:
-		"spawn_1":
-			return Vector2i(1, 7)
-		"spawn_2":
-			return Vector2i(10, 10)
-		"spawn_3":
-			return Vector2i(15, 15)
-		_:
-			return Vector2i(5, 5)
-
 ## Resetea el estado a los valores por defecto
 func reset_to_default() -> void:
-	_initialize_default_state()
+	initialize_new_game()
 
 ## Retorna un resumen del estado actual
 func get_state_summary() -> String:
 	var summary = "=== ESTADO DEL JUEGO ===\n"
 	summary += "Mapa: %s\n" % current_map_id
-	summary += "Spawn: %s\n" % current_spawn_id
+	summary += "Posición: %s\n" % current_position
 	summary += "Dirección: %s\n" % facing_dir
 	summary += "Flags: %s\n" % event_flags
 	return summary
