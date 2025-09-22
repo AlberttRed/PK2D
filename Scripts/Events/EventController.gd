@@ -138,14 +138,14 @@ func skip_current_command() -> void:
 func _on_event_finished(event: Event) -> void:
 	SignalManager.event_finished.emit(event)
 
+## Se registra en el EventSystem si ya está disponible
 func _register_with_event_system() -> void:
-	"""Se registra en el EventSystem si ya está disponible"""
 	var event_system = get_tree().get_first_node_in_group("EventSystem")
 	if event_system and event_system.has_method("register_controller"):
 		event_system.register_controller(self, true)
 		print("EventController: Registrado automáticamente en EventSystem")
 
+## Se registra en el EventSystem cuando esté listo
 func _on_event_system_ready(system: Node) -> void:
-	"""Se registra en el EventSystem cuando esté listo"""
 	if system.has_method("register_controller"):
 		system.register_controller(self, true)
