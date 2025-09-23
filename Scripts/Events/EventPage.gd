@@ -5,3 +5,4 @@ class_name EventPage
 @export var commands: Array[EventCommand] = []
 @export var blocks_player: bool = true
 @export var through: bool = false
+@export var sprite_frames: SpriteFrames = null

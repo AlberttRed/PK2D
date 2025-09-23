@@ -19,7 +19,6 @@ animations = [{
 script = ExtResource("1_s1pap")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_s1pap")
 
 [node name="Occupancy" type="Node" parent="."]
 script = ExtResource("3_x7w3d")
