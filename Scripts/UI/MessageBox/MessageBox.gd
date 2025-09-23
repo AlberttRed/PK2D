@@ -98,8 +98,6 @@ func writeText():
 	
 func startText():
 	enable_input_handling()
-	#GUI.accept.connect(selectOption)
-	#GUI.cancel.connect(cancelOption)
 	label.line_displayed.connect(newLine)
 	finsihedTyping.connect(_finishedMessage)
 	finished.connect(onFinish)
@@ -208,9 +206,6 @@ func close():
 	
 func clear():
 	disable_input_handling()
-	#if GUI.accept.is_connected(selectOption):
-		#GUI.accept.disconnect(selectOption)
-	#GUI.cancel.disconnect(cancelOption)
 	if label.line_displayed.is_connected(newLine):
 		label.line_displayed.disconnect(newLine)
 	if finsihedTyping.is_connected(_finishedMessage):
@@ -241,13 +236,13 @@ func onFinish():
 	clear()
 
 func enable_input_handling():
-	if not GUI.accept.is_connected(Callable(self, "selectOption")):
-		GUI.accept.connect(Callable(self, "selectOption"))
-	if not GUI.cancel.is_connected(Callable(self, "cancelOption")):
-		GUI.cancel.connect(Callable(self, "cancelOption"))
+	if not SignalManager.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
+		SignalManager.messagebox_input_accept.connect(Callable(self, "selectOption"))
+	if not SignalManager.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
+		SignalManager.messagebox_input_cancel.connect(Callable(self, "cancelOption"))
 
 func disable_input_handling():
-	if GUI.accept.is_connected(Callable(self, "selectOption")):
-		GUI.accept.disconnect(Callable(self, "selectOption"))
-	if GUI.cancel.is_connected(Callable(self, "cancelOption")):
-		GUI.cancel.disconnect(Callable(self, "cancelOption"))
+	if SignalManager.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
+		SignalManager.messagebox_input_accept.disconnect(Callable(self, "selectOption"))
+	if SignalManager.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
+		SignalManager.messagebox_input_cancel.disconnect(Callable(self, "cancelOption"))

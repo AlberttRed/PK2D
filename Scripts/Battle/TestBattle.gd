@@ -25,7 +25,7 @@ func wildSingleBattle():
 		BattleRules.BattleModes.SINGLE  
 	)
 
-	GUI.BattleNew.start_battle([playerParticipant], [wildParticipant], rules)
+	SignalManager.battle_requested.emit([playerParticipant, wildParticipant], rules)
 	
 	
 func wildDoubleBattle():
@@ -42,7 +42,7 @@ func wildDoubleBattle():
 		BattleRules.BattleModes.DOUBLE  
 	)
 
-	GUI.BattleNew.start_battle([playerParticipant], [wildParticipant], rules)	
+	SignalManager.battle_requested.emit([playerParticipant, wildParticipant], rules)	
 	
 func singleTrainerBattle():
 	pass

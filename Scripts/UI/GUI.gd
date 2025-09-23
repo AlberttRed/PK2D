@@ -30,12 +30,16 @@ var next = false
 #onready var bag = get_node("BAG")
 #@onready var transition = $TRANSITION
 #@onready var levelUp = $LEVELUP
+@onready var fade_layer:ColorRect = $FadeLayer
 
 var choices_options = null
 
 func _ready():
 	# Conectar señales del SignalManager
 	SignalManager.message_requested.connect(_on_message_requested)
+	SignalManager.messagebox_input_accept.connect(_on_messagebox_accept)
+	SignalManager.messagebox_input_cancel.connect(_on_messagebox_cancel)
+	SignalManager.battle_requested.connect(_on_battle_requested)
 	
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
@@ -200,7 +204,7 @@ func isVisible():
 #	menu.set_process(true)
 #
 func isFading():
-	return fading
+	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 ## --- Señales del SignalManager ---
 ## Maneja solicitudes de mensaje desde el SignalManager
@@ -210,6 +214,28 @@ func _on_message_requested(text: String, config: Dictionary = {}) -> void:
 ## Notifica que el mensaje terminó
 func _on_message_finished() -> void:
 	SignalManager.message_finished.emit()
+
+## Maneja input de accept para el MessageBox
+func _on_messagebox_accept() -> void:
+	accept.emit()
+
+## Maneja input de cancel para el MessageBox
+func _on_messagebox_cancel() -> void:
+	cancel.emit()
+
+## Maneja solicitudes de batalla desde el SignalManager
+func _on_battle_requested(participants: Array, rules: BattleRules) -> void:
+	# Separar participantes en player y enemy
+	var player_participants = []
+	var enemy_participants = []
+	
+	for participant in participants:
+		if participant.is_player:
+			player_participants.append(participant)
+		else:
+			enemy_participants.append(participant)
+	
+	BattleNew.start_battle(player_participants, enemy_participants, rules)
 
 ## --- Métodos del MessageBox ---
 ## Muestra un mensaje con configuración específica
@@ -264,12 +290,14 @@ func _input(event: InputEvent):
 		pressed_actions["ui_accept"] = true
 		print("GUI accept")
 		accept.emit()
+		SignalManager.messagebox_input_accept.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_cancel") and !pressed_actions.has("ui_cancel"):
 		pressed_actions["ui_cancel"] = true
 		print("GUI cancel")
 		cancel.emit()
+		SignalManager.messagebox_input_cancel.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6s1oa8tssbi1"]
+[gd_scene load_steps=5 format=3 uid="uid://c6s1oa8tssbi1"]
 
 [ext_resource type="Script" uid="uid://b4kjg3acee1ud" path="res://Scripts/UI/GUI.gd" id="1"]
+[ext_resource type="Script" uid="uid://6d5fhb0upic7" path="res://Scripts/UI/FadeLayer.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_rtl2r"]
 [ext_resource type="PackedScene" uid="uid://notumsye5rrv" path="res://Scenes/Battle/core/Battle.tscn" id="13_n4y00"]
 
@@ -12,3 +13,6 @@ visible = false
 
 [node name="BattleNew" parent="." instance=ExtResource("13_n4y00")]
 visible = false
+
+[node name="FadeLayer" type="ColorRect" parent="."]
+script = ExtResource("4")
