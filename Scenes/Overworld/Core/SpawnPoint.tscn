@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dd2nm1d1v7gfv"]
 
 [ext_resource type="Script" uid="uid://gaqqrnyb1sdp" path="res://Scripts/Overworld/Core/SpawnPoint.gd" id="1_leu81"]
-[ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_dfmx2"]
+[ext_resource type="Texture2D" uid="uid://cswr51cc38xri" path="res://Sprites/Eventos/DefaultSpawnPointSprite.png" id="2_dfmx2"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_c34v6"]
 animations = [{
