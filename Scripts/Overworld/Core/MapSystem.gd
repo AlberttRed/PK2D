@@ -6,6 +6,7 @@ class_name MapSystem
 
 var active_map: Node = null
 var player: Node = null
+var previous_map: Node = null
 
 func _enter_tree() -> void:
 	# Verificar si ya hay un mapa configurado
@@ -180,7 +181,7 @@ func load_map(map_id: String) -> Node:
 	return map_instance
 
 ## Cambia al mapa especificado
-func change_to_map(map_id: String) -> bool:
+func change_to_map(map_id: String, preserve_previous: bool = false) -> bool:
 	print("MapSystem: Cambiando a mapa: ", map_id)
 	
 	# Si ya estamos en el mapa correcto, no hacer nada
@@ -190,9 +191,16 @@ func change_to_map(map_id: String) -> bool:
 	
 	# Limpiar el mapa anterior si existe
 	if active_map:
-		_cleanup_previous_map()
-		active_map.queue_free()
-		active_map = null
+		if preserve_previous:
+			# Preservar el mapa anterior de forma temporal para permitir terminar eventos en curso
+			previous_map = active_map
+			# Ocultar de forma robusta todo el subárbol visual
+			_set_subtree_visibility(previous_map, false)
+			previous_map.process_mode = Node.PROCESS_MODE_DISABLED
+		else:
+			_cleanup_previous_map()
+			active_map.queue_free()
+			active_map = null
 	
 	# Cargar el nuevo mapa
 	var new_map = load_map(map_id)
@@ -202,18 +210,41 @@ func change_to_map(map_id: String) -> bool:
 	# Configurar el nuevo mapa
 	new_map.name = map_id
 	
+	# Asegurar que el mapa nuevo esté visible
+	_set_subtree_visibility(new_map, true)
+	new_map.process_mode = Node.PROCESS_MODE_INHERIT
+	
 	# Establecer como activo ANTES de añadirlo como child
 	# para que los sistemas puedan acceder a active_map en su _ready()
 	active_map = new_map
 	
 	# Añadir como child (esto disparará _ready() en todos los nodos del mapa)
 	add_child(new_map)
+
+	# Emitir grid activo tras activar el mapa
+	var grid := get_active_grid()
+	if SignalManager and grid:
+		SignalManager.active_grid_changed.emit(grid)
 	
 	# Configurar el mapa activo (esto ya no es necesario pero lo mantenemos por compatibilidad)
 	set_active_map(new_map)
 	
 	print("MapSystem: Cambio de mapa completado: ", map_id)
 	return true
+
+## Libera el mapa preservado (si existe). Se puede conectar directamente a señales que pasen un parámetro
+func release_previous_map(_event: Event = null) -> void:
+	if previous_map and is_instance_valid(previous_map):
+		print("MapSystem: Liberando mapa preservado: ", previous_map.name)
+		previous_map.queue_free()
+	previous_map = null
+
+## Oculta/muestra todo el subárbol de un nodo CanvasItem (y descendientes)
+func _set_subtree_visibility(node: Node, visible: bool) -> void:
+	if node is CanvasItem:
+		(node as CanvasItem).visible = visible
+	for child in node.get_children():
+		_set_subtree_visibility(child, visible)
 
 
 

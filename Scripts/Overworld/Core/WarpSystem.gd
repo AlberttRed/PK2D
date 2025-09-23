@@ -83,11 +83,12 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	
 	if needs_map_change:
 		print("WarpSystem: Cambiando de mapa a: ", map_id)
-		var success = map_system.change_to_map(map_id)
+		var success = map_system.change_to_map(map_id, true)
 		if not success:
 			push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
 			is_warping = false
 			return
+
 	
 	# 2. Posicionar al jugador en el spawn point correspondiente
 	print("WarpSystem: Posicionando jugador en spawn: ", spawn_id)
@@ -104,13 +105,22 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	# 4. Actualizar estado interno
 	current_map_id = map_id
 	current_spawn_id = spawn_id
+
+	# Conectar one-shot a la finalización de evento para liberar mapa preservado ANTES de emitir warp_finished
+	if SignalManager and map_system and map_system.has_method("release_previous_map"):
+		SignalManager.event_finished.connect(func(_event): map_system.release_previous_map(), CONNECT_ONE_SHOT)
+
+	# Emitir warp_finished de forma diferida (siguiente frame) para que los comandos puedan await correctamente
+	call_deferred("_emit_warp_finished", map_id, spawn_id)
+	return
+
+## Emisión diferida de warp_finished para evitar carreras con await en comandos
+func _emit_warp_finished(map_id: String, spawn_id: String) -> void:
+	# Marcar que ya no estamos warpeando justo antes de emitir
 	is_warping = false
-	
-	# 5. Emitir señal de finalización
 	warp_finished.emit(map_id, spawn_id)
 	if SignalManager:
 		SignalManager.warp_finished.emit(map_id, spawn_id)
-	
 	print("WarpSystem: Warp completado - Mapa: ", map_id, ", Spawn: ", spawn_id)
 
 ## Obtiene información del estado actual

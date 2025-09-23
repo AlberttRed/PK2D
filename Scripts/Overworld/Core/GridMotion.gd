@@ -20,16 +20,13 @@ var previous_dir := dir
 var grid: OverworldGrid
 
 func _ready() -> void:
-	# Obtener el grid a través del MapSystem
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
-	if not map_system:
-		push_error("GridMotion: No se encontró el MapSystem en la escena")
-		return
-	
-	grid = map_system.get_active_grid()
-	if not grid:
-		push_error("GridMotion: No se pudo obtener el OverworldGrid del MapSystem")
-		return
+	# Suscribirse a cambios de grid activo publicados por MapSystem
+	if SignalManager:
+		SignalManager.active_grid_changed.connect(func(g): grid = g)
+		# Inicializar con el grid activo si ya existe
+		var ms: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+		if ms:
+			grid = ms.get_active_grid()
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
@@ -46,7 +43,20 @@ func get_speed_multiplier(_d: Vector2, can_step: bool, initial_step: bool) -> fl
 
 
 func current_tile() -> Vector2i:
+	# Revalidar grid por si fue liberado tras un cambio de mapa
+	if not grid or not is_instance_valid(grid):
+		_refresh_grid()
+		if not grid or not is_instance_valid(grid):
+			push_error("GridMotion: OverworldGrid no disponible para calcular current_tile")
+			assert(false)
+			return Vector2i.ZERO
 	return grid.world_to_tile(actor.global_position)
+ 
+func _refresh_grid() -> void:
+	grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
+
+func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
+	_refresh_grid()
 
 func face(d: Vector2) -> void:
 	if d != Vector2.ZERO:
@@ -54,6 +64,12 @@ func face(d: Vector2) -> void:
 		self.dir = d
 
 func try_step(d: Vector2) -> bool:
+	# Revalidar grid antes de cualquier acceso (evita crash si se mantiene input durante warp)
+	if not grid or not is_instance_valid(grid):
+		_refresh_grid()
+		if not grid or not is_instance_valid(grid):
+			return false
+
 	if moving or d == Vector2.ZERO:
 		return false
 	face(d)

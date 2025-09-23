@@ -15,6 +15,14 @@ func _ready() -> void:
 	if not grid:
 		push_error("Occupancy: No se pudo obtener el OverworldGrid del MapSystem")
 		return
+
+	# Suscribirse a cambios de grid activo publicados por MapSystem
+	if SignalManager:
+		SignalManager.active_grid_changed.connect(func(g): grid = g)
+		# Inicializar con el grid activo si ya existe
+		var ms: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+		if ms:
+			grid = ms.get_active_grid()
 	
 	# Snap al centro de tile y registra ocupación inicial
 	var tile := grid.world_to_tile(actor.global_position)
@@ -30,6 +38,10 @@ func _ready() -> void:
 		grid.occupy(tile, actor)
 
 func current_tile() -> Vector2i:
+	if not grid or not is_instance_valid(grid):
+		push_error("Occupancy: grid inválido en current_tile()")
+		assert(false)
+		return Vector2i.ZERO
 	return grid.world_to_tile(actor.global_position)
 
 ## Registra la ocupación del evento después de que se haya configurado current_page
@@ -41,6 +53,10 @@ func register_event_occupancy(tile: Vector2i) -> void:
 
 ## Si en algún momento teletransportas:
 func teleport_to_tile(t: Vector2i) -> void:
+	if not grid or not is_instance_valid(grid):
+		push_error("Occupancy: grid inválido en teleport_to_tile()")
+		assert(false)
+		return
 	var cur := grid.world_to_tile(actor.global_position)
 	# Limpiar registros previos
 	if actor is Event:
@@ -60,3 +76,5 @@ func teleport_to_tile(t: Vector2i) -> void:
 			grid.occupy(t, actor)
 	else:
 		grid.occupy(t, actor)
+
+# Ya no necesitamos escuchar warp_finished; el grid se actualiza vía active_grid_changed

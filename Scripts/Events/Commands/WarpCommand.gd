@@ -30,10 +30,15 @@ func execute(_context: Node) -> void:
 	# Emitir señal para solicitar warp
 	SignalManager.warp_requested.emit(target_scene, target_spawn)
 	print("WarpCommand: Señal warp_requested emitida correctamente")
-	
-	# Esperar a que termine el warp y aplicar la dirección
-	await _context.get_tree().process_frame
+
+	# Esperar a que termine el warp realmente
+	await SignalManager.warp_finished
+
+	# Aplicar la dirección con el nuevo mapa ya activo
 	_apply_facing_direction(_context)
+
+	# Continuar ejecución del EventController al terminar este comando asíncrono
+	_context.continue_execution()
 
 ## Aplica la dirección configurada en el inspector
 func _apply_facing_direction(context: Node) -> void:
@@ -66,5 +71,4 @@ func get_facing_vector() -> Vector2:
 			return Vector2.DOWN
 
 func is_async() -> bool:
-	# Será asíncrono cuando implementemos cambio de escena
-	return false
+	return true
