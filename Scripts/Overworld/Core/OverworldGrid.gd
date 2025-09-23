@@ -31,14 +31,6 @@ func _enter_tree() -> void:
 			push_warning("El nodo en '%s' no es un TileMapLayer" % [path])
 
 func _ready() -> void:
-	# Buscar el jugador a través del MapSystem
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
-	if not map_system:
-		push_error("OverworldGrid: No se encontró el MapSystem en la escena")
-		return
-	
-	var _player: Node = map_system.get_player()
-	
 	# Registrar todos los SpawnPoints del mapa
 	_register_all_spawns()
 	

@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://ca0jpvrn30kqs"]
+
+[ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
+[ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
+
+[node name="MapScene" type="Node2D"]
+
+[node name="OverworldGrid" type="Node" parent="." groups=["OverworldGrid"]]
+script = ExtResource("1_03vl0")
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
+
+[node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
+metadata/_edit_lock_ = true
+
+[node name="Objects" type="TileMapLayer" parent="OverworldGrid"]
+metadata/_edit_lock_ = true
+
+[node name="Above" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 1
+metadata/_edit_lock_ = true
+
+[node name="Events" type="Node2D" parent="OverworldGrid"]
+metadata/_edit_lock_ = true
+
+[node name="SpawnPoints" type="Node" parent="OverworldGrid"]
+
+[node name="EventController" parent="." instance=ExtResource("7_5slja")]

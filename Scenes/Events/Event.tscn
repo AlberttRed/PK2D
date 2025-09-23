@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_x7w3d"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_s1pap"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_x7w3d"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -19,6 +19,7 @@ animations = [{
 script = ExtResource("1_s1pap")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_x7w3d")
 
 [node name="Occupancy" type="Node" parent="."]
 script = ExtResource("3_x7w3d")

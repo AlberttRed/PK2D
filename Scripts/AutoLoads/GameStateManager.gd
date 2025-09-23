@@ -18,7 +18,7 @@ func _ready() -> void:
 
 ## Inicializa el estado con valores por defecto para nueva partida
 func initialize_new_game() -> void:
-	current_map_id = "MapScene"
+	current_map_id = "MapaPuebloTest"
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
 	event_flags = {}

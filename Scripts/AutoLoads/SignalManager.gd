@@ -32,6 +32,9 @@ signal message_input_received()
 signal fade_requested(mode: String, duration: float)
 signal fade_finished()
 
+# === SEÑALES DEL GRID ACTIVO ===
+signal active_grid_changed(grid: OverworldGrid)
+
 # === SEÑALES DE INPUT DEL MESSAGEBOX ===
 signal messagebox_input_accept()
 signal messagebox_input_cancel()
