@@ -28,6 +28,19 @@ signal message_requested(text: String, config: Dictionary)
 signal message_finished()
 signal message_input_received()
 
+# === SEÑALES DEL SISTEMA DE FADE ===
+signal fade_requested(mode: String, duration: float)
+signal fade_finished()
+
+# === SEÑALES DE INPUT DEL MESSAGEBOX ===
+signal messagebox_input_accept()
+signal messagebox_input_cancel()
+
+# === SEÑALES DEL SISTEMA DE BATALLA ===
+signal battle_requested(participants: Array, rules: BattleRules)
+signal battle_started()
+signal battle_finished()
+
 
 # --- Utilidades ---
 
