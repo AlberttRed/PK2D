@@ -1,151 +1,98 @@
 extends Node
 class_name EventController
 
-## EventController - Ejecutor de eventos específico de un mapa
-## Gestiona la ejecución de eventos de un mapa individual
+## Controlador GLOBAL de ejecución de eventos (EventPage)
+## Debe ser hijo de EventSystem. Ejecuta páginas de evento (copias) en orden.
 
-signal event_started(event: Event)
-signal event_finished(event: Event)
+signal page_started(page: EventPage)
+signal page_finished(page: EventPage)
 
 enum State { IDLE, RUNNING }
 
 var current_state: State = State.IDLE
-var current_event: Event = null
+var current_page: EventPage = null
 var command_queue: Array[EventCommand] = []
 var current_command_index: int = 0
 
-# Referencias del mapa
-var map_node: Node = null
-var grid: OverworldGrid = null
-
-func _ready() -> void:
-	# El EventController debe ser hijo de un mapa
-	map_node = get_parent()
-	
-	# Buscar el OverworldGrid de este mapa
-	grid = map_node.get_node_or_null("OverworldGrid")
-	if not grid:
-		push_warning("EventController: No se encontró OverworldGrid en el mapa '%s'" % map_node.name)
-	
-	# Conectar señales
-	event_finished.connect(_on_event_finished)
-	
-	# Conectar señales del SignalManager
-	SignalManager.event_system_ready.connect(_on_event_system_ready)
-	
-	# Registrarse automáticamente en el EventSystem si ya está disponible
-	_register_with_event_system()
-
-## --- Control de Estado ---
 func is_busy() -> bool:
 	return current_state == State.RUNNING
 
-func can_start_event(event: Event) -> bool:
-	return current_state == State.IDLE and event != null
-
-## --- Ejecución de Eventos ---
-func start_event(event: Event) -> bool:
-	if not can_start_event(event):
-		print("EventController: No se puede iniciar evento '%s' - ya hay uno en curso" % event.event_name)
+## Inicia la ejecución de una EventPage (se asume que ya es una copia)
+func start_page(page: EventPage) -> bool:
+	if current_state != State.IDLE or page == null:
+		push_warning("EventController: No se puede iniciar página - ya hay una en curso o es nula")
 		return false
 	
-	if not event.current_page or event.current_page.commands.is_empty():
-		print("EventController: Evento '%s' no tiene comandos para ejecutar" % event.event_name)
+	if page.commands.is_empty():
+		push_warning("EventController: La página no tiene comandos para ejecutar")
 		return false
-	print("Ejecutando event %s", event.event_name)
-	# Configurar estado
+	
 	current_state = State.RUNNING
-	current_event = event
-	command_queue = event.current_page.commands.duplicate()
+	current_page = page
+	command_queue.clear()
 	current_command_index = 0
 	
-	# Bloquear/desbloquear según configuración de la EventPage
-	if event.current_page.blocks_player:
-		block_player_control()
+	# Trabajar con copias de los comandos para desacoplar de recursos originales
+	for c in page.commands:
+		if c:
+			command_queue.append(c.duplicate(true))
+	
+	# Bloqueo de jugador según la página
+	if page.blocks_player:
+		SignalManager.player_control_blocked.emit()
 	else:
-		unblock_player_control()
+		SignalManager.player_control_unblocked.emit()
 	
-	# Emitir señal
-	event_started.emit(event)
+	page_started.emit(page)
 	
-	print("EventController: Iniciando evento '%s' con %d comandos" % [event.event_name, command_queue.size()])
-	
-	# Ejecutar primer comando
-	execute_next_command()
-	
+	call_deferred("execute_next_command")
 	return true
 
 func execute_next_command() -> void:
 	if current_command_index >= command_queue.size():
-		finish_event()
+		finish_page()
 		return
 	
 	var command = command_queue[current_command_index]
-	print("EventController: Ejecutando comando %d/%d: %s" % [current_command_index + 1, command_queue.size(), command.get_command_name()])
+	# Ejecutar comando con este controlador como contexto
+	if command and command.has_method("execute"):
+		command.execute(self)
 	
-	# Ejecutar comando 
-	command.execute(self)
-	
-	# Avanzar al siguiente comando
 	current_command_index += 1
 	
 	# Si el comando no es asíncrono, continuar inmediatamente
-	if not command.has_method("is_async") or not command.is_async():
+	if not command or not command.has_method("is_async") or not command.is_async():
 		call_deferred("execute_next_command")
 
-func finish_event() -> void:
-	if current_state != State.RUNNING:
-		return
-	
-	var finished_event = current_event
-	
-	# Limpiar estado
-	current_state = State.IDLE
-	current_event = null
-	command_queue.clear()
-	current_command_index = 0
-	
-	# SIEMPRE desbloquear control del jugador al terminar
-	unblock_player_control()
-	
-	# Emitir señal
-	event_finished.emit(finished_event)
-	
-	print("EventController: Evento '%s' finalizado" % finished_event.event_name)
-
-## --- Control del Jugador ---
-func block_player_control() -> void:
-	# Emitir señal global para bloquear control del jugador
-	SignalManager.player_control_blocked.emit()
-
-func unblock_player_control() -> void:
-	# Emitir señal global para desbloquear control del jugador
-	SignalManager.player_control_unblocked.emit()
-
-
-##Llamado por comandos asíncronos cuando terminan
 func continue_execution() -> void:
 	if current_state == State.RUNNING:
 		call_deferred("execute_next_command")
 
-##Permite a los comandos saltarse a sí mismos
 func skip_current_command() -> void:
 	if current_state == State.RUNNING:
 		current_command_index += 1
 		call_deferred("execute_next_command")
 
-##Notifica que terminó un evento
-func _on_event_finished(event: Event) -> void:
-	SignalManager.event_finished.emit(event)
+func finish_page() -> void:
+	if current_state != State.RUNNING:
+		return
+	
+	var finished := current_page
+	
+	# SIEMPRE desbloquear control del jugador al terminar
+	SignalManager.player_control_unblocked.emit()
+	
+	# Limpiar estado
+	current_state = State.IDLE
+	current_page = null
+	command_queue.clear()
+	current_command_index = 0
+	
+	page_finished.emit(finished)
 
-## Se registra en el EventSystem si ya está disponible
-func _register_with_event_system() -> void:
-	var event_system = get_tree().get_first_node_in_group("EventSystem")
-	if event_system and event_system.has_method("register_controller"):
-		event_system.register_controller(self, true)
-		print("EventController: Registrado automáticamente en EventSystem")
+## Compatibilidad con comandos existentes
+func block_player_control() -> void:
+	SignalManager.player_control_blocked.emit()
 
-## Se registra en el EventSystem cuando esté listo
-func _on_event_system_ready(system: Node) -> void:
-	if system.has_method("register_controller"):
-		system.register_controller(self, true)
+func unblock_player_control() -> void:
+	SignalManager.player_control_unblocked.emit()

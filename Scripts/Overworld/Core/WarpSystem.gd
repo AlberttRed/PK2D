@@ -9,7 +9,6 @@ signal warp_finished(map_id: String, spawn_id: String)
 
 # Referencias a otros sistemas (obtenidas dinámicamente)
 var map_system: Node = null
-var player: Node = null
 
 # Variables del estado actual
 var is_warping: bool = false
@@ -36,11 +35,6 @@ func _update_references() -> void:
 	if not map_system:
 		push_warning("WarpSystem: No se encontró el MapSystem")
 		return
-	
-	# Obtener Player a través del MapSystem
-	player = map_system.get_player()
-	if not player:
-		push_warning("WarpSystem: No se encontró el jugador (puede cargarse más tarde)")
 
 ## Método público para solicitar un warp
 func request_warp(map_id: String, spawn_id: String) -> void:
@@ -83,7 +77,7 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	
 	if needs_map_change:
 		print("WarpSystem: Cambiando de mapa a: ", map_id)
-		var success = map_system.change_to_map(map_id, true)
+		var success = map_system.change_to_map(map_id, false)
 		if not success:
 			push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
 			is_warping = false
@@ -105,10 +99,6 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	# 4. Actualizar estado interno
 	current_map_id = map_id
 	current_spawn_id = spawn_id
-
-	# Conectar one-shot a la finalización de evento para liberar mapa preservado ANTES de emitir warp_finished
-	if SignalManager and map_system and map_system.has_method("release_previous_map"):
-		SignalManager.event_finished.connect(func(_event): map_system.release_previous_map(), CONNECT_ONE_SHOT)
 
 	# Emitir warp_finished de forma diferida (siguiente frame) para que los comandos puedan await correctamente
 	call_deferred("_emit_warp_finished", map_id, spawn_id)

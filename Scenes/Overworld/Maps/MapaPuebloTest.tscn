@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=4 uid="uid://1owe4s00dp15"]
+[gd_scene load_steps=32 format=4 uid="uid://1owe4s00dp15"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_ai0v4"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_v81bm"]
@@ -13,7 +13,6 @@
 [ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="11_gf6em"]
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="12_dg3ml"]
 [ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="13_aylp7"]
-[ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="14_lixsw"]
 
 [sub_resource type="Resource" id="Resource_s82w2"]
 script = ExtResource("6_bny8y")
@@ -102,10 +101,19 @@ target_spawn = "SpawnEntrada"
 facing_direction = 0
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
+[sub_resource type="Resource" id="Resource_0asgo"]
+script = ExtResource("7_2b25c")
+metadata/_custom_type_script = "uid://bocuxh8svpgvc"
+
+[sub_resource type="Resource" id="Resource_j7sqr"]
+script = ExtResource("8_01pid")
+duration = 5.0
+metadata/_custom_type_script = "uid://dy36hc326kn7v"
+
 [sub_resource type="Resource" id="Resource_we81h"]
 script = ExtResource("4_0asgo")
 trigger_type = 1
-commands = Array[ExtResource("5_j7sqr")]([SubResource("Resource_ai0v4"), SubResource("Resource_j5a51"), SubResource("Resource_tjc6v")])
+commands = Array[ExtResource("5_j7sqr")]([SubResource("Resource_ai0v4"), SubResource("Resource_j5a51"), SubResource("Resource_tjc6v"), SubResource("Resource_0asgo"), SubResource("Resource_j7sqr")])
 blocks_player = true
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -176,5 +184,3 @@ spawn_id = "prova"
 [node name="SpawnPorta" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_aylp7")]
 position = Vector2(336, 176)
 spawn_id = "SpawnPorta"
-
-[node name="EventController" parent="." instance=ExtResource("14_lixsw")]

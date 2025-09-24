@@ -1,7 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
-[ext_resource type="PackedScene" uid="uid://d0gweahpiuul1" path="res://Scenes/Events/EventController.tscn" id="7_5slja"]
 
 [node name="MapScene" type="Node2D"]
 
@@ -24,4 +23,3 @@ metadata/_edit_lock_ = true
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
-[node name="EventController" parent="." instance=ExtResource("7_5slja")]
