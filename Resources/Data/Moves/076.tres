@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://0gcduyxqyjof"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_aeh1h"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_aeh1h"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_nuod1"]
 
 [resource]
@@ -25,8 +25,6 @@ During sunny day, the charge turn is skipped.
 During hail, rain dance, or sandstorm, power is halved.
 
 This move cannot be selected by sleep talk."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

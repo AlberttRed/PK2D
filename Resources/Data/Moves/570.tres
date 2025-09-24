@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b2ttnoyphf10w"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_tcf2x"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_tcf2x"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_4t236"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 3
 effect_entries = "Heals the user for half the total damage dealt to all targets. Heals the user for half the total damage dealt to all targets."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 9
 meta_ailment_id = 0

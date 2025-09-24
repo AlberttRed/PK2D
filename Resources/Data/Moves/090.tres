@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cw4ty0se7gaet"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_fmad2"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_fmad2"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_lukri"]
 
 [resource]
@@ -23,8 +23,6 @@ effect_entries = "Causes a one-hit KO. Inflicts damage equal to the target's max
 Because this move inflicts a specific and finite amount of damage, endure still prevents the target from fainting.
 
 The effects of lock on, mind reader, and no guard still apply, as long as the user is equal or higher level than the target.  However, they will not give this move a chance to break through detect or protect."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

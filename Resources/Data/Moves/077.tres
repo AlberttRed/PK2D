@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://c68mct6xvbu2q"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_4q05n"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_4q05n"]
 [ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_e2ajg"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_xbwfx"]
 
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 1
 effect_entries = "Poisons the target. Poisons the target."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 5

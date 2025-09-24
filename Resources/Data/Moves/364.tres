@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bindo51iwtlqj"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_apbv6"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_apbv6"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8ot1r"]
 
 [resource]
@@ -22,8 +22,6 @@ damage_class_id = 2
 effect_entries = "Hits through Protect and Detect. Inflicts regular damage.  Removes the effects of detect or protect from the target before hitting.
 
 This move cannot be copied by mirror move, nor selected by assist or metronome."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

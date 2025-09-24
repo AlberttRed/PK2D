@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b61ge3xn0xcbp"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_cqnfw"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_cqnfw"]
 [ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_mqxbg"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 2
 effect_entries = "If the target is asleep, has double power and wakes it up. Inflicts regular damage.  If the target is sleeping, this move has double power, and the target wakes up."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

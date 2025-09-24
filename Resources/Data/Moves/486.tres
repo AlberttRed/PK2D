@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dtu7kgmu3os64"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_wtdje"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_wtdje"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_5pdnw"]
 
 [resource]
@@ -28,8 +28,6 @@ Up to 3× the target's Speed      |    80
 Up to 4× the target's Speed      |   120
 More than 4× the target's Speed  |   150
 "
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

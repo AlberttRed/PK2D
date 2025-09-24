@@ -1,11 +1,8 @@
-[gd_resource type="DynamicFont" load_steps=2 format=3]
-
-[ext_resource type="DynamicFontData" uid="uid://odn2mkfd4lap" path="res://Escenas/UI/Fonts/pkmnem.ttf" id="1"]
-
+[gd_resource type="FontFile" format=3 uid="uid://b5llvva0yujhb"]
 
 [resource]
-size = 26
-outline_color = Color( 0.00784314, 0, 0, 1 )
-use_mipmaps = true
-font_data = ExtResource( 1 )
-
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0

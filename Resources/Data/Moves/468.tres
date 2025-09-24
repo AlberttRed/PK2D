@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://brw1cpcb1j31d"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oaagt"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_oaagt"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_n7r0i"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 1
 effect_entries = "Raises the user's Attack and accuracy by one stage. Raises the user's Attack and accuracy by one stage."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 0: 1,
 5: 1

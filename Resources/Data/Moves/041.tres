@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cy6iixskx3pls"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_mbny6"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_mbny6"]
 [ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_o8fx4"]
 [ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_iftqe"]
 
@@ -21,8 +21,6 @@ effect_chance = 20
 priority = 0
 damage_class_id = 2
 effect_entries = "Hits twice in the same turn.  Has a $effect_chance% chance to poison the target. Inflicts regular damage.  Hits twice in the same turn.  Has a $effect_chance% chance to poison the target."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 5

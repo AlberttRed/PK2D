@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cpr7rnr428tb6" path="res://Scripts/Battle/ui/AnimatedProgressBar.gd" id="1_0brsp"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_i4fpu"]
-[ext_resource type="FontFile" uid="uid://cefelqhb6o2me" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="3_0ieai"]
-[ext_resource type="Texture2D" uid="uid://dqhrc65l8u6am" path="res://Sprites/Pictures/HPbar_background.png" id="4_245vy"]
-[ext_resource type="Texture2D" uid="uid://cdus0uhl7tnql" path="res://Sprites/Pictures/HPbar_overlay.png" id="5_ob3jh"]
-[ext_resource type="Texture2D" uid="uid://x2gt17sm1nc5" path="res://Sprites/Pictures/HPbar_progress.png" id="6_ll6vi"]
+[ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="3_0ieai"]
+[ext_resource type="Texture2D" uid="uid://bsmo2icu67vg5" path="res://Sprites/Pictures/HPbar_background.png" id="4_245vy"]
+[ext_resource type="Texture2D" uid="uid://7pfr8knatm2n" path="res://Sprites/Pictures/HPbar_overlay.png" id="5_ob3jh"]
+[ext_resource type="Texture2D" uid="uid://rrd66cwpe6r0" path="res://Sprites/Pictures/HPbar_progress.png" id="6_ll6vi"]
 
 [sub_resource type="FontVariation" id="FontVariation_kynk5"]
 base_font = ExtResource("3_0ieai")

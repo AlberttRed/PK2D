@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://db5d5ooobp42x"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5ag5t"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5ag5t"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_xe74m"]
 
 [resource]
@@ -24,8 +24,6 @@ effect_entries = "Target drops its held item. Inflicts regular damage.  Target l
 Neither the user nor the target can recover its item with recycle.
 
 If the target has multitype or sticky hold, it will take damage but not lose its item."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

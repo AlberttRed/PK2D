@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b5yrtuxpy6r5k"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_viv70"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_viv70"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8utt0"]
 
 [resource]
@@ -21,8 +21,6 @@ damage_class_id = 1
 effect_entries = "Ally's next move inflicts half more damage. Boosts the power of the target's moves by 50% until the end of this turn.
 
 This move cannot be copied by mirror move, nor selected by assist or metronome."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 3
 meta_ailment_id = 0

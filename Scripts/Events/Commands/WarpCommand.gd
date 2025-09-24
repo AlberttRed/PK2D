@@ -72,3 +72,6 @@ func get_facing_vector() -> Vector2:
 
 func is_async() -> bool:
 	return true
+
+func is_safe_for_parallel() -> bool:
+	return false

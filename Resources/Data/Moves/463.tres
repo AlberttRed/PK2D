@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://fsqxdp1qd731"]
 
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_ey2vp"]
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_v1bom"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_v1bom"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_pf8e2"]
 
 [resource]
@@ -24,8 +24,6 @@ effect_entries = "Prevents the target from fleeing and inflicts damage for 2-5 t
 Has a 3/8 chance each to hit 2 or 3 times, and a 1/8 chance each to hit 4 or 5 times.  Averages to 3 hits per use.
 
 rapid spin cancels this effect."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 8

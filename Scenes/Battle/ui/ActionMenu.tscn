@@ -3,7 +3,7 @@
 [ext_resource type="StyleBox" uid="uid://cpxaac6mtjqnu" path="res://Resources/UI/Battle/BattleActions_Panel.tres" id="1_kketv"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_eob2g"]
 [ext_resource type="Script" uid="uid://nmns50ki7hc6" path="res://Scripts/Battle/ui/ActionsMenu.gd" id="2_x0gi5"]
-[ext_resource type="Texture2D" uid="uid://cvcukpof2s52k" path="res://Sprites/Pictures/battleCommandButtons.png" id="3_x0gi5"]
+[ext_resource type="Texture2D" uid="uid://boqv7476ti1mr" path="res://Sprites/Pictures/battleCommandButtons.png" id="3_x0gi5"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kketv"]
 texture = ExtResource("3_x0gi5")

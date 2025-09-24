@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bmwinrypiq56s"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_1rqmh"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_1rqmh"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_tqu3l"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 3
 effect_entries = "Has double power against Pokémon that have less than half their max HP remaining. Inflicts regular damage.  If the target has less than half its max HP remaining, this move has double power."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

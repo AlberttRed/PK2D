@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://mctqwt8phg8u"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_lq6kp"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_lq6kp"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_l1tn5"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 100
 priority = 0
 damage_class_id = 1
 effect_entries = "Lowers all targets' Attack and Special Attack by one stage.  Makes the user switch out. Lowers all targets' Attack and Special Attack by one stage.  Makes the user switch out."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 0: -1,
 2: -1

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://d2jr2ix8psrdc"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_senm8"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_senm8"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_6opej"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 4
 damage_class_id = 1
 effect_entries = "Blocks damaging attacks and damages attacking Pokémon for 1/8 their max HP. Blocks damaging attacks and damages attacking Pokémon for 1/8 their max HP."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 7
 meta_ailment_id = 0

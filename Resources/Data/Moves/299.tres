@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://t1lyj6a4hs7a"]
 
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_gaw4w"]
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_l8b2s"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_l8b2s"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_sm8hp"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 10
 priority = 0
 damage_class_id = 2
 effect_entries = "Has an increased chance for a critical hit and a $effect_chance% chance to burn the target. Inflicts regular damage.  User's critical hit rate is one level higher when using this move. Has a $effect_chance% chance to burn the target."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 4

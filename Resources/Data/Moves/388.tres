@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://c0t6eyoupuj0s"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gl4tb"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gl4tb"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_k68tj"]
 
 [resource]
@@ -22,8 +22,6 @@ damage_class_id = 1
 effect_entries = "Changes the target's ability to Insomnia. Changes the target's ability to insomnia.
 
 If the target's ability is truant or multitype, this move will fail."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

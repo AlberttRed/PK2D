@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b5uah2y2f1tow"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_g71sg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_g71sg"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_m0cnn"]
 
 [resource]
@@ -23,8 +23,6 @@ effect_entries = "Prevents the user's HP from lowering below 1 this turn. The us
 If the user successfully used detect, endure, protect, quick guard, or wide guard on the last turn, this move has a 50% chance to fail.
 
 This move cannot be selected by assist or metronome."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 7
 meta_ailment_id = 0

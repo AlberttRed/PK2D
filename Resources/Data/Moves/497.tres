@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cp1e64aqsu4vh"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_w73hm"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_w73hm"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_0u4qf"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 3
 effect_entries = "Power increases by 100% for each consecutive use by any friendly Pokémon, to a maximum of 200. Inflicts regular damage.  If any friendly Pokémon used this move earlier this turn or on the previous turn, that use's power is added to this move's power, to a maximum of 200."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

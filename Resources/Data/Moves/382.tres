@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cy7erj3c2betg"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_h11b0"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_h11b0"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_551xy"]
 
 [resource]
@@ -24,8 +24,6 @@ effect_entries = "Uses the target's move against it before it attacks, with powe
 If the target moves before the user, this move will fail.
 
 This move cannot be copied by mirror move, nor selected by assist, metronome, or sleep talk."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 2
 meta_ailment_id = 0

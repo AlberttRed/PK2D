@@ -1,9 +1,6 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bugfcogjtje8h"]
-
-[ext_resource type="FontFile" uid="uid://bg2qmq8nwewnl" path="res://Escenas/UI/Fonts/pkmnem.ttf" id="1_d8fwv"]
+[gd_resource type="Theme" format=3 uid="uid://bugfcogjtje8h"]
 
 [resource]
-default_font = ExtResource("1_d8fwv")
 default_font_size = 26
 Label/colors/font_color = Color(0.345098, 0.345098, 0.313726, 1)
 Label/colors/font_outline_color = Color(0.658824, 0.721569, 0.721569, 1)

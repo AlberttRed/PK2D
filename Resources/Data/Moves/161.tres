@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://re4c2bgwv4l5"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_kuu34"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_kuu34"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_vuprt"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 20
 priority = 0
 damage_class_id = 3
 effect_entries = "Has a $effect_chance% chance to burn, freeze, or paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to burn, freeze, or paralyze the target.  One of these effects is selected at random; they do not each have independent chances to occur."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = -1

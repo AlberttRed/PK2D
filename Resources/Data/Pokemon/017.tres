@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="Pokemon" load_steps=13 format=3 uid="uid://xofymkk0xeag"]
 
-[ext_resource type="Texture2D" uid="uid://bt20co3c7ndt7" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_6hacb"]
-[ext_resource type="Texture2D" uid="uid://bu2m3wq1emkah" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_pwpnf"]
-[ext_resource type="Texture2D" uid="uid://ho0xrpwbwl0i" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_td7vu"]
-[ext_resource type="Script" uid="uid://drjps1mdvnkde" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_fcmfc"]
+[ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_6hacb"]
+[ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_pwpnf"]
+[ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_td7vu"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="4_fcmfc"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_kt2ts"]
 [ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="6_e54sf"]
 

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://brfic6mlromje"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_37ur6"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_37ur6"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_ysu7w"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 100
 priority = 0
 damage_class_id = 1
 effect_entries = "Lowers the target's Attack, Special Attack, and Speed by one stage if it is poisoned. Lowers the target's Attack, Special Attack, and Speed by one stage if it is poisoned."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 0: -1,
 2: -1,

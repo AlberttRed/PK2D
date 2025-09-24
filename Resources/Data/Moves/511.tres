@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://duds3d7kw8gof"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_47i8k"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_47i8k"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_ljlqp"]
 
 [resource]
@@ -18,8 +18,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 1
 effect_entries = "Makes the target act last this turn. Forces the target to act last this turn, regardless of Speed or move priority.  If the target has already acted this turn, this move will fail."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

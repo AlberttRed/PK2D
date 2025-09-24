@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c4ex854x6yq5d"]
 
-[ext_resource type="FontFile" uid="uid://dqn60qyxkiqon" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="1_186ph"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="1_186ph"]
 [ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="2_kjeps"]
 
 [sub_resource type="FontVariation" id="FontVariation_djnq7"]

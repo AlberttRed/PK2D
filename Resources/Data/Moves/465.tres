@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bt0s6hpgmkpju"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_e8wa1"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_e8wa1"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_ot8a1"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 40
 priority = 0
 damage_class_id = 3
 effect_entries = "Has a $effect_chance% chance to lower the target's Special Defense by two stages. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Defense by two stages."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 3: -2
 })

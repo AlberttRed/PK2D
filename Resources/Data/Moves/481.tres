@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://811corvn38pb"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7sju2"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7sju2"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_kie5g"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 3
 effect_entries = "Deals splash damage to Pokémon next to the target. Inflicts regular damage.  If this move successfully hits the target, any Pokémon adjacent to the target are damaged for 1/16 their max HP."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0
