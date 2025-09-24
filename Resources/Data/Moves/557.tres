@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://b1p0kkggespf"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7s3jk"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7s3jk"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_3kxvs"]
 
 [resource]
@@ -20,8 +20,6 @@ effect_chance = 100
 priority = 0
 damage_class_id = 2
 effect_entries = "Lowers the user's Defense, Special Defense, and Speed by one stage each. Inflicts regular damage.  Lowers the user's Defense, Special Defense, and Speed by one stage each."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 1: -1,
 3: -1,

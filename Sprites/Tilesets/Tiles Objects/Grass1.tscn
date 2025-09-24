@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://b4vtxyj8eip0f"]
 
-[ext_resource type="Texture2D" uid="uid://b557yulw4x72r" path="res://Sprites/Tilesets/Tiles Objects/Grass1.png" id="1_d3iiy"]
+[ext_resource type="Texture2D" uid="uid://dck63rb15x5a8" path="res://Sprites/Tilesets/Tiles Objects/Grass1.png" id="1_d3iiy"]
 [ext_resource type="Script" uid="uid://dthg0i20b3f25" path="res://Sprites/Tilesets/Tiles Objects/Grass.gd" id="2_njatc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i3bx5"]

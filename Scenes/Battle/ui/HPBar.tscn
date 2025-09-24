@@ -1,14 +1,14 @@
 [gd_scene load_steps=12 format=3 uid="uid://dniko84d5byyb"]
 
-[ext_resource type="Texture2D" uid="uid://b8ovhsr861ugj" path="res://Sprites/Pictures/battlePlayerBoxS.png" id="1_pin0n"]
+[ext_resource type="Texture2D" uid="uid://kyij0fo8jh6o" path="res://Sprites/Pictures/battlePlayerBoxS.png" id="1_pin0n"]
 [ext_resource type="Script" uid="uid://bpc8w47kho03v" path="res://Scripts/Battle/ui/HPBar.gd" id="2_pin0n"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="3_smnl1"]
-[ext_resource type="Texture2D" uid="uid://6s4ko21ivsiy" path="res://Sprites/Pictures/Nv_icon_black.png" id="4_stmy4"]
-[ext_resource type="FontFile" uid="uid://cefelqhb6o2me" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="5_ump82"]
+[ext_resource type="Texture2D" uid="uid://bg3jekl6dawi0" path="res://Sprites/Pictures/Nv_icon_black.png" id="4_stmy4"]
+[ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="5_ump82"]
 [ext_resource type="PackedScene" uid="uid://b0ajmrb8a7e0r" path="res://Scenes/Battle/ui/AnimatedProgressBar.tscn" id="7_pin0n"]
-[ext_resource type="Texture2D" uid="uid://ds2nqorvg7ok" path="res://Sprites/Pictures/EXPbar_background.png" id="9_83cp1"]
-[ext_resource type="Texture2D" uid="uid://dbnnetnk6i26s" path="res://Sprites/Pictures/EXPbar_overlay.png" id="10_7xxgi"]
-[ext_resource type="Texture2D" uid="uid://0ldm4ismhwn8" path="res://Sprites/Pictures/EXPbar_progress.png" id="11_o1cti"]
+[ext_resource type="Texture2D" uid="uid://de5gioiilm38q" path="res://Sprites/Pictures/EXPbar_background.png" id="9_83cp1"]
+[ext_resource type="Texture2D" uid="uid://cg27fg41gy8jr" path="res://Sprites/Pictures/EXPbar_overlay.png" id="10_7xxgi"]
+[ext_resource type="Texture2D" uid="uid://cmdjcwgdkilef" path="res://Sprites/Pictures/EXPbar_progress.png" id="11_o1cti"]
 
 [sub_resource type="FontVariation" id="FontVariation_kynk5"]
 base_font = ExtResource("5_ump82")

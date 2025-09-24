@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://e634cdm0fidd"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_i2hbg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_i2hbg"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_h87mk"]
 
 [resource]
@@ -25,8 +25,6 @@ If yawn is used while this move is in effect, it will immediately fail.
 defog used by an opponent will end this effect.
 
 This effect does not prevent the confusion caused by outrage, petal dance, or thrash."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 4
 meta_ailment_id = 0

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cvynocc6nhf8a"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_su7b1"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_su7b1"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_dis2d"]
 
 [resource]
@@ -20,8 +20,6 @@ damage_class_id = 3
 effect_entries = "Inflicts regular damage and can hit Dive users. Inflicts regular damage.
 
 If the target is in the first turn of dive, this move will hit with double power."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 9
 meta_ailment_id = 0

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bru3jtjcy6k8g"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gok3b"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gok3b"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_4xi0j"]
 
 [resource]
@@ -21,8 +21,6 @@ damage_class_id = 1
 effect_entries = "Raises user's Defense by one stage. Raises user's Defense by one stage.
 
 After this move is used, the power of ice ball and rollout are doubled until the user leaves the field."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 1: 1
 })

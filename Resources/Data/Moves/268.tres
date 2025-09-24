@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://rqqhmtpg1cg5"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_07qni"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_07qni"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_iq15w"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 0
 priority = 0
 damage_class_id = 1
 effect_entries = "Raises the user's Special Defense by one stage.  User's Electric moves have doubled power next turn. Raises the user's Special Defense by one stage.  If the user uses an electric move next turn, its power will be doubled."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({
 3: 1
 })

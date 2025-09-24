@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://crvvnny5iyfk0"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_phidt"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_phidt"]
 [ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_oqtm3"]
 
 [resource]
@@ -23,8 +23,6 @@ effect_entries = "If target has a berry, inflicts double damage and uses the ber
 If the target is holding a jaboca berry or rowap berry, the berry is still removed, but has no effect.
 
 If this move is super effective and the target is holding a berry that can reduce this move's damage, it will do so, and will not be stolen."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c22wi0px6h3ic"]
 
-[ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://NEW/Scripts/Battler.gd" id="1_28gro"]
-[ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Database/Instances/pokemon_instance.gd" id="3"]
+[ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="1_28gro"]
+[ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Scripts/Resources/Instances/pokemon_instance.gd" id="3"]
 
 [node name="Trainer" type="Node"]
 script = ExtResource("1_28gro")

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://bv2axh1ekbkgs"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_eunr3"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_eunr3"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_q0ar2"]
 
 [resource]
@@ -23,8 +23,6 @@ effect_entries = "Scatters Spikes, hurting opposing Pokémon that switch in. Sca
 wonder guard does not block damage from this effect.
 
 rapid spin removes this effect from its user's side of the field.  defog removes this effect from its target's side of the field."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 6
 meta_ailment_id = 0

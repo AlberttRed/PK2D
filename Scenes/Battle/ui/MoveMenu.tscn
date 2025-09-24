@@ -3,9 +3,9 @@
 [ext_resource type="StyleBox" uid="uid://bgsm216aqcccn" path="res://Resources/UI/Battle/BattleMoves_Panel.tres" id="1_3c2lq"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_ayfvv"]
 [ext_resource type="Script" uid="uid://c8eqr3jrxv8fi" path="res://Scripts/Battle/ui/MovesMenu.gd" id="2_vbs0g"]
-[ext_resource type="FontFile" uid="uid://b0eoymrw2d1t0" path="res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf" id="3_vbs0g"]
-[ext_resource type="Texture2D" uid="uid://iuwf0e47o00v" path="res://Sprites/Pictures/types.png" id="4_tqxhr"]
-[ext_resource type="Texture2D" uid="uid://b1qihbmhnaikw" path="res://Sprites/Pictures/battleFightButtons.png" id="5_47ip6"]
+[ext_resource type="FontFile" uid="uid://df8fc4j42lsgd" path="res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf" id="3_vbs0g"]
+[ext_resource type="Texture2D" uid="uid://8h52o7ms5gha" path="res://Sprites/Pictures/types.png" id="4_tqxhr"]
+[ext_resource type="Texture2D" uid="uid://duas2caa2j618" path="res://Sprites/Pictures/battleFightButtons.png" id="5_47ip6"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3c2lq"]
 texture = ExtResource("5_47ip6")

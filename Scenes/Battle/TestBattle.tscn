@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://clrnq0wq7bjw7"]
 
 [ext_resource type="Script" uid="uid://dfsjekxx61vm7" path="res://Scripts/Battle/TestBattle.gd" id="1_tse6d"]
-[ext_resource type="PackedScene" path="res://Scenes/Battle/Trainer.tscn" id="2_rfkpo"]
+[ext_resource type="PackedScene" uid="uid://c22wi0px6h3ic" path="res://Scenes/Battle/Trainer.tscn" id="2_rfkpo"]
 [ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Scripts/Resources/Instances/pokemon_instance.gd" id="3_p5erh"]
-[ext_resource type="Texture2D" uid="uid://dkoedcae4y1wp" path="res://Sprites/Pictures/trainer000.png" id="3_uewrw"]
-[ext_resource type="Texture2D" uid="uid://dx7t7y2tum7mu" path="res://Sprites/Pictures/trback000.png" id="4_eovwa"]
+[ext_resource type="Texture2D" uid="uid://fq406fwwunjs" path="res://Sprites/Pictures/trainer000.png" id="3_uewrw"]
+[ext_resource type="Texture2D" uid="uid://unhc837nw13f" path="res://Sprites/Pictures/trback000.png" id="4_eovwa"]
 
 [node name="TestBattle" type="Node2D"]
 script = ExtResource("1_tse6d")

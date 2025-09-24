@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Type" load_steps=41 format=3 uid="uid://5oyw0rmfnaa5"]
 
-[ext_resource type="Texture2D" uid="uid://iuwf0e47o00v" path="res://Sprites/Pictures/types.png" id="1_1u3mg"]
+[ext_resource type="Texture2D" uid="uid://8h52o7ms5gha" path="res://Sprites/Pictures/types.png" id="1_1u3mg"]
 [ext_resource type="Script" uid="uid://bf8vu0ooo504r" path="res://Scripts/Resources/Classes/type_resource.gd" id="2_0e3nx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_thuu0"]

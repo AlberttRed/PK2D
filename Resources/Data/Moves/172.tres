@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dlqwidc56hf0e"]
 
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_3ho4r"]
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_wyt5d"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_wyt5d"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_0srk2"]
 
 [resource]
@@ -19,8 +19,6 @@ effect_chance = 10
 priority = 0
 damage_class_id = 2
 effect_entries = "Has a $effect_chance% chance to burn the target.  Lets frozen Pokémon thaw themselves. Inflicts regular damage.  Has a $effect_chance% chance to burn the target.  Frozen Pokémon may use this move, in which case they will thaw."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 4

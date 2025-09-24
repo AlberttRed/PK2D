@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cyyxdcklb3nii"]
 
-[ext_resource type="Script" uid="uid://dn7q7tk3occ58" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5xcyf"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_5xcyf"]
 [ext_resource type="Resource" uid="uid://dnsnvqip0m7rb" path="res://Resources/Data/Ailments/TORMENT.tres" id="1_7o10n"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_mrhfh"]
 
@@ -22,8 +22,6 @@ damage_class_id = 1
 effect_entries = "Prevents the target from using the same move twice in a row. Prevents the target from attempting to use the same move twice in a row.  When the target leaves the field, this effect ends.
 
 If the target is forced to attempt a repeated move due to choice band, choice scarf, choice specs, disable, encore, taunt, only having PP remaining for one move, or any other effect, the target will use struggle instead.  The target is then free to use the forced move next turn, as it didn't use that move this turn."
-stat_change_ids = Array[int]([])
-stat_change_valors = Array[int]([])
 stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 12

@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://bctyl7571gj7l"]
 
-[ext_resource type="Script" uid="uid://b4dpgg4l8a73s" path="res://NEW/Scripts/Battle/ui/BattleSpotUI.gd" id="1_nleos"]
-[ext_resource type="Texture2D" uid="uid://k8kwqyrcx6jf" path="res://Sprites/Batalla/007b.png" id="2_ereqq"]
-[ext_resource type="Texture2D" uid="uid://bmucqisxae21h" path="res://Sprites/Batalla/battle_shadow.png" id="3_2j6lo"]
-[ext_resource type="PackedScene" uid="uid://dniko84d5byyb" path="res://NEW/Scenes/Battle/ui/HPBar.tscn" id="4_tu6mb"]
+[ext_resource type="Script" uid="uid://b4dpgg4l8a73s" path="res://Scripts/Battle/ui/BattleSpotUI.gd" id="1_nleos"]
+[ext_resource type="Texture2D" uid="uid://bm3cxlnu0yn0x" path="res://Sprites/Batalla/007b.png" id="2_ereqq"]
+[ext_resource type="Texture2D" uid="uid://dumrcq1svc26j" path="res://Sprites/Batalla/battle_shadow.png" id="3_2j6lo"]
+[ext_resource type="PackedScene" uid="uid://dniko84d5byyb" path="res://Scenes/Battle/ui/HPBar.tscn" id="4_tu6mb"]
 
 [node name="BattleSpot" type="Node2D"]
 script = ExtResource("1_nleos")

@@ -1,9 +1,6 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://cymojubdtrrlf"]
-
-[ext_resource type="FontFile" uid="uid://c0bg21erpkaew" path="res://Escenas/UI/Fonts/pkmnems.ttf" id="1_0squk"]
+[gd_resource type="Theme" format=3 uid="uid://cymojubdtrrlf"]
 
 [resource]
-default_font = ExtResource("1_0squk")
 default_font_size = 22
 Label/colors/font_color = Color(0.313726, 0.313726, 0.345098, 1)
 Label/colors/font_outline_color = Color(0.721569, 0.721569, 0.721569, 1)
