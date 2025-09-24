@@ -8,6 +8,7 @@ class_name EventSystem
 
 var controller: EventController
 var page_queue: Array[EventPage] = []
+var parallel_controllers: Array[EventController] = []
 
 func _ready() -> void:
 	# Conectar señales del SignalManager
@@ -35,6 +36,12 @@ func _on_event_requested(event: Event, _controller: EventController) -> void:
 		push_warning("EventSystem: No se pudo duplicar la EventPage")
 		return
 	
+	# Si la página es paralela, crear un controlador independiente y no bloquear la cola principal
+	if page_copy.execution_mode == EventPage.ExecutionMode.PARALLEL:
+		_start_parallel_page(page_copy)
+		# No emitir event_started para paralelas (no bloquean); quienes lo necesiten pueden escuchar page_finished
+		return
+
 	var is_autorun := page_copy.trigger_type == EventTriggers.TriggerType.AUTORUN
 	enqueue_page(page_copy, is_autorun)
 
@@ -61,9 +68,29 @@ func _on_page_finished(_page: EventPage) -> void:
 	SignalManager.event_finished.emit(null)
 	_try_start_next()
 
+func _start_parallel_page(page: EventPage) -> void:
+	var ctrl := EventController.new()
+	ctrl.name = "ParallelController_%s" % str(Time.get_ticks_msec())
+	add_child(ctrl)
+	parallel_controllers.append(ctrl)
+	# No bloquear jugador aquí: el control se conserva salvo bloqueo explícito por comando
+	ctrl.page_finished.connect(_on_parallel_page_finished)
+	ctrl.start_page(page)
+	ctrl.set_process(true)
+
+
+func _on_parallel_page_finished(_page: EventPage) -> void:
+	# Limpiar lista de controladores paralelos ya finalizados
+	parallel_controllers = parallel_controllers.filter(func(c): return is_instance_valid(c) and c.is_busy())
+
 ## Exponer estado para otros sistemas
 func is_any_controller_busy() -> bool:
-	return controller != null and controller.is_busy()
+	var any_parallel := false
+	for c in parallel_controllers:
+		if is_instance_valid(c) and c.is_busy():
+			any_parallel = true
+			break
+	return (controller != null and controller.is_busy()) or any_parallel
 
 ## (Opcional) helpers de bloqueo de jugador si otros sistemas lo requieren
 func block_player_control() -> void:

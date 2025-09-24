@@ -2,6 +2,9 @@ extends Resource
 ## Clase base de la que heredarán todos los comandos
 class_name EventCommand
 
+## Indica si el comando es seguro para ejecutarse en paralelo
+@export var safe_for_parallel: bool = false
+
 ## Aquí irían los parámetros comunes, si los hubiera
 # Por ejemplo, se puede poner un diccionario de argumentos:
 # @export var args: Dictionary = {}
@@ -19,3 +22,7 @@ func get_command_name() -> String:
 ## Método que luego ejecutará el EventController
 func execute(_context: Node) -> void:
 	push_warning("Ejecutando comando base, debería ser sobrescrito.")
+
+## Indica si este comando puede ejecutarse en modo paralelo
+func is_safe_for_parallel() -> bool:
+	return safe_for_parallel

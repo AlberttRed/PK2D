@@ -13,6 +13,7 @@
 script = ExtResource("6_ubsjn")
 mode = 0
 duration = 0.3
+safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_87lpp"]
@@ -20,16 +21,19 @@ script = ExtResource("7_1qekf")
 target_scene = "MapaPuebloTest"
 target_spawn = "SpawnPorta"
 facing_direction = 1
+safe_for_parallel = false
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_ardic"]
 script = ExtResource("6_ubsjn")
 mode = 1
 duration = 0.3
+safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_gc3x0"]
 script = ExtResource("4_j2c21")
+execution_mode = 0
 trigger_type = 1
 commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_87lpp"), SubResource("Resource_ardic")])
 blocks_player = true

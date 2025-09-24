@@ -35,3 +35,6 @@ func execute(context: Node) -> void:
 
 func is_async() -> bool:
 	return true
+
+func is_safe_for_parallel() -> bool:
+	return false
