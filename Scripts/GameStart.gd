@@ -35,6 +35,8 @@ func _load_overworld_scene() -> void:
 	# Reemplazar la escena actual
 	get_tree().root.add_child(overworld_instance)
 	get_tree().current_scene = overworld_instance
+	# Bloquear el control del jugador durante la carga inicial hasta completar el fade
+	SignalManager.player_control_blocked.emit()
 	
 	# Configurar el player después de cargar la escena
 	await get_tree().process_frame
@@ -43,6 +45,11 @@ func _load_overworld_scene() -> void:
 		print("GameStart: Configurando player según GameState...")
 		map_system.configure_player_from_gamestate()
 		print("GameStart: Player configurado exitosamente")
+		# Desvanecer desde negro cuando el mapa y el jugador ya están listos
+		SignalManager.fade_requested.emit("fade_out", 0.25)
+		await SignalManager.fade_finished
+		# Desbloquear control ahora que terminó el fade
+		SignalManager.player_control_unblocked.emit()
 	else:
 		push_warning("GameStart: No se pudo configurar el player - MapSystem no encontrado o método no disponible")
 	
