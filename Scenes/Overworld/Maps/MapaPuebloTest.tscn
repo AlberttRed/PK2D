@@ -83,7 +83,7 @@ metadata/_custom_type_script = "uid://k6r0axpkwn50"
 [sub_resource type="Resource" id="Resource_vfkak"]
 script = ExtResource("12_dg3ml")
 target_scene = "MapaPuebloTest"
-target_spawn = "prova"
+target_spawn = "SpawnProva"
 facing_direction = 0
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
@@ -244,10 +244,8 @@ pages = Array[ExtResource("4_0asgo")]([SubResource("Resource_wcme4")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
-[node name="SpawnPoint" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_aylp7")]
+[node name="SpawnProva" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_aylp7")]
 position = Vector2(112, 208)
-spawn_id = "prova"
 
 [node name="SpawnPorta" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_aylp7")]
 position = Vector2(336, 176)
-spawn_id = "SpawnPorta"

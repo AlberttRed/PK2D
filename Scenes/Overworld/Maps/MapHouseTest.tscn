@@ -78,4 +78,3 @@ pages = Array[ExtResource("4_j2c21")]([SubResource("Resource_gc3x0")])
 
 [node name="SpawnEntrada" parent="OverworldGrid/SpawnPoints" instance=ExtResource("4_32chm")]
 position = Vector2(176, 240)
-spawn_id = "SpawnEntrada"
