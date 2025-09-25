@@ -19,9 +19,9 @@ func _ready():
 	offset_right = 0
 	offset_bottom = 0
 	
-	# Inicialmente invisible
-	modulate.a = 0.0
-	visible = false
+	# Inicialmente en negro para ocultar la carga inicial
+	modulate.a = 1.0
+	visible = true
 	
 	# Conectar señales del SignalManager
 	SignalManager.fade_requested.connect(_on_fade_requested)
@@ -35,6 +35,7 @@ func fade_in(duration: float = 1.0) -> void:
 	visible = true
 	modulate.a = 0.0
 	
+
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, duration)
 	await tween.finished
