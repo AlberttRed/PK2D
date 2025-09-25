@@ -4,7 +4,6 @@ class_name SpawnPoint
 ## SpawnPoint - Punto de aparición para el jugador en los mapas
 ## Se puede usar para definir dónde debe aparecer el jugador al hacer warp
 
-@export var spawn_id: String = ""
 @export var facing_direction: Vector2
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -14,18 +13,14 @@ func _ready() -> void:
 	if not is_in_group("SpawnPoints"):
 		add_to_group("SpawnPoints")
 	
-	# Si no se especificó un ID, usar el nombre del nodo
-	if spawn_id.is_empty():
-		spawn_id = name
-	
 	# Ocultar sprite por defecto si es necesario
 	hide_default_sprite_if_needed()
 	
-	print("SpawnPoint: Inicializado con ID: ", spawn_id, " y dirección: ", facing_direction)
+	print("SpawnPoint: Inicializado con ID: ", name, " y dirección: ", facing_direction)
 
 ## Retorna el ID del spawn point
 func get_spawn_id() -> String:
-	return spawn_id
+	return name
 
 ## Retorna la posición en tiles del spawn point
 func get_tile_position() -> Vector2i:
@@ -47,10 +42,6 @@ func get_tile_position() -> Vector2i:
 func get_facing_direction() -> Vector2:
 	return facing_direction
 
-## Establece el ID del spawn point
-func set_spawn_id(new_id: String) -> void:
-	spawn_id = new_id
-
 ## Establece la dirección de mirada
 func set_facing_direction(direction: Vector2) -> void:
 	facing_direction = direction
@@ -66,7 +57,7 @@ func hide_default_sprite_if_needed() -> void:
 	if is_using_default_sprite:
 		# Ocultar el sprite durante la ejecución del juego
 		sprite.visible = false
-		print("SpawnPoint '%s': Sprite por defecto ocultado en ejecución" % spawn_id)
+		print("SpawnPoint '%s': Sprite por defecto ocultado en ejecución" % name)
 
 ## Verifica si el spawn point está usando el sprite por defecto
 func is_using_default_spawn_sprite() -> bool:

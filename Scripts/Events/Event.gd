@@ -3,8 +3,6 @@ class_name Event
 
 signal event_triggered(page)
 
-@export var event_name: String = "Event"
-
 ##Lista de páginas de evento (EventPage) que puede ejecutar el vento, cada una con su lista de comandos (EventCommand) definida.
 @export var pages: Array[EventPage] = []
 @export var current_page_index: int = 0
@@ -54,7 +52,7 @@ func update_sprite_from_current_page() -> void:
 
 func trigger() -> void:
 	if current_page:
-		print("Event '%s' triggered!" % event_name)
+		print("Event '%s' triggered!" % name)
 		event_triggered.emit(current_page)
 		
 		# Emitir señal global para solicitar ejecución del evento
@@ -83,7 +81,7 @@ func hide_default_sprite_if_needed() -> void:
 	if is_using_default_sprite:
 		# Ocultar el sprite durante la ejecución del juego
 		sprite.visible = false
-		print("Event '%s': Sprite por defecto ocultado en ejecución" % event_name)
+		print("Event '%s': Sprite por defecto ocultado en ejecución" % name)
 
 ## Verifica si el evento está usando el sprite por defecto
 func is_using_default_event_sprite() -> bool:
@@ -132,7 +130,7 @@ func switch_to_page(page_index: int) -> void:
 	if page_index >= 0 and page_index < pages.size():
 		current_page_index = page_index
 		setup_current_page()
-		print("Event '%s': Cambiado a página %d" % [event_name, page_index])
+		print("Event '%s': Cambiado a página %d" % [name, page_index])
 
 ## Cambia al siguiente página del evento
 func next_page() -> void:
@@ -140,7 +138,7 @@ func next_page() -> void:
 	if next_index < pages.size():
 		switch_to_page(next_index)
 	else:
-		print("Event '%s': No hay más páginas disponibles" % event_name)
+		print("Event '%s': No hay más páginas disponibles" % name)
 
 ## Cambia a la página anterior del evento
 func previous_page() -> void:
@@ -148,7 +146,7 @@ func previous_page() -> void:
 	if prev_index >= 0:
 		switch_to_page(prev_index)
 	else:
-		print("Event '%s': Ya está en la primera página" % event_name)
+		print("Event '%s': Ya está en la primera página" % name)
 
 func _to_string() -> String:
 	return name
