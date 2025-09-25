@@ -214,6 +214,8 @@ func _on_message_requested(text: String, config: Dictionary = {}) -> void:
 ## Notifica que el mensaje terminó
 func _on_message_finished() -> void:
 	SignalManager.message_finished.emit()
+	# Asegurar que no queden flags de pulsación retenidos tras cerrar el mensaje
+	pressed_actions.clear()
 
 ## Maneja input de accept para el MessageBox
 func _on_messagebox_accept() -> void:
@@ -280,6 +282,13 @@ var input_locked := false
 var pressed_actions := {}
 
 func _input(event: InputEvent):
+	# Registrar liberaciones SIEMPRE, incluso si el GUI no es visible,
+	# para evitar que queden flags de pulsación colgados entre mensajes
+	if event is InputEventKey and !event.pressed:
+		for action in ["ui_accept", "ui_cancel", "ui_start", "ui_up", "ui_down", "ui_right", "ui_left"]:
+			if InputMap.event_is_action(event, action):
+				pressed_actions.erase(action)
+
 	if input_locked or !isVisible() or isFading():
 		return
 
@@ -329,12 +338,6 @@ func _input(event: InputEvent):
 		print("GUI left")
 		left.emit()
 		input_consumed = true
-
-	# Registrar cuándo se sueltan
-	if event is InputEventKey and !event.pressed:
-		for action in ["ui_accept", "ui_cancel", "ui_start", "ui_up", "ui_down", "ui_right", "ui_left"]:
-			if InputMap.event_is_action(event, action):
-				pressed_actions.erase(action)
 
 	# Consumir el input para evitar que llegue al Player
 	if input_consumed:
