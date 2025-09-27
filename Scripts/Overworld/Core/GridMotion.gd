@@ -78,16 +78,13 @@ func try_step(d: Vector2) -> bool:
 	var from := current_tile()
 	var to := from + Vector2i(d)
 	var can_step := grid.can_step_to(actor, from, to)
-	var is_initial := requires_initial_step(d)
-
-	# Marcar si este paso será un giro en sitio (sin desplazamiento)
-	self.initial_step = (not can_step or is_initial)
+	self.initial_step = requires_initial_step(d)
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
 	step_started.emit()
 
 	#If cannot move to next tile, or trying a first quick tap to another direction when idle, stay in same position
-	if self.initial_step:
+	if self.initial_step or !can_step:
 		to = from
 
 	moving = true
@@ -96,7 +93,7 @@ func try_step(d: Vector2) -> bool:
 	var target := grid.tile_to_world_center(to)
 	
 	if to == from:
-		await get_tree().create_timer(turn_duration).timeout
+		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
 		var t := actor.create_tween()
 		t.tween_property(actor, "global_position", target, get_step_duration())
@@ -112,7 +109,7 @@ func try_step(d: Vector2) -> bool:
 	if to != from:
 		grid.on_enter_tile(actor, to)
 		# Alternar la zancada únicamente cuando hubo desplazamiento real
-		stride_is_left = not stride_is_left
+	stride_is_left = not stride_is_left
 		
 	return true
 	
