@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://dpxa6dptr3hll"]
+[gd_scene load_steps=19 format=4 uid="uid://dpxa6dptr3hll"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_jvw5v"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="2_ui5me"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="5_gxega"]
 [ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="6_ubsjn"]
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="7_1qekf"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_j2c21"]
+[ext_resource type="Texture2D" uid="uid://bpar5wu503m72" path="res://Sprites/Overworlds/Characters/trchar001.png" id="9_gxega"]
 
 [sub_resource type="Resource" id="Resource_jv80v"]
 script = ExtResource("6_ubsjn")
@@ -38,6 +40,40 @@ trigger_type = 1
 commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_87lpp"), SubResource("Resource_ardic")])
 blocks_player = true
 through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_ubsjn"]
+script = ExtResource("8_j2c21")
+message = "De momento soy un Evento, pero dentro de un tiempo seré un NPC."
+wait_input = true
+close_at_end = true
+wait_time = 0.0
+safe_for_parallel = false
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2c21"]
+atlas = ExtResource("9_gxega")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bo035"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j2c21")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_tugbi"]
+script = ExtResource("4_j2c21")
+execution_mode = 0
+trigger_type = 0
+commands = Array[ExtResource("5_gxega")]([SubResource("Resource_ubsjn")])
+blocks_player = true
+through = false
+sprite_frames = SubResource("SpriteFrames_bo035")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [node name="MapHouseTest" type="Node2D"]
@@ -74,7 +110,17 @@ metadata/_edit_lock_ = true
 position = Vector2(176, 272)
 pages = Array[ExtResource("4_j2c21")]([SubResource("Resource_gc3x0")])
 
+[node name="Event" parent="OverworldGrid/Events" instance=ExtResource("3_bo035")]
+position = Vector2(240, 144)
+pages = Array[ExtResource("4_j2c21")]([SubResource("Resource_tugbi")])
+current_page_index = 1
+
+[node name="AnimatedSprite2D" parent="OverworldGrid/Events/Event" index="0"]
+offset = Vector2(0, -8)
+
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="SpawnEntrada" parent="OverworldGrid/SpawnPoints" instance=ExtResource("4_32chm")]
 position = Vector2(176, 240)
+
+[editable path="OverworldGrid/Events/Event"]

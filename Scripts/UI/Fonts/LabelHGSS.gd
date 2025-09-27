@@ -88,8 +88,8 @@ func reset():
 	nextLineStop = 0
 	visible_ratio = 0
 	
-func _set(name, value):
-	match name:
+func _set(_name, value):
+	match _name:
 		"text":
 			#var algn = ""
 			#match align:
