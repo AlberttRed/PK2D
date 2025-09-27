@@ -8,6 +8,10 @@ var active_map: Node = null
 var player: Node = null
 var previous_map: Node = null
 
+# Lista de escenas de mapa referenciadas explícitamente para exportación.
+# Rellénala en el editor para evitar depender de listados de directorio en runtime.
+@export var map_scene_list: Array[PackedScene] = []
+
 func _enter_tree() -> void:
 	# Verificar si ya hay un mapa configurado
 	var map_scene = get_node_or_null("MapScene")
@@ -157,16 +161,10 @@ func _setup_player_for_map() -> void:
 func load_map(map_id: String) -> Node:
 	print("MapSystem: Cargando mapa: ", map_id)
 
-	# Buscar la ruta del mapa (permitiendo subcarpetas bajo Scenes/Overworld/Maps)
-	var map_path = _find_map_path(map_id)
-	if map_path == "":
-		push_error("MapSystem: No se encontró el mapa '" + map_id + "' en 'res://Scenes/Overworld/Maps' ni sus subcarpetas")
-		return null
-	
-	# Cargar la escena del mapa
-	var map_scene = load(map_path) as PackedScene
+	# Resolver escena solo desde la lista exportada (robusto en exportación)
+	var map_scene: PackedScene = _get_scene_for_map_id(map_id)
 	if not map_scene:
-		push_error("MapSystem: No se pudo cargar la escena del mapa: " + map_path)
+		push_error("MapSystem: No se encontró el mapa '" + map_id + "' en la lista exportada 'map_scene_list'")
 		return null
 	
 	# Instanciar el mapa
@@ -230,38 +228,19 @@ func change_to_map(map_id: String, preserve_previous: bool = false) -> bool:
 	print("MapSystem: Cambio de mapa completado: ", map_id)
 	return true
 
-## Busca recursivamente un mapa por nombre dentro de Scenes/Overworld/Maps
-func _find_map_path(map_id: String) -> String:
-	var base_path = "res://Scenes/Overworld/Maps"
-	var target_file = "%s.tscn" % map_id
-	return _find_file_recursive(base_path, target_file)
-
-## Búsqueda recursiva de archivo por nombre exacto
-func _find_file_recursive(dir_path: String, target_file: String) -> String:
-	var dir = DirAccess.open(dir_path)
-	if dir == null:
-		return ""
-	
-	dir.list_dir_begin()
-	while true:
-		var item = dir.get_next()
-		if item == "":
-			break
-		if item.begins_with("."):
+## Obtiene la escena de mapa desde la lista exportada, comparando por nombre de archivo (basename)
+func _get_scene_for_map_id(map_id: String) -> PackedScene:
+	for scene: PackedScene in map_scene_list:
+		if scene == null:
 			continue
-		var item_path = dir_path + "/" + item
-		if dir.current_is_dir():
-			var found = _find_file_recursive(item_path, target_file)
-			if found != "":
-				dir.list_dir_end()
-				return found
-		else:
-			if item == target_file:
-				dir.list_dir_end()
-				return item_path
-	
-	dir.list_dir_end()
-	return ""
+		var path: String = scene.resource_path
+		if path == "":
+			continue
+		var file_name := path.get_file()
+		var id := file_name.get_basename()
+		if id == map_id:
+			return scene
+	return null
 
 ## Libera el mapa preservado (si existe). Se puede conectar directamente a señales que pasen un parámetro
 func release_previous_map(_event: Event = null) -> void:
