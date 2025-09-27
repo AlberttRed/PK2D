@@ -7,6 +7,7 @@ signal step_finished(tile: Vector2i)
 ## Duración base de un paso (en segundos)
 @export var step_duration := 0.266
 @export var initial_delay := 0.12  # tiempo que hay que mantener pulsado antes de moverse
+@export var turn_duration := 0.133  # duración del giro en sitio (cuando no hay desplazamiento)
 
 ## Multiplicador de velocidad (1 = normal, 2 = correr, 0.5 = ralentizado…)
 var speed_multiplier := 1.0
@@ -15,6 +16,8 @@ var hold_time:float
 var moving := false
 var dir := Vector2.DOWN
 var previous_dir := dir
+var initial_step := false
+var stride_is_left := true
 
 @onready var actor := get_parent() as Node2D
 var grid: OverworldGrid
@@ -32,10 +35,8 @@ func get_step_duration() -> float:
 	return step_duration / speed_multiplier
 
 ##Gets de speed scale that will be used to move and animate the actor when moving
-func get_speed_multiplier(_d: Vector2, can_step: bool, initial_step: bool) -> float:
-	if initial_step:
-		return 1.0
-	if Input.is_action_pressed("run") and can_step:
+func get_speed_multiplier(_d: Vector2, can_step: bool, is_initial_step: bool) -> float:
+	if (is_initial_step or Input.is_action_pressed("run")) and can_step:
 		return 2.0
 	if not can_step:
 		return 0.5
@@ -77,14 +78,16 @@ func try_step(d: Vector2) -> bool:
 	var from := current_tile()
 	var to := from + Vector2i(d)
 	var can_step := grid.can_step_to(actor, from, to)
-	var initial_step := requires_initial_step(d)
+	var is_initial := requires_initial_step(d)
 
-	speed_multiplier = get_speed_multiplier(d, can_step, initial_step)
-	
+	# Marcar si este paso será un giro en sitio (sin desplazamiento)
+	self.initial_step = (not can_step or is_initial)
+
+	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
 	step_started.emit()
 
 	#If cannot move to next tile, or trying a first quick tap to another direction when idle, stay in same position
-	if not can_step or requires_initial_step(d):
+	if self.initial_step:
 		to = from
 
 	moving = true
@@ -93,7 +96,7 @@ func try_step(d: Vector2) -> bool:
 	var target := grid.tile_to_world_center(to)
 	
 	if to == from:
-		await get_tree().create_timer(get_step_duration()).timeout
+		await get_tree().create_timer(turn_duration).timeout
 	else:
 		var t := actor.create_tween()
 		t.tween_property(actor, "global_position", target, get_step_duration())
@@ -101,12 +104,15 @@ func try_step(d: Vector2) -> bool:
 
 	grid.commit(from, to, actor)
 	moving = false
+	self.initial_step = false
 	
 	step_finished.emit(to)
 
 	# Solo llamar on_enter_tile si realmente nos movimos a un tile diferente
 	if to != from:
 		grid.on_enter_tile(actor, to)
+		# Alternar la zancada únicamente cuando hubo desplazamiento real
+		stride_is_left = not stride_is_left
 		
 	return true
 	

@@ -210,7 +210,7 @@ tile_set = ExtResource("2_ovgf6")
 metadata/_edit_lock_ = true
 
 [node name="Above" type="TileMapLayer" parent="OverworldGrid"]
-z_index = 1
+z_index = 2
 tile_map_data = PackedByteArray("AAAJAAAAAwAAAMUAAAAKAAAAAwABAMUAAAALAAAAAwACAMUAAAAMAAAAAwADAMUAAAANAAAAAwAEAMUAAAA=")
 tile_set = ExtResource("2_ovgf6")
 metadata/_edit_lock_ = true

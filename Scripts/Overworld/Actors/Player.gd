@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var motion: GridMotion = $GridMotion
+@onready var motion = $GridMotion
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 var input_dir := Vector2.ZERO
@@ -17,7 +17,7 @@ func _ready() -> void:
 	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
 	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
 	
-	sprite.animation = "walk_down"
+	sprite.animation = "walk_down_right"
 
 func _process(_delta: float):
 	if not movement_enabled:
@@ -43,18 +43,34 @@ func _process(_delta: float):
 		motion.try_step(input_dir)
 
 func _on_step_started() -> void:
-	var anim_prefix = "walk"
-	if motion.speed_multiplier > 1.0:
-		anim_prefix = "run"
+	print("step started")
+	var use_run: bool = (motion.speed_multiplier > 1.0 and not motion.initial_step)
+	var dir_name := "down"
 	match motion.dir:
-		Vector2.UP:    sprite.play(anim_prefix + "_up")
-		Vector2.DOWN:  sprite.play(anim_prefix + "_down")
-		Vector2.LEFT:  sprite.play(anim_prefix + "_left")
-		Vector2.RIGHT: sprite.play(anim_prefix + "_right")
+		Vector2.UP: dir_name = "up"
+		Vector2.DOWN: dir_name = "down"
+		Vector2.LEFT: dir_name = "left"
+		Vector2.RIGHT: dir_name = "right"
+
+	# Animaciones con zancada: walk_<dir>_<left|right>
+	var stride := ("left" if motion.stride_is_left else "right")
+	var walk_anim := "walk_" + dir_name + "_" + stride
+	var run_anim := "run_" + dir_name + "_" + stride
+
+	var frames: SpriteFrames = sprite.sprite_frames
+	var anim_to_play := ""
+	if use_run and frames and frames.has_animation(run_anim):
+		anim_to_play = run_anim
+	elif frames and frames.has_animation(walk_anim):
+		anim_to_play = walk_anim
+	if sprite.is_playing():
+		sprite.stop()
+	sprite.play(anim_to_play)
 
 	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
 
 func _on_step_finished(_tile: Vector2i) -> void:
+	print("step finished")
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
@@ -62,20 +78,20 @@ func _on_step_finished(_tile: Vector2i) -> void:
 		stop()
 		
 func stop():
-	match motion.dir:
-		Vector2.UP: sprite.animation = "walk_up"
-		Vector2.DOWN: sprite.animation = "walk_down"
-		Vector2.LEFT: sprite.animation = "walk_left"
-		Vector2.RIGHT: sprite.animation = "walk_right"
+	sprite.animation = "idle"
 	sprite.stop()
-	sprite.frame = 0  # idle
+	match motion.dir:
+		Vector2.UP: sprite.frame = 3
+		Vector2.DOWN: sprite.frame = 0
+		Vector2.LEFT: sprite.frame = 1
+		Vector2.RIGHT: sprite.frame = 2
 	
 func _unhandled_input(event: InputEvent) -> void:
 	if not movement_enabled:
 		return
 		
 	if event.is_action_pressed("interact") and not motion.moving:
-		var e := motion.event_in_front()
+		var e: Event = motion.event_in_front()
 		if e:
 			e.on_player_action()
 
