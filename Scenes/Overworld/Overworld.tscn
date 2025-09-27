@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=7 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
+[ext_resource type="PackedScene" uid="uid://1owe4s00dp15" path="res://Scenes/Overworld/Maps/TestMap2/MapaPuebloTest.tscn" id="2_a8jsd"]
 [ext_resource type="Script" uid="uid://dce34esefkiqj" path="res://Scripts/Overworld/Core/MapSystem.gd" id="3_map_system"]
+[ext_resource type="PackedScene" uid="uid://dpxa6dptr3hll" path="res://Scenes/Overworld/Maps/MapHouseTest.tscn" id="3_ytpjq"]
 [ext_resource type="Script" uid="uid://cjx738lc2vvbb" path="res://Scripts/Overworld/Core/WarpSystem.gd" id="4_warp_system"]
 [ext_resource type="PackedScene" uid="uid://c6s1oa8tssbi1" path="res://Scenes/UI/GUI.tscn" id="5_gui"]
 
@@ -9,6 +11,7 @@
 
 [node name="MapSystem" type="Node" parent="." groups=["MapSystem"]]
 script = ExtResource("3_map_system")
+map_scene_list = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq")])
 metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
 [node name="EventSystem" type="Node" parent="." groups=["EventSystem"]]
