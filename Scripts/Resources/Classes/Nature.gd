@@ -15,3 +15,8 @@ func get_stat_multiplier(stat: StatTypes.Stat) -> float:
 		return 0.9
 	else:
 		return 1.0
+
+func print_info():
+	var inc := str(increased_stat)
+	var dec := str(decreased_stat)
+	print("[Nature] %s (%s) | +%s -%s" % [display_name, id, inc, dec])

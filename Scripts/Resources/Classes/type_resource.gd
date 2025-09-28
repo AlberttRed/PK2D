@@ -60,3 +60,6 @@ func get_effectiveness_against_pokemon(pokemon: BattlePokemon) -> float:
 			
 func _to_string() -> String:
 	return "%s (%s)" % [Name, id]
+
+func print_info():
+	print("[Type] %s | ID: %d | internal: %s" % [Name, id, internal_name])
