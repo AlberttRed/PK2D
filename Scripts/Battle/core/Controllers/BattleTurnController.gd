@@ -8,6 +8,10 @@ var battle_controller: BattleController
 
 var current_turn := 0
 var collected_choices: Array[BattleChoice] = []
+var last_ordered_choices: Array[BattleChoice] = []
+
+func _ready():
+	randomize()
 
 func start_turn_loop():
 	for pokemon in battle_controller.get_all_active_pokemon():	
@@ -50,6 +54,7 @@ func select_actions():
 			
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
+	last_ordered_choices = ordered_choices
 	var results: Dictionary = {} # key: BattleChoice, value: BattleMoveResult
 	
 	#Calculamos y resolvemos las acciones seleccionadas por cada pokémon activo
@@ -74,7 +79,9 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	print(">>> Orden de ejecución:")
 	for choice:BattleChoice in battle_choices:
 		var pkmn_name = choice.pokemon.get_name()
-		var move_name = choice.get_move().get_name() if choice.get_move() != null else "Otra acción"
+		var move_name = "Otra acción"
+		if choice is BattleMoveChoice and choice.get_move() != null:
+			move_name = choice.get_move().get_name()
 		print("- %s usará %s (velocidad: %d)" % [
 			pkmn_name, move_name, choice.pokemon.get_speed()
 		])
@@ -184,6 +191,9 @@ func end_turn():
 	turn_finished.emit(current_turn)
 	# Aquí iría lógica futura de efectos, clima, estados...
 	#await battle_controller.end_turn()
+
+func get_execution_order() -> Array[BattleChoice]:
+	return last_ordered_choices.duplicate()
 	
 func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> void:
 	for choice in choices:
@@ -233,8 +243,8 @@ func print_active_effects_log():
 		print("   (sin efectos de Campo)")
 	else:
 		for e in field_effects:
-			var name = e.get_script().resource_path.get_file().get_basename()
-			print("     · %s" % name)
+			var effect_name = e.get_script().resource_path.get_file().get_basename()
+			print("     · %s" % effect_name)
 
 	for spot in battle_controller.get_active_battle_spots():
 		var pokemon = spot.get_active_pokemon()
@@ -249,16 +259,16 @@ func print_active_effects_log():
 		else:
 			print("   Pokémon Effects:")
 			for e in pokemon_effects:
-				var name = e.get_script().resource_path.get_file().get_basename()
-				print("     · %s" % name)
+				var effect_name = e.get_script().resource_path.get_file().get_basename()
+				print("     · %s" % effect_name)
 
 		if side_effects.is_empty():
 			print("   (sin efectos de Side)")
 		else:
 			print("   Side Effects:")
 			for e in side_effects:
-				var name = e.get_script().resource_path.get_file().get_basename()
-				print("     · %s" % name)
+				var effect_name = e.get_script().resource_path.get_file().get_basename()
+				print("     · %s" % effect_name)
 
 	print("================================")
 
@@ -266,8 +276,8 @@ func print_active_effects_log():
 func print_stat_stages_log() -> void:
 	for spot in battle_controller.get_active_battle_spots():
 		var pokemon = spot.get_active_pokemon()
-		var name = pokemon.get_display_name()
-		print("[Estadísticas modificadas para %s]" % name)
+		var display_name = pokemon.get_display_name()
+		print("[Estadísticas modificadas para %s]" % display_name)
 
 		var stages = pokemon.stat_stages
 		var any_modified := false

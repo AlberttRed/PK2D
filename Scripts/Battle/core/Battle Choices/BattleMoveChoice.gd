@@ -17,7 +17,7 @@ func get_targets() -> Array:
 	return []
 	
 func get_priority() -> int:
-	return get_move().get_priority() if get_move() != null else null
+	return get_move().get_priority() if get_move() != null else 0
 
 func get_main_target():
 	if target_handler:
