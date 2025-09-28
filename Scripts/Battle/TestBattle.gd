@@ -10,6 +10,7 @@ extends Node2D
 func _ready() -> void:
 	#await wildBattle_OLD()
 	#await wildSingleBattle()
+	$GUI/FadeLayer.visible = false
 	await wildDoubleBattle()
 	#get_tree().quit()
 	
@@ -41,8 +42,10 @@ func wildDoubleBattle():
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.DOUBLE  
 	)
+	
+	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	SignalManager.battle_requested.emit([playerParticipant, wildParticipant], rules)	
+	SignalManager.battle_requested.emit(participants, rules)	
 	
 func singleTrainerBattle():
 	pass

@@ -2,6 +2,8 @@ extends Node
 
 class_name BattleTurnController
 
+signal turn_finished(turn_number: int)
+
 var battle_controller: BattleController
 
 var current_turn := 0
@@ -38,8 +40,13 @@ func select_actions():
 		else:
 			var participant = p.participant  # o como lo tengas enlazado
 			p.selectedBattleChoice = await participant.decide_action_for(p)
-		if p.selectedBattleChoice != null:
-			collected_choices.append(p.selectedBattleChoice)
+
+		# Garantizar que cada Pokémon declara una acción
+		if p.selectedBattleChoice == null:
+			p.selectedBattleChoice = BattlePassChoice.new()
+			p.selectedBattleChoice.pokemon = p
+
+		collected_choices.append(p.selectedBattleChoice)
 			
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
@@ -172,8 +179,9 @@ func handle_move_result(choice: BattleMoveChoice, result: BattleMoveResult) -> v
 			## await animation_controller.play_faint_animation(pokemon)
 
 
+
 func end_turn():
-	pass
+	turn_finished.emit(current_turn)
 	# Aquí iría lógica futura de efectos, clima, estados...
 	#await battle_controller.end_turn()
 	
@@ -185,8 +193,8 @@ func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> 
 				continue
 
 			var effects: Array = result.effects
-			var user := choice.pokemon.get_name()
-			var move = choice.get_move().get_name()
+			var user: String = choice.pokemon.get_name()
+			var move: String = choice.get_move().get_name()
 
 			if effects.size() == 1 and effects[0] is MissEffect:
 				var missed_target = effects[0].target.get_name()

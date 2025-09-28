@@ -226,10 +226,10 @@ func _on_messagebox_cancel() -> void:
 	cancel.emit()
 
 ## Maneja solicitudes de batalla desde el SignalManager
-func _on_battle_requested(participants: Array, rules: BattleRules) -> void:
+func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleRules) -> void:
 	# Separar participantes en player y enemy
-	var player_participants = []
-	var enemy_participants = []
+	var player_participants: Array[BattleParticipant] = []
+	var enemy_participants: Array[BattleParticipant] = []
 	
 	for participant in participants:
 		if participant.is_player:
@@ -237,6 +237,7 @@ func _on_battle_requested(participants: Array, rules: BattleRules) -> void:
 		else:
 			enemy_participants.append(participant)
 	
+	BattleNew.visible = true
 	BattleNew.start_battle(player_participants, enemy_participants, rules)
 
 ## --- Métodos del MessageBox ---
@@ -288,6 +289,13 @@ func _input(event: InputEvent):
 		for action in ["ui_accept", "ui_cancel", "ui_start", "ui_up", "ui_down", "ui_right", "ui_left"]:
 			if InputMap.event_is_action(event, action):
 				pressed_actions.erase(action)
+
+	# Si el foco actual está dentro de BattleUI, no consumir el input aquí
+	if $BattleNew.visible:
+		var focus_owner = get_viewport().gui_get_focus_owner()
+		var battle_ui = $BattleNew/BattleUI
+		if battle_ui != null and focus_owner != null and battle_ui.is_ancestor_of(focus_owner):
+			return
 
 	if input_locked or !isVisible() or isFading():
 		return

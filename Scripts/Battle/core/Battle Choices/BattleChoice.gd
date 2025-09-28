@@ -8,3 +8,6 @@ func get_priority() -> int:
 
 func resolve():
 	push_error("resolve() method not implemented at BattleChoice class!")
+
+func is_pass() -> bool:
+	return false
