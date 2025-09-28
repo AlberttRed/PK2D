@@ -43,7 +43,6 @@ func _process(_delta: float):
 		motion.try_step(input_dir)
 
 func _on_step_started() -> void:
-	print("step started")
 	var use_run: bool = (motion.speed_multiplier > 1.0 and not motion.initial_step)
 	var dir_name := "down"
 	match motion.dir:
@@ -70,7 +69,6 @@ func _on_step_started() -> void:
 	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
 
 func _on_step_finished(_tile: Vector2i) -> void:
-	print("step finished")
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \

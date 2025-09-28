@@ -117,9 +117,7 @@ func event_at_offset(offset: int = 1) -> Event:
 	# offset = 1 → el tile de delante
 	# offset = 2 → dos tiles más adelante
 	# offset = -1 → el tile de detrás
-	print(current_tile())
 	var target_tile = current_tile() + Vector2i(dir) * offset
-	print(target_tile)
 	return grid.event_at(target_tile)
 
 func event_in_front() -> Event:

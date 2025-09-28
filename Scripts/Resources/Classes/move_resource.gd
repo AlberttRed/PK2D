@@ -84,3 +84,7 @@ func makeContact():
 
 func get_pp():
 	return pp
+
+func print_info():
+	var title := "%s (ID %d)" % [Name, id]
+	print("[Move] %s | PP: %d | %s" % [title, pp, description])
