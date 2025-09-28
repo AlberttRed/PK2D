@@ -1,10 +1,12 @@
 class_name BattlePassChoice
 extends BattleChoice
 
-func resolve():
-	return null
-
 func is_pass() -> bool:
-	return true
+    return true
 
+func get_priority() -> int:
+    return 0
 
+func resolve():
+    var result = BattlePassResult.new()
+    return result
