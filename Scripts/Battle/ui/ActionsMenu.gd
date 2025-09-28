@@ -30,9 +30,9 @@ func show_for(pokemon: BattlePokemon) -> BattleChoice:
 	return choice
 
 func _on_cmd_luchar_pressed(): action_selected.emit(BattleMoveChoice.new())
-func _on_cmd_pokemon_pressed(): action_selected.emit(BattleMoveChoice.new())
-func _on_cmd_mochila_pressed(): action_selected.emit(null) #BattleItemChoice
-func _on_cmd_huir_pressed(): action_selected.emit(null) #BattleRunChoice
+func _on_cmd_pokemon_pressed(): action_selected.emit(BattleSwitchChoice.new())
+func _on_cmd_mochila_pressed(): action_selected.emit(BattleBagChoice.new())
+func _on_cmd_huir_pressed(): action_selected.emit(BattleRunChoice.new())
 
 ## Resalta visualmente el botón con focus
 #func _highlight(cmd: Button):

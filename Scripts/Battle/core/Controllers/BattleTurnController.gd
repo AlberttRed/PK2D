@@ -79,12 +79,21 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	print(">>> Orden de ejecución:")
 	for choice:BattleChoice in battle_choices:
 		var pkmn_name = choice.pokemon.get_name()
-		var move_name = "Otra acción"
+		var speed = choice.pokemon.get_speed()
+		var action_desc := ""
 		if choice is BattleMoveChoice and choice.get_move() != null:
-			move_name = choice.get_move().get_name()
-		print("- %s usará %s (velocidad: %d)" % [
-			pkmn_name, move_name, choice.pokemon.get_speed()
-		])
+			action_desc = "usará %s" % choice.get_move().get_name()
+		elif choice is BattleSwitchChoice:
+			action_desc = "cambiará de Pokémon"
+		elif choice is BattleBagChoice:
+			action_desc = "usará un objeto"
+		elif choice is BattleRunChoice:
+			action_desc = "intentará huir"
+		elif choice.is_pass():
+			action_desc = "pasará"
+		else:
+			action_desc = "realizará otra acción"
+		print("- %s %s (velocidad: %d)" % [pkmn_name, action_desc, speed])
 	return battle_choices
 	
 
