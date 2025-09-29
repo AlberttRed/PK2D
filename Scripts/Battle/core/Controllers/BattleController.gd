@@ -2,9 +2,6 @@ extends Node
 
 class_name BattleController
 
-signal battle_started
-signal battle_ended
-
 var ui: BattleUI
 @onready var turn_controller: BattleTurnController = $TurnController
 #var animation_controller: BattleAnimationControllerRefactor
@@ -17,30 +14,29 @@ var enemy_side: BattleSide
 var sides: Array[BattleSide]
 
 var finished := false
+var winner_side: String = ""
 
 func _ready():
 	# Este método puede quedar vacío si se usa start_battle() desde BattleScene
 	pass
 
 # Configura los dos BattleSide con sus participantes y reglas
-func setup_sides(player_participants: Array[BattleParticipant], enemy_participants: Array[BattleParticipant], rules: BattleRules):
+func setup_sides(player_participants: Array[BattleParticipant], enemy_participants: Array[BattleParticipant], _rules: BattleRules):
 
-	var player_side = BattleSide.new(BattleSide.Types.PLAYER)
+	self.player_side = BattleSide.new(BattleSide.Types.PLAYER)
 	for p in player_participants:
 		player_side.add_participant(p)
-	player_side.prepare_for_battle(rules)
+	player_side.prepare_for_battle(_rules)
 	
-	var enemy_side = BattleSide.new(BattleSide.Types.ENEMY)
+	self.enemy_side = BattleSide.new(BattleSide.Types.ENEMY)
 	for p in enemy_participants:
 		enemy_side.add_participant(p)
-	enemy_side.prepare_for_battle(rules)
+	enemy_side.prepare_for_battle(_rules)
 	
-	self.player_side = player_side
-	self.enemy_side = enemy_side
 	self.sides = [player_side, enemy_side]
 	assign_opponent_sides()
 
-	self.rules = rules
+	self.rules = _rules
 	
 func assign_active_pokemons_to_spots():
 	var player_actives = player_side.get_active_pokemons()
@@ -94,11 +90,50 @@ func assign_opponent_sides():
 	sides[1].opponent_side = sides[0]
 
 func battle_finished() -> bool:
-	# Lógica real pendiente
-	return false
+	# Si ya se determinó el fin, no recalcular
+	if finished:
+		return true
+
+	var player_alive := player_side.count_alive_pokemons()
+	var enemy_alive := enemy_side.count_alive_pokemons()
+
+	if player_alive == 0 or enemy_alive == 0:
+		finished = true
+		if player_alive == 0 and enemy_alive == 0:
+			winner_side = "draw"
+		elif player_alive == 0:
+			winner_side = "enemy"
+		else:
+			winner_side = "player"
+
+	return finished
 
 func get_message_controller() -> BattleMessageController:
 	return ui.message_controller
+
+func end_battle() -> void:
+	# Asegura que el estado final esté calculado
+	if not finished:
+		battle_finished()
+
+	# Ocultar/limpiar UI mínima
+	if ui:
+		ui.visible = false
+
+	# Señal global con el resultado
+	var result_msg := "Resultado del combate: desconocido"
+	match winner_side:
+		"player":
+			result_msg = "Resultado del combate: gana Player"
+		"enemy":
+			result_msg = "Resultado del combate: gana Enemy"
+		"draw":
+			result_msg = "Resultado del combate: empate"
+	print(result_msg)
+	SignalManager.battle_finished.emit(winner_side)
+
+	# Hacer esta función awaitable
+	await get_tree().process_frame
 
 
 #func init_battle():

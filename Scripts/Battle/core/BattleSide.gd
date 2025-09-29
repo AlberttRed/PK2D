@@ -138,3 +138,14 @@ func _to_string() -> String:
 		return "Enemy"
 	else:
 		return "None"
+
+# --- NUEVO: utilidades de disponibilidad de Pokémon ---
+func count_alive_pokemons() -> int:
+	var alive := 0
+	for pk in pokemonParty:
+		if pk and not pk.is_fainted():
+			alive += 1
+	return alive
+
+func has_any_pokemon_alive() -> bool:
+	return count_alive_pokemons() > 0

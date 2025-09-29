@@ -42,7 +42,7 @@ signal messagebox_input_cancel()
 # === SEÑALES DEL SISTEMA DE BATALLA ===
 signal battle_requested(participants: Array, rules: BattleRules)
 signal battle_started()
-signal battle_finished()
+signal battle_finished(winner_side)
 
 
 # --- Utilidades ---

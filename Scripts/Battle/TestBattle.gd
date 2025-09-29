@@ -8,9 +8,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#await wildBattle_OLD()
-	#await wildSingleBattle()
 	$GUI/FadeLayer.visible = false
+	#await wildBattle_OLD()
+#	await wildSingleBattle()
 	await wildDoubleBattle()
 	#get_tree().quit()
 	
@@ -26,7 +26,9 @@ func wildSingleBattle():
 		BattleRules.BattleModes.SINGLE  
 	)
 
-	SignalManager.battle_requested.emit([playerParticipant, wildParticipant], rules)
+	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
+	
+	SignalManager.battle_requested.emit(participants, rules)
 	
 	
 func wildDoubleBattle():
