@@ -13,7 +13,7 @@ func get_move() -> BattleMove:
 
 func get_targets() -> Array:
 	if target_handler:
-		return target_handler.selectedTargets
+		return target_handler.selected_targets
 	return []
 	
 func get_priority() -> int:
@@ -56,9 +56,9 @@ func get_main_target():
 #
 	#return all_effects
 
-func resolve() -> BattleMoveResult:
+func resolve() -> BattleResult:
 	var all_effects: Array[ImmediateBattleEffect] = []
-	var result := BattleMoveResult.new()
+	var result := BattleResult.new()
 	var targets = target_handler.selected_targets if target_handler else []
 
 	if targets.is_empty():

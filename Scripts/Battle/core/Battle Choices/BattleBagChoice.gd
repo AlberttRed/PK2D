@@ -8,8 +8,8 @@ func get_priority() -> int:
     # En juegos oficiales, usar objeto suele resolverse antes que los movimientos
     return 6
 
-func resolve():
+func resolve() -> BattleResult:
     # Placeholder: resultado vacío hasta implementar lógica de mochila
-    return BattleBagResult.new()
+    return BattleResult.new()
 
 
