@@ -5,8 +5,8 @@ func get_priority() -> int:
 	# Placeholder: resolveremos reglas reales de prioridad más adelante
 	return 6
 
-func resolve():
+func resolve() -> BattleResult:
 	# Placeholder: la lógica de huida (probabilidad, restricciones) se implementará después
-	return BattleRunResult.new()
+	return BattleResult.new()
 
 

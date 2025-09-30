@@ -55,14 +55,13 @@ func select_actions():
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
 	last_ordered_choices = ordered_choices
-	var results: Dictionary = {} # key: BattleChoice, value: BattleMoveResult
+	var results: Dictionary = {} # key: BattleChoice, value: BattleResult
 	
 	#Calculamos y resolvemos las acciones seleccionadas por cada pokémon activo
 	for choice:BattleChoice in ordered_choices:
 		if choice.pokemon.is_fainted():
 			continue
-		var move_result = await choice.resolve()
-		results[choice] = move_result
+		results[choice] = await choice.resolve()
 	
 	print_turn_debug_log(ordered_choices, results)
 	
@@ -116,22 +115,19 @@ func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 func handle_result(choice: BattleChoice, result) -> void:
 	if choice is BattleMoveChoice:
 		await handle_move_result(choice, result)
-
-	# elif choice is BattleSwitchChoice:
-	#	await handle_switch_result(choice, result)
-
-	# BattleItemChoice:
-	# 	await handle_item_result(choice, result)
-
-	# BattleRunChoice:
-	# 	await handle_run_result(choice, result)
+	elif choice is BattleSwitchChoice:
+		handle_switch_result(choice, result)
+	elif choice is BattleBagChoice:
+		handle_bag_result(choice, result)
+	elif choice is BattleRunChoice:
+		await handle_run_result(choice, result)
 	else:
 		push_warning("handle_result: tipo de choice no reconocido o aún no implementado.")
 		
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_END_POKEMON_TURN)
 
 #
-func handle_move_result(choice: BattleMoveChoice, result: BattleMoveResult) -> void:
+func handle_move_result(choice: BattleMoveChoice, result: BattleResult) -> void:
 
 	# Aplicar y visualizar efectos previos al movimiento (como confusión, paralizado)
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_BEFORE_MOVE)
@@ -146,6 +142,35 @@ func handle_move_result(choice: BattleMoveChoice, result: BattleMoveResult) -> v
 	for effect in result.effects:
 		print("visualize " + choice.get_move().get_name())
 		await effect.visualize(battle_controller.ui)
+
+func handle_switch_result(choice: BattleSwitchChoice, _result) -> void:
+	var spot := choice.pokemon.battle_spot
+	var current := spot.get_active_pokemon()
+	var target_idx := choice.target_index
+	var party := choice.pokemon.side.pokemonParty
+	if target_idx < 0 or target_idx >= party.size():
+		print("[SWITCH] Índice destino inválido")
+		return
+	var incoming: BattlePokemon = party[target_idx]
+	if incoming == current:
+		print("[SWITCH] Mismo Pokémon, no se realiza el cambio")
+		return
+	var effect := SwitchEffect.new(choice.pokemon.side, spot, current, incoming, battle_controller.rules)
+	effect.apply()
+	await effect.visualize(battle_controller.ui)
+
+func handle_bag_result(_choice: BattleBagChoice, _result) -> void:
+	print("[BAG] Usar Bolsa no disponible")
+
+func handle_run_result(choice: BattleRunChoice, _result) -> void:
+	var side := choice.pokemon.side
+	var can_escape := (side.opponent_side != null and not side.opponent_side.is_controllable())
+	var effect := RunEffect.new(side, can_escape)
+	effect.apply()
+	await effect.visualize(battle_controller.ui)
+	if can_escape:
+		battle_controller.finished = true
+		# No asignamos ganador al huir; se trata como escape sin ganador
 		
 	# Aplicar y visualizar efectos posteriores al movimiento (como veneno, quemadura)
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_AFTER_MOVE)

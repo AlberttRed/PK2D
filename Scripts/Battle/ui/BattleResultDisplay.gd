@@ -4,7 +4,7 @@ class_name BattleResultDisplay
 # Se espera que esté instanciada o referenciada desde BattleUI.
 var ui:BattleUI
 
-#func display_move_result(result: BattleMoveResult, choice: BattleMoveChoice) -> void:
+#func display_move_result(result: BattleResult, choice: BattleMoveChoice) -> void:
 	##var message_controller = ui.message_controller
 	#
 	#await ui.show_used_move_message(choice.pokemon, choice.get_move())
@@ -23,7 +23,7 @@ var ui:BattleUI
 		#await ui.show_multi_hit_message(result.num_hits)
 #
 #
-#func display_move_result(result: BattleMoveResult, choice: BattleMoveChoice) -> void:
+#func display_move_result(result: BattleResult, choice: BattleMoveChoice) -> void:
 	#await ui.show_used_move_message(choice.pokemon, choice.get_move())
 #
 	#if result.missed:
