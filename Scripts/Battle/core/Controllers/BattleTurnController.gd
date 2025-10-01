@@ -55,7 +55,7 @@ func select_actions():
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
 	last_ordered_choices = ordered_choices
-	var results: Dictionary = {} # key: BattleChoice, value: BattleResult
+	var results: Dictionary = {} # key: BattleChoice, value: Array[BattleHandler]
 	
 	#Calculamos y resolvemos las acciones seleccionadas por cada pokémon activo
 	for choice:BattleChoice in ordered_choices:
@@ -127,7 +127,7 @@ func handle_result(choice: BattleChoice, result) -> void:
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_END_POKEMON_TURN)
 
 #
-func handle_move_result(choice: BattleMoveChoice, result: BattleResult) -> void:
+func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]) -> void:
 
 	# Aplicar y visualizar efectos previos al movimiento (como confusión, paralizado)
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_BEFORE_MOVE)
@@ -137,11 +137,10 @@ func handle_move_result(choice: BattleMoveChoice, result: BattleResult) -> void:
 
 	await battle_controller.ui.show_used_move_message(choice.pokemon, choice.get_move())
 	
-	for effect in result.effects:
-		effect.apply()
-	for effect in result.effects:
-		print("visualize " + choice.get_move().get_name())
-		await effect.visualize(battle_controller.ui)
+	for h in handlers:
+		h.apply()
+	for h in handlers:
+		await h.visualize(battle_controller.ui)
 
 func handle_switch_result(choice: BattleSwitchChoice, _result) -> void:
 	var spot := choice.pokemon.battle_spot
@@ -232,42 +231,13 @@ func get_execution_order() -> Array[BattleChoice]:
 func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> void:
 	for choice in choices:
 		if choice is BattleMoveChoice and results.has(choice):
-			var result = results[choice]
-			if not result.has_method("effects"):
-				continue
-
-			var effects: Array = result.effects
+			var handlers: Array = results[choice]
 			var user: String = choice.pokemon.get_name()
 			var move: String = choice.get_move().get_name()
-
-			if effects.size() == 1 and effects[0] is MissEffect:
-				var missed_target = effects[0].target.get_name()
-				print("%s usará %s contra %s pero fallará." % [user, move, missed_target])
-			else:
-				var grouped := {}
-
-				for effect in effects:
-					var inner_effects = effect.sub_effects if effect.has("sub_effects") else [effect]
-
-					for e in inner_effects:
-						if e is DamageEffect:
-							var t = e.target
-							if not grouped.has(t):
-								grouped[t] = { "damage": 0, "healing": 0 }
-							grouped[t].damage += e.amount
-						#elif e is HealEffect:
-							#var t = e.target
-							#if not grouped.has(t):
-								#grouped[t] = { "damage": 0, "healing": 0 }
-							#grouped[t].healing += e.amount
-
-				for target in grouped.keys():
-					var tname = target.get_name()
-					var entry = grouped[target]
-					if entry.damage > 0:
-						print("%s usará %s contra %s e infligirá %d de daño." % [user, move, tname, entry.damage])
-					if entry.healing > 0:
-						print("%s usará %s y curará %d PS a %s." % [user, move, entry.healing, tname])
+			if handlers.is_empty():
+				continue
+			# Log mínimo sin depender de efectos internos
+			print("%s resolverá %d handler(s) para %s" % [user, handlers.size(), move])
 
 func print_active_effects_log():
 	print("====== Battle Effects Log ======")

@@ -36,6 +36,8 @@ class_name Move
 @export var ailment : Ailment = null
 @export var move_effect : Script = null
 
+@export var category: BattleMoveCategory = null
+
 func _init():
 	add_user_signal("move_done")
 	add_user_signal("animation_done")
