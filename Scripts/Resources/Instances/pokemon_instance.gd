@@ -385,10 +385,17 @@ func load_moves():
 	var moves:Array[PokemonLearningMove] = learningMoves.filter(func(move:PokemonLearningMove): return move.learningType==PokemonLearningMove.Type.LVL_UP and move.learningLevel<=level).slice(0, 4)
 	
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
-	if movements.size() < 4:
-		movements.push_back(MoveInstance.new(86))
-	if movements.size() < 4:
-		movements.push_back(MoveInstance.new(3))
+	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
+	movements.insert(0, MoveInstance.new(52))
+
+	# Limitar a 4 movimientos
+	while movements.size() > 4:
+		movements.pop_back()
+
+	movements.insert(0, MoveInstance.new(77))
+
+	while movements.size() > 4:
+		movements.pop_back()
 	
 func addMove(_move:MoveInstance):
 	if movements.size() == 4:

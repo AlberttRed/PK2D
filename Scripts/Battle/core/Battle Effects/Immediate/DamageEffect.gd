@@ -8,7 +8,6 @@ var amount: int
 
 var is_critical := false
 var effectiveness := 1.0
-var show_effectiveness := true
 
 func _init(_user: BattlePokemon, _target: BattlePokemon, _move: BattleMove, _amount:int):
 	user = _user

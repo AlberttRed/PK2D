@@ -1,15 +1,9 @@
-extends BattleHandler
+extends BattleMoveHandler
 
 class_name BattleDamageHealMoveHandler
 
-var user
-var target
-var move
-
-func _init(_move, _user, _target):
-	move = _move
-	user = _user
-	target = _target
+func _init(_move, _user, _target, _category = null):
+	super._init(_move, _user, _target, _category)
 
 func apply() -> void:
 	# TODO: aplicar daño y curación por drenaje

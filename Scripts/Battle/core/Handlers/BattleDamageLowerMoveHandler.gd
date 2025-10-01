@@ -1,22 +1,29 @@
-extends BattleHandler
+extends BattleMoveHandler
 
 class_name BattleDamageLowerMoveHandler
 
-var user
-var target
-var move
+var damage: DamageEffect = null
+var stat_effect: StatChangeEffect = null
 
-func _init(_move, _user, _target):
-	move = _move
-	user = _user
-	target = _target
+func _init(_move, _user, _target, _category = null):
+	super._init(_move, _user, _target, _category)
 
 func apply() -> void:
-	# TODO: aplicar daño y bajar stats
-	pass
+	# 1) Daño al objetivo
+	damage = move.calculate_damage(target)
+	show_effectiveness = (damage.effectiveness != 1.0)
+	damage.apply()
+	# 2) Bajar stats del objetivo
+	var changes: Dictionary = move.get_stat_changes()
+	stat_effect = StatChangeEffect.new(target, changes)
+	stat_effect.apply()
 
 func visualize(ui) -> void:
-	# TODO: visualizar daño y cambios de stats
-	pass
-
-
+	if damage != null:
+		await damage.visualize(ui)
+		if damage.is_critical:
+			await ui.show_critical_hit_message()
+		if show_effectiveness:
+			await ui.show_effectiveness_message(damage)
+	if stat_effect != null:
+		await stat_effect.visualize(ui)

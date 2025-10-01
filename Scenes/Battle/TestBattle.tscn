@@ -270,7 +270,6 @@ spDefense_IVs = 23
 speed_IVs = 13
 ability_id = 8
 nature_id = 2
-rotate_hp_EVs = null
 
 [node name="pkm2" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
@@ -292,7 +291,6 @@ spDefense_IVs = 30
 speed_IVs = 23
 ability_id = 20
 nature_id = 19
-rotate_hp_EVs = null
 
 [editable path="Player"]
 [editable path="SingleTrainer"]
