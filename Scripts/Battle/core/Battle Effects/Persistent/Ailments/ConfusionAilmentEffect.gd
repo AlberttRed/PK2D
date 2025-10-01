@@ -20,7 +20,6 @@ func apply_phase(pokemon:BattlePokemon, phase: Phases) -> void:
 	else:
 		var damage:int = ceil(pokemon.total_hp / 8.0)
 		var effect := DamageEffect.new(pokemon, pokemon, null, damage)
-		effect.show_effectiveness = false
 		pokemon.take_damage(effect)
 		pokemon.can_act_this_turn = false
 

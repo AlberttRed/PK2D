@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://c2gwsrncqiwnk"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://c2gwsrncqiwnk"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_o5o5a"]
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_ue4mj"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_vuay0"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_wpwk6"]
 
 [resource]
 resource_name = "592 - Chorro de Vapor"
@@ -37,3 +38,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_ue4mj")
+category = ExtResource("2_wpwk6")

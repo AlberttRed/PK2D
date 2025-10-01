@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://dt2kdxtl4udvi"]
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://dt2kdxtl4udvi"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_q1dfo"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_xqebx"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_v8gib"]
 
 [resource]
@@ -44,3 +45,4 @@ meta_ailment_chance = 0
 meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
+category = ExtResource("1_xqebx")

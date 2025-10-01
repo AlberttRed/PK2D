@@ -2,5 +2,6 @@ class_name MoveCategoryDamage
 extends MoveCategoryLogic
 
 func execute() -> Array[ImmediateBattleEffect]:
-	return [ApplyDamageEffect.new(user, target, move)]
+	# Deprecated: ahora los handlers gestionan el daño
+	return []
 	#return [move.calculate_damage(target)]

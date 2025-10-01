@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cuagln0bcf2vo"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://cuagln0bcf2vo"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_1m2hf"]
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_3dsa2"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_4352r"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_p2wlf"]
 
 [resource]
 resource_name = "221 - Fuego Sagrado"
@@ -36,3 +37,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_3dsa2")
+category = ExtResource("2_p2wlf")

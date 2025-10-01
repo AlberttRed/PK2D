@@ -8,7 +8,6 @@ func apply_phase(pokemon:BattlePokemon, phase: Phases) -> void:
 	var dmg:int = ceil(pokemon.total_hp / 16.0)
 
 	var burn_effect := DamageEffect.new(null, pokemon, null, dmg)
-	burn_effect.show_effectiveness = false
 	burn_effect.is_critical = false
 	burn_effect.effectiveness = 1.0
 

@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://b6y1fpvw0d1ej"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://b6y1fpvw0d1ej"]
 
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_dnwj5"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_kgsc3"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_dolfa"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_h04uc"]
 
 [resource]
 resource_name = "503 - Escaldar"
@@ -36,3 +37,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_dnwj5")
+category = ExtResource("2_h04uc")

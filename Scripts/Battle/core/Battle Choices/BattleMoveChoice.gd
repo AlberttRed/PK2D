@@ -72,7 +72,7 @@ func resolve() -> Array[BattleHandler]:
 			handlers.append(MissHandler.new(pokemon))
 			continue
 
-		var category: BattleMoveCategory = move.get_category_resource() if move.has_method("get_category_resource") else null
+		var category: BattleMoveCategory = move.get_category() if move.has_method("get_category") else null
 		if category != null:
 			var handler := category.create_handler(move, pokemon, target)
 			if handler != null:

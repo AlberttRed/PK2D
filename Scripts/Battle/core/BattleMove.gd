@@ -105,8 +105,8 @@ func get_min_turns() -> int:
 func get_critical_rate() -> int:
 	return base_data.get_critical_rate()
 	
-func get_category_resource() -> BattleMoveCategory:
-	return base_data.get_category_resource()
+func get_category() -> BattleMoveCategory:
+	return base_data.get_category()
 
 func get_ailment() -> Ailment:
 	return base_data.get_ailment()

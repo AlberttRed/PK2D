@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://c2f2ur44m7xgg"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://c2f2ur44m7xgg"]
 
 [ext_resource type="Resource" uid="uid://dv16nb2l12eoo" path="res://Resources/Data/Ailments/NIGHTMARE.tres" id="1_e8x4y"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_jjopq"]
 [ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_6rs8k"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_kbreb"]
 
 [resource]
 resource_name = "171 - Pesadilla"
@@ -37,3 +38,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_e8x4y")
+category = ExtResource("2_kbreb")
