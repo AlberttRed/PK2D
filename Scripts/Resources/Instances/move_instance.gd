@@ -123,6 +123,9 @@ func get_critical_rate() -> int:
 func get_category_id() -> int:
 	return base.meta_category_id
 
+func get_category() -> BattleMoveCategory:
+	return base.category
+
 func get_drain_percentage():
 	return base.meta_drain
 	

@@ -7,22 +7,8 @@ enum DamageClass {
 	SPECIAL = 3	
 }
 
-enum MoveCategory {
-	DAMAGE,
-	AILMENT,
-	NET_GOOD_STATS,
-	HEAL,
-	DAMAGE_AILMENT,
-	SWAGGER,
-	DAMAGE_LOWER,
-	DAMAGE_RAISE,
-	DAMAGE_HEAL,
-	OHKO,
-	WHOLE_FIELD_EFFECT,
-	FIELD_EFFECT,
-	FORCE_SWITCH,
-	UNIQUE
-}
+## Deprecated: se usaba para mapear categorías de pokapi
+## enum MoveCategory { ... }
 
 var base_data: MoveInstance
 var pokemon: BattlePokemon
@@ -70,7 +56,7 @@ func is_depleted() -> bool:
 func get_priority() -> int:
 	return base_data.priority
 	
-func get_category() -> MoveCategory:
+func get_category_id() -> int:
 	return base_data.get_category_id()
 	
 func get_drain_percentage() -> int:
@@ -119,39 +105,8 @@ func get_min_turns() -> int:
 func get_critical_rate() -> int:
 	return base_data.get_critical_rate()
 	
-func get_category_logic() -> MoveCategoryLogic:
-	match get_category():
-		MoveCategory.DAMAGE:
-			return MoveCategoryDamage.new()
-		MoveCategory.AILMENT:
-			return MoveCategoryAilment.new()
-		MoveCategory.NET_GOOD_STATS:
-			return MoveCategoryNetGoodStats.new()
-		MoveCategory.HEAL:
-			return MoveCategoryHeal.new()
-		MoveCategory.DAMAGE_AILMENT:
-			return MoveCategoryDamageAilment.new()
-		MoveCategory.SWAGGER:
-			return MoveCategorySwagger.new()
-		MoveCategory.DAMAGE_LOWER:
-			return MoveCategoryDamageLower.new()
-		MoveCategory.DAMAGE_RAISE:
-			return MoveCategoryDamageRaise.new()
-		MoveCategory.DAMAGE_HEAL:
-			return MoveCategoryDamageHeal.new()
-		MoveCategory.OHKO:
-			return MoveCategoryOhko.new()
-		MoveCategory.WHOLE_FIELD_EFFECT:
-			return MoveCategoryWholeFieldEffect.new()
-		MoveCategory.FIELD_EFFECT:
-			return MoveCategoryFieldEffect.new()
-		MoveCategory.FORCE_SWITCH:
-			return MoveCategoryForceSwitch.new()
-		MoveCategory.UNIQUE:
-			return MoveCategoryUnique.new()
-		_:
-			push_warning("Move category no implementada: %s" % str(get_category()))
-			return MoveCategoryLogic.new()
+func get_category_resource() -> BattleMoveCategory:
+	return base_data.get_category_resource()
 
 func get_ailment() -> Ailment:
 	return base_data.get_ailment()

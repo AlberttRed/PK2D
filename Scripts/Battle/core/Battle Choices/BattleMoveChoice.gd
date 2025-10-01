@@ -56,31 +56,28 @@ func get_main_target():
 #
 	#return all_effects
 
-func resolve() -> BattleResult:
-	var all_effects: Array[ImmediateBattleEffect] = []
-	var result := BattleResult.new()
+func resolve() -> Array[BattleHandler]:
+	var handlers: Array[BattleHandler] = []
 	var targets = target_handler.selected_targets if target_handler else []
 
 	if targets.is_empty():
-		return result
+		return handlers
+
+	var move := get_move()
 
 	for spot in targets:
 		var target := spot.get_active_pokemon()
 
-		if not AccuracyUtils.check_hit(get_move(), pokemon, target):
-			all_effects.append(MissEffect.new(pokemon))
+		if not AccuracyUtils.check_hit(move, pokemon, target):
+			handlers.append(MissHandler.new(pokemon))
 			continue
 
-		var num_hits := get_move().get_number_of_hits()
-
-		if num_hits > 1:
-			var multi := MultiHitEffect.new(pokemon, target, get_move(), num_hits)
-			all_effects.append(multi)
+		var category: BattleMoveCategory = move.get_category_resource() if move.has_method("get_category_resource") else null
+		if category != null:
+			var handler := category.create_handler(move, pokemon, target)
+			if handler != null:
+				handlers.append(handler)
 		else:
-			var logic = get_move().get_category_logic()
-			logic.move = get_move()
-			logic.user = pokemon
-			logic.target = target
-			all_effects.append_array(logic.execute())
-	result.effects = all_effects
-	return result
+			print("No category found for move: " + move.get_name())
+
+	return handlers
