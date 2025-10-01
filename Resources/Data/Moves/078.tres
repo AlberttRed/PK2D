@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://7djwq67oy6q5"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://7djwq67oy6q5"]
 
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_bq46g"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_yyan2"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_bn58m"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_kw2m0"]
 
 [resource]
 resource_name = "78 - Paralizador"
@@ -35,3 +36,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_bq46g")
+category = ExtResource("2_kw2m0")

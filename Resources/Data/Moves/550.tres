@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://djcs5kas8fgjc"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://djcs5kas8fgjc"]
 
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_gjkd7"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_sy5dq"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_gt05i"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_y7ijt"]
 
 [resource]
 resource_name = "550 - Ataque Fulgor"
@@ -36,3 +37,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_gjkd7")
+category = ExtResource("2_y7ijt")

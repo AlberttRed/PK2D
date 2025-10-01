@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://cvpknhxxo4d0u"]
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://cvpknhxxo4d0u"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ryapa"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_ye6l1"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_u4s0r"]
 
 [resource]
@@ -38,3 +39,4 @@ meta_ailment_chance = 0
 meta_flinch_chance = 0
 meta_stat_chance = 100
 contact_flag = false
+category = ExtResource("1_ye6l1")

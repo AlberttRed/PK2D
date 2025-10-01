@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://c361corr032xj"]
+[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://c361corr032xj"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_e6loq"]
 [ext_resource type="Resource" uid="uid://djlu5d7nxiwrg" path="res://Resources/Data/Ailments/FREEZE.tres" id="1_qf5hp"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_k7np2"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_r0ptl"]
 
 [resource]
 resource_name = "573 - Liofilización"
@@ -39,3 +40,4 @@ meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
 ailment = ExtResource("1_qf5hp")
+category = ExtResource("2_r0ptl")

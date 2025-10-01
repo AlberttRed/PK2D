@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="Move" load_steps=3 format=3 uid="uid://tye8xtfhot5i"]
+[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://tye8xtfhot5i"]
 
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_glx12"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_leunp"]
 [ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_2yr47"]
 
@@ -44,3 +45,4 @@ meta_ailment_chance = 0
 meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
+category = ExtResource("1_glx12")
