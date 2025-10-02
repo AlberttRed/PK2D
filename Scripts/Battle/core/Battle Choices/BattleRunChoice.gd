@@ -5,8 +5,8 @@ func get_priority() -> int:
 	# Placeholder: resolveremos reglas reales de prioridad más adelante
 	return 6
 
-func resolve() -> BattleResult:
-	# Placeholder: la lógica de huida (probabilidad, restricciones) se implementará después
-	return BattleResult.new()
-
-
+func resolve() -> Array[BattleHandler]:
+	# Crear el handler de huida
+	var side := pokemon.side
+	var handler = BattleRunHandler.new(side, side.battle_rules)
+	return [handler]

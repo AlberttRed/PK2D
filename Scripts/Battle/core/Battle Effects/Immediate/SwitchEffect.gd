@@ -20,9 +20,13 @@ func apply():
     if spot and in_pokemon:
         spot.load_active_pokemon(in_pokemon, rules)
 
-func visualize(_ui):
-    # Placeholder: de momento, solo logs.
+func visualize(ui):
+    # Muestra mensaje y animación de switch
     var out_name = out_pokemon.get_name() if out_pokemon else "(ninguno)"
     var in_name = in_pokemon.get_name() if in_pokemon else "(ninguno)"
+    
+    await ui.show_switch_message(side.to_string(), in_name)
+    
+    # Log de debug (opcional)
     print("[SWITCH] Sale %s, entra %s" % [out_name, in_name])
 

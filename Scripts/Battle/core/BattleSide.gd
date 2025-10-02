@@ -18,6 +18,7 @@ var isWild: bool = false
 var pokemonParty : Array[BattlePokemon]
 var escapeAttempts:int #Player attemps to exit the battle. If a Move is selected, the attemps counter will restart
 var escapedBattle:bool
+var battle_rules: BattleRules = null
 
 func _init(_type: Types) -> void:
 	self.type = _type
@@ -121,6 +122,7 @@ func assign_active_pokemons(rules: BattleRules) -> void:
 # - Asigna cuáles comenzarán el combate en función del modo de batalla (SINGLE, DOUBLE, etc.)
 func prepare_for_battle(rules: BattleRules) -> void:
 	assert(!participants.is_empty(), "BattleSide sin participantes")
+	battle_rules = rules
 	load_party()
 	assign_active_pokemons(rules)
 

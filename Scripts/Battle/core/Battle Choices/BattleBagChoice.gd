@@ -8,8 +8,9 @@ func get_priority() -> int:
     # En juegos oficiales, usar objeto suele resolverse antes que los movimientos
     return 6
 
-func resolve() -> BattleResult:
-    # Placeholder: resultado vacío hasta implementar lógica de mochila
-    return BattleResult.new()
+func resolve() -> Array[BattleHandler]:
+    # Crear el handler de bolsa (placeholder)
+    var handler = BattleBagHandler.new()
+    return [handler]
 
 

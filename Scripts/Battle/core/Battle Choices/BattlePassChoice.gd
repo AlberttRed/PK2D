@@ -7,5 +7,5 @@ func is_pass() -> bool:
 func get_priority() -> int:
 	return 0
 
-func resolve():
-	return BattleResult.new()
+func resolve() -> Array[BattleHandler]:
+	return []

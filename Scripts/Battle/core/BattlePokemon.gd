@@ -36,7 +36,16 @@ var status_turns: int = 0
 
 var stat_stages := StatStages.new()
 
-var selectedBattleChoice: BattleChoice
+var _selectedBattleChoice: BattleChoice
+
+# Setter para selectedBattleChoice que automáticamente asigna el pokemon al choice
+var selectedBattleChoice: BattleChoice:
+	get:
+		return _selectedBattleChoice
+	set(value):
+		_selectedBattleChoice = value
+		if value != null:
+			value.pokemon = self
 
 func _init(_pokemon: PokemonInstance, _IA: BattleIA = null):
 	base_data = _pokemon
