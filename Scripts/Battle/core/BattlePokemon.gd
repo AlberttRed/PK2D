@@ -161,6 +161,10 @@ func take_damage(damage: DamageEffect) -> void:
 	hp -= damage.amount
 	hp = max(hp, 0)
 
+func take_heal(heal: HealEffect) -> void:
+	hp += heal.amount
+	hp = min(hp, total_hp)
+
 func set_status(new_status: Ailment):
 	if new_status and !new_status.is_persistent:
 		push_warning("Intentando asignar un ailment volátil como status.")

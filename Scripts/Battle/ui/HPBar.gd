@@ -67,9 +67,13 @@ func reduce_hp_by(hp: int) -> void:
 	await health_bar.animate_to(health_bar.current_value - hp)
 	updated.emit()
 
-func update_exp(exp: int) -> void:
-	await exp_bar.animate_to(exp)
-	pokemon.base_data.totalExp = exp
+func increase_hp_by(hp: int) -> void:
+	await health_bar.animate_to(health_bar.current_value + hp)
+	updated.emit()
+
+func update_exp(exp_value: int) -> void:
+	await exp_bar.animate_to(exp_value)
+	pokemon.base_data.totalExp = exp_value
 	updated.emit()
 
 func setup_for(side_type: int, mode: int) -> void:

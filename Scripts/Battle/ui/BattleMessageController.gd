@@ -95,6 +95,20 @@ func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 func get_critical_hit_message() -> Dictionary:
 	return { "type": "input", "text": "¡Golpe crítico!" }
 
+func get_heal_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
+	return {
+		"type": "wait",
+		"text": "¡%s recuperó %d PS!" % [pokemon.get_name(), amount],
+		"wait_time": 1.0
+	}
+
+func get_drain_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
+	return {
+		"type": "wait",
+		"text": "¡%s absorbió %d PS!" % [pokemon.get_name(), amount],
+		"wait_time": 1.0
+	}
+
 func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 	return {
 		"type": "wait",
@@ -124,7 +138,7 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat,
 	if amount == 0:
 		return {}
 
-	var name := get_display_name(pokemon)
+	var _name := get_display_name(pokemon)
 	var stat_name := get_stat_display_name(stat)
 	var verb := ""
 	var msg := ""

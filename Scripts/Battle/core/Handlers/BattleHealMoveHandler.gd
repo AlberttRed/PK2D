@@ -2,15 +2,18 @@ extends BattleMoveHandler
 
 class_name BattleHealMoveHandler
 
-var heal_result = null
+var heal: HealEffect = null
 
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)
 
 func apply() -> void:
-	heal_result = move.calculate_healing(target)
-	# TODO: aplicar curación cuando esté implementado.
+	heal = move.calculate_healing(user)
+	heal.apply()
 
-func visualize(ui) -> void:
-	# TODO: visualizar curación cuando esté implementado.
-	pass
+func visualize(ui: BattleUI) -> void:
+	if heal == null:
+		return
+	await heal.visualize(ui)
+	# Mostrar mensaje específico de curación directa
+	await ui.show_heal_message(user, heal.amount)

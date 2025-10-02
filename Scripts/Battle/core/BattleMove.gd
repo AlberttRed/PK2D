@@ -131,11 +131,11 @@ func calculate_damage(target: BattlePokemon) -> DamageEffect:
 
 
 # Calcula la curación para este movimiento (puede ser auto-curación o por drenaje)
-func calculate_healing(target: BattlePokemon, damage_taken: int = 0) -> MoveImpactResult.Heal:
+func calculate_healing(target: BattlePokemon, damage_taken: int = 0) -> HealEffect:
 	assert(pokemon != null, "El movimiento no tiene asignado un 'pokemon' (usuario)")
 	return HealingCalculator.calculate(self, pokemon, target, damage_taken)
 
 
 # Placeholder para más adelante
-func apply(target: BattleSpot):
+func apply(_target: BattleSpot):
 	pass
