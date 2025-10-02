@@ -150,6 +150,12 @@ func show_effectiveness_message(result: DamageEffect) -> void:
 func show_critical_hit_message() -> void:
 	await show_message_from_dict(message_controller.get_critical_hit_message())
 
+func show_heal_message(pokemon: BattlePokemon, amount: int) -> void:
+	await show_message_from_dict(message_controller.get_heal_message(pokemon, amount))
+
+func show_drain_message(pokemon: BattlePokemon, amount: int) -> void:
+	await show_message_from_dict(message_controller.get_drain_message(pokemon, amount))
+
 func show_start_ailment_message(user: BattlePokemon, ailment: Ailment) -> void:
 	await show_message_from_dict(message_controller.get_start_ailment_message(user, ailment))
 

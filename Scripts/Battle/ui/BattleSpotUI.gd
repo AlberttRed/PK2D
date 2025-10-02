@@ -91,20 +91,46 @@ func apply_damage(decrease_value = null) -> void:
 		else:
 			await hp_bar.update_hp(get_active_pokemon().hp)
 
+func apply_heal(increase_value = null) -> void:
+	if get_active_pokemon() == null:
+		return
+	
+	if hp_bar:
+		if increase_value:
+			await hp_bar.increase_hp_by(increase_value)
+		else:
+			await hp_bar.update_hp(get_active_pokemon().hp)
+
 func play_hit_animation() -> void:
 	if not is_visible():
 		return
 
-	var tween := create_tween()
-	tween.set_parallel(false) # animación secuencial (no solapada)
+	var hit_tween := create_tween()
+	hit_tween.set_parallel(false) # animación secuencial (no solapada)
 
 	# Parpadeo: transparente → visible (2 veces)
 	for i in 2:
-		tween.tween_property(sprite, "modulate", Color(1, 1, 1, 0.0), 0.1)
-		tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.1)
+		hit_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 0.0), 0.1)
+		hit_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.1)
 
-	await tween.finished
+	await hit_tween.finished
 	await get_tree().create_timer(0.5).timeout
+
+func play_heal_animation() -> void:
+	if not is_visible():
+		return
+
+	var heal_tween := create_tween()
+	heal_tween.set_parallel(false) # animación secuencial (no solapada)
+
+	# Efecto de curación: brillo verde
+	heal_tween.tween_property(sprite, "modulate", Color(0.5, 1.0, 0.5, 1.0), 0.2)
+	heal_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.2)
+	heal_tween.tween_property(sprite, "modulate", Color(0.5, 1.0, 0.5, 1.0), 0.2)
+	heal_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.2)
+
+	await heal_tween.finished
+	await get_tree().create_timer(0.3).timeout
 
 func play_enter_animation():
 	# Simple animación de entrada, si querés algo visual
