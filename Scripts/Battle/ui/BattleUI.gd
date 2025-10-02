@@ -177,6 +177,14 @@ func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat
 func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, ability: Ability) -> void:
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability))
 
+# Mensajes de escape/huida
+func show_escape_message(pokemon_name: String, is_trainer_battle: bool, escape_succeeded: bool) -> void:
+	await show_message_from_dict(message_controller.get_escape_message(pokemon_name, is_trainer_battle, escape_succeeded))
+
+# Mensajes de cambio de Pokémon
+func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
+	await show_message_from_dict(message_controller.get_switch_message(trainer_name, pokemon_name))
+
 
 # Manda el mensaje a mostrar al MessageBox según el tipo de mensaje devuleto por el MessageController
 func show_message_from_dict(msg: Dictionary) -> void:

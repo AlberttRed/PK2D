@@ -33,24 +33,32 @@ func select_actions():
 	collected_choices.clear()
 	print_stat_stages_log()
 	print_active_effects_log()
+		
 	# Recorremos todos los BattleSpots activos en ambos lados del combate
 	for spot:BattleSpot in battle_controller.get_active_battle_spots():
+		var selectedChoice:BattleChoice = null
 		var p:BattlePokemon = spot.get_active_pokemon()
 		p.init_turn()
 
-		if p.controllable:
-			var choice = await battle_controller.ui.show_action_menu_for(p)
-			p.selectedBattleChoice = choice
-		else:
-			var participant = p.participant  # o como lo tengas enlazado
-			p.selectedBattleChoice = await participant.decide_action_for(p)
+		if p.controllable and not _player_has_attempted_escape():
+			selectedChoice = await battle_controller.ui.show_action_menu_for(p)
+		elif !p.controllable:
+			selectedChoice = await p.participant.decide_action_for(p)
+		# Si es controlable pero ya se intentó escapar, selectedChoice queda null
+		# y se asignará BattlePassChoice.new() más abajo
 
 		# Garantizar que cada Pokémon declara una acción
-		if p.selectedBattleChoice == null:
-			p.selectedBattleChoice = BattlePassChoice.new()
-			p.selectedBattleChoice.pokemon = p
+		if selectedChoice == null:
+			selectedChoice = BattlePassChoice.new()
+		
+		# Asignar el choice al pokemon (el setter se encarga de asignar el pokemon al choice)
+		p.selectedBattleChoice = selectedChoice
+		
+		collected_choices.append(selectedChoice)
 
-		collected_choices.append(p.selectedBattleChoice)
+func _player_has_attempted_escape() -> bool:
+	# Verificar si algún choice del jugador es un BattleRunChoice
+	return collected_choices and collected_choices.filter(func(c): return c is BattleRunChoice).size() > 0
 			
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
@@ -61,7 +69,7 @@ func execute_turn():
 	for choice:BattleChoice in ordered_choices:
 		if choice.pokemon.is_fainted():
 			continue
-		results[choice] = await choice.resolve()
+		results[choice] = choice.resolve()
 	
 	print_turn_debug_log(ordered_choices, results)
 	
@@ -69,9 +77,13 @@ func execute_turn():
 	for choice in ordered_choices:
 		if results.has(choice):
 			await handle_result(choice, results[choice])
+			# Si el combate terminó (por ejemplo, por escape exitoso), salir del bucle
+			if battle_controller.finished:
+				break
 	
-	# Aplicar efectos de fin de turno
-	await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
+	# Aplicar efectos de fin de turno solo si el combate no ha terminado
+	if not battle_controller.finished:
+		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
 	
 func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	battle_choices.sort_custom(_sort_choices)
@@ -112,15 +124,15 @@ func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 	# 3. Desempate aleatorio
 	return randi() % 2 == 0
 
-func handle_result(choice: BattleChoice, result) -> void:
+func handle_result(choice: BattleChoice, handlers: Array[BattleHandler]) -> void:
 	if choice is BattleMoveChoice:
-		await handle_move_result(choice, result)
+		await handle_move_result(choice, handlers)
 	elif choice is BattleSwitchChoice:
-		handle_switch_result(choice, result)
+		await handle_switch_result(choice, handlers)
 	elif choice is BattleBagChoice:
-		handle_bag_result(choice, result)
+		await handle_bag_result(choice, handlers)
 	elif choice is BattleRunChoice:
-		await handle_run_result(choice, result)
+		await handle_run_result(choice, handlers)
 	else:
 		push_warning("handle_result: tipo de choice no reconocido o aún no implementado.")
 		
@@ -142,37 +154,40 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 	for h in handlers:
 		await h.visualize(battle_controller.ui)
 
-func handle_switch_result(choice: BattleSwitchChoice, _result) -> void:
-	var spot := choice.pokemon.battle_spot
-	var current := spot.get_active_pokemon()
-	var target_idx := choice.target_index
-	var party := choice.pokemon.side.pokemonParty
-	if target_idx < 0 or target_idx >= party.size():
-		print("[SWITCH] Índice destino inválido")
-		return
-	var incoming: BattlePokemon = party[target_idx]
-	if incoming == current:
-		print("[SWITCH] Mismo Pokémon, no se realiza el cambio")
-		return
-	var effect := SwitchEffect.new(choice.pokemon.side, spot, current, incoming, battle_controller.rules)
-	effect.apply()
-	await effect.visualize(battle_controller.ui)
+func handle_switch_result(_choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
+	# Aplicar todos los handlers
+	for handler in handlers:
+		handler.apply()
+	
+	# Visualizar todos los handlers
+	for handler in handlers:
+		await handler.visualize(battle_controller.ui)
 
-func handle_bag_result(_choice: BattleBagChoice, _result) -> void:
-	print("[BAG] Usar Bolsa no disponible")
+func handle_bag_result(_choice: BattleBagChoice, handlers: Array[BattleHandler]) -> void:
+	# Aplicar todos los handlers
+	for handler in handlers:
+		handler.apply()
+	
+	# Visualizar todos los handlers
+	for handler in handlers:
+		await handler.visualize(battle_controller.ui)
 
-func handle_run_result(choice: BattleRunChoice, _result) -> void:
-	var side := choice.pokemon.side
-	var can_escape := (side.opponent_side != null and not side.opponent_side.is_controllable())
-	var effect := RunEffect.new(side, can_escape)
-	effect.apply()
-	await effect.visualize(battle_controller.ui)
-	if can_escape:
+func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) -> void:
+	# Aplicar todos los handlers
+	for handler in handlers:
+		handler.apply()
+	
+	# Visualizar todos los handlers
+	for handler in handlers:
+		await handler.visualize(battle_controller.ui)
+	
+	# Si se escapó exitosamente, terminar el combate inmediatamente
+	if choice.pokemon.side.escapedBattle:
 		battle_controller.finished = true
-		# No asignamos ganador al huir; se trata como escape sin ganador
-		
-	# Aplicar y visualizar efectos posteriores al movimiento (como veneno, quemadura)
-	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_AFTER_MOVE)
+		return  # No procesar efectos posteriores si se escapó
+	
+	# Si falló el escape, el Pokémon pierde el turno y no se procesan efectos posteriores
+	# El turno pasa directamente al oponente
 
 	#var user = choice.pokemon
 	#var move = choice.get_move()
@@ -230,14 +245,27 @@ func get_execution_order() -> Array[BattleChoice]:
 	
 func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> void:
 	for choice in choices:
-		if choice is BattleMoveChoice and results.has(choice):
-			var handlers: Array = results[choice]
+		if results.has(choice):
+			var handlers: Array[BattleHandler] = results[choice]
 			var user: String = choice.pokemon.get_name()
-			var move: String = choice.get_move().get_name()
+			var action_desc := ""
+			
+			if choice is BattleMoveChoice and choice.get_move() != null:
+				action_desc = "usará %s" % choice.get_move().get_name()
+			elif choice is BattleSwitchChoice:
+				action_desc = "cambiará de Pokémon"
+			elif choice is BattleBagChoice:
+				action_desc = "usará un objeto"
+			elif choice is BattleRunChoice:
+				action_desc = "intentará huir"
+			elif choice.is_pass():
+				action_desc = "pasará"
+			else:
+				action_desc = "realizará otra acción"
+			
 			if handlers.is_empty():
 				continue
-			# Log mínimo sin depender de efectos internos
-			print("%s resolverá %d handler(s) para %s" % [user, handlers.size(), move])
+			print("%s resolverá %d handler(s) para %s" % [user, handlers.size(), action_desc])
 
 func print_active_effects_log():
 	print("====== Battle Effects Log ======")

@@ -204,3 +204,32 @@ func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
 		"type": "input",
 		"text": "%s se ha debilitado." % pokemon.nickname
 	}
+
+# Mensaje de escape/huida unificado
+func get_escape_message(pokemon_name: String, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
+	if is_trainer_battle:
+		return {
+			"type": "wait",
+			"text": "¡No puedes escapar de un combate contra un entrenador!",
+			"wait_time": 1.5
+		}
+	elif escape_succeeded:
+		return {
+			"type": "wait",
+			"text": "¡%s escapó del combate!" % pokemon_name,
+			"wait_time": 1.5
+		}
+	else:
+		return {
+			"type": "wait",
+			"text": "¡%s no pudo escapar!" % pokemon_name,
+			"wait_time": 1.5
+		}
+
+# Mensajes de cambio de Pokémon
+func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionary:
+	return {
+		"type": "wait",
+		"text": "¡%s envió a %s!" % [trainer_name, pokemon_name],
+		"wait_time": 1.2
+	}
