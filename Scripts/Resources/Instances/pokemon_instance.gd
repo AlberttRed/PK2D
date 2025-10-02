@@ -26,9 +26,6 @@ var nickname:String = ""
 @export_range(1, 100) var level: int = 1 
 @export_enum("Sin indicar", "Macho", "Hembra", "Sin Genero") var gender = 0:
 	set(value):
-		print("mec")
-		if value == CONST.GENEROS.NON_SELECTED:
-			print("mec")
 		gender = value
 var type_a :
 	get:
@@ -457,9 +454,9 @@ func addMove(_move:MoveInstance):
 	
 func loadLearningMoves():
 	for i in range(base.learn_move_id.size()):
-		print(base.learn_move_id[i])
-		print(base.learn_type[i])
-		print(base.learn_lvl[i])
+		# print(base.learn_move_id[i])
+		# print(base.learn_type[i])
+		# print(base.learn_lvl[i])
 		learningMoves.push_back(PokemonLearningMove.new(base.learn_move_id[i] as int, base.learn_type[i] as int,base.learn_lvl[i] as int))
 		
 

@@ -4,18 +4,6 @@ extends CanvasLayer
 signal input
 signal selected_choice
 
-signal accept
-signal cancel
-signal start
-signal left
-signal right
-signal up
-signal down
-signal select
-
-signal fadedOut
-signal fadedIn
-
 var fading:bool = false
 var next = false
 
@@ -219,11 +207,11 @@ func _on_message_finished() -> void:
 
 ## Maneja input de accept para el MessageBox
 func _on_messagebox_accept() -> void:
-	accept.emit()
+	SignalManager.input_accept.emit()
 
 ## Maneja input de cancel para el MessageBox
 func _on_messagebox_cancel() -> void:
-	cancel.emit()
+	SignalManager.input_cancel.emit()
 
 ## Maneja solicitudes de batalla desde el SignalManager
 func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleRules) -> void:
@@ -306,45 +294,45 @@ func _input(event: InputEvent):
 	if event.is_action_pressed("ui_accept") and !pressed_actions.has("ui_accept"):
 		pressed_actions["ui_accept"] = true
 		print("GUI accept")
-		accept.emit()
+		SignalManager.input_accept.emit()
 		SignalManager.messagebox_input_accept.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_cancel") and !pressed_actions.has("ui_cancel"):
 		pressed_actions["ui_cancel"] = true
 		print("GUI cancel")
-		cancel.emit()
+		SignalManager.input_cancel.emit()
 		SignalManager.messagebox_input_cancel.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):
 		pressed_actions["ui_start"] = true
 		print("GUI start")
-		start.emit()
+		SignalManager.input_start.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_up") and !pressed_actions.has("ui_up"):
 		pressed_actions["ui_up"] = true
 		print("GUI up")
-		up.emit()
+		SignalManager.input_up.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_down") and !pressed_actions.has("ui_down"):
 		pressed_actions["ui_down"] = true
 		print("GUI down")
-		down.emit()
+		SignalManager.input_down.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_right") and !pressed_actions.has("ui_right"):
 		pressed_actions["ui_right"] = true
 		print("GUI right")
-		right.emit()
+		SignalManager.input_right.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_left") and !pressed_actions.has("ui_left"):
 		pressed_actions["ui_left"] = true
 		print("GUI left")
-		left.emit()
+		SignalManager.input_left.emit()
 		input_consumed = true
 
 	# Consumir el input para evitar que llegue al Player
