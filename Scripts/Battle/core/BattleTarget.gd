@@ -18,8 +18,8 @@ var type: TYPE:
 var selected_targets: Array[BattleSpot] = []
 var _targetCursor: int = -1
 
-func _init(move: BattleMove):
-	self.move = move
+func _init(move_instance: BattleMove):
+	self.move = move_instance
 
 func get_actual_target() -> BattleSpot:
 	if selected_targets.is_empty() or _targetCursor >= selected_targets.size():

@@ -44,6 +44,16 @@ signal battle_requested(participants: Array, rules: BattleRules)
 signal battle_started()
 signal battle_finished(winner_side)
 
+# === SEÑALES DE INPUT GLOBAL ===
+signal input_accept()
+signal input_cancel()
+signal input_start()
+signal input_left()
+signal input_right()
+signal input_up()
+signal input_down()
+signal input_select()
+
 
 # --- Utilidades ---
 
