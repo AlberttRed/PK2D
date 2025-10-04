@@ -11,14 +11,14 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var power = move.get_power()
 
 	# Paso 1: Daño base
-	var base = (((2 * level / 5 + 2) * power * atk / def) / 50) + 2
+	var base = (((2 * level / 5.0 + 2) * power * atk / def) / 50.0) + 2
 
 	# Paso 2: STAB
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 
 	# Paso 3: Crítico
 	var is_crit = is_critical_hit(move.get_critical_rate())
-	var crit = 1.5 if is_crit else 1.0
+	var crit = 2.0 if is_crit else 1.0
 
 	# Paso 4: Efectividad
 	var effectiveness = TypeEffectivenessUtils.get_multiplier(
@@ -36,12 +36,13 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var effect := DamageEffect.new(user, target, move, int(total))
 	effect.effectiveness = effectiveness
 	effect.is_critical = is_crit && !effect.is_ineffective()
+	effect.is_stab = (stab > 1.0)
 	log_damage_calculation(effect)
 	return effect
 
 static func get_crit_chance(stage: int) -> float:
 	match clamp(stage, 0, 3):
-		0: return 1.0 / 24.0
+		0: return 1.0 / 16.0  # Gen 5: 1/16 por defecto
 		1: return 1.0 / 8.0
 		2: return 1.0 / 2.0
 		_: return 1.0
@@ -68,10 +69,10 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var power = move.get_power()
 
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
-	var crit = 1.5 if effect.is_critical else 1.0
+	var crit = 2.0 if effect.is_critical else 1.0
 	var effectiveness = effect.effectiveness
 
-	var base = (((2 * user_level / 5 + 2) * power * atk_mod / def_mod) / 50) + 2
+	var base = (((2 * user_level / 5.0 + 2) * power * atk_mod / def_mod) / 50.0) + 2
 
 	print("===== DAMAGE LOG =====")
 	print("Movimiento: %s | Potencia: %d | Clase de daño: %s" %

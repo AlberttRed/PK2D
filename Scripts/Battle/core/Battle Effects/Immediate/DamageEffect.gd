@@ -7,6 +7,7 @@ var move: BattleMove
 var amount: int
 
 var is_critical := false
+var is_stab := false
 var effectiveness := 1.0
 
 func _init(_user: BattlePokemon, _target: BattlePokemon, _move: BattleMove, _amount:int):
@@ -19,7 +20,7 @@ func apply():
 	if !is_ineffective():
 		target.take_damage(self)
 
-func visualize(ui:BattleUI):
+func visualize(_ui:BattleUI):
 	if !is_ineffective():
 		await target.battle_spot.play_hit_animation()
 		await target.battle_spot.apply_damage(amount)
