@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://djqyc10nosdl"]
+[gd_scene load_steps=11 format=3 uid="uid://djqyc10nosdl"]
 
 [ext_resource type="Script" uid="uid://fue81u7lotyd" path="res://Scripts/Battle/ui/BattleUI.gd" id="1_cwigb"]
 [ext_resource type="Script" uid="uid://ciwn5vywclehe" path="res://Scripts/Battle/ui/BattleMessageController.gd" id="2_gtgo1"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://btj5i08qahepp" path="res://Scenes/Battle/ui/ActionMenu.tscn" id="4_hkwg8"]
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_alpup"]
 [ext_resource type="PackedScene" uid="uid://dauokklht8873" path="res://Scenes/Battle/ui/MoveMenu.tscn" id="6_x8cud"]
+[ext_resource type="StyleBox" uid="uid://ci1q4xtpco246" path="res://Resources/UI/MessageBox/HGSS_BattleMessageBox_Style.tres" id="7_f6frr"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fm4l"]
 
@@ -39,9 +40,9 @@ visible = false
 layout_mode = 1
 
 [node name="MessageBox" parent="." instance=ExtResource("5_alpup")]
-visible = false
 z_index = 6
 layout_mode = 1
+theme_override_styles/panel = ExtResource("7_f6frr")
 
 [node name="MovesMenu" parent="." instance=ExtResource("6_x8cud")]
 visible = false

@@ -85,11 +85,13 @@ func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 	if pokemon.battle_spot.has_previous_controllable_pokemon():
 		actions_menu.allow_cancel()
 	moves_menu.hide()
+	message_box.hide()
 	return await actions_menu.show_for(pokemon)
 
 
 func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 	actions_menu.hide()
+	message_box.hide()
 	return await moves_menu.show_for(pokemon)
 
 
@@ -177,15 +179,19 @@ func show_used_move_message(user: BattlePokemon, move: BattleMove) -> void:
 	
 func show_failed_move_message(user: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_failed_move_message(user))
+	clear_message_box()
 
 func show_multi_hit_message(num_hits: int) -> void:
 	await show_message_from_dict(message_controller.get_multi_hit_message(num_hits))
+	clear_message_box()
 
 func show_effectiveness_message(result: DamageEffect) -> void:
 	await show_message_from_dict(message_controller.get_effectiveness_message(result))
+	clear_message_box()
 
 func show_critical_hit_message() -> void:
 	await show_message_from_dict(message_controller.get_critical_hit_message())
+	clear_message_box()
 
 func show_heal_message(pokemon: BattlePokemon, amount: int) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon, amount))
@@ -232,5 +238,10 @@ func show_message_from_dict(msg: Dictionary) -> void:
 			await message_box.show_input(msg.text)
 		"wait":
 			await message_box.show_wait(msg.text, msg.get("wait_time", 1.0))
+		"display":
+			await message_box.show_display(msg.text, msg.get("wait_time", 0.0))
 		"no_close":
 			await message_box.show_no_close(msg.text)
+
+func clear_message_box():
+	message_box.show_clear_text()

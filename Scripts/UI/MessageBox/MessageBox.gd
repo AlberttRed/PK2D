@@ -20,10 +20,7 @@ var _stop:bool = false
 
 var messageTextList: Array[String] = []
 var actualMessageIndex: int = 0
-var waitTime:float = 0.0:
-		set(wait):
-				waitInput = (wait == 0.0)
-				waitTime = wait
+var waitTime:float = 0.0
 var waitInput:bool = true
 var closeAtEnd:bool = true
 var typing:bool:
@@ -74,6 +71,14 @@ func show_wait(text: String, wait_time: float):
 	await show_custom(text, {
 		"waitInput": false,
 		"closeAtEnd": true,
+		"waitTime": wait_time
+	})
+
+##	Muestra un mensaje sin cerrar el messagebox, útil para mantener el texto visible durante animaciones
+func show_display(text: String, wait_time: float):
+	await show_custom(text, {
+		"waitInput": false,
+		"closeAtEnd": false,
 		"waitTime": wait_time
 	})
 
@@ -148,7 +153,7 @@ func pauseText():
 	set_physics_process(false)
 	_stop = true
 	#$AnimationPlayer.pause()
-	if waitInput:
+	if waitInput and closeAtEnd:
 		$AnimationPlayer2.play("Idle")
 
 func stopText():
@@ -185,21 +190,34 @@ func getNextMessage():
 	
 func _finishedMessage():
 	finishedMessage.emit()
+	
+	# Guardar los valores ANTES de que se puedan resetear por las señales
+	var should_show_arrow = waitInput and closeAtEnd and messageHasFinished and isLastMessage
+
+	await get_tree().process_frame
+	
 	if messageHasFinished and isLastMessage:
 		if waitTime > 0.0:
 			await get_tree().create_timer(waitTime).timeout
 		finishedAllText.emit()
+	
+	# Mostrar la flecha "next" si estamos esperando input del usuario
+	if should_show_arrow:
+		$AnimationPlayer2.play("Idle")
 		
 func showMessage(message = null):
 	if message!=null:
 		addMessage(message)
 	label.text = getNextMessage()
+	$AnimationPlayer2.stop()
 	$next.hide()
 	self.show()
 	await startText()
 	await finished
 		
 func close():
+	$AnimationPlayer2.stop()
+	$next.hide()
 	if closeAtEnd:
 		hide()
 	finished.emit()
@@ -222,6 +240,10 @@ func clear():
 	waitInput = true
 	_stop = false
 	actualMessageIndex = 0
+
+func show_clear_text():
+	label.text = ""
+	show()
 	
 func updateScroll(startingPosition:int, finalPosition:int):
 #### Sprite:position

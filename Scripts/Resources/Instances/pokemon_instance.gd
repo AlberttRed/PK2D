@@ -245,11 +245,10 @@ func create(_randomize_stats : bool = true, _pkmn_id : int = -1, _level : int = 
 	
 
 	if _pkmn_id == -1:
-		var pk_num : String = "%03d" % randi_range(1, 151)
-		base = load("res://Resources/Pokemon/" + pk_num + ".tres")
+		var random_id = randi_range(1, 151)
+		base = DatabaseManager.get_pokemon(random_id)
 	else:
-		var pk_num : String = "%03d" % _pkmn_id
-		base = load("res://Resources/Pokemon/" + pk_num + ".tres")
+		base = DatabaseManager.get_pokemon(_pkmn_id)
 		
 	if _level == -1:
 		randomize()
@@ -289,8 +288,7 @@ func _ready():
 	if randomize_pokemon || randomize_stats:
 		randomize_pkmn()
 	else:
-		print("res://Resources/Data/Pokemon/"+str(pokemon).pad_zeros(3)+".tres")
-		base = load("res://Resources/Data/Pokemon/"+str(pokemon).pad_zeros(3)+".tres")
+		base = DatabaseManager.get_pokemon(pokemon)
 
 	nature = load_nature_by_id(nature_id)
 	ability = get_ability_resource()
@@ -349,7 +347,7 @@ func randomize_pkmn():
 	
 	if randomize_pokemon:
 		randomize()
-		base = load("res://Resources/Data/Pokemon/"+str(randi_range(1, 151)).pad_zeros(3)+".tres")
+		base = DatabaseManager.get_pokemon(randi_range(1, 151))
 		#pkm_id = randi_range(1, DB.get_node("Pokemons").get_children().size())
 		level = randi_range(1, 100)
 		gender = calculateGender()
@@ -384,6 +382,9 @@ func load_moves():
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	movements.insert(0, MoveInstance.new(52))
+	
+	# Forzar "Ataque Furia" (id 31) para test Multi-hit
+	movements.insert(0, MoveInstance.new(31))
 
 	# Limitar a 4 movimientos
 	while movements.size() > 4:
@@ -683,20 +684,10 @@ func to_battle_pokemon(ai: BattleIA = null) -> BattlePokemon:
 	return battle_pokemon
 
 func get_ability_resource() -> Ability:
-	var prefix = "%03d-" % ability_id
-	var dir = DirAccess.open("res://Resources/Abilities")
-	if dir:
-		for file in dir.get_files():
-			if file.begins_with(prefix) and file.ends_with(".tres"):
-				return load("res://Resources/Abilities/" + file)
-	return null
+	return DatabaseManager.get_ability(ability_id)
 
 func load_nature_by_id(_nature_id: NatureTypes.Nature) -> Nature:
-	var path = "res://Resources/Natures/%s.tres" % NatureTypes.get_id(_nature_id).to_upper()
-	if ResourceLoader.exists(path):
-		return load(path)
-		#push_error("Nature not found: %s" % _nature_id)
-	return null
+	return DatabaseManager.get_nature(NatureTypes.get_id(_nature_id))
 
 
 

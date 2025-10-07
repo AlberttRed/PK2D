@@ -106,9 +106,9 @@ func get_ailment_effect_message(user:BattlePokemon, ailment:Ailment) -> Dictiona
 			return {}
 			
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": msg,
-		"wait_time": 2.0
+		"wait_time": 0.5
 	}
 
 func get_ailment_previous_effect_message(user:BattlePokemon, ailment:Ailment) -> Dictionary:
