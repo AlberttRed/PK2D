@@ -116,6 +116,9 @@ func end_battle() -> void:
 	if not finished:
 		battle_finished()
 
+	# Mostrar mensaje de final de combate
+	await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
+
 	# Ocultar/limpiar UI mínima
 	if ui:
 		ui.visible = false
