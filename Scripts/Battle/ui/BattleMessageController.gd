@@ -17,9 +17,8 @@ func get_intro_messages(
 		BattleRules.BattleModes.SINGLE:
 			if rules.type == BattleRules.BattleTypes.WILD:
 				messages.append({
-					"type": "wait",
-					"text": "¡Un " + enemy_pokemon[0].get_name() + " salvaje apareció!",
-					"wait_time": 1.5
+					"type": "input",
+					"text": "¡Un " + enemy_pokemon[0].get_name() + " salvaje apareció!"
 				})
 			else:
 				var enemy = enemy_trainers[0]
@@ -41,9 +40,8 @@ func get_intro_messages(
 		BattleRules.BattleModes.DOUBLE:
 			if rules.type == BattleRules.BattleTypes.WILD:
 				messages.append({
-					"type": "wait",
-					"text": "¡Un " + enemy_pokemon[0].get_name() + " y un " + enemy_pokemon[1].get_name() + " salvajes aparecieron!",
-					"wait_time": 1.5
+					"type": "input",
+					"text": "¡Un " + enemy_pokemon[0].get_name() + " y un " + enemy_pokemon[1].get_name() + " salvajes aparecieron!"
 				})
 			else:
 				if enemy_trainers.size() == 1:
@@ -84,16 +82,16 @@ func get_intro_messages(
 
 func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 	if result.is_super_effective():
-		return { "type": "input", "text": "¡Es muy eficaz!" }
+		return { "type": "wait", "text": "¡Es muy eficaz!", "wait_time": 1.0 }
 	elif result.is_not_very_effective():
-		return { "type": "input", "text": "No es muy eficaz..." }
+		return { "type": "wait", "text": "No es muy eficaz...", "wait_time": 1.0 }
 	elif result.is_ineffective():
-		return { "type": "input", "text": "No afecta a %s..." % result.target.get_name() }
+		return { "type": "wait", "text": "No afecta a %s..." % result.target.get_name(), "wait_time": 1.0 }
 	
 	return {}
 	
 func get_critical_hit_message() -> Dictionary:
-	return { "type": "input", "text": "¡Golpe crítico!" }
+	return { "type": "wait", "text": "¡Golpe crítico!", "wait_time": 1.0 }
 
 func get_heal_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
 	return {
@@ -111,7 +109,7 @@ func get_drain_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
 
 func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": "¡%s ha usado %s!" % [user.get_name(), move.get_name()],
 		"wait_time": 0.5
 	}
@@ -157,7 +155,7 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat,
 	return {
 		"type": "wait",
 		"text": msg,
-		"wait_time": 0.5
+		"wait_time": 1.0
 	}
 
 func get_stat_display_name(stat: StatTypes.Stat) -> String:
@@ -173,8 +171,9 @@ func get_stat_display_name(stat: StatTypes.Stat) -> String:
 
 func get_failed_move_message(user: BattlePokemon) -> Dictionary:
 	return {
-		"type": "input",
-		"text": "¡El ataque de %s falló!" % [user.get_name()]
+		"type": "wait",
+		"text": "¡El ataque de %s falló!" % [user.get_name()],
+		"wait_time": 1.0
 	}
 	
 static func get_display_name(pokemon: BattlePokemon) -> String:
@@ -195,8 +194,9 @@ static func get_possessive_name(pokemon: BattlePokemon) -> String:
 
 func get_multi_hit_message(num_hits: int) -> Dictionary:
 	return {
-		"type": "input",
-		"text": "N.º de golpes: %d." % num_hits
+		"type": "wait",
+		"text": "N.º de golpes: %d." % num_hits,
+		"wait_time": 1.0
 	}
 
 func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
@@ -215,9 +215,8 @@ func get_escape_message(pokemon_name: String, is_trainer_battle: bool, escape_su
 		}
 	elif escape_succeeded:
 		return {
-			"type": "wait",
-			"text": "¡%s escapó del combate!" % pokemon_name,
-			"wait_time": 1.5
+			"type": "input",
+			"text": "¡%s escapó del combate!" % pokemon_name
 		}
 	else:
 		return {

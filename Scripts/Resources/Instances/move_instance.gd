@@ -80,11 +80,10 @@ var mod_pp = 0
 	
 func _init(_move_id : int = -1) -> void:
 	if _move_id != -1:
-		var t_num : String = "%03d" % _move_id
-		self.base = load("res://Resources/Data/Moves/" + t_num + ".tres")
-		var a = "res://Resources/Data/Moves/" + t_num + ".tres"
-		pp = base.pp
-		pp_actual = pp
+		self.base = DatabaseManager.get_move(_move_id)
+		if base:
+			pp = base.pp
+			pp_actual = pp
 
 #func doMove(from,to):
 #	DB.moves[id].ShowAnimation(from,to)
