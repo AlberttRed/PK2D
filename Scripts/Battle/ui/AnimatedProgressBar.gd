@@ -41,6 +41,7 @@ func update_color() -> void:
 
 func animate_to(new_value: int) -> void:
 	var tween = create_tween()
+	tween.set_parallel(true)  # Animar barra y label al mismo tiempo
 	tween.tween_property(progress_bar, "value", new_value, animate_duration)
 	if show_label:
 		tween.tween_method(set_label_value , current_value, new_value, animate_duration)
@@ -49,7 +50,9 @@ func animate_to(new_value: int) -> void:
 	await tween.finished
 	
 func set_label_value(value: float) -> void:
-	lbl_value.setText("%d/%d" % [round(value), max_value])
+	# Asegurarse de que el valor mostrado esté entre 0 y max_value
+	var display_value = clamp(round(value), 0, max_value)
+	lbl_value.setText("%d/%d" % [display_value, max_value])
 	update_color()
 	
 func set_value_visible(state:bool):

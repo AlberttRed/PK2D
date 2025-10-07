@@ -11,7 +11,7 @@ func _ready() -> void:
 	$GUI/FadeLayer.visible = false
 	#await wildBattle_OLD()
 	await wildSingleBattle()
-#	await wildDoubleBattle()
+	#await wildDoubleBattle()
 	#get_tree().quit()
 	
 func wildSingleBattle():
@@ -23,11 +23,6 @@ func wildSingleBattle():
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
 
-	for pokemon in playerParticipant.pokemon_team:
-		pokemon.hp = 10
-		
-	for pokemon in wildParticipant.pokemon_team:
-		pokemon.hp = 10
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.SINGLE  
@@ -49,8 +44,6 @@ func wildDoubleBattle():
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon(), wildPokemons[1].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
 
-	for pokemon in playerParticipant.pokemon_team:
-		pokemon.hp = 10
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.DOUBLE  

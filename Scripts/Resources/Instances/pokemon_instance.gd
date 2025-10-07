@@ -384,7 +384,7 @@ func load_moves():
 	movements.insert(0, MoveInstance.new(52))
 	
 	# Forzar "Ataque Furia" (id 31) para test Multi-hit
-	movements.insert(0, MoveInstance.new(31))
+	#movements.insert(0, MoveInstance.new(31))
 
 	# Limitar a 4 movimientos
 	while movements.size() > 4:
