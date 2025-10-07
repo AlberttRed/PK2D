@@ -13,10 +13,11 @@ enum TYPE {
 
 var move: BattleMove
 var type: TYPE:
-	get: return move.base_data.get_target_id()
+	get: return move.base_data.get_target_id() as TYPE
 
 var selected_targets: Array[BattleSpot] = []
 var _targetCursor: int = -1
+var canceled:= false
 
 func _init(move_instance: BattleMove):
 	self.move = move_instance
@@ -108,6 +109,11 @@ func select_targets() -> void:
 
 
 func set_manual_target(spot: BattleSpot) -> void:
+	if spot == null:
+		canceled = true
+		emit_signal("target_selected")
+		return
+	canceled = false
 	selected_targets = [spot]
 	_targetCursor = 0
 	emit_signal("target_selected")

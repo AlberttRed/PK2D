@@ -41,7 +41,11 @@ func select_actions():
 		p.init_turn()
 
 		if p.controllable and not _player_has_attempted_escape():
-			selectedChoice = await battle_controller.ui.show_action_menu_for(p)
+			selectedChoice = await battle_controller.ui.show_action_selection(p)
+
+			if selectedChoice.canceled:
+				await select_actions()
+				return
 		elif !p.controllable:
 			selectedChoice = await p.participant.decide_action_for(p)
 		# Si es controlable pero ya se intentó escapar, selectedChoice queda null
@@ -180,60 +184,6 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 	# Visualizar todos los handlers
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
-	
-	# Si se escapó exitosamente, terminar el combate inmediatamente
-	if choice.pokemon.side.escapedBattle:
-		battle_controller.finished = true
-		return  # No procesar efectos posteriores si se escapó
-	
-	# Si falló el escape, el Pokémon pierde el turno y no se procesan efectos posteriores
-	# El turno pasa directamente al oponente
-
-	#var user = choice.pokemon
-	#var move = choice.get_move()
-	#var message_controller:= battle_controller.get_message_controller()
-#
-	#var used_msg := message_controller.get_used_move_message(move, user)
-	#await battle_controller.show_message_from_dict(used_msg)
-#
-	## ⚠️ Animación general del movimiento (comentado por ahora)
-	## await animation_controller.play_move_animation(user, move, result.targets)
-#
-	#if result.missed:
-		#var missed_target := result.targets[0].get_active_pokemon()
-		#var msg:Dictionary = message_controller.get_failed_move_message(user)
-		#await battle_controller.show_message_from_dict(msg)
-		#return
-#
-#
-	#for spot:BattleSpot in result.targets:
-		#var pokemon := spot.get_active_pokemon()
-		#var dmg_list = result.get_damage_results_for(pokemon)#result.damage_results.get(pokemon, [])
-#
-		#for dmg in dmg_list:
-			## ⚠️ Animación de golpe (se deberá mover al AnimationController)
-			#await spot.play_hit_animation()
-#
-#
-			## ⚠️ Reducción visual de HP 
-			#await spot.apply_damage(dmg)
-#
-			## Mostrar mensajes (eficacia, crítico...)
-			#for msg in message_controller.get_damage_result_messages(choice, dmg, pokemon):
-				#await battle_controller.show_message_from_dict(msg)
-#
-		#if dmg_list.size() > 1:
-			#var multi_hit_msg := message_controller.get_multi_hit_message(dmg_list.size())
-			#await battle_controller.show_message_from_dict(multi_hit_msg)
-#
-		#if pokemon.get_hp() == 0:
-			#var faint_msg := message_controller.get_faint_message(pokemon)
-			#await battle_controller.show_message_from_dict(faint_msg)
-#
-			## ⚠️ Animación de debilitamiento (comentado por ahora)
-			## await animation_controller.play_faint_animation(pokemon)
-
-
 
 func end_turn():
 	turn_finished.emit(current_turn)

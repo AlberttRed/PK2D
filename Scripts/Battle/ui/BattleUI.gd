@@ -63,9 +63,13 @@ func get_all_spots_for_mode(mode: int) -> Array[BattleSpot]:
 func position_battlespots_for_mode(mode: int) -> void:
 	$FieldUI.position_battlespots_for_mode(mode)
 
-func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
+func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 	# Mostrar panel de acciones: LUCHAR, POKÉMON, MOCHILA, HUIR
-	var choice:BattleChoice = await actions_menu.show_for(pokemon)
+	var choice:BattleChoice = await show_action_menu_for(pokemon)
+
+	if choice.canceled:
+		return choice
+
 	choice.pokemon = pokemon  # Importante: establecer el Pokémon que realiza la acción
 
 	# Si no es LUCHAR, devolvemos directamente
@@ -73,28 +77,59 @@ func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 		return choice
 
 	# Mostrar el menú de movimientos
-	var move_choice:BattleMoveChoice = await moves_menu.show_for(pokemon)
+	var move_choice:BattleMoveChoice = await show_move_selection(pokemon)
+
+	return move_choice
+
+func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
+	if pokemon.battle_spot.has_previous_controllable_pokemon():
+		actions_menu.allow_cancel()
+	moves_menu.hide()
+	return await actions_menu.show_for(pokemon)
+
+
+func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
+	actions_menu.hide()
+	return await moves_menu.show_for(pokemon)
+
+
+func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
+	var move_choice = await show_moves_menu_for(pokemon)
+
+	if move_choice.canceled:
+		# Si el usuario cancela el menú de movimientos, se vuelve a mostrar el menú de acciones
+		return await show_action_selection(pokemon)
+
 	move_choice.pokemon = pokemon  # también aquí, por seguridad
 
 	# Crear el manejador de targets
-	var target_handler := BattleTarget.new(move_choice.get_move())
+	var target_handler := await show_target_selection(move_choice.get_move())
+
+	if target_handler.canceled:
+		# Si el usuario cancela la selección de targets, se vuelve a mostrar el menú de movimientos
+		SignalManager.disconnect_all(target_handler.request_manual_selection)
+		SignalManager.disconnect_all(target_selector_ui.target_chosen)
+		return await show_move_selection(pokemon)
+	
+	# Asignar el handler al BattleChoice
+	move_choice.target_handler = target_handler
+	moves_menu.hide()
+	return move_choice
+
+
+func show_target_selection(move: BattleMove) -> BattleTarget:
+	# Crear el manejador de targets
+	var target_handler := BattleTarget.new(move)
 
 	# Conectar la petición de selección manual
-	target_handler.request_manual_selection.connect(func(candidates):
+	target_handler.request_manual_selection.connect(func(_candidates):
 		request_target_selection(target_handler)
-	)
+	, CONNECT_ONE_SHOT)
 
 	# Ejecutar la lógica de selección de targets (manual o automática)
 	await target_handler.select_targets()
 
-	# Asignar el handler al BattleChoice
-	move_choice.target_handler = target_handler
-
-	return move_choice
-
-
-func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
-	return await moves_menu.show_for(pokemon)
+	return target_handler
 	
 func hide_action_menu():
 	actions_menu.hide()
@@ -105,6 +140,8 @@ func request_target_selection(target: BattleTarget) -> void:
 	if candidates.size() == 1:
 		target.set_manual_target(candidates[0])
 		return
+
+	SignalManager.disconnect_all(target_selector_ui.target_chosen)
 
 	target_selector_ui.target_chosen.connect(func(spot):
 		target.set_manual_target(spot)
