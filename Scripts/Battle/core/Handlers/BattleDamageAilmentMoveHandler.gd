@@ -15,9 +15,9 @@ func apply() -> void:
 	damage.apply()
 
 	var ailment: Ailment = move.get_ailment()
-	# Si el daño fue inefectivo, no hay estado asociado o no supera la probabilidad,
+	# Si el daño fue inefectivo, el objetivo se debilitó, no hay estado asociado o no supera la probabilidad,
 	# salimos temprano y no intentamos aplicar el ailment.
-	if damage == null or damage.is_ineffective() or ailment == null or randf() >= move.get_ailment_chance():
+	if damage == null or damage.is_ineffective() or target.is_fainted() or ailment == null or randf() >= move.get_ailment_chance():
 		return
 	# 2) Estado
 	if _check_is_valid(ailment):

@@ -78,8 +78,19 @@ func get_active_battle_spots() -> Array[BattleSpot]:
 
 	return spots
 	
-func get_all_active_pokemon():
-	return get_active_battle_spots().map(func(spot:BattleSpot): return spot.pokemon as BattlePokemon) as Array[BattlePokemon]
+func get_all_active_pokemon() -> Array[BattlePokemon]:
+	var result: Array[BattlePokemon] = []
+	result.assign(get_active_battle_spots().map(func(spot: BattleSpot): return spot.pokemon))
+	return result
+
+func get_all_battle_spot_pokemon() -> Array[BattlePokemon]:
+	# Devuelve TODOS los Pokémon en los battle spots, incluidos los debilitados
+	var result: Array[BattlePokemon] = []
+	for side: BattleSide in [player_side, enemy_side]:
+		for spot: BattleSpot in side.battle_spots:
+			if spot.pokemon:
+				result.append(spot.pokemon)
+	return result
 
 func assign_opponent_sides():
 	if sides.size() != 2:

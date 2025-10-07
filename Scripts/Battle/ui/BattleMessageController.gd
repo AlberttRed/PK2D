@@ -200,9 +200,14 @@ func get_multi_hit_message(num_hits: int) -> Dictionary:
 	}
 
 func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
+	var pokemon_name = get_display_name(pokemon)
+	# Capitalizar la primera letra para inicio de frase
+	if pokemon_name.length() > 0:
+		pokemon_name = pokemon_name[0].to_upper() + pokemon_name.substr(1)
+	
 	return {
 		"type": "input",
-		"text": "%s se ha debilitado." % pokemon.nickname
+		"text": "¡%s se debilitó!" % pokemon_name
 	}
 
 # Mensaje de escape/huida unificado

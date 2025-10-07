@@ -11,12 +11,14 @@ func _ready() -> void:
 	$GUI/FadeLayer.visible = false
 	#await wildBattle_OLD()
 	await wildSingleBattle()
-#	await wildDoubleBattle()
+	#await wildDoubleBattle()
 	#get_tree().quit()
 	
 func wildSingleBattle():
 	#var wildPokemon:PokemonInstance = PokemonInstance.new().create(true) 
 	#wildPokemon.isWild = true
+	
+	# Configurar HP de los Pokémon del jugador en 10 para testing
 	
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
@@ -37,6 +39,8 @@ func wildDoubleBattle():
 	#var wildPokemon2:PokemonInstance = PokemonInstance.new().create(true) 
 	#wildPokemon2.isWild = true
 	#
+	# Configurar HP de los Pokémon del jugador en 10 para testing
+	
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon(), wildPokemons[1].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
 
