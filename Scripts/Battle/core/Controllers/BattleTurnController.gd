@@ -81,8 +81,8 @@ func execute_turn():
 	for choice in ordered_choices:
 		if results.has(choice):
 			await handle_result(choice, results[choice])
-			# Si el combate terminó (por ejemplo, por escape exitoso), salir del bucle
-			if battle_controller.finished:
+			# Verificar si el combate ha terminado después de cada acción
+			if battle_controller.battle_finished():
 				break
 	
 	# Aplicar efectos de fin de turno solo si el combate no ha terminado

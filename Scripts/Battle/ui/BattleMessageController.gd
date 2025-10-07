@@ -232,3 +232,40 @@ func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionar
 		"text": "¡%s envió a %s!" % [trainer_name, pokemon_name],
 		"wait_time": 1.2
 	}
+
+# Mensajes de final de combate
+func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_trainer_names: Array[String]) -> Dictionary:
+	match winner_side:
+		"player":
+			# En combates salvajes, no se muestra mensaje al ganar
+			if rules.type == BattleRules.BattleTypes.WILD:
+				return {}
+			# En combates contra entrenadores, mostrar mensaje de victoria
+			else:
+				var trainer_text = ""
+				if enemy_trainer_names.size() == 1:
+					trainer_text = enemy_trainer_names[0]
+				elif enemy_trainer_names.size() == 2:
+					trainer_text = enemy_trainer_names[0] + " y " + enemy_trainer_names[1]
+				else:
+					trainer_text = "el entrenador"
+				
+				return {
+					"type": "input",
+					"text": "¡Has vencido a %s!" % trainer_text
+				}
+		"enemy":
+			return {
+				"type": "input",
+				"text": "Te has quedado sin Pokémon. Has perdido el combate."
+			}
+		"draw":
+			return {
+				"type": "input",
+				"text": "¡El combate terminó en empate!"
+			}
+		_:
+			return {
+				"type": "input",
+				"text": "El combate ha terminado."
+			}
