@@ -38,4 +38,3 @@ func visualize(ui: BattleUI) -> void:
 	if show_effectiveness and !per_hit_handlers.is_empty():
 		await ui.show_effectiveness_message(per_hit_handlers[0].damage)
 
-

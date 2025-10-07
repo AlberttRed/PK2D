@@ -232,6 +232,10 @@ func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
 func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_trainer_names: Array[String]) -> void:
 	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_trainer_names))
 
+# Mensaje de debilitamiento
+func show_faint_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_faint_message(pokemon))
+
 # Manda el mensaje a mostrar al MessageBox según el tipo de mensaje devuleto por el MessageController
 func show_message_from_dict(msg: Dictionary) -> void:
 	if msg == null or msg.is_empty():

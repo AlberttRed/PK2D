@@ -18,9 +18,16 @@ func wildSingleBattle():
 	#var wildPokemon:PokemonInstance = PokemonInstance.new().create(true) 
 	#wildPokemon.isWild = true
 	
+	# Configurar HP de los Pokémon del jugador en 10 para testing
+	
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
 
+	for pokemon in playerParticipant.pokemon_team:
+		pokemon.hp = 10
+		
+	for pokemon in wildParticipant.pokemon_team:
+		pokemon.hp = 10
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.SINGLE  
@@ -37,9 +44,13 @@ func wildDoubleBattle():
 	#var wildPokemon2:PokemonInstance = PokemonInstance.new().create(true) 
 	#wildPokemon2.isWild = true
 	#
+	# Configurar HP de los Pokémon del jugador en 10 para testing
+	
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon(), wildPokemons[1].to_battle_pokemon()])
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
 
+	for pokemon in playerParticipant.pokemon_team:
+		pokemon.hp = 10
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.DOUBLE  

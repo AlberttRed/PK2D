@@ -13,10 +13,12 @@ func apply() -> void:
 	damage = move.calculate_damage(target)
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
-	# 2) Bajar stats del objetivo
-	var changes: Dictionary = move.get_stat_changes()
-	stat_effect = StatChangeEffect.new(target, changes)
-	stat_effect.apply()
+	
+	# 2) Bajar stats del objetivo solo si no se ha debilitado
+	if not target.is_fainted():
+		var changes: Dictionary = move.get_stat_changes()
+		stat_effect = StatChangeEffect.new(target, changes)
+		stat_effect.apply()
 
 func visualize(ui) -> void:
 	if damage != null:

@@ -81,6 +81,11 @@ func execute_turn():
 	for choice in ordered_choices:
 		if results.has(choice):
 			await handle_result(choice, results[choice])
+			
+			# Verificar y mostrar mensajes de debilitamiento después de cada acción
+			# Pasamos el pokemon que ejecutó la acción para mostrar primero los del rival
+			await check_and_show_fainted_pokemon(choice.pokemon)
+			
 			# Verificar si el combate ha terminado después de cada acción
 			if battle_controller.battle_finished():
 				break
@@ -274,3 +279,19 @@ func print_stat_stages_log() -> void:
 
 		if not any_modified:
 			print("  (Sin modificaciones activas)")
+
+func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
+	# Primero mostramos los debilitados del lado CONTRARIO (rival)
+	# Luego los del lado del ejecutor (tu Pokémon)
+	var executor_side = action_executor.side
+	var opponent_side = action_executor.get_opponent_side()
+	
+	# 1. Primero los del lado contrario
+	for spot in opponent_side.battle_spots:
+		if spot.pokemon and spot.pokemon.is_fainted():
+			await battle_controller.ui.show_faint_message(spot.pokemon)
+	
+	# 2. Luego los del lado del ejecutor
+	for spot in executor_side.battle_spots:
+		if spot.pokemon and spot.pokemon.is_fainted():
+			await battle_controller.ui.show_faint_message(spot.pokemon)
