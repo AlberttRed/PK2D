@@ -1,6 +1,7 @@
 extends Node2D
 class_name BattleSpot
 
+var index = null
 var pokemon: BattlePokemon = null
 var side: BattleSide
 var tween: Tween
@@ -11,6 +12,9 @@ var tween: Tween
 @onready var hp_bar: HPBar = $HPBar
 @onready var hp_bar_pos_single: Marker2D = $Positions/HPBarPos_Single
 @onready var hp_bar_pos_double: Marker2D = $Positions/HPBarPos_Double
+
+func _ready() -> void:
+	index = 1 if name.contains("SpotA") else 2
 	
 func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	self.pokemon = _pokemon
@@ -100,6 +104,23 @@ func apply_heal(increase_value = null) -> void:
 			await hp_bar.increase_hp_by(increase_value)
 		else:
 			await hp_bar.update_hp(get_active_pokemon().hp)
+
+##	Verifica si hay un Pokémon controlable activo en un spot anterior del mismo equipo
+func has_previous_controllable_pokemon() -> bool:
+	# Si no tenemos índice o side, no podemos verificar
+	if index <= 1 or side == null:
+		return false
+	
+	# Buscar en los spots anteriores del mismo equipo
+	for i in range(index - 1):
+		var previous_spot = side.battle_spots[i]
+		if previous_spot.has_active_pokemon():
+			var previous_pokemon = previous_spot.get_active_pokemon()
+			if previous_pokemon.controllable and not previous_pokemon.is_fainted():
+				return true
+	
+	return false
+
 
 func play_hit_animation() -> void:
 	if not is_visible():

@@ -13,7 +13,7 @@ func _ready():
 	#cmd_pokemon.focus_entered.connect(_on_cmd_pokemon_focus)
 	#cmd_mochila.focus_entered.connect(_on_cmd_mochila_focus)
 	#cmd_huir.focus_entered.connect(_on_cmd_huir_focus)
-
+	set_process_input(false)
 	# Conectar botones
 	cmd_luchar.pressed.connect(_on_cmd_luchar_pressed)
 	cmd_pokemon.pressed.connect(_on_cmd_pokemon_pressed)
@@ -24,8 +24,8 @@ func show_for(pokemon: BattlePokemon) -> BattleChoice:
 	label_question.text = "¿Qué debería hacer\n" + pokemon.get_name() + "?"
 	visible = true
 	cmd_luchar.grab_focus()
-
 	var choice: BattleChoice = await action_selected
+	set_process_input(false)
 	visible = false
 	return choice
 
@@ -33,6 +33,18 @@ func _on_cmd_luchar_pressed(): action_selected.emit(BattleMoveChoice.new())
 func _on_cmd_pokemon_pressed(): action_selected.emit(BattleSwitchChoice.new())
 func _on_cmd_mochila_pressed(): action_selected.emit(BattleBagChoice.new())
 func _on_cmd_huir_pressed(): action_selected.emit(BattleRunChoice.new())
+
+func allow_cancel():
+	set_process_input(true)
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_cancel_pressed()
+
+func _on_cancel_pressed():
+	var choice := BattleChoice.new()
+	choice.canceled = true
+	action_selected.emit(choice)
 
 ## Resalta visualmente el botón con focus
 #func _highlight(cmd: Button):
