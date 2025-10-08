@@ -57,6 +57,16 @@ func clear() -> void:
 	sprite.texture = null
 	hide()
 
+##	Remueve el Pokémon debilitado del battlespot y limpia la UI
+func remove_pokemon() -> void:
+	if pokemon:
+		pokemon.in_battle = false
+		pokemon.battle_spot = null
+	pokemon = null
+	sprite.visible = false
+	shadow.visible = false
+	hp_bar.visible = false
+
 func position_hp_bar(mode: int) -> void:
 	match mode:
 		BattleRules.BattleModes.SINGLE:
