@@ -72,10 +72,8 @@ func set_battle_spot(spot: BattleSpot) -> void:
 	
 func setIA(_IA:BattleIA):
 	if _IA != null:
-		var pkmnIA:BattleIA = _IA.duplicate()
-		if !pkmnIA.pokemon_assigned():
-			pkmnIA.assign_pokemon(self)
-		self.ai_controller = pkmnIA
+		# Duplicar la IA para que cada Pokémon tenga su propia instancia
+		self.ai_controller = _IA.duplicate()
 
 func init_turn() -> void:
 	selectedBattleChoice = null

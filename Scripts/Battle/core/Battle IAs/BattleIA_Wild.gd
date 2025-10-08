@@ -2,56 +2,40 @@ extends BattleIA
 
 class_name BattleIA_Wild
 
-#Inteligencia artificial dels Pokemons Salvatges
+## IA para Pokémon salvajes.
+##
+## Comportamiento: Ataca con un movimiento aleatorio sin ninguna estrategia.
+## Los Pokémon salvajes siempre atacan eligiendo aleatoriamente entre sus movimientos disponibles.
+##
+## Nota: Para Pokémon especiales (como los "Roaming" que intentan escapar),
+## se crearán subclases específicas en el futuro.
 
-#Els pokemons salvatges sempre ataquen. Hi ha els casos dels "Roaming" pokemon que intenten escapar-se a cada turn
-#pero en aquests casos farem una IA especifica per ells.
-	
-func selectAction():
-	#if pokemon.ability == BattleEffect.Abilities.RETIRADA:
-		#if pokemon.HPperectageLeft <= 0.5:
-			#pokemon.exitBattle()
-			#return
-	
-	pokemon.selectMove()
-	
-#
-#func selectMove():
-	#pokemon.selectedBattleChoice.setMove(getBestMoveChoices().move)
+func _init():
+	difficulty_name = "Wild"
+	use_items = false
+	can_switch_strategically = false
 
-
-#
-##Obtenim el millor atac possible a fer. En el cas dels pokemon salvatges, ataquen aleatoriament amb qualsevol
-##dels atacs que coneixen
-#func getBestMoveChoices() -> BattleMoveChoice:
-	#pass # to do refactor
-	##randomize()
-	##var move_index = randi_range(0, pokemon.moves.size()-1)
-	##var moveChoice:BattleMoveChoice = BattleMoveChoice.new(pokemon)
-	##moveChoice.setMove(pokemon.moves[move_index])
-	##
-	#return null
-	
-func selectTargets():
-	randomize()
-	var target_index = randi_range(0, pokemon.listEnemies.size()-1)
-	SignalManager.Battle.selectTarget.emit([pokemon.listEnemies[target_index].battleSpot])
-	#return BattleMoveChoice.new(pokemon.moves[move_index], [pokemon.listEnemies[target_index]])
-
-func decide_action(pokemon:BattlePokemon) -> BattleChoice:
+## Decide la acción del Pokémon salvaje.
+## Siempre elige un movimiento aleatorio de los disponibles.
+func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	var moves = pokemon.get_available_moves()
+	
+	# Si no hay movimientos disponibles, pasar turno
 	if moves.is_empty():
-		return BattleChoice.new()  # fallback
-
+		return BattlePassChoice.new()
+	
+	# Seleccionar un movimiento aleatorio
 	var index = randi() % moves.size()
 	var move = moves[index]
-
+	
+	# Crear la elección de movimiento
 	var choice = BattleMoveChoice.new()
 	choice.move_index = index
 	choice.pokemon = pokemon
-
+	
+	# Configurar los objetivos del movimiento
 	var target_handler = BattleTarget.new(move)
 	await target_handler.select_targets()
 	choice.target_handler = target_handler
-
+	
 	return choice
