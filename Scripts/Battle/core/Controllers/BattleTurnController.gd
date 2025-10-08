@@ -80,7 +80,10 @@ func execute_turn():
 	# Mostrar animaciones y efectos tras resolver todo
 	for choice in ordered_choices:
 		if results.has(choice):
-			await handle_result(choice, results[choice])
+			# Verificar si el Pokémon sigue vivo antes de ejecutar su acción
+			# Esto previene que un Pokémon debilitado ejecute su movimiento
+			if not choice.pokemon.is_fainted():
+				await handle_result(choice, results[choice])
 			
 			# Verificar y mostrar mensajes de debilitamiento después de cada acción
 			# Pasamos el pokemon que ejecutó la acción para mostrar primero los del rival
@@ -291,9 +294,11 @@ func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
 		if spot.pokemon and spot.pokemon.is_fainted():
 			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)
+			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
 	
 	# 2. Luego los del lado del ejecutor
 	for spot in executor_side.battle_spots:
 		if spot.pokemon and spot.pokemon.is_fainted():
 			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)
+			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
