@@ -381,19 +381,19 @@ func load_moves():
 	
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
-	movements.insert(0, MoveInstance.new(52))
+	#movements.insert(0, MoveInstance.new(52))
 	
 	# Forzar "Ataque Furia" (id 31) para test Multi-hit
 	#movements.insert(0, MoveInstance.new(31))
 
 	# Limitar a 4 movimientos
-	while movements.size() > 4:
-		movements.pop_back()
-
-	movements.insert(0, MoveInstance.new(77))
-
-	while movements.size() > 4:
-		movements.pop_back()
+	#while movements.size() > 4:
+		#movements.pop_back()
+#
+	#movements.insert(0, MoveInstance.new(77))
+#
+	#while movements.size() > 4:
+		#movements.pop_back()
 	
 func addMove(_move:MoveInstance):
 	if movements.size() == 4:
