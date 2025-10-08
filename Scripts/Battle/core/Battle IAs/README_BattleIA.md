@@ -8,12 +8,22 @@ Este sistema permite configurar diferentes niveles de inteligencia artificial pa
 Clase base abstracta que define la interfaz para todas las IAs de combate.
 
 **Método principal:**
-- `decide_action(pokemon: BattlePokemon) -> BattleChoice`
+- `decide_action(pokemon: BattlePokemon) -> BattleChoice` - Implementar en subclases
 
 **Propiedades configurables desde el editor:**
 - `difficulty_name`: Nombre descriptivo de la dificultad
 - `use_items`: Si la IA puede usar objetos (futuro)
 - `can_switch_strategically`: Si la IA puede cambiar Pokémon estratégicamente (futuro)
+
+**Métodos de utilidad comunes (disponibles para todas las IAs):**
+- `evaluate_best_move_target_combination(moves, enemies) -> Dictionary`
+  - Evalúa todas las combinaciones de (movimiento, objetivo)
+  - Retorna la mejor basándose en efectividad de tipos
+  - Útil para IAs que toman decisiones basadas en tipos
+- `_calculate_average_effectiveness(move, enemies) -> float`
+  - Calcula efectividad promedio contra múltiples enemigos
+- `_select_best_combination(combinations) -> Dictionary`
+  - Elige la mejor combinación (con desempate aleatorio)
 
 ---
 
@@ -34,12 +44,20 @@ IA para Pokémon salvajes.
 IA básica para entrenadores de nivel fácil.
 
 **Comportamiento:**
-- ✅ Considera efectividad de tipos al elegir movimientos
-- ✅ Calcula el movimiento más efectivo contra los enemigos activos
+- ✅ Considera efectividad de tipos al elegir movimientos **Y objetivos**
+- ✅ Evalúa todas las combinaciones posibles de (movimiento, objetivo)
+- ✅ Elige la combinación con mejor efectividad contra el objetivo específico
+- ✅ Para movimientos multi-objetivo (ej: Terremoto), calcula efectividad promedio
 - ✅ En caso de empate, elige aleatoriamente entre los mejores
 - ❌ No considera stats, estado, clima u otros factores
 - ❌ No usa objetos
 - ❌ No cambia de Pokémon estratégicamente
+
+**Ejemplo:**
+- Si tiene Pistola Agua disponible y hay un Charizard y un Bulbasaur:
+  - Calculará: Pistola Agua → Charizard = 2.0x (súper efectivo)
+  - Calculará: Pistola Agua → Bulbasaur = 0.5x (no muy efectivo)
+  - Elegirá atacar a Charizard con Pistola Agua
 
 **Uso recomendado:** Entrenadores novatos, primeras rutas
 
@@ -49,10 +67,29 @@ IA básica para entrenadores de nivel fácil.
 
 ### `BattleIA_Medium` (No implementada)
 **Comportamiento previsto:**
-- Considera efectividad de tipos
+- Considera efectividad de tipos (usando `evaluate_best_move_target_combination()`)
 - Evalúa cambios de stats (boosts/drops)
 - Puede cambiar Pokémon en situaciones desfavorables
 - Usa objetos curativos básicos
+
+**Ejemplo de implementación:**
+```gdscript
+func decide_action(pokemon: BattlePokemon) -> BattleChoice:
+    var moves = pokemon.get_available_moves()
+    var enemies = pokemon.get_opponent_side().get_active_pokemons()
+    
+    # Reutilizar el método común para evaluar tipos
+    var best_type_combo = evaluate_best_move_target_combination(moves, enemies)
+    
+    # Extender con evaluación de stats, prioridad, etc.
+    var best_overall = _evaluate_with_stats(best_type_combo, pokemon, enemies)
+    
+    # Considerar cambio de Pokémon si es desfavorable
+    if _should_switch(pokemon, enemies):
+        return _create_switch_choice()
+    
+    return _create_move_choice(best_overall)
+```
 
 ### `BattleIA_Hard` (No implementada)
 **Comportamiento previsto:**

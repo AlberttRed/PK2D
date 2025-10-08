@@ -7,6 +7,10 @@ class_name BattleIA
 ## Las subclases deben implementar el método decide_action() que devuelve
 ## un BattleChoice válido para el Pokémon controlado por la IA.
 ##
+## Esta clase también proporciona métodos de utilidad comunes para evaluar
+## movimientos y objetivos basados en efectividad de tipos, que pueden ser
+## utilizados por cualquier IA.
+##
 ## Ejemplos de subclases:
 ## - BattleIA_Wild: Comportamiento aleatorio simple
 ## - BattleIA_Easy: Considera efectividad de tipos
@@ -23,3 +27,94 @@ class_name BattleIA
 func decide_action(_pokemon: BattlePokemon) -> BattleChoice:
 	push_error("decide_action() debe ser implementado en la subclase de BattleIA")
 	return BattlePassChoice.new()
+
+# ============================================================================
+# MÉTODOS DE UTILIDAD COMUNES PARA TODAS LAS IAS
+# ============================================================================
+
+## Evalúa todas las combinaciones posibles de (movimiento, objetivo) y retorna
+## la mejor basándose en efectividad de tipos.
+##
+## Este método puede ser usado por cualquier IA que quiera tomar decisiones
+## basadas en efectividad de tipos.
+##
+## Retorna un Dictionary con:
+## - move_index: int - Índice del mejor movimiento
+## - target_spot: BattleSpot o null - Objetivo específico (null para multi-objetivo)
+## - effectiveness: float - Efectividad de la combinación elegida
+func evaluate_best_move_target_combination(moves: Array[BattleMove], enemies: Array[BattlePokemon]) -> Dictionary:
+	var all_combinations: Array[Dictionary] = []
+	
+	for i in range(moves.size()):
+		var move := moves[i]
+		var target_type = move.base_data.get_target_id() as BattleTarget.TYPE
+		
+		# Evaluar según el tipo de objetivo del movimiento
+		match target_type:
+			BattleTarget.TYPE.SELECCIONAR, BattleTarget.TYPE.RANDOM_ENEMY, BattleTarget.TYPE.BASE_ENEMY:
+				# Movimientos de objetivo único: evaluar contra cada enemigo
+				for enemy in enemies:
+					var effectiveness = move.get_effectiveness_against_pokemon(enemy)
+					all_combinations.append({
+						"move_index": i,
+						"target_spot": enemy.battle_spot,
+						"effectiveness": effectiveness
+					})
+			
+			BattleTarget.TYPE.ENEMIES, BattleTarget.TYPE.ALL_FIELD, BattleTarget.TYPE.ALL_POKEMON:
+				# Movimientos multi-objetivo: calcular efectividad promedio
+				var avg_effectiveness = _calculate_average_effectiveness(move, enemies)
+				all_combinations.append({
+					"move_index": i,
+					"target_spot": null,  # No hay objetivo específico
+					"effectiveness": avg_effectiveness
+				})
+			
+			_:
+				# Otros tipos (USER, ALIADO, etc.): usar efectividad promedio
+				var avg_effectiveness = _calculate_average_effectiveness(move, enemies)
+				all_combinations.append({
+					"move_index": i,
+					"target_spot": null,
+					"effectiveness": avg_effectiveness
+				})
+	
+	# Si no hay combinaciones válidas, retornar una aleatoria
+	if all_combinations.is_empty():
+		return {"move_index": randi() % moves.size(), "target_spot": null, "effectiveness": 0.0}
+	
+	# Encontrar y retornar la mejor combinación
+	return _select_best_combination(all_combinations)
+
+## Calcula la efectividad promedio de un movimiento contra múltiples enemigos.
+func _calculate_average_effectiveness(move: BattleMove, enemies: Array[BattlePokemon]) -> float:
+	if enemies.is_empty():
+		return 0.0
+	
+	var total_effectiveness := 0.0
+	for enemy in enemies:
+		total_effectiveness += move.get_effectiveness_against_pokemon(enemy)
+	
+	return total_effectiveness / float(enemies.size())
+
+## Selecciona la mejor combinación de un array de combinaciones.
+## En caso de empate, elige aleatoriamente entre las mejores.
+func _select_best_combination(combinations: Array[Dictionary]) -> Dictionary:
+	# Encontrar la mejor efectividad
+	var best_effectiveness := 0.0
+	for combo in combinations:
+		if combo.effectiveness > best_effectiveness:
+			best_effectiveness = combo.effectiveness
+	
+	# Si todos tienen efectividad 0 o negativa (inmunes), elegir aleatorio
+	if best_effectiveness <= 0.0:
+		return combinations[randi() % combinations.size()]
+	
+	# Recopilar todas las combinaciones con la mejor efectividad
+	var best_combos: Array[Dictionary] = []
+	for combo in combinations:
+		if is_equal_approx(combo.effectiveness, best_effectiveness):
+			best_combos.append(combo)
+	
+	# Si hay empate, elegir aleatoriamente
+	return best_combos[randi() % best_combos.size()]

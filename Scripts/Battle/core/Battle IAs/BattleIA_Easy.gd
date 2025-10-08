@@ -4,9 +4,10 @@ class_name BattleIA_Easy
 
 ## IA básica para entrenadores de nivel fácil.
 ##
-## Comportamiento: Considera la efectividad de tipos al elegir movimientos.
-## - Calcula la efectividad de cada movimiento contra los enemigos activos
-## - Elige el movimiento con mejor efectividad promedio
+## Comportamiento: Considera la efectividad de tipos al elegir movimientos y objetivos.
+## - Evalúa todas las combinaciones de (movimiento, objetivo) posibles
+## - Elige la combinación con mejor efectividad
+## - Para movimientos multi-objetivo (ENEMIES, ALL_FIELD, etc.), usa efectividad promedio
 ## - Si hay empate, elige aleatoriamente entre los mejores
 ## - No considera otros factores como stats, estado, clima, etc.
 
@@ -16,7 +17,7 @@ func _init():
 	can_switch_strategically = false
 
 ## Decide la acción del entrenador fácil.
-## Elige el movimiento más efectivo contra los enemigos activos.
+## Elige el mejor par (movimiento, objetivo) basado en efectividad de tipos.
 func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	var moves = pokemon.get_available_moves()
 	
@@ -31,56 +32,28 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	if enemies.is_empty():
 		return await _select_random_move(pokemon, moves)
 	
-	# Calcular el mejor movimiento basado en efectividad
-	var best_move_index = _find_best_move_by_effectiveness(moves, enemies)
+	# Usar el método común de la clase base para evaluar combinaciones
+	var best_choice = evaluate_best_move_target_combination(moves, enemies)
 	
 	# Crear la elección de movimiento
 	var choice = BattleMoveChoice.new()
-	choice.move_index = best_move_index
+	choice.move_index = best_choice.move_index
 	choice.pokemon = pokemon
 	
 	# Configurar los objetivos del movimiento
-	var move = moves[best_move_index]
+	var move = moves[best_choice.move_index]
 	var target_handler = BattleTarget.new(move)
-	await target_handler.select_targets()
+	
+	# Si el movimiento requiere selección manual de objetivo, pre-seleccionarlo
+	if best_choice.has("target_spot") and best_choice.target_spot != null:
+		target_handler.set_manual_target(best_choice.target_spot)
+	else:
+		# Para movimientos multi-objetivo o auto-target
+		await target_handler.select_targets()
+	
 	choice.target_handler = target_handler
 	
 	return choice
-
-## Encuentra el índice del mejor movimiento basado en efectividad de tipos.
-## Si hay empate, elige aleatoriamente entre los mejores.
-func _find_best_move_by_effectiveness(moves: Array[BattleMove], enemies: Array[BattlePokemon]) -> int:
-	var effectiveness_scores: Array[float] = []
-	
-	# Calcular efectividad promedio de cada movimiento contra todos los enemigos
-	for move: BattleMove in moves:
-		var total_effectiveness := 0.0
-		
-		for enemy in enemies:
-			total_effectiveness += move.get_effectiveness_against_pokemon(enemy)
-		
-		# Promedio de efectividad contra todos los enemigos
-		var avg_effectiveness = total_effectiveness / float(enemies.size())
-		effectiveness_scores.append(avg_effectiveness)
-	
-	# Encontrar la mejor efectividad
-	var best_effectiveness: float = effectiveness_scores.max()
-	
-	# Si todos los movimientos tienen efectividad 0 (inmunes), elegir aleatorio
-	if best_effectiveness <= 0.0:
-		return randi() % moves.size()
-	
-	# Recopilar todos los índices con la mejor efectividad
-	var best_indices: Array[int] = []
-	for i in range(effectiveness_scores.size()):
-		if is_equal_approx(effectiveness_scores[i], best_effectiveness):
-			best_indices.append(i)
-	
-	# Si hay empate, elegir aleatoriamente entre los mejores
-	if best_indices.size() > 1:
-		return best_indices[randi() % best_indices.size()]
-	
-	return best_indices[0]
 
 ## Selecciona un movimiento aleatorio como fallback.
 func _select_random_move(pokemon: BattlePokemon, moves: Array[BattleMove]) -> BattleChoice:
