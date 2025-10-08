@@ -3,7 +3,7 @@ class_name Battler
 
 @export var trainer_id : int
 @export var type : CONST.BATTLER_TYPES
-@export var battleIA : Resource = null
+@export var battleIA : BattleIA = null
 @export var Name: String
 @export var battle_front_sprite: Texture
 @export var battle_back_sprite: Texture = null
