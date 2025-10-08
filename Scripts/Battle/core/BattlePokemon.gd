@@ -51,12 +51,12 @@ func _init(_pokemon: PokemonInstance, _IA: BattleIA = null):
 	base_data = _pokemon
 	controllable = (_IA == null)
 	hp = base_data.hp_actual
-	total_hp = get_final_stat(StatTypes.Stat.HP)
-	attack = get_final_stat(StatTypes.Stat.ATTACK)
-	defense = get_final_stat(StatTypes.Stat.DEFENSE)
-	sp_attack = get_final_stat(StatTypes.Stat.SP_ATTACK)
-	sp_defense = get_final_stat(StatTypes.Stat.SP_DEFENSE)
-	speed = get_final_stat(StatTypes.Stat.SPEED)
+	total_hp = get_final_stat(StatsEnum.Values.HP)
+	attack = get_final_stat(StatsEnum.Values.ATTACK)
+	defense = get_final_stat(StatsEnum.Values.DEFENSE)
+	sp_attack = get_final_stat(StatsEnum.Values.SP_ATTACK)
+	sp_defense = get_final_stat(StatsEnum.Values.SP_DEFENSE)
+	speed = get_final_stat(StatsEnum.Values.SPEED)
 	ability = base_data.ability
 	nature = base_data.nature
 
@@ -182,19 +182,19 @@ func set_status(new_status: Ailment):
 
 	status = new_status
 
-func get_base_stat(stat: StatTypes.Stat) -> int:
+func get_base_stat(stat: StatsEnum.Values) -> int:
 	return base_data.get_base_stat(stat)
 
-func get_iv(stat: StatTypes.Stat) -> int:
+func get_iv(stat: StatsEnum.Values) -> int:
 	return base_data.get_iv(stat)
 
-func get_ev(stat: StatTypes.Stat) -> int:
+func get_ev(stat: StatsEnum.Values) -> int:
 	return base_data.get_ev(stat)
 
-func get_final_stat(stat: StatTypes.Stat, level: int = base_data.level) -> int:
+func get_final_stat(stat: StatsEnum.Values, level: int = base_data.level) -> int:
 	return base_data.get_final_stat(stat, level)
 
-func get_modified_stat(stat: StatTypes.Stat) -> float:
+func get_modified_stat(stat: StatsEnum.Values) -> float:
 	var final = get_final_stat(stat)
 	var multiplier = stat_stages.get_multiplier(stat)
 	return final * multiplier

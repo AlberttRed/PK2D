@@ -2,13 +2,16 @@ class_name DamageCalculator_Gen5
 extends RefCounted
 
 static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokemon) -> DamageEffect:
-	var atk_stat = StatTypes.Stat.SP_ATTACK if move.is_special_category() else StatTypes.Stat.ATTACK
-	var def_stat = StatTypes.Stat.SP_DEFENSE if move.is_special_category() else StatTypes.Stat.DEFENSE
+	var atk_stat = StatsEnum.Values.SP_ATTACK if move.is_special_category() else StatsEnum.Values.ATTACK
+	var def_stat = StatsEnum.Values.SP_DEFENSE if move.is_special_category() else StatsEnum.Values.DEFENSE
 
 	var atk = user.get_modified_stat(atk_stat)
 	var def = target.get_modified_stat(def_stat)
 	var level = user.get_level()
 	var power = move.get_power()
+	
+	# Aplicar modificadores de efectos activos (clima, etc.)
+	power = apply_power_modifiers(move, user, target, power)
 
 	# Paso 1: Daño base
 	var base = (((2 * level / 5.0 + 2) * power * atk / def) / 50.0) + 2
@@ -57,8 +60,8 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var move = effect.move
 	var total = effect.amount
 
-	var atk_stat = StatTypes.Stat.SP_ATTACK if move.is_special_category() else StatTypes.Stat.ATTACK
-	var def_stat = StatTypes.Stat.SP_DEFENSE if move.is_special_category() else StatTypes.Stat.DEFENSE
+	var atk_stat = StatsEnum.Values.SP_ATTACK if move.is_special_category() else StatsEnum.Values.ATTACK
+	var def_stat = StatsEnum.Values.SP_DEFENSE if move.is_special_category() else StatsEnum.Values.DEFENSE
 
 	var atk_final = user.get_final_stat(atk_stat)
 	var atk_mod = user.get_modified_stat(atk_stat)
@@ -66,7 +69,8 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var def_mod = target.get_modified_stat(def_stat)
 	var user_level = user.get_level()
 	var target_level = target.get_level()
-	var power = move.get_power()
+	var base_power = move.get_power()
+	var power = apply_power_modifiers(move, user, target, base_power)
 
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 	var crit = 2.0 if effect.is_critical else 1.0
@@ -75,8 +79,9 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var base = (((2 * user_level / 5.0 + 2) * power * atk_mod / def_mod) / 50.0) + 2
 
 	print("===== DAMAGE LOG =====")
-	print("Movimiento: %s | Potencia: %d | Clase de daño: %s" %
-		[move.get_name(), power, get_damage_class_string(move.get_damage_class())])
+	var power_display = str(base_power) if base_power == power else "%d → %d (modificado)" % [base_power, power]
+	print("Movimiento: %s | Potencia: %s | Clase de daño: %s" %
+		[move.get_name(), power_display, get_damage_class_string(move.get_damage_class())])
 	print("Atacante: %s (Nivel %d)" % [user.get_display_name(), user_level])
 	print("  - Stat base: %d → modificado (stages): %.2f" % [atk_final, atk_mod])
 
@@ -84,7 +89,7 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 		var nature = user.nature
 		var mult = nature.get_stat_multiplier(atk_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatTypes.stat_to_string(atk_stat).capitalize()
+		var stat_name = StatsEnum.stat_to_string(atk_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("Defensor: %s (Nivel %d)" % [target.get_display_name(), target_level])
@@ -94,7 +99,7 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 		var nature = target.nature
 		var mult = nature.get_stat_multiplier(def_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatTypes.stat_to_string(def_stat).capitalize()
+		var stat_name = StatsEnum.stat_to_string(def_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("STAB: %.1f | Crítico: %s | Efectividad: %.1f" %
@@ -118,6 +123,26 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	print("Possible damage amounts: %s" % ", ".join(damage_strings))
 	print("========================")
 
+
+# Aplica modificadores de efectos activos al poder del movimiento
+static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target: BattlePokemon, base_power: int) -> int:
+	var modified_power = float(base_power)
+	
+	# Obtener todos los efectos activos que afectan al usuario
+	var all_effects = BattleEffectController.get_all_effects_for(user)
+	
+	# Aplicar modificador de cada efecto
+	for effect in all_effects:
+		if effect.has_method("on_modifier"):
+			modified_power = effect.on_modifier(
+				BattleEffect.Modifiers.MOVE_POWER,
+				move,
+				user,
+				target,
+				modified_power
+			)
+	
+	return int(modified_power)
 
 
 static func get_damage_class_string(cls: BattleMove.DamageClass) -> String:

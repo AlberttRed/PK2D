@@ -1,7 +1,7 @@
 class_name AbilitiesEnum
 
 # Habilidades de Pokémon
-enum {
+enum Values {
 	NONE,
 	STENCH,
 	DRIZZLE,

@@ -1,7 +1,7 @@
 class_name WeathersEnum
 
 # Tipos de clima
-enum {
+enum Values {
 	NONE,
 	RAIN,
 	SUN,

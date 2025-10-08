@@ -272,12 +272,12 @@ func print_stat_stages_log() -> void:
 		var stages = pokemon.stat_stages
 		var any_modified := false
 
-		for stat in StatTypes.Stat.values():
+		for stat in StatsEnum.Values.values():
 			var stage = stages.get_stat(stat)
 			if stage != 0:
 				any_modified = true
 				var icon = "↑" if stage > 0 else "↓"
-				var stat_name = StatTypes.stat_to_string(stat).capitalize()
+				var stat_name = StatsEnum.stat_to_string(stat).capitalize()
 				print("  %s: %s %+d" % [stat_name, icon, stage])
 
 		if not any_modified:

@@ -114,10 +114,10 @@ func get_ailment() -> Ailment:
 func get_ailment_chance() -> float:
 	return 100.0 if base_data.get_ailment_chance() == 0 else (float(base_data.get_ailment_chance()) / 100.0)
 
-func get_stat_changes() -> Dictionary[StatTypes.Stat, int]:
+func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base_data.get_stat_changes()
 
-func get_stat_change_value(stat: StatTypes.Stat) -> int:
+func get_stat_change_value(stat: StatsEnum.Values) -> int:
 	return get_stat_changes()[stat]
 
 func get_effectiveness_against_pokemon(target: BattlePokemon) -> float:
@@ -134,6 +134,14 @@ func calculate_damage(target: BattlePokemon) -> DamageEffect:
 func calculate_healing(target: BattlePokemon, damage_taken: int = 0) -> HealEffect:
 	assert(pokemon != null, "El movimiento no tiene asignado un 'pokemon' (usuario)")
 	return HealingCalculator.calculate(self, pokemon, target, damage_taken)
+
+
+# Crea el efecto del movimiento si tiene uno asignado
+func create_move_effect(target: BattlePokemon = null) -> BattleMoveEffect:
+	var effect_script = base_data.get_move_effect_script()
+	if effect_script:
+		return effect_script.new(pokemon, target)
+	return null
 
 
 # Placeholder para más adelante

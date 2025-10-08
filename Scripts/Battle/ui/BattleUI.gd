@@ -214,7 +214,7 @@ func show_already_ailment_message(user: BattlePokemon, ailment: Ailment, same_st
 func show_ailment_previous_effect_message(user: BattlePokemon, ailment: Ailment) -> void:
 	await show_message_from_dict(message_controller.get_ailment_previous_effect_message(user, ailment))
 
-func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat, amount: int):
+func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int):
 	await show_message_from_dict(message_controller.get_stat_stage_change_message(pokemon, stat, amount))
 
 func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, ability: Ability) -> void:

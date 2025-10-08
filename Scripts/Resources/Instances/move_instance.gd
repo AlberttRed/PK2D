@@ -137,8 +137,11 @@ func get_ailment() -> Ailment:
 func get_ailment_chance() -> int:
 	return base.meta_ailment_chance
 	
-func get_stat_changes() -> Dictionary[StatTypes.Stat, int]:
+func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base.stat_changes
+
+func get_move_effect_script() -> Script:
+	return base.move_effect
 	
 func print_move():
 	print(" ------ " + str(Name) + " " + str(pp_actual) + "/" + str(pp) + " PP ------ ")

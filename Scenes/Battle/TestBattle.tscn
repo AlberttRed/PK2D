@@ -39,7 +39,6 @@ spDefense_IVs = 19
 speed_IVs = 5
 ability_id = 219
 nature_id = 24
-rotate_hp_EVs = null
 
 [node name="pkm1" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
@@ -60,7 +59,6 @@ spDefense_IVs = 30
 speed_IVs = 13
 ability_id = 22
 nature_id = 16
-rotate_hp_EVs = null
 
 [node name="SingleTrainer" parent="." instance=ExtResource("2_rfkpo")]
 Name = "AAAA"
@@ -200,7 +198,6 @@ spDefense_IVs = 30
 speed_IVs = 23
 ability_id = 20
 nature_id = 19
-rotate_hp_EVs = null
 
 [node name="pkm1" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
@@ -222,7 +219,6 @@ spDefense_IVs = 23
 speed_IVs = 13
 ability_id = 8
 nature_id = 2
-rotate_hp_EVs = null
 
 [node name="Backlog" type="Node" parent="."]
 
@@ -246,7 +242,6 @@ spDefense_IVs = 4
 speed_IVs = 5
 ability_id = 123
 nature_id = 21
-rotate_hp_EVs = null
 
 [node name="pkm4" type="Node" parent="Backlog"]
 script = ExtResource("3_p5erh")
@@ -267,7 +262,6 @@ spDefense_IVs = 1
 speed_IVs = 19
 ability_id = 207
 nature_id = 1
-rotate_hp_EVs = null
 
 [node name="pkm5" type="Node" parent="Backlog"]
 script = ExtResource("3_p5erh")
@@ -288,7 +282,6 @@ spDefense_IVs = 12
 speed_IVs = 18
 ability_id = 39
 nature_id = 9
-rotate_hp_EVs = null
 
 [node name="pkm6" type="Node" parent="Backlog"]
 script = ExtResource("3_p5erh")
@@ -308,6 +301,5 @@ spAttack_IVs = 29
 speed_IVs = 24
 ability_id = 39
 nature_id = 2
-rotate_hp_EVs = null
 
 [editable path="SingleTrainer"]

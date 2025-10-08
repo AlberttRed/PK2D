@@ -132,7 +132,7 @@ func get_ailment_previous_effect_message(user:BattlePokemon, ailment:Ailment) ->
 func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability:Ability) -> Dictionary:
 	return AbilityMessages.get_ability_effect_message(user, target, ability)
 
-func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat, amount: int) -> Dictionary:
+func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int) -> Dictionary:
 	if amount == 0:
 		return {}
 
@@ -158,15 +158,15 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat,
 		"wait_time": 0.5
 	}
 
-func get_stat_display_name(stat: StatTypes.Stat) -> String:
+func get_stat_display_name(stat: StatsEnum.Values) -> String:
 	match stat:
-		StatTypes.Stat.ATTACK: return "Ataque"
-		StatTypes.Stat.DEFENSE: return "Defensa"
-		StatTypes.Stat.SP_ATTACK: return "At. Esp."
-		StatTypes.Stat.SP_DEFENSE: return "Def. Esp."
-		StatTypes.Stat.SPEED: return "Velocidad"
-		StatTypes.Stat.ACCURACY: return "Precisión"
-		StatTypes.Stat.EVASION: return "Evasión"
+		StatsEnum.Values.ATTACK: return "Ataque"
+		StatsEnum.Values.DEFENSE: return "Defensa"
+		StatsEnum.Values.SP_ATTACK: return "At. Esp."
+		StatsEnum.Values.SP_DEFENSE: return "Def. Esp."
+		StatsEnum.Values.SPEED: return "Velocidad"
+		StatsEnum.Values.ACCURACY: return "Precisión"
+		StatsEnum.Values.EVASION: return "Evasión"
 		_: return "Estadística"
 
 func get_failed_move_message(user: BattlePokemon) -> Dictionary:

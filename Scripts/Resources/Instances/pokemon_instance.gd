@@ -158,7 +158,7 @@ var ability_slot: int = 0 #Al crear un pokemon,se li donarà aleatoriament l'slo
 			 #"TIMID", "HASTY", "SERIOUS", "JOLLY", "NAIVE",
 			 #"MODEST", "MILD", "QUIET", "BASHFUL", "RASH",
 			 #"CALM", "GENTLE", "SASSY", "CAREFUL", "QUIRKY")
-@export var nature_id: NatureTypes.Nature = NatureTypes.Nature.SERIOUS#"SERIOUS"  # valor por defecto
+@export var nature_id: int = 13  # NaturesEnum.Values.SERIOUS (valor por defecto)
 
 
 @export var held_item_id: int
@@ -232,16 +232,16 @@ var newLearningMove : MoveInstance
 
 
 
-var base_stats: Dictionary[StatTypes.Stat, int] 
+var base_stats: Dictionary[StatsEnum.Values, int] 
 
-var evs: Dictionary[StatTypes.Stat, int] 
+var evs: Dictionary[StatsEnum.Values, int] 
 
-var ivs: Dictionary[StatTypes.Stat, int] 
+var ivs: Dictionary[StatsEnum.Values, int] 
 
 var nature: Nature
 var ability: Ability
 
-func create(_randomize_stats : bool = true, _pkmn_id : int = -1, _level : int = -1, _gender : int = -1, _ability_id : int = -1, _nature_id : NatureTypes.Nature = NatureTypes.Nature.NONE):
+func create(_randomize_stats : bool = true, _pkmn_id : int = -1, _level : int = -1, _gender : int = -1, _ability_id : int = -1, _nature_id : int = 0):  # _nature_id: NaturesEnum.Values
 	
 
 	if _pkmn_id == -1:
@@ -268,9 +268,9 @@ func create(_randomize_stats : bool = true, _pkmn_id : int = -1, _level : int = 
 	
 	ability = get_ability_resource()
 		
-	if _nature_id == NatureTypes.Nature.NONE:
+	if _nature_id == 0:  # NaturesEnum.Values.NONE
 		randomize()
-		nature = load_nature_by_id(NatureTypes.get_random_nature())
+		nature = load_nature_by_id(NaturesEnum.get_random_nature())
 	else:
 		nature = load_nature_by_id(nature_id)
 		
@@ -300,7 +300,7 @@ func _ready():
 #	set_info()
 	loadLearningMoves()
 	load_moves()
-	hp_actual = get_final_stat(StatTypes.Stat.HP)
+	hp_actual = get_final_stat(StatsEnum.Values.HP)
 #	hp_total = get_total_hp()
 #	hp_actual = int(float(hp_total) / randf_range(1, 6))
 #	attack = get_attack()  
@@ -325,7 +325,7 @@ func init_pokemon():
 		push_error("No s'ha seleccionat un genere pel pokémon " + Name)
 		#set_info()
 	load_moves()
-	hp_actual = get_final_stat(StatTypes.Stat.HP)
+	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	
 	load_stats()
 	#ability_id = CONST.ABILITIES.INTIMIDATE
@@ -380,6 +380,10 @@ func load_moves():
 	var moves:Array[PokemonLearningMove] = learningMoves.filter(func(move:PokemonLearningMove): return move.learningType==PokemonLearningMove.Type.LVL_UP and move.learningLevel<=level).slice(0, 4)
 	
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
+	
+	# Forzar "Danza Lluvia" (id 240) para test de efectos de clima
+	movements.insert(0, MoveInstance.new(240))
+	
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	#movements.insert(0, MoveInstance.new(52))
 	
@@ -493,9 +497,9 @@ func calculateAbility():
 	
 
 	
-func get_highest_IV() -> StatTypes.Stat:
+func get_highest_IV() -> StatsEnum.Values:
 	var highest_valor = -1
-	var highest_IVs:Array[StatTypes.Stat] = []
+	var highest_IVs: Array[StatsEnum.Values] = []
 	for iv in ivs:
 		#print(str(iv) + ": " + str(IVs[iv])) 
 		if ivs[iv] > highest_valor:
@@ -524,12 +528,12 @@ func log_pokemon_stats() -> void:
 		[self.Name, self.level, self.nature.display_name if self.nature else "Desconocida"])
 
 	for stat in [
-		StatTypes.Stat.HP,
-		StatTypes.Stat.ATTACK,
-		StatTypes.Stat.DEFENSE,
-		StatTypes.Stat.SP_ATTACK,
-		StatTypes.Stat.SP_DEFENSE,
-		StatTypes.Stat.SPEED
+	StatsEnum.Values.HP,
+	StatsEnum.Values.ATTACK,
+	StatsEnum.Values.DEFENSE,
+	StatsEnum.Values.SP_ATTACK,
+	StatsEnum.Values.SP_DEFENSE,
+	StatsEnum.Values.SPEED
 	]:
 		var base = self.get_base_stat(stat)
 		var iv = self.get_iv(stat)
@@ -537,7 +541,7 @@ func log_pokemon_stats() -> void:
 		var final = self.get_final_stat(stat)
 		var modifier = nature.get_stat_multiplier(stat) if nature else 1.0
 		var icon = "↑" if modifier > 1.0 else "↓" if modifier < 1.0 else "–"
-		var stat_name = StatTypes.stat_to_string(stat)
+		var stat_name = StatsEnum.stat_to_string(stat)
 
 		print("%-17s Base: %3d | IV: %2d | EV: %3d | Total: %3d | %s" %
 			[stat_name + ":", base, iv, ev, final, icon])
@@ -568,23 +572,23 @@ func print_moves():
 #func get_types():
 #	return [DB.pokemons[pkm_id].type_a, DB.pokemons[pkm_id].type_b]
 
-func get_base_stat(stat: StatTypes.Stat) -> int:
+func get_base_stat(stat: StatsEnum.Values) -> int:
 	return base_stats.get(stat, 0)
 
-func get_iv(stat: StatTypes.Stat) -> int:
+func get_iv(stat: StatsEnum.Values) -> int:
 	return ivs.get(stat, 0)
 
-func get_ev(stat: StatTypes.Stat) -> int:
+func get_ev(stat: StatsEnum.Values) -> int:
 	return evs.get(stat, 0)
 	
-func get_final_stat(stat: StatTypes.Stat, _level: int = self.level) -> int:
+func get_final_stat(stat: StatsEnum.Values, _level: int = self.level) -> int:
 	var base = get_base_stat(stat)
 	var iv = get_iv(stat)
 	var ev = get_ev(stat)
 
 	var total = ((2 * base + iv + int(ev / 4)) * _level) / 100
 
-	if stat == StatTypes.Stat.HP:
+	if stat == StatsEnum.Values.HP:
 		return int(total) + _level + 10
 	else:
 		var multiplier = 1.0
@@ -594,33 +598,33 @@ func get_final_stat(stat: StatTypes.Stat, _level: int = self.level) -> int:
 
 func load_stats():
 	self.base_stats = {
-	StatTypes.Stat.ATTACK: base.attack_base,
-	StatTypes.Stat.DEFENSE: base.defense_base,
-	StatTypes.Stat.SP_ATTACK: base.special_attack_base,
-	StatTypes.Stat.SP_DEFENSE: base.special_defense_base,
-	StatTypes.Stat.SPEED: base.speed_base,
-	StatTypes.Stat.HP: base.hp_base,
-	StatTypes.Stat.ACCURACY: 100,  # precisión base por defecto
-	StatTypes.Stat.EVASION: 100    # evasión base por defecto
+	StatsEnum.Values.ATTACK: base.attack_base,
+	StatsEnum.Values.DEFENSE: base.defense_base,
+	StatsEnum.Values.SP_ATTACK: base.special_attack_base,
+	StatsEnum.Values.SP_DEFENSE: base.special_defense_base,
+	StatsEnum.Values.SPEED: base.speed_base,
+	StatsEnum.Values.HP: base.hp_base,
+	StatsEnum.Values.ACCURACY: 100,  # precisión base por defecto
+	StatsEnum.Values.EVASION: 100    # evasión base por defecto
 	}
 
 	self.evs = {
-	StatTypes.Stat.ATTACK: attack_EVs,
-	StatTypes.Stat.DEFENSE: defense_EVs,
-	StatTypes.Stat.SP_ATTACK: spAttack_EVs,
-	StatTypes.Stat.SP_DEFENSE: spDefense_EVs,
-	StatTypes.Stat.SPEED: speed_EVs,
-	StatTypes.Stat.HP: hp_EVs 
+	StatsEnum.Values.ATTACK: attack_EVs,
+	StatsEnum.Values.DEFENSE: defense_EVs,
+	StatsEnum.Values.SP_ATTACK: spAttack_EVs,
+	StatsEnum.Values.SP_DEFENSE: spDefense_EVs,
+	StatsEnum.Values.SPEED: speed_EVs,
+	StatsEnum.Values.HP: hp_EVs 
 }
 
 # Si necesitas EVs distintos (aunque normalmente son fijos por especie)
 	self.ivs = {
-	StatTypes.Stat.ATTACK: attack_IVs,
-	StatTypes.Stat.DEFENSE: defense_IVs,
-	StatTypes.Stat.SP_ATTACK: spAttack_IVs,
-	StatTypes.Stat.SP_DEFENSE: spDefense_IVs,
-	StatTypes.Stat.SPEED: speed_IVs,
-	StatTypes.Stat.HP: hp_IVs 
+	StatsEnum.Values.ATTACK: attack_IVs,
+	StatsEnum.Values.DEFENSE: defense_IVs,
+	StatsEnum.Values.SP_ATTACK: spAttack_IVs,
+	StatsEnum.Values.SP_DEFENSE: spDefense_IVs,
+	StatsEnum.Values.SPEED: speed_IVs,
+	StatsEnum.Values.HP: hp_IVs 
 }
 
 
@@ -634,7 +638,7 @@ func hasAlly():
 	return ally != null
 	
 func hasFullHealth():
-	return hp_actual == get_final_stat(StatTypes.Stat.HP)
+	return hp_actual == get_final_stat(StatsEnum.Values.HP)
 	
 func updateStats():
 	pass
@@ -646,10 +650,10 @@ func checkNewLevelMoveLearned():
 		newLearningMove = newMove.getMove()
 	
 func levelUP():
-	var previousHP:float = get_final_stat(StatTypes.Stat.HP)
+	var previousHP:float = get_final_stat(StatsEnum.Values.HP)
 	level += 1
 	updateStats()
-	var newHP:float = get_final_stat(StatTypes.Stat.HP)
+	var newHP:float = get_final_stat(StatsEnum.Values.HP)
 	var incrHP:float = (newHP - previousHP) / previousHP * 100.0
 	var hpAdd = ceil(hp_actual * (incrHP/100.0))
 	hp_actual =  hp_actual + hpAdd
@@ -686,8 +690,8 @@ func to_battle_pokemon(ai: BattleIA = null) -> BattlePokemon:
 func get_ability_resource() -> Ability:
 	return DatabaseManager.get_ability(ability_id)
 
-func load_nature_by_id(_nature_id: NatureTypes.Nature) -> Nature:
-	return DatabaseManager.get_nature(NatureTypes.get_id(_nature_id))
+func load_nature_by_id(_nature_id: int) -> Nature:
+	return DatabaseManager.get_nature(NaturesEnum.get_id(_nature_id))
 
 
 

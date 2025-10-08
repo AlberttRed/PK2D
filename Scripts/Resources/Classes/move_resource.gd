@@ -18,7 +18,7 @@ class_name Move
 @export var priority : int = 0 # % de que un atac pugui produir un problema d estat(cremar, confuso etc)
 @export_enum("None", "Estado", "Físico", "Especial") var damage_class_id : int = 0 # % de que un atac pugui produir un problema d estat(cremar, confuso etc)
 @export_multiline var effect_entries : String = "" # Explicacio de com es produeix l atac. Ho faré servir per quan fagi els scripts dels atacs
-@export var stat_changes : Dictionary[StatTypes.Stat, int] # Diccionari amb els stats que modifica el moviment, i en quin valor
+@export var stat_changes : Dictionary[StatsEnum.Values, int] # Diccionari amb els stats que modifica el moviment, i en quin valor
 @export var target_id : int = 1 # la id del target de l atac. Si ataca al rival, o pot atacar a dos a lhora, o a un aliat, o a tots els q hi ha en combat...
 @export var meta_ailment_id : int # la id del tipus de ailment que pot provocar el mov.(cremar, paralitzar etc)
 @export var meta_category_id : int = 1 # la id de l'"efecte" que provoca el moviment. si fa mal, si fa mal i pot cremar, si cura etc.

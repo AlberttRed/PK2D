@@ -94,9 +94,9 @@ func _load_natures() -> void:
 		natures_loaded = _natures_by_id.size() > 0
 
 	if not natures_loaded:
-		# Construye naturalezas en memoria a partir de NatureTypes si no hay .tres
-		for i in NatureTypes.Nature.size():
-			var nat_id := NatureTypes.get_id(i)
+		# Construye naturalezas en memoria a partir de NaturesEnum si no hay .tres
+		for i in NaturesEnum.Values.size():
+			var nat_id := NaturesEnum.get_id(i)
 			if nat_id == "NONE":
 				continue
 			var nat := Nature.new()
