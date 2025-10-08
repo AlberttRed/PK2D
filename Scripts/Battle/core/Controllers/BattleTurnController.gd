@@ -289,9 +289,11 @@ func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
 	# 1. Primero los del lado contrario
 	for spot in opponent_side.battle_spots:
 		if spot.pokemon and spot.pokemon.is_fainted():
+			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)
 	
 	# 2. Luego los del lado del ejecutor
 	for spot in executor_side.battle_spots:
 		if spot.pokemon and spot.pokemon.is_fainted():
+			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)

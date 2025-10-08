@@ -10,8 +10,8 @@ extends Node2D
 func _ready() -> void:
 	$GUI/FadeLayer.visible = false
 	#await wildBattle_OLD()
-	await wildSingleBattle()
-	#await wildDoubleBattle()
+	#await wildSingleBattle()
+	await wildDoubleBattle()
 	#get_tree().quit()
 	
 func wildSingleBattle():

@@ -153,9 +153,9 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatTypes.Stat,
 	msg =  "¡%s %s %s!" % [stat_name, get_possessive_name(pokemon), verb]
 	
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": msg,
-		"wait_time": 1.0
+		"wait_time": 0.5
 	}
 
 func get_stat_display_name(stat: StatTypes.Stat) -> String:

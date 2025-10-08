@@ -140,18 +140,160 @@ func play_hit_animation() -> void:
 func play_heal_animation() -> void:
 	if not is_visible():
 		return
+	
+	# Overlay verde que baja (como RPG Maker)
+	await _play_overlay_animation(
+		"res://Sprites/Batalla/Moves Animations/OverlayHeal.png",
+		true,  # animate_up = false (baja)
+		2.0     # duración
+	)
 
-	var heal_tween := create_tween()
-	heal_tween.set_parallel(false) # animación secuencial (no solapada)
+func play_stat_up_animation() -> void:
+	if not is_visible():
+		return
+	
+	# Overlay rojo que sube
+	await _play_overlay_animation(
+		"res://Sprites/Batalla/Moves Animations/OverlayStatUp.png",
+		true,   # animate_up = true (sube)
+		2.0
+	)
 
-	# Efecto de curación: brillo verde
-	heal_tween.tween_property(sprite, "modulate", Color(0.5, 1.0, 0.5, 1.0), 0.2)
-	heal_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.2)
-	heal_tween.tween_property(sprite, "modulate", Color(0.5, 1.0, 0.5, 1.0), 0.2)
-	heal_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.2)
+func play_stat_down_animation() -> void:
+	if not is_visible():
+		return
+	
+	# Overlay azul que baja
+	await _play_overlay_animation(
+		"res://Sprites/Batalla/Moves Animations/OverlayStatDown.png",
+		false,  # animate_up = false (baja)
+		2.0
+	)
 
-	await heal_tween.finished
-	await get_tree().create_timer(0.3).timeout
+# Función genérica para animar overlays con shader
+func _play_overlay_animation(overlay_path: String, animate_up: bool, duration: float) -> void:
+	# Crear shader material temporal
+	var shader = load("res://Shaders/Battle/overlay_animation.gdshader")
+	var shader_material = ShaderMaterial.new()
+	shader_material.shader = shader
+	
+	# Configurar parámetros del shader
+	shader_material.set_shader_parameter("overlay_texture", load(overlay_path))
+	shader_material.set_shader_parameter("animate_up", animate_up)
+	shader_material.set_shader_parameter("progress", 0.0)
+	shader_material.set_shader_parameter("overlay_alpha", 0.7)
+	shader_material.set_shader_parameter("scroll_speed", 2)
+	shader_material.set_shader_parameter("overlay_scale", 2.0)
+	
+	# Asignar material al sprite
+	sprite.material = shader_material
+	
+	# Animar el parámetro progress con tween
+	var overlay_tween := create_tween()
+	overlay_tween.tween_method(
+		func(value: float): shader_material.set_shader_parameter("progress", value),
+		0.0,
+		1.0,
+		duration
+	)
+	
+	await overlay_tween.finished
+	
+	# Limpiar material
+	sprite.material = null
+	await get_tree().create_timer(0.1).timeout
+
+func play_faint_animation() -> void:
+	if not is_visible():
+		return
+	
+	# Guardar valores originales
+	var original_position = sprite.position
+	var original_region_enabled = sprite.region_enabled
+	var original_region = sprite.region_rect
+	
+	# Obtener el tamaño del sprite
+	var sprite_height = sprite.texture.get_height() if sprite.texture else 96
+	
+	# Activar región si no está activa
+	if not sprite.region_enabled:
+		sprite.region_enabled = true
+		sprite.region_rect = Rect2(0, 0, sprite.texture.get_width(), sprite_height)
+	
+	var duration = 0.5
+	
+	# Crear tween para hundimiento
+	var faint_tween := create_tween()
+	faint_tween.set_parallel(false)
+	
+	# Animar posición Y y altura de región simultáneamente
+	faint_tween.tween_method(
+		func(progress: float):
+			# Mover sprite hacia abajo
+			sprite.position.y = original_position.y + (progress * 40)
+			
+			# Recortar región desde abajo hacia arriba
+			var new_height = sprite_height * (1.0 - progress)
+			sprite.region_rect = Rect2(
+				sprite.region_rect.position.x,
+				sprite.region_rect.position.y,
+				sprite.region_rect.size.x,
+				new_height
+			),
+		0.0,
+		1.0,
+		duration
+	)
+	
+	await faint_tween.finished
+	
+	# Ocultar completamente el sprite
+	sprite.visible = false
+	
+	# Ocultar la sombra si existe y es visible
+	if shadow and shadow.visible:
+		shadow.visible = false
+	
+	# Restaurar valores originales
+	sprite.position = original_position
+	sprite.region_enabled = original_region_enabled
+	sprite.region_rect = original_region
+	
+	# Animar HP bar retirándose
+	await play_hp_bar_slide_out()
+
+func play_hp_bar_slide_out() -> void:
+	if not hp_bar or not hp_bar.visible:
+		return
+	
+	# Determinar dirección según el tipo de lado
+	var is_player = pokemon.side.type == BattleSide.Types.PLAYER
+	var slide_distance = 300  # Píxeles a desplazar
+	var direction = 1 if is_player else -1  # Derecha (+) para player, izquierda (-) para enemy
+	
+	# Guardar posición original
+	var original_hp_position = hp_bar.global_position
+	
+	# Crear tween para deslizar el HP bar
+	var hp_tween := create_tween()
+	hp_tween.set_ease(Tween.EASE_IN)
+	hp_tween.set_trans(Tween.TRANS_CUBIC)
+	
+	# Deslizar hacia la dirección correspondiente
+	hp_tween.tween_property(
+		hp_bar,
+		"global_position:x",
+		original_hp_position.x + (direction * slide_distance),
+		0.3
+	)
+	
+	await hp_tween.finished
+	
+	# Ocultar HP bar
+	hp_bar.visible = false
+	
+	# Restaurar posición (para futuras batallas)
+	hp_bar.global_position = original_hp_position
 
 func play_enter_animation():
 	# Simple animación de entrada, si querés algo visual

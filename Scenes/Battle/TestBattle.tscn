@@ -41,6 +41,27 @@ ability_id = 219
 nature_id = 24
 rotate_hp_EVs = null
 
+[node name="pkm1" type="Node" parent="Player"]
+script = ExtResource("3_p5erh")
+pokemon = 130
+level = 25
+gender = 1
+hp_EVs = 213
+attack_EVs = 150
+defense_EVs = 55
+spAttack_EVs = 252
+spDefense_EVs = 192
+speed_EVs = 252
+hp_IVs = 27
+attack_IVs = 17
+defense_IVs = 25
+spAttack_IVs = 13
+spDefense_IVs = 30
+speed_IVs = 13
+ability_id = 22
+nature_id = 16
+rotate_hp_EVs = null
+
 [node name="SingleTrainer" parent="." instance=ExtResource("2_rfkpo")]
 Name = "AAAA"
 
@@ -204,27 +225,6 @@ nature_id = 2
 rotate_hp_EVs = null
 
 [node name="Backlog" type="Node" parent="."]
-
-[node name="pkm1" type="Node" parent="Backlog"]
-script = ExtResource("3_p5erh")
-pokemon = 130
-level = 25
-gender = 1
-hp_EVs = 213
-attack_EVs = 150
-defense_EVs = 55
-spAttack_EVs = 252
-spDefense_EVs = 192
-speed_EVs = 252
-hp_IVs = 27
-attack_IVs = 17
-defense_IVs = 25
-spAttack_IVs = 13
-spDefense_IVs = 30
-speed_IVs = 13
-ability_id = 22
-nature_id = 16
-rotate_hp_EVs = null
 
 [node name="pkm3" type="Node" parent="Backlog"]
 script = ExtResource("3_p5erh")

@@ -22,9 +22,14 @@ func apply() -> void:
 func visualize(ui: BattleUI):
 	if not _applied:
 		return  # Nada que mostrar
-		
-	# TO DO ANIMACIÓ
-
+	
 	for stat in stats_changes_list:
 		var amount = stats_changes_list[stat]
+		
+		# Reproducir animación según si sube o baja
+		if amount > 0:
+			await target.battle_spot.play_stat_up_animation()
+		else:
+			await target.battle_spot.play_stat_down_animation()
+		
 		await ui.show_stat_stage_change_message(target, stat, amount)
