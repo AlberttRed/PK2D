@@ -21,15 +21,15 @@ uniform float overlay_scale : hint_range(1.0, 10.0) = 2.0;
 void fragment() {
 	// Obtener el color original del sprite del Pokémon
 	vec4 sprite_color = texture(TEXTURE, UV);
-	
+
 	// Calcular UVs normalizadas independientes del atlas
 	// TEXTURE_PIXEL_SIZE da el tamaño de un píxel en coordenadas UV
 	vec2 texture_size = 1.0 / TEXTURE_PIXEL_SIZE;
 	vec2 normalized_uv = UV * texture_size / 96.0; // 96 = tamaño de referencia para sprites Pokémon
-	
+
 	// Calcular UVs repetidas para el overlay (solo overlay_scale afecta el tamaño)
 	vec2 overlay_uv = normalized_uv / overlay_scale;
-	
+
 	// Desplazar las UVs según el progreso para crear el efecto de scroll
 	// Multiplicamos por overlay_scale para que la velocidad sea proporcional al tamaño
 	if (animate_up) {
@@ -39,18 +39,18 @@ void fragment() {
 		// Mover hacia abajo: las ondas bajan (de arriba hacia abajo)
 		overlay_uv.y -= progress / scroll_speed;
 	}
-	
+
 	// Obtener el color del overlay con las UVs modificadas
 	vec4 overlay_color = texture(overlay_texture, overlay_uv);
-	
+
 	// Solo aplicar overlay donde el sprite tiene alpha > 0 (no es transparente)
 	vec4 final_color = sprite_color;
-	
+
 	if (sprite_color.a > 0.1 && overlay_color.a > 0.1) {
 		// Mezclar el overlay sobre el sprite usando el alpha del sprite como máscara
 		final_color.rgb = mix(sprite_color.rgb, overlay_color.rgb, overlay_color.a * overlay_alpha);
 	}
-	
+
 	COLOR = final_color;
 }
 

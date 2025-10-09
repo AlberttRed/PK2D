@@ -11,7 +11,8 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var power = move.get_power()
 	
 	# Aplicar modificadores de efectos activos (clima, etc.)
-	power = apply_power_modifiers(move, user, target, power)
+	var power_data = apply_power_modifiers(move, user, target, power)
+	power = power_data.power
 
 	# Paso 1: Daño base
 	var base = (((2 * level / 5.0 + 2) * power * atk / def) / 50.0) + 2
@@ -70,7 +71,9 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var user_level = user.get_level()
 	var target_level = target.get_level()
 	var base_power = move.get_power()
-	var power = apply_power_modifiers(move, user, target, base_power)
+	var power_data = apply_power_modifiers(move, user, target, base_power)
+	var power = power_data.power
+	var modifiers = power_data.modifiers
 
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 	var crit = 2.0 if effect.is_critical else 1.0
@@ -79,7 +82,16 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var base = (((2 * user_level / 5.0 + 2) * power * atk_mod / def_mod) / 50.0) + 2
 
 	print("===== DAMAGE LOG =====")
-	var power_display = str(base_power) if base_power == power else "%d → %d (modificado)" % [base_power, power]
+	var power_display = str(base_power)
+	if base_power != power:
+		# Mostrar qué efectos modificaron la potencia
+		var modifier_names = []
+		for mod in modifiers:
+			var sign_str = "+" if mod.multiplier > 1.0 else ""
+			var percent_change = (mod.multiplier - 1.0) * 100.0
+			modifier_names.append("%s (%s%.0f%%)" % [mod.name, sign_str, percent_change])
+		power_display = "%d → %d (%s)" % [base_power, power, ", ".join(modifier_names)]
+	
 	print("Movimiento: %s | Potencia: %s | Clase de daño: %s" %
 		[move.get_name(), power_display, get_damage_class_string(move.get_damage_class())])
 	print("Atacante: %s (Nivel %d)" % [user.get_display_name(), user_level])
@@ -125,8 +137,10 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 
 
 # Aplica modificadores de efectos activos al poder del movimiento
-static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target: BattlePokemon, base_power: int) -> int:
+# Retorna un Dictionary con {power: int, modifiers: Array[Dictionary]}
+static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target: BattlePokemon, base_power: int) -> Dictionary:
 	var modified_power = float(base_power)
+	var modifiers_applied := []
 	
 	# Obtener todos los efectos activos que afectan al usuario
 	var all_effects = BattleEffectController.get_all_effects_for(user)
@@ -134,6 +148,7 @@ static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target:
 	# Aplicar modificador de cada efecto
 	for effect in all_effects:
 		if effect.has_method("on_modifier"):
+			var old_power = modified_power
 			modified_power = effect.on_modifier(
 				BattleEffect.Modifiers.MOVE_POWER,
 				move,
@@ -141,8 +156,51 @@ static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target:
 				target,
 				modified_power
 			)
+			
+			# Si el efecto modificó la potencia, registrarlo
+			if modified_power != old_power:
+				var effect_name = "Efecto desconocido"
+				if effect.get_script() and effect.get_script().get_global_name():
+					effect_name = effect.get_script().get_global_name()
+				# Remover el sufijo "Effect" del nombre si existe
+				if effect_name.ends_with("Effect"):
+					effect_name = effect_name.substr(0, effect_name.length() - 6)
+				# Convertir de CamelCase a texto legible
+				effect_name = _format_effect_name(effect_name)
+				
+				var multiplier = modified_power / old_power
+				modifiers_applied.append({
+					"name": effect_name,
+					"old_value": old_power,
+					"new_value": modified_power,
+					"multiplier": multiplier
+				})
 	
-	return int(modified_power)
+	return {
+		"power": int(modified_power),
+		"modifiers": modifiers_applied
+	}
+
+# Convierte nombres de efectos de CamelCase a formato legible
+static func _format_effect_name(name: String) -> String:
+	# Casos especiales primero
+	if name == "RainWeather":
+		return "Lluvia"
+	if name == "SunnyWeather":
+		return "Sol"
+	if name == "SandstormWeather":
+		return "Tormenta de Arena"
+	if name == "HailWeather":
+		return "Granizo"
+	
+	# Para otros casos, intentar convertir de CamelCase
+	var result = ""
+	for i in range(name.length()):
+		var c = name[i]
+		if c == c.to_upper() and i > 0:
+			result += " "
+		result += c
+	return result
 
 
 static func get_damage_class_string(cls: BattleMove.DamageClass) -> String:

@@ -387,8 +387,8 @@ func load_moves():
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	#movements.insert(0, MoveInstance.new(52))
 	
-	# Forzar "Ataque Furia" (id 31) para test Multi-hit
-	#movements.insert(0, MoveInstance.new(31))
+#	Forzar "Ataque Furia" (id 31) para test Multi-hit
+	movements.insert(0, MoveInstance.new(DatabaseManager.get_move("water-gun").id))
 
 	# Limitar a 4 movimientos
 	#while movements.size() > 4:

@@ -20,3 +20,12 @@ enum Modifiers {
 	MOVE_ACCURACY,
 	CRITICAL_CHANCE
 }
+
+# Helper para mostrar mensajes desde efectos sin repetir diccionarios
+# Por defecto: tipo "wait" y wait_time 1.0
+func show_effect_message(ui: BattleUI, text: String, wait_time: float = 1.0, message_type: String = "wait") -> void:
+	await ui.show_message_from_dict({
+		"type": message_type,
+		"text": text,
+		"wait_time": wait_time
+	})

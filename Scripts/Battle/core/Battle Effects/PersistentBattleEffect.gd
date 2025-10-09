@@ -13,7 +13,7 @@ func _init(_source, _min_turns = null, _max_turns = null) -> void:
 func apply_phase(pokemon, phase: Phases) -> void: return
 func visualize_phase(pokemon, ui, phase: Phases) -> void: return
 
-func has_finished(): return turns_left!=null and turns_left < 0
+func has_finished(): return turns_left != null and turns_left < 0
 
 func next_turn(): turns_left -= 1
 

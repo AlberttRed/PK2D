@@ -22,4 +22,3 @@ enum Values {
 	DARK,
 	FAIRY
 }
-

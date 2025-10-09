@@ -65,10 +65,28 @@ func resolve() -> Array[BattleHandler]:
 
 	var move := get_move()
 
+	# Si el movimiento afecta al campo o a un lado, ejecutamos un único handler
+	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
+	if _is_field_or_side_target(target_type):
+		var category_field: BattleMoveCategory = move.get_category() if move.has_method("get_category") else null
+		if category_field != null:
+			# Pasamos un target cualquiera (o null) porque el handler de campo no depende del objetivo
+			var any_target: BattlePokemon = null
+			if not targets.is_empty() and targets[0] and targets[0].has_active_pokemon():
+				any_target = targets[0].get_active_pokemon()
+			var field_handler := category_field.create_handler(move, pokemon, any_target)
+			if field_handler != null:
+				handlers.append(field_handler)
+		else:
+			print("No category found for move: " + move.get_name())
+		return handlers
+
+	# Para el resto de movimientos, iterar por cada objetivo y aplicar precisión si corresponde
 	for spot in targets:
 		var target := spot.get_active_pokemon()
 
-		if not AccuracyUtils.check_hit(move, pokemon, target):
+		# Movimientos con precisión <= 0 no hacen chequeo (auto-hit)
+		if move.get_accuracy() > 0 and not AccuracyUtils.check_hit(move, pokemon, target):
 			handlers.append(MissHandler.new(pokemon))
 			continue
 
@@ -81,3 +99,10 @@ func resolve() -> Array[BattleHandler]:
 			print("No category found for move: " + move.get_name())
 
 	return handlers
+
+
+# Devuelve true si el tipo de target representa efectos de campo o de lado
+func _is_field_or_side_target(t: BattleTarget.TYPE) -> bool:
+	return t == BattleTarget.TYPE.ALL_FIELD \
+		or t == BattleTarget.TYPE.PLAYERS \
+		or t == BattleTarget.TYPE.ENEMIES

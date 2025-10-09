@@ -24,5 +24,3 @@ func apply() -> void:
 func visualize(ui: BattleUI) -> void:
 	if move_effect:
 		await move_effect.visualize(ui)
-
-

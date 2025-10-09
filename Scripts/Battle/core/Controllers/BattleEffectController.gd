@@ -34,6 +34,12 @@ static func remove_field_effect(effect: PersistentBattleEffect):
 static func has_effect_for(pokemon, effect_instance: PersistentBattleEffect) -> bool:
 	return effect_instance != null and get_instance()._has_effect_for(pokemon, effect_instance)
 
+static func has_field_effect(effect_instance: PersistentBattleEffect) -> bool:
+	return effect_instance != null and get_instance()._has_field_effect(effect_instance)
+
+static func has_side_effect(side: String, effect_instance: PersistentBattleEffect) -> bool:
+	return effect_instance != null and get_instance()._has_side_effect(side, effect_instance)
+
 static func get_all_effects_for(pokemon):
 	return get_instance()._get_all_effects_for(pokemon)
 
@@ -121,6 +127,16 @@ func _has_effect_for(pokemon, effect: PersistentBattleEffect) -> bool:
 	var target_class = effect.get_script().get_global_name()
 	var all = _get_all_effects_for(pokemon)
 	return all.any(func(e): return e.get_script().get_global_name() == target_class)
+
+func _has_field_effect(effect: PersistentBattleEffect) -> bool:
+	var target_class = effect.get_script().get_global_name()
+	return field_effects.any(func(e): return e.get_script().get_global_name() == target_class)
+
+func _has_side_effect(side: String, effect: PersistentBattleEffect) -> bool:
+	if not side_effects.has(side):
+		return false
+	var target_class = effect.get_script().get_global_name()
+	return side_effects[side].any(func(e): return e.get_script().get_global_name() == target_class)
 
 func _get_all_effects_for(pokemon) -> Array[PersistentBattleEffect]:
 	var result: Array[PersistentBattleEffect] = []
