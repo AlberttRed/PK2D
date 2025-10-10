@@ -1,13 +1,14 @@
 extends Node
 
 ## DatabaseManager - Autoload para centralizar acceso a Resources del juego
-## Carga e indexa Pokémon, Movimientos, Tipos, Habilidades y Naturalezas.
+## Carga e indexa Pokémon, Movimientos, Tipos, Habilidades, Naturalezas y Climas.
 
 const POKEMON_DIR := "res://Resources/Data/Pokemon"
 const MOVES_DIR := "res://Resources/Data/Moves"
 const TYPES_DIR := "res://Resources/Data/Types"
 const ABILITIES_DIR := "res://Resources/Data/Abilities"
 const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
+const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}
@@ -24,6 +25,9 @@ var _abilities_by_name: Dictionary = {}
 var _natures_by_id: Dictionary = {}
 var _natures_by_name: Dictionary = {}
 
+var _weathers_by_id: Dictionary = {}
+var _weathers_by_name: Dictionary = {}
+
 func _ready() -> void:
 	_load_all()
 	_print_summary()
@@ -34,6 +38,7 @@ func _load_all() -> void:
 	_types_by_id.clear(); _types_by_name.clear()
 	_abilities_by_id.clear(); _abilities_by_name.clear()
 	_natures_by_id.clear(); _natures_by_name.clear()
+	_weathers_by_id.clear(); _weathers_by_name.clear()
 
 	load_resources_from_dir(POKEMON_DIR, func(res):
 		if res == null: return
@@ -47,10 +52,11 @@ func _load_all() -> void:
 	_load_types()
 	_load_abilities()
 	_load_natures()
+	_load_weathers()
 
 func _print_summary() -> void:
-	print("DatabaseManager: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures" % [
-		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size()
+	print("DatabaseManager: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers" % [
+		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size(), _weathers_by_id.size()
 	])
 
 func _load_moves() -> void:
@@ -104,6 +110,18 @@ func _load_natures() -> void:
 			nat.display_name = nat_id.capitalize()
 			_natures_by_id[nat.id] = nat
 			_natures_by_name[nat.id] = nat
+
+func _load_weathers() -> void:
+	var dir := DirAccess.open(WEATHERS_DIR)
+	if dir == null:
+		return
+	load_resources_from_dir(WEATHERS_DIR, func(res):
+		if res == null: return
+		if not (res is Weather): return
+		_weathers_by_id[res.id] = res
+		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
+			_weathers_by_name[res.internal_name.to_lower()] = res
+	)
 
 ## Utilidad genérica para escanear un directorio y cargar .tres
 func load_resources_from_dir(dir_path: String, on_loaded: Callable) -> void:
@@ -162,3 +180,11 @@ func get_ability(name_or_id) -> Resource:
 func get_nature(name_or_id) -> Resource:
 	var key := str(name_or_id).to_lower()
 	return _natures_by_id.get(key, _natures_by_name.get(key, null))
+
+func get_weather(name_or_id) -> Weather:
+	if typeof(name_or_id) == TYPE_INT:
+		return _weathers_by_id.get(name_or_id, null)
+	var key := str(name_or_id).to_lower()
+	if key.is_valid_int():
+		return _weathers_by_id.get(int(key), null)
+	return _weathers_by_name.get(key, null)

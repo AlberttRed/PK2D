@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_aquvd")
-id = "no-type-immunity"
+id = 17
+internal_name = "no-type-immunity"
 display_name = "No type immunity"
 description = ""
 is_persistent = false

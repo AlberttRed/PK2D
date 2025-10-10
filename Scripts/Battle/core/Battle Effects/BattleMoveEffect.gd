@@ -7,10 +7,12 @@ extends ImmediateBattleEffect
 ## Esta clase sirve como punto intermedio entre ImmediateBattleEffect y efectos
 ## específicos de movimientos como RainDanceMoveEffect, SunnyDayMoveEffect, etc.
 
+var move: BattleMove
 var user: BattlePokemon
 var target: BattlePokemon
 
-func _init(_user: BattlePokemon, _target: BattlePokemon = null) -> void:
+func _init(_move: BattleMove, _user: BattlePokemon, _target: BattlePokemon = null) -> void:
+	move = _move
 	user = _user
 	target = _target
 
@@ -19,4 +21,3 @@ func apply() -> void:
 
 func visualize(_ui: BattleUI) -> void:
 	pass
-

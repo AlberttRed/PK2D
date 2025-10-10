@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_ekcov")
-id = "nightmare"
+id = 9
+internal_name = "nightmare"
 display_name = "Maldito"
 description = ""
 is_persistent = false

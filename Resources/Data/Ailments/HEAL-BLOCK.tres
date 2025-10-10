@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_fcr2w")
-id = "heal-block"
+id = 15
+internal_name = "heal-block"
 display_name = "Anticura"
 description = ""
 is_persistent = false

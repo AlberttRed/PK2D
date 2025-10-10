@@ -1,11 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://djqyc10nosdl"]
+[gd_scene load_steps=11 format=3 uid="uid://djqyc10nosdl"]
 
 [ext_resource type="Script" uid="uid://fue81u7lotyd" path="res://Scripts/Battle/ui/BattleUI.gd" id="1_cwigb"]
 [ext_resource type="Script" uid="uid://ciwn5vywclehe" path="res://Scripts/Battle/ui/BattleMessageController.gd" id="2_gtgo1"]
 [ext_resource type="PackedScene" uid="uid://ui53do2ck5tn" path="res://Scenes/Battle/ui/FieldUI.tscn" id="2_yxxch"]
 [ext_resource type="PackedScene" uid="uid://bwgrjg6m68rr" path="res://Scenes/Battle/core/BattleTargetSelector.tscn" id="3_0scdk"]
 [ext_resource type="PackedScene" uid="uid://btj5i08qahepp" path="res://Scenes/Battle/ui/ActionMenu.tscn" id="4_hkwg8"]
-[ext_resource type="Script" uid="uid://bpgt41pn4lkx3" path="res://Scripts/Battle/core/BattleTargetSelectorUI.gd" id="4_ydjl4"]
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_alpup"]
 [ext_resource type="PackedScene" uid="uid://dauokklht8873" path="res://Scenes/Battle/ui/MoveMenu.tscn" id="6_x8cud"]
 [ext_resource type="StyleBox" uid="uid://ci1q4xtpco246" path="res://Resources/UI/MessageBox/HGSS_BattleMessageBox_Style.tres" id="7_f6frr"]
@@ -32,7 +31,6 @@ script = ExtResource("2_gtgo1")
 [node name="TargetSelectorUI" parent="." instance=ExtResource("3_0scdk")]
 visible = false
 layout_mode = 1
-script = ExtResource("4_ydjl4")
 
 [node name="FieldUI" parent="." instance=ExtResource("2_yxxch")]
 layout_mode = 1

@@ -10,7 +10,8 @@ region = Rect2(0, 0, 44, 16)
 
 [resource]
 script = ExtResource("3_qqm7f")
-id = "sleep"
+id = 2
+internal_name = "sleep"
 display_name = "Dormir"
 description = ""
 icon = SubResource("AtlasTexture_nhm54")

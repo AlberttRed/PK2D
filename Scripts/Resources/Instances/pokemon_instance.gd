@@ -382,13 +382,20 @@ func load_moves():
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
 	
 	# Forzar "Danza Lluvia" (id 240) para test de efectos de clima
-	movements.insert(0, MoveInstance.new(240))
+	movements.insert(0, MoveInstance.new(MovesEnum.Values.RAIN_DANCE))
 	
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	#movements.insert(0, MoveInstance.new(52))
-	
-#	Forzar "Ataque Furia" (id 31) para test Multi-hit
+
+	#	Forzar "Ataque Furia" (id 31) para test Multi-hit
 	movements.insert(0, MoveInstance.new(DatabaseManager.get_move("water-gun").id))
+
+	# Inserción de 4 movimientos para probar Ailments:
+	# Orden final en la lista: Onda Trueno, Somnífero, Fuego Fatuo, Puño Hielo
+	#movements.insert(0, MoveInstance.new(DatabaseManager.get_move("ice-punch").id))      # Puño Hielo
+	#movements.insert(0, MoveInstance.new(DatabaseManager.get_move("will-o-wisp").id))    # Fuego Fatuo
+	#movements.insert(0, MoveInstance.new(DatabaseManager.get_move("sleep-powder").id))   # Somnífero
+	#movements.insert(0, MoveInstance.new(DatabaseManager.get_move("thunder-wave").id))   # Onda Trueno
 
 	# Limitar a 4 movimientos
 	#while movements.size() > 4:

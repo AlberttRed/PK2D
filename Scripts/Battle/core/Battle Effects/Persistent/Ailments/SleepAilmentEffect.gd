@@ -16,10 +16,10 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	if has_finished():
-		await ui.show_end_ailment_message(pokemon, source)
+		await ui.show_end_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 		pokemon.status_changed.emit()
 	else:
-		await ui.show_ailment_effect_message(pokemon, source)
+		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 
 func get_priority() -> int:
 	return 10

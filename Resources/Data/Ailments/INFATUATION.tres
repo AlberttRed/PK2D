@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_o05yv")
-id = "infatuation"
+id = 7
+internal_name = "infatuation"
 display_name = "Enamorar"
 description = ""
 is_persistent = false

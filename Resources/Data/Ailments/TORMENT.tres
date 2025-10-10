@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_acc0y")
-id = "torment"
+id = 12
+internal_name = "torment"
 display_name = "Tormento"
 description = ""
 is_persistent = false

@@ -2,24 +2,27 @@ extends BattleMoveEffect
 class_name RainDanceMoveEffect
 
 var already_active: bool = false
+var weather: Weather = null
 
-func _init(_user: BattlePokemon, _target: BattlePokemon = null) -> void:
-	super._init(_user, _target)
+func _init(_move: BattleMove, _user: BattlePokemon, _target: BattlePokemon = null) -> void:
+	super._init(_move, _user, _target)
+	weather = move.get_weather()
 
 func apply():
-	# Evitar duplicar clima: si ya está lloviendo, no hacemos nada
-	var temp_effect := RainWeatherEffect.new(user, 5, true)
-	if BattleEffectController.has_field_effect(temp_effect):
-		already_active = true
-		return
 	# Crear efecto de lluvia con duración de 5 turnos
 	# El parámetro 'true' indica que fue iniciado por un movimiento (no es lluvia natural)
-	var rain_effect := RainWeatherEffect.new(user, 5, true)
-	BattleEffectController.add_field_effect(rain_effect)
+	var effect_instance = weather.get_effect(5, true)
+	
+	# Evitar duplicar clima: si ya está lloviendo, no hacemos nada
+	if BattleEffectController.has_field_effect(effect_instance):
+		already_active = true
+		return
+
+	BattleEffectController.add_field_effect(effect_instance)
 
 func visualize(ui: BattleUI):
 	# Mostrar mensajes según si ya estaba activa la lluvia
 	if already_active:
-		await show_effect_message(ui, "¡Pero ya está lloviendo!", 1.0)
+		await ui.show_message_from_dict(ui.message_controller.get_already_active_weather_message(weather.id))
 		return
-	await show_effect_message(ui, "¡Comenzó a llover!", 1.5)
+	await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(weather.id))

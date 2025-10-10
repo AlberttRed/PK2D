@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_qh3qr")
-id = "trap"
+id = 8
+internal_name = "trap"
 display_name = "Atrapado"
 description = ""
 is_persistent = false

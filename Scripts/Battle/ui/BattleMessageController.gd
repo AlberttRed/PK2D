@@ -3,7 +3,8 @@ class_name BattleMessageController
 
 var AilmentMessages = BattleMessageAilment.new()
 var AbilityMessages = BattleMessageAbility.new()
-
+var WeatherMessages = BattleMessageWeather.new()
+var FieldEffectMessages = BattleMessageFieldEffect.new()
 
 func get_intro_messages(
 	rules: BattleRules,
@@ -114,23 +115,80 @@ func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 		"wait_time": 0.5
 	}
 
-func get_start_ailment_message(user:BattlePokemon, ailment:Ailment) -> Dictionary:
-	return AilmentMessages.get_start_ailment_message(user, ailment)
+func get_start_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_start_ailment_message(user, ailment_id)
 
-func get_end_ailment_message(user:BattlePokemon, ailment:Ailment) -> Dictionary:
-	return AilmentMessages.get_end_ailment_message(user, ailment)
+func get_end_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_end_ailment_message(user, ailment_id)
 
-func get_already_ailment_message(user:BattlePokemon, ailment:Ailment, has_other_status: bool) -> Dictionary:
-	return AilmentMessages.get_already_ailment_message(user, ailment, has_other_status)
+func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values, has_other_status: bool) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_already_ailment_message(user, ailment_id, has_other_status)
 
-func get_ailment_effect_message(user:BattlePokemon, ailment:Ailment) -> Dictionary:
-	return AilmentMessages.get_ailment_effect_message(user, ailment)
+func get_ailment_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_ailment_effect_message(user, ailment_id)
 
-func get_ailment_previous_effect_message(user:BattlePokemon, ailment:Ailment) -> Dictionary:
-	return AilmentMessages.get_ailment_previous_effect_message(user, ailment)
+func get_ailment_previous_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id)
 	
-func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability:Ability) -> Dictionary:
-	return AbilityMessages.get_ability_effect_message(user, target, ability)
+func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
+	if user == null or target == null:
+		return {}
+	return AbilityMessages.get_ability_effect_message(user, target, ability_id)
+
+func get_start_ability_message(user:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AbilityMessages.get_start_ability_message(user, ability_id)
+
+func get_end_ability_message(user:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
+	if user == null:
+		return {}
+	return AbilityMessages.get_end_ability_message(user, ability_id)
+
+func get_start_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE:
+		return {}
+	return WeatherMessages.get_start_weather_message(weather_id)
+
+func get_ongoing_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE:
+		return {}
+	return WeatherMessages.get_ongoing_weather_message(weather_id)
+
+func get_end_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE:
+		return {}
+	return WeatherMessages.get_end_weather_message(weather_id)
+
+func get_already_active_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE:
+		return {}
+	return WeatherMessages.get_already_active_weather_message(weather_id)
+
+func get_start_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
+	if effect_id < 0:
+		return {}
+	return FieldEffectMessages.get_start_field_effect_message(effect_id, side_name)
+
+func get_end_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
+	if effect_id < 0:
+		return {}
+	return FieldEffectMessages.get_end_field_effect_message(effect_id, side_name)
+
+func get_already_active_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
+	if effect_id < 0:
+		return {}
+	return FieldEffectMessages.get_already_active_field_effect_message(effect_id, side_name)
 
 func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int) -> Dictionary:
 	if amount == 0:

@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_dyyp4")
-id = "disable"
+id = 13
+internal_name = "disable"
 display_name = "Anulación"
 description = ""
 is_persistent = false
