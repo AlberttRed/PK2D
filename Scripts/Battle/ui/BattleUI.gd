@@ -9,6 +9,7 @@ class_name BattleUI
 @onready var message_box:MessageBox = $MessageBox
 @onready var moves_menu = $MovesMenu
 @onready var target_selector_ui = $TargetSelectorUI
+var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
 
 func _ready() -> void:
@@ -104,52 +105,44 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 
 	move_choice.pokemon = pokemon  # también aquí, por seguridad
 
-	# Crear el manejador de targets
-	var target_handler := await show_target_selection(move_choice.get_move())
-
-	if target_handler.canceled:
-		# Si el usuario cancela la selección de targets, se vuelve a mostrar el menú de movimientos
-		SignalManager.disconnect_all(target_handler.request_manual_selection)
-		SignalManager.disconnect_all(target_selector_ui.target_chosen)
-		return await show_move_selection(pokemon)
+	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
+	var move: BattleMove = move_choice.get_move()
+	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
 	
-	# Asignar el handler al BattleChoice
-	move_choice.target_handler = target_handler
+	var selected_spot: BattleSpot = null
+	if target_selector != null and target_selector.requires_manual_selection(target_type, pokemon):
+		selected_spot = await show_target_selection(pokemon)
+		
+		if selected_spot == null:
+			# Usuario canceló la selección de target
+			return await show_move_selection(pokemon)
+	
+	# Generar los targets aquí usando la lógica y asignarlos al choice
+	if target_selector != null:
+		move_choice.targets = target_selector.resolve_targets(move, pokemon, selected_spot)
+	
 	moves_menu.hide()
 	return move_choice
 
 
-func show_target_selection(move: BattleMove) -> BattleTarget:
-	# Crear el manejador de targets
-	var target_handler := BattleTarget.new(move)
+func show_target_selection(user: BattlePokemon) -> BattleSpot:
+	# Obtener los spots seleccionables con la lógica
+	var candidates: Array[BattleSpot] = []
+	if target_selector != null:
+		candidates = target_selector.get_selectable_spots(user)
 
-	# Conectar la petición de selección manual
-	target_handler.request_manual_selection.connect(func(_candidates):
-		request_target_selection(target_handler)
-	, CONNECT_ONE_SHOT)
+	if candidates.size() == 1:
+		return candidates[0]
 
-	# Ejecutar la lógica de selección de targets (manual o automática)
-	await target_handler.select_targets()
-
-	return target_handler
+	target_selector_ui.show_targets(candidates)
+	
+	# Esperar a que se seleccione un target - await devuelve directamente el parámetro de la señal
+	var selected_spot: BattleSpot = await target_selector_ui.target_chosen
+	
+	return selected_spot
 	
 func hide_action_menu():
 	actions_menu.hide()
-	
-func request_target_selection(target: BattleTarget) -> void:
-	var candidates = target.get_candidate_spots()
-
-	if candidates.size() == 1:
-		target.set_manual_target(candidates[0])
-		return
-
-	SignalManager.disconnect_all(target_selector_ui.target_chosen)
-
-	target_selector_ui.target_chosen.connect(func(spot):
-		target.set_manual_target(spot)
-	, CONNECT_ONE_SHOT)
-
-	target_selector_ui.show_targets(candidates)
 
 	
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
@@ -195,6 +188,7 @@ func show_critical_hit_message() -> void:
 
 func show_heal_message(pokemon: BattlePokemon, amount: int) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon, amount))
+	
 
 func show_drain_message(pokemon: BattlePokemon, amount: int) -> void:
 	await show_message_from_dict(message_controller.get_drain_message(pokemon, amount))

@@ -63,6 +63,8 @@ func assign_active_pokemons_to_spots():
 func start_battle() -> void:
 	ui.visible = true  # Si estaba oculto por defecto
 	turn_controller.battle_controller = self
+	# Inyectar lógica de targeting en la UI
+	ui.target_selector = BattleTargetSelector.new()
 	print("Combate iniciado (test)")
 	await ui.play_intro_sequence(rules,player_side.get_active_pokemons(),enemy_side.get_active_pokemons(),player_side.get_trainer_names(),enemy_side.get_trainer_names())
 	await turn_controller.start_turn_loop()

@@ -32,10 +32,9 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	var choice = BattleMoveChoice.new()
 	choice.move_index = index
 	choice.pokemon = pokemon
-	
-	# Configurar los objetivos del movimiento
-	var target_handler = BattleTarget.new(move)
-	await target_handler.select_targets()
-	choice.target_handler = target_handler
+
+	# Generar targets automáticamente (sin UI) usando la lógica de targeting
+	var selector := BattleTargetSelector.new()
+	choice.targets = selector.resolve_targets(move, pokemon, null)
 	
 	return choice

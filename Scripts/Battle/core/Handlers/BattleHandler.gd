@@ -5,7 +5,7 @@ class_name BattleHandler
 func apply() -> void:
 	pass
 
-func visualize(ui: BattleUI) -> void:
+func visualize(_ui: BattleUI) -> void:
 	pass
 
 
