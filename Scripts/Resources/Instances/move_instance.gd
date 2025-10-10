@@ -133,10 +133,14 @@ func get_heal_amount():
 	
 func get_ailment() -> Ailment:
 	return base.ailment
-	
+
+
 func get_ailment_chance() -> int:
 	return base.meta_ailment_chance
 	
+func get_weather() -> Weather:
+	return base.weather
+
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base.stat_changes
 

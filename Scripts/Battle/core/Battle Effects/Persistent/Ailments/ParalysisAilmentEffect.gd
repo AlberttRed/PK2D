@@ -18,7 +18,7 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 		return
 
 	if effect_success:
-		await ui.show_ailment_effect_message(pokemon, source)
+		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 
 func get_priority() -> int:
 	return 10

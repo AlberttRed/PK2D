@@ -10,7 +10,8 @@ region = Rect2(0, 64, 44, 16)
 
 [resource]
 script = ExtResource("1")
-id = "freeze"
+id = 3
+internal_name = "freeze"
 display_name = "Congelar"
 description = ""
 icon = SubResource("AtlasTexture_f76ff")

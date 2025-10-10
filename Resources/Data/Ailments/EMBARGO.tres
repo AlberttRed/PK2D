@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_ojx6f")
-id = "embargo"
+id = 19
+internal_name = "embargo"
 display_name = "Embargo"
 description = ""
 is_persistent = false

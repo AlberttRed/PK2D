@@ -110,9 +110,13 @@ func get_category() -> BattleMoveCategory:
 
 func get_ailment() -> Ailment:
 	return base_data.get_ailment()
+
 	
 func get_ailment_chance() -> float:
 	return 100.0 if base_data.get_ailment_chance() == 0 else (float(base_data.get_ailment_chance()) / 100.0)
+
+func get_weather() -> Weather:
+	return base_data.get_weather()
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base_data.get_stat_changes()
@@ -140,7 +144,7 @@ func calculate_healing(target: BattlePokemon, damage_taken: int = 0) -> HealEffe
 func create_move_effect(target: BattlePokemon = null) -> BattleMoveEffect:
 	var effect_script = base_data.get_move_effect_script()
 	if effect_script:
-		return effect_script.new(pokemon, target)
+		return effect_script.new(self, pokemon, target)
 	return null
 
 

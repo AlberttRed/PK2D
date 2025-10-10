@@ -3,18 +3,19 @@ extends BattleMoveHandler
 class_name BattleAilmentMoveHandler
 
 var _is_valid: bool = false
+var ailment: Ailment = null
 
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)
+	ailment = _move.get_ailment()
 
 func apply() -> void:
-	var ailment: Ailment = move.get_ailment()
 	if ailment == null:
 		return
 	if randf() >= move.get_ailment_chance():
 		return
 
-	_is_valid =_check_is_valid(ailment)
+	_is_valid =_check_is_valid()
 
 	if not _is_valid:
 		return
@@ -26,17 +27,17 @@ func apply() -> void:
 		target.set_status(ailment)
 
 func visualize(ui) -> void:
-	if not _is_valid:
-		var ail: Ailment = move.get_ailment()
-		if ail != null:
-			await ui.show_already_ailment_message(target, ail, ail.is_persistent and target.status != ail)
+	if ailment == null:
 		return
-	await ui.show_start_ailment_message(target, move.get_ailment())
+	if not _is_valid:
+		await ui.show_already_effect_message(MessageFamily.Values.AILMENT, target, null, ailment.id, ailment.is_persistent and target.status != ailment)
+		return
+	await ui.show_start_effect_message(MessageFamily.Values.AILMENT, target, ailment.id)
 	# Asegurar actualización de icono de estado en la barra de HP
 	if target != null:
 		target.status_changed.emit()
 
-func _check_is_valid(ailment: Ailment) -> bool:
+func _check_is_valid() -> bool:
 	var effect_proto = ailment.get_effect() if ailment.effect != null else null
 	var was_repeated := BattleEffectController.has_effect_for(target, effect_proto)
 	var persistent_blocked: bool = ailment.is_persistent and target.status != null and target.status != ailment

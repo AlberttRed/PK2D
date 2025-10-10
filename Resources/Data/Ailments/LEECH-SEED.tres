@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_63sg2")
-id = "leech-seed"
+id = 18
+internal_name = "leech-seed"
 display_name = "Drenadoras"
 description = ""
 is_persistent = false

@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://cuma2yb7yqge6"]
+[gd_resource type="Resource" script_class="Weather" load_steps=3 format=3 uid="uid://cuma2yb7yqge6"]
 
+[ext_resource type="Script" uid="uid://xsolc280ypju" path="res://Scripts/Battle/core/Battle Effects/Persistent/Weather/RainWeatherEffect.gd" id="1_34lxh"]
 [ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/Weather.gd" id="1_ftq15"]
 
 [resource]
 script = ExtResource("1_ftq15")
-id = -1
+id = 1
 internal_name = "rain"
 display_name = "Lluvia"
-metadata/_custom_type_script = "uid://c3ykal5rqqt2m"
+effect = ExtResource("1_34lxh")

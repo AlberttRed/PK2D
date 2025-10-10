@@ -9,19 +9,18 @@ func _init(_source = null, _duration: int = 5, _started_by_move: bool = false) -
 	started_by_move = _started_by_move
 
 func apply_phase(_pokemon: BattlePokemon, phase: Phases) -> void:
-	if phase == Phases.ON_END_BATTLE_TURN:
+	if phase == Phases.ON_END_BATTLE_TURN and started_by_move:
 		next_turn()
 		# No eliminamos aquí: el BattleEffectController lo hace después de visualize_phase()
 
 func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> void:
 	if phase == Phases.ON_ENTRY:
-		await show_effect_message(ui, "¡Comenzó a llover!", 1.5)
+		await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(source.id))
 	elif phase == Phases.ON_END_BATTLE_TURN:
 		if has_finished():
-			await show_effect_message(ui, "La lluvia ha cesado.", 1.0)
+			await ui.show_message_from_dict(ui.message_controller.get_end_weather_message(source.id))
 			return
-		
-		await show_effect_message(ui, "La lluvia sigue cayendo.", 1.0)
+		await ui.show_message_from_dict(ui.message_controller.get_ongoing_weather_message(source.id))
 
 # Modificador de poder para movimientos según tipo
 func on_modifier(modifier_type: int, move: BattleMove, _user, _target, value):

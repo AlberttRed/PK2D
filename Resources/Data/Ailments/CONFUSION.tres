@@ -5,7 +5,8 @@
 
 [resource]
 script = ExtResource("1_rox0k")
-id = "confusion"
+id = 6
+internal_name = "confusion"
 display_name = "Confundir"
 description = ""
 is_persistent = false

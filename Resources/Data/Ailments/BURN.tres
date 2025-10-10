@@ -10,7 +10,8 @@ region = Rect2(0, 32, 44, 16)
 
 [resource]
 script = ExtResource("3_i83j3")
-id = "burn"
+id = 4
+internal_name = "burn"
 display_name = "Quemar"
 description = ""
 icon = SubResource("AtlasTexture_onjun")

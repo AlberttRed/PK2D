@@ -10,7 +10,8 @@ region = Rect2(0, 48, 44, 16)
 
 [resource]
 script = ExtResource("3_8yg8h")
-id = "paralysis"
+id = 1
+internal_name = "paralysis"
 display_name = "Parálisis"
 description = ""
 icon = SubResource("AtlasTexture_g0t8o")
