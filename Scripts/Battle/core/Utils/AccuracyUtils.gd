@@ -3,7 +3,7 @@ class_name AccuracyUtils
 static func check_hit(move: BattleMove, user: BattlePokemon, target: BattlePokemon) -> bool:
 	var base_accuracy = move.get_accuracy()
 	# Movimientos sin precisión (0) siempre impactan: usados para efectos de campo/side
-	if base_accuracy <= 0:
+	if base_accuracy <= 0 or !target:
 		return true
 	var acc_mod = get_stage_modifier(user.accuracy_stage)
 	var eva_mod = get_stage_modifier(target.evasion_stage)
