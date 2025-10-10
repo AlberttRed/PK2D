@@ -3,24 +3,21 @@ extends BattleHandler
 class_name BattleWholeFieldEffectMoveHandler
 
 var user: BattlePokemon
-var target: BattlePokemon
 var move: BattleMove
-var move_effect: BattleMoveEffect
+var effect: BattleMoveEffect
 
-func _init(_move: BattleMove, _user: BattlePokemon, _target: BattlePokemon):
+func _init(_move: BattleMove, _user: BattlePokemon):
 	move = _move
 	user = _user
-	target = _target
-	
-	# Obtener el efecto del movimiento desde su definición
-	move_effect = move.create_move_effect(target)
-	if not move_effect:
-		push_warning("BattleWholeFieldEffectMoveHandler: El movimiento '%s' no tiene un BattleMoveEffect asignado" % move.get_name())
 
 func apply() -> void:
-	if move_effect:
-		move_effect.apply()
+	# Los efectos de campo completo siempre se aplican globalmente
+	# El BattleMoveEffect se encarga internamente de crear y añadir el PersistentBattleEffect
+	effect = move.create_move_effect(null)
+	if effect:
+		effect.apply()
 
 func visualize(ui: BattleUI) -> void:
-	if move_effect:
-		await move_effect.visualize(ui)
+	# Visualizar el efecto del movimiento (ej: "¡Comenzó a llover!")
+	if effect:
+		await effect.visualize(ui)

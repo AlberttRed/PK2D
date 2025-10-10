@@ -95,14 +95,14 @@ func get_critical_hit_message() -> Dictionary:
 
 func get_heal_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": "¡%s recuperó %d PS!" % [pokemon.get_name(), amount],
 		"wait_time": 1.0
 	}
 
 func get_drain_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": "¡%s absorbió %d PS!" % [pokemon.get_name(), amount],
 		"wait_time": 1.0
 	}

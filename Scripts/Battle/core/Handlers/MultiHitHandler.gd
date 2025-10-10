@@ -5,13 +5,13 @@ class_name MultiHitHandler
 var category: BattleMoveCategory
 var move: BattleMove
 var user: BattlePokemon
-var target: BattlePokemon
+var target: BattleTarget  # Ahora es BattleTarget en lugar de BattlePokemon
 var num_hits: int
 
 var per_hit_handlers: Array[BattleHandler] = []
 var show_effectiveness := false
 
-func _init(_category: BattleMoveCategory, _move: BattleMove, _user: BattlePokemon, _target: BattlePokemon, _num_hits: int):
+func _init(_category: BattleMoveCategory, _move: BattleMove, _user: BattlePokemon, _target: BattleTarget, _num_hits: int):
 	category = _category
 	move = _move
 	user = _user
@@ -20,8 +20,16 @@ func _init(_category: BattleMoveCategory, _move: BattleMove, _user: BattlePokemo
 
 func apply() -> void:
 	per_hit_handlers.clear()
+	
+	# Solo aplicar multi-hit si el target es un Pokémon
+	if not target.is_pokemon():
+		push_warning("MultiHitHandler solo debe aplicarse a targets de tipo POKEMON")
+		return
+	
+	var target_pokemon := target.get_pokemon()
+	
 	for i in num_hits:
-		if target.is_fainted():
+		if target_pokemon.is_fainted():
 			break
 		var base_handler := category._create_handler(move, user, target)
 		if base_handler != null:
@@ -32,9 +40,9 @@ func apply() -> void:
 func visualize(ui: BattleUI) -> void:
 	for h in per_hit_handlers:
 		await h.visualize(ui)
+	
 	if num_hits > 1:
 		await ui.show_multi_hit_message(per_hit_handlers.size())
 
-	if show_effectiveness and !per_hit_handlers.is_empty():
+	if show_effectiveness and !per_hit_handlers.is_empty() and per_hit_handlers[0].has("damage"):
 		await ui.show_effectiveness_message(per_hit_handlers[0].damage)
-

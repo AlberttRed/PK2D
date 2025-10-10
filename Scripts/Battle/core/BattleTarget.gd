@@ -1,9 +1,17 @@
 class_name BattleTarget
 extends RefCounted
 
-signal request_manual_selection(candidates: Array[BattleSpot])
-signal target_selected
+## Representa un único objetivo en combate (Pokémon, Side o Field)
+## El scope se detecta automáticamente según el tipo de objeto recibido
 
+## Scope: Tipo de objetivo (Pokémon individual, Side o Field completo)
+enum Scope {
+	POKEMON,  # Target es un BattlePokemon
+	SIDE,     # Target es un BattleSide
+	FIELD     # Target es el campo completo (sin objeto específico)
+}
+
+## TYPE: Tipo de targeting del movimiento (a quién va dirigido)
 enum TYPE {
 	NONE, ESPECIFICO, YO_PRIMERO, ALIADO,
 	BASE_PLAYER, USER_OR_ALLY, BASE_ENEMY,
@@ -11,172 +19,62 @@ enum TYPE {
 	ENEMIES, ALL_FIELD, PLAYERS, ALL_POKEMON
 }
 
-var move: BattleMove
-var type: TYPE:
-	get: return move.base_data.get_target_id() as TYPE
+var scope: Scope
+var _target_object  # BattlePokemon, BattleSide o null (para FIELD)
 
-var selected_targets: Array[BattleSpot] = []
-var _targetCursor: int = -1
-var canceled:= false
-
-func _init(move_instance: BattleMove):
-	self.move = move_instance
-
-func get_actual_target() -> BattleSpot:
-	if selected_targets.is_empty() or _targetCursor >= selected_targets.size():
-		return null
-	return selected_targets[_targetCursor]
-
-func nextTarget() -> bool:
-	_targetCursor += 1
-	return get_actual_target() != null
-
-#func select_targets() -> void:
-	#selected_targets.clear()
-	#_targetCursor = -1
-#
-	#match type:
-		#TYPE.SELECCIONAR:
-			#if move.pokemon.controllable:
-				#await await_manual_selection(_get_selectable_enemy_spots())
-			#else:
-				#selected_targets.append(_get_random_enemy_spot())
-#
-		#TYPE.USER:
-			#selected_targets.append(move.pokemon.battle_spot)
-#
-		#TYPE.ENEMIES:
-			#selected_targets = _get_enemy_spots()
-#
-		#TYPE.PLAYERS:
-			#selected_targets = _get_player_spots()
-#
-		## Otros tipos según necesidad...
-
-func select_targets() -> void:
-	selected_targets.clear()
-	_targetCursor = -1
-
-	match type:
-		TYPE.ESPECIFICO:
-			# No se selecciona en combate, se usa internamente
-			pass
-
-		TYPE.YO_PRIMERO:
-			selected_targets.append(move.pokemon.battle_spot)
-
-		TYPE.ALIADO:
-			selected_targets.append(_get_ally_spot())
-
-		TYPE.BASE_PLAYER:
-			selected_targets.append(_get_player_base_spot())
-
-		TYPE.USER_OR_ALLY:
-			selected_targets.append(_get_user_or_ally_spot())
-
-		TYPE.BASE_ENEMY:
-			selected_targets.append(_get_enemy_base_spot())
-
-		TYPE.USER:
-			selected_targets.append(move.pokemon.battle_spot)
-
-		TYPE.RANDOM_ENEMY:
-			selected_targets.append(_get_random_enemy_spot())
-
-		TYPE.ALL_OTHER:
-			selected_targets = _get_all_other_spots()
-
-		TYPE.SELECCIONAR:
-			if move.pokemon.controllable:
-				await await_manual_selection(_get_selectable_enemy_spots())
-			else:
-				selected_targets.append(_get_random_enemy_spot())
-
-		TYPE.ENEMIES:
-			selected_targets = _get_enemy_spots()
-
-		TYPE.ALL_FIELD:
-			selected_targets = _get_all_field_spots()
-
-		TYPE.PLAYERS:
-			selected_targets = _get_player_spots()
-
-		TYPE.ALL_POKEMON:
-			selected_targets = _get_all_pokemon_spots()
-
-		_:
-			push_warning("Target type no manejado: %s" % str(type))
-
-
-func set_manual_target(spot: BattleSpot) -> void:
-	if spot == null:
-		canceled = true
-		emit_signal("target_selected")
-		return
-	canceled = false
-	selected_targets = [spot]
-	_targetCursor = 0
-	emit_signal("target_selected")
-
-# --------------------------------------
-# Métodos auxiliares
-
-func _get_enemy_spots() -> Array[BattleSpot]:
-	return move.pokemon.get_opponent_side().battle_spots.filter(
-		func(s): return s.has_active_pokemon()
-	)
-
-func _get_player_spots() -> Array[BattleSpot]:
-	return move.pokemon.side.battle_spots.filter(
-		func(s): return s.has_active_pokemon()
-	)
-
-func _get_selectable_enemy_spots() -> Array[BattleSpot]:
-	var all := _get_enemy_spots()
-	return all if not all.is_empty() else []
-	
-func _get_random_enemy_spot() -> BattleSpot:
-	var enemies = _get_enemy_spots()
-	if enemies.is_empty(): return null
-	return enemies[randi() % enemies.size()]
-	
-func await_manual_selection(candidates: Array[BattleSpot]) -> void:
-	if candidates.size() == 1:
-		set_manual_target(candidates[0])
+## Constructor que detecta automáticamente el scope según el tipo de target
+func _init(target = null):
+	if target is BattlePokemon:
+		scope = Scope.POKEMON
+		_target_object = target
+	elif target is BattleSide:
+		scope = Scope.SIDE
+		_target_object = target
 	else:
-		emit_signal("request_manual_selection", candidates)
-		await target_selected
-	
-func get_candidate_spots() -> Array[BattleSpot]:
-	match type:
-		TYPE.SELECCIONAR:
-			return _get_selectable_enemy_spots()
-		#TYPE.USER_OR_ALLY:
-			#return _get_user_or_ally_spots()
-		# Otros tipos si quieres extenderlo...
+		# Si target es null o cualquier otro tipo, se considera FIELD
+		scope = Scope.FIELD
+		_target_object = null
+
+## Devuelve el objeto target (BattlePokemon, BattleSide o null)
+func get_target():
+	return _target_object
+
+## Devuelve un nombre representativo del target para debugging/UI
+func get_name() -> String:
+	match scope:
+		Scope.POKEMON:
+			if _target_object:
+				return _target_object.get_name()
+			return "Unknown Pokémon"
+		Scope.SIDE:
+			if _target_object:
+				return _target_object.to_string()
+			return "Unknown Side"
+		Scope.FIELD:
+			return "Field"
 		_:
-			return []
+			return "Unknown Target"
 
-func _get_ally_spot() -> BattleSpot:
-	# Devuelve el compañero del usuario si existe
-	return _get_player_spots().filter(func(s): return s != move.pokemon.battle_spot)[0]
+## Verifica si este target es de tipo Pokémon
+func is_pokemon() -> bool:
+	return scope == Scope.POKEMON
 
-func _get_user_or_ally_spot() -> BattleSpot:
-	return move.pokemon.battle_spot if _get_ally_spot() == null else _get_ally_spot()
+## Verifica si este target es de tipo Side
+func is_side() -> bool:
+	return scope == Scope.SIDE
 
-func _get_player_base_spot() -> BattleSpot:
-	# Nodo de la base del jugador (ej: suelo, decorativo)
+## Verifica si este target es de tipo Field
+func is_field() -> bool:
+	return scope == Scope.FIELD
+
+## Obtiene el Pokémon si el scope es POKEMON, sino null
+func get_pokemon() -> BattlePokemon:
+	if scope == Scope.POKEMON:
+		return _target_object as BattlePokemon
 	return null
 
-func _get_enemy_base_spot() -> BattleSpot:
+## Obtiene el Side si el scope es SIDE, sino null
+func get_side() -> BattleSide:
+	if scope == Scope.SIDE:
+		return _target_object as BattleSide
 	return null
-
-func _get_all_other_spots() -> Array:
-	var all := _get_all_pokemon_spots()
-	return all.filter(func(s): return s != move.pokemon.battle_spot)
-
-func _get_all_field_spots() -> Array:
-	return _get_player_spots() + _get_enemy_spots()
-
-func _get_all_pokemon_spots() -> Array:
-	return _get_all_field_spots().filter(func(s): return s.has_active_pokemon())

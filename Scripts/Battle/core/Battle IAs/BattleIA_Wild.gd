@@ -26,16 +26,13 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	
 	# Seleccionar un movimiento aleatorio
 	var index = randi() % moves.size()
-	var move = moves[index]
 	
 	# Crear la elección de movimiento
 	var choice = BattleMoveChoice.new()
 	choice.move_index = index
 	choice.pokemon = pokemon
 	
-	# Configurar los objetivos del movimiento
-	var target_handler = BattleTarget.new(move)
-	await target_handler.select_targets()
-	choice.target_handler = target_handler
+	# El sistema generará los targets automáticamente en resolve()
+	# No necesitamos hacer nada más aquí
 	
 	return choice

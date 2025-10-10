@@ -17,7 +17,7 @@ func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> vo
 	if phase == Phases.ON_ENTRY:
 		await show_effect_message(ui, "¡Comenzó a llover!", 1.5)
 	elif phase == Phases.ON_END_BATTLE_TURN:
-		if turns_left > 0:
+		if turns_left >= 0:
 			await show_effect_message(ui, "La lluvia sigue cayendo.", 1.0)
 		else:
 			await show_effect_message(ui, "La lluvia ha cesado.", 1.0)

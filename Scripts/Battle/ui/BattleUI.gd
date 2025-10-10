@@ -104,52 +104,39 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 
 	move_choice.pokemon = pokemon  # también aquí, por seguridad
 
-	# Crear el manejador de targets
-	var target_handler := await show_target_selection(move_choice.get_move())
-
-	if target_handler.canceled:
-		# Si el usuario cancela la selección de targets, se vuelve a mostrar el menú de movimientos
-		SignalManager.disconnect_all(target_handler.request_manual_selection)
-		SignalManager.disconnect_all(target_selector_ui.target_chosen)
-		return await show_move_selection(pokemon)
+	# Verificar si necesita selección manual de target
+	var move: BattleMove = move_choice.get_move()
+	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
 	
-	# Asignar el handler al BattleChoice
-	move_choice.target_handler = target_handler
+	if BattleTargetSelector.requires_manual_selection(target_type, pokemon):
+		var selected_spot := await show_target_selection(pokemon)
+		
+		if selected_spot == null:
+			# Usuario canceló la selección de target
+			return await show_move_selection(pokemon)
+		
+		move_choice.manual_selected_spot = selected_spot
+	
 	moves_menu.hide()
 	return move_choice
 
 
-func show_target_selection(move: BattleMove) -> BattleTarget:
-	# Crear el manejador de targets
-	var target_handler := BattleTarget.new(move)
+func show_target_selection(user: BattlePokemon) -> BattleSpot:
+	# Obtener los spots seleccionables
+	var candidates := BattleTargetSelector.get_selectable_spots(user)
 
-	# Conectar la petición de selección manual
-	target_handler.request_manual_selection.connect(func(_candidates):
-		request_target_selection(target_handler)
-	, CONNECT_ONE_SHOT)
+	if candidates.size() == 1:
+		return candidates[0]
 
-	# Ejecutar la lógica de selección de targets (manual o automática)
-	await target_handler.select_targets()
-
-	return target_handler
+	target_selector_ui.show_targets(candidates)
+	
+	# Esperar a que se seleccione un target - await devuelve directamente el parámetro de la señal
+	var selected_spot: BattleSpot = await target_selector_ui.target_chosen
+	
+	return selected_spot
 	
 func hide_action_menu():
 	actions_menu.hide()
-	
-func request_target_selection(target: BattleTarget) -> void:
-	var candidates = target.get_candidate_spots()
-
-	if candidates.size() == 1:
-		target.set_manual_target(candidates[0])
-		return
-
-	SignalManager.disconnect_all(target_selector_ui.target_chosen)
-
-	target_selector_ui.target_chosen.connect(func(spot):
-		target.set_manual_target(spot)
-	, CONNECT_ONE_SHOT)
-
-	target_selector_ui.show_targets(candidates)
 
 	
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
