@@ -40,18 +40,11 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	choice.move_index = best_choice.move_index
 	choice.pokemon = pokemon
 	
-	# Configurar los objetivos del movimiento
+	# Configurar los objetivos del movimiento (sin UI) con la lógica
 	var move = moves[best_choice.move_index]
-	var target_handler = BattleTarget.new(move)
-	
-	# Si el movimiento requiere selección manual de objetivo, pre-seleccionarlo
-	if best_choice.has("target_spot") and best_choice.target_spot != null:
-		target_handler.set_manual_target(best_choice.target_spot)
-	else:
-		# Para movimientos multi-objetivo o auto-target
-		await target_handler.select_targets()
-	
-	choice.target_handler = target_handler
+	var selector := BattleTargetSelector.new()
+	var manual_spot: BattleSpot = best_choice.target_spot if best_choice.has("target_spot") else null
+	choice.targets = selector.resolve_targets(move, pokemon, manual_spot)
 	
 	return choice
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bwgrjg6m68rr"]
 
-[ext_resource type="Script" uid="uid://mor40o6k3xpu" path="res://Scripts/Battle/core/BattleTargetSelector.gd" id="1_o3wcj"]
+[ext_resource type="Script" uid="uid://bpgt41pn4lkx3" path="res://Scripts/Battle/core/BattleTargetSelectorUI.gd" id="1_o3wcj"]
 
 [node name="SelectorUI" type="Control"]
 layout_mode = 3

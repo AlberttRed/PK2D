@@ -6,8 +6,7 @@ var move_index: int = -1
 
 # Array de BattleTarget generados para este movimiento
 var targets: Array[BattleTarget] = []
-# Para selección manual, guardamos el spot seleccionado
-var manual_selected_spot: BattleSpot = null
+## Los targets serán asignados por BattleUI antes de resolver
 
 func get_move() -> BattleMove:
 	if not pokemon or move_index == -1:
@@ -24,9 +23,6 @@ func resolve() -> Array[BattleHandler]:
 	var move_instance := get_move()
 	if not move_instance:
 		return handlers
-	
-	# Generar los targets usando BattleTargetSelector
-	targets = BattleTargetSelector.generate_targets(move_instance, pokemon, manual_selected_spot)
 	
 	if targets.is_empty():
 		return handlers

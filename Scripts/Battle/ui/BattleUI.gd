@@ -9,6 +9,7 @@ class_name BattleUI
 @onready var message_box:MessageBox = $MessageBox
 @onready var moves_menu = $MovesMenu
 @onready var target_selector_ui = $TargetSelectorUI
+var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
 
 func _ready() -> void:
@@ -104,26 +105,31 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 
 	move_choice.pokemon = pokemon  # también aquí, por seguridad
 
-	# Verificar si necesita selección manual de target
+	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
 	var move: BattleMove = move_choice.get_move()
 	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
 	
-	if BattleTargetSelector.requires_manual_selection(target_type, pokemon):
-		var selected_spot := await show_target_selection(pokemon)
+	var selected_spot: BattleSpot = null
+	if target_selector != null and target_selector.requires_manual_selection(target_type, pokemon):
+		selected_spot = await show_target_selection(pokemon)
 		
 		if selected_spot == null:
 			# Usuario canceló la selección de target
 			return await show_move_selection(pokemon)
-		
-		move_choice.manual_selected_spot = selected_spot
+	
+	# Generar los targets aquí usando la lógica y asignarlos al choice
+	if target_selector != null:
+		move_choice.targets = target_selector.resolve_targets(move, pokemon, selected_spot)
 	
 	moves_menu.hide()
 	return move_choice
 
 
 func show_target_selection(user: BattlePokemon) -> BattleSpot:
-	# Obtener los spots seleccionables
-	var candidates := BattleTargetSelector.get_selectable_spots(user)
+	# Obtener los spots seleccionables con la lógica
+	var candidates: Array[BattleSpot] = []
+	if target_selector != null:
+		candidates = target_selector.get_selectable_spots(user)
 
 	if candidates.size() == 1:
 		return candidates[0]
@@ -182,6 +188,7 @@ func show_critical_hit_message() -> void:
 
 func show_heal_message(pokemon: BattlePokemon, amount: int) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon, amount))
+	
 
 func show_drain_message(pokemon: BattlePokemon, amount: int) -> void:
 	await show_message_from_dict(message_controller.get_drain_message(pokemon, amount))

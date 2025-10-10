@@ -17,10 +17,11 @@ func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> vo
 	if phase == Phases.ON_ENTRY:
 		await show_effect_message(ui, "¡Comenzó a llover!", 1.5)
 	elif phase == Phases.ON_END_BATTLE_TURN:
-		if turns_left >= 0:
-			await show_effect_message(ui, "La lluvia sigue cayendo.", 1.0)
-		else:
+		if has_finished():
 			await show_effect_message(ui, "La lluvia ha cesado.", 1.0)
+			return
+		
+		await show_effect_message(ui, "La lluvia sigue cayendo.", 1.0)
 
 # Modificador de poder para movimientos según tipo
 func on_modifier(modifier_type: int, move: BattleMove, _user, _target, value):
