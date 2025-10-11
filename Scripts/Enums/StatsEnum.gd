@@ -12,14 +12,13 @@ enum Values {
 	HP
 }
 
-static func stat_to_string(stat: Values) -> String:
+static func get_display_name(stat: StatsEnum.Values) -> String:
 	match stat:
-		Values.ATTACK: return "Ataque"
-		Values.DEFENSE: return "Defensa"
-		Values.SP_ATTACK: return "Ataque Especial"
-		Values.SP_DEFENSE: return "Defensa Especial"
-		Values.SPEED: return "Velocidad"
-		Values.ACCURACY: return "Precisión"
-		Values.EVASION: return "Evasión"
-		Values.HP: return "HP"
+		StatsEnum.Values.ATTACK: return "Ataque"
+		StatsEnum.Values.DEFENSE: return "Defensa"
+		StatsEnum.Values.SP_ATTACK: return "At. Esp."
+		StatsEnum.Values.SP_DEFENSE: return "Def. Esp."
+		StatsEnum.Values.SPEED: return "Velocidad"
+		StatsEnum.Values.ACCURACY: return "Precisión"
+		StatsEnum.Values.EVASION: return "Evasión"
 		_: return "Desconocido"
