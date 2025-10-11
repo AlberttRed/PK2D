@@ -22,16 +22,14 @@ func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> vo
 			return
 		await ui.show_message_from_dict(ui.message_controller.get_ongoing_weather_message(source.id))
 
-# Modificador de poder para movimientos según tipo
-func on_modifier(modifier_type: int, move: BattleMove, _user, _target, value):
-	if modifier_type == BattleEffect.Modifiers.MOVE_POWER:
-		var move_type = move.get_type()
-		# Aumentar poder de movimientos Agua en 50%
-		if move_type.id == TypesEnum.Values.WATER:
-			return value * 1.5
-		# Reducir poder de movimientos Fuego en 50%
-		elif move_type.id == TypesEnum.Values.FIRE:
-			return value * 0.5
+func on_power(move: BattleMove, _user, _target, value):
+	var move_type = move.get_type()
+	# Aumentar poder de movimientos Agua en 50%
+	if move_type.id == TypesEnum.Values.WATER:
+		return value * 1.5
+	# Reducir poder de movimientos Fuego en 50%
+	elif move_type.id == TypesEnum.Values.FIRE:
+		return value * 0.5
 	return value
 
 func get_priority() -> int:
