@@ -549,7 +549,7 @@ func log_pokemon_stats() -> void:
 		var final = self.get_final_stat(stat)
 		var modifier = nature.get_stat_multiplier(stat) if nature else 1.0
 		var icon = "↑" if modifier > 1.0 else "↓" if modifier < 1.0 else "–"
-		var stat_name = StatsEnum.stat_to_string(stat)
+		var stat_name = StatsEnum.get_display_name(stat)
 
 		print("%-17s Base: %3d | IV: %2d | EV: %3d | Total: %3d | %s" %
 			[stat_name + ":", base, iv, ev, final, icon])

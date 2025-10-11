@@ -183,8 +183,8 @@ func show_heal_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon))
 	
 
-func show_drain_message(pokemon: BattlePokemon, amount: int) -> void:
-	await show_message_from_dict(message_controller.get_drain_message(pokemon, amount))
+func show_drain_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_drain_message(pokemon))
 
 func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int):
 	await show_message_from_dict(message_controller.get_stat_stage_change_message(pokemon, stat, amount))

@@ -33,6 +33,4 @@ func visualize(ui: BattleUI) -> void:
 	# Luego visualizar curación
 	await heal.visualize(ui)
 	# Mostrar mensaje específico de drenaje
-	await ui.show_drain_message(user, heal.amount)
-
-
+	await ui.show_drain_message(user)

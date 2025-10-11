@@ -108,7 +108,7 @@ static func log_damage_calculation(effect: DamageEffect, final_mods: Array = [])
 		var nature = user.nature
 		var mult = nature.get_stat_multiplier(atk_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatsEnum.stat_to_string(atk_stat).capitalize()
+		var stat_name = StatsEnum.get_display_name(atk_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("Defensor: %s (Nivel %d)" % [target.get_display_name(), target_level])
@@ -118,7 +118,7 @@ static func log_damage_calculation(effect: DamageEffect, final_mods: Array = [])
 		var nature = target.nature
 		var mult = nature.get_stat_multiplier(def_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatsEnum.stat_to_string(def_stat).capitalize()
+		var stat_name = StatsEnum.get_display_name(def_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("STAB: %.1f | Crítico: %s | Efectividad: %.1f" %
