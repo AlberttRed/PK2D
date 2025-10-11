@@ -34,7 +34,7 @@ func get_start_field_effect_message(effect_id: int, side: BattleSide = null) -> 
 
 
 func get_end_field_effect_message(effect_id: int, side: BattleSide = null) -> Dictionary:
-    var side_name := "tu equipo"
+    var side_name := "de alguien"
     if side != null:
         side_name = "tu equipo" if side.type == BattleSide.Types.PLAYER else "el equipo rival"
     var msg:String = ""

@@ -88,7 +88,7 @@ func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 	elif result.is_not_very_effective():
 		return { "type": "wait", "text": "No es muy eficaz...", "wait_time": 1.0 }
 	elif result.is_ineffective():
-		return { "type": "wait", "text": "No afecta a %s..." % result.target.get_battle_display_name(), "wait_time": 1.0 }
+		return { "type": "wait", "text": "No afecta %s..." % result.target.get_battle_target_name(), "wait_time": 1.0 }
 	
 	return {}
 	

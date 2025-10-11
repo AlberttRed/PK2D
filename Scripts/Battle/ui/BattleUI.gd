@@ -228,7 +228,6 @@ func show_end_effect_message(family: MessageFamily.Values, user: BattlePokemon =
 	await show_message_from_dict(msg)
 
 func show_already_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0, has_other_status: bool = false) -> void:
-	var side: BattleSide = user.side if user != null else null
 	var msg: Dictionary = message_controller.get_already_effect_message(family, user, source_id, has_other_status)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)

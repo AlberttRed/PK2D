@@ -147,6 +147,14 @@ func get_battle_possessive_name() -> String:
 	else:
 		return "del %s rival" % get_name()
 
+func get_battle_target_name() -> String:
+	if controllable:
+		return "a %s" % get_display_name()
+	elif is_wild:
+		return "al %s salvaje" % get_name()
+	else:
+		return "al %s rival" % get_name()
+
 func get_level() -> int:
 	return base_data.level
 	

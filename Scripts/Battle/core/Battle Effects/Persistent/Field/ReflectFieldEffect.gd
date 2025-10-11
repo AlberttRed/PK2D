@@ -17,9 +17,9 @@ func apply_phase(_pokemon, phase: Phases) -> void:
 
 func visualize_phase(_pokemon, ui: BattleUI, phase: Phases) -> void:
 	if phase == Phases.ON_ENTRY:
-		await ui.show_start_effect_message(MessageFamily.Values.FIELD_EFFECT, null, source.get_id())
+		await ui.show_start_effect_message(MessageFamily.Values.FIELD_EFFECT, source.pokemon, source.get_id())
 	elif phase == Phases.ON_END_BATTLE_TURN and has_finished():
-		await ui.show_end_effect_message(MessageFamily.Values.FIELD_EFFECT, null, source.get_id())
+		await ui.show_end_effect_message(MessageFamily.Values.FIELD_EFFECT, source.pokemon, source.get_id())
 
 func on_damage(effect: DamageEffect) -> void:
 	if effect.is_critical:
