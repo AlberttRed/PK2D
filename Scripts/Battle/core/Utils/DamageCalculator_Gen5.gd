@@ -43,8 +43,8 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	effect.is_stab = (stab > 1.0)
 
 	# Paso 8: Modificadores de daño final (defensor, globales)
-	ModifierEngine.apply_final_damage(effect)
-	log_damage_calculation(effect)
+	var final_mods = ModifierEngine.apply_final_damage_with_log(effect)
+	log_damage_calculation(effect, final_mods)
 	return effect
 
 static func get_crit_chance(stage: int) -> float:
@@ -58,7 +58,7 @@ static func is_critical_hit(stage: int) -> bool:
 	return randf() < get_crit_chance(stage)
 
 
-static func log_damage_calculation(effect: DamageEffect) -> void:
+static func log_damage_calculation(effect: DamageEffect, final_mods: Array = []) -> void:
 	var user = effect.user
 	var target = effect.target
 	var move = effect.move
@@ -77,6 +77,10 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var power_data = apply_power_modifiers(move, user, target, base_power)
 	var power = power_data.power
 	var modifiers = power_data.modifiers
+
+	# (Opcional) Calcular y mostrar modificadores de precisión si tu flujo los usa antes del cálculo de impacto
+	# var acc_data = ModifierEngine.apply_accuracy(move, user, target, move.get_accuracy())
+	# var acc_mods = acc_data.modifiers
 
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 	var crit = 2.0 if effect.is_critical else 1.0
@@ -120,6 +124,13 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	print("STAB: %.1f | Crítico: %s | Efectividad: %.1f" %
 		[stab, str(effect.is_critical), effectiveness])
 	print("Daño final calculado: %d" % total)
+	if final_mods and not final_mods.is_empty():
+		var mods_strings := []
+		for m in final_mods:
+			var sign_str = "+" if m.multiplier > 1.0 else ""
+			var percent_change = (m.multiplier - 1.0) * 100.0
+			mods_strings.append("%s (%s%.0f%%)" % [m.name, sign_str, percent_change])
+		print("Modificadores de daño final: %s" % ", ".join(mods_strings))
 
 	# Mostrar los 39 posibles daños con su frecuencia
 	var damage_counts := {}

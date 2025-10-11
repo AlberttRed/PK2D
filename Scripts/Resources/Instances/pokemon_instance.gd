@@ -383,6 +383,7 @@ func load_moves():
 	
 	# Forzar "Danza Lluvia" (id 240) para test de efectos de clima
 	movements.insert(0, MoveInstance.new(MovesEnum.Values.RAIN_DANCE))
+	movements.insert(0, MoveInstance.new(MovesEnum.Values.REFLECT))
 	
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	#movements.insert(0, MoveInstance.new(52))

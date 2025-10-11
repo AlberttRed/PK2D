@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://coobi1yk80hle"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_ekkcl"]
-[ext_resource type="Script" uid="uid://f9t1q3rjv4m1r" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/ReflectMoveEffect.gd" id="4_moveeffect"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_xr7bb"]
 [ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_42jtu"]
+[ext_resource type="Script" uid="uid://b3pkdy62lb1q3" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/ReflectMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "115 - Reflejo"
@@ -40,5 +40,5 @@ meta_ailment_chance = 0
 meta_flinch_chance = 0
 meta_stat_chance = 0
 contact_flag = false
-category = ExtResource("1_ekkcl")
 move_effect = ExtResource("4_moveeffect")
+category = ExtResource("1_ekkcl")
