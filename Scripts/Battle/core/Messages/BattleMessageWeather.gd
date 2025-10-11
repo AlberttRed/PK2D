@@ -6,9 +6,9 @@ func get_start_weather_message(weather_id: int) -> Dictionary:
 	var msg:String = ""
 	match weather_id:
 		WeathersEnum.Values.RAIN:
-			msg = "¡Comenzó a llover!"
+			msg = "¡Ha empezado a llover!" #Validado HGSS
 		WeathersEnum.Values.SUN:
-			msg = "¡El sol brilla intensamente!"
+			msg = "¡El sol está brillando!" #Validado HGSS
 		WeathersEnum.Values.SANDSTORM:
 			msg = "¡Se desató una tormenta de arena!"
 		WeathersEnum.Values.HAIL:
@@ -34,9 +34,9 @@ func get_ongoing_weather_message(weather_id: int) -> Dictionary:
 	var msg:String = ""
 	match weather_id:
 		WeathersEnum.Values.RAIN:
-			msg = "La lluvia sigue cayendo."
+			msg = "Sigue lloviendo..." #Validado HGSS
 		WeathersEnum.Values.SUN:
-			msg = "La luz solar es intensa."
+			msg = "Hace mucho sol..." #Validado HGSS
 		WeathersEnum.Values.SANDSTORM:
 			msg = "La tormenta de arena continúa."
 		WeathersEnum.Values.HAIL:
@@ -62,9 +62,9 @@ func get_end_weather_message(weather_id: int) -> Dictionary:
 	var msg:String = ""
 	match weather_id:
 		WeathersEnum.Values.RAIN:
-			msg = "La lluvia ha cesado."
+			msg = "Ha dejado de llover." #Validado HGSS
 		WeathersEnum.Values.SUN:
-			msg = "La luz solar se desvaneció."
+			msg = "Se ha ido el sol." #Validado HGSS
 		WeathersEnum.Values.SANDSTORM:
 			msg = "La tormenta de arena amainó."
 		WeathersEnum.Values.HAIL:
@@ -86,31 +86,8 @@ func get_end_weather_message(weather_id: int) -> Dictionary:
 	}
 
 
-func get_already_active_weather_message(weather_id: int) -> Dictionary:
-	var msg:String = ""
-	match weather_id:
-		WeathersEnum.Values.RAIN:
-			msg = "¡Pero ya está lloviendo!"
-		WeathersEnum.Values.SUN:
-			msg = "¡Pero la luz solar ya es intensa!"
-		WeathersEnum.Values.SANDSTORM:
-			msg = "¡Pero ya hay una tormenta de arena!"
-		WeathersEnum.Values.HAIL:
-			msg = "¡Pero ya está granizando!"
-		WeathersEnum.Values.SNOW:
-			msg = "¡Pero ya está nevando!"
-		WeathersEnum.Values.FOG:
-			msg = "¡Pero ya hay niebla en el campo!"
-		WeathersEnum.Values.WIND:
-			msg = "¡Pero el viento ya arrecia!"
-		_:
-			push_warning("Invalid Weather on get_already_active_weather_message()")
-			return {}
-
-	return {
-		"type": "wait",
-		"text": msg,
-		"wait_time": 1.0
-	}
+func get_already_active_weather_message() -> Dictionary:
+	return { "type": "wait", "text": "¡Pero falló!", "wait_time": 1.0 }
+	
 
 

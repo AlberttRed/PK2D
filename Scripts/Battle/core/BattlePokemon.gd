@@ -127,6 +127,34 @@ func get_display_name() -> String:
 	else:
 		return base_data.Name
 
+func get_battle_display_name(upper:bool = false) -> String:
+	var display_name = ""
+	
+	if controllable:
+		display_name = get_display_name()
+	elif is_wild:
+		display_name = "el %s salvaje" % get_name()
+	else:
+		display_name = "el %s rival" % get_name()
+
+	return display_name[0].to_upper() + display_name.substr(1) if upper else display_name
+
+func get_battle_possessive_name() -> String:
+	if controllable:
+		return "de %s" % get_display_name()
+	elif is_wild:
+		return "del %s salvaje" % get_name()
+	else:
+		return "del %s rival" % get_name()
+
+func get_battle_target_name() -> String:
+	if controllable:
+		return "a %s" % get_display_name()
+	elif is_wild:
+		return "al %s salvaje" % get_name()
+	else:
+		return "al %s rival" % get_name()
+
 func get_level() -> int:
 	return base_data.level
 	

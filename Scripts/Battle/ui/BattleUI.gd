@@ -179,12 +179,12 @@ func show_critical_hit_message() -> void:
 	await show_message_from_dict(message_controller.get_critical_hit_message())
 	clear_message_box()
 
-func show_heal_message(pokemon: BattlePokemon, amount: int) -> void:
-	await show_message_from_dict(message_controller.get_heal_message(pokemon, amount))
+func show_heal_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_heal_message(pokemon))
 	
 
-func show_drain_message(pokemon: BattlePokemon, amount: int) -> void:
-	await show_message_from_dict(message_controller.get_drain_message(pokemon, amount))
+func show_drain_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_drain_message(pokemon))
 
 func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int):
 	await show_message_from_dict(message_controller.get_stat_stage_change_message(pokemon, stat, amount))
@@ -193,8 +193,8 @@ func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, abi
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability_id))
 
 # Mensajes de escape/huida
-func show_escape_message(pokemon_name: String, is_trainer_battle: bool, escape_succeeded: bool) -> void:
-	await show_message_from_dict(message_controller.get_escape_message(pokemon_name, is_trainer_battle, escape_succeeded))
+func show_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> void:
+	await show_message_from_dict(message_controller.get_escape_message(pokemon, is_trainer_battle, escape_succeeded))
 
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
@@ -210,76 +210,30 @@ func show_faint_message(pokemon: BattlePokemon) -> void:
 
 
 # API unificada por variante (source es SIEMPRE int id)
-func show_start_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> void:
-	var msg: Dictionary = {}
-	match family:
-		FAMILY.AILMENT:
-			msg = message_controller.get_start_ailment_message(user, source)
-		FAMILY.ABILITY:
-			msg = message_controller.get_start_ability_message(user, source)
-		FAMILY.WEATHER:
-			msg = message_controller.get_start_weather_message(source)
-		FAMILY.FIELD_EFFECT:
-			msg = message_controller.get_start_field_effect_message(source, "tu lado")
-		_:
-			pass
+func show_start_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
+	var side: BattleSide = user.side if user != null else null
+	var msg: Dictionary = message_controller.get_start_effect_message(family, user, source_id, side)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> void:
-	var msg: Dictionary = {}
-	match family:
-		FAMILY.AILMENT:
-			msg = message_controller.get_ailment_effect_message(user, source)
-		FAMILY.ABILITY:
-			# TODO: si se necesita, derivar target dentro del controller/handlers
-			msg = message_controller.get_ability_effect_message(user, null, source)
-		FAMILY.WEATHER:
-			msg = message_controller.get_ongoing_weather_message(source)
-		FAMILY.FIELD_EFFECT:
-			pass
-		_:
-			pass
+func show_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
+	var msg: Dictionary = message_controller.get_effect_message(family, user, source_id)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_end_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> void:
-	var msg: Dictionary = {}
-	match family:
-		FAMILY.AILMENT:
-			msg = message_controller.get_end_ailment_message(user, source)
-		FAMILY.ABILITY:
-			msg = message_controller.get_end_ability_message(user, source)
-		FAMILY.WEATHER:
-			msg = message_controller.get_end_weather_message(source)
-		FAMILY.FIELD_EFFECT:
-			msg = message_controller.get_end_field_effect_message(source, "tu lado")
-		_:
-			pass
+func show_end_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
+	var side: BattleSide = user.side if user != null else null
+	var msg: Dictionary = message_controller.get_end_effect_message(family, user, source_id, side)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_already_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, has_other_status: bool = false) -> void:
-	var msg: Dictionary = {}
-	match family:
-		FAMILY.AILMENT:
-			msg = message_controller.get_already_ailment_message(user, source, has_other_status)
-		FAMILY.WEATHER:
-			msg = message_controller.get_already_active_weather_message(source)
-		FAMILY.FIELD_EFFECT:
-			msg = message_controller.get_already_active_field_effect_message(source, "tu lado")
-		_:
-			pass
+func show_already_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0, has_other_status: bool = false) -> void:
+	var msg: Dictionary = message_controller.get_already_effect_message(family, user, source_id, has_other_status)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> void:
-	var msg: Dictionary = {}
-	match family:
-		FAMILY.AILMENT:
-			msg = message_controller.get_ailment_previous_effect_message(user, source)
-		_:
-			pass
+func show_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
+	var msg: Dictionary = message_controller.get_previous_effect_message(family, user, source_id)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 

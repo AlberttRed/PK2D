@@ -17,6 +17,9 @@ func _init(_base_data: MoveInstance, _pokemon: BattlePokemon):
 	self.base_data = _base_data
 	self.pokemon = _pokemon
 
+func get_id() -> int:
+	return base_data.id
+
 func get_name() -> String:
 	return base_data.Name
 

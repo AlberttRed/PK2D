@@ -23,6 +23,6 @@ func apply():
 func visualize(ui: BattleUI):
 	# Mostrar mensajes según si ya estaba activa la lluvia
 	if already_active:
-		await ui.show_message_from_dict(ui.message_controller.get_already_active_weather_message(weather.id))
+		await ui.show_already_effect_message(MessageFamily.Values.WEATHER, null, weather.id)
 		return
-	await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(weather.id))
+	await ui.show_start_effect_message(MessageFamily.Values.WEATHER, null, weather.id)

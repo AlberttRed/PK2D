@@ -10,8 +10,8 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var level = user.get_level()
 	var power = move.get_power()
 	
-	# Aplicar modificadores de efectos activos (clima, etc.)
-	var power_data = apply_power_modifiers(move, user, target, power)
+	# Aplicar modificadores de potencia (atacante, globales)
+	var power_data = ModifierEngine.apply_power(move, user, target, power)
 	power = power_data.power
 
 	# Paso 1: Daño base
@@ -41,7 +41,10 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	effect.effectiveness = effectiveness
 	effect.is_critical = is_crit && !effect.is_ineffective()
 	effect.is_stab = (stab > 1.0)
-	log_damage_calculation(effect)
+
+	# Paso 8: Modificadores de daño final (defensor, globales)
+	var final_mods = ModifierEngine.apply_final_damage_with_log(effect)
+	log_damage_calculation(effect, final_mods)
 	return effect
 
 static func get_crit_chance(stage: int) -> float:
@@ -55,7 +58,7 @@ static func is_critical_hit(stage: int) -> bool:
 	return randf() < get_crit_chance(stage)
 
 
-static func log_damage_calculation(effect: DamageEffect) -> void:
+static func log_damage_calculation(effect: DamageEffect, final_mods: Array = []) -> void:
 	var user = effect.user
 	var target = effect.target
 	var move = effect.move
@@ -74,6 +77,10 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 	var power_data = apply_power_modifiers(move, user, target, base_power)
 	var power = power_data.power
 	var modifiers = power_data.modifiers
+
+	# (Opcional) Calcular y mostrar modificadores de precisión si tu flujo los usa antes del cálculo de impacto
+	# var acc_data = ModifierEngine.apply_accuracy(move, user, target, move.get_accuracy())
+	# var acc_mods = acc_data.modifiers
 
 	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 	var crit = 2.0 if effect.is_critical else 1.0
@@ -101,7 +108,7 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 		var nature = user.nature
 		var mult = nature.get_stat_multiplier(atk_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatsEnum.stat_to_string(atk_stat).capitalize()
+		var stat_name = StatsEnum.get_display_name(atk_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("Defensor: %s (Nivel %d)" % [target.get_display_name(), target_level])
@@ -111,12 +118,19 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 		var nature = target.nature
 		var mult = nature.get_stat_multiplier(def_stat)
 		var icon = "↑" if mult > 1.0 else "↓" if mult < 1.0 else "–"
-		var stat_name = StatsEnum.stat_to_string(def_stat).capitalize()
+		var stat_name = StatsEnum.get_display_name(def_stat).capitalize()
 		print("  - Naturaleza: %s | %s %s (%.1fx)" % [nature.display_name, icon, stat_name, mult])
 
 	print("STAB: %.1f | Crítico: %s | Efectividad: %.1f" %
 		[stab, str(effect.is_critical), effectiveness])
 	print("Daño final calculado: %d" % total)
+	if final_mods and not final_mods.is_empty():
+		var mods_strings := []
+		for m in final_mods:
+			var sign_str = "+" if m.multiplier > 1.0 else ""
+			var percent_change = (m.multiplier - 1.0) * 100.0
+			mods_strings.append("%s (%s%.0f%%)" % [m.name, sign_str, percent_change])
+		print("Modificadores de daño final: %s" % ", ".join(mods_strings))
 
 	# Mostrar los 39 posibles daños con su frecuencia
 	var damage_counts := {}
@@ -139,47 +153,8 @@ static func log_damage_calculation(effect: DamageEffect) -> void:
 # Aplica modificadores de efectos activos al poder del movimiento
 # Retorna un Dictionary con {power: int, modifiers: Array[Dictionary]}
 static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target: BattlePokemon, base_power: int) -> Dictionary:
-	var modified_power = float(base_power)
-	var modifiers_applied := []
-	
-	# Obtener todos los efectos activos que afectan al usuario
-	var all_effects = BattleEffectController.get_all_effects_for(user)
-	
-	# Aplicar modificador de cada efecto
-	for effect in all_effects:
-		if effect.has_method("on_modifier"):
-			var old_power = modified_power
-			modified_power = effect.on_modifier(
-				BattleEffect.Modifiers.MOVE_POWER,
-				move,
-				user,
-				target,
-				modified_power
-			)
-			
-			# Si el efecto modificó la potencia, registrarlo
-			if modified_power != old_power:
-				var effect_name = "Efecto desconocido"
-				if effect.get_script() and effect.get_script().get_global_name():
-					effect_name = effect.get_script().get_global_name()
-				# Remover el sufijo "Effect" del nombre si existe
-				if effect_name.ends_with("Effect"):
-					effect_name = effect_name.substr(0, effect_name.length() - 6)
-				# Convertir de CamelCase a texto legible
-				effect_name = _format_effect_name(effect_name)
-				
-				var multiplier = modified_power / old_power
-				modifiers_applied.append({
-					"name": effect_name,
-					"old_value": old_power,
-					"new_value": modified_power,
-					"multiplier": multiplier
-				})
-	
-	return {
-		"power": int(modified_power),
-		"modifiers": modifiers_applied
-	}
+	# Retrocompat: delega al motor nuevo
+	return ModifierEngine.apply_power(move, user, target, base_power)
 
 # Convierte nombres de efectos de CamelCase a formato legible
 static func _format_effect_name(name: String) -> String:

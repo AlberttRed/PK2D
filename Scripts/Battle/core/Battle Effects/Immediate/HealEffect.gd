@@ -19,6 +19,7 @@ func apply():
 
 func visualize(_ui: BattleUI):
 	if amount > 0:
-		await target.battle_spot.play_heal_animation()
+		# La animacion de heal solo se muestra en objetos (pociones etc). Aqui solo se aplica la animacion del move.
+		#await target.battle_spot.play_heal_animation()
 		await target.battle_spot.apply_heal(amount)
 		# El mensaje se maneja en el handler específico

@@ -5,6 +5,7 @@ var AilmentMessages = BattleMessageAilment.new()
 var AbilityMessages = BattleMessageAbility.new()
 var WeatherMessages = BattleMessageWeather.new()
 var FieldEffectMessages = BattleMessageFieldEffect.new()
+const FAMILY := MessageFamily.Values
 
 func get_intro_messages(
 	rules: BattleRules,
@@ -87,31 +88,31 @@ func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 	elif result.is_not_very_effective():
 		return { "type": "wait", "text": "No es muy eficaz...", "wait_time": 1.0 }
 	elif result.is_ineffective():
-		return { "type": "wait", "text": "No afecta a %s..." % result.target.get_name(), "wait_time": 1.0 }
+		return { "type": "wait", "text": "No afecta %s..." % result.target.get_battle_target_name(), "wait_time": 1.0 }
 	
 	return {}
 	
 func get_critical_hit_message() -> Dictionary:
 	return { "type": "wait", "text": "¡Golpe crítico!", "wait_time": 1.0 }
 
-func get_heal_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
+func get_heal_message(pokemon: BattlePokemon) -> Dictionary:
 	return {
 		"type": "display",
-		"text": "¡%s recuperó %d PS!" % [pokemon.get_name(), amount],
+		"text": "¡%s recuperó salud!" % [pokemon.get_battle_display_name(true)],
 		"wait_time": 1.0
 	}
 
-func get_drain_message(pokemon: BattlePokemon, amount: int) -> Dictionary:
+func get_drain_message(target: BattlePokemon) -> Dictionary:
 	return {
 		"type": "display",
-		"text": "¡%s absorbió %d PS!" % [pokemon.get_name(), amount],
+		"text": "¡%s ha perdido energía!" % [target.get_battle_display_name(true)],
 		"wait_time": 1.0
 	}
 
 func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 	return {
 		"type": "display",
-		"text": "¡%s ha usado %s!" % [user.get_name(), move.get_name()],
+		"text": "¡%s ha usado %s!" % [user.get_battle_display_name(true), move.get_name()],
 		"wait_time": 0.5
 	}
 
@@ -170,32 +171,89 @@ func get_end_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
 		return {}
 	return WeatherMessages.get_end_weather_message(weather_id)
 
-func get_already_active_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
-	if weather_id == WeathersEnum.Values.NONE:
-		return {}
-	return WeatherMessages.get_already_active_weather_message(weather_id)
+func get_already_active_weather_message() -> Dictionary:
+	return WeatherMessages.get_already_active_weather_message()
 
-func get_start_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
+func get_start_field_effect_message(effect_id: FieldEffectsEnum.Values, side: BattleSide = null) -> Dictionary:
 	if effect_id < 0:
 		return {}
-	return FieldEffectMessages.get_start_field_effect_message(effect_id, side_name)
+	return FieldEffectMessages.get_start_field_effect_message(effect_id, side)
 
-func get_end_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
+func get_end_field_effect_message(effect_id: FieldEffectsEnum.Values, side: BattleSide = null) -> Dictionary:
 	if effect_id < 0:
 		return {}
-	return FieldEffectMessages.get_end_field_effect_message(effect_id, side_name)
+	return FieldEffectMessages.get_end_field_effect_message(effect_id, side)
 
-func get_already_active_field_effect_message(effect_id: FieldEffectsEnum.Values, side_name: String = "tu lado") -> Dictionary:
-	if effect_id < 0:
-		return {}
-	return FieldEffectMessages.get_already_active_field_effect_message(effect_id, side_name)
+func get_already_active_field_effect_message() -> Dictionary:
+	return FieldEffectMessages.get_already_active_field_effect_message()
+
+# ============================================================================
+# Unificado: helpers por familia (limpia BattleUI)
+# ============================================================================
+
+func get_start_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, side: BattleSide = null) -> Dictionary:
+	match family:
+		FAMILY.AILMENT:
+			return get_start_ailment_message(user, source)
+		FAMILY.ABILITY:
+			return get_start_ability_message(user, source)
+		FAMILY.WEATHER:
+			return get_start_weather_message(source)
+		FAMILY.FIELD_EFFECT:
+			return get_start_field_effect_message(source, side)
+		_:
+			return {}
+
+func get_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> Dictionary:
+	match family:
+		FAMILY.AILMENT:
+			return get_ailment_effect_message(user, source)
+		FAMILY.ABILITY:
+			return get_ability_effect_message(user, null, source)
+		FAMILY.WEATHER:
+			return get_ongoing_weather_message(source)
+		FAMILY.FIELD_EFFECT:
+			return {}
+		_:
+			return {}
+
+func get_end_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, side: BattleSide = null) -> Dictionary:
+	match family:
+		FAMILY.AILMENT:
+			return get_end_ailment_message(user, source)
+		FAMILY.ABILITY:
+			return get_end_ability_message(user, source)
+		FAMILY.WEATHER:
+			return get_end_weather_message(source)
+		FAMILY.FIELD_EFFECT:
+			return get_end_field_effect_message(source, side)
+		_:
+			return {}
+
+func get_already_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, has_other_status: bool = false) -> Dictionary:
+	match family:
+		FAMILY.AILMENT:
+			return get_already_ailment_message(user, source, has_other_status)
+		FAMILY.WEATHER:
+			return get_already_active_weather_message()
+		FAMILY.FIELD_EFFECT:
+			return get_already_active_field_effect_message()
+		_:
+			return {}
+
+func get_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> Dictionary:
+	match family:
+		FAMILY.AILMENT:
+			return get_ailment_previous_effect_message(user, source)
+		_:
+			return {}
 
 func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int) -> Dictionary:
 	if amount == 0:
 		return {}
 
-	var _name := get_display_name(pokemon)
-	var stat_name := get_stat_display_name(stat)
+	var _name := pokemon.get_battle_display_name()
+	var stat_name := StatsEnum.get_display_name(stat)
 	var verb := ""
 	var msg := ""
 
@@ -208,7 +266,7 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Value
 	elif amount == -1:
 		verb = "bajó"
 	
-	msg =  "¡%s %s %s!" % [stat_name, get_possessive_name(pokemon), verb]
+	msg =  "¡%s %s %s!" % [stat_name, pokemon.get_battle_possessive_name(), verb]
 	
 	return {
 		"type": "display",
@@ -216,40 +274,15 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Value
 		"wait_time": 0.5
 	}
 
-func get_stat_display_name(stat: StatsEnum.Values) -> String:
-	match stat:
-		StatsEnum.Values.ATTACK: return "Ataque"
-		StatsEnum.Values.DEFENSE: return "Defensa"
-		StatsEnum.Values.SP_ATTACK: return "At. Esp."
-		StatsEnum.Values.SP_DEFENSE: return "Def. Esp."
-		StatsEnum.Values.SPEED: return "Velocidad"
-		StatsEnum.Values.ACCURACY: return "Precisión"
-		StatsEnum.Values.EVASION: return "Evasión"
-		_: return "Estadística"
+# (El bloque duplicado de agregadores por familia fue consolidado en los métodos anteriores)
 
 func get_failed_move_message(user: BattlePokemon) -> Dictionary:
 	return {
 		"type": "wait",
-		"text": "¡El ataque de %s falló!" % [user.get_name()],
+		"text": "¡El ataque %s falló!" % [user.get_battle_possessive_name()],
 		"wait_time": 1.0
 	}
 	
-static func get_display_name(pokemon: BattlePokemon) -> String:
-	if pokemon.controllable:
-		return pokemon.get_display_name()
-	elif pokemon.is_wild:
-		return "el %s salvaje" % pokemon.get_name()
-	else:
-		return "el %s rival" % pokemon.get_name()
-
-static func get_possessive_name(pokemon: BattlePokemon) -> String:
-	if pokemon.controllable:
-		return "de %s" % pokemon.get_display_name()
-	elif pokemon.is_wild:
-		return "del %s salvaje" % pokemon.get_name()
-	else:
-		return "del %s rival" % pokemon.get_name()
-
 func get_multi_hit_message(num_hits: int) -> Dictionary:
 	return {
 		"type": "wait",
@@ -257,34 +290,29 @@ func get_multi_hit_message(num_hits: int) -> Dictionary:
 		"wait_time": 1.0
 	}
 
-func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
-	var pokemon_name = get_display_name(pokemon)
-	# Capitalizar la primera letra para inicio de frase
-	if pokemon_name.length() > 0:
-		pokemon_name = pokemon_name[0].to_upper() + pokemon_name.substr(1)
-	
+func get_faint_message(pokemon: BattlePokemon) -> Dictionary: 
 	return {
 		"type": "input",
-		"text": "¡%s se debilitó!" % pokemon_name
+		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true) #Validado HGSS
 	}
 
 # Mensaje de escape/huida unificado
-func get_escape_message(pokemon_name: String, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
+func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
 	if is_trainer_battle:
 		return {
 			"type": "wait",
-			"text": "¡No puedes escapar de un combate contra un entrenador!",
+			"text": "¡No puedes huir de un combate contra un Entrenador!", #Validado HGSS
 			"wait_time": 1.5
 		}
 	elif escape_succeeded:
 		return {
 			"type": "input",
-			"text": "¡%s escapó del combate!" % pokemon_name
+			"text": "¡Escapaste sin probemas!" #Validado HGSS
 		}
 	else:
 		return {
 			"type": "wait",
-			"text": "¡%s no pudo escapar!" % pokemon_name,
+			"text": "¡%s no pudo escapar!" % pokemon.get_battle_display_name(true),
 			"wait_time": 1.5
 		}
 

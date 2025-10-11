@@ -53,7 +53,7 @@ func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, abilit
     var msg:String = ""
     match ability_id:
         AbilitiesEnum.Values.INTIMIDATE:
-            msg = "¡Intimidación %s baja el Ataque %s!" % [BattleMessageController.get_possessive_name(user), BattleMessageController.get_possessive_name(target)]
+            msg = "¡Intimidación %s baja el Ataque %s!" % [user.get_battle_possessive_name(), target.get_battle_possessive_name()]
         _:
             push_warning("Invalid Ability or not implemented on get_ability_effect_message()")
             return {}

@@ -16,4 +16,4 @@ func visualize(ui: BattleUI) -> void:
 		return
 	await heal.visualize(ui)
 	# Mostrar mensaje específico de curación directa
-	await ui.show_heal_message(user, heal.amount)
+	await ui.show_heal_message(user)
