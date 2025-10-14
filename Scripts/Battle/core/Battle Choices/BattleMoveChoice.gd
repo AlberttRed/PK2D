@@ -32,8 +32,8 @@ func resolve() -> Array[BattleHandler]:
 		print("No category found for move: " + move_instance.get_name())
 		return handlers
 	
-	for target in targets:
 
+	for target in targets:
 		if move_instance.get_accuracy() > 0 and not AccuracyUtils.check_hit(move_instance, pokemon, target.get_pokemon()):
 			handlers.append(MissHandler.new(pokemon))
 			continue
@@ -43,3 +43,15 @@ func resolve() -> Array[BattleHandler]:
 			handlers.append(handler)
 	
 	return handlers
+
+
+# Retorna el target válido si existe; en caso contrario devuelve null
+func _get_valid_single_enemy_target_or_null(original_target: BattleTarget) -> BattleTarget:
+	var tp := original_target.get_pokemon()
+	if tp != null and not tp.is_fainted() and tp.battle_spot != null:
+		return original_target
+	var candidates := pokemon.get_opponent_side().get_active_pokemons()
+	candidates = candidates.filter(func(p): return p != tp and not p.is_fainted() and p.battle_spot != null)
+	if candidates.is_empty():
+		return null
+	return BattleTarget.new(candidates[0], original_target.selection_type)

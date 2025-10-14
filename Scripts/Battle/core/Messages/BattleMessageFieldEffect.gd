@@ -3,15 +3,15 @@ extends RefCounted
 
 
 func get_start_field_effect_message(effect_id: int, side: BattleSide = null) -> Dictionary:
-    var side_name := "de alguien"
-    if side != null:
-        side_name = "de tu equipo" if side.type == BattleSide.Types.PLAYER else "del equipo rival"
+    var side_name := "de tu equipo" if side.type == BattleSide.Types.PLAYER else "del equipo rival"
+    var double_msg := "un poco " if side.get_active_pokemons().size() > 1 else ""
+
     var msg:String = ""
     match effect_id:
         MovesEnum.Values.REFLECT:
-            msg = "¡Reflejo subió la %s %s!" % [StatsEnum.get_display_name(StatsEnum.Values.DEFENSE), side_name] #Validado HGSS
+            msg = "¡Reflejo subió %sla %s %s!" % [double_msg, StatsEnum.get_display_name(StatsEnum.Values.DEFENSE), side_name] #Validado HGSS
         MovesEnum.Values.LIGHT_SCREEN:
-            msg = "¡Pantalla de Luz subió la %s %s!" % [StatsEnum.get_display_name(StatsEnum.Values.SP_DEFENSE), side_name]
+            msg = "¡Pantalla de Luz subió %sla %s %s!" % [double_msg, StatsEnum.get_display_name(StatsEnum.Values.SP_DEFENSE), side_name] #Validado HGSS
         MovesEnum.Values.SAFEGUARD:
             msg = "¡Velo Sagrado protege %s!" % side_name
         MovesEnum.Values.MIST:

@@ -22,8 +22,8 @@ is_playable = true
 
 [node name="pkm2" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
-pokemon = 46
-level = 51
+pokemon = 20
+level = 100
 gender = 2
 hp_EVs = 75
 attack_EVs = 94
@@ -43,8 +43,8 @@ rotate_hp_EVs = null
 
 [node name="pkm1" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
-pokemon = 130
-level = 25
+randomize_pokemon = true
+randomize_stats = true
 gender = 1
 hp_EVs = 213
 attack_EVs = 150
@@ -67,8 +67,7 @@ Name = "AAAA"
 
 [node name="pkm1" parent="SingleTrainer" index="0"]
 randomize_pokemon = true
-pokemon = 59
-level = 55
+randomize_stats = true
 gender = 1
 hp_EVs = 190
 attack_EVs = 222
@@ -87,7 +86,7 @@ nature_id = 8
 
 [node name="pkm2" parent="SingleTrainer" index="1"]
 randomize_pokemon = true
-level = 82
+randomize_stats = true
 gender = 1
 hp_EVs = 140
 attack_EVs = 217
@@ -182,9 +181,9 @@ nature_id = 3
 
 [node name="pkm2" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
+randomize_pokemon = true
+randomize_stats = true
 isWild = true
-pokemon = 95
-level = 25
 gender = 2
 hp_EVs = 34
 attack_EVs = 232
@@ -204,9 +203,9 @@ rotate_hp_EVs = null
 
 [node name="pkm1" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
+randomize_pokemon = true
+randomize_stats = true
 isWild = true
-pokemon = 59
-level = 45
 gender = 1
 hp_EVs = 87
 attack_EVs = 233

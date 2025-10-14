@@ -7,5 +7,3 @@ func apply() -> void:
 
 func visualize(_ui: BattleUI) -> void:
 	pass
-
-

@@ -8,9 +8,11 @@ var stat_effect: StatChangeEffect = null
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)
 
-func apply() -> void:
+func _apply() -> void:
 	# Aplicar daño base primero
-	damage = move.calculate_damage(target)
+	if target.get_pokemon() == null:
+		return
+	damage = move.calculate_damage(target.get_pokemon())
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
 	# Subir stats del usuario si corresponde
@@ -18,7 +20,7 @@ func apply() -> void:
 	stat_effect = StatChangeEffect.new(user, changes)
 	stat_effect.apply()
 
-func visualize(ui) -> void:
+func _visualize(ui) -> void:
 	if damage != null:
 		await damage.visualize(ui)
 		if damage.is_critical:

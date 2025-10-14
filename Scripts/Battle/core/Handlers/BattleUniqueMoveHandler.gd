@@ -1,18 +1,10 @@
-extends BattleHandler
+extends BattleMoveHandler
 
 class_name BattleUniqueMoveHandler
 
-var user: BattlePokemon
-var target: BattleTarget
-var move: BattleMove
 var effect: BattleMoveEffect
 
-func _init(_move: BattleMove, _user: BattlePokemon, _target: BattleTarget):
-	move = _move
-	user = _user
-	target = _target
-
-func apply() -> void:
+func _apply() -> void:
 	# Los movimientos únicos tienen lógica específica
 	var effect_target: BattlePokemon = null
 	
@@ -23,7 +15,7 @@ func apply() -> void:
 	if effect:
 		effect.apply()
 
-func visualize(ui: BattleUI) -> void:
+func _visualize(ui: BattleUI) -> void:
 	# Visualizar movimiento único
 	if effect:
 		await effect.visualize(ui)

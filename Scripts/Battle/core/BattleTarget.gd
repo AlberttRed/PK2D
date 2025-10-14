@@ -21,9 +21,11 @@ enum TYPE {
 
 var scope: Scope
 var _target_object  # BattlePokemon, BattleSide o null (para FIELD)
+## Nuevo: tipo de targeting con el que se generó este target
+var selection_type: TYPE = TYPE.NONE
 
 ## Constructor que detecta automáticamente el scope según el tipo de target
-func _init(target = null):
+func _init(target = null, _selection_type: TYPE = TYPE.NONE):
 	if target is BattlePokemon:
 		scope = Scope.POKEMON
 		_target_object = target
@@ -34,6 +36,7 @@ func _init(target = null):
 		# Si target es null o cualquier otro tipo, se considera FIELD
 		scope = Scope.FIELD
 		_target_object = null
+	selection_type = _selection_type
 
 ## Devuelve el objeto target (BattlePokemon, BattleSide o null)
 func get_target():
@@ -67,6 +70,10 @@ func is_side() -> bool:
 func is_field() -> bool:
 	return scope == Scope.FIELD
 
+## Helper: indica si el selection_type representa objetivo único enemigo
+func is_single_enemy_selection_type() -> bool:
+	return selection_type == TYPE.SELECCIONAR or selection_type == TYPE.RANDOM_ENEMY or selection_type == TYPE.ESPECIFICO
+
 ## Obtiene el Pokémon si el scope es POKEMON, sino null
 func get_pokemon() -> BattlePokemon:
 	if scope == Scope.POKEMON:
@@ -78,3 +85,15 @@ func get_side() -> BattleSide:
 	if scope == Scope.SIDE:
 		return _target_object as BattleSide
 	return null
+
+func is_valid_pokemon() -> bool:
+	return get_pokemon() and !get_pokemon().is_fainted()
+
+func is_valid_side() -> bool:
+	return get_side() != null
+
+func is_valid_field() -> bool:
+	return is_field() and _target_object == null
+
+func is_valid() -> bool:
+	return is_valid_pokemon() or is_valid_side() or is_valid_field()
