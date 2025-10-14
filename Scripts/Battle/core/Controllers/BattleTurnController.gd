@@ -160,9 +160,16 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 		return
 
 	await battle_controller.ui.show_used_move_message(choice.pokemon, choice.get_move())
-	
-	for h in handlers:
+
+	# Aplicar uno a uno revalidando justo antes de cada apply(),
+	# ya que handlers anteriores pueden debilitar objetivos de los siguientes
+	for i in handlers.size():
+		var h: BattleHandler = handlers[i]
+		if h is BattleMoveHandler and !h.ensure_valid_single_enemy_target_or_null():
+			h = NoTargetHandler.new(choice.pokemon)
+			handlers[i] = h
 		h.apply()
+
 	for h in handlers:
 		await h.visualize(battle_controller.ui)
 

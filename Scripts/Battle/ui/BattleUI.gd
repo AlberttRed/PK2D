@@ -179,6 +179,10 @@ func show_critical_hit_message() -> void:
 	await show_message_from_dict(message_controller.get_critical_hit_message())
 	clear_message_box()
 
+func show_no_target_message(user: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_no_target_message(user))
+	clear_message_box()
+
 func show_heal_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon))
 	

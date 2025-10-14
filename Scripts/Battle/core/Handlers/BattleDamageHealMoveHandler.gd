@@ -8,16 +8,18 @@ var heal: HealEffect = null
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)
 
-func apply() -> void:
+func _apply() -> void:
+	if target.get_pokemon() == null:
+		return
 	# 1. Aplicar daño al objetivo
-	damage = move.calculate_damage(target)
+	damage = move.calculate_damage(target.get_pokemon())
 	damage.apply()
 	
 	# 2. Calcular y aplicar curación al usuario basada en el daño causado
 	heal = move.calculate_healing(user, damage.amount)
 	heal.apply()
 
-func visualize(ui: BattleUI) -> void:
+func _visualize(ui: BattleUI) -> void:
 	if damage == null or heal == null:
 		return
 	

@@ -7,12 +7,18 @@ var damage:DamageEffect = null
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)
 
-func apply() -> void:
-	damage = move.calculate_damage(target)
+func _apply() -> void:
+	# Resolver Pokémon del target y validar
+	var target_pokemon: BattlePokemon = target.get_pokemon()
+	if target_pokemon == null:
+		return
+	
+	# Calcular y aplicar daño
+	damage = move.calculate_damage(target_pokemon)
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
 
-func visualize(ui: BattleUI) -> void:
+func _visualize(ui: BattleUI) -> void:
 	if damage == null:
 		return
 	await damage.visualize(ui)

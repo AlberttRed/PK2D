@@ -296,6 +296,13 @@ func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
 		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true) #Validado HGSS
 	}
 
+func get_no_target_message(user: BattlePokemon) -> Dictionary:
+	return {
+		"type": "wait",
+		"text": "¡Pero no hay objetivo al que atacar!",
+		"wait_time": 1.0
+	}
+
 # Mensaje de escape/huida unificado
 func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
 	if is_trainer_battle:
