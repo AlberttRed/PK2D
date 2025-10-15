@@ -1,43 +1,65 @@
 class_name RunEffect
 extends ImmediateBattleEffect
 
-var side: BattleSide
+var pokemon: BattlePokemon
 var can_escape: bool
 var succeeded: bool = false
 
-func _init(_side: BattleSide, _can_escape: bool):
-    side = _side
-    can_escape = _can_escape
+func _init(_pokemon: BattlePokemon, _can_escape: bool):
+	pokemon = _pokemon
+	can_escape = _can_escape
 
 func apply():
-    if not can_escape:
-        return
-    
-    # Calcular probabilidad de escape basada en velocidad
-    succeeded = _calculate_escape_success()
-    
-    if succeeded:
-        side.escapedBattle = true
+	if not can_escape:
+		return
+	
+	# Calcular probabilidad de escape basada en velocidad
+	succeeded = _calculate_escape_success()
+	
+	if succeeded:
+		pokemon.side.escapedBattle = true
 
 func _calculate_escape_success() -> bool:
-    # Fórmula simplificada basada en los juegos oficiales
-    var user_speed = side.get_active_pokemons()[0].get_speed() if not side.get_active_pokemons().is_empty() else 100
-    var opponent_speed = side.opponent_side.get_active_pokemons()[0].get_speed() if side.opponent_side and not side.opponent_side.get_active_pokemons().is_empty() else 100
-    
-    # Fórmula básica: si el usuario es más rápido, tiene 100% de éxito
-    # Si es más lento, tiene una probabilidad basada en la diferencia de velocidad
-    if user_speed >= opponent_speed:
-        return true
-    
-    # Probabilidad basada en la diferencia de velocidad
-    var speed_ratio = float(user_speed) / float(opponent_speed)
-    var escape_chance = speed_ratio * 0.5 + 0.3  # Entre 30% y 80%
-    
-    return randf() < escape_chance
+	# Fórmula fiel a los juegos originales de Pokémon
+	var user_speed = pokemon.get_speed()
+	var side = pokemon.side
+	var opponent_side = side.opponent_side
+	
+	if not opponent_side or opponent_side.get_active_pokemons().is_empty():
+		return true
+	
+	var opponent_pokemons = opponent_side.get_active_pokemons()
+	var success = true
+	
+	# Iterar por cada Pokémon rival activo
+	for opponent_pokemon in opponent_pokemons:
+		var a = user_speed
+		var b = opponent_pokemon.get_speed()
+		var n = side.escapeAttempts
+		
+		var base_chance = (a * 128.0) / b + 30 * n
+		
+		print("base_chance: ", base_chance)
+
+		# Si la probabilidad supera 255, huida garantizada
+		if base_chance > 255:
+			success = true
+			continue
+		
+		var escape_chance = int(base_chance) % 256
+		randomize()
+		var roll = randi() % 256
+		
+		if escape_chance <= roll:
+			success = false
+			break
+	
+	# Incrementar intentos de escape después de cada intento
+	side.escapeAttempts += 1
+	
+	return success
 
 func visualize(ui):
-    var who = side.to_string() if side else "(?)"
-    var is_trainer_battle = not can_escape
-    
-    await ui.show_escape_message(who, is_trainer_battle, succeeded)
-
+	var is_trainer_battle = not can_escape
+	
+	await ui.show_escape_message(is_trainer_battle, succeeded)

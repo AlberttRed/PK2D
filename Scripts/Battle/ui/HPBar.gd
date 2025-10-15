@@ -60,15 +60,15 @@ func clear_ui() -> void:
 	exp_bar.clear()
 
 func update_hp(hp: int) -> void:
-	await health_bar.animate_to(hp)
+	await health_bar.animate_to(min(hp, health_bar.max_value))
 	updated.emit()
 	
 func reduce_hp_by(hp: int) -> void:
-	await health_bar.animate_to(health_bar.current_value - hp)
+	await health_bar.animate_to(max(health_bar.current_value - hp, 0))
 	updated.emit()
 
 func increase_hp_by(hp: int) -> void:
-	await health_bar.animate_to(health_bar.current_value + hp)
+	await health_bar.animate_to(min(health_bar.current_value + hp, health_bar.max_value))
 	updated.emit()
 
 func update_exp(exp_value: int) -> void:

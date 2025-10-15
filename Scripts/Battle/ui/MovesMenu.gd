@@ -3,7 +3,6 @@ signal move_selected(battle_choice: BattleChoice)
 
 var locked_button: Button = null
 var original_normal_style: StyleBox = null
-var last_index:int = 0
 
 @onready var lbl_pps = $lblPPs
 @onready var move_type_icon = $MoveType
@@ -41,7 +40,10 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 		else:
 			move_buttons[i].visible = false
 
-	move_buttons[last_index].grab_focus()
+	# Usar el último índice de movimiento del Pokémon específico
+	# Validar que esté dentro del rango de movimientos disponibles
+	var initial_index = clamp(pokemon.last_move_index, 0, moves.size() - 1)
+	move_buttons[initial_index].grab_focus()
 	visible = true
 	set_process_input(true)
 	var choice: BattleMoveChoice = await move_selected
@@ -56,7 +58,8 @@ func _on_move_pressed(index: int):
 
 func _on_focus_entered(index: int):
 	var move = moves[index]
-	last_index = index
+	# Guardar el índice en el Pokémon específico
+	current_pokemon.last_move_index = index
 	update_move_info_panel(move)
 
 func _input(event: InputEvent):

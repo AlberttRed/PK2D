@@ -190,15 +190,18 @@ func show_heal_message(pokemon: BattlePokemon) -> void:
 func show_drain_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_drain_message(pokemon))
 
-func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int):
-	await show_message_from_dict(message_controller.get_stat_stage_change_message(pokemon, stat, amount))
+func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int, applied: bool):
+	await show_message_from_dict(message_controller.get_stat_stage_change_message(pokemon, stat, amount, applied))
+
+func show_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: bool):
+	await show_message_from_dict(message_controller.get_generic_stat_stage_failed_message(pokemon, is_increase))
 
 func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, ability_id: int) -> void:
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability_id))
 
 # Mensajes de escape/huida
-func show_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> void:
-	await show_message_from_dict(message_controller.get_escape_message(pokemon, is_trainer_battle, escape_succeeded))
+func show_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> void:
+	await show_message_from_dict(message_controller.get_escape_message(is_trainer_battle, escape_succeeded))
 
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:

@@ -297,6 +297,7 @@ func _ready():
 	totalExp = actualLevelExpBase
 	personality = get_personality_text()
 #	print("patata")
+	
 #	set_info()
 	loadLearningMoves()
 	load_moves()
@@ -325,9 +326,10 @@ func init_pokemon():
 		push_error("No s'ha seleccionat un genere pel pokémon " + Name)
 		#set_info()
 	load_moves()
+	load_stats()
+	
 	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	
-	load_stats()
 	#ability_id = CONST.ABILITIES.INTIMIDATE
 
 #
@@ -382,8 +384,8 @@ func load_moves():
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
 	
 	# Forzar "Danza Lluvia" (id 240) para test de efectos de clima
-	movements.insert(0, MoveInstance.new(MovesEnum.Values.LEER))
-	movements.insert(0, MoveInstance.new(MovesEnum.Values.REFLECT))
+#	movements.insert(0, MoveInstance.new(MovesEnum.Values.CONFUSE_RAY))
+	#movements.insert(0, MoveInstance.new(MovesEnum.Values.REFLECT))
 	
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
 	#movements.insert(0, MoveInstance.new(52))
@@ -590,11 +592,11 @@ func get_ev(stat: StatsEnum.Values) -> int:
 	return evs.get(stat, 0)
 	
 func get_final_stat(stat: StatsEnum.Values, _level: int = self.level) -> int:
-	var base = get_base_stat(stat)
+	var base_stat = get_base_stat(stat)
 	var iv = get_iv(stat)
 	var ev = get_ev(stat)
 
-	var total = ((2 * base + iv + int(ev / 4)) * _level) / 100
+	var total = ((2 * base_stat + iv + int(ev / 4)) * _level) / 100
 
 	if stat == StatsEnum.Values.HP:
 		return int(total) + _level + 10

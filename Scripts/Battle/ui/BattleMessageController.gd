@@ -248,7 +248,7 @@ func get_previous_effect_message(family: MessageFamily.Values, user: BattlePokem
 		_:
 			return {}
 
-func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int) -> Dictionary:
+func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Values, amount: int, applied: bool) -> Dictionary:
 	if amount == 0:
 		return {}
 
@@ -258,15 +258,25 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Value
 	var msg := ""
 
 	if amount > 1:
-		verb = "subió mucho"
+		verb = "subió mucho" if applied else "no puede subir más"
 	elif amount == 1:
-		verb = "subió"
+		verb = "subió" if applied else "no puede subir más"
 	elif amount < -1:
-		verb = "bajó mucho"
+		verb = "bajó mucho" if applied else "no puede bajar más"
 	elif amount == -1:
-		verb = "bajó"
+		verb = "bajó" if applied else "no puede bajar más"
 	
 	msg =  "¡%s %s %s!" % [stat_name, pokemon.get_battle_possessive_name(), verb]
+	
+	return {
+		"type": "display",
+		"text": msg,
+		"wait_time": 0.5
+	}
+
+func get_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: bool) -> Dictionary:
+	var verb := "subir" if is_increase else "bajar"
+	var msg := "¡Las características %s no pueden %s más!" % [pokemon.get_battle_possessive_name(), verb]
 	
 	return {
 		"type": "display",
@@ -304,7 +314,7 @@ func get_no_target_message(user: BattlePokemon) -> Dictionary:
 	}
 
 # Mensaje de escape/huida unificado
-func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
+func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
 	if is_trainer_battle:
 		return {
 			"type": "wait",
@@ -319,7 +329,7 @@ func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_
 	else:
 		return {
 			"type": "wait",
-			"text": "¡%s no pudo escapar!" % pokemon.get_battle_display_name(true),
+			"text": "¡No puedes escapar!",
 			"wait_time": 1.5
 		}
 

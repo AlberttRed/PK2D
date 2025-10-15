@@ -20,10 +20,18 @@ var escapeAttempts:int #Player attemps to exit the battle. If a Move is selected
 var escapedBattle:bool
 var battle_rules: BattleRules = null
 
+# Flag para indicar si ya se ha seleccionado una acción bloqueante este turno
+# (ej: Huir, Lanzar Pokéball). Se resetea al inicio de cada turno.
+var has_blocking_action_this_turn: bool = false
+
 func _init(_type: Types) -> void:
 	self.type = _type
 	self.pokemonParty = []
 	self.escapeAttempts = 0
+
+func init_turn() -> void:
+	# Resetear flags al inicio de cada turno
+	has_blocking_action_this_turn = false
 	
 func add_participant(participant: BattleParticipant) -> void:
 	if participants.has(participant):

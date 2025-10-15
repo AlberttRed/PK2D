@@ -22,7 +22,6 @@ func _ready():
 
 # Configura los dos BattleSide con sus participantes y reglas
 func setup_sides(player_participants: Array[BattleParticipant], enemy_participants: Array[BattleParticipant], _rules: BattleRules):
-
 	self.player_side = BattleSide.new(BattleSide.Types.PLAYER)
 	for p in player_participants:
 		player_side.add_participant(p)
@@ -61,6 +60,9 @@ func assign_active_pokemons_to_spots():
 	ui.position_battlespots_for_mode(rules.mode)
 
 func start_battle() -> void:
+	# Configurar UI para el nuevo combate
+	BattleEffectController.set_ui(ui)
+	
 	ui.visible = true  # Si estaba oculto por defecto
 	turn_controller.battle_controller = self
 	# Inyectar lógica de targeting en la UI
@@ -107,6 +109,12 @@ func battle_finished() -> bool:
 	if finished:
 		return true
 
+	# Verificar si alguien ha escapado exitosamente
+	if player_side.escapedBattle or enemy_side.escapedBattle:
+		finished = true
+		return true
+		
+	# Verificar si todos los Pokémon de algún lado están debilitados
 	var player_alive := player_side.count_alive_pokemons()
 	var enemy_alive := enemy_side.count_alive_pokemons()
 
@@ -129,8 +137,9 @@ func end_battle() -> void:
 	if not finished:
 		battle_finished()
 
-	# Mostrar mensaje de final de combate
-	await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
+	if !winner_side.is_empty():
+		# Mostrar mensaje de final de combate
+		await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
 
 	# Ocultar/limpiar UI mínima
 	if ui:
@@ -146,10 +155,25 @@ func end_battle() -> void:
 		"draw":
 			result_msg = "Resultado del combate: empate"
 	print(result_msg)
+	
+	# Limpiar estado del combate para el siguiente
+	_cleanup_battle_state()
+	
 	SignalManager.battle_finished.emit(winner_side)
 
 	# Hacer esta función awaitable
 	await get_tree().process_frame
+
+func _cleanup_battle_state():
+	# Resetear flags de control
+	finished = false
+	winner_side = ""
+	
+	# Resetear controlador de turnos
+	turn_controller.reset()
+	
+	# Limpiar efectos persistentes
+	BattleEffectController.reset_effects()
 
 
 #func init_battle():

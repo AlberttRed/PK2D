@@ -36,6 +36,9 @@ var status_turns: int = 0
 
 var stat_stages := StatStages.new()
 
+# Recordar el último movimiento seleccionado por este Pokémon
+var last_move_index: int = 0
+
 var _selectedBattleChoice: BattleChoice
 
 # Setter para selectedBattleChoice que automáticamente asigna el pokemon al choice
@@ -199,6 +202,7 @@ func take_damage(damage: DamageEffect) -> void:
 func take_heal(heal: HealEffect) -> void:
 	hp += heal.amount
 	hp = min(hp, total_hp)
+	print("hp after heal: " + str(hp))
 
 func set_status(new_status: Ailment):
 	if new_status and !new_status.is_persistent:

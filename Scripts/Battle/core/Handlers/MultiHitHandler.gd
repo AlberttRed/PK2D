@@ -44,5 +44,5 @@ func visualize(ui: BattleUI) -> void:
 	if num_hits > 1:
 		await ui.show_multi_hit_message(per_hit_handlers.size())
 
-	if show_effectiveness and !per_hit_handlers.is_empty() and per_hit_handlers[0].has("damage"):
+	if show_effectiveness and !per_hit_handlers.is_empty() and per_hit_handlers[0] is BattleDamageMoveHandler:
 		await ui.show_effectiveness_message(per_hit_handlers[0].damage)

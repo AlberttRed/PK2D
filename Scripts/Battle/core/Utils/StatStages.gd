@@ -15,14 +15,12 @@ func get_stat(stat: StatsEnum.Values) -> int:
 	return stages.get(stat, 0)
 
 func increase(stat: StatsEnum.Values, amount: int = 1) -> bool:
-	if not stages.has(stat): return false
 	var current = stages[stat]
 	if current >= 6: return false
 	stages[stat] = min(current + amount, 6)
 	return true
 
 func decrease(stat: StatsEnum.Values, amount: int = 1) -> bool:
-	if not stages.has(stat): return false
 	var current = stages[stat]
 	if current <= -6: return false
 	stages[stat] = max(current - amount, -6)
