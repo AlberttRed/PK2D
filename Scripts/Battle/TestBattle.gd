@@ -10,8 +10,8 @@ extends Node2D
 func _ready() -> void:
 	$GUI/FadeLayer.visible = false
 	
-	wildSingleBattle()
-	return
+	#wildDoubleBattle()
+	#return
 	# Lanzar combates en bucle para testing continuo
 	while true:
 		if randi() % 2 == 0:

@@ -36,6 +36,9 @@ var status_turns: int = 0
 
 var stat_stages := StatStages.new()
 
+# Recordar el último movimiento seleccionado por este Pokémon
+var last_move_index: int = 0
+
 var _selectedBattleChoice: BattleChoice
 
 # Setter para selectedBattleChoice que automáticamente asigna el pokemon al choice

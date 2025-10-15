@@ -1,10 +1,11 @@
 class_name BurnAilmentEffect
 extends PersistentBattleEffect
 
+
 func apply_phase(pokemon:BattlePokemon, phase: Phases) -> void: 
 	if phase != BattleEffect.Phases.ON_END_POKEMON_TURN:
 		return
-
+		
 	var dmg:int = ceil(pokemon.total_hp / 16.0)
 
 	var burn_effect := DamageEffect.new(null, pokemon, null, dmg)

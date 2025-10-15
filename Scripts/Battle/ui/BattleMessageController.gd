@@ -286,7 +286,7 @@ func get_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: 
 
 # (El bloque duplicado de agregadores por familia fue consolidado en los métodos anteriores)
 
-func get_failed_move_message(user: BattlePokemon) -> Dictionary:
+func mget_failed_move_message(user: BattlePokemon) -> Dictionary:
 	return {
 		"type": "wait",
 		"text": "¡El ataque %s falló!" % [user.get_battle_possessive_name()],
@@ -314,7 +314,7 @@ func get_no_target_message(user: BattlePokemon) -> Dictionary:
 	}
 
 # Mensaje de escape/huida unificado
-func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
+func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
 	if is_trainer_battle:
 		return {
 			"type": "wait",
@@ -329,7 +329,7 @@ func get_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_
 	else:
 		return {
 			"type": "wait",
-			"text": "¡%s no pudo escapar!" % pokemon.get_battle_display_name(true),
+			"text": "¡No puedes escapar!",
 			"wait_time": 1.5
 		}
 

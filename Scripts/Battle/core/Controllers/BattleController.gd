@@ -109,6 +109,12 @@ func battle_finished() -> bool:
 	if finished:
 		return true
 
+	# Verificar si alguien ha escapado exitosamente
+	if player_side.escapedBattle or enemy_side.escapedBattle:
+		finished = true
+		return true
+		
+	# Verificar si todos los Pokémon de algún lado están debilitados
 	var player_alive := player_side.count_alive_pokemons()
 	var enemy_alive := enemy_side.count_alive_pokemons()
 
@@ -131,8 +137,9 @@ func end_battle() -> void:
 	if not finished:
 		battle_finished()
 
-	# Mostrar mensaje de final de combate
-	await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
+	if !winner_side.is_empty():
+		# Mostrar mensaje de final de combate
+		await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
 
 	# Ocultar/limpiar UI mínima
 	if ui:

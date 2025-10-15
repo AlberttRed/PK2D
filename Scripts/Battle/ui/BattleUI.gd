@@ -200,8 +200,8 @@ func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, abi
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability_id))
 
 # Mensajes de escape/huida
-func show_escape_message(pokemon: BattlePokemon, is_trainer_battle: bool, escape_succeeded: bool) -> void:
-	await show_message_from_dict(message_controller.get_escape_message(pokemon, is_trainer_battle, escape_succeeded))
+func show_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> void:
+	await show_message_from_dict(message_controller.get_escape_message(is_trainer_battle, escape_succeeded))
 
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:

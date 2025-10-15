@@ -5,8 +5,11 @@ func get_priority() -> int:
 	# Placeholder: resolveremos reglas reales de prioridad más adelante
 	return 6
 
+func is_blocking_action() -> bool:
+	# Intentar huir bloquea las acciones del resto del equipo
+	return true
+
 func resolve() -> Array[BattleHandler]:
 	# Crear el handler de huida
-	var side := pokemon.side
-	var handler = BattleRunHandler.new(side, side.battle_rules)
+	var handler = BattleRunHandler.new(pokemon, pokemon.side.battle_rules)
 	return [handler]

@@ -33,24 +33,41 @@ func select_actions():
 	collected_choices.clear()
 	print_stat_stages_log()
 	print_active_effects_log()
-		
+	
+	# Inicializar turnos en ambos sides (resetea flags y prepara el turno)
+	if battle_controller.player_side:
+		battle_controller.player_side.init_turn()
+	if battle_controller.enemy_side:
+		battle_controller.enemy_side.init_turn()
+	
 	# Recorremos todos los BattleSpots activos en ambos lados del combate
 	for spot:BattleSpot in battle_controller.get_active_battle_spots():
 		var selectedChoice:BattleChoice = null
 		var p:BattlePokemon = spot.get_active_pokemon()
 		p.init_turn()
-
-		if p.controllable and not _player_has_attempted_escape():
+		
+		# Verificar si el side de este Pokémon ya tiene una acción bloqueante
+		if p.side.has_blocking_action_this_turn:
+			# Saltar selección, asignar acción de "pasar turno"
+			selectedChoice = BattlePassChoice.new()
+		elif p.controllable:
 			selectedChoice = await battle_controller.ui.show_action_selection(p)
-
+			
 			if selectedChoice.canceled:
 				await select_actions()
 				return
+			
+			# Si es bloqueante, marcar el side
+			if selectedChoice.is_blocking_action():
+				p.side.has_blocking_action_this_turn = true
+				
 		elif !p.controllable:
 			selectedChoice = await p.participant.decide_action_for(p)
-		# Si es controlable pero ya se intentó escapar, selectedChoice queda null
-		# y se asignará BattlePassChoice.new() más abajo
-
+			
+			# También marcar si la IA elige una acción bloqueante
+			if selectedChoice and selectedChoice.is_blocking_action():
+				p.side.has_blocking_action_this_turn = true
+		
 		# Garantizar que cada Pokémon declara una acción
 		if selectedChoice == null:
 			selectedChoice = BattlePassChoice.new()
@@ -59,10 +76,6 @@ func select_actions():
 		p.selectedBattleChoice = selectedChoice
 		
 		collected_choices.append(selectedChoice)
-
-func _player_has_attempted_escape() -> bool:
-	# Verificar si algún choice del jugador es un BattleRunChoice
-	return collected_choices and collected_choices.filter(func(c): return c is BattleRunChoice).size() > 0
 			
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)

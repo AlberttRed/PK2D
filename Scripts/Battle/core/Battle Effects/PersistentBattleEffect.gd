@@ -4,6 +4,7 @@ extends BattleEffect
 var source # Ailment/Ability/Weather
 var effect_success:bool
 var turns_left:int
+var applied:bool = false
 
 func _init(_source, _min_turns = null, _max_turns = null) -> void:
 	source = _source

@@ -20,31 +20,10 @@ battle_front_sprite = ExtResource("3_uewrw")
 battle_back_sprite = ExtResource("4_eovwa")
 is_playable = true
 
-[node name="pkm2" type="Node" parent="Player"]
-script = ExtResource("3_p5erh")
-pokemon = 6
-level = 57
-gender = 2
-hp_EVs = 75
-attack_EVs = 94
-defense_EVs = 224
-spAttack_EVs = 81
-spDefense_EVs = 21
-speed_EVs = 50
-hp_IVs = 10
-attack_IVs = 25
-defense_IVs = 10
-spAttack_IVs = 16
-spDefense_IVs = 19
-speed_IVs = 5
-ability_id = 219
-nature_id = 24
-rotate_hp_EVs = null
-
 [node name="pkm1" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
-randomize_pokemon = true
-randomize_stats = true
+pokemon = 17
+level = 85
 gender = 1
 hp_EVs = 213
 attack_EVs = 150
@@ -60,6 +39,27 @@ spDefense_IVs = 30
 speed_IVs = 13
 ability_id = 22
 nature_id = 16
+rotate_hp_EVs = null
+
+[node name="pkm2" type="Node" parent="Player"]
+script = ExtResource("3_p5erh")
+pokemon = 1
+level = 5
+gender = 2
+hp_EVs = 75
+attack_EVs = 94
+defense_EVs = 224
+spAttack_EVs = 81
+spDefense_EVs = 21
+speed_EVs = 50
+hp_IVs = 10
+attack_IVs = 25
+defense_IVs = 10
+spAttack_IVs = 16
+spDefense_IVs = 19
+speed_IVs = 5
+ability_id = 219
+nature_id = 24
 rotate_hp_EVs = null
 
 [node name="SingleTrainer" parent="." instance=ExtResource("2_rfkpo")]
@@ -183,7 +183,7 @@ nature_id = 3
 script = ExtResource("3_p5erh")
 isWild = true
 pokemon = 135
-level = 13
+level = 100
 gender = 1
 hp_EVs = 87
 attack_EVs = 233
@@ -203,9 +203,9 @@ rotate_hp_EVs = null
 
 [node name="pkm2" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
-randomize_pokemon = true
-randomize_stats = true
 isWild = true
+pokemon = 22
+level = 100
 gender = 2
 hp_EVs = 34
 attack_EVs = 232
