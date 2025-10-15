@@ -83,6 +83,13 @@ static func cleanup():
 	instance.side_effects.clear()
 	_instance = null
 
+static func reset_effects():
+	var instance = get_instance()
+	if instance:
+		instance.pokemon_effects.clear()
+		instance.field_effects.clear()
+		instance.side_effects.clear()
+
 # 🔐 Datos internos
 var pokemon_effects: Dictionary = {}
 var field_effects: Array[PersistentBattleEffect] = []

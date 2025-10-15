@@ -199,6 +199,7 @@ func take_damage(damage: DamageEffect) -> void:
 func take_heal(heal: HealEffect) -> void:
 	hp += heal.amount
 	hp = min(hp, total_hp)
+	print("hp after heal: " + str(hp))
 
 func set_status(new_status: Ailment):
 	if new_status and !new_status.is_persistent:

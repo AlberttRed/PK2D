@@ -205,6 +205,12 @@ func end_turn():
 	# Aquí iría lógica futura de efectos, clima, estados...
 	#await battle_controller.end_turn()
 
+func reset():
+	# Limpiar estado del controlador de turnos para el siguiente combate
+	current_turn = 0
+	collected_choices.clear()
+	last_ordered_choices.clear()
+
 func get_execution_order() -> Array[BattleChoice]:
 	return last_ordered_choices.duplicate()
 	

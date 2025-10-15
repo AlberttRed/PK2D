@@ -11,7 +11,7 @@ func _init(_user: BattlePokemon, _target: BattlePokemon, _move: BattleMove, _amo
 	user = _user
 	target = _target
 	move = _move
-	amount = _amount
+	amount = max(_amount, 1) # La curación siempre debe ser como mínimo 1
 
 func apply():
 	if amount > 0:

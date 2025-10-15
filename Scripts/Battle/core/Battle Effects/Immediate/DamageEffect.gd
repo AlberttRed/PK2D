@@ -33,3 +33,6 @@ func is_not_very_effective() -> bool:
 
 func is_ineffective() -> bool:
 	return effectiveness == 0.0
+
+func validate() -> void:
+	amount = max(amount, 1) if !is_ineffective() else amount # El daño siempre debe ser como mínimo 1

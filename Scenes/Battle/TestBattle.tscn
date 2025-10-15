@@ -22,8 +22,8 @@ is_playable = true
 
 [node name="pkm2" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
-pokemon = 20
-level = 100
+pokemon = 6
+level = 57
 gender = 2
 hp_EVs = 75
 attack_EVs = 94
@@ -179,6 +179,28 @@ nature_id = 3
 
 [node name="WildPokemons" type="Node" parent="."]
 
+[node name="pkm1" type="Node" parent="WildPokemons"]
+script = ExtResource("3_p5erh")
+isWild = true
+pokemon = 135
+level = 13
+gender = 1
+hp_EVs = 87
+attack_EVs = 233
+defense_EVs = 146
+spAttack_EVs = 55
+spDefense_EVs = 43
+speed_EVs = 232
+hp_IVs = 23
+attack_IVs = 20
+defense_IVs = 25
+spAttack_IVs = 8
+spDefense_IVs = 23
+speed_IVs = 13
+ability_id = 8
+nature_id = 2
+rotate_hp_EVs = null
+
 [node name="pkm2" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
 randomize_pokemon = true
@@ -199,28 +221,6 @@ spDefense_IVs = 30
 speed_IVs = 23
 ability_id = 20
 nature_id = 19
-rotate_hp_EVs = null
-
-[node name="pkm1" type="Node" parent="WildPokemons"]
-script = ExtResource("3_p5erh")
-randomize_pokemon = true
-randomize_stats = true
-isWild = true
-gender = 1
-hp_EVs = 87
-attack_EVs = 233
-defense_EVs = 146
-spAttack_EVs = 55
-spDefense_EVs = 43
-speed_EVs = 232
-hp_IVs = 23
-attack_IVs = 20
-defense_IVs = 25
-spAttack_IVs = 8
-spDefense_IVs = 23
-speed_IVs = 13
-ability_id = 8
-nature_id = 2
 rotate_hp_EVs = null
 
 [node name="Backlog" type="Node" parent="."]

@@ -64,5 +64,3 @@ static func _format_effect_name(name: String) -> String:
 			result += " "
 		result += c
 	return result
-
-

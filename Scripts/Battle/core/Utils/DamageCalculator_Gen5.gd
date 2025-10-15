@@ -44,6 +44,7 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 
 	# Paso 8: Modificadores de daño final (defensor, globales)
 	var final_mods = ModifierEngine.apply_final_damage_with_log(effect)
+	effect.validate()
 	log_damage_calculation(effect, final_mods)
 	return effect
 
