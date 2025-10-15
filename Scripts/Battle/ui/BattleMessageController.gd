@@ -286,7 +286,7 @@ func get_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: 
 
 # (El bloque duplicado de agregadores por familia fue consolidado en los métodos anteriores)
 
-func mget_failed_move_message(user: BattlePokemon) -> Dictionary:
+func get_failed_move_message(user: BattlePokemon) -> Dictionary:
 	return {
 		"type": "wait",
 		"text": "¡El ataque %s falló!" % [user.get_battle_possessive_name()],

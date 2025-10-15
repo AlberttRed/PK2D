@@ -384,7 +384,7 @@ func load_moves():
 	movements.assign(moves.map(func(m:PokemonLearningMove): return m.getMove()))
 	
 	# Forzar "Danza Lluvia" (id 240) para test de efectos de clima
-	movements.insert(0, MoveInstance.new(MovesEnum.Values.CONFUSE_RAY))
+#	movements.insert(0, MoveInstance.new(MovesEnum.Values.CONFUSE_RAY))
 	#movements.insert(0, MoveInstance.new(MovesEnum.Values.REFLECT))
 	
 	# Forzar "Ascuas" (id 52) como primer movimiento para test Damage+Ailment
