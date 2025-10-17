@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 class_name OverworldGrid
 
 ## Asigna aquí la capa que usarás para consultas (colisión/terreno)
@@ -86,9 +86,13 @@ func event_at(tile: Vector2i) -> Event:
 
 func is_blocked(actor: Node, t: Vector2i) -> bool:
 	var datas = get_tile_data(t)
-	if datas.is_empty():
-		return true # fuera del mapa
 	
+	# Si el tile no está en este mapa, está "bloqueado" para este grid
+	# (No es responsabilidad de este grid verificar otros mapas)
+	if datas.is_empty():
+		return true
+	
+	# Verificar propiedades de bloqueo del tile
 	for d in datas:
 		if d.get_custom_data("blocked") == true:
 			return true
@@ -192,8 +196,8 @@ func has_spawn_point(spawn_id: String) -> bool:
 # --- Player Positioning ---
 ## Posiciona al jugador en una posición específica (Vector2i)
 func position_player_at_tile(tile_position: Vector2i) -> bool:
-	# Buscar el jugador a través del MapSystem
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	# Buscar MapSystem (solo cuando se necesita, poco frecuente)
+	var map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
 	if not map_system:
 		push_error("OverworldGrid: No se encontró el MapSystem")
 		return false
@@ -234,8 +238,8 @@ func position_player_at_spawn(spawn_id: String) -> bool:
 
 ## Establece la dirección del jugador
 func set_player_facing_direction(direction: Vector2) -> void:
-	# Buscar el jugador a través del MapSystem
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	# Buscar MapSystem (solo cuando se necesita, poco frecuente)
+	var map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
 	if not map_system:
 		push_error("OverworldGrid: No se encontró el MapSystem")
 		return

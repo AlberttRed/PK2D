@@ -8,9 +8,12 @@ var active_map: Node = null
 var player: Node = null
 var previous_map: Node = null
 
-# Lista de escenas de mapa referenciadas explícitamente para exportación.
-# Rellénala en el editor para evitar depender de listados de directorio en runtime.
-@export var map_scene_list: Array[PackedScene] = []
+## Referencia al WorldSystem (inyectada desde OverworldCoordinator)
+## NO usar get_node("../WorldSystem") - viola el principio de jerarquía
+var world_system: WorldSystem = null
+
+# NOTA: La gestión de escenas de mapa ahora es responsabilidad del WorldSystem
+# El MapSystem se enfoca únicamente en el mapa activo y el jugador
 
 func _enter_tree() -> void:
 	# Verificar si ya hay un mapa configurado
@@ -31,8 +34,18 @@ func _ready() -> void:
 	
 	print("MapSystem: Inicialización completada")
 
-## Configura el jugador según el estado del GameStateManager
+## DEPRECATED: Usar OverworldCoordinator.configure_from_gamestate() en su lugar
+## Este método permanece por compatibilidad temporal pero será eliminado
+## 
+## PROBLEMA: Este método hace orquestación de alto nivel (cambiar mapa, cargar jugador, posicionar)
+## que debería estar en OverworldCoordinator, no en MapSystem.
+## 
+## Flujo correcto:
+## GameStart → OverworldCoordinator.configure_from_gamestate()
+##   └→ Orquesta WorldSystem, MapSystem y OverworldGrid
 func configure_player_from_gamestate() -> void:
+	push_warning("MapSystem.configure_player_from_gamestate() está DEPRECATED. Usar OverworldCoordinator.configure_from_gamestate()")
+	
 	# Obtener datos del GameStateManager
 	var map_id = GameStateManager.get_current_map_id()
 	var position = GameStateManager.get_current_position()
@@ -157,90 +170,95 @@ func _setup_player_for_map() -> void:
 			if terrain_layer:
 				camera.map_layer_path = terrain_layer.get_path()
 
-## Carga un mapa por su ID
+## Carga un mapa por su ID - DELEGADO AL WORLDSYSTEM
 func load_map(map_id: String) -> Node:
-	print("MapSystem: Cargando mapa: ", map_id)
-
-	# Resolver escena solo desde la lista exportada (robusto en exportación)
-	var map_scene: PackedScene = _get_scene_for_map_id(map_id)
-	if not map_scene:
-		push_error("MapSystem: No se encontró el mapa '" + map_id + "' en la lista exportada 'map_scene_list'")
+	print("MapSystem: Delegando carga de mapa a WorldSystem: ", map_id)
+	
+	# Verificar que tenemos la referencia inyectada
+	if not world_system:
+		push_error("MapSystem: WorldSystem no inyectado. OverworldCoordinator debe inyectar la dependencia.")
 		return null
 	
-	# Instanciar el mapa
-	var map_instance = map_scene.instantiate()
+	# Delegar la carga al WorldSystem
+	return world_system.load_map(map_id)
+
+## Cambia al mapa especificado - DELEGADO AL WORLDSYSTEM
+func change_to_map(map_id: String, _preserve_previous: bool = false) -> bool:
+	print("MapSystem: Delegando cambio de mapa a WorldSystem: ", map_id)
+	
+	# Verificar que tenemos la referencia inyectada
+	if not world_system:
+		push_error("MapSystem: WorldSystem no inyectado. OverworldCoordinator debe inyectar la dependencia.")
+		return false
+	
+	# Delegar al WorldSystem
+	return world_system.change_to_map(map_id)
+
+## Cambia al mapa usando una instancia ya proporcionada (por WorldSystem)
+## NOTA: En sistema seamless, el mapa puede ya estar renderizado como vecino
+func change_to_map_instance(map_instance: Node) -> bool:
 	if not map_instance:
-		push_error("MapSystem: No se pudo instanciar el mapa: " + map_id)
-		return null
+		push_error("MapSystem: Instancia de mapa inválida")
+		return false
 	
-	print("MapSystem: Mapa cargado exitosamente: ", map_id)
-	return map_instance
-
-## Cambia al mapa especificado
-func change_to_map(map_id: String, preserve_previous: bool = false) -> bool:
-	print("MapSystem: Cambiando a mapa: ", map_id)
+	var map_id := map_instance.name
+	print("MapSystem: Cambiando a instancia de mapa: ", map_id)
 	
-	# Si ya estamos en el mapa correcto, no hacer nada
-	if active_map and active_map.name == map_id:
+	# Si ya estamos en este mapa, no hacer nada
+	if active_map == map_instance:
 		print("MapSystem: Ya estamos en el mapa: ", map_id)
 		return true
 	
-	# Limpiar el mapa anterior si existe
+	# Desactivar el mapa anterior (pero NO removerlo - sistema seamless)
 	if active_map:
-		if preserve_previous:
-			# Preservar el mapa anterior de forma temporal para permitir terminar eventos en curso
-			previous_map = active_map
-			# Ocultar de forma robusta todo el subárbol visual
-			_set_subtree_visibility(previous_map, false)
-			previous_map.process_mode = Node.PROCESS_MODE_DISABLED
-		else:
-			_cleanup_previous_map()
-			active_map.queue_free()
-			active_map = null
+		_cleanup_previous_map()
+		
+		# En sistema seamless, los mapas pueden permanecer visibles
+		# Solo desactivamos el procesamiento si tiene el método
+		if active_map.has_method("deactivate"):
+			active_map.deactivate()
+		
+		# NO remover el mapa del árbol (puede ser un vecino visible)
+		# active_map sigue bajo MapSystem pero inactivo
 	
-	# Cargar el nuevo mapa
-	var new_map = load_map(map_id)
-	if not new_map:
-		return false
+	# Establecer como activo
+	active_map = map_instance
 	
-	# Configurar el nuevo mapa
-	new_map.name = map_id
+	# Añadir como child si no está ya en la jerarquía (primera carga)
+	if not is_ancestor_of(map_instance):
+		# CRÍTICO: Remover del padre actual si tiene uno (puede estar en cache_container)
+		var current_parent = map_instance.get_parent()
+		if current_parent:
+			current_parent.remove_child(map_instance)
+			print("  → Removido de: %s" % current_parent.name)
+		
+		add_child(map_instance)
+		print("  ✓ Mapa añadido a MapSystem")
+	else:
+		print("  ✓ Mapa ya estaba en MapSystem (seamless)")
 	
-	# Asegurar que el mapa nuevo esté visible
-	_set_subtree_visibility(new_map, true)
-	new_map.process_mode = Node.PROCESS_MODE_INHERIT
+	# Configurar visibilidad y procesamiento
+	_set_subtree_visibility(map_instance, true)
 	
-	# Establecer como activo ANTES de añadirlo como child
-	# para que los sistemas puedan acceder a active_map en su _ready()
-	active_map = new_map
+	# Activar el procesamiento si tiene el método
+	if map_instance.has_method("activate"):
+		map_instance.activate()
+	else:
+		map_instance.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	# Añadir como child (esto disparará _ready() en todos los nodos del mapa)
-	add_child(new_map)
-
 	# Emitir grid activo tras activar el mapa
 	var grid := get_active_grid()
 	if SignalManager and grid:
 		SignalManager.active_grid_changed.emit(grid)
 	
-	# Configurar el mapa activo (esto ya no es necesario pero lo mantenemos por compatibilidad)
-	set_active_map(new_map)
+	# Configurar el mapa activo
+	set_active_map(map_instance)
 	
 	print("MapSystem: Cambio de mapa completado: ", map_id)
 	return true
 
-## Obtiene la escena de mapa desde la lista exportada, comparando por nombre de archivo (basename)
-func _get_scene_for_map_id(map_id: String) -> PackedScene:
-	for scene: PackedScene in map_scene_list:
-		if scene == null:
-			continue
-		var path: String = scene.resource_path
-		if path == "":
-			continue
-		var file_name := path.get_file()
-		var id := file_name.get_basename()
-		if id == map_id:
-			return scene
-	return null
+## MÉTODO ELIMINADO: _get_scene_for_map_id
+## La resolución de escenas ahora es responsabilidad del WorldSystem
 
 ## Libera el mapa preservado (si existe). Se puede conectar directamente a señales que pasen un parámetro
 func release_previous_map(_event: Event = null) -> void:
@@ -249,12 +267,13 @@ func release_previous_map(_event: Event = null) -> void:
 		previous_map.queue_free()
 	previous_map = null
 
-## Oculta/muestra todo el subárbol de un nodo CanvasItem (y descendientes)
-func _set_subtree_visibility(node: Node, visible: bool) -> void:
+## Configura la visibilidad del nodo raíz (NO recursivo)
+## Los nodos hijos gestionan su propia visibilidad (respeta SpawnPoints, etc.)
+func _set_subtree_visibility(node: Node, vis: bool) -> void:
 	if node is CanvasItem:
-		(node as CanvasItem).visible = visible
-	for child in node.get_children():
-		_set_subtree_visibility(child, visible)
+		(node as CanvasItem).visible = vis
+	# NO hacer recursivo - respeta la visibilidad configurada de los hijos
+	# Ejemplo: SpawnPoints con sprite oculto, eventos con sprites personalizados, etc.
 
 
 
@@ -266,3 +285,57 @@ func _cleanup_previous_map() -> void:
 	# Aquí se pueden añadir limpiezas específicas si es necesario
 	# Por ejemplo, desconectar señales, limpiar referencias, etc.
 	pass
+
+
+## ============================================================================
+## CONSULTAS DE MOVIMIENTO MUNDIAL (para seamless world)
+## ============================================================================
+
+## Encuentra el grid que contiene una posición global y retorna grid + tile convertido
+## Optimizado: convierte una sola vez, evitando cálculos duplicados
+## Retorna: {"grid": OverworldGrid, "tile": Vector2i}
+func find_grid_and_tile_at_world_position(world_pos: Vector2) -> Dictionary:
+	# Iterar por todos los hijos de MapSystem (mapas renderizados)
+	for child in get_children():
+		if child.is_in_group("Player"):
+			continue
+		
+		var grid = child.get_grid() if child.has_method("get_grid") else null
+		if not grid:
+			continue
+		
+		# Convertir posición global a tile local de este grid
+		var tile_local = grid.world_to_tile(world_pos)
+		
+		# Verificar si el grid tiene tile data en esa posición
+		var tile_data = grid.get_tile_data(tile_local)
+		if not tile_data.is_empty():
+			return {"grid": grid, "tile": tile_local}  # Encontrado!
+	
+	return {"grid": null, "tile": Vector2i.ZERO}
+
+
+## Verifica movimiento usando posiciones globales y retorna resultado + grid destino
+## Optimizado: usa find_grid_and_tile_at_world_position para evitar conversiones duplicadas
+## Retorna: {"can_move": bool, "target_grid": OverworldGrid, "from_tile": Vector2i, "to_tile": Vector2i}
+func check_world_movement(actor: Node, from_world_pos: Vector2, to_world_pos: Vector2) -> Dictionary:
+	# Encontrar el grid que contiene la posición destino (con tile ya convertido)
+	var to_result = find_grid_and_tile_at_world_position(to_world_pos)
+	var target_grid: OverworldGrid = to_result["grid"]
+	var to_tile: Vector2i = to_result["tile"]
+	
+	if not target_grid:
+		return {"can_move": false, "target_grid": null, "from_tile": Vector2i.ZERO, "to_tile": Vector2i.ZERO}
+	
+	# Convertir posición origen al sistema del grid destino
+	var from_tile = target_grid.world_to_tile(from_world_pos)
+	
+	# Verificar si puede moverse usando la lógica del grid correspondiente
+	var can_move = target_grid.can_step_to(actor, from_tile, to_tile)
+	
+	return {
+		"can_move": can_move,
+		"target_grid": target_grid,
+		"from_tile": from_tile,
+		"to_tile": to_tile
+	}

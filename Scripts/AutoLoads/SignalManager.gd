@@ -14,6 +14,9 @@ signal warp_started(map_id: String, spawn_id: String)
 signal warp_finished(map_id: String, spawn_id: String)
 signal map_change_requested(from_map: String, to_map: String)
 
+# === SEÑALES DEL SISTEMA SEAMLESS ===
+signal seamless_map_crossed(from_map_id: String, to_map_id: String)
+
 # === SEÑALES DE CONTROL DEL JUGADOR ===
 signal player_control_blocked()
 signal player_control_unblocked()

@@ -1,10 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=3 format=3 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
+[ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mmedn"]
 
 [node name="MapScene" type="Node2D"]
+script = ExtResource("1_mmedn")
 
-[node name="OverworldGrid" type="Node" parent="." groups=["OverworldGrid"]]
+[node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 script = ExtResource("1_03vl0")
 layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
 
@@ -15,7 +17,7 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="Above" type="TileMapLayer" parent="OverworldGrid"]
-z_index = 1
+z_index = 2
 metadata/_edit_lock_ = true
 
 [node name="Events" type="Node2D" parent="OverworldGrid"]
