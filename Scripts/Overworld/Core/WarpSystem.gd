@@ -7,8 +7,10 @@ class_name WarpSystem
 signal warp_started(map_id: String, spawn_id: String)
 signal warp_finished(map_id: String, spawn_id: String)
 
-# Referencias a otros sistemas (obtenidas dinámicamente)
-var map_system: Node = null
+# Referencias a otros sistemas (inyectadas desde OverworldCoordinator)
+# NO usar get_tree().get_first_node_in_group() - usar inyección de dependencias
+var map_system: MapSystem = null
+var world_system: WorldSystem = null
 
 # Variables del estado actual
 var is_warping: bool = false
@@ -16,8 +18,13 @@ var current_map_id: String = ""
 var current_spawn_id: String = ""
 
 func _ready() -> void:
-	# Obtener referencias dinámicamente
-	_update_references()
+	# Las referencias se inyectan desde OverworldCoordinator
+	# Verificar que las tenemos (se ejecutará después de la inyección)
+	await get_tree().process_frame
+	
+	if not map_system or not world_system:
+		push_warning("WarpSystem: Dependencias no inyectadas correctamente. Intentando fallback...")
+		_update_references()
 	
 	# Conectar con las señales del SignalManager
 	if SignalManager:
@@ -28,13 +35,19 @@ func _ready() -> void:
 	
 	print("WarpSystem: Sistema de warp inicializado")
 
-## Actualiza las referencias a otros sistemas
+## Actualiza las referencias a otros sistemas (FALLBACK - no recomendado)
+## Las dependencias deberían ser inyectadas por OverworldCoordinator
 func _update_references() -> void:
-	# Obtener MapSystem por grupo
-	map_system = get_tree().get_first_node_in_group("MapSystem")
+	# Solo ejecutar si las referencias no fueron inyectadas
 	if not map_system:
-		push_warning("WarpSystem: No se encontró el MapSystem")
-		return
+		map_system = get_tree().get_first_node_in_group("MapSystem")
+		if map_system:
+			push_warning("WarpSystem: MapSystem detectado por fallback. Debería ser inyectado.")
+	
+	if not world_system:
+		world_system = get_tree().get_first_node_in_group("WorldSystem")
+		if world_system:
+			push_warning("WarpSystem: WorldSystem detectado por fallback. Debería ser inyectado.")
 
 ## Método público para solicitar un warp
 func request_warp(map_id: String, spawn_id: String) -> void:
@@ -62,7 +75,24 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	
 	is_warping = true
 	
-	# 0. Actualizar referencias antes de ejecutar el warp
+	# 0. CRÍTICO: Detener completamente cualquier movimiento en curso
+	var player = get_tree().get_first_node_in_group("Player")
+	if player and player.has_node("GridMotion"):
+		var motion = player.get_node("GridMotion")
+		if motion:
+			# Si está en movimiento, esperar que termine
+			if motion.moving:
+				print("WarpSystem: Esperando a que termine el paso actual...")
+				await motion.step_finished
+				print("WarpSystem: Paso completado")
+			
+			# Detener completamente el movimiento (cancela tweens, resetea estado)
+			if motion.has_method("stop_movement"):
+				motion.stop_movement()
+			
+			print("WarpSystem: Movimiento detenido, continuando warp")
+	
+	# 1. Actualizar referencias antes de ejecutar el warp
 	_update_references()
 	
 	# Verificar que tenemos las referencias necesarias
@@ -71,17 +101,35 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 		is_warping = false
 		return
 	
+	if not world_system:
+		push_error("WarpSystem: No se pudo obtener el WorldSystem")
+		is_warping = false
+		return
+	
 	# 1. Verificar si necesitamos cambiar de mapa
 	var current_map = map_system.get_active_map()
 	var needs_map_change = not current_map or current_map.name != map_id
 	
 	if needs_map_change:
-		print("WarpSystem: Cambiando de mapa a: ", map_id)
-		var success = map_system.change_to_map(map_id, false)
-		if not success:
-			push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
-			is_warping = false
+		print("WarpSystem: Cambiando de mapa a través de WorldSystem: ", map_id)
+		
+		# Usar gestión de estado avanzada para interiores (PBI 374)
+		if world_system.has_method("warp_with_state_management"):
+			var success = await world_system.warp_with_state_management(map_id, spawn_id)
+			if not success:
+				push_error("WarpSystem: No se pudo cambiar al mapa con gestión de estado: " + map_id)
+				is_warping = false
+				return
+			# Si el warp con gestión de estado se completó, salir temprano
+			_emit_warp_finished(map_id, spawn_id)
 			return
+		else:
+			# Fallback al método tradicional
+			var success = world_system.change_to_map(map_id)
+			if not success:
+				push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
+				is_warping = false
+				return
 
 	
 	# 2. Posicionar al jugador en el spawn point correspondiente
@@ -125,4 +173,4 @@ func get_current_warp_info() -> Dictionary:
 func is_ready() -> bool:
 	# Actualizar referencias antes de verificar
 	_update_references()
-	return not is_warping and map_system != null
+	return not is_warping and map_system != null and world_system != null

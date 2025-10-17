@@ -21,15 +21,23 @@ var stride_is_left := true
 
 @onready var actor := get_parent() as Node2D
 var grid: OverworldGrid
+var active_tween: Tween = null  # Referencia al tween activo
+
+## Referencia a MapSystem (inicializada en _ready, crítica para seamless world)
+var map_system: MapSystem = null
 
 func _ready() -> void:
+	# Inicializar MapSystem (crítico para seamless world)
+	map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
+	if not map_system:
+		push_error("GridMotion: MapSystem no encontrado - el sistema seamless no funcionará")
+	
 	# Suscribirse a cambios de grid activo publicados por MapSystem
 	if SignalManager:
 		SignalManager.active_grid_changed.connect(func(g): grid = g)
-		# Inicializar con el grid activo si ya existe
-		var ms: MapSystem = get_tree().get_first_node_in_group("MapSystem")
-		if ms:
-			grid = ms.get_active_grid()
+		# Inicializar con el grid activo si ya existe (usar MapSystem ya cargado)
+		if map_system:
+			grid = map_system.get_active_grid()
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
@@ -52,12 +60,71 @@ func current_tile() -> Vector2i:
 			assert(false)
 			return Vector2i.ZERO
 	return grid.world_to_tile(actor.global_position)
- 
+
+## Refresca la referencia al grid actual (con cache para evitar búsquedas repetidas)
+## Nota: Se usa get_first_node_in_group en lugar de señales porque current_tile()
+## es consultado frecuentemente (hot path) y necesita respuesta síncrona
 func _refresh_grid() -> void:
 	grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
 
 func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
 	_refresh_grid()
+
+## Intenta cruzar a un mapa vecino (seamless world)
+## Retorna: {"success": bool, "from": Vector2i, "to": Vector2i}
+func _try_seamless_crossing(from: Vector2i, to: Vector2i) -> Dictionary:
+	# Verificar si el tile destino no existe en el grid actual
+	var tile_data = grid.get_tile_data(to)
+	if not tile_data.is_empty():
+		return {"success": false, "from": from, "to": to}
+	
+	# El tile no existe en este grid, puede ser un mapa vecino
+	var from_world_pos = actor.global_position
+	var to_world_pos = grid.tile_to_world_center(to)
+	
+	# Consultar movimiento en mapas vecinos (MapSystem ya validado en _ready)
+	var movement_result = map_system.check_world_movement(actor, from_world_pos, to_world_pos)
+	if not movement_result["can_move"]:
+		return {"success": false, "from": from, "to": to}
+	
+	var target_grid: OverworldGrid = movement_result["target_grid"]
+	if not target_grid or target_grid == grid:
+		return {"success": false, "from": from, "to": to}
+	
+	# Cruce exitoso: actualizar al nuevo grid
+	var from_map_id = grid.get_parent().name
+	var to_map_id = target_grid.get_parent().name
+	
+	# Emitir señal para que otros sistemas reaccionen (WorldSystem, Occupancy, etc.)
+	# NOTA: WorldSystem emitirá active_grid_changed, que hará que Occupancy limpie
+	# automáticamente la ocupación del grid anterior
+	SignalManager.seamless_map_crossed.emit(from_map_id, to_map_id)
+	
+	# Actualizar al nuevo grid
+	# IMPORTANTE: La limpieza de ocupación la hace Occupancy vía active_grid_changed
+	grid = target_grid
+	
+	# Retornar coordenadas convertidas
+	return {
+		"success": true,
+		"from": movement_result["from_tile"],
+		"to": movement_result["to_tile"]
+	}
+
+
+## Detiene inmediatamente cualquier movimiento en curso (para warps)
+func stop_movement() -> void:
+	# Cancelar tween activo si existe
+	if active_tween and active_tween.is_valid():
+		active_tween.kill()
+		active_tween = null
+		print("GridMotion: Tween cancelado")
+	
+	# Resetear estado de movimiento
+	moving = false
+	hold_time = 0.0
+	
+	print("GridMotion: Movimiento detenido")
 
 func face(d: Vector2) -> void:
 	if d != Vector2.ZERO:
@@ -77,7 +144,18 @@ func try_step(d: Vector2) -> bool:
 	
 	var from := current_tile()
 	var to := from + Vector2i(d)
+	
+	# PRIMERO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
+	
+	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
+	if not can_step:
+		var seamless_result = _try_seamless_crossing(from, to)
+		if seamless_result["success"]:
+			can_step = true
+			from = seamless_result["from"]
+			to = seamless_result["to"]
+	
 	self.initial_step = requires_initial_step(d)
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
@@ -95,9 +173,10 @@ func try_step(d: Vector2) -> bool:
 	if to == from:
 		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
-		var t := actor.create_tween()
-		t.tween_property(actor, "global_position", target, get_step_duration())
-		await t.finished
+		active_tween = actor.create_tween()
+		active_tween.tween_property(actor, "global_position", target, get_step_duration())
+		await active_tween.finished
+		active_tween = null
 
 	grid.commit(from, to, actor)
 	moving = false

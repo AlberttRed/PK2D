@@ -38,20 +38,26 @@ func _load_overworld_scene() -> void:
 	# Bloquear el control del jugador durante la carga inicial hasta completar el fade
 	SignalManager.player_control_blocked.emit()
 	
-	# Configurar el player después de cargar la escena
+	# Configurar el overworld después de cargar la escena
 	await get_tree().process_frame
-	var map_system:MapSystem = overworld_instance.get_node("MapSystem")
-	if map_system and map_system.has_method("configure_player_from_gamestate"):
-		print("GameStart: Configurando player según GameState...")
-		map_system.configure_player_from_gamestate()
-		print("GameStart: Player configurado exitosamente")
-		# Desvanecer desde negro cuando el mapa y el jugador ya están listos
-		SignalManager.fade_requested.emit("fade_out", 0.25)
-		await SignalManager.fade_finished
-		# Desbloquear control ahora que terminó el fade
-		SignalManager.player_control_unblocked.emit()
+	
+	# Obtener el coordinador (orquestador de sistemas del overworld)
+	var overworld_coordinator = overworld_instance as OverworldCoordinator
+	if overworld_coordinator and overworld_coordinator.has_method("configure_from_gamestate"):
+		print("GameStart: Configurando overworld según GameState...")
+		var success = overworld_coordinator.configure_from_gamestate()
+		
+		if success:
+			print("GameStart: ✓ Overworld configurado exitosamente")
+			# Desvanecer desde negro cuando todo está listo
+			SignalManager.fade_requested.emit("fade_out", 0.25)
+			await SignalManager.fade_finished
+			# Desbloquear control ahora que terminó el fade
+			SignalManager.player_control_unblocked.emit()
+		else:
+			push_error("GameStart: Error al configurar overworld desde GameState")
 	else:
-		push_warning("GameStart: No se pudo configurar el player - MapSystem no encontrado o método no disponible")
+		push_error("GameStart: OverworldCoordinator no encontrado o método no disponible")
 	
 	# Remover esta escena de la jerarquía
 	queue_free()
