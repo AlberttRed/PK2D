@@ -1,0 +1,278 @@
+extends Event
+class_name NPC
+
+## Sistema de NPCs como extensión de Event
+## 
+## Los NPCs pueden comportarse como eventos interactivos (diálogos, combates, cutscenes)
+## manteniendo compatibilidad total con el sistema de eventos, pero añadiendo capacidades
+## de movimiento, animación y colisión mediante GridMotion, Occupancy y ActorAnimator.
+
+## Tipo de movimiento del NPC
+@export_enum("Fixed", "Random", "Path", "LookAtPlayer") var movement_type: int = 0
+
+## Dirección inicial del NPC
+@export var initial_direction: Vector2 = Vector2.DOWN
+
+## Velocidad de movimiento (multiplicador)
+@export var movement_speed: float = 1.0
+
+@export_group("Random Movement")
+## Tiempo mínimo entre movimientos aleatorios (en segundos)
+@export var random_move_interval_min: float = 2.0
+## Tiempo máximo entre movimientos aleatorios (en segundos)
+@export var random_move_interval_max: float = 5.0
+
+@export_group("Path Movement")
+## Array de direcciones a seguir en bucle (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
+@export var path_directions: Array[DirectionEnum.Type] = []
+## Duración del delay cuando el NPC ejecuta un comando LOOK (en segundos)
+@export var look_delay: float = 0.5
+
+@export_group("")  # Cerrar el grupo
+
+## Ruta convertida a Vector2 (uso interno)
+var _path_directions_vector2: Array[Vector2] = []
+
+## Componentes del NPC
+@onready var motion: GridMotion = $GridMotion
+@onready var animator = $ActorAnimator  # ActorAnimator (sin tipo explícito por compatibilidad del linter)
+
+## Estado interno para movimiento
+var movement_enabled: bool = true
+var path_index: int = 0
+var looking_at_player: bool = false
+
+## Timers para gestión eficiente de movimiento
+var _random_timer: Timer
+var _look_delay_timer: Timer
+
+func _ready() -> void:
+	# El NPC usa ActorAnimator en lugar del sprite directo de Event
+	# Ocultar el sprite del Event si existe para evitar duplicados
+	if has_node("AnimatedSprite2D"):
+		$AnimatedSprite2D.visible = false
+	
+	super._ready()
+	
+	# Configurar dirección inicial
+	if motion:
+		motion.dir = initial_direction
+	
+	# Conectar señales de GridMotion
+	if motion:
+		motion.step_started.connect(_on_step_started)
+		motion.step_finished.connect(_on_step_finished)
+	
+	# Configurar animación idle inicial
+	if animator:
+		animator.idle(initial_direction)
+	
+	# Convertir el path de enum a Vector2 (2 = PATH)
+	if movement_type == 2:
+		_convert_path_to_vector2()
+	
+	# Reemplazar el sprite del Event con el ActorAnimator
+	# Si el evento tiene sprite_frames configurados en su página, aplicarlos al animator
+	_update_animator_from_current_page()
+	
+	# Configurar timers según el tipo de movimiento
+	_setup_timers()
+	
+	# Iniciar path movement si corresponde
+	if movement_type == 2:
+		_try_execute_next_path_action()
+
+func _process(_delta: float) -> void:
+	if not movement_enabled:
+		return
+	
+	# Solo LookAtPlayer necesita _process (actualiza cada frame)
+	if movement_type == 3:  # LOOK_AT_PLAYER
+		_process_look_at_player()
+
+## Actualiza el animator con el sprite_frames de la página actual del evento
+func _update_animator_from_current_page() -> void:
+	if not animator:
+		return
+	
+	if current_page and current_page.sprite_frames:
+		animator.set_sprite_frames(current_page.sprite_frames)
+		animator.show_sprite()
+	else:
+		# Si no hay sprite_frames, ocultar
+		animator.hide_sprite()
+
+## Override del método de Event para actualizar también el animator
+func update_sprite_from_current_page() -> void:
+	super.update_sprite_from_current_page()
+	_update_animator_from_current_page()
+
+## Configura los timers según el tipo de movimiento
+func _setup_timers() -> void:
+	# Timer para movimiento aleatorio (solo para Random)
+	if movement_type == 1:  # RANDOM
+		_random_timer = Timer.new()
+		add_child(_random_timer)
+		_random_timer.timeout.connect(_on_random_timer_timeout)
+		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	
+	# Timer para delay de LOOK (para Random y Path)
+	if movement_type in [1, 2]:  # RANDOM o PATH
+		_look_delay_timer = Timer.new()
+		_look_delay_timer.one_shot = true
+		add_child(_look_delay_timer)
+		_look_delay_timer.timeout.connect(_on_look_delay_timeout)
+
+## Callback del timer de movimiento aleatorio
+func _on_random_timer_timeout() -> void:
+	if not movement_enabled or motion.moving:
+		return
+	
+	# Todas las acciones disponibles (movimiento + LOOK)
+	var actions_to_use = [
+		DirectionEnum.Type.UP, DirectionEnum.Type.DOWN, 
+		DirectionEnum.Type.LEFT, DirectionEnum.Type.RIGHT,
+		DirectionEnum.Type.LOOK_UP, DirectionEnum.Type.LOOK_DOWN, 
+		DirectionEnum.Type.LOOK_LEFT, DirectionEnum.Type.LOOK_RIGHT
+	]
+	
+	# Elegir una acción aleatoria
+	var random_action = actions_to_use[randi() % actions_to_use.size()]
+	var direction = DirectionEnum.to_vector2(random_action)
+	
+	# Ejecutar según sea movimiento o LOOK
+	if DirectionEnum.is_movement(random_action):
+		# Movimiento normal: usar GridMotion
+		motion.hold_time = motion.initial_delay
+		motion.try_step(direction)
+	else:
+		# Comando LOOK: solo girar sin moverse
+		motion.hold_time = 0.0
+		motion.try_step(direction)
+	
+	# Reiniciar timer con intervalo aleatorio
+	_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+
+## Convierte el array de enum a Vector2
+func _convert_path_to_vector2() -> void:
+	_path_directions_vector2.clear()
+	for dir_enum in path_directions:
+		match dir_enum:
+			DirectionEnum.Type.UP: _path_directions_vector2.append(Vector2.UP)
+			DirectionEnum.Type.DOWN: _path_directions_vector2.append(Vector2.DOWN)
+			DirectionEnum.Type.LEFT: _path_directions_vector2.append(Vector2.LEFT)
+			DirectionEnum.Type.RIGHT: _path_directions_vector2.append(Vector2.RIGHT)
+			DirectionEnum.Type.LOOK_UP: _path_directions_vector2.append(Vector2.UP)
+			DirectionEnum.Type.LOOK_DOWN: _path_directions_vector2.append(Vector2.DOWN)
+			DirectionEnum.Type.LOOK_LEFT: _path_directions_vector2.append(Vector2.LEFT)
+			DirectionEnum.Type.LOOK_RIGHT: _path_directions_vector2.append(Vector2.RIGHT)
+			_: push_warning("NPC: Dirección inválida en path_directions: %d" % dir_enum)
+
+## Callback cuando termina el delay de LOOK
+func _on_look_delay_timeout() -> void:
+	# Avanzar al siguiente comando de la ruta después del delay
+	path_index = (path_index + 1) % _path_directions_vector2.size()
+	_try_execute_next_path_action()
+
+## Intenta ejecutar la siguiente acción del path
+func _try_execute_next_path_action() -> void:
+	if not movement_enabled or motion.moving or _path_directions_vector2.is_empty():
+		return
+	
+	# Obtener el comando actual de la ruta (enum y vector)
+	var dir_enum = path_directions[path_index]
+	var direction = _path_directions_vector2[path_index]
+	
+	# Verificar si es un comando LOOK (solo girar) o movimiento real
+	if DirectionEnum.is_movement(dir_enum):
+		# Movimiento normal: usar GridMotion
+		motion.hold_time = motion.initial_delay
+		motion.try_step(direction)
+		# Avanzar solo si empezó a moverse
+		if motion.moving:
+			path_index = (path_index + 1) % _path_directions_vector2.size()
+	else:
+		# Comando LOOK: solo girar sin moverse
+		motion.face(direction)
+		if animator:
+			animator.idle(direction)
+		# Iniciar timer de delay
+		_look_delay_timer.start(look_delay)
+
+## Procesa el comportamiento de mirar al jugador
+func _process_look_at_player() -> void:
+	if motion.moving:
+		return
+	
+	# Buscar al jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player:
+		return
+	
+	# Calcular dirección hacia el jugador
+	var player_tile = motion.grid.world_to_tile(player.global_position)
+	var npc_tile = motion.current_tile()
+	var diff = player_tile - npc_tile
+	
+	# Determinar la dirección predominante
+	var new_direction = Vector2.ZERO
+	if abs(diff.x) > abs(diff.y):
+		new_direction = Vector2.RIGHT if diff.x > 0 else Vector2.LEFT
+	else:
+		new_direction = Vector2.DOWN if diff.y > 0 else Vector2.UP
+	
+	# Solo actualizar si cambió la dirección
+	if new_direction != motion.dir:
+		motion.face(new_direction)
+		if animator:
+			animator.idle(new_direction)
+
+## Callback cuando GridMotion inicia un paso
+func _on_step_started() -> void:
+	if not animator or not motion:
+		return
+	
+	var use_run: bool = (motion.speed_multiplier > 1.0 and not motion.initial_step)
+	var prefix := "run" if use_run else "walk"
+	var stride := ("left" if motion.stride_is_left else "right")
+	
+	animator.set_direction(motion.dir, prefix, stride)
+	animator.set_speed_scale(motion.speed_multiplier)
+
+## Callback cuando GridMotion finaliza un paso
+func _on_step_finished(_tile: Vector2i) -> void:
+	if animator:
+		animator.idle(motion.dir)
+	
+	# Para Path movement, intentar ejecutar la siguiente acción
+	if movement_type == 2:  # PATH
+		_try_execute_next_path_action()
+
+## Detiene el movimiento del NPC
+func stop_movement() -> void:
+	if motion:
+		motion.moving = false
+	if animator:
+		animator.idle(motion.dir)
+
+## Habilita o deshabilita el movimiento del NPC
+func set_movement_enabled(enabled: bool) -> void:
+	movement_enabled = enabled
+	if not enabled:
+		stop_movement()
+
+## Teletransporta el NPC a una posición específica
+func teleport_to_tile(tile: Vector2i) -> void:
+	if has_node("Occupancy"):
+		$Occupancy.teleport_to_tile(tile)
+	else:
+		# Fallback: teletransporte directo
+		if motion and motion.grid:
+			global_position = motion.grid.tile_to_world_center(tile)
+
+## Establece la dirección que mira el NPC
+func set_facing_direction(new_direction: Vector2) -> void:
+	if motion:
+		motion.dir = new_direction
+	if animator:
+		animator.idle(new_direction)
