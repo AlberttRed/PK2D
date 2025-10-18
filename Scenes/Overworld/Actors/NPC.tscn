@@ -6,16 +6,14 @@
 [ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="5_animator"]
 
 [node name="NPC" instance=ExtResource("1_base")]
+z_index = 1
 script = ExtResource("2_npc")
 movement_type = 2
-initial_direction = Vector2(0, 1)
+initial_direction = 1
 movement_speed = 2
 random_move_interval_min = 2.0
 random_move_interval_max = 5.0
-random_actions = Array[int]([])
-random_look_delay = 0.5
 path_directions = Array[int]([])
-look_delay = 0.5
 
 [node name="GridMotion" type="Node" parent="." index="2"]
 script = ExtResource("3_motion")

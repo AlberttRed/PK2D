@@ -11,10 +11,10 @@ class_name NPC
 @export_enum("Fixed", "Random", "Path", "LookAtPlayer") var movement_type: int = 0
 
 ## Dirección inicial del NPC
-@export var initial_direction: Vector2 = Vector2.DOWN
+@export_enum("Up", "Down", "Left", "Right") var initial_direction: int = 1  # 1 = Down
 
-## Velocidad de movimiento (multiplicador)
-@export var movement_speed: float = 1.0
+## Velocidad de movimiento del NPC
+@export_enum("Slowest", "Slower", "Normal", "Faster", "Fastest") var movement_speed: int = 2  # 2 = Normal
 
 @export_group("Random Movement")
 ## Tiempo mínimo entre movimientos aleatorios (en segundos)
@@ -25,8 +25,6 @@ class_name NPC
 @export_group("Path Movement")
 ## Array de direcciones a seguir en bucle (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
 @export var path_directions: Array[DirectionEnum.Type] = []
-## Duración del delay cuando el NPC ejecuta un comando LOOK (en segundos)
-@export var look_delay: float = 0.5
 
 @export_group("")  # Cerrar el grupo
 
@@ -54,18 +52,19 @@ func _ready() -> void:
 	
 	super._ready()
 	
-	# Configurar dirección inicial
+	# Configurar dirección inicial y velocidad
 	if motion:
-		motion.dir = initial_direction
+		motion.dir = DirectionEnum.to_vector2(initial_direction)
+		motion.base_speed = MoveSpeedEnum.to_multiplier(movement_speed)
+	
+	# Configurar animación idle inicial
+	if animator:
+		animator.idle(DirectionEnum.to_vector2(initial_direction))
 	
 	# Conectar señales de GridMotion
 	if motion:
 		motion.step_started.connect(_on_step_started)
 		motion.step_finished.connect(_on_step_finished)
-	
-	# Configurar animación idle inicial
-	if animator:
-		animator.idle(initial_direction)
 	
 	# Convertir el path de enum a Vector2 (2 = PATH)
 	if movement_type == 2:
@@ -115,13 +114,6 @@ func _setup_timers() -> void:
 		add_child(_random_timer)
 		_random_timer.timeout.connect(_on_random_timer_timeout)
 		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
-	
-	# Timer para delay de LOOK (para Random y Path)
-	if movement_type in [1, 2]:  # RANDOM o PATH
-		_look_delay_timer = Timer.new()
-		_look_delay_timer.one_shot = true
-		add_child(_look_delay_timer)
-		_look_delay_timer.timeout.connect(_on_look_delay_timeout)
 
 ## Callback del timer de movimiento aleatorio
 func _on_random_timer_timeout() -> void:
@@ -168,12 +160,6 @@ func _convert_path_to_vector2() -> void:
 			DirectionEnum.Type.LOOK_RIGHT: _path_directions_vector2.append(Vector2.RIGHT)
 			_: push_warning("NPC: Dirección inválida en path_directions: %d" % dir_enum)
 
-## Callback cuando termina el delay de LOOK
-func _on_look_delay_timeout() -> void:
-	# Avanzar al siguiente comando de la ruta después del delay
-	path_index = (path_index + 1) % _path_directions_vector2.size()
-	_try_execute_next_path_action()
-
 ## Intenta ejecutar la siguiente acción del path
 func _try_execute_next_path_action() -> void:
 	if not movement_enabled or motion.moving or _path_directions_vector2.is_empty():
@@ -185,19 +171,30 @@ func _try_execute_next_path_action() -> void:
 	
 	# Verificar si es un comando LOOK (solo girar) o movimiento real
 	if DirectionEnum.is_movement(dir_enum):
+
+		var from = motion.current_tile()
+		var to = from + Vector2i(direction)
+		var can_step = motion.grid.can_step_to(motion.actor, from, to)
+
 		# Movimiento normal: usar GridMotion
-		motion.hold_time = motion.initial_delay
-		motion.try_step(direction)
-		# Avanzar solo si empezó a moverse
-		if motion.moving:
+		motion.face(direction)
+		animator.idle(direction)
+
+		if can_step:
+			# Avanzar solo si empezó a moverse
+			motion.try_step(direction)
 			path_index = (path_index + 1) % _path_directions_vector2.size()
+		else:
+			await get_tree().create_timer(0.5).timeout
+
 	else:
 		# Comando LOOK: solo girar sin moverse
 		motion.face(direction)
-		if animator:
-			animator.idle(direction)
-		# Iniciar timer de delay
-		_look_delay_timer.start(look_delay)
+		animator.idle(direction)
+		path_index = (path_index + 1) % _path_directions_vector2.size()
+		await get_tree().create_timer(0.5).timeout
+	call_deferred("_try_execute_next_path_action")
+
 
 ## Procesa el comportamiento de mirar al jugador
 func _process_look_at_player() -> void:
@@ -245,8 +242,9 @@ func _on_step_finished(_tile: Vector2i) -> void:
 		animator.idle(motion.dir)
 	
 	# Para Path movement, intentar ejecutar la siguiente acción
+	# Usar call_deferred para esperar a que GridMotion alterne el stride_is_left
 	if movement_type == 2:  # PATH
-		_try_execute_next_path_action()
+		call_deferred("_try_execute_next_path_action")
 
 ## Detiene el movimiento del NPC
 func stop_movement() -> void:

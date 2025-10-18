@@ -26,8 +26,8 @@ Clase que hereda de `Event` y añade capacidades de movimiento.
 
 **Propiedades exportadas:**
 - `movement_type`: Tipo de movimiento (Fixed=0, Random=1, Path=2, LookAtPlayer=3)
-- `initial_direction`: Dirección inicial del NPC
-- `movement_speed`: Velocidad de movimiento (Slowest=0, Slower=1, Normal=2, Faster=3, Fastest=4)
+- `initial_direction`: Dirección inicial del NPC - Enum (Up=0, Down=1, Left=2, Right=3)
+- `movement_speed`: Velocidad de movimiento - Enum (Slowest=0, Slower=1, Normal=2, Faster=3, Fastest=4)
 - `random_move_interval_min/max`: Intervalo entre movimientos aleatorios (solo visible si movement_type = Random)
 - `path_directions`: Array de direcciones para movimiento por ruta (solo visible si movement_type = Path)
 - `look_delay`: Duración del delay cuando ejecuta un comando LOOK (solo visible si movement_type = Path)
@@ -35,13 +35,18 @@ Clase que hereda de `Event` y añade capacidades de movimiento.
 **💡 Tip:** Las propiedades se muestran/ocultan automáticamente en el Inspector según el `movement_type` seleccionado para mantener la interfaz limpia.
 
 **Velocidades de movimiento disponibles:**
-| Velocidad | Multiplicador | Uso Típico |
-|-----------|---------------|------------|
-| Slowest | 0.5x | Ancianos, NPCs lentos |
-| Slower | 0.75x | Caminata relajada |
-| Normal | 1.0x | Velocidad estándar (por defecto) |
-| Faster | 1.5x | Caminata rápida |
-| Fastest | 2.0x | Correr, NPCs apresurados |
+
+El `movement_speed` del NPC se convierte a multiplicador y se asigna a `GridMotion.base_speed`:
+
+| Enum | Valor | Multiplicador | Tiempo/Tile | Uso Típico |
+|------|-------|---------------|-------------|------------|
+| Slowest | 0 | 0.5x | ~0.53s | 🐌 Ancianos, NPCs muy lentos |
+| Slower | 1 | 0.75x | ~0.35s | 🚶 Caminata relajada |
+| Normal | 2 | 1.0x | ~0.27s | 🚶‍♂️ Velocidad estándar (por defecto) |
+| Faster | 3 | 1.5x | ~0.18s | 🏃 Caminata rápida |
+| Fastest | 4 | 2.0x | ~0.13s | 🏃‍♂️ Correr |
+
+**Nota:** El Player usa `base_speed = 1.0` y controla la velocidad con el botón "run" (actualiza `GridMotion.is_running`). Los NPCs usan una velocidad fija configurada, pero pueden activar temporalmente `motion.is_running = true` si necesitan "correr" en situaciones específicas (ej: perseguir al jugador).
 
 **Métodos principales:**
 - `stop_movement()`: Detiene el movimiento actual
@@ -156,7 +161,7 @@ movement_type = 1  # Random
 movement_speed = 2  # Normal
 random_move_interval_min = 2.0
 random_move_interval_max = 5.0
-initial_direction = Vector2.DOWN
+initial_direction = 1  # Down
 ```
 
 ### Ejemplo: NPC Anciano Lento
@@ -164,10 +169,10 @@ initial_direction = Vector2.DOWN
 ```gdscript
 # Configuración en el Inspector:
 movement_type = 1  # Random
-movement_speed = 0  # Slowest (0.5x) ← Movimiento muy lento
+movement_speed = 0  # Slowest (0.5x) - Movimiento muy lento
 random_move_interval_min = 3.0
 random_move_interval_max = 6.0  # También más tiempo entre movimientos
-initial_direction = Vector2.DOWN
+initial_direction = 1  # Down
 ```
 
 ### Ejemplo: NPC con Movimiento Aleatorio + LOOK (Vigilante)
@@ -179,7 +184,7 @@ random_move_interval_min = 1.5
 random_move_interval_max = 3.0
 random_actions = [UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT]
 random_look_delay = 0.8
-initial_direction = Vector2.DOWN
+initial_direction = 1  # Down
 
 # Resultado: 50% movimiento, 50% LOOK (8 acciones, 4 de cada tipo)
 ```
@@ -193,7 +198,7 @@ random_move_interval_min = 2.0
 random_move_interval_max = 4.0
 random_actions = [LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT]
 random_look_delay = 1.0
-initial_direction = Vector2.DOWN
+initial_direction = 1  # Down
 
 # Resultado: El NPC se queda en su posición pero mira en todas direcciones (vigilando)
 ```
@@ -214,10 +219,23 @@ path_directions = [DOWN, DOWN, UP, UP]
 ```gdscript
 # Configuración en el Inspector:
 movement_type = 2  # Path
-movement_speed = 4  # Fastest (2.0x) ← Patrulla rápida
+movement_speed = 4  # Fastest (2.0x) - Patrulla a velocidad de carrera
 path_directions = [RIGHT, RIGHT, DOWN, DOWN, LEFT, LEFT, UP, UP]
 
 # Resultado: Cuadrado de 2x2 tiles a velocidad de carrera
+```
+
+### Ejemplo Avanzado: NPC que Corre Temporalmente (Futuro)
+
+```gdscript
+# Si en el futuro quieres que un NPC corra bajo ciertas condiciones:
+func chase_player():
+    motion.is_running = true  # Activar carrera temporalmente
+    var direction = _calculate_direction_to_player()
+    motion.try_step(direction)  # Este paso será a velocidad de carrera (2.0x)
+    
+func stop_chasing():
+    motion.is_running = false  # Volver a velocidad normal
 ```
 
 ### Ejemplo: NPC con Ruta Compleja (Cuadrado)

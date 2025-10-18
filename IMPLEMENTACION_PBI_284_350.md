@@ -46,13 +46,13 @@ NPC (hereda de Event)
 ### Funcionalidad Implementada:
 
 #### Propiedades Exportadas:
-✅ `movement_type` - Tipo de movimiento (Fixed=0, Random=1, Path=2, LookAtPlayer=3)  
-✅ `initial_direction` - Dirección inicial del NPC  
-✅ `movement_speed` - Velocidad del NPC (Slowest, Slower, Normal, Faster, Fastest)  
+✅ `movement_type` - Tipo de movimiento enum (Fixed=0, Random=1, Path=2, LookAtPlayer=3)  
+✅ `initial_direction` - Dirección inicial del NPC enum (Up=0, Down=1, Left=2, Right=3)  
+✅ `movement_speed` - Velocidad del NPC enum (Slowest=0, Slower=1, Normal=2, Faster=3, Fastest=4)  
 ✅ `random_move_interval_min/max` - Intervalo entre movimientos aleatorios  
 ✅ `random_look_delay` - Duración del delay para LOOK en movimiento aleatorio  
 ✅ `path_directions` - Array de DirectionEnum.Type (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)  
-✅ `look_delay` - Duración del delay para comandos LOOK en rutas (por defecto 0.5s)
+✅ `look_delay` - Duración del delay para comandos LOOK en rutas
 
 #### Tipos de Movimiento:
 ✅ **Fixed (0)**: NPC permanece en su posición sin moverse  
@@ -163,10 +163,12 @@ El ActorAnimator espera animaciones con el siguiente formato:
 - Scripts/Enums/MoveSpeedEnum.gd.uid
 - Scripts/Overworld/Actors/NPC_README.md
 
+### Archivos Modificados:
+- GridMotion.gd (añadidas propiedades `base_speed` y `is_running` para desacoplar input de lógica de movimiento)
+- Player.gd (actualiza `motion.is_running` según input del botón "run")
+
 ### Archivos NO Modificados:
 - Event.gd (mantiene compatibilidad con eventos existentes)
-- Player.gd (puede ser actualizado en el futuro para usar ActorAnimator)
-- GridMotion.gd
 - Occupancy.gd
 
 ---

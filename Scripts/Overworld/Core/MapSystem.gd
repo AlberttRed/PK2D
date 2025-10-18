@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 class_name MapSystem
 
 ## Sistema de gestión de mapas para el overworld
