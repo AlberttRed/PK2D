@@ -8,7 +8,10 @@ class_name NPC
 ## de movimiento, animación y colisión mediante GridMotion, Occupancy y ActorAnimator.
 
 ## Tipo de movimiento del NPC
-@export_enum("Fixed", "Random", "Path", "LookAtPlayer") var movement_type: int = 0
+@export_enum("None", "Random", "Path", "LookAtPlayer") var movement_type: int = 0
+
+## Comportamiento de orientación al interactuar
+@export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
 
 ## Dirección inicial del NPC
 @export_enum("Up", "Down", "Left", "Right") var initial_direction: int = 1  # 1 = Down
@@ -39,6 +42,7 @@ var _path_directions_vector2: Array[Vector2] = []
 var movement_enabled: bool = true
 var path_index: int = 0
 var looking_at_player: bool = false
+var _movement_paused: bool = false  # Flag para pausar movimiento durante comandos
 
 ## Timers para gestión eficiente de movimiento
 var _random_timer: Timer
@@ -66,6 +70,9 @@ func _ready() -> void:
 		motion.step_started.connect(_on_step_started)
 		motion.step_finished.connect(_on_step_finished)
 	
+	# Conectar señales del sistema de eventos
+	SignalManager.event_finished.connect(_on_event_finished)
+	
 	# Convertir el path de enum a Vector2 (2 = PATH)
 	if movement_type == 2:
 		_convert_path_to_vector2()
@@ -81,8 +88,30 @@ func _ready() -> void:
 	if movement_type == 2:
 		_try_execute_next_path_action()
 
+## Override del trigger() de Event para pausar movimiento
+func trigger() -> void:
+	SignalManager.player_control_blocked.emit()
+	if motion.moving:
+		await motion.step_finished
+	# Pausar movimiento antes de ejecutar comandos
+	_pause_movement()
+	
+	# Manejar orientación según el comportamiento
+	match orientation_behavior:
+		OrientationBehaviorEnum.Type.FACE_PLAYER:
+			_face_player()
+		OrientationBehaviorEnum.Type.FIXED:
+			# No hacer nada, mantener dirección actual
+			pass
+		OrientationBehaviorEnum.Type.FACE_AND_RESTORE:
+			_face_player()
+	
+	# Llamar al trigger() de la clase padre
+	SignalManager.player_control_unblocked.emit()
+	super.trigger()
+
 func _process(_delta: float) -> void:
-	if not movement_enabled:
+	if not movement_enabled or _movement_paused:
 		return
 	
 	# Solo LookAtPlayer necesita _process (actualiza cada frame)
@@ -117,7 +146,7 @@ func _setup_timers() -> void:
 
 ## Callback del timer de movimiento aleatorio
 func _on_random_timer_timeout() -> void:
-	if not movement_enabled or motion.moving:
+	if not movement_enabled or motion.moving or _movement_paused:
 		return
 	
 	# Todas las acciones disponibles (movimiento + LOOK)
@@ -162,7 +191,7 @@ func _convert_path_to_vector2() -> void:
 
 ## Intenta ejecutar la siguiente acción del path
 func _try_execute_next_path_action() -> void:
-	if not movement_enabled or motion.moving or _path_directions_vector2.is_empty():
+	if not movement_enabled or motion.moving or _path_directions_vector2.is_empty() or _movement_paused:
 		return
 	
 	# Obtener el comando actual de la ruta (enum y vector)
@@ -201,9 +230,14 @@ func _process_look_at_player() -> void:
 	if motion.moving:
 		return
 	
+	# Usar la función reutilizable para mirar al jugador
+	_face_player()
+
+## Hace que el NPC mire hacia el jugador
+func _face_player() -> void:
 	# Buscar al jugador
 	var player = get_tree().get_first_node_in_group("Player")
-	if not player:
+	if not player or not motion:
 		return
 	
 	# Calcular dirección hacia el jugador
@@ -274,3 +308,41 @@ func set_facing_direction(new_direction: Vector2) -> void:
 		motion.dir = new_direction
 	if animator:
 		animator.idle(new_direction)
+
+## Pausa el movimiento del NPC cuando se activa un comando
+func _pause_movement() -> void:
+	_movement_paused = true
+	
+	# Detener timers si están activos
+	if _random_timer and _random_timer.time_left > 0:
+		_random_timer.stop()
+	if _look_delay_timer and _look_delay_timer.time_left > 0:
+		_look_delay_timer.stop()
+	
+	print("NPC: Movimiento pausado para ejecutar comandos")
+
+## Reanuda el movimiento del NPC cuando terminan los comandos
+func _resume_movement() -> void:
+	_movement_paused = false
+	
+	# Reiniciar timers según el tipo de movimiento
+	if movement_type == 1 and _random_timer:  # RANDOM
+		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	elif movement_type == 2:  # PATH
+		# Reanudar path movement
+		call_deferred("_try_execute_next_path_action")
+	
+	print("NPC: Movimiento reanudado")
+
+## Callback cuando termina un evento (para reanudar movimiento)
+func _on_event_finished(_event: Event) -> void:
+	# Solo reanudar si este NPC estaba pausado
+	if _movement_paused:
+		# Restaurar dirección inicial si es necesario
+		if orientation_behavior == OrientationBehaviorEnum.Type.FACE_AND_RESTORE:
+			var initial_dir = DirectionEnum.to_vector2(initial_direction)
+			motion.dir = initial_dir
+			if animator:
+				animator.idle(initial_dir)
+		
+		_resume_movement()

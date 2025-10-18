@@ -9,6 +9,7 @@
 z_index = 1
 script = ExtResource("2_npc")
 movement_type = 2
+orientation_behavior = 0
 initial_direction = 1
 movement_speed = 2
 random_move_interval_min = 2.0

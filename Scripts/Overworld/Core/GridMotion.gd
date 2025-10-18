@@ -184,11 +184,20 @@ func try_step(d: Vector2) -> bool:
 	if to == from:
 		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
+		# if actor is Event:
+		# 	# Desregistrar del tile anterior
+		if actor is Event:
+			# Registrar en el tile nuevo
+			_update_event_registration(from, to)
+		# 	grid.unregister_event(from, actor)
 		active_tween = actor.create_tween()
 		active_tween.tween_property(actor, "global_position", target, get_step_duration())
 		grid.vacate(from, actor)
 		await active_tween.finished
 		active_tween = null
+		# if actor is Event:
+		# 	# Registrar en el tile nuevo
+		# 	grid.register_event(to, actor)
 
 	grid.commit(from, to, actor)
 	moving = false
@@ -217,3 +226,16 @@ func event_in_front() -> Event:
 ##Checks if actor need to do the first step animation before moving
 func requires_initial_step(direction: Vector2) -> bool:
 	return (direction != previous_dir and self.hold_time < initial_delay)
+
+## Actualiza el registro de eventos en el grid cuando se mueve un Event
+func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
+	if not grid:
+		return
+	
+	# Desregistrar del tile anterior
+	grid.unregister_event(from_tile, actor)
+	
+	# Registrar en el tile nuevo
+	grid.register_event(to_tile, actor)
+	
+	print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
