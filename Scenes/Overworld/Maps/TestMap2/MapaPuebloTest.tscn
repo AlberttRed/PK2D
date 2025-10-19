@@ -72,6 +72,7 @@ commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_s82w2"), SubReso
 blocks_player = true
 through = true
 sprite_frames = SubResource("SpriteFrames_vfkak")
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_ai0v4"]
@@ -103,6 +104,7 @@ trigger_type = 1
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_ai0v4"), SubResource("Resource_vfkak"), SubResource("Resource_tjc6v")])
 blocks_player = true
 through = true
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_j5a51"]
@@ -120,6 +122,7 @@ trigger_type = 1
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_ai0v4"), SubResource("Resource_j5a51"), SubResource("Resource_tjc6v")])
 blocks_player = true
 through = true
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_w67m6"]
@@ -138,6 +141,7 @@ trigger_type = 0
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_w67m6")])
 blocks_player = true
 through = false
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_y2ivs"]
@@ -165,6 +169,7 @@ trigger_type = 2
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_y2ivs"), SubResource("Resource_j7sqr"), SubResource("Resource_bny8y")])
 blocks_player = true
 through = true
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_2b25c"]
@@ -192,6 +197,7 @@ trigger_type = 2
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_2b25c"), SubResource("Resource_01pid"), SubResource("Resource_i3b8l")])
 blocks_player = true
 through = true
+frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [node name="MapaPuebloTest" type="Node2D"]

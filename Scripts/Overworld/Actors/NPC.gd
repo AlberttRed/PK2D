@@ -89,6 +89,9 @@ func _ready() -> void:
 	
 	super._ready()
 	
+	# Ocultar el sprite por defecto del Event base si está usando DefaultNPCSprite
+	_hide_default_npc_sprite_if_needed()
+	
 	# Configurar dirección inicial y velocidad
 	if motion:
 		motion.dir = DirectionEnum.to_vector2(initial_direction)
@@ -156,11 +159,20 @@ func _update_animator_from_current_page() -> void:
 	if not animator:
 		return
 	
-	if current_page and current_page.sprite_frames:
-		animator.set_sprite_frames(current_page.sprite_frames)
-		animator.show_sprite()
+	if current_page:
+		# Usar el método get_sprite_frames() que soporta generación automática
+		var frames = current_page.get_sprite_frames()
+		if frames:
+			animator.set_sprite_frames(frames)
+			animator.show_sprite()
+			
+			# Configurar la dirección inicial después de asignar los frames
+			if motion:
+				var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(initial_direction)
+				animator.idle(initial_dir)
+		else:
+			animator.hide_sprite()
 	else:
-		# Si no hay sprite_frames, ocultar
 		animator.hide_sprite()
 
 ## Override del método de Event para actualizar también el animator
@@ -522,3 +534,42 @@ func _on_event_finished(_event: Event) -> void:
 				animator.idle(initial_dir)
 		
 		_resume_movement()
+
+## Oculta el sprite por defecto si el NPC está usando DefaultNPCSprite (solo visible en editor)
+func _hide_default_npc_sprite_if_needed() -> void:
+	# El NPC usa ActorAnimator, así que verificamos si el sprite del Event base está visible
+	if not sprite or not sprite.sprite_frames:
+		return
+	
+	# Verificar si está usando el sprite por defecto de NPC
+	var is_using_default = _is_using_default_npc_sprite()
+	
+	if is_using_default:
+		# Ocultar el sprite durante la ejecución del juego
+		sprite.visible = false
+		print("NPC '%s': DefaultNPCSprite ocultado en ejecución (usando ActorAnimator)" % name)
+
+## Verifica si el NPC está usando el sprite por defecto
+func _is_using_default_npc_sprite() -> bool:
+	if not sprite or not sprite.sprite_frames:
+		return false
+	
+	# Obtener la ruta del sprite actual
+	var current_sprite_path = sprite.sprite_frames.resource_path
+	
+	# Verificar si coincide con el sprite por defecto de NPC
+	var default_sprite_path = "res://Sprites/Eventos/DefaultNPCSprite.png"
+	
+	# Verificar por el nombre del recurso
+	if current_sprite_path.find("DefaultNPCSprite") != -1:
+		return true
+	
+	# Verificar si la primera animación usa la textura por defecto
+	if sprite.sprite_frames.has_animation("default"):
+		var frame_count = sprite.sprite_frames.get_frame_count("default")
+		if frame_count > 0:
+			var frame_texture = sprite.sprite_frames.get_frame_texture("default", 0)
+			if frame_texture and frame_texture.resource_path == default_sprite_path:
+				return true
+	
+	return false
