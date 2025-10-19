@@ -33,6 +33,9 @@ func _process(_delta: float):
 	elif Input.is_action_pressed("move_right"):
 		input_dir = Vector2.RIGHT
 	
+	# Actualizar flag de correr en GridMotion
+	motion.is_running = Input.is_action_pressed("run")
+	
 	if input_dir != Vector2.ZERO:
 		motion.hold_time += _delta
 	else:

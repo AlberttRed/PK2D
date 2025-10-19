@@ -5,11 +5,13 @@
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_63pmi"]
 
 [node name="MapCiudadTest" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_drkgp")
 world_position = Vector2(-128, -1152)
 neighbors = Array[String](["MapNeighborTest"])
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
+y_sort_enabled = true
 script = ExtResource("1_xjxps")
 layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
 
@@ -30,6 +32,7 @@ metadata/_edit_lock_ = true
 
 [node name="Events" type="Node2D" parent="OverworldGrid"]
 visible = false
+y_sort_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]

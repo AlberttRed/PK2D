@@ -351,7 +351,7 @@ script = ExtResource("3_sxj1f")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_slkcw")
-animation = &"run_up_right"
+animation = &"walk_left_left"
 offset = Vector2(0, -8)
 metadata/_edit_lock_ = true
 

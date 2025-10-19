@@ -9,8 +9,14 @@ signal step_finished(tile: Vector2i)
 @export var initial_delay := 0.12  # tiempo que hay que mantener pulsado antes de moverse
 @export var turn_duration := 0.133  # duración del giro en sitio (cuando no hay desplazamiento)
 
+## Multiplicador de velocidad base (configurable por NPCs, Player usa 1.0)
+@export var base_speed := 1.0
+
 ## Multiplicador de velocidad (1 = normal, 2 = correr, 0.5 = ralentizado…)
 var speed_multiplier := 1.0
+
+## Flag para indicar si el actor está corriendo (controlado externamente por Player o NPCs)
+var is_running := false
 
 var hold_time:float
 var moving := false
@@ -44,11 +50,16 @@ func get_step_duration() -> float:
 
 ##Gets de speed scale that will be used to move and animate the actor when moving
 func get_speed_multiplier(_d: Vector2, can_step: bool, is_initial_step: bool) -> float:
-	if (is_initial_step or Input.is_action_pressed("run")) and can_step:
-		return 2.0
+	var multiplier := base_speed
+	
+	# Aplicar boost de run si está activado (controlado externamente por Player/NPC)
+	if (is_initial_step or is_running) and can_step and base_speed == 1.0:
+		multiplier = 2.0
+	
 	if not can_step:
-		return 0.5
-	return 1.0
+		multiplier = 0.5
+	
+	return multiplier
 
 
 func current_tile() -> Vector2i:
@@ -173,10 +184,20 @@ func try_step(d: Vector2) -> bool:
 	if to == from:
 		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
+		# if actor is Event:
+		# 	# Desregistrar del tile anterior
+		if actor is Event:
+			# Registrar en el tile nuevo
+			_update_event_registration(from, to)
+		# 	grid.unregister_event(from, actor)
 		active_tween = actor.create_tween()
 		active_tween.tween_property(actor, "global_position", target, get_step_duration())
+		grid.vacate(from, actor)
 		await active_tween.finished
 		active_tween = null
+		# if actor is Event:
+		# 	# Registrar en el tile nuevo
+		# 	grid.register_event(to, actor)
 
 	grid.commit(from, to, actor)
 	moving = false
@@ -205,3 +226,16 @@ func event_in_front() -> Event:
 ##Checks if actor need to do the first step animation before moving
 func requires_initial_step(direction: Vector2) -> bool:
 	return (direction != previous_dir and self.hold_time < initial_delay)
+
+## Actualiza el registro de eventos en el grid cuando se mueve un Event
+func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
+	if not grid:
+		return
+	
+	# Desregistrar del tile anterior
+	grid.unregister_event(from_tile, actor)
+	
+	# Registrar en el tile nuevo
+	grid.register_event(to_tile, actor)
+	
+	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)

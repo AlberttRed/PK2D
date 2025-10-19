@@ -40,11 +40,14 @@ func update_sprite_from_current_page() -> void:
 	if not sprite:
 		return
 	
-	if current_page and current_page.sprite_frames:
-		sprite.sprite_frames = current_page.sprite_frames
+	if current_page:
+		# Usar el método get_sprite_frames() que soporta generación automática
+		var frames = current_page.get_sprite_frames()
+		if frames:
+			sprite.sprite_frames = frames
+		else:
+			sprite.sprite_frames = null
 	else:
-		# Si no hay página activa o no tiene sprite, usar sprite por defecto
-		# Esto se puede personalizar según tus necesidades
 		sprite.sprite_frames = null
 	
 	# Revisar si necesita ocultar el sprite por defecto

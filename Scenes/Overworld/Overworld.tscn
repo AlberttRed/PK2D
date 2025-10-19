@@ -18,9 +18,9 @@ script = ExtResource("1_overworld")
 script = ExtResource("6_world_system")
 world_map_scenes = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq"), ExtResource("5_ius67"), ExtResource("6_de4hb")])
 
-[node name="MapSystem" type="Node" parent="." groups=["MapSystem"]]
+[node name="MapSystem" type="Node2D" parent="." groups=["MapSystem"]]
+y_sort_enabled = true
 script = ExtResource("3_map_system")
-metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
 [node name="EventSystem" type="Node" parent="." groups=["EventSystem"]]
 script = ExtResource("1_fvdb5")
