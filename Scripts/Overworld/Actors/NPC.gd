@@ -294,12 +294,20 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 	if movement_type not in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
 		return
 	
-	# Obtener referencia al jugador
+	# OPTIMIZACIÓN: Verificar distancia con tiles ANTES de buscar el player
+	var npc_tile = motion.current_tile()
+	var distance_tiles = npc_tile.distance_to(_tile_pos)
+	
+	# Early return si está muy lejos (evita búsquedas costosas)
+	if distance_tiles > awareness_detection_distance:
+		return
+	
+	# Solo si está cerca, buscar el player
 	var player = get_tree().get_first_node_in_group("Player")
 	if not player:
 		return
 	
-	# Calcular distancia al jugador (convertir tiles a píxeles)
+	# Calcular distancia exacta en píxeles para mayor precisión
 	var distance_in_pixels = global_position.distance_to(player.global_position)
 	var detection_distance_pixels = awareness_detection_distance * 32
 	
