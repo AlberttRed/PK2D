@@ -20,7 +20,7 @@ animations = [{
 [node name="NPC" instance=ExtResource("1_base")]
 z_index = 1
 script = ExtResource("2_npc")
-movement_type = 2
+movement_type = 0
 orientation_behavior = 0
 initial_direction = 1
 movement_speed = 2

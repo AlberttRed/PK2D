@@ -148,6 +148,7 @@ pages = Array[ExtResource("4_j2c21")]([SubResource("Resource_gc3x0")])
 
 [node name="NPC" parent="OverworldGrid/Events" instance=ExtResource("11_ubsjn")]
 position = Vector2(112, 144)
+movement_type = 2
 initial_direction = 2
 random_move_interval_min = 5.0
 path_directions = Array[int]([0, 0, 6, 7, 1, 1, 1, 6, 7, 0])
@@ -163,7 +164,6 @@ pages = Array[ExtResource("4_j2c21")]([SubResource("Resource_8p3xo")])
 
 [node name="NPC3" parent="OverworldGrid/Events" instance=ExtResource("11_ubsjn")]
 position = Vector2(240, 144)
-movement_type = 0
 orientation_behavior = 2
 initial_direction = 2
 random_move_interval_min = 5.0
