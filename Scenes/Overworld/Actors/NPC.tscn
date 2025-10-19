@@ -15,6 +15,14 @@ movement_speed = 2
 random_move_interval_min = 2.0
 random_move_interval_max = 5.0
 path_directions = Array[int]([])
+look_pattern_directions = Array[int]([])
+look_pattern_delay = 2.0
+random_turning_interval_min = 2.0
+random_turning_interval_max = 5.0
+awareness_enabled = false
+awareness_chance = 0.3
+awareness_running_multiplier = 2.0
+awareness_detection_distance = 3.0
 
 [node name="GridMotion" type="Node" parent="." index="2"]
 script = ExtResource("3_motion")

@@ -8,7 +8,7 @@ class_name NPC
 ## de movimiento, animación y colisión mediante GridMotion, Occupancy y ActorAnimator.
 
 ## Tipo de movimiento del NPC
-@export_enum("None", "Random", "Path", "LookAtPlayer") var movement_type: int = 0
+@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
 
 ## Comportamiento de orientación al interactuar
 @export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
@@ -31,8 +31,39 @@ class_name NPC
 
 @export_group("")  # Cerrar el grupo
 
+@export_group("Look Pattern")
+## Array de direcciones de mirada a seguir en bucle (LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
+@export var look_pattern_directions: Array[DirectionEnum.Type] = []
+## Tiempo en segundos que el NPC mira en cada dirección antes de cambiar
+@export var look_pattern_delay: float = 2.0
+
+@export_group("")  # Cerrar el grupo
+
+# === PROPIEDADES PARA RANDOM TURNING ===
+@export_group("Random Turning", "random_turning_")
+## Intervalo mínimo entre giros aleatorios
+@export var random_turning_interval_min: float = 2.0
+## Intervalo máximo entre giros aleatorios
+@export var random_turning_interval_max: float = 5.0
+
+# === PROPIEDADES PARA AWARENESS (DETECCIÓN DE JUGADOR) ===
+@export_group("Player Awareness", "awareness_")
+## Si está activo, el NPC puede detectar y girar hacia el jugador
+@export var awareness_enabled: bool = false
+## Probabilidad base de girar hacia el jugador (0.0 a 1.0)
+@export var awareness_chance: float = 0.3
+## Multiplicador de probabilidad cuando el jugador corre
+@export var awareness_running_multiplier: float = 2.0
+## Distancia máxima para detectar al jugador (en tiles)
+@export var awareness_detection_distance: float = 3.0
+
+@export_group("")  # Cerrar el grupo
+
 ## Ruta convertida a Vector2 (uso interno)
 var _path_directions_vector2: Array[Vector2] = []
+
+## Patrón de mirada (uso interno)
+var _look_pattern_index: int = 0
 
 ## Componentes del NPC
 @onready var motion: GridMotion = $GridMotion
@@ -47,6 +78,8 @@ var _movement_paused: bool = false  # Flag para pausar movimiento durante comand
 ## Timers para gestión eficiente de movimiento
 var _random_timer: Timer
 var _look_delay_timer: Timer
+var _random_turning_timer: Timer
+var _look_pattern_timer: Timer
 
 func _ready() -> void:
 	# El NPC usa ActorAnimator en lugar del sprite directo de Event
@@ -72,6 +105,10 @@ func _ready() -> void:
 	
 	# Conectar señales del sistema de eventos
 	SignalManager.event_finished.connect(_on_event_finished)
+	
+	# Conectar a la señal step_finished del Player si el awareness está activo
+	if awareness_enabled and movement_type in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+		_connect_to_player_movement()
 	
 	# Convertir el path de enum a Vector2 (2 = PATH)
 	if movement_type == 2:
@@ -111,12 +148,8 @@ func trigger() -> void:
 	super.trigger()
 
 func _process(_delta: float) -> void:
-	if not movement_enabled or _movement_paused:
-		return
-	
-	# Solo LookAtPlayer necesita _process (actualiza cada frame)
-	if movement_type == 3:  # LOOK_AT_PLAYER
-		_process_look_at_player()
+	# Los timers manejan todo ahora, no necesitamos _process
+	pass
 
 ## Actualiza el animator con el sprite_frames de la página actual del evento
 func _update_animator_from_current_page() -> void:
@@ -143,6 +176,31 @@ func _setup_timers() -> void:
 		add_child(_random_timer)
 		_random_timer.timeout.connect(_on_random_timer_timeout)
 		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	
+	# Timer para giro aleatorio (solo para RandomTurning)
+	elif movement_type == 3:  # RANDOM_TURNING
+		_random_turning_timer = Timer.new()
+		add_child(_random_turning_timer)
+		_random_turning_timer.timeout.connect(_on_random_turning_timer_timeout)
+		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+	
+	# Timer para patrón de mirada (solo para LookPattern)
+	elif movement_type == 4:  # LOOK_PATTERN
+		_look_pattern_timer = Timer.new()
+		add_child(_look_pattern_timer)
+		_look_pattern_timer.timeout.connect(_on_look_pattern_timer_timeout)
+		if not look_pattern_directions.is_empty():
+			# Ejecutar primera mirada inmediatamente, luego el timer
+			_execute_next_look_pattern()
+
+## Conecta a la señal step_finished del Player para awareness
+func _connect_to_player_movement() -> void:
+	# Buscar al jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if player and player.has_node("GridMotion"):
+		var player_motion = player.get_node("GridMotion")
+		if player_motion:
+			player_motion.step_finished.connect(_on_player_moved)
 
 ## Callback del timer de movimiento aleatorio
 func _on_random_timer_timeout() -> void:
@@ -173,6 +231,114 @@ func _on_random_timer_timeout() -> void:
 	
 	# Reiniciar timer con intervalo aleatorio
 	_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+
+## Callback del timer de giro aleatorio (RandomTurning)
+func _on_random_turning_timer_timeout() -> void:
+	if not movement_enabled or _movement_paused:
+		return
+	
+	# Solo comandos LOOK (sin movimiento)
+	var look_actions = [
+		DirectionEnum.Type.LOOK_UP, DirectionEnum.Type.LOOK_DOWN, 
+		DirectionEnum.Type.LOOK_LEFT, DirectionEnum.Type.LOOK_RIGHT
+	]
+	
+	# Elegir una dirección aleatoria para mirar
+	var random_look = look_actions[randi() % look_actions.size()]
+	var direction = DirectionEnum.to_vector2(random_look)
+	
+	# Solo girar sin moverse
+	motion.face(direction)
+	animator.idle(direction)
+	
+	# Reiniciar timer con intervalo aleatorio
+	_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+
+## Callback del timer de Look Pattern
+func _on_look_pattern_timer_timeout() -> void:
+	if not movement_enabled or _movement_paused:
+		return
+	
+	_execute_next_look_pattern()
+
+## Ejecuta la siguiente dirección del patrón de mirada
+func _execute_next_look_pattern() -> void:
+	if look_pattern_directions.is_empty():
+		return
+	
+	# Obtener la dirección actual del patrón
+	var look_direction_enum = look_pattern_directions[_look_pattern_index]
+	var look_direction = DirectionEnum.to_vector2(look_direction_enum)
+	
+	# Validar que sea un comando LOOK
+	if not DirectionEnum.is_movement(look_direction_enum):
+		# Girar hacia la dirección
+		motion.face(look_direction)
+		if animator:
+			animator.idle(look_direction)
+	else:
+		push_warning("NPC: Look Pattern contiene comandos de movimiento. Solo debe contener LOOK_UP/DOWN/LEFT/RIGHT")
+	
+	# Avanzar al siguiente índice (bucle infinito)
+	_look_pattern_index = (_look_pattern_index + 1) % look_pattern_directions.size()
+	
+	# Iniciar timer para la siguiente mirada
+	_look_pattern_timer.start(look_pattern_delay)
+
+## Callback cuando el jugador se mueve (para awareness)
+func _on_player_moved(_tile_pos: Vector2) -> void:
+	if not movement_enabled or _movement_paused or not awareness_enabled:
+		return
+	
+	# Solo activar en tipos sin movimiento
+	if movement_type not in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+		return
+	
+	# Obtener referencia al jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player:
+		return
+	
+	# Calcular distancia al jugador (convertir tiles a píxeles)
+	var distance_in_pixels = global_position.distance_to(player.global_position)
+	var detection_distance_pixels = awareness_detection_distance * 32
+	
+	if distance_in_pixels > detection_distance_pixels:
+		return
+	
+	# Calcular probabilidad de giro
+	var chance = awareness_chance
+	
+	# Aumentar probabilidad si el jugador está corriendo
+	if player.has_node("GridMotion"):
+		var player_motion = player.get_node("GridMotion")
+		if player_motion and player_motion.is_running:
+			chance *= awareness_running_multiplier
+	
+	# Verificar si debe girar
+	if randf() < chance:
+		# Calcular dirección hacia el jugador
+		var direction_to_player = (player.global_position - global_position).normalized()
+		var look_direction = _get_closest_direction(direction_to_player)
+		
+		# Girar hacia el jugador
+		motion.face(look_direction)
+		if animator:
+			animator.idle(look_direction)
+
+## Obtiene la dirección más cercana a un vector dado
+func _get_closest_direction(direction: Vector2) -> Vector2:
+	var directions = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
+	var closest_dir = Vector2.UP
+	var max_dot = -1.0
+	
+	for dir in directions:
+		var dot = direction.dot(dir)
+		if dot > max_dot:
+			max_dot = dot
+			closest_dir = dir
+	
+	return closest_dir
 
 ## Convierte el array de enum a Vector2
 func _convert_path_to_vector2() -> void:
@@ -226,12 +392,6 @@ func _try_execute_next_path_action() -> void:
 
 
 ## Procesa el comportamiento de mirar al jugador
-func _process_look_at_player() -> void:
-	if motion.moving:
-		return
-	
-	# Usar la función reutilizable para mirar al jugador
-	_face_player()
 
 ## Hace que el NPC mire hacia el jugador
 func _face_player() -> void:
@@ -318,6 +478,10 @@ func _pause_movement() -> void:
 		_random_timer.stop()
 	if _look_delay_timer and _look_delay_timer.time_left > 0:
 		_look_delay_timer.stop()
+	if _random_turning_timer and _random_turning_timer.time_left > 0:
+		_random_turning_timer.stop()
+	if _look_pattern_timer and _look_pattern_timer.time_left > 0:
+		_look_pattern_timer.stop()
 	
 	print("NPC: Movimiento pausado para ejecutar comandos")
 
@@ -331,6 +495,10 @@ func _resume_movement() -> void:
 	elif movement_type == 2:  # PATH
 		# Reanudar path movement
 		call_deferred("_try_execute_next_path_action")
+	elif movement_type == 3 and _random_turning_timer:  # RANDOM_TURNING
+		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+	elif movement_type == 4 and _look_pattern_timer:  # LOOK_PATTERN
+		_look_pattern_timer.start(look_pattern_delay)
 	
 	print("NPC: Movimiento reanudado")
 

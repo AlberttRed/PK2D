@@ -238,4 +238,4 @@ func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 	# Registrar en el tile nuevo
 	grid.register_event(to_tile, actor)
 	
-	print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
+	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
