@@ -41,6 +41,9 @@ var _last_grass_effect_tile: Vector2i = Vector2i(-9999, -9999)
 ## Último tile donde hay un overlay activo
 var _last_overlay_tile: Vector2i = Vector2i(-9999, -9999)
 
+## Tile donde estaba el player al empezar el step (para detectar colisiones)
+var _tile_before_step: Vector2i = Vector2i(-9999, -9999)
+
 
 func _ready() -> void:
 	# Obtener GridMotion del padre (Player)
@@ -69,37 +72,44 @@ func _ready() -> void:
 
 ## Se ejecuta cuando el jugador EMPIEZA un paso (antes de moverse)
 func _on_step_started() -> void:
+	# Guardar el tile actual para detectar colisiones en step_finished
+	if not map_system:
+		return
+	
+	var active_grid: OverworldGrid = map_system.get_active_grid()
+	if not active_grid:
+		return
+	
+	_tile_before_step = active_grid.world_to_tile(player.global_position)
+	
 	# Solo destruir/crear overlay si NO es first step
 	if not grid_motion.initial_step:
-		# Se va a mover a un tile diferente: destruir overlay anterior
-		_hide_tall_grass_overlay()
-		_last_overlay_tile = Vector2i(-9999, -9999)
-		
 		# Calcular el tile de destino
-		if not map_system:
-			return
-		
-		var active_grid: OverworldGrid = map_system.get_active_grid()
-		if not active_grid:
-			return
-		
-		var current_tile: Vector2i = active_grid.world_to_tile(player.global_position)
 		var direction: Vector2 = grid_motion.dir
-		var destination_tile: Vector2i = current_tile + Vector2i(int(direction.x), int(direction.y))
+		var destination_tile: Vector2i = _tile_before_step + Vector2i(int(direction.x), int(direction.y))
 		
-		# Verificar si el tile de destino es de hierba
-		var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, destination_tile)
+		# Verificar si podemos movernos al tile de destino
+		var can_move: bool = active_grid.can_step_to(player, _tile_before_step, destination_tile)
 		
-		if encounter_type == EncounterAreaTypeEnum.Values.LAND:
-			# Tile de destino es hierba: crear efectos en la posición de destino
-			var destination_world_pos: Vector2 = active_grid.tile_to_world_center(destination_tile)
+		if can_move:
+			# Podemos movernos: destruir overlay anterior
+			_hide_tall_grass_overlay()
+			_last_overlay_tile = Vector2i(-9999, -9999)
 			
-			# Crear efecto de hierba "aplastada" (debajo del player, se autodestruye)
-			_show_grass_stepped_effect(active_grid, destination_tile)
+			# Verificar si el tile de destino es de hierba
+			var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, destination_tile)
 			
-			# Crear overlay con z_index bajo (0) para que el player quede delante durante el movimiento
-			_show_tall_grass_overlay_at_position(destination_world_pos, 0)
-			_last_overlay_tile = destination_tile
+			if encounter_type == EncounterAreaTypeEnum.Values.LAND:
+				# Tile de destino es hierba: crear efectos en la posición de destino
+				var destination_world_pos: Vector2 = active_grid.tile_to_world_center(destination_tile)
+				
+				# Crear efecto de hierba "aplastada" (debajo del player, se autodestruye)
+				_show_grass_stepped_effect(active_grid, destination_tile)
+				
+				# Crear overlay con z_index bajo (0) para que el player quede delante durante el movimiento
+				_show_tall_grass_overlay_at_position(destination_world_pos, 0)
+				_last_overlay_tile = destination_tile
+		# Si NO podemos movernos (colisión): mantener overlay existente
 	# Si es first step (giro en sitio): mantener overlay existente
 
 
@@ -115,6 +125,9 @@ func _on_step_finished(tile: Vector2i) -> void:
 	if not active_grid:
 		return
 	
+	# Detectar si hubo colisión (no nos movimos realmente)
+	var had_collision: bool = (tile == _tile_before_step) and not grid_motion.initial_step
+	
 	# Obtener el tipo de encuentro del tile
 	var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, tile)
 	
@@ -124,17 +137,44 @@ func _on_step_finished(tile: Vector2i) -> void:
 	
 	# Manejar efectos visuales de hierba
 	if is_grass_tile:
-		# Solo mostrar GrassEffect si es un NUEVO tile (no repetir en el mismo)
-		if was_on_different_tile:
-			_show_grass_effect(active_grid, tile)
-			_last_grass_effect_tile = tile
-		
-		# El overlay ya se creó en step_started (si era necesario)
-		# Ahora subir su z_index para que el player quede debajo
-		if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
-			_active_tall_grass_overlay.z_index = 5
+		# Si hubo colisión, el overlay ya existe (no se destruyó en step_started)
+		if had_collision:
+			# Colisión: solo asegurar que el overlay tenga z_index correcto
+			if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
+				_active_tall_grass_overlay.z_index = 5
+			else:
+				# Por alguna razón no hay overlay: recrear
+				var current_world_pos: Vector2 = active_grid.tile_to_world_center(tile)
+				_show_tall_grass_overlay_at_position(current_world_pos, 5)
+				_last_overlay_tile = tile
+		else:
+			# No hubo colisión: movimiento normal o first step
+			# Solo mostrar GrassEffect si es un NUEVO tile (no repetir en el mismo)
+			if was_on_different_tile:
+				_show_grass_effect(active_grid, tile)
+				_last_grass_effect_tile = tile
+			
+			# Gestionar overlay
+			if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
+				# El overlay existe: verificar si está en la posición correcta
+				var current_world_pos: Vector2 = active_grid.tile_to_world_center(tile)
+				if _active_tall_grass_overlay.global_position.distance_to(current_world_pos) > 1.0:
+					# Overlay está en posición incorrecta
+					# Destruir y recrear en posición correcta
+					_hide_tall_grass_overlay()
+					_show_tall_grass_overlay_at_position(current_world_pos, 5)
+					_last_overlay_tile = tile
+				else:
+					# Overlay en posición correcta: solo subir z_index
+					_active_tall_grass_overlay.z_index = 5
+			else:
+				# No hay overlay: crear en la posición actual
+				var current_world_pos: Vector2 = active_grid.tile_to_world_center(tile)
+				_show_tall_grass_overlay_at_position(current_world_pos, 5)
+				_last_overlay_tile = tile
 	else:
-		# Si NO estamos en hierba, resetear variables
+		# Si NO estamos en hierba, destruir overlay y resetear variables
+		_hide_tall_grass_overlay()
 		_last_grass_effect_tile = Vector2i(-9999, -9999)
 		_last_overlay_tile = Vector2i(-9999, -9999)
 	
@@ -332,12 +372,16 @@ func _disconnect_signal() -> void:
 
 
 ## Callback cuando se cambia de mapa (seamless)
-func _on_map_changed(_from_map: String, _to_map: String) -> void:
-	# Limpiar overlay al cambiar de mapa
-	_hide_tall_grass_overlay()
-	# Resetear el último tile de hierba al cambiar de mapa
-	_last_grass_effect_tile = Vector2i(-9999, -9999)
-	_last_overlay_tile = Vector2i(-9999, -9999)
+func _on_map_changed(from_map: String, _to_map: String) -> void:
+	# Solo limpiar si REALMENTE cambiamos de mapa (no solo al mirar hacia otro mapa)
+	if from_map != current_map_name:
+		# El mapa cambió realmente: limpiar overlay
+		_hide_tall_grass_overlay()
+		# Resetear el último tile de hierba al cambiar de mapa
+		_last_grass_effect_tile = Vector2i(-9999, -9999)
+		_last_overlay_tile = Vector2i(-9999, -9999)
+	
+	# Actualizar cache de encuentros (siempre, incluso si solo cargamos vecino)
 	_update_encounters_cache()
 
 

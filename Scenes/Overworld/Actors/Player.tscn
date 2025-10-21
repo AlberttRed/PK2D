@@ -360,7 +360,6 @@ script = ExtResource("3_wild_encounter")
 grass_effect_scene = ExtResource("4_grass_effect")
 tall_grass_overlay_scene = ExtResource("4_tall_grass")
 grass_stepped_effect_scene = ExtResource("4_stepped")
-encounters_enabled = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_slkcw")
