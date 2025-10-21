@@ -2,7 +2,7 @@
 
 ## Resumen del PBI 288
 
-Este documento explica cómo configurar los datos de encuentros salvajes en el editor de Godot.
+Este documento explica cómo configurar los datos de encuentros salvajes en el editor de Godot. 
 
 ## Archivos Creados
 
