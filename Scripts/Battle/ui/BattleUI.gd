@@ -156,6 +156,7 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 
 	for msg in intro_messages:
 		await show_message_from_dict(msg)
+		print("escrito!")
 	
 	# Aquí podrías activar el menú o iniciar la siguiente fase del combate
 	actions_menu.show()

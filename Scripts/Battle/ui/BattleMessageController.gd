@@ -34,7 +34,7 @@ func get_intro_messages(
 					"wait_time": 1.2
 				})
 			messages.append({
-				"type": "wait",
+				"type": "display",
 				"text": "¡Adelante, " + player_pokemon[0].get_name() + "!",
 				"wait_time": 0.5
 			})

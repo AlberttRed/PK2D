@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://djlq7fvr2w1qk"]
+
+[ext_resource type="Script" path="res://Scripts/Resources/MapAreaEncounters.gd" id="1_1a2b3"]
+
+[node name="MapAreaEncounters" type="Node"]
+script = ExtResource("1_1a2b3")
+

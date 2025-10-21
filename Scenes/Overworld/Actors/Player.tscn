@@ -1,11 +1,15 @@
-[gd_scene load_steps=42 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=46 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_sxj1f"]
+[ext_resource type="Script" uid="uid://cpkd2doka4oah" path="res://Scripts/Overworld/WildEncounterDetector.gd" id="3_wild_encounter"]
+[ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="4_grass_effect"]
 [ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/trchar000.png" id="4_sxj1f"]
 [ext_resource type="Texture2D" uid="uid://b4u12a3ypo5hc" path="res://Sprites/Overworlds/Characters/boy_run.png" id="4_udrh2"]
 [ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
+[ext_resource type="PackedScene" uid="uid://bley1ox21sbx" path="res://Scenes/Overworld/Core/PlayerBattler.tscn" id="9_6py5t"]
+[ext_resource type="PackedScene" uid="uid://b8d88kcgtv3sr" path="res://Scenes/Data/PokemonInstance.tscn" id="10_3negh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4p3nb"]
 atlas = ExtResource("4_sxj1f")
@@ -349,6 +353,10 @@ script = ExtResource("2_slkcw")
 [node name="Occupancy" type="Node" parent="."]
 script = ExtResource("3_sxj1f")
 
+[node name="WildEncounterDetector" type="Node" parent="."]
+script = ExtResource("3_wild_encounter")
+grass_effect_scene = ExtResource("4_grass_effect")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_slkcw")
 animation = &"walk_left_left"
@@ -358,3 +366,15 @@ metadata/_edit_lock_ = true
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("5_0hlcb")
 metadata/_edit_lock_ = true
+
+[node name="Battler" parent="." instance=ExtResource("9_6py5t")]
+
+[node name="Squirtle" parent="Battler" instance=ExtResource("10_3negh")]
+pokemon = 7
+level = 5
+gender = 1
+hp_IVs = 4
+attack_IVs = 4
+spAttack_IVs = 1
+spDefense_IVs = 1
+speed_IVs = 1

@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://c0njj2ydft1ai"]
+
+[ext_resource type="Texture2D" uid="uid://d1ixfl4m0q715" path="res://Sprites/Tilesets/Animated tiles/Grass Step/Grass_Step.png" id="1_0772e"]
+[ext_resource type="Script" path="res://Scripts/Overworld/GrassEffect.gd" id="2_grass_effect"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eyvl5"]
+atlas = ExtResource("1_0772e")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ew3u"]
+atlas = ExtResource("1_0772e")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1k2jd"]
+atlas = ExtResource("1_0772e")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xl5pv"]
+atlas = ExtResource("1_0772e")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qtk0l"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eyvl5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ew3u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1k2jd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xl5pv")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="GrassEffect" type="AnimatedSprite2D"]
+z_index = 3
+scale = Vector2(1.33333, 1.33333)
+sprite_frames = SubResource("SpriteFrames_qtk0l")
+autoplay = "default"
+frame = 3
+frame_progress = 1.0
+script = ExtResource("2_grass_effect")

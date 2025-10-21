@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8jq4fvr3x2mk"]
+
+[ext_resource type="Script" path="res://Scripts/Resources/AreaEncounter.gd" id="1_2b3c4"]
+
+[node name="AreaEncounter" type="Node"]
+script = ExtResource("1_2b3c4")
+

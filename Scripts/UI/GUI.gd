@@ -28,6 +28,7 @@ func _ready():
 	SignalManager.messagebox_input_accept.connect(_on_messagebox_accept)
 	SignalManager.messagebox_input_cancel.connect(_on_messagebox_cancel)
 	SignalManager.battle_requested.connect(_on_battle_requested)
+	SignalManager.battle_finished.connect(_on_battle_finished)
 	
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
@@ -215,6 +216,9 @@ func _on_messagebox_cancel() -> void:
 
 ## Maneja solicitudes de batalla desde el SignalManager
 func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleRules) -> void:
+	# Bloquear control del jugador al iniciar batalla
+	SignalManager.player_control_blocked.emit()
+	
 	# Separar participantes en player y enemy
 	var player_participants: Array[BattleParticipant] = []
 	var enemy_participants: Array[BattleParticipant] = []
@@ -225,8 +229,20 @@ func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleR
 		else:
 			enemy_participants.append(participant)
 	
+	# Emitir señal de inicio de batalla
+	SignalManager.battle_started.emit()
+	
 	BattleNew.visible = true
-	BattleNew.start_battle(player_participants, enemy_participants, rules)
+	await BattleNew.start_battle(player_participants, enemy_participants, rules)
+	
+
+
+## Maneja el evento de finalización de la batalla
+func _on_battle_finished(winner_side: String) -> void:
+	print("GUI: Batalla terminada, desbloqueando control del jugador...")
+	BattleNew.visible = false
+	SignalManager.player_control_unblocked.emit()
+	print("GUI: Control del jugador desbloqueado")
 
 ## --- Métodos del MessageBox ---
 ## Muestra un mensaje con configuración específica

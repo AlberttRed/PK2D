@@ -15,10 +15,8 @@ script = ExtResource("1_tse6d")
 
 [node name="Player" type="Node" parent="."]
 script = ExtResource("3_bfl41")
-Name = "YO"
 battle_front_sprite = ExtResource("3_uewrw")
 battle_back_sprite = ExtResource("4_eovwa")
-is_playable = true
 
 [node name="pkm1" type="Node" parent="Player"]
 script = ExtResource("3_p5erh")
@@ -63,7 +61,6 @@ nature_id = 24
 rotate_hp_EVs = null
 
 [node name="SingleTrainer" parent="." instance=ExtResource("2_rfkpo")]
-Name = "AAAA"
 
 [node name="pkm1" parent="SingleTrainer" index="0"]
 randomize_pokemon = true
@@ -181,7 +178,6 @@ nature_id = 3
 
 [node name="pkm1" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
-isWild = true
 pokemon = 135
 level = 100
 gender = 1
@@ -203,7 +199,6 @@ rotate_hp_EVs = null
 
 [node name="pkm2" type="Node" parent="WildPokemons"]
 script = ExtResource("3_p5erh")
-isWild = true
 pokemon = 22
 level = 100
 gender = 2

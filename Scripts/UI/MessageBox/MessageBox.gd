@@ -23,6 +23,7 @@ var actualMessageIndex: int = 0
 var waitTime:float = 0.0
 var waitInput:bool = true
 var closeAtEnd:bool = true
+var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var typing:bool:
 	get:
 		return label.visible_ratio > 0 and is_physics_processing()# $AnimationPlayer.is_playing() and $AnimationPlayer.current_animation == "Typing"
@@ -63,7 +64,7 @@ func show_custom(text: String, config := {}):
 func show_input(text: String):
 	await show_custom(text, {
 		"waitInput": true,
-		"closeAtEnd": true,
+		"closeAtEnd": false,
 		"waitTime": 0.0
 	})
 
@@ -192,7 +193,8 @@ func _finishedMessage():
 	finishedMessage.emit()
 	
 	# Guardar los valores ANTES de que se puedan resetear por las señales
-	var should_show_arrow = waitInput and closeAtEnd and messageHasFinished and isLastMessage
+	# CORREGIDO: Mostrar flecha si waitInput = true, independientemente de closeAtEnd
+	var should_show_arrow = waitInput and messageHasFinished and isLastMessage
 
 	await get_tree().process_frame
 	
@@ -206,6 +208,8 @@ func _finishedMessage():
 		$AnimationPlayer2.play("Idle")
 		
 func showMessage(message = null):
+	_is_processing_message = true
+	
 	if message!=null:
 		addMessage(message)
 	label.text = getNextMessage()
@@ -213,14 +217,36 @@ func showMessage(message = null):
 	$next.hide()
 	self.show()
 	await startText()
-	await finished
+	
+	# CRÍTICO: En lugar de await finished (que puede perderse),
+	# usar polling del flag
+	while _is_processing_message:
+		await get_tree().process_frame
+	
+	print("MessageBox.showMessage: Completado")
 		
 func close():
+	# Si ya no está procesando, no hacer nada (ya se cerró)
+	if not _is_processing_message:
+		print("MessageBox.close(): Ya estaba cerrado, ignorando")
+		return
+	
+	print("MessageBox.close(): Cerrando...")
+	
+	# Deshabilitar input para evitar múltiples llamadas
+	disable_input_handling()
+	
 	$AnimationPlayer2.stop()
 	$next.hide()
 	if closeAtEnd:
 		hide()
+	
+	# CRÍTICO: Marcar como no procesando ANTES de emitir finished
+	_is_processing_message = false
+	
 	finished.emit()
+	
+	print("MessageBox.close(): Cerrado y señal emitida")
 	
 func clear():
 	disable_input_handling()
@@ -240,6 +266,7 @@ func clear():
 	waitInput = true
 	_stop = false
 	actualMessageIndex = 0
+	_is_processing_message = false  ## CRÍTICO: Resetear flag
 
 func show_clear_text():
 	label.text = ""

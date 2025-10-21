@@ -7,7 +7,7 @@ signal newMoveLearned
 
 @export var randomize_pokemon: bool = false
 @export var randomize_stats: bool = false
-@export var isWild : bool
+@export var is_wild : bool = false
 var base : Pokemon
 #var battleInstance : BattlePokemon
 
@@ -693,7 +693,7 @@ func levelUP():
 
 func to_battle_pokemon(ai: BattleIA = null) -> BattlePokemon:
 	var battle_pokemon = BattlePokemon.new(self, ai)
-	battle_pokemon.is_wild = self.isWild
+	battle_pokemon.is_wild = self.is_wild
 	battle_pokemon.prepare_battle_moves()
 	return battle_pokemon
 

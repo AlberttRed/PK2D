@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b608k4nan3q1r"]
+
+[ext_resource type="PackedScene" uid="uid://c4x8j9k2l5m6n" path="res://Scenes/Overworld/Core/Battler.tscn" id="1_base"]
+
+[node name="Battler" instance=ExtResource("1_base")]
+trainer_name = "Trainer"
+before_battle_message = "¡Prepárate para combatir!"
+init_battle_message = "¡Adelante!"
+end_battle_message = "Has ganado..."
+

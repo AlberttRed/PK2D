@@ -159,10 +159,11 @@ func end_battle() -> void:
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 	
-	SignalManager.battle_finished.emit(winner_side)
 
 	# Hacer esta función awaitable
 	await get_tree().process_frame
+	
+	SignalManager.battle_finished.emit(winner_side)
 
 func _cleanup_battle_state():
 	# Resetear flags de control
