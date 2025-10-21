@@ -14,4 +14,3 @@ func _ready() -> void:
 func _on_animation_finished() -> void:
 	# Auto-destruirse al terminar
 	queue_free()
-

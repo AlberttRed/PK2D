@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://c0njj2ydft1ai"]
 
-[ext_resource type="Texture2D" uid="uid://d1ixfl4m0q715" path="res://Sprites/Tilesets/Animated tiles/Grass Step/Grass_Step.png" id="1_0772e"]
-[ext_resource type="Script" path="res://Scripts/Overworld/GrassEffect.gd" id="2_grass_effect"]
+[ext_resource type="Texture2D" uid="uid://sbrjil64gm66" path="res://Sprites/Tilesets/Animated tiles/Grass Step/Grass_Step.png" id="1_0772e"]
+[ext_resource type="Script" uid="uid://fdl1uh8ejpag" path="res://Scripts/Overworld/GrassEffect.gd" id="2_grass_effect"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eyvl5"]
 atlas = ExtResource("1_0772e")
@@ -40,10 +40,8 @@ animations = [{
 }]
 
 [node name="GrassEffect" type="AnimatedSprite2D"]
-z_index = 3
+z_index = 6
 scale = Vector2(1.33333, 1.33333)
 sprite_frames = SubResource("SpriteFrames_qtk0l")
 autoplay = "default"
-frame = 3
-frame_progress = 1.0
 script = ExtResource("2_grass_effect")

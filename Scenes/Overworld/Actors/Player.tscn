@@ -1,11 +1,13 @@
-[gd_scene load_steps=46 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=48 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_sxj1f"]
 [ext_resource type="Script" uid="uid://cpkd2doka4oah" path="res://Scripts/Overworld/WildEncounterDetector.gd" id="3_wild_encounter"]
 [ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="4_grass_effect"]
+[ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="4_stepped"]
 [ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/trchar000.png" id="4_sxj1f"]
+[ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="4_tall_grass"]
 [ext_resource type="Texture2D" uid="uid://b4u12a3ypo5hc" path="res://Sprites/Overworlds/Characters/boy_run.png" id="4_udrh2"]
 [ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
 [ext_resource type="PackedScene" uid="uid://bley1ox21sbx" path="res://Scenes/Overworld/Core/PlayerBattler.tscn" id="9_6py5t"]
@@ -356,6 +358,9 @@ script = ExtResource("3_sxj1f")
 [node name="WildEncounterDetector" type="Node" parent="."]
 script = ExtResource("3_wild_encounter")
 grass_effect_scene = ExtResource("4_grass_effect")
+tall_grass_overlay_scene = ExtResource("4_tall_grass")
+grass_stepped_effect_scene = ExtResource("4_stepped")
+encounters_enabled = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_slkcw")

@@ -9,8 +9,14 @@ class_name WildEncounterDetector
 ## tiene encuentros configurados. En mapas sin encuentros, la señal está desconectada por completo,
 ## eliminando cualquier procesamiento innecesario.
 
-## Escena del efecto visual de hierba
+## Escena del efecto visual de hierba (animación corta al pisar)
 @export var grass_effect_scene: PackedScene
+
+## Escena del overlay de hierba alta (imagen que cubre al player mientras está en hierba)
+@export var tall_grass_overlay_scene: PackedScene
+
+## Escena del efecto de hierba "aplastada" (animación de 2 frames que se autodestruye)
+@export var grass_stepped_effect_scene: PackedScene
 
 ## Flag para deshabilitar encuentros (útil para debug o eventos especiales)
 @export var encounters_enabled: bool = true
@@ -26,6 +32,15 @@ var current_map_name: String = ""
 ## Flag para controlar si la señal está conectada (optimización)
 var _signal_connected: bool = false
 
+## Referencia al overlay de hierba alta activo (si el player está en hierba)
+var _active_tall_grass_overlay: Sprite2D = null
+
+## Último tile donde se mostró el GrassEffect (para evitar repetir en el mismo tile)
+var _last_grass_effect_tile: Vector2i = Vector2i(-9999, -9999)
+
+## Último tile donde hay un overlay activo
+var _last_overlay_tile: Vector2i = Vector2i(-9999, -9999)
+
 
 func _ready() -> void:
 	# Obtener GridMotion del padre (Player)
@@ -33,6 +48,9 @@ func _ready() -> void:
 	if not grid_motion:
 		push_error("WildEncounterDetector: No se encontró GridMotion en el Player")
 		return
+	
+	# Conectar a step_started para destruir overlay cuando se mueve a otro tile
+	grid_motion.step_started.connect(_on_step_started)
 	
 	# Obtener MapSystem
 	map_system = get_tree().get_first_node_in_group("MapSystem")
@@ -49,11 +67,45 @@ func _ready() -> void:
 	print("WildEncounterDetector: Sistema de encuentros inicializado")
 
 
+## Se ejecuta cuando el jugador EMPIEZA un paso (antes de moverse)
+func _on_step_started() -> void:
+	# Solo destruir/crear overlay si NO es first step
+	if not grid_motion.initial_step:
+		# Se va a mover a un tile diferente: destruir overlay anterior
+		_hide_tall_grass_overlay()
+		_last_overlay_tile = Vector2i(-9999, -9999)
+		
+		# Calcular el tile de destino
+		if not map_system:
+			return
+		
+		var active_grid: OverworldGrid = map_system.get_active_grid()
+		if not active_grid:
+			return
+		
+		var current_tile: Vector2i = active_grid.world_to_tile(player.global_position)
+		var direction: Vector2 = grid_motion.dir
+		var destination_tile: Vector2i = current_tile + Vector2i(int(direction.x), int(direction.y))
+		
+		# Verificar si el tile de destino es de hierba
+		var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, destination_tile)
+		
+		if encounter_type == EncounterAreaTypeEnum.Values.LAND:
+			# Tile de destino es hierba: crear efectos en la posición de destino
+			var destination_world_pos: Vector2 = active_grid.tile_to_world_center(destination_tile)
+			
+			# Crear efecto de hierba "aplastada" (debajo del player, se autodestruye)
+			_show_grass_stepped_effect(active_grid, destination_tile)
+			
+			# Crear overlay con z_index bajo (0) para que el player quede delante durante el movimiento
+			_show_tall_grass_overlay_at_position(destination_world_pos, 0)
+			_last_overlay_tile = destination_tile
+	# Si es first step (giro en sitio): mantener overlay existente
+
+
 ## Se ejecuta cuando el jugador termina un paso
 ## NOTA: Esta función solo se ejecuta si el mapa tiene encuentros configurados
 func _on_step_finished(tile: Vector2i) -> void:
-	if not encounters_enabled:
-		return
 	
 	# Obtener el grid activo
 	if not map_system:
@@ -65,16 +117,34 @@ func _on_step_finished(tile: Vector2i) -> void:
 	
 	# Obtener el tipo de encuentro del tile
 	var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, tile)
-	if encounter_type == null:
-		return  # Este tile no tiene encuentros
 	
+	# Determinar si estamos en un tile de hierba
+	var is_grass_tile: bool = encounter_type == EncounterAreaTypeEnum.Values.LAND
+	var was_on_different_tile: bool = tile != _last_grass_effect_tile
+	
+	# Manejar efectos visuales de hierba
+	if is_grass_tile:
+		# Solo mostrar GrassEffect si es un NUEVO tile (no repetir en el mismo)
+		if was_on_different_tile:
+			_show_grass_effect(active_grid, tile)
+			_last_grass_effect_tile = tile
+		
+		# El overlay ya se creó en step_started (si era necesario)
+		# Ahora subir su z_index para que el player quede debajo
+		if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
+			_active_tall_grass_overlay.z_index = 5
+	else:
+		# Si NO estamos en hierba, resetear variables
+		_last_grass_effect_tile = Vector2i(-9999, -9999)
+		_last_overlay_tile = Vector2i(-9999, -9999)
+	
+	# Si no hay encuentros configurados, no intentar batalla
+	if encounter_type == null or not encounters_enabled:
+		return
+
 	# Verificar si este tipo de área tiene encuentros configurados
 	if not current_map_encounters.has_encounters_for_area(encounter_type):
-		return  # Este tipo de área no tiene encuentros configurados
-	
-	# Mostrar efecto visual si es hierba
-	if encounter_type == EncounterAreaTypeEnum.Values.LAND:
-		_show_grass_effect(active_grid, tile)
+		return
 	
 	# Intentar generar un encuentro salvaje
 	_try_trigger_encounter(encounter_type)
@@ -101,25 +171,83 @@ func _get_encounter_type_from_tile(grid: OverworldGrid, tile: Vector2i) -> Varia
 	return null
 
 
-## Muestra el efecto visual de hierba en el tile
-func _show_grass_effect(grid: OverworldGrid, tile: Vector2i) -> void:
+## Muestra el efecto visual de hierba en el tile (animación corta)
+func _show_grass_effect(_grid: OverworldGrid, _tile: Vector2i) -> void:
 	if not grass_effect_scene:
 		return
 	
 	# Instanciar el efecto
 	var effect: Node2D = grass_effect_scene.instantiate()
 	
-	# Posicionar en el tile
-	var world_pos := grid.tile_to_world_center(tile)
-	effect.global_position = world_pos
+	# Posicionar en la posición actual del player (mismo tile)
+	effect.global_position = player.global_position
 	
-	# Agregar al mapa (no al player, para que no se mueva con él)
-	var current_map = grid.get_parent()
-	if current_map:
-		current_map.add_child(effect)
+	# Agregar como hermano del player (mismo padre)
+	# Así comparten sistema de coordenadas y se ve correctamente
+	var player_parent = player.get_parent()
+	if player_parent:
+		player_parent.add_child(effect)
 	else:
 		# Fallback: agregar al root
 		get_tree().root.add_child(effect)
+
+
+## Muestra el efecto de hierba "aplastada" en un tile específico (se autodestruye)
+func _show_grass_stepped_effect(grid: OverworldGrid, tile: Vector2i) -> void:
+	if not grass_stepped_effect_scene:
+		return
+	
+	# Instanciar el efecto
+	var effect: AnimatedSprite2D = grass_stepped_effect_scene.instantiate()
+	
+	# Posicionar en el tile especificado
+	effect.global_position = grid.tile_to_world_center(tile)
+	
+	# Agregar como hermano del player (mismo padre)
+	# z_index = 0 (definido en la escena) para quedar debajo del player
+	var player_parent = player.get_parent()
+	if player_parent:
+		player_parent.add_child(effect)
+	else:
+		# Fallback: agregar al root
+		get_tree().root.add_child(effect)
+
+
+## Muestra el overlay de hierba alta en una posición específica
+func _show_tall_grass_overlay_at_position(world_position: Vector2, z_idx: int = 5) -> void:
+	# Si ya existe, no crear otro
+	if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
+		return
+	
+	if not tall_grass_overlay_scene:
+		return
+	
+	# Instanciar el overlay
+	var overlay: Sprite2D = tall_grass_overlay_scene.instantiate()
+	
+	# IMPORTANTE: Posicionar en la posición especificada
+	# El overlay se queda en esta posición (no sigue al player)
+	overlay.global_position = world_position
+	
+	# Configurar z_index
+	overlay.z_index = z_idx
+	
+	# Agregar como hermano del player (mismo padre)
+	var player_parent = player.get_parent()
+	if player_parent:
+		player_parent.add_child(overlay)
+		_active_tall_grass_overlay = overlay
+	else:
+		# Fallback: agregar al root
+		get_tree().root.add_child(overlay)
+		_active_tall_grass_overlay = overlay
+
+
+## Oculta y destruye el overlay de hierba alta
+func _hide_tall_grass_overlay() -> void:
+	if _active_tall_grass_overlay != null and is_instance_valid(_active_tall_grass_overlay):
+		_active_tall_grass_overlay.queue_free()
+		_active_tall_grass_overlay = null
 
 
 ## Intenta generar un encuentro salvaje
@@ -205,11 +333,21 @@ func _disconnect_signal() -> void:
 
 ## Callback cuando se cambia de mapa (seamless)
 func _on_map_changed(_from_map: String, _to_map: String) -> void:
+	# Limpiar overlay al cambiar de mapa
+	_hide_tall_grass_overlay()
+	# Resetear el último tile de hierba al cambiar de mapa
+	_last_grass_effect_tile = Vector2i(-9999, -9999)
+	_last_overlay_tile = Vector2i(-9999, -9999)
 	_update_encounters_cache()
 
 
 ## Callback cuando se hace warp
 func _on_map_changed_warp(_map_id: String, _spawn_id: String) -> void:
+	# Limpiar overlay al hacer warp
+	_hide_tall_grass_overlay()
+	# Resetear el último tile de hierba al cambiar de mapa
+	_last_grass_effect_tile = Vector2i(-9999, -9999)
+	_last_overlay_tile = Vector2i(-9999, -9999)
 	_update_encounters_cache()
 
 
