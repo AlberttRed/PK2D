@@ -2,7 +2,7 @@ extends BattleMoveEffect
 class_name RainDanceMoveEffect
 
 var already_active: bool = false
-var weather: Weather = null
+var weather: WeatherData = null
 
 func _init(_move: BattleMove, _user: BattlePokemon, _target: BattlePokemon = null) -> void:
 	super._init(_move, _user, _target)

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Weather" load_steps=2 format=3 uid="uid://cgjy5ty75t74o"]
+[gd_resource type="Resource" script_class="WeatherData" load_steps=2 format=3 uid="uid://cgjy5ty75t74o"]
 
-[ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/Weather.gd" id="1_qgoah"]
+[ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/WeatherData.gd" id="1_qgoah"]
 
 [resource]
 script = ExtResource("1_qgoah")

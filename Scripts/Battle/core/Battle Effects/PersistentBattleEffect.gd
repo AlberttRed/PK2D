@@ -1,7 +1,7 @@
 class_name PersistentBattleEffect
 extends BattleEffect
 
-var source # Ailment/Ability/Weather
+var source # Ailment/AbilityData/WeatherData
 var effect_success:bool
 var turns_left:int
 var applied:bool = false

@@ -138,7 +138,7 @@ func get_ailment() -> Ailment:
 func get_ailment_chance() -> int:
 	return base.meta_ailment_chance
 	
-func get_weather() -> Weather:
+func get_weather() -> WeatherData:
 	return base.weather
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:

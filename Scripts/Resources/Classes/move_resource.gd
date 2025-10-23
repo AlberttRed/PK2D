@@ -34,7 +34,7 @@ class_name Move
 @export var meta_stat_chance : int = 0 # % de que un atac pugi o baixi els stats
 @export var contact_flag : bool = false
 @export var ailment : Ailment = null
-@export var weather : Weather = null
+@export var weather : WeatherData = null
 @export var move_effect : Script = null
 
 @export var category: BattleMoveCategory = null

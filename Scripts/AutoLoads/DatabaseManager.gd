@@ -80,7 +80,7 @@ func _load_types() -> void:
 func _load_abilities() -> void:
 	load_resources_from_dir(ABILITIES_DIR, func(res):
 		if res == null: return
-		if not (res is Ability): return
+		if not (res is AbilityData): return
 		_abilities_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_abilities_by_name[res.internal_name.to_lower()] = res
@@ -117,7 +117,7 @@ func _load_weathers() -> void:
 		return
 	load_resources_from_dir(WEATHERS_DIR, func(res):
 		if res == null: return
-		if not (res is Weather): return
+		if not (res is WeatherData): return
 		_weathers_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_weathers_by_name[res.internal_name.to_lower()] = res
@@ -181,7 +181,7 @@ func get_nature(name_or_id) -> Resource:
 	var key := str(name_or_id).to_lower()
 	return _natures_by_id.get(key, _natures_by_name.get(key, null))
 
-func get_weather(name_or_id) -> Weather:
+func get_weather(name_or_id) -> WeatherData:
 	if typeof(name_or_id) == TYPE_INT:
 		return _weathers_by_id.get(name_or_id, null)
 	var key := str(name_or_id).to_lower()

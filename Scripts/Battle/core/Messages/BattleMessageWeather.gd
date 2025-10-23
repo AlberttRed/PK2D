@@ -20,7 +20,7 @@ func get_start_weather_message(weather_id: int) -> Dictionary:
 		WeathersEnum.Values.WIND:
 			msg = "¡El viento arrecia en el campo!"
 		_:
-			push_warning("Invalid Weather on get_start_weather_message()")
+			push_warning("Invalid WeatherData on get_start_weather_message()")
 			return {}
 
 	return {
@@ -48,7 +48,7 @@ func get_ongoing_weather_message(weather_id: int) -> Dictionary:
 		WeathersEnum.Values.WIND:
 			msg = "El viento sigue soplando con fuerza."
 		_:
-			push_warning("Invalid Weather on get_ongoing_weather_message()")
+			push_warning("Invalid WeatherData on get_ongoing_weather_message()")
 			return {}
 
 	return {
@@ -76,7 +76,7 @@ func get_end_weather_message(weather_id: int) -> Dictionary:
 		WeathersEnum.Values.WIND:
 			msg = "El viento se calmó."
 		_:
-			push_warning("Invalid Weather on get_end_weather_message()")
+			push_warning("Invalid WeatherData on get_end_weather_message()")
 			return {}
 
 	return {

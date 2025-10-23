@@ -1,5 +1,5 @@
 extends Resource
-class_name Ability
+class_name AbilityData
 
 @export var id: int = -1
 @export var internal_name: String = ""
@@ -10,3 +10,4 @@ class_name Ability
 func print_info():
 	var name := display_name if display_name != "" else internal_name.capitalize()
 	print("[Ability] %s (ID %d) | %s" % [name, id, description])
+

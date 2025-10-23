@@ -118,7 +118,7 @@ func get_ailment() -> Ailment:
 func get_ailment_chance() -> float:
 	return 100.0 if base_data.get_ailment_chance() == 0 else (float(base_data.get_ailment_chance()) / 100.0)
 
-func get_weather() -> Weather:
+func get_weather() -> WeatherData:
 	return base_data.get_weather()
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
