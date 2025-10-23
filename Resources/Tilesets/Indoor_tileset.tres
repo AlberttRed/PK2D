@@ -2208,4 +2208,6 @@ custom_data_layer_0/name = "terrain"
 custom_data_layer_0/type = 4
 custom_data_layer_1/name = "blocked"
 custom_data_layer_1/type = 1
+custom_data_layer_2/name = "encounter_type"
+custom_data_layer_2/type = 4
 sources/1 = SubResource("TileSetAtlasSource_ui5me")

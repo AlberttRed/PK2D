@@ -63,7 +63,6 @@ func start_battle() -> void:
 	# Configurar UI para el nuevo combate
 	BattleEffectController.set_ui(ui)
 	
-	ui.visible = true  # Si estaba oculto por defecto
 	turn_controller.battle_controller = self
 	# Inyectar lógica de targeting en la UI
 	ui.target_selector = BattleTargetSelector.new()
@@ -141,9 +140,8 @@ func end_battle() -> void:
 		# Mostrar mensaje de final de combate
 		await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
 
-	# Ocultar/limpiar UI mínima
-	if ui:
-		ui.visible = false
+	# NO ocultamos el UI aquí - lo manejará el GUI con las transiciones
+	# La UI debe quedarse visible para que el fade funcione correctamente
 
 	# Señal global con el resultado
 	var result_msg := "Resultado del combate: desconocido"
