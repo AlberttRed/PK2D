@@ -232,15 +232,28 @@ func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleR
 	# Emitir señal de inicio de batalla
 	SignalManager.battle_started.emit()
 	
+	# Mostrar la escena de batalla
 	BattleNew.visible = true
+	
+	# Iniciar el combate (esto ejecutará la transición que maneja todo el fade)
 	await BattleNew.start_battle(player_participants, enemy_participants, rules)
 	
 
 
 ## Maneja el evento de finalización de la batalla
-func _on_battle_finished(winner_side: String) -> void:
-	print("GUI: Batalla terminada, desbloqueando control del jugador...")
-	BattleNew.visible = false
+func _on_battle_finished(_winner_side: String) -> void:
+	print("GUI: Batalla terminada, iniciando transición de salida...")
+	
+	# Hacer fade in (a negro) para ocultar la batalla
+	await fade_layer.fade_in(0.3)
+	
+	# Ocultar la escena de batalla (BattleScene gestiona su propia UI internamente)
+	BattleNew.cleanup_battle()
+	
+	# Hacer fade out para revelar el overworld
+	await fade_layer.fade_out(0.3)
+	
+	# Desbloquear control del jugador
 	SignalManager.player_control_unblocked.emit()
 	print("GUI: Control del jugador desbloqueado")
 
@@ -248,7 +261,6 @@ func _on_battle_finished(winner_side: String) -> void:
 ## Muestra un mensaje con configuración específica
 func show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	var wait_input = config.get("waitInput", true)
-	var close_at_end = config.get("closeAtEnd", true)
 	var wait_time = config.get("waitTime", 0.0)
 	
 	if wait_time > 0.0:

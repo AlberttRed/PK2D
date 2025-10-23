@@ -34,6 +34,10 @@ signal message_input_received()
 # === SEÑALES DEL SISTEMA DE FADE ===
 signal fade_requested(mode: String, duration: float)
 signal fade_finished()
+signal battle_transition_requested(texture_path: String, duration: float)
+signal battle_transition_finished()
+signal battle_reveal_requested()
+signal battle_reveal_finished()
 
 # === SEÑALES DEL GRID ACTIVO ===
 signal active_grid_changed(grid: OverworldGrid)

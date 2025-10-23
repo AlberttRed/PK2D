@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_6gkq1"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_lsbij"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_bjew2"]
-[ext_resource type="PackedScene" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="4_jlk61"]
-[ext_resource type="PackedScene" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="5_etrda"]
+[ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="4_jlk61"]
+[ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="5_etrda"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="6_e31w4"]
 
 [sub_resource type="Resource" id="Resource_f2pe6"]

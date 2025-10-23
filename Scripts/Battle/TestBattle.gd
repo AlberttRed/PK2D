@@ -8,10 +8,6 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$GUI/FadeLayer.visible = false
-	
-	#wildDoubleBattle()
-	#return
 	# Lanzar combates en bucle para testing continuo
 	while true:
 		if randi() % 2 == 0:
