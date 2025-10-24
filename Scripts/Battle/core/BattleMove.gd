@@ -10,27 +10,27 @@ enum DamageClass {
 ## Deprecated: se usaba para mapear categorías de pokapi
 ## enum MoveCategory { ... }
 
-var base_data: MoveInstance
+var base_data: Move
 var pokemon: BattlePokemon
 
-func _init(_base_data: MoveInstance, _pokemon: BattlePokemon):
+func _init(_base_data: Move, _pokemon: BattlePokemon):
 	self.base_data = _base_data
 	self.pokemon = _pokemon
 
 func get_id() -> int:
-	return base_data.id
+	return base_data.get_id()
 
 func get_name() -> String:
-	return base_data.Name
+	return base_data.get_move_name()
 
 func get_type() -> TypeData:
-	return base_data.type as TypeData
+	return base_data.get_type()
 
 func get_type_name() -> String:
-	return base_data.type.Name
+	return base_data.get_type().Name
 
 func get_damage_class() -> DamageClass:
-	return base_data.damage_class as DamageClass
+	return base_data.get_damage_class() as DamageClass
 
 func is_physic_category():
 	return get_damage_class() == DamageClass.PHYSIC
@@ -48,16 +48,16 @@ func get_total_pp() -> int:
 	return base_data.pp
 
 func get_power() -> int:
-	return base_data.power
+	return base_data.get_power()
 
 func get_accuracy() -> int:
-	return base_data.accuracy
+	return base_data.get_accuracy()
 
 func is_depleted() -> bool:
 	return base_data.pp_actual <= 0
 
 func get_priority() -> int:
-	return base_data.priority
+	return base_data.get_priority()
 	
 func get_category_id() -> int:
 	return base_data.get_category_id()

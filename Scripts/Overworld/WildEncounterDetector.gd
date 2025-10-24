@@ -349,7 +349,7 @@ func _on_map_changed_warp(_map_id: String, _spawn_id: String) -> void:
 ## Inicia un combate salvaje
 func _start_wild_battle(encounter_data: Dictionary) -> void:
 	# Crear un Pokémon salvaje
-	var wild_pokemon_instance := _create_wild_pokemon(encounter_data["pokemon_id"], encounter_data["level"])
+	var wild_pokemon_instance = _create_wild_pokemon(encounter_data["pokemon_id"], encounter_data["level"])  # Pokemon
 	if not wild_pokemon_instance:
 		push_error("WildEncounterDetector: No se pudo crear el Pokémon salvaje")
 		return
@@ -400,7 +400,7 @@ func _get_player_participant() -> BattleParticipant:
 	# Convertir equipo a BattlePokemon
 	var battle_team: Array[BattlePokemon] = []
 	for pokemon_instance in player_team:
-		if pokemon_instance is PokemonInstance:
+		if pokemon_instance is Pokemon:
 			var battle_pkmn: BattlePokemon = pokemon_instance.to_battle_pokemon()
 			battle_team.append(battle_pkmn)
 	
@@ -412,9 +412,16 @@ func _get_player_participant() -> BattleParticipant:
 	return participant
 
 ## Crea un Pokémon salvaje
-func _create_wild_pokemon(pokemon_id: int, level: int) -> PokemonInstance:
-	
-	var pokemon = PokemonInstance.new().create(true, pokemon_id, level)
+func _create_wild_pokemon(pokemon_id: int, level: int):  # return: Pokemon
+	var pokemon_data = DatabaseManager.get_pokemon(pokemon_id)
+	var pokemon = Pokemon.new(
+		pokemon_data,  # pokemon_data
+		level,         # pokemon_level
+		0,             # pokemon_gender (0 = aleatorio)
+		0,             # pokemon_ability (0 = aleatorio)
+		0,             # pokemon_nature (0 = aleatorio)
+		true           # randomize_stats
+	)
 	pokemon.is_wild = true
 	return pokemon
 

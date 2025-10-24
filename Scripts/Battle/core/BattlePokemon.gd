@@ -2,7 +2,7 @@ class_name BattlePokemon
 
 signal status_changed
 
-var base_data: PokemonInstance
+var base_data: Pokemon
 var ai_controller: BattleIA
 var participant: BattleParticipant
 var side: BattleSide = null
@@ -50,7 +50,7 @@ var selectedBattleChoice: BattleChoice:
 		if value != null:
 			value.pokemon = self
 
-func _init(_pokemon: PokemonInstance, _IA: BattleIA = null):
+func _init(_pokemon: Pokemon, _IA: BattleIA = null):
 	base_data = _pokemon
 	controllable = (_IA == null)
 	hp = base_data.hp_actual
@@ -87,20 +87,20 @@ func _to_string() -> String:
 	return "patata"
 	
 func get_type1() -> TypeData:
-	return base_data.type_a as TypeData
+	return base_data.get_type1()
 
 func get_type2() -> TypeData:
-	return base_data.type_b as TypeData
+	return base_data.get_type2()
 	
 func get_back_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_back_sprite.atlas.get_image().get_region(instance.battle_back_sprite.region))
 	#texture.set_size_override(texture.get_size())
-	return base_data.battle_back_sprite
+	return base_data.get_battle_back_sprite()
 	
 func get_front_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_front_sprite.atlas.get_image().get_region(instance.battle_front_sprite.region))
 	#texture.set_size_override(texture.get_size())
-	return base_data.battle_front_sprite
+	return base_data.get_battle_front_sprite()
 	
 
 func get_hp() -> int:
@@ -122,13 +122,10 @@ func get_speed() -> int:
 	return speed
 	
 func get_name() -> String:
-	return base_data.Name
+	return base_data.base.Name
 		
 func get_display_name() -> String:
-	if !base_data.nickname.is_empty():
-		return base_data.nickname
-	else:
-		return base_data.Name
+	return base_data.get_display_name()
 
 func get_battle_display_name(upper:bool = false) -> String:
 	var display_name = ""
@@ -174,8 +171,8 @@ func get_available_moves() -> Array[BattleMove]:
 
 func prepare_battle_moves():
 	battle_moves.clear()
-	for move_instance:MoveInstance in base_data.movements:
-		battle_moves.append(move_instance.to_battle_move(self))
+	for move: Move in base_data.movements:
+		battle_moves.append(move.to_battle_move(self))
 
 func decide_random_action() -> BattleChoice:
 	var moves = get_available_moves()
@@ -232,4 +229,12 @@ func get_modified_stat(stat: StatsEnum.Values) -> float:
 	return final * multiplier
 
 func log_pokemon_stats():
-	base_data.log_pokemon_stats()
+	print("=== Stats de %s (Lv. %d) ===" % [get_display_name(), get_level()])
+	print("HP: %d/%d" % [hp, total_hp])
+	print("Attack: %d | Defense: %d" % [attack, defense])
+	print("Sp.Atk: %d | Sp.Def: %d" % [sp_attack, sp_defense])
+	print("Speed: %d" % speed)
+	print("Ability: %s" % (ability.display_name if ability else "None"))
+	print("Nature: %s" % (nature.display_name if nature else "None"))
+	print("Status: %s" % (status.display_name if status else "OK"))
+	print("==============================")

@@ -3,7 +3,7 @@ extends Node2D
 #Battlers
 @onready var player: Battler = $Player
 @onready var singleTrainer: Battler = $SingleTrainer
-@onready var wildPokemons = $WildPokemons.get_children() 
+@onready var wildPokemons: Battler = $WildPokemons
 
 
 # Called when the node enters the scene tree for the first time.
@@ -21,8 +21,17 @@ func _ready() -> void:
 	#get_tree().quit()
 	
 func wildSingleBattle():
-	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon()])
+	# Usar equipo del jugador (configurado en Player Battler)
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
+	
+	# Usar el primer Pokémon del equipo WildPokemons (configurado desde inspector)
+	if wildPokemons.party.is_empty():
+		push_error("wildSingleBattle: No hay Pokémon configurados en WildPokemons")
+		return
+	
+	var wild_battle_pokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_battle_pokemon.is_wild = true
+	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wild_battle_pokemon])
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
@@ -36,8 +45,19 @@ func wildSingleBattle():
 	
 	
 func wildDoubleBattle():
-	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wildPokemons[0].to_battle_pokemon(), wildPokemons[1].to_battle_pokemon()])
+	# Usar equipo del jugador (configurado en Player Battler)
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
+	
+	# Usar los primeros 2 Pokémon del equipo WildPokemons (configurado desde inspector)
+	if wildPokemons.party.size() < 2:
+		push_error("wildDoubleBattle: Se necesitan al menos 2 Pokémon en WildPokemons")
+		return
+	
+	var wild1 = wildPokemons.party[0].to_battle_pokemon()
+	wild1.is_wild = true
+	var wild2 = wildPokemons.party[1].to_battle_pokemon()
+	wild2.is_wild = true
+	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wild1, wild2])
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
@@ -80,14 +100,34 @@ func wildRandomDoubleBattle():
 	await SignalManager.battle_finished
 	
 func singleTrainerBattle():
-	pass
+	# Usar equipos configurados en ambos Battlers (Player vs SingleTrainer)
+	var playerParticipant: BattleParticipant = player.to_battle_participant()
+	var trainerParticipant: BattleParticipant = singleTrainer.to_battle_participant()
+
+	var rules = BattleRules.new(
+		BattleRules.BattleTypes.TRAINER,
+		BattleRules.BattleModes.SINGLE  
+	)
+
+	var participants:Array[BattleParticipant] = [playerParticipant, trainerParticipant]
+	
+	SignalManager.battle_requested.emit(participants, rules)
+	await SignalManager.battle_finished
 
 # Helper: genera un Pokémon aleatorio
 func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:
-	var pkmn_instance := PokemonInstance.new()
-	pkmn_instance.create(true, -1, randi_range(1, 100))  # Pokémon aleatorio nivel 1-100
-	pkmn_instance.isWild = is_wild
-	return pkmn_instance.to_battle_pokemon()
+	var random_id = randi_range(1, 151)
+	var pokemon_data = DatabaseManager.get_pokemon(random_id)
+	var pkmn := Pokemon.new(
+		pokemon_data,         # pokemon_data
+		randi_range(1, 100),  # pokemon_level
+		0,                    # pokemon_gender (0 = aleatorio)
+		0,                    # pokemon_ability (0 = aleatorio)
+		0,                    # pokemon_nature (0 = aleatorio)
+		true                  # randomize_stats
+	)
+	pkmn.is_wild = is_wild
+	return pkmn.to_battle_pokemon()
 
 # Helper: genera participante salvaje con N Pokémon aleatorios
 func _create_random_wild_participant(num_pokemon: int = 1) -> BattleParticipant:
