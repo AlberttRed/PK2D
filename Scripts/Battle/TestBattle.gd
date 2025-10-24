@@ -118,7 +118,14 @@ func singleTrainerBattle():
 func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:
 	var random_id = randi_range(1, 151)
 	var pokemon_data = DatabaseManager.get_pokemon(random_id)
-	var pkmn := Pokemon.new(pokemon_data, randi_range(1, 100), -1, -1, 0, true)
+	var pkmn := Pokemon.new(
+		pokemon_data,         # pokemon_data
+		randi_range(1, 100),  # pokemon_level
+		0,                    # pokemon_gender (0 = aleatorio)
+		0,                    # pokemon_ability (0 = aleatorio)
+		0,                    # pokemon_nature (0 = aleatorio)
+		true                  # randomize_stats
+	)
 	pkmn.is_wild = is_wild
 	return pkmn.to_battle_pokemon()
 

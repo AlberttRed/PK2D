@@ -414,7 +414,14 @@ func _get_player_participant() -> BattleParticipant:
 ## Crea un Pokémon salvaje
 func _create_wild_pokemon(pokemon_id: int, level: int):  # return: Pokemon
 	var pokemon_data = DatabaseManager.get_pokemon(pokemon_id)
-	var pokemon = Pokemon.new(pokemon_data, level, -1, -1, 0, true)
+	var pokemon = Pokemon.new(
+		pokemon_data,  # pokemon_data
+		level,         # pokemon_level
+		0,             # pokemon_gender (0 = aleatorio)
+		0,             # pokemon_ability (0 = aleatorio)
+		0,             # pokemon_nature (0 = aleatorio)
+		true           # randomize_stats
+	)
 	pokemon.is_wild = true
 	return pokemon
 

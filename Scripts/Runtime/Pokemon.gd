@@ -44,6 +44,12 @@ signal newMoveLearned
 @export_group("Otros")
 @export var held_item_id: int = 0
 
+@export_group("Moveset (Movimientos)")
+## Define hasta 4 movimientos personalizados (IDs). 
+## Si está vacío, el Pokémon aprenderá movimientos automáticamente según su nivel.
+## Ejemplo: [33, 45, 98, 156] para Tackle, Growl, Quick Attack, Rest
+@export var custom_move_ids: Array[MovesEnum.Values] = []
+
 # Propiedades calculadas/runtime (no exportadas)
 var base: PokemonData  # Se carga desde pokemon_id
 var hp_actual: int = 0
@@ -89,66 +95,91 @@ var fainted: bool:
 var learningMoves: Array[PokemonLearningMove] = []
 
 ## Constructor principal
-## Si se llama sin parámetros (creado desde inspector), usa los valores @export
-## Si se llama con parámetros (creado por código), usa los parámetros
-func _init(_pokemon_data = null, _level: int = -1, _gender: int = -99, _ability_id: int = -99, _nature_id: int = -99, _randomize_stats: bool = false) -> void:
-	# Si se crea desde inspector sin parámetros, no inicializar (se hará en _post_init)
-	if _pokemon_data == null:
+## 
+## Creación desde inspector: Llamar sin parámetros, luego _post_init() inicializará desde @export vars
+## Creación por código: Proporcionar al menos pokemon_data o pokemon_id
+##
+## @param pokemon_data: PokemonData, int (pokemon_id), o null (inspector)
+## @param pokemon_level: Nivel inicial (5 por defecto)
+## @param pokemon_gender: Género específico, 0 para aleatorio, null para mantener @export
+## @param pokemon_ability: ID de habilidad, 0 para aleatorio según especie, null para mantener @export
+## @param pokemon_nature: NatureEnum, 0 para aleatorio, null para mantener @export
+## @param randomize_stats: Si true, genera IVs aleatorios (0-31)
+func _init(
+	pokemon_data = null,
+	pokemon_level: int = 5,
+	pokemon_gender = null,
+	pokemon_ability = null,
+	pokemon_nature = null,
+	randomize_stats: bool = false
+) -> void:
+	# Creación desde inspector: sin parámetros, inicializar después con _post_init()
+	if pokemon_data == null:
 		return
 	
-	# Creado por código: aceptar PokemonData o int (pokemon_id)
-	if _pokemon_data is int:
-		pokemon_id = _pokemon_data as PokemonsEnum.Values
-		base = DatabaseManager.get_pokemon(_pokemon_data)
-	elif _pokemon_data is PokemonData:
-		base = _pokemon_data
+	# Cargar PokemonData
+	if pokemon_data is int:
+		pokemon_id = pokemon_data as PokemonsEnum.Values
+		base = DatabaseManager.get_pokemon(pokemon_data)
+	elif pokemon_data is PokemonData:
+		base = pokemon_data
 		pokemon_id = base.id as PokemonsEnum.Values
 	else:
-		push_error("Pokemon._init: Parámetro inválido. Debe ser PokemonData o int")
+		push_error("Pokemon._init: pokemon_data debe ser PokemonData o int (pokemon_id)")
 		return
 	
-	if _level > 0:
-		level = _level
+	if base == null:
+		push_error("Pokemon._init: No se pudo cargar PokemonData para id %s" % str(pokemon_data))
+		return
 	
-	# Género
-	if _gender == -99:  # No especificado, usar valor export o calcular
-		if gender == 0:  # "Sin indicar"
-			gender = calculateGender()
-	elif _gender == -1 or _gender == 0:
-		gender = calculateGender()
+	# Configurar nivel
+	level = pokemon_level
+	
+	# Configurar género
+	if pokemon_gender == null:
+		# Mantener valor @export o calcular si es 0 ("Sin indicar")
+		if gender == 0:
+			gender = _calculate_gender()
+	elif pokemon_gender == 0:
+		gender = _calculate_gender()
 	else:
-		gender = _gender
+		gender = pokemon_gender
 	
-	# Habilidad
-	if _ability_id == -99:  # No especificado, usar valor export o calcular
+	# Configurar habilidad
+	if pokemon_ability == null:
+		# Mantener valor @export o calcular si es NONE
 		if ability_id == AbilitiesEnum.Values.NONE:
-			ability_id = calculateAbility() as AbilitiesEnum.Values
-	elif _ability_id == -1:
-		ability_id = calculateAbility() as AbilitiesEnum.Values
+			ability_id = _calculate_ability() as AbilitiesEnum.Values
+	elif pokemon_ability == 0:
+		ability_id = _calculate_ability() as AbilitiesEnum.Values
 	else:
-		ability_id = _ability_id as AbilitiesEnum.Values
+		ability_id = pokemon_ability as AbilitiesEnum.Values
 	ability = DatabaseManager.get_ability(ability_id)
 	
-	# Naturaleza
-	if _nature_id == -99:  # No especificado, usar valor export
-		pass  # Ya está configurado
-	elif _nature_id == 0:
+	# Configurar naturaleza
+	if pokemon_nature == null:
+		# Mantener valor @export (por defecto SERIOUS)
+		pass
+	elif pokemon_nature == 0:
 		nature_id = NaturesEnum.get_random_nature() as NaturesEnum.Values
 	else:
-		nature_id = _nature_id as NaturesEnum.Values
+		nature_id = pokemon_nature as NaturesEnum.Values
 	nature = DatabaseManager.get_nature(NaturesEnum.get_id(nature_id))
 	
-	# Inicializar stats
-	_initialize_stats(_randomize_stats)
+	# Inicializar stats (IVs, EVs, base_stats)
+	_initialize_stats(randomize_stats)
 	
-	# Cargar movimientos aprendibles
-	loadLearningMoves()
-	load_moves()
+	# Cargar movimientos
+	_load_learnable_moves()
+	_load_initial_moves()
 	
-	# HP inicial
+	# Configurar estado inicial
 	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	totalExp = actualLevelExpBase
 	personality = get_personality_text()
+	
+	# Configurar nombre para el inspector
+	_update_resource_name()
 
 ## Inicialización posterior (cuando se crea desde inspector)
 ## Battler.gd llamará esto en _ready() para inicializar Pokemon del inspector
@@ -161,10 +192,10 @@ func _post_init() -> void:
 	
 	# Calcular valores automáticos si no están configurados
 	if gender == 0:  # "Sin indicar"
-		gender = calculateGender()
+		gender = _calculate_gender()
 	
 	if ability_id == AbilitiesEnum.Values.NONE:
-		ability_id = calculateAbility() as AbilitiesEnum.Values
+		ability_id = _calculate_ability() as AbilitiesEnum.Values
 	ability = DatabaseManager.get_ability(ability_id)
 	
 	nature = DatabaseManager.get_nature(NaturesEnum.get_id(nature_id))
@@ -173,13 +204,42 @@ func _post_init() -> void:
 	_initialize_stats(false)
 	
 	# Cargar movimientos
-	loadLearningMoves()
-	load_moves()
+	_load_learnable_moves()
+	_load_initial_moves()
 	
-	# HP inicial
+	# Configurar estado inicial
 	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	totalExp = actualLevelExpBase
 	personality = get_personality_text()
+	
+	# Configurar nombre para el inspector
+	_update_resource_name()
+
+## Actualiza el resource_name para que se muestre bien en el inspector
+func _update_resource_name() -> void:
+	if base == null:
+		resource_name = "Pokemon (sin configurar)"
+		return
+	
+	var display_text = ""
+	
+	# Mostrar nickname si existe
+	if not nickname.is_empty():
+		display_text = "%s (%s)" % [nickname, base.Name]
+	else:
+		display_text = base.Name
+	
+	# Añadir nivel
+	display_text += " Lv.%d" % level
+	
+	# Añadir género si no es "sin indicar"
+	match gender:
+		CONST.GENEROS.MACHO:
+			display_text += " ♂"
+		CONST.GENEROS.HEMBRA:
+			display_text += " ♀"
+	
+	resource_name = display_text
 
 ## Inicializa IVs, EVs y base stats
 func _initialize_stats(_randomize: bool = false) -> void:
@@ -225,7 +285,8 @@ func _initialize_stats(_randomize: bool = false) -> void:
 	}
 
 ## Calcula el género basándose en gender_rate
-func calculateGender() -> int:
+## Calcula el género aleatorio basado en el ratio de la especie
+func _calculate_gender() -> int:
 	if base.gender_rate == -1:
 		return CONST.GENEROS.SIN_GENERO
 	else:
@@ -236,8 +297,8 @@ func calculateGender() -> int:
 		else:
 			return CONST.GENEROS.MACHO
 
-## Calcula la habilidad aleatoria (normalmente slot 0 o 1)
-func calculateAbility() -> int:
+## Calcula la habilidad aleatoria según las disponibles para la especie
+func _calculate_ability() -> int:
 	ability_slot = randi_range(0, 1)
 	var selected_ability = base.abilities[ability_slot]
 	
@@ -251,8 +312,8 @@ func calculateAbility() -> int:
 	else:
 		return selected_ability
 
-## Carga los movimientos aprendibles del PokemonData
-func loadLearningMoves() -> void:
+## Carga la lista de movimientos aprendibles según el PokemonData
+func _load_learnable_moves() -> void:
 	learningMoves.clear()
 	for i in range(base.learn_move_id.size()):
 		learningMoves.push_back(
@@ -263,9 +324,16 @@ func loadLearningMoves() -> void:
 			)
 		)
 
-## Carga los primeros 4 movimientos que el Pokémon puede aprender por nivel
-func load_moves() -> void:
+## Carga los movimientos iniciales según el nivel actual o movimientos personalizados
+func _load_initial_moves() -> void:
 	movements.clear()
+	
+	# Si hay movimientos personalizados definidos, usarlos en lugar de los automáticos
+	if not custom_move_ids.is_empty():
+		_load_custom_moves()
+		return
+	
+	# Lógica por defecto: cargar movimientos según nivel
 	var available_moves: Array[PokemonLearningMove] = learningMoves.filter(
 		func(move: PokemonLearningMove):
 			return move.learningType == PokemonLearningMove.Type.LVL_UP and move.learningLevel <= level
@@ -273,6 +341,21 @@ func load_moves() -> void:
 	
 	for learning_move in available_moves:
 		movements.append(learning_move.getMove())
+
+## Carga movimientos personalizados desde custom_move_ids
+func _load_custom_moves() -> void:
+	var move_count = min(custom_move_ids.size(), 4)  # Máximo 4 movimientos
+	
+	for i in range(move_count):
+		var move_enum = custom_move_ids[i]
+		var move_id = int(move_enum)  # Convertir enum a int
+		
+		if move_id > 0:  # Validar que sea un ID válido
+			var move = Move.new(move_id)
+			if move.base != null:  # Verificar que el movimiento se cargó correctamente
+				movements.append(move)
+			else:
+				push_warning("Pokemon: No se pudo cargar el movimiento con ID %d" % move_id)
 
 ## Añade un movimiento (máximo 4)
 func addMove(_move) -> void:  # _move: Move - evitamos referencia circular

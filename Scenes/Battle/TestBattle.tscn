@@ -31,6 +31,7 @@ speed_EVs = 0
 nature_id = 13
 ability_id = 1
 held_item_id = 0
+custom_move_ids = Array[int]([])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_bfl41"]
@@ -56,6 +57,7 @@ speed_EVs = 0
 nature_id = 13
 ability_id = 0
 held_item_id = 0
+custom_move_ids = Array[int]([])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_hj5qa"]
@@ -81,6 +83,7 @@ speed_EVs = 0
 nature_id = 13
 ability_id = 0
 held_item_id = 0
+custom_move_ids = Array[int]([])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_7sl6r"]
@@ -106,6 +109,7 @@ speed_EVs = 0
 nature_id = 13
 ability_id = 0
 held_item_id = 0
+custom_move_ids = Array[int]([])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [node name="TestBattle" type="Node2D"]

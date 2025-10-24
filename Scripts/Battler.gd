@@ -75,7 +75,15 @@ func add_pokemon_from_data(pokemon_data: PokemonData, level: int = 5, gender: in
 		push_warning("Battler: PokemonData nulo")
 		return
 	
-	var pokemon = Pokemon.new(pokemon_data, level, gender, -1, 0, true)
+	# Crear Pokemon con stats aleatorios
+	var pokemon = Pokemon.new(
+		pokemon_data,     # pokemon_data
+		level,            # pokemon_level
+		gender,           # pokemon_gender (0 = aleatorio)
+		0,                # pokemon_ability (0 = aleatorio según especie)
+		0,                # pokemon_nature (0 = aleatorio)
+		true              # randomize_stats (IVs aleatorios)
+	)
 	
 	if battler_type == CONST.BATTLER_TYPES.TRAINER:
 		pokemon.trainer_id = trainer_id

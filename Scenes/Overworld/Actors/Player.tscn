@@ -368,6 +368,7 @@ speed_EVs = 0
 nature_id = 13
 ability_id = 0
 held_item_id = 0
+custom_move_ids = Array[int]([])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [node name="Player" type="Node2D" groups=["Player"]]
