@@ -1,4 +1,4 @@
-class_name Nature
+class_name NatureData
 extends Resource
 
 @export var id: String = ""  # nombre en inglés, minúsculas (ej. "jolly")
@@ -20,3 +20,4 @@ func print_info():
 	var inc := str(increased_stat)
 	var dec := str(decreased_stat)
 	print("[Nature] %s (%s) | +%s -%s" % [display_name, id, inc, dec])
+

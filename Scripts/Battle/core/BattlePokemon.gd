@@ -25,7 +25,7 @@ var sp_defense: int
 var speed: int
 
 var ability: AbilityData = null
-var nature: Nature = null
+var nature: NatureData = null
 
 var accuracy_stage: int = 0
 var evasion_stage: int = 0

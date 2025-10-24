@@ -92,7 +92,7 @@ func _load_natures() -> void:
 	if dir != null:
 		load_resources_from_dir(NATURES_DIR, func(res):
 			if res == null: return
-			if not (res is Nature): return
+			if not (res is NatureData): return
 			_natures_by_id[res.id] = res
 			var key := str(res.id).to_lower()
 			_natures_by_name[key] = res
@@ -105,7 +105,7 @@ func _load_natures() -> void:
 			var nat_id := NaturesEnum.get_id(i)
 			if nat_id == "NONE":
 				continue
-			var nat := Nature.new()
+			var nat := NatureData.new()
 			nat.id = nat_id.to_lower()
 			nat.display_name = nat_id.capitalize()
 			_natures_by_id[nat.id] = nat

@@ -238,7 +238,7 @@ var evs: Dictionary[StatsEnum.Values, int]
 
 var ivs: Dictionary[StatsEnum.Values, int] 
 
-var nature: Nature
+var nature: NatureData
 var ability: AbilityData
 
 func create(_randomize_stats : bool = true, _pkmn_id : int = -1, _level : int = -1, _gender : int = -1, _ability_id : int = -1, _nature_id : int = 0):  # _nature_id: NaturesEnum.Values
@@ -700,7 +700,7 @@ func to_battle_pokemon(ai: BattleIA = null) -> BattlePokemon:
 func get_ability_resource() -> AbilityData:
 	return DatabaseManager.get_ability(ability_id)
 
-func load_nature_by_id(_nature_id: int) -> Nature:
+func load_nature_by_id(_nature_id: int) -> NatureData:
 	return DatabaseManager.get_nature(NaturesEnum.get_id(_nature_id))
 
 
