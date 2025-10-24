@@ -37,9 +37,9 @@ var type_b :
 		return base.type_b
 	set(value):
 		type_b = value 	
-var types : Array[Type] :
+var types : Array[TypeData] :
 	get:
-		return [base.type_a as Type, base.type_b as Type]
+		return [base.type_a as TypeData, base.type_b as TypeData]
 	set(value):
 		types = value 	
 

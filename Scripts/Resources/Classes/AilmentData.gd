@@ -22,4 +22,3 @@ func get_enum_value() -> int:
 		return AilmentsEnum.from_string(internal_name)
 	else:
 		return AilmentsEnum.Values.NONE
-
