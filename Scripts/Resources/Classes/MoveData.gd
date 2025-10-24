@@ -1,6 +1,6 @@
 extends Resource
 
-class_name Move
+class_name MoveData
 
 #var MOVE_FUNCTIONS = load("res://Assets/ui/battle/BATTLE_MoveFunctions.gd").INST()
 #var MOVE_ANIMATIONS = load("res://Assets/ui/battle/BATTLE_MoveAnimations.gd").new()
@@ -91,3 +91,4 @@ func get_pp():
 func print_info():
 	var title := "%s (ID %d)" % [Name, id]
 	print("[Move] %s | PP: %d | %s" % [title, pp, description])
+

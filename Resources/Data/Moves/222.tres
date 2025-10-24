@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://bcok2l4b54b52"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=4 format=3 uid="uid://bcok2l4b54b52"]
 
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_hr5i8"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hr5i8"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_rshn4"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_7freb"]
 

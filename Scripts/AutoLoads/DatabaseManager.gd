@@ -62,7 +62,7 @@ func _print_summary() -> void:
 func _load_moves() -> void:
 	load_resources_from_dir(MOVES_DIR, func(res):
 		if res == null: return
-		if not (res is Move): return
+		if not (res is MoveData): return
 		_moves_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_moves_by_name[res.internal_name.to_lower()] = res
@@ -153,7 +153,7 @@ func get_pokemon(name_or_id) -> Resource:
 		return _pokemon_by_id.get(int(key), null)
 	return _pokemon_by_name.get(key, null)
 
-func get_move(name_or_id) -> Move:
+func get_move(name_or_id) -> MoveData:
 	if typeof(name_or_id) == TYPE_INT:
 		return _moves_by_id.get(name_or_id, null)
 	var key := str(name_or_id).to_lower()

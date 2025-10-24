@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://i3jgby74ew4v"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=4 format=3 uid="uid://i3jgby74ew4v"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_jjwd1"]
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_qx45s"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qx45s"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_pgppd"]
 
 [resource]

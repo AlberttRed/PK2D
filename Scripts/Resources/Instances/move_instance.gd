@@ -2,7 +2,7 @@ extends Node
 
 class_name MoveInstance
 
-var base : Move
+var base : MoveData
 
 var id  : int :
 	get:

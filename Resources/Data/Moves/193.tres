@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://cd7l2hry24uv"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=5 format=3 uid="uid://cd7l2hry24uv"]
 
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7a7n2"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7a7n2"]
 [ext_resource type="Resource" uid="uid://pxq1boh748y0" path="res://Resources/Data/Ailments/NO-TYPE-IMMUNITY.tres" id="1_xfr5j"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_bngua"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_wql0y"]

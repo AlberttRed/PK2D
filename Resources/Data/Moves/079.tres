@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://dmct3bg1e1yaa"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=5 format=3 uid="uid://dmct3bg1e1yaa"]
 
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_7kqvv"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7kqvv"]
 [ext_resource type="Resource" uid="uid://cwcxxqx6mbg3b" path="res://Resources/Data/Ailments/SLEEP.tres" id="1_ygv8t"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_ih1sr"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_xh61m"]

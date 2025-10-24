@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=6 format=3 uid="uid://dngjmjgunt56b"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=6 format=3 uid="uid://dngjmjgunt56b"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_3w4dp"]
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_o6gti"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_o6gti"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_nlxnd"]
 [ext_resource type="Script" uid="uid://bacydl0r12das" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/RainDanceMoveEffect.gd" id="4_moveeffect"]
 [ext_resource type="Resource" uid="uid://cuma2yb7yqge6" path="res://Resources/Data/Weather/RAIN.tres" id="5_y3mvp"]

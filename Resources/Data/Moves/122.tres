@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://dhwv0i04jxrfs"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=5 format=3 uid="uid://dhwv0i04jxrfs"]
 
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_chuuh"]
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_ythxg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ythxg"]
 [ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_7lq2r"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_p36jx"]
 

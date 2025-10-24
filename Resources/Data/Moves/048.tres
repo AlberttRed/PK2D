@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=5 format=3 uid="uid://badqo5mli132k"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=5 format=3 uid="uid://badqo5mli132k"]
 
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_02s28"]
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_gp1lr"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_gp1lr"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_o2mff"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_ox25d"]
 
