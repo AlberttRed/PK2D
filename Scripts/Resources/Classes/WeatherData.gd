@@ -8,4 +8,3 @@ class_name WeatherData
 
 func get_effect(_duration: int = 5, _started_by_move: bool = false) -> PersistentBattleEffect:
 	return effect.new(self,_duration,_started_by_move) if effect != null else null
-

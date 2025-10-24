@@ -131,7 +131,7 @@ func get_drain_percentage():
 func get_heal_amount():
 	return base.meta_healing
 	
-func get_ailment() -> Ailment:
+func get_ailment() -> AilmentData:
 	return base.ailment
 
 

@@ -111,7 +111,7 @@ func get_critical_rate() -> int:
 func get_category() -> BattleMoveCategory:
 	return base_data.get_category()
 
-func get_ailment() -> Ailment:
+func get_ailment() -> AilmentData:
 	return base_data.get_ailment()
 
 	

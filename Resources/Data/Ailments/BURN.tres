@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="Ailment" load_steps=5 format=3 uid="uid://l318umt6ltd1"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=5 format=3 uid="uid://l318umt6ltd1"]
 
 [ext_resource type="Script" uid="uid://d0eygd0bl6j3i" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/BurnAilmentEffect.gd" id="1_thuta"]
 [ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="2_qgxyx"]
-[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="3_i83j3"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="3_i83j3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_onjun"]
 atlas = ExtResource("2_qgxyx")

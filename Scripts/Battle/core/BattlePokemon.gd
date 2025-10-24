@@ -31,7 +31,7 @@ var accuracy_stage: int = 0
 var evasion_stage: int = 0
 var critical_stage: int = 0
 
-var status: Ailment = null
+var status: AilmentData = null
 var status_turns: int = 0
 
 var stat_stages := StatStages.new()
@@ -204,7 +204,7 @@ func take_heal(heal: HealEffect) -> void:
 	hp = min(hp, total_hp)
 	print("hp after heal: " + str(hp))
 
-func set_status(new_status: Ailment):
+func set_status(new_status: AilmentData):
 	if new_status and !new_status.is_persistent:
 		push_warning("Intentando asignar un ailment volátil como status.")
 		return

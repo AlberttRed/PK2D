@@ -1,4 +1,4 @@
-class_name Ailment
+class_name AilmentData
 extends Resource
 
 # Esquema unificado: id numérico e internal_name en minúsculas
@@ -22,3 +22,4 @@ func get_enum_value() -> int:
 		return AilmentsEnum.from_string(internal_name)
 	else:
 		return AilmentsEnum.Values.NONE
+
