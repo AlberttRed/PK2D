@@ -9,21 +9,31 @@ class_name Battler
 
 ## === CONFIGURACIÓN DEL ENTRENADOR ===
 
-@export_group("Trainer Info")
+@export_group("Trainer Data (Recomendado)")
+## TrainerData Resource con toda la información del entrenador.
+## Si está definido, se carga automáticamente el equipo, textos, IA, etc.
+## Deja en null para configurar manualmente las propiedades individuales.
+@export var trainer_data: TrainerData = null
+
+@export_group("Trainer Info (Manual)")
+## Estos campos se usan solo si trainer_data es null
 @export var trainer_id: int = -1
 @export var trainer_name: String = ""
 @export var is_player: bool = false
 
-@export_group("Battle Settings")
+@export_group("Battle Settings (Manual)")
+## Estos campos se usan solo si trainer_data es null
 @export var battler_type: CONST.BATTLER_TYPES = CONST.BATTLER_TYPES.TRAINER
 @export var battle_ia: BattleIA = null
 @export var allow_double_battle: bool = false
 
-@export_group("Sprites")
+@export_group("Sprites (Manual)")
+## Estos campos se usan solo si trainer_data es null
 @export var battle_front_sprite: Texture
 @export var battle_back_sprite: Texture = null
 
-@export_group("Messages")
+@export_group("Messages (Manual)")
+## Estos campos se usan solo si trainer_data es null
 @export_multiline var before_battle_message: String = ""
 @export_multiline var init_battle_message: String = ""
 @export_multiline var end_battle_message: String = ""
@@ -31,10 +41,9 @@ class_name Battler
 @export_group("State")
 @export var is_defeated: bool = false
 
-@export_group("Party (Equipo Pokémon)")
-## Configura el equipo desde el inspector:
-## Puedes arrastrar Pokemon (runtime .tres) ya creados,
-## O dejar vacío y construir el equipo en código con add_pokemon_from_data()
+@export_group("Party (Equipo Pokémon - Manual)")
+## Configura el equipo manualmente si trainer_data es null.
+## Si trainer_data está definido, se ignora este array.
 @export var party: Array[Pokemon] = []
 
 @export_group("Partner (for Double Battles)")
@@ -42,23 +51,57 @@ class_name Battler
 
 
 func _ready() -> void:
+	_load_from_trainer_data()
 	_initialize_party()
+
+
+## Carga la configuración desde TrainerData si existe
+func _load_from_trainer_data() -> void:
+	if trainer_data == null:
+		return  # Usar configuración manual
+	
+	# Inicializar TrainerData (carga TrainerClassData desde el enum)
+	trainer_data.initialize()
+	
+	# Cargar propiedades básicas
+	trainer_id = trainer_data.trainer_id
+	trainer_name = trainer_data.display_name
+	battle_ia = trainer_data.ai_profile
+	allow_double_battle = trainer_data.double_battle
+	
+	# Cargar sprites (front y back) con fallback a los de la clase
+	battle_front_sprite = trainer_data.get_battle_front_sprite()
+	battle_back_sprite = trainer_data.get_battle_back_sprite()
+	
+	# Cargar textos
+	before_battle_message = trainer_data.intro_text
+	init_battle_message = trainer_data.intro_text  # Usar intro para ambos
+	end_battle_message = trainer_data.defeat_text
+	
+	# Cargar equipo desde TrainerData
+	party = trainer_data.create_party()
+	
+	print("Battler: Cargado desde TrainerData '%s' (%d Pokémon)" % [trainer_data.get_full_name(), party.size()])
 
 
 ## Inicializa el equipo
 ## Si ya hay Pokemon en el array party (configurados desde inspector), inicializarlos
 ## Si está vacío, se debe construir el equipo con add_pokemon_from_data()
 func _initialize_party() -> void:
+	var trainer_display_name = trainer_data.display_name if trainer_data else trainer_name
+	
 	if party.is_empty():
-		push_warning("Battler '%s': No tiene Pokémon en el equipo. Configúralos desde el inspector o usa add_pokemon_from_data()." % trainer_name)
+		push_warning("Battler '%s': No tiene Pokémon en el equipo. Configúralos desde el inspector o usa add_pokemon_from_data()." % trainer_display_name)
 		return
 	
 	# Inicializar cada Pokemon del array (configurados desde inspector)
 	for pokemon in party:
 		if pokemon:
-			pokemon._post_init()
+			# Solo llamar _post_init si el Pokemon no está inicializado
+			if pokemon.base == null:
+				pokemon._post_init()
 	
-	print("Battler '%s': Equipo cargado e inicializado (%d Pokémon)" % [trainer_name, party.size()])
+	print("Battler '%s': Equipo cargado e inicializado (%d Pokémon)" % [trainer_display_name, party.size()])
 
 
 ## Agrega un Pokémon al equipo (runtime)
@@ -121,6 +164,34 @@ func get_alive_pokemon_count() -> int:
 ## Verifica si el entrenador puede pelear
 func can_battle() -> bool:
 	return get_alive_pokemon_count() > 0
+
+
+## Obtiene el nombre completo del entrenador (clase + nombre si trainer_data existe)
+func get_full_name() -> String:
+	if trainer_data:
+		return trainer_data.get_full_name()
+	return trainer_name
+
+
+## Obtiene la recompensa en dinero por ganar
+func get_reward_money() -> int:
+	if trainer_data:
+		return trainer_data.calculate_reward()
+	return 0  # Sin trainer_data, no hay recompensa definida
+
+
+## Obtiene el texto de introducción
+func get_intro_text() -> String:
+	if trainer_data:
+		return trainer_data.get_intro_message()
+	return before_battle_message if not before_battle_message.is_empty() else "¡Vamos a combatir!"
+
+
+## Obtiene el texto de derrota
+func get_defeat_text() -> String:
+	if trainer_data:
+		return trainer_data.get_defeat_message()
+	return end_battle_message if not end_battle_message.is_empty() else "He perdido..."
 
 
 ## === CONVERSIÓN A BATTLEPARTICIPANT ===
