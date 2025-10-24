@@ -1,6 +1,6 @@
 extends Resource
 
-class_name Type
+class_name TypeData
 
 @export var internal_name : String = ""
 @export var Name : String = ""
@@ -63,3 +63,4 @@ func _to_string() -> String:
 
 func print_info():
 	print("[Type] %s | ID: %d | internal: %s" % [Name, id, internal_name])
+

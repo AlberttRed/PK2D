@@ -1,4 +1,4 @@
-class_name Ailment
+class_name AilmentData
 extends Resource
 
 # Esquema unificado: id numérico e internal_name en minúsculas

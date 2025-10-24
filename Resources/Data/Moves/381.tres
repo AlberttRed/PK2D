@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Move" load_steps=4 format=3 uid="uid://bctojlxn71x20"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=4 format=3 uid="uid://bctojlxn71x20"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_0rv2a"]
-[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/move_resource.gd" id="1_q2877"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q2877"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_bcdsv"]
 
 [resource]

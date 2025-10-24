@@ -1,5 +1,5 @@
 extends Resource
-class_name Weather
+class_name WeatherData
 
 @export var id: int
 @export var internal_name: String

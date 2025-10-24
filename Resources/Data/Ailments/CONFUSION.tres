@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Ailment" load_steps=3 format=3 uid="uid://cgmfhfx43byjx"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://cgmfhfx43byjx"]
 
 [ext_resource type="Script" uid="uid://b3ygcov781h3" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/ConfusionAilmentEffect.gd" id="1_21a6o"]
-[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/Ailment.gd" id="1_rox0k"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_rox0k"]
 
 [resource]
 script = ExtResource("1_rox0k")

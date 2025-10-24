@@ -1,6 +1,6 @@
 extends Resource
 
-class_name Move
+class_name MoveData
 
 #var MOVE_FUNCTIONS = load("res://Assets/ui/battle/BATTLE_MoveFunctions.gd").INST()
 #var MOVE_ANIMATIONS = load("res://Assets/ui/battle/BATTLE_MoveAnimations.gd").new()
@@ -33,8 +33,8 @@ class_name Move
 @export var meta_flinch_chance : int = 0 # % de que un atac fagi retrocedir  al rival
 @export var meta_stat_chance : int = 0 # % de que un atac pugi o baixi els stats
 @export var contact_flag : bool = false
-@export var ailment : Ailment = null
-@export var weather : Weather = null
+@export var ailment : AilmentData = null
+@export var weather : WeatherData = null
 @export var move_effect : Script = null
 
 @export var category: BattleMoveCategory = null
@@ -91,3 +91,4 @@ func get_pp():
 func print_info():
 	var title := "%s (ID %d)" % [Name, id]
 	print("[Move] %s | PP: %d | %s" % [title, pp, description])
+

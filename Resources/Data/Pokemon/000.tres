@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Pokemon" load_steps=7 format=3 uid="uid://dsdm5mwfr5116"]
+[gd_resource type="Resource" script_class="PokemonData" load_steps=7 format=3 uid="uid://dsdm5mwfr5116"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2iadx"]
-[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/pokemon_resource.gd" id="2_k1v7i"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="2_k1v7i"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2iadx"]
 atlas = ExtResource("1_2iadx")

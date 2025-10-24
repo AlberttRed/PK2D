@@ -2,7 +2,7 @@ extends Node
 
 class_name MoveInstance
 
-var base : Move
+var base : MoveData
 
 var id  : int :
 	get:
@@ -131,14 +131,14 @@ func get_drain_percentage():
 func get_heal_amount():
 	return base.meta_healing
 	
-func get_ailment() -> Ailment:
+func get_ailment() -> AilmentData:
 	return base.ailment
 
 
 func get_ailment_chance() -> int:
 	return base.meta_ailment_chance
 	
-func get_weather() -> Weather:
+func get_weather() -> WeatherData:
 	return base.weather
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:

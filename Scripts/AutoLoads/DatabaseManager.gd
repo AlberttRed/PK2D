@@ -42,7 +42,7 @@ func _load_all() -> void:
 
 	load_resources_from_dir(POKEMON_DIR, func(res):
 		if res == null: return
-		if not (res is Pokemon): return
+		if not (res is PokemonData): return
 		_pokemon_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_pokemon_by_name[res.internal_name.to_lower()] = res
@@ -62,7 +62,7 @@ func _print_summary() -> void:
 func _load_moves() -> void:
 	load_resources_from_dir(MOVES_DIR, func(res):
 		if res == null: return
-		if not (res is Move): return
+		if not (res is MoveData): return
 		_moves_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_moves_by_name[res.internal_name.to_lower()] = res
@@ -71,7 +71,7 @@ func _load_moves() -> void:
 func _load_types() -> void:
 	load_resources_from_dir(TYPES_DIR, func(res):
 		if res == null: return
-		if not (res is Type): return
+		if not (res is TypeData): return
 		_types_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_types_by_name[res.internal_name.to_lower()] = res
@@ -80,7 +80,7 @@ func _load_types() -> void:
 func _load_abilities() -> void:
 	load_resources_from_dir(ABILITIES_DIR, func(res):
 		if res == null: return
-		if not (res is Ability): return
+		if not (res is AbilityData): return
 		_abilities_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_abilities_by_name[res.internal_name.to_lower()] = res
@@ -92,7 +92,7 @@ func _load_natures() -> void:
 	if dir != null:
 		load_resources_from_dir(NATURES_DIR, func(res):
 			if res == null: return
-			if not (res is Nature): return
+			if not (res is NatureData): return
 			_natures_by_id[res.id] = res
 			var key := str(res.id).to_lower()
 			_natures_by_name[key] = res
@@ -105,7 +105,7 @@ func _load_natures() -> void:
 			var nat_id := NaturesEnum.get_id(i)
 			if nat_id == "NONE":
 				continue
-			var nat := Nature.new()
+			var nat := NatureData.new()
 			nat.id = nat_id.to_lower()
 			nat.display_name = nat_id.capitalize()
 			_natures_by_id[nat.id] = nat
@@ -117,7 +117,7 @@ func _load_weathers() -> void:
 		return
 	load_resources_from_dir(WEATHERS_DIR, func(res):
 		if res == null: return
-		if not (res is Weather): return
+		if not (res is WeatherData): return
 		_weathers_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_weathers_by_name[res.internal_name.to_lower()] = res
@@ -153,7 +153,7 @@ func get_pokemon(name_or_id) -> Resource:
 		return _pokemon_by_id.get(int(key), null)
 	return _pokemon_by_name.get(key, null)
 
-func get_move(name_or_id) -> Move:
+func get_move(name_or_id) -> MoveData:
 	if typeof(name_or_id) == TYPE_INT:
 		return _moves_by_id.get(name_or_id, null)
 	var key := str(name_or_id).to_lower()
@@ -181,7 +181,7 @@ func get_nature(name_or_id) -> Resource:
 	var key := str(name_or_id).to_lower()
 	return _natures_by_id.get(key, _natures_by_name.get(key, null))
 
-func get_weather(name_or_id) -> Weather:
+func get_weather(name_or_id) -> WeatherData:
 	if typeof(name_or_id) == TYPE_INT:
 		return _weathers_by_id.get(name_or_id, null)
 	var key := str(name_or_id).to_lower()

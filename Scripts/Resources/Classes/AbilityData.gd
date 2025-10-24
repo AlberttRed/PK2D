@@ -1,5 +1,5 @@
 extends Resource
-class_name Ability
+class_name AbilityData
 
 @export var id: int = -1
 @export var internal_name: String = ""

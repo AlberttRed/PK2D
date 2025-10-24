@@ -24,14 +24,14 @@ var sp_attack: int
 var sp_defense: int
 var speed: int
 
-var ability: Ability = null
-var nature: Nature = null
+var ability: AbilityData = null
+var nature: NatureData = null
 
 var accuracy_stage: int = 0
 var evasion_stage: int = 0
 var critical_stage: int = 0
 
-var status: Ailment = null
+var status: AilmentData = null
 var status_turns: int = 0
 
 var stat_stages := StatStages.new()
@@ -86,11 +86,11 @@ func init_turn() -> void:
 func _to_string() -> String:
 	return "patata"
 	
-func get_type1() -> Type:
-	return base_data.type_a as Type
+func get_type1() -> TypeData:
+	return base_data.type_a as TypeData
 
-func get_type2() -> Type:
-	return base_data.type_b as Type
+func get_type2() -> TypeData:
+	return base_data.type_b as TypeData
 	
 func get_back_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_back_sprite.atlas.get_image().get_region(instance.battle_back_sprite.region))
@@ -204,7 +204,7 @@ func take_heal(heal: HealEffect) -> void:
 	hp = min(hp, total_hp)
 	print("hp after heal: " + str(hp))
 
-func set_status(new_status: Ailment):
+func set_status(new_status: AilmentData):
 	if new_status and !new_status.is_persistent:
 		push_warning("Intentando asignar un ailment volátil como status.")
 		return

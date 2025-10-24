@@ -23,8 +23,8 @@ func get_id() -> int:
 func get_name() -> String:
 	return base_data.Name
 
-func get_type() -> Type:
-	return base_data.type as Type
+func get_type() -> TypeData:
+	return base_data.type as TypeData
 
 func get_type_name() -> String:
 	return base_data.type.Name
@@ -111,14 +111,14 @@ func get_critical_rate() -> int:
 func get_category() -> BattleMoveCategory:
 	return base_data.get_category()
 
-func get_ailment() -> Ailment:
+func get_ailment() -> AilmentData:
 	return base_data.get_ailment()
 
 	
 func get_ailment_chance() -> float:
 	return 100.0 if base_data.get_ailment_chance() == 0 else (float(base_data.get_ailment_chance()) / 100.0)
 
-func get_weather() -> Weather:
+func get_weather() -> WeatherData:
 	return base_data.get_weather()
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:

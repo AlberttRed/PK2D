@@ -3,7 +3,7 @@ extends BattleMoveHandler
 class_name BattleAilmentMoveHandler
 
 var _is_valid: bool = false
-var ailment: Ailment = null
+var ailment: AilmentData = null
 
 func _init(_move, _user, _target, _category = null):
 	super._init(_move, _user, _target, _category)

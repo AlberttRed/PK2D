@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Weather" load_steps=3 format=3 uid="uid://cuma2yb7yqge6"]
+[gd_resource type="Resource" script_class="WeatherData" load_steps=3 format=3 uid="uid://cuma2yb7yqge6"]
 
 [ext_resource type="Script" uid="uid://xsolc280ypju" path="res://Scripts/Battle/core/Battle Effects/Persistent/Weather/RainWeatherEffect.gd" id="1_34lxh"]
-[ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/Weather.gd" id="1_ftq15"]
+[ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/WeatherData.gd" id="1_ftq15"]
 
 [resource]
 script = ExtResource("1_ftq15")

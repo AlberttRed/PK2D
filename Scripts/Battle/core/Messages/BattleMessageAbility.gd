@@ -13,7 +13,7 @@ func get_start_ability_message(user:BattlePokemon, ability_id: AbilitiesEnum.Val
     var msg:String = ""
     match ability_id:
         _:
-            push_warning("Invalid Ability on get_start_ability_message()")
+            push_warning("Invalid AbilityData on get_start_ability_message()")
             return {}
             
     return {
@@ -27,7 +27,7 @@ func get_end_ability_message(user:BattlePokemon, ability_id: AbilitiesEnum.Value
     var msg:String = ""
     match ability_id:
         _:
-            push_warning("Invalid Ability or not implemented on get_end_ability_message()")
+            push_warning("Invalid AbilityData or not implemented on get_end_ability_message()")
             return {}
             
     return {
@@ -40,7 +40,7 @@ func get_ability_ailment_message(user:BattlePokemon, ability_id: AbilitiesEnum.V
     var msg:String = ""
     match ability_id:
         _:
-            push_warning("Invalid Ability on get_ability_ailment_message()")
+            push_warning("Invalid AbilityData on get_ability_ailment_message()")
             return {}
             
     return {
@@ -55,7 +55,7 @@ func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, abilit
         AbilitiesEnum.Values.INTIMIDATE:
             msg = "¡Intimidación %s baja el Ataque %s!" % [user.get_battle_possessive_name(), target.get_battle_possessive_name()]
         _:
-            push_warning("Invalid Ability or not implemented on get_ability_effect_message()")
+            push_warning("Invalid AbilityData or not implemented on get_ability_effect_message()")
             return {}
             
     return {
