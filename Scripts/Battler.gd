@@ -4,8 +4,8 @@ class_name Battler
 ## Gestiona el equipo de Pokémon y convierte los datos a BattleParticipant.
 ##
 ## El equipo se puede configurar de dos formas:
-## 1. **Resources (recomendado)**: Array exportado de PokemonInstance resources
-## 2. **Nodos hijos (legacy)**: PokemonInstance como nodos hijos (para testing/compatibilidad)
+## 1. **Resources (recomendado)**: Array exportado de Pokemon resources
+## 2. **Nodos hijos (legacy)**: Pokemon como nodos hijos (para testing/compatibilidad)
 
 ## === CONFIGURACIÓN DEL ENTRENADOR ===
 
@@ -32,71 +32,67 @@ class_name Battler
 @export var is_defeated: bool = false
 
 @export_group("Party (Equipo Pokémon)")
-## ⚠️ IMPORTANTE: Agrega el equipo como NODOS HIJOS de tipo PokemonInstance
-## (PokemonInstance actualmente hereda de Node, no de Resource)
-## 
-## El array party_resources está comentado porque PokemonInstance es un Node.
-## En el futuro, si PokemonInstance se convierte a Resource, descomentar esta línea:
-## @export var party_resources: Array[PokemonInstance] = []
-##
-## POR AHORA: Agrega nodos PokemonInstance como hijos de este Battler
+## Configura el equipo desde el inspector:
+## Puedes arrastrar Pokemon (runtime .tres) ya creados,
+## O dejar vacío y construir el equipo en código con add_pokemon_from_data()
+@export var party: Array[Pokemon] = []
 
 @export_group("Partner (for Double Battles)")
 @export var partner_path: NodePath = ""
-
-
-## === EQUIPO POKÉMON ===
-
-## Equipo actual (se llena automáticamente desde nodos hijos)
-var party: Array[PokemonInstance] = []
 
 
 func _ready() -> void:
 	_initialize_party()
 
 
-## Inicializa el equipo desde nodos hijos (PokemonInstance como hijos de este Battler)
+## Inicializa el equipo
+## Si ya hay Pokemon en el array party (configurados desde inspector), inicializarlos
+## Si está vacío, se debe construir el equipo con add_pokemon_from_data()
 func _initialize_party() -> void:
-	party.clear()
-	
-	# Buscar nodos hijos de tipo PokemonInstance
-	var child_pokemon: Array[PokemonInstance] = []
-	for child in get_children():
-		if child is PokemonInstance:
-			child_pokemon.append(child)
-	
-	if not child_pokemon.is_empty():
-		for pokemon in child_pokemon:
-			add_pokemon_to_party(pokemon)
-		print("Battler '%s': Equipo cargado (%d Pokémon)" % [trainer_name, party.size()])
+	if party.is_empty():
+		push_warning("Battler '%s': No tiene Pokémon en el equipo. Configúralos desde el inspector o usa add_pokemon_from_data()." % trainer_name)
 		return
 	
-	# Sin equipo configurado
-	push_warning("Battler '%s': No tiene Pokémon como nodos hijos" % trainer_name)
+	# Inicializar cada Pokemon del array (configurados desde inspector)
+	for pokemon in party:
+		if pokemon:
+			pokemon._post_init()
+	
+	print("Battler '%s': Equipo cargado e inicializado (%d Pokémon)" % [trainer_name, party.size()])
 
 
-## Agrega un Pokémon al equipo
-func add_pokemon_to_party(pokemon: PokemonInstance) -> void:
+## Agrega un Pokémon al equipo (runtime)
+func add_pokemon_to_party(pokemon) -> void:  # pokemon: Pokemon
 	if pokemon == null:
 		push_warning("Battler: Intentando agregar un Pokémon nulo")
 		return
 	
-	# Asignar entrenador si es un entrenador (no salvaje)
+	party.append(pokemon)
+
+## Agrega un Pokémon desde PokemonData (crea el runtime automáticamente)
+func add_pokemon_from_data(pokemon_data: PokemonData, level: int = 5, gender: int = -1) -> void:
+	if pokemon_data == null:
+		push_warning("Battler: PokemonData nulo")
+		return
+	
+	var pokemon = Pokemon.new(pokemon_data, level, gender, -1, 0, true)
+	
 	if battler_type == CONST.BATTLER_TYPES.TRAINER:
-		pokemon.trainer = self
+		pokemon.trainer_id = trainer_id
+		pokemon.original_trainer = trainer_name if not trainer_name.is_empty() else "Desconocido"
 	
 	party.append(pokemon)
 
 
 ## Elimina un Pokémon del equipo
-func remove_pokemon_from_party(pokemon: PokemonInstance) -> void:
+func remove_pokemon_from_party(pokemon) -> void:  # pokemon: Pokemon
 	var index = party.find(pokemon)
 	if index != -1:
 		party.remove_at(index)
 
 
 ## Verifica si tiene un Pokémon específico
-func has_pokemon(pokemon: PokemonInstance) -> bool:
+func has_pokemon(pokemon) -> bool:  # pokemon: Pokemon
 	return party.has(pokemon)
 
 
@@ -135,7 +131,7 @@ func to_battle_participant() -> BattleParticipant:
 	
 	# Convertir el equipo a BattlePokemon
 	for pokemon in party:
-		var battle_pokemon := pokemon.to_battle_pokemon()
+		var battle_pokemon = pokemon.to_battle_pokemon()  # BattlePokemon
 		battle_pokemon.controllable = is_player
 		battle_pokemon.participant = participant
 		participant.add_pokemon(battle_pokemon)
@@ -167,10 +163,10 @@ func print_party_info() -> void:
 		var pokemon = party[i]
 		print("    %d. %s (Lv.%d) - HP: %d/%d" % [
 			i + 1,
-			pokemon.Name,
+			pokemon.get_display_name(),
 			pokemon.level,
 			pokemon.hp_actual,
-			pokemon.calculate_max_hp()
+			pokemon.get_final_stat(StatsEnum.Values.HP)
 		])
 
 
@@ -209,7 +205,7 @@ func create(
 	# Agregar Pokémon al equipo
 	party.clear()
 	for p in _party:
-		if p is PokemonInstance:
+		if p is Pokemon:
 			add_pokemon_to_party(p)
 	
 	return self

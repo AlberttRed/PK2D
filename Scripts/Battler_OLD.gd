@@ -17,11 +17,11 @@ class_name BattlerOLD
 
 var tilesVisibility
 
-@onready var party : Array[PokemonInstance] = [] #: Array = get_children() # setget ,get_party
+@onready var party : Array[PokemonInstance_OLD] = [] #: Array = get_children() # setget ,get_party
 
 func create(_type : CONST.BATTLER_TYPES, _party : Array, _IA,  _name : String = "", _battle_front_sprite : Texture = null, _battle_back_sprite : Texture = null, _before_battle_message : String = "", _init_battle_message: String = "", _end_battle_message: String = "", _is_defeated : bool = false, _double_battle: bool = false, _is_playable: bool = false, _partner : NodePath = NodePath("")):
 	type = _type
-	for p:PokemonInstance in _party:
+	for p:PokemonInstance_OLD in _party:
 		addPokemonToParty(p)
 	#party = _party
 	battleIA = _IA
@@ -46,10 +46,10 @@ func create(_type : CONST.BATTLER_TYPES, _party : Array, _IA,  _name : String = 
 func _ready():
 	if get_children().size() != 0:
 		party = []
-		for p:PokemonInstance in get_children():
+		for p:PokemonInstance_OLD in get_children():
 			addPokemonToParty(p)
 
-func addPokemonToParty(p:PokemonInstance):
+func addPokemonToParty(p:PokemonInstance_OLD):
 	if type == CONST.BATTLER_TYPES.TRAINER:
 		p.trainer = self
 	party.push_back(p)
@@ -58,7 +58,7 @@ func is_type(type): return type == "Trainer" or self.is_type(type)
 func    get_type(): return "Trainer"
 
 func has_pokemon(pk):
-	for p:PokemonInstance in party:
+	for p:PokemonInstance_OLD in party:
 		if p == pk:
 			return true
 	return false
@@ -67,7 +67,7 @@ func has_pokemon(pk):
 
 	
 func print_pokemon_team():
-	for p:PokemonInstance in get_children():
+	for p:PokemonInstance_OLD in get_children():
 		p.print_pokemon()
 		print(" ")
 		p.print_moves()

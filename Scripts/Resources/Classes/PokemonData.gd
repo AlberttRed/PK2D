@@ -83,10 +83,6 @@ class_name PokemonData
 @export var overworld_shiny_spritesheet : AtlasTexture
 
 
-
-#var poke_instance_script = preload("res://Assets/Game_data/pokemon_instance.gd")
-var move_instance_script = load("res://Scripts/Resources/Instances/move_instance.gd")
-
 #
 #func make_wild(level: int):
 #	var p = poke_instance_script.new()
@@ -207,4 +203,3 @@ func move_is_greater(a, b):
 #			a = abilities[randi() % abilities.size()]
 #		return a
 #	return CONST.ABILITIES.NONE
-

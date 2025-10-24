@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b8d88kcgtv3sr"]
-
-[ext_resource type="Script" uid="uid://bcvomvu36qckp" path="res://Scripts/Resources/Instances/pokemon_instance.gd" id="1_no5tx"]
-
-[node name="PokemonInstance" type="Node"]
-script = ExtResource("1_no5tx")
-rotate_hp_EVs = null

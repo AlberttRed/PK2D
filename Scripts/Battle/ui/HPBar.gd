@@ -45,9 +45,11 @@ func update_ui() -> void:
 	update_status_ui()
 
 func update_status_ui() -> void:
-	if pokemon.base_data.status != CONST.STATUS.OK:
+	# status está en BattlePokemon, no en Pokemon (base_data)
+	if pokemon.status != null:
 		status_ui.visible = true
-		status_ui.region_rect = Rect2(0, 16 * (pokemon.base_data.status - 1), 44, 16)
+		# pokemon.status es un AilmentData, necesitamos el ID
+		status_ui.region_rect = Rect2(0, 16 * (pokemon.status.id - 1), 44, 16)
 	else:
 		status_ui.visible = false
 

@@ -18,5 +18,5 @@ func _init(_moveId:int, _learningType:PokemonLearningMove.Type, _learningLevel:i
 	self.learningType = _learningType
 	self.learningLevel = _learningLevel
 
-func getMove() -> MoveInstance:
-	return MoveInstance.new(moveId)
+func getMove() -> Move:
+	return Move.new(moveId)

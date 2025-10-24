@@ -21,6 +21,6 @@ func apply():
 
 func visualize(ui: BattleUI):
 	if already_active:
-		await ui.show_already_effect_message(MessageFamily.Values.FIELD_EFFECT, user, move.base_data.id)
+		await ui.show_already_effect_message(MessageFamily.Values.FIELD_EFFECT, user, move.get_id())
 	else:
-		await ui.show_start_effect_message(MessageFamily.Values.FIELD_EFFECT, user, move.base_data.id)
+		await ui.show_start_effect_message(MessageFamily.Values.FIELD_EFFECT, user, move.get_id())
