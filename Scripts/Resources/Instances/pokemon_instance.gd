@@ -8,7 +8,7 @@ signal newMoveLearned
 @export var randomize_pokemon: bool = false
 @export var randomize_stats: bool = false
 @export var is_wild : bool = false
-var base : Pokemon
+var base : PokemonData
 #var battleInstance : BattlePokemon
 
 var pkm_id : int = 0 :

@@ -42,7 +42,7 @@ func _load_all() -> void:
 
 	load_resources_from_dir(POKEMON_DIR, func(res):
 		if res == null: return
-		if not (res is Pokemon): return
+		if not (res is PokemonData): return
 		_pokemon_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_pokemon_by_name[res.internal_name.to_lower()] = res

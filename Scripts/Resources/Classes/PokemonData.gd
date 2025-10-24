@@ -1,7 +1,7 @@
 @icon("res://pkmn_icon.png")
 extends Resource
 
-class_name Pokemon
+class_name PokemonData
 
 
 @export var id:int = 0
@@ -207,3 +207,4 @@ func move_is_greater(a, b):
 #			a = abilities[randi() % abilities.size()]
 #		return a
 #	return CONST.ABILITIES.NONE
+
