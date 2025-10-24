@@ -23,8 +23,8 @@ func get_id() -> int:
 func get_name() -> String:
 	return base_data.Name
 
-func get_type() -> Type:
-	return base_data.type as Type
+func get_type() -> TypeData:
+	return base_data.type as TypeData
 
 func get_type_name() -> String:
 	return base_data.type.Name

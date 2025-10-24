@@ -71,7 +71,7 @@ func _load_moves() -> void:
 func _load_types() -> void:
 	load_resources_from_dir(TYPES_DIR, func(res):
 		if res == null: return
-		if not (res is Type): return
+		if not (res is TypeData): return
 		_types_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_types_by_name[res.internal_name.to_lower()] = res

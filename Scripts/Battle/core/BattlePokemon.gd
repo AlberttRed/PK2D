@@ -86,11 +86,11 @@ func init_turn() -> void:
 func _to_string() -> String:
 	return "patata"
 	
-func get_type1() -> Type:
-	return base_data.type_a as Type
+func get_type1() -> TypeData:
+	return base_data.type_a as TypeData
 
-func get_type2() -> Type:
-	return base_data.type_b as Type
+func get_type2() -> TypeData:
+	return base_data.type_b as TypeData
 	
 func get_back_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_back_sprite.atlas.get_image().get_region(instance.battle_back_sprite.region))
