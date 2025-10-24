@@ -3,51 +3,43 @@ class_name Battler
 ## Representa un entrenador (Trainer) o al jugador en combate.
 ## Gestiona el equipo de Pokémon y convierte los datos a BattleParticipant.
 ##
-## El equipo se puede configurar de dos formas:
-## 1. **Resources (recomendado)**: Array exportado de Pokemon resources
-## 2. **Nodos hijos (legacy)**: Pokemon como nodos hijos (para testing/compatibilidad)
+## Configuración:
+## - Asignar TrainerData en el inspector (contiene equipo, textos, IA, sprites)
+## - Marcar is_player=true para el jugador
+## - Todas las propiedades se cargan automáticamente desde TrainerData
 
 ## === CONFIGURACIÓN DEL ENTRENADOR ===
 
-@export_group("Trainer Data (Recomendado)")
-## TrainerData Resource con toda la información del entrenador.
-## Si está definido, se carga automáticamente el equipo, textos, IA, etc.
-## Deja en null para configurar manualmente las propiedades individuales.
+@export_group("Trainer Data")
+## TrainerData Resource con toda la información del entrenador (equipo, textos, IA, sprites, etc.)
 @export var trainer_data: TrainerData = null
 
-@export_group("Trainer Info (Manual)")
-## Estos campos se usan solo si trainer_data es null
-@export var trainer_id: int = -1
-@export var trainer_name: String = ""
+@export_group("Player Config")
+## Marcar como true si este Battler pertenece al jugador
 @export var is_player: bool = false
 
-@export_group("Battle Settings (Manual)")
-## Estos campos se usan solo si trainer_data es null
-@export var battler_type: CONST.BATTLER_TYPES = CONST.BATTLER_TYPES.TRAINER
-@export var battle_ia: BattleIA = null
-@export var allow_double_battle: bool = false
-
-@export_group("Sprites (Manual)")
-## Estos campos se usan solo si trainer_data es null
-@export var battle_front_sprite: Texture
-@export var battle_back_sprite: Texture = null
-
-@export_group("Messages (Manual)")
-## Estos campos se usan solo si trainer_data es null
-@export_multiline var before_battle_message: String = ""
-@export_multiline var init_battle_message: String = ""
-@export_multiline var end_battle_message: String = ""
-
 @export_group("State")
+## Si el entrenador ya fue derrotado
 @export var is_defeated: bool = false
 
-@export_group("Party (Equipo Pokémon - Manual)")
-## Configura el equipo manualmente si trainer_data es null.
-## Si trainer_data está definido, se ignora este array.
-@export var party: Array[Pokemon] = []
-
 @export_group("Partner (for Double Battles)")
+## Ruta al Battler del partner para combates dobles
 @export var partner_path: NodePath = ""
+
+## === PROPIEDADES INTERNAS (cargadas desde TrainerData) ===
+
+## Estos campos se cargan automáticamente desde trainer_data en _ready()
+var trainer_id: int = -1
+var trainer_name: String = ""
+var battler_type: CONST.BATTLER_TYPES = CONST.BATTLER_TYPES.TRAINER
+var battle_ia: BattleIA = null
+var allow_double_battle: bool = false
+var battle_front_sprite: Texture
+var battle_back_sprite: Texture = null
+var before_battle_message: String = ""
+var init_battle_message: String = ""
+var end_battle_message: String = ""
+var party: Array[Pokemon] = []
 
 
 func _ready() -> void:
@@ -58,7 +50,8 @@ func _ready() -> void:
 ## Carga la configuración desde TrainerData si existe
 func _load_from_trainer_data() -> void:
 	if trainer_data == null:
-		return  # Usar configuración manual
+		push_warning("Battler: No se ha asignado TrainerData. El Battler no tendrá datos configurados.")
+		return
 	
 	# Inicializar TrainerData (carga TrainerClassData desde el enum)
 	trainer_data.initialize()
@@ -84,17 +77,16 @@ func _load_from_trainer_data() -> void:
 	print("Battler: Cargado desde TrainerData '%s' (%d Pokémon)" % [trainer_data.get_full_name(), party.size()])
 
 
-## Inicializa el equipo
-## Si ya hay Pokemon en el array party (configurados desde inspector), inicializarlos
-## Si está vacío, se debe construir el equipo con add_pokemon_from_data()
+## Inicializa el equipo cargado desde TrainerData
+## Si el equipo está vacío, muestra una advertencia
 func _initialize_party() -> void:
 	var trainer_display_name = trainer_data.display_name if trainer_data else trainer_name
 	
 	if party.is_empty():
-		push_warning("Battler '%s': No tiene Pokémon en el equipo. Configúralos desde el inspector o usa add_pokemon_from_data()." % trainer_display_name)
+		push_warning("Battler '%s': No tiene Pokémon en el equipo. Asegúrate de configurar party_data en el TrainerData." % trainer_display_name)
 		return
 	
-	# Inicializar cada Pokemon del array (configurados desde inspector)
+	# Inicializar cada Pokemon del array (cargados desde TrainerData)
 	for pokemon in party:
 		if pokemon:
 			# Solo llamar _post_init si el Pokemon no está inicializado

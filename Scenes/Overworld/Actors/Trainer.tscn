@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8a7yxm1qw8kb"]
+
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://cn8qak2x7m4q5" path="res://Scripts/Overworld/Actors/Trainer.gd" id="2_trainer"]
+[ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="3_battler"]
+[ext_resource type="SpriteFrames" uid="uid://dv47eum5xc1ej" path="res://Resources/Animations/Overworld/trainer_exclamation.tres" id="3_qjuq7"]
+
+[node name="Trainer" instance=ExtResource("1_base")]
+script = ExtResource("2_trainer")
+trainer_data = null
+detection_range = 5
+transition_type = 0
+allow_rematch = false
+exclamation_sprite = ExtResource("3_qjuq7")
+exclamation_duration = 4.0
+
+[node name="Battler" type="Node" parent="." index="4"]
+script = ExtResource("3_battler")
