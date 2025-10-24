@@ -9,6 +9,7 @@ const TYPES_DIR := "res://Resources/Data/Types"
 const ABILITIES_DIR := "res://Resources/Data/Abilities"
 const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
 const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
+const TRAINER_CLASSES_DIR := "res://Resources/Data/TrainerClasses"
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}
@@ -28,6 +29,9 @@ var _natures_by_name: Dictionary = {}
 var _weathers_by_id: Dictionary = {}
 var _weathers_by_name: Dictionary = {}
 
+var _trainer_classes_by_id: Dictionary = {}
+var _trainer_classes_by_name: Dictionary = {}
+
 func _ready() -> void:
 	_load_all()
 	_print_summary()
@@ -39,6 +43,7 @@ func _load_all() -> void:
 	_abilities_by_id.clear(); _abilities_by_name.clear()
 	_natures_by_id.clear(); _natures_by_name.clear()
 	_weathers_by_id.clear(); _weathers_by_name.clear()
+	_trainer_classes_by_id.clear(); _trainer_classes_by_name.clear()
 
 	load_resources_from_dir(POKEMON_DIR, func(res):
 		if res == null: return
@@ -53,10 +58,11 @@ func _load_all() -> void:
 	_load_abilities()
 	_load_natures()
 	_load_weathers()
+	_load_trainer_classes()
 
 func _print_summary() -> void:
-	print("DatabaseManager: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers" % [
-		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size(), _weathers_by_id.size()
+	print("DatabaseManager: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers, %d trainer classes" % [
+		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size(), _weathers_by_id.size(), _trainer_classes_by_id.size()
 	])
 
 func _load_moves() -> void:
@@ -121,6 +127,20 @@ func _load_weathers() -> void:
 		_weathers_by_id[res.id] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_weathers_by_name[res.internal_name.to_lower()] = res
+	)
+
+func _load_trainer_classes() -> void:
+	var dir := DirAccess.open(TRAINER_CLASSES_DIR)
+	if dir == null:
+		# Si no existe el directorio, no hay problema (se crearán temporales)
+		return
+	
+	load_resources_from_dir(TRAINER_CLASSES_DIR, func(res):
+		if res == null: return
+		if not (res is TrainerClassData): return
+		_trainer_classes_by_id[res.id] = res
+		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
+			_trainer_classes_by_name[res.internal_name.to_lower()] = res
 	)
 
 ## Utilidad genérica para escanear un directorio y cargar .tres
@@ -188,3 +208,11 @@ func get_weather(name_or_id) -> WeatherData:
 	if key.is_valid_int():
 		return _weathers_by_id.get(int(key), null)
 	return _weathers_by_name.get(key, null)
+
+func get_trainer_class(name_or_id) -> TrainerClassData:
+	if typeof(name_or_id) == TYPE_INT:
+		return _trainer_classes_by_id.get(name_or_id, null)
+	var key := str(name_or_id).to_lower()
+	if key.is_valid_int():
+		return _trainer_classes_by_id.get(int(key), null)
+	return _trainer_classes_by_name.get(key, null)
