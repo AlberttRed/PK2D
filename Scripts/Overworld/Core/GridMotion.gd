@@ -3,6 +3,7 @@ class_name GridMotion
 
 signal step_started()
 signal step_finished(tile: Vector2i)
+signal direction_changed(new_direction: Vector2)
 
 ## Duración base de un paso (en segundos)
 @export var step_duration := 0.266
@@ -141,6 +142,9 @@ func face(d: Vector2) -> void:
 	if d != Vector2.ZERO:
 		self.previous_dir = dir
 		self.dir = d
+		# Emitir señal solo si realmente cambió la dirección
+		if self.previous_dir != d:
+			direction_changed.emit(d)
 
 func try_step(d: Vector2) -> bool:
 	# Revalidar grid antes de cualquier acceso (evita crash si se mantiene input durante warp)

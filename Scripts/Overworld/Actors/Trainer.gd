@@ -32,14 +32,11 @@ class_name Trainer
 ## Si true, el trainer puede hacer rematches incluso después de ser derrotado
 @export var allow_rematch: bool = false
 
-## === COMPORTAMIENTO ===
-
-@export_group("Behavior")
 ## Animación de exclamación a mostrar sobre el trainer (64x32px, ocupa 2 tiles de alto)
-@export var exclamation_sprite: SpriteFrames = null
+var exclamation_sprite: SpriteFrames = preload("res://Resources/Animations/Overworld/trainer_exclamation.tres")
 
 ## Tiempo que dura la exclamación (en segundos)
-@export var exclamation_duration: float = 0.5
+var exclamation_duration: float = 1.5
 
 ## === ESTADO INTERNO ===
 
@@ -65,14 +62,18 @@ func _ready() -> void:
 	# Si el Trainer tiene un TrainerData configurado, asignarlo al Battler
 	if trainer_data and battler:
 		battler.trainer_data = trainer_data
-		print("Trainer '%s': TrainerData asignado al Battler" % name)
+		# Forzar la carga del TrainerData (el Battler ya ejecutó _ready() sin trainer_data)
+		battler._load_from_trainer_data()
+		battler._initialize_party()
+		print("Trainer '%s': TrainerData asignado y cargado al Battler" % name)
 	
 	# Conectar señal de batalla terminada
 	SignalManager.battle_finished.connect(_on_battle_finished)
 	
-	# Conectar señal de paso del jugador para detección (diferido para esperar a que Player esté listo)
+	# Conectar señales para detección (diferido para esperar a que Player esté listo)
 	if not is_defeated() or allow_rematch:
 		call_deferred("_connect_to_player_for_detection")
+		_connect_own_movement_for_detection()
 
 
 ## Busca el nodo Battler hijo
@@ -99,10 +100,23 @@ func _connect_to_player_for_detection() -> void:
 	
 	var player_motion = player.get_node("GridMotion")
 	if player_motion:
-		player_motion.step_finished.connect(_on_player_step_finished)
+		player_motion.step_finished.connect(_on_movement_detected)
 		print("Trainer '%s': Conectado a movimiento del jugador" % name)
 	else:
 		push_warning("Trainer '%s': No se pudo obtener GridMotion del Player." % name)
+
+
+## Conecta a las señales del propio movimiento del Trainer para detección
+func _connect_own_movement_for_detection() -> void:
+	if not motion:
+		push_warning("Trainer '%s': No tiene GridMotion. La detección no funcionará." % name)
+		return
+	
+	# Conectar a step_finished (cuando termina un movimiento)
+	motion.step_finished.connect(_on_movement_detected)
+	# Conectar a direction_changed (cuando gira sin moverse - LOOK commands)
+	motion.direction_changed.connect(_on_direction_changed)
+	print("Trainer '%s': Conectado a propio movimiento y giros para detección" % name)
 
 
 ## Verifica si el trainer está derrotado
@@ -112,8 +126,14 @@ func is_defeated() -> bool:
 	return false
 
 
-## Callback cuando el jugador se mueve
-func _on_player_step_finished(player_tile: Vector2i) -> void:
+## Callback cuando el trainer cambia de dirección (giros)
+func _on_direction_changed(_new_direction: Vector2) -> void:
+	# Reutilizar la lógica de detección
+	_on_movement_detected()
+
+
+## Callback cuando hay movimiento (del jugador o del trainer)
+func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
 	# No detectar si ya está iniciando batalla o si está derrotado (y no permite rematch)
 	if _initiating_battle or _player_detected:
 		return
@@ -124,6 +144,13 @@ func _on_player_step_finished(player_tile: Vector2i) -> void:
 	# No detectar durante eventos o movimiento pausado
 	if _movement_paused or not movement_enabled:
 		return
+	
+	# Obtener posición actual del jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player or not motion or not motion.grid:
+		return
+	
+	var player_tile = motion.grid.world_to_tile(player.global_position)
 	
 	# Verificar si el jugador está en el campo de visión
 	if _is_player_in_sight(player_tile):

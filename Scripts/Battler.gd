@@ -194,7 +194,8 @@ func to_battle_participant() -> BattleParticipant:
 	
 	# Configurar datos del participante
 	participant.trainer_id = trainer_id
-	var effective_name: String = trainer_name if not trainer_name.is_empty() else str(name)
+	# Usar get_full_name() para incluir la clase del trainer (ej: "Cazabichos Jano")
+	var effective_name: String = get_full_name() if trainer_data else (trainer_name if not trainer_name.is_empty() else str(name))
 	participant.name = effective_name
 	participant.is_player = is_player
 	participant.ai_controller = battle_ia

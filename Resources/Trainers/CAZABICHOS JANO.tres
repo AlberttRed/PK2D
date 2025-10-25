@@ -69,7 +69,9 @@ trainer_id = 1
 trainer_class_id = 2
 display_name = "Jano"
 ai_profile = SubResource("Resource_n0ay5")
-intro_text = "¡Eh! ¡Tienes POKÉMON! ¡Sí! ¡Al ataque!"
+intro_text = "¡Eh! ¡Tienes POKÉMON! 
+¡Sí! 
+¡Al ataque!"
 defeat_text = "¡No! ¡Mi CATERPIE no pudo más!"
 victory_text = "¡Gané!"
 party_data = Array[ExtResource("1_1gy8p")]([SubResource("Resource_1ee48"), SubResource("Resource_nyei7")])

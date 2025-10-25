@@ -32,8 +32,6 @@ look_pattern_delay = 2.0
 random_turning_interval_min = 2.0
 random_turning_interval_max = 5.0
 awareness_enabled = false
-awareness_chance = 0.3
-awareness_running_multiplier = 2.0
 awareness_detection_distance = 3.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]

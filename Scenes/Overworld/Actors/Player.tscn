@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=51 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
@@ -346,6 +346,32 @@ animations = [{
 "speed": 7.5
 }]
 
+[sub_resource type="Resource" id="Resource_5yaag"]
+script = ExtResource("12_x884u")
+pokemon_id = 7
+nickname = ""
+level = 5
+gender = 1
+is_wild = false
+shiny = false
+hp_IVs = 0
+attack_IVs = 0
+defense_IVs = 0
+spAttack_IVs = 0
+spDefense_IVs = 0
+speed_IVs = 0
+hp_EVs = 0
+attack_EVs = 0
+defense_EVs = 0
+spAttack_EVs = 0
+spDefense_EVs = 0
+speed_EVs = 0
+nature_id = 13
+ability_id = 0
+held_item_id = 0
+custom_move_ids = Array[int]([])
+metadata/_custom_type_script = "uid://d4mopscjx7rum"
+
 [sub_resource type="Resource" id="Resource_p0ptx"]
 script = ExtResource("13_5yaag")
 trainer_id = 0
@@ -354,7 +380,7 @@ display_name = "Red"
 intro_text = ""
 defeat_text = ""
 victory_text = ""
-party_data = Array[ExtResource("12_x884u")]([])
+party_data = Array[ExtResource("12_x884u")]([SubResource("Resource_5yaag")])
 double_battle = false
 reward_money = 1000
 battle_items = Array[int]([])
