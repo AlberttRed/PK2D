@@ -317,11 +317,11 @@ func _show_intro_dialogue() -> void:
 	
 	var intro_text = battler.get_intro_text()
 	
-
 	var config = {
 		"waitInput": true,
 		"closeAtEnd": false,
-		"waitTime": 0.0
+		"waitTime": 0.0,
+		"showIconAtEnd": false  # Overworld: no mostrar icono al final
 	}
 	
 	# Emitir señal para mostrar mensaje

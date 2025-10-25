@@ -23,6 +23,7 @@ var actualMessageIndex: int = 0
 var waitTime:float = 0.0
 var waitInput:bool = true
 var closeAtEnd:bool = true
+var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aunque no haya más mensajes (batalla)
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var typing:bool:
 	get:
@@ -59,20 +60,23 @@ func show_custom(text: String, config := {}):
 	waitInput = config.get("waitInput", true)
 	closeAtEnd = config.get("closeAtEnd", true)
 	waitTime = config.get("waitTime", 0.0)
+	showIconAtEnd = config.get("showIconAtEnd", false)
 	await showMessage(text)
 
-func show_input(text: String):
+func show_input(text: String, show_icon_at_end: bool = false):
 	await show_custom(text, {
 		"waitInput": true,
 		"closeAtEnd": false,
-		"waitTime": 0.0
+		"waitTime": 0.0,
+		"showIconAtEnd": show_icon_at_end
 	})
 
 func show_wait(text: String, wait_time: float):
 	await show_custom(text, {
 		"waitInput": false,
 		"closeAtEnd": true,
-		"waitTime": wait_time
+		"waitTime": wait_time,
+		"showIconAtEnd": false
 	})
 
 ##	Muestra un mensaje sin cerrar el messagebox, útil para mantener el texto visible durante animaciones
@@ -80,14 +84,16 @@ func show_display(text: String, wait_time: float):
 	await show_custom(text, {
 		"waitInput": false,
 		"closeAtEnd": false,
-		"waitTime": wait_time
+		"waitTime": wait_time,
+		"showIconAtEnd": false
 	})
 
-func show_no_close(text: String):
+func show_no_close(text: String, show_icon_at_end: bool = false):
 	await show_custom(text, {
 		"waitInput": true,
 		"closeAtEnd": false,
-		"waitTime": 0.0
+		"waitTime": 0.0,
+		"showIconAtEnd": show_icon_at_end
 	})
 
 	
@@ -154,6 +160,8 @@ func pauseText():
 	set_physics_process(false)
 	_stop = true
 	#$AnimationPlayer.pause()
+	# Mostrar icono "next" en pausas intermedias (saltos de línea) SIEMPRE si waitInput
+	# (porque hay más texto por mostrar del mensaje actual)
 	if waitInput and closeAtEnd:
 		$AnimationPlayer2.play("Idle")
 
@@ -177,7 +185,7 @@ func addMessage(message):
 		for m:String in message:
 			messageTextList.push_back(m)
 	else:
-		assert("Invalid message for MessageBox")
+		push_error("MessageBox: Tipo de mensaje inválido. Se esperaba String o Array[String]")
 
 func scrollText():
 	updateScroll(32*(label.actualLine-2), 32*(label.actualLine-1))
@@ -193,8 +201,17 @@ func _finishedMessage():
 	finishedMessage.emit()
 	
 	# Guardar los valores ANTES de que se puedan resetear por las señales
-	# CORREGIDO: Mostrar flecha si waitInput = true, independientemente de closeAtEnd
-	var should_show_arrow = waitInput and messageHasFinished and isLastMessage
+	# Lógica del icono "next":
+	# - Si showIconAtEnd = false (overworld): Solo mostrar si hay más mensajes por procesar
+	# - Si showIconAtEnd = true (batalla): Siempre mostrar al final
+	var should_show_arrow = false
+	if waitInput and messageHasFinished and isLastMessage:
+		if showIconAtEnd:
+			# Modo batalla: Siempre mostrar el icono al final
+			should_show_arrow = true
+		else:
+			# Modo overworld: Solo mostrar si hay más mensajes pendientes por procesar
+			should_show_arrow = actualMessageIndex < messageTextList.size()
 
 	await get_tree().process_frame
 	
@@ -264,6 +281,7 @@ func clear():
 	messageTextList.clear()
 	closeAtEnd = true
 	waitInput = true
+	showIconAtEnd = false  # Resetear a valor por defecto
 	_stop = false
 	actualMessageIndex = 0
 	_is_processing_message = false  ## CRÍTICO: Resetear flag

@@ -26,6 +26,7 @@ message = "¡Hola mundo!"
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
@@ -51,6 +52,7 @@ message = "¡Hola mundo!"
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
@@ -136,6 +138,7 @@ message = "¡Cuidado! Teleport a la izquierda."
 wait_input = true
 close_at_end = false
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
@@ -211,6 +214,7 @@ message = "Yo si fuera tú le haría caso al cartel."
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 

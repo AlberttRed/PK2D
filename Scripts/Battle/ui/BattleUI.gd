@@ -251,13 +251,13 @@ func show_message_from_dict(msg: Dictionary) -> void:
 		return
 	match msg.type:
 		"input":
-			await message_box.show_input(msg.text)
+			await message_box.show_input(msg.text, true)  # Batalla: mostrar icono al final
 		"wait":
 			await message_box.show_wait(msg.text, msg.get("wait_time", 1.0))
 		"display":
 			await message_box.show_display(msg.text, msg.get("wait_time", 0.0))
 		"no_close":
-			await message_box.show_no_close(msg.text)
+			await message_box.show_no_close(msg.text, true)  # Batalla: mostrar icono al final
 
 func clear_message_box():
 	message_box.show_clear_text()
