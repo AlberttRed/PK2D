@@ -55,6 +55,7 @@ func play_transition():
 		# transition_path = wild_transitions[randi() % wild_transitions.size()]
 	
 	# Solicitar la transición al FadeLayer (1.5 segundos para el efecto)
+	# El FadeLayer se encargará de ocultar el MessageBox después de los parpadeos
 	SignalManager.battle_transition_requested.emit(transition_path, 1.5)
 	await SignalManager.battle_transition_finished
 

@@ -38,6 +38,7 @@ signal battle_transition_requested(texture_path: String, duration: float)
 signal battle_transition_finished()
 signal battle_reveal_requested()
 signal battle_reveal_finished()
+signal hide_overworld_messagebox()  ## Se emite justo antes del fade a negro en transición de batalla
 
 # === SEÑALES DEL GRID ACTIVO ===
 signal active_grid_changed(grid: OverworldGrid)

@@ -125,9 +125,19 @@ func startText():
 	
 func selectOption(): #(ui_accept)
 	print("selected")
+	
 	if messageHasFinished:
 		if waitInput:
-			close()
+			# Lógica de cierre:
+			if closeAtEnd:
+				# closeAtEnd = true → Siempre cerrar
+				close()
+			elif not isLastMessage:
+				# closeAtEnd = false y hay más mensajes → Continuar al siguiente
+				resumeText()
+			else:
+				# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
+				_finish_without_closing()
 	else:
 		if typing:
 			pass#SPEED UP TEXT
@@ -139,7 +149,14 @@ func cancelOption(): #(ui_cancel)
 		print("cancel")
 		if messageHasFinished:
 			if waitInput:
-				close()
+				# Lógica de cierre (igual que selectOption):
+				if closeAtEnd:
+					close()
+				elif not isLastMessage:
+					resumeText()
+				else:
+					# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
+					_finish_without_closing()
 		else:
 			if typing:
 				pass#SPEED UP TEXT
@@ -162,7 +179,8 @@ func pauseText():
 	#$AnimationPlayer.pause()
 	# Mostrar icono "next" en pausas intermedias (saltos de línea) SIEMPRE si waitInput
 	# (porque hay más texto por mostrar del mensaje actual)
-	if waitInput and closeAtEnd:
+	# closeAtEnd NO afecta aquí - las pausas intermedias siempre muestran icono
+	if waitInput:
 		$AnimationPlayer2.play("Idle")
 
 func stopText():
@@ -265,6 +283,34 @@ func close():
 	
 	print("MessageBox.close(): Cerrado y señal emitida")
 	
+	# Si closeAtEnd = false, mantener el input deshabilitado para evitar reiniciar
+	# El input se rehabilitará solo cuando se muestre un nuevo mensaje
+
+
+## Finaliza el mensaje sin cerrar ni limpiar (para mantener visible con closeAtEnd=false)
+func _finish_without_closing() -> void:
+	if not _is_processing_message:
+		return
+	
+	# Guardar estado visual antes de limpiar
+	var current_scroll_position = scroll.scroll_vertical
+	var current_text = label.text
+	
+	# Ocultar icono next
+	$AnimationPlayer2.stop()
+	$next.hide()
+	
+	# Hacer limpieza completa (reutiliza código de clear)
+	# Esto desconecta señales, resetea variables, marca _is_processing_message = false
+	clear()
+	
+	# Restaurar contenido visual para que se mantenga visible
+	label.text = current_text
+	scroll.scroll_vertical = current_scroll_position
+	
+	# El await en showMessage() ya se desbloqueó porque clear() pone _is_processing_message = false
+
+
 func clear():
 	disable_input_handling()
 	if label.line_displayed.is_connected(newLine):
@@ -285,6 +331,12 @@ func clear():
 	_stop = false
 	actualMessageIndex = 0
 	_is_processing_message = false  ## CRÍTICO: Resetear flag
+
+## Limpia y oculta el MessageBox (llamado después de una batalla)
+func cleanup_and_hide() -> void:
+	clear()
+	hide()
+
 
 func show_clear_text():
 	label.text = ""
