@@ -30,7 +30,7 @@ func start_battle(player_participants: Array[BattleParticipant], enemy_participa
 	# Configurar todos los elementos visuales mientras está en negro
 	battle_ui.visible = true  # Si estaba oculto por defecto
 	battle_ui.message_box.show_clear_text()
-	await show_trainers_and_pokemon()
+	#await show_trainers_and_pokemon()
 	await show_hp_bars()
 
 	
@@ -55,6 +55,7 @@ func play_transition():
 		# transition_path = wild_transitions[randi() % wild_transitions.size()]
 	
 	# Solicitar la transición al FadeLayer (1.5 segundos para el efecto)
+	# El FadeLayer se encargará de ocultar el MessageBox después de los parpadeos
 	SignalManager.battle_transition_requested.emit(transition_path, 1.5)
 	await SignalManager.battle_transition_finished
 

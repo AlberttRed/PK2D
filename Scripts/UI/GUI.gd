@@ -29,6 +29,7 @@ func _ready():
 	SignalManager.messagebox_input_cancel.connect(_on_messagebox_cancel)
 	SignalManager.battle_requested.connect(_on_battle_requested)
 	SignalManager.battle_finished.connect(_on_battle_finished)
+	SignalManager.hide_overworld_messagebox.connect(_on_hide_overworld_messagebox)
 	
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
@@ -199,6 +200,7 @@ func isFading():
 ## Maneja solicitudes de mensaje desde el SignalManager
 func _on_message_requested(text: String, config: Dictionary = {}) -> void:
 	await show_message_with_config(text, config)
+	SignalManager.message_finished.emit()
 
 ## Notifica que el mensaje terminó
 func _on_message_finished() -> void:
@@ -240,6 +242,12 @@ func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleR
 	
 
 
+## Oculta el MessageBox del overworld (llamado después de los parpadeos de transición)
+func _on_hide_overworld_messagebox() -> void:
+	print("GUI: Limpiando y ocultando MessageBox del overworld")
+	msg.cleanup_and_hide()
+
+
 ## Maneja el evento de finalización de la batalla
 func _on_battle_finished(_winner_side: String) -> void:
 	print("GUI: Batalla terminada, iniciando transición de salida...")
@@ -260,15 +268,8 @@ func _on_battle_finished(_winner_side: String) -> void:
 ## --- Métodos del MessageBox ---
 ## Muestra un mensaje con configuración específica
 func show_message_with_config(text: String, config: Dictionary = {}) -> void:
-	var wait_input = config.get("waitInput", true)
-	var wait_time = config.get("waitTime", 0.0)
-	
-	if wait_time > 0.0:
-		await showMessageWait(text, wait_time)
-	elif wait_input:
-		await showMessageInput(text)
-	else:
-		await showMessageNoClose(text)
+	# Pasar TODA la configuración al MessageBox usando show_custom
+	await msg.show_custom(text, config)
 
 #
 #func showParty():

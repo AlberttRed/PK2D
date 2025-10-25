@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bley1ox21sbx"]
-
-[ext_resource type="PackedScene" uid="uid://c4x8j9k2l5m6n" path="res://Scenes/Overworld/Core/Battler.tscn" id="1_base"]
-
-[node name="Battler" instance=ExtResource("1_base")]
-trainer_name = "Red"
-is_player = true
-

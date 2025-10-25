@@ -9,7 +9,7 @@ const TYPES_DIR := "res://Resources/Data/Types"
 const ABILITIES_DIR := "res://Resources/Data/Abilities"
 const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
 const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
-const TRAINER_CLASSES_DIR := "res://Resources/Data/TrainerClasses"
+const TRAINER_CLASSES_DIR := "res://Resources/Trainer Classes"
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}

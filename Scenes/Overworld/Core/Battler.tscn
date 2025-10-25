@@ -1,7 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c4x8kak2l5m6n"]
+[gd_scene load_steps=2 format=3 uid="uid://c22wi0px6h3ic"]
 
-[ext_resource type="Script" path="res://Scripts/Battler.gd" id="1_battler"]
+[ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="1_28gro"]
 
 [node name="Battler" type="Node"]
-script = ExtResource("1_battler")
-
+script = ExtResource("1_28gro")

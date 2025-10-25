@@ -20,13 +20,15 @@ func get_intro_messages(
 			if rules.type == BattleRules.BattleTypes.WILD:
 				messages.append({
 					"type": "input",
-					"text": "¡Un " + enemy_pokemon[0].get_name() + " salvaje apareció!"
+					"text": "¡Un " + enemy_pokemon[0].get_name() + " salvaje apareció!",
+					"showIconAtEnd": true
 				})
 			else:
 				var enemy = enemy_trainers[0]
 				messages.append({
 					"type": "input",
-					"text": "¡" + enemy + " quiere luchar!"
+					"text": "¡" + enemy + " quiere luchar!",
+					"showIconAtEnd": true
 				})
 				messages.append({
 					"type": "wait",
@@ -43,13 +45,15 @@ func get_intro_messages(
 			if rules.type == BattleRules.BattleTypes.WILD:
 				messages.append({
 					"type": "input",
-					"text": "¡Un " + enemy_pokemon[0].get_name() + " y un " + enemy_pokemon[1].get_name() + " salvajes aparecieron!"
+					"text": "¡Un " + enemy_pokemon[0].get_name() + " y un " + enemy_pokemon[1].get_name() + " salvajes aparecieron!",
+					"showIconAtEnd": true
 				})
 			else:
 				if enemy_trainers.size() == 1:
 					messages.append({
 						"type": "input",
-						"text": "¡" + enemy_trainers[0] + " quiere luchar!"
+						"text": "¡" + enemy_trainers[0] + " quiere luchar!",
+						"showIconAtEnd": true
 					})
 					messages.append({
 						"type": "wait",
@@ -59,7 +63,8 @@ func get_intro_messages(
 				elif enemy_trainers.size() == 2:
 					messages.append({
 						"type": "input",
-						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " quieren luchar!"
+						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " quieren luchar!",
+						"showIconAtEnd": true
 					})
 					messages.append({
 						"type": "wait",
@@ -303,7 +308,8 @@ func get_multi_hit_message(num_hits: int) -> Dictionary:
 func get_faint_message(pokemon: BattlePokemon) -> Dictionary: 
 	return {
 		"type": "input",
-		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true) #Validado HGSS
+		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true), #Validado HGSS
+		"showIconAtEnd": true
 	}
 
 func get_no_target_message(user: BattlePokemon) -> Dictionary:
@@ -324,7 +330,8 @@ func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dict
 	elif escape_succeeded:
 		return {
 			"type": "input",
-			"text": "¡Escapaste sin probemas!" #Validado HGSS
+			"text": "¡Escapaste sin probemas!", #Validado HGSS
+			"showIconAtEnd": true
 		}
 	else:
 		return {
@@ -360,20 +367,24 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_train
 				
 				return {
 					"type": "input",
-					"text": "¡Has vencido a %s!" % trainer_text
+					"text": "¡Has vencido a %s!" % trainer_text,
+					"showIconAtEnd": true
 				}
 		"enemy":
 			return {
 				"type": "input",
-				"text": "Te has quedado sin Pokémon. Has perdido el combate."
+				"text": "Te has quedado sin Pokémon. Has perdido el combate.",
+				"showIconAtEnd": true
 			}
 		"draw":
 			return {
 				"type": "input",
-				"text": "¡El combate terminó en empate!"
+				"text": "¡El combate terminó en empate!",
+				"showIconAtEnd": true
 			}
 		_:
 			return {
 				"type": "input",
-				"text": "El combate ha terminado."
+				"text": "El combate ha terminado.",
+				"showIconAtEnd": true
 			}

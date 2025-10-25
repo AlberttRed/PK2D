@@ -51,9 +51,9 @@ class_name NPC
 ## Si está activo, el NPC puede detectar y girar hacia el jugador
 @export var awareness_enabled: bool = false
 ## Probabilidad base de girar hacia el jugador (0.0 a 1.0)
-@export var awareness_chance: float = 0.3
+var awareness_chance: float = 0.3
 ## Multiplicador de probabilidad cuando el jugador corre
-@export var awareness_running_multiplier: float = 2.0
+var awareness_running_multiplier: float = 2.0
 ## Distancia máxima para detectar al jugador (en tiles)
 @export var awareness_detection_distance: float = 3.0
 

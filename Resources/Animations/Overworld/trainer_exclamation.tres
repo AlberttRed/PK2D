@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" load_steps=5 format=3 uid="uid://dv47eum5xc1ej"]
+
+[ext_resource type="Texture2D" uid="uid://bgfshwh7wfn0q" path="res://Sprites/Others/trainer exclamation.png" id="1_syqqe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adjmr"]
+atlas = ExtResource("1_syqqe")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y57ot"]
+atlas = ExtResource("1_syqqe")
+region = Rect2(32, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kqg7f"]
+atlas = ExtResource("1_syqqe")
+region = Rect2(64, 0, 32, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adjmr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y57ot")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kqg7f")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]

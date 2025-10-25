@@ -53,6 +53,7 @@ message = "¿Qué quieres?"
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
@@ -73,6 +74,7 @@ message = "Jeje hola."
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
@@ -93,6 +95,7 @@ message = "¡Ya a soy un NPC!"
 wait_input = true
 close_at_end = true
 wait_time = 0.0
+show_icon_at_end = false
 safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 

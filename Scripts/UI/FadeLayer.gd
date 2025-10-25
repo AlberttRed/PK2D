@@ -148,6 +148,10 @@ func play_battle_transition(texture_path: String, duration: float = 1.0) -> void
 	# Primero hacer los parpadeos previos
 	await play_battle_flashes(0.15)
 	
+	# Ocultar el MessageBox del overworld justo cuando terminan los parpadeos
+	# (En los juegos originales, se oculta al empezar el fade con máscara)
+	SignalManager.hide_overworld_messagebox.emit()
+	
 	visible = true
 	
 	# Cargar y configurar la textura de transición
