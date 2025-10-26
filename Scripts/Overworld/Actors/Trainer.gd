@@ -32,6 +32,12 @@ class_name Trainer
 ## Si true, el trainer puede hacer rematches incluso después de ser derrotado
 @export var allow_rematch: bool = false
 
+@export_group("State Tracking")
+## Flag para guardar si el entrenador fue derrotado (usa GameStateManager)
+## Si está vacío, no se guarda el estado
+## Ejemplo: "route_1_youngster_joey_defeated"
+@export var defeated_flag: String = ""
+
 ## Animación de exclamación a mostrar sobre el trainer (64x32px, ocupa 2 tiles de alto)
 var exclamation_sprite: SpriteFrames = preload("res://Resources/Animations/Overworld/trainer_exclamation.tres")
 
@@ -66,6 +72,13 @@ func _ready() -> void:
 		battler._load_from_trainer_data()
 		battler._initialize_party()
 		print("Trainer '%s': TrainerData asignado y cargado al Battler" % name)
+	
+	# Restaurar estado desde GameStateManager si hay un defeated_flag configurado
+	if battler and not defeated_flag.is_empty():
+		var is_defeated_saved = GameStateManager.get_event_flag(defeated_flag)
+		if is_defeated_saved:
+			battler.is_defeated = true
+			print("Trainer '%s': Estado restaurado desde GameStateManager - Ya fue derrotado" % name)
 	
 	# Conectar señal de batalla terminada
 	SignalManager.battle_finished.connect(_on_battle_finished)
@@ -117,6 +130,23 @@ func _connect_own_movement_for_detection() -> void:
 	# Conectar a direction_changed (cuando gira sin moverse - LOOK commands)
 	motion.direction_changed.connect(_on_direction_changed)
 	print("Trainer '%s': Conectado a propio movimiento y giros para detección" % name)
+
+
+## Desconecta todas las señales de detección
+func _disconnect_detection_signals() -> void:
+	# Desconectar del jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if player and player.has_node("GridMotion"):
+		var player_motion = player.get_node("GridMotion")
+		if player_motion and player_motion.step_finished.is_connected(_on_movement_detected):
+			player_motion.step_finished.disconnect(_on_movement_detected)
+	
+	# Desconectar de propio movimiento
+	if motion:
+		if motion.step_finished.is_connected(_on_movement_detected):
+			motion.step_finished.disconnect(_on_movement_detected)
+		if motion.direction_changed.is_connected(_on_direction_changed):
+			motion.direction_changed.disconnect(_on_direction_changed)
 
 
 ## Verifica si el trainer está derrotado
@@ -392,10 +422,20 @@ func _on_battle_finished(winner_side: String) -> void:
 	
 	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner_side])
 	
-	# Marcar como derrotado si perdió
-	if winner_side == "PLAYER" and battler:
+	# Marcar como derrotado si perdió y guardar en GameStateManager
+	if winner_side == "player" and battler:
 		battler.is_defeated = true
 		print("Trainer '%s': Marcado como derrotado" % name)
+		
+		# Guardar estado en GameStateManager si hay un defeated_flag configurado
+		if not defeated_flag.is_empty():
+			GameStateManager.set_event_flag(defeated_flag, true)
+			print("Trainer '%s': Estado guardado en GameStateManager (flag: '%s')" % [name, defeated_flag])
+		
+		# Desconectar señales de detección si fue derrotado y no permite rematch
+		if not allow_rematch:
+			_disconnect_detection_signals()
+			print("Trainer '%s': Señales de detección desconectadas (derrotado)" % name)
 	
 	# Resetear flags
 	_initiating_battle = false

@@ -154,6 +154,9 @@ func end_battle() -> void:
 			result_msg = "Resultado del combate: empate"
 	print(result_msg)
 	
+	# Guardar el ganador antes de limpiar el estado
+	var battle_winner = winner_side
+	
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 	
@@ -161,7 +164,8 @@ func end_battle() -> void:
 	# Hacer esta función awaitable
 	await get_tree().process_frame
 	
-	SignalManager.battle_finished.emit(winner_side)
+	# Emitir con el ganador guardado (antes del cleanup)
+	SignalManager.battle_finished.emit(battle_winner)
 
 func _cleanup_battle_state():
 	# Resetear flags de control

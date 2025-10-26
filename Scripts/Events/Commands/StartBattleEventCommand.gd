@@ -144,8 +144,8 @@ func execute(context: Node) -> void:
 	
 	# Guardar estado si es un entrenador derrotado
 	if battle_type == BattleType.TRAINER and not defeated_flag.is_empty():
-		if _battle_winner == "PLAYER":
-			GameStateManager.set_flag(defeated_flag, true)
+		if _battle_winner == "player":
+			GameStateManager.set_event_flag(defeated_flag, true)
 			print("StartBattleCommand: Trainer derrotado, flag '%s' guardado" % defeated_flag)
 	
 	# Continuar con el siguiente comando

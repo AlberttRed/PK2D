@@ -243,6 +243,7 @@ pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_fih2l")])
 [node name="Trainer" parent="OverworldGrid/Events" instance=ExtResource("16_3rt2b")]
 position = Vector2(48, 176)
 trainer_data = ExtResource("17_8j1dd")
+defeated_flag = "test_defeated"
 movement_type = 3
 initial_direction = 3
 awareness_enabled = true

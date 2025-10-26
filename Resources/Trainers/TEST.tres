@@ -11,7 +11,7 @@ metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 [sub_resource type="Resource" id="Resource_1ee48"]
 script = ExtResource("2_ftr5d")
 pokemon_id = 25
-level = 6
+level = 1
 gender = 1
 ability_id = 19
 custom_move_ids = Array[int]([81, 40])
