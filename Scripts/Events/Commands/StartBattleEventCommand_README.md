@@ -119,7 +119,7 @@ Messages:
 
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
-| `defeated_flag` | String | Flag para guardar derrota del entrenador |
+| `defeated_flag` | String | Flag personalizado (opcional, usa el del Trainer si está vacío) |
 
 ## Ejemplos Completos
 
@@ -163,7 +163,7 @@ EventPage:
   ]
 ```
 
-### Ejemplo 3: Entrenador en ruta
+### Ejemplo 3: Entrenador en ruta (con Event separado del Trainer NPC)
 
 ```gdscript
 # En un Event con trigger ACTION (interacción)
@@ -182,6 +182,31 @@ EventPage:
     }
   ]
 ```
+
+### Ejemplo 3b: Combate desde el Trainer NPC (detección automática)
+
+```gdscript
+# Si el combate se lanza desde el mismo Trainer que tiene detección automática
+Trainer "Jano":
+  defeated_flag = "route_1_jano_defeated"  # ← Configurado en el Trainer
+  pages[0]:
+    trigger_type = ACTION
+    commands = [
+      StartBattleEventCommand {
+        battle_type = TRAINER,
+        trainer_data = preload("res://Resources/Trainers/CAZABICHOS JANO.tres"),
+        battle_mode = SINGLE,
+        use_trainer_intro = true
+        # defeated_flag vacío = usa automáticamente el del Trainer ✅
+      }
+    ]
+```
+
+**Nota**: Si el comando se ejecuta desde un **Trainer NPC**, el sistema:
+- ✅ Detecta automáticamente que el Event es un Trainer
+- ✅ Usa el `defeated_flag` del Trainer si el del comando está vacío
+- ✅ Marca `battler.is_defeated = true` en el Trainer
+- ✅ Desconecta las señales de detección automáticamente
 
 ### Ejemplo 4: Combate doble con pareja
 
@@ -307,6 +332,13 @@ Si alguna validación falla, el comando:
 ### ❌ El mensaje intro no se muestra
 **Causa**: `intro_message` está vacío y `use_trainer_intro = false`  
 **Solución**: Escribir un `intro_message` o activar `use_trainer_intro`
+
+### ❌ El Trainer NPC sigue detectando después de vencerlo
+**Causa**: El Trainer no tiene `defeated_flag` configurado o el sistema no lo detectó  
+**Solución**: 
+- Asignar `defeated_flag` en el Trainer NPC
+- O asignar `defeated_flag` en el comando
+- El sistema detecta automáticamente si el Event es un Trainer
 
 ## Criterios de Aceptación (PBI-315)
 

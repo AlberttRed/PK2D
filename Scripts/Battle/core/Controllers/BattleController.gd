@@ -138,7 +138,7 @@ func end_battle() -> void:
 
 	if !winner_side.is_empty():
 		# Mostrar mensaje de final de combate
-		await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
+		await ui.show_battle_end_message(winner_side, rules, enemy_side.participants)
 
 	# NO ocultamos el UI aquí - lo manejará el GUI con las transiciones
 	# La UI debe quedarse visible para que el fade funcione correctamente

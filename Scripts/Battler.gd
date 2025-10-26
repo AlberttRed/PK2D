@@ -201,6 +201,11 @@ func to_battle_participant() -> BattleParticipant:
 	participant.ai_controller = battle_ia
 	participant.is_trainer = (battler_type != CONST.BATTLER_TYPES.WILD_POKEMON)
 	
+	# Pasar mensajes del trainer (para mostrar al final del combate)
+	participant.intro_message = before_battle_message
+	participant.defeat_message = end_battle_message
+	participant.victory_message = ""  # Por si se añade en el futuro
+	
 	# Convertir el equipo a BattlePokemon
 	for pokemon in party:
 		var battle_pokemon = pokemon.to_battle_pokemon()  # BattlePokemon

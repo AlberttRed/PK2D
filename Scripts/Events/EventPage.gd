@@ -11,6 +11,10 @@ enum ExecutionMode { QUEUED, PARALLEL }
 @export var blocks_player: bool = true
 @export var through: bool = false
 
+## Referencia al Event de origen (no exportada, solo runtime)
+## Se asigna cuando se duplica la página desde un Event
+var source_event: Event = null
+
 # Sistema de sprites: manual o automático
 @export var sprite_frames: SpriteFrames = null
 

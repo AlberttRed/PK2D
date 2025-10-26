@@ -56,7 +56,8 @@ enum BattleType {
 @export_group("State Tracking")
 
 ## Flag para guardar si el entrenador fue derrotado (solo para TRAINER)
-## Si está vacío, no se guarda el estado
+## Si está vacío, usa automáticamente el defeated_flag del Trainer (si el Event es un Trainer)
+## Solo necesitas configurarlo para batallas sin Trainer NPC o para usar un flag diferente
 @export var defeated_flag: String = ""
 
 ## === ESTADO INTERNO ===
@@ -143,10 +144,10 @@ func execute(context: Node) -> void:
 	SignalManager.battle_finished.disconnect(_on_battle_finished)
 	
 	# Guardar estado si es un entrenador derrotado
-	if battle_type == BattleType.TRAINER and not defeated_flag.is_empty():
-		if _battle_winner == "player":
-			GameStateManager.set_event_flag(defeated_flag, true)
-			print("StartBattleCommand: Trainer derrotado, flag '%s' guardado" % defeated_flag)
+	if battle_type == BattleType.TRAINER and _battle_winner == "player":
+		# Intentar marcar el Trainer NPC como derrotado (si existe)
+		# Esto también guardará el defeated_flag del Trainer automáticamente
+		_mark_trainer_as_defeated(context)
 	
 	# Continuar con el siguiente comando
 	context.continue_execution()
@@ -262,6 +263,44 @@ func _create_wild_participant() -> BattleParticipant:
 	var wild_participant = BattleParticipantWild.new(battle_pokemon_team)
 	
 	return wild_participant
+
+
+## Marca el Trainer NPC como derrotado (si existe) y guarda el estado
+func _mark_trainer_as_defeated(context: Node) -> void:
+	var trainer: Trainer = null
+	
+	# Detectar automáticamente el Trainer desde current_page.source_event
+	if context.current_page != null:
+		var page = context.current_page
+		# EventPage tiene source_event (asignado por EventSystem)
+		if page.source_event and page.source_event is Trainer:
+			trainer = page.source_event
+			print("StartBattleCommand: Trainer detectado automáticamente: '%s'" % trainer.name)
+	
+	# Determinar qué flag usar para GameStateManager
+	var flag_to_save = defeated_flag  # Primero, intentar usar el configurado en el comando
+	
+	# Si no hay flag en el comando pero hay un Trainer con flag, usar el del Trainer
+	if flag_to_save.is_empty() and trainer and not trainer.defeated_flag.is_empty():
+		flag_to_save = trainer.defeated_flag
+		print("StartBattleCommand: Usando defeated_flag del Trainer: '%s'" % flag_to_save)
+	
+	# Guardar flag en GameStateManager
+	if not flag_to_save.is_empty():
+		GameStateManager.set_event_flag(flag_to_save, true)
+		print("StartBattleCommand: Estado guardado en GameStateManager (flag: '%s')" % flag_to_save)
+	
+	# Marcar el Battler del Trainer como derrotado (si hay un Trainer detectado)
+	if trainer and trainer.battler:
+		trainer.battler.is_defeated = true
+		print("StartBattleCommand: Trainer '%s' marcado como derrotado" % trainer.name)
+		
+		# Desconectar las señales de detección si el Trainer no permite rematches
+		if not trainer.allow_rematch:
+			trainer._disconnect_detection_signals()
+			print("StartBattleCommand: Señales de detección desconectadas del Trainer '%s'" % trainer.name)
+	elif trainer and not trainer.battler:
+		push_warning("StartBattleCommand: El Trainer '%s' no tiene un Battler hijo" % trainer.name)
 
 
 ## Callback cuando la batalla termina

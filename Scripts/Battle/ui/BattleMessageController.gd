@@ -349,7 +349,7 @@ func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionar
 	}
 
 # Mensajes de final de combate
-func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_trainer_names: Array[String]) -> Dictionary:
+func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> Dictionary:
 	match winner_side:
 		"player":
 			# En combates salvajes, no se muestra mensaje al ganar
@@ -357,6 +357,12 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_train
 				return {}
 			# En combates contra entrenadores, mostrar mensaje de victoria
 			else:
+				# Extraer nombres de los participantes
+				var enemy_trainer_names: Array[String] = []
+				for participant in enemy_participants:
+					if participant is BattleParticipant:
+						enemy_trainer_names.append(participant.name)
+				
 				var trainer_text = ""
 				if enemy_trainer_names.size() == 1:
 					trainer_text = enemy_trainer_names[0]

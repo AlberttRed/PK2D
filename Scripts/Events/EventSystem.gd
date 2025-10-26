@@ -36,6 +36,9 @@ func _on_event_requested(event: Event, _controller: EventController) -> void:
 		push_warning("EventSystem: No se pudo duplicar la EventPage")
 		return
 	
+	# Asignar el Event de origen a la copia
+	page_copy.source_event = event
+	
 	# Si la página es paralela, crear un controlador independiente y no bloquear la cola principal
 	if page_copy.execution_mode == EventPage.ExecutionMode.PARALLEL:
 		_start_parallel_page(page_copy)

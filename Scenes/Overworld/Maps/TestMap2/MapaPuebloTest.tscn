@@ -173,6 +173,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 script = ExtResource("19_kcgog")
 battle_type = 1
 trainer_data = ExtResource("17_8j1dd")
+defeated_flag = "test_defeated"
 metadata/_custom_type_script = "uid://qm4ouivf82wo"
 
 [sub_resource type="Resource" id="Resource_6ysuj"]
