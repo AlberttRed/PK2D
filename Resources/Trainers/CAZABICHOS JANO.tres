@@ -6,60 +6,24 @@
 
 [sub_resource type="Resource" id="Resource_n0ay5"]
 script = ExtResource("1_1ee48")
-difficulty_name = "Default"
-use_items = false
-can_switch_strategically = false
 metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_1ee48"]
 script = ExtResource("1_1gy8p")
 pokemon_id = 13
-nickname = ""
 level = 6
 gender = 1
-is_wild = false
-shiny = false
-hp_IVs = 0
-attack_IVs = 0
-defense_IVs = 0
-spAttack_IVs = 0
-spDefense_IVs = 0
-speed_IVs = 0
-hp_EVs = 0
-attack_EVs = 0
-defense_EVs = 0
-spAttack_EVs = 0
-spDefense_EVs = 0
-speed_EVs = 0
-nature_id = 13
 ability_id = 19
-held_item_id = 0
 custom_move_ids = Array[int]([81, 40])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_nyei7"]
 script = ExtResource("1_1gy8p")
 pokemon_id = 10
-nickname = ""
 level = 6
 gender = 1
-is_wild = false
-shiny = false
-hp_IVs = 0
-attack_IVs = 0
-defense_IVs = 0
-spAttack_IVs = 0
-spDefense_IVs = 0
-speed_IVs = 0
-hp_EVs = 0
-attack_EVs = 0
-defense_EVs = 0
-spAttack_EVs = 0
-spDefense_EVs = 0
-speed_EVs = 0
 nature_id = 19
 ability_id = 19
-held_item_id = 0
 custom_move_ids = Array[int]([33, 81])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
@@ -73,11 +37,6 @@ intro_text = "¡Eh! ¡Tienes POKÉMON!
 ¡Sí! 
 ¡Al ataque!"
 defeat_text = "¡No! ¡Mi CATERPIE no pudo más!"
-victory_text = "¡Gané!"
 party_data = Array[ExtResource("1_1gy8p")]([SubResource("Resource_1ee48"), SubResource("Resource_nyei7")])
-double_battle = false
 reward_money = 72
-battle_items = Array[int]([])
-can_rematch = false
-rematch_level_bonus = 0
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"
