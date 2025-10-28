@@ -138,7 +138,7 @@ func end_battle() -> void:
 
 	if !winner_side.is_empty():
 		# Mostrar mensaje de final de combate
-		await ui.show_battle_end_message(winner_side, rules, enemy_side.get_trainer_names())
+		await ui.show_battle_end_message(winner_side, rules, enemy_side.participants)
 
 	# NO ocultamos el UI aquí - lo manejará el GUI con las transiciones
 	# La UI debe quedarse visible para que el fade funcione correctamente
@@ -154,6 +154,9 @@ func end_battle() -> void:
 			result_msg = "Resultado del combate: empate"
 	print(result_msg)
 	
+	# Guardar el ganador antes de limpiar el estado
+	var battle_winner = winner_side
+	
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 	
@@ -161,7 +164,8 @@ func end_battle() -> void:
 	# Hacer esta función awaitable
 	await get_tree().process_frame
 	
-	SignalManager.battle_finished.emit(winner_side)
+	# Emitir con el ganador guardado (antes del cleanup)
+	SignalManager.battle_finished.emit(battle_winner)
 
 func _cleanup_battle_state():
 	# Resetear flags de control

@@ -15,27 +15,46 @@ func _ready() -> void:
 	setup_current_page()
 	hide_default_sprite_if_needed()
 	
+	# Conectar a señales de cambio de estado para reevaluación automática
+	_connect_to_state_signals()
+	
 	# Autorun inmediato
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
 		trigger()
 
 ## Configura current_page basado en current_page_index y pages
+## Evalúa condiciones de todas las páginas para encontrar la activa
 func setup_current_page() -> void:
 	if pages.size() == 0:
 		current_page = null
-	elif current_page_index >= 0 and current_page_index < pages.size():
-		current_page = pages[current_page_index]
-	else:
 		current_page_index = 0
-		if pages.size() > 0:
-			current_page = pages[0]
-		else:
-			current_page = null
+		update_sprite_from_current_page()
+		return
 	
-	# Actualizar el sprite según la página activa
+	# Obtener ID único del evento para self-switches
+	var event_id = _get_event_id()
+	
+	# Evaluar páginas en orden inverso (prioridad a las últimas)
+	# Esto permite tener una página "por defecto" al inicio y páginas condicionales después
+	for i in range(pages.size() - 1, -1, -1):
+		var page = pages[i]
+		if page and page.evaluate_conditions(event_id):
+			# Esta página cumple las condiciones
+			if current_page_index != i:
+				current_page_index = i
+				current_page = page
+				update_sprite_from_current_page()
+				print("Event '%s': Página activa cambiada a índice %d" % [name, i])
+			else:
+				current_page = page
+			return
+	
+	# Si ninguna página cumple las condiciones, usar la primera por defecto
+	current_page_index = 0
+	current_page = pages[0] if pages.size() > 0 else null
 	update_sprite_from_current_page()
 
-## Actualiza el sprite del evento según la página activa
+## Actualiza el sprite y propiedades del evento según la página activa
 func update_sprite_from_current_page() -> void:
 	if not sprite:
 		return
@@ -52,6 +71,9 @@ func update_sprite_from_current_page() -> void:
 	
 	# Revisar si necesita ocultar el sprite por defecto
 	hide_default_sprite_if_needed()
+	
+	# Actualizar ocupación en el grid (through, blocks_player)
+	_refresh_occupancy()
 
 func trigger() -> void:
 	if current_page:
@@ -152,4 +174,58 @@ func previous_page() -> void:
 		print("Event '%s': Ya está en la primera página" % name)
 
 func _to_string() -> String:
+	return name
+
+
+## Actualiza la ocupación del evento en el grid cuando cambia de página
+func _refresh_occupancy() -> void:
+	# Buscar el nodo Occupancy (si existe)
+	var occupancy_node = get_node_or_null("Occupancy")
+	if occupancy_node and occupancy_node.has_method("refresh_occupancy"):
+		occupancy_node.refresh_occupancy()
+
+
+## Reevalúa las condiciones y actualiza la página activa
+## Se llama automáticamente cuando cambian flags, variables o self-switches
+func refresh_active_page() -> void:
+	var old_page_index = current_page_index
+	setup_current_page()
+	
+	# Si cambió de página, puede haber nuevo trigger type
+	if old_page_index != current_page_index:
+		# Si la nueva página es AUTORUN, trigger inmediato
+		if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
+			call_deferred("trigger")
+
+
+## Conecta el evento a las señales globales de cambio de estado
+func _connect_to_state_signals() -> void:
+	# Conectar a las señales reenviadas por SignalManager
+	SignalManager.game_flag_changed.connect(_on_state_changed)
+	SignalManager.game_variable_changed.connect(_on_state_changed_var)
+	SignalManager.game_self_switch_changed.connect(_on_state_changed_switch)
+
+
+## Callback cuando cambia un flag global
+func _on_state_changed(_flag_name: String, _new_value: bool) -> void:
+	refresh_active_page()
+
+
+## Callback cuando cambia una variable global
+func _on_state_changed_var(_variable_name: String, _new_value: int) -> void:
+	refresh_active_page()
+
+
+## Callback cuando cambia un self-switch
+func _on_state_changed_switch(event_id: String, _switch_letter: String, _new_value: bool) -> void:
+	# Solo reevaluar si el self-switch pertenece a este evento
+	if event_id == _get_event_id():
+		refresh_active_page()
+
+
+## Obtiene un ID único para este evento (usado para self-switches)
+## Formato: "mapid_eventname" o solo el nombre del nodo
+func _get_event_id() -> String:
+	# Usar el nombre del nodo como ID único
+	# En el futuro se puede mejorar con: "current_map_id + '_' + name"
 	return name

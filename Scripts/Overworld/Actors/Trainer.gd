@@ -16,21 +16,11 @@ class_name Trainer
 
 ## === CONFIGURACIÓN DE ENTRENADOR ===
 
-@export_group("Trainer Data")
-## TrainerData del entrenador (se asigna automáticamente al Battler hijo)
-@export var trainer_data: TrainerData = null
-
-## === CONFIGURACIÓN DE DETECCIÓN ===
-
-@export_group("Detection")
-## Rango de detección en tiles (línea recta en la dirección que mira)
-@export_range(1, 10) var detection_range: int = 5
-
-## Tipo de transición de batalla a usar
-@export_enum("Battle1", "Battle2", "Battle3", "Battle4", "Normal01", "Normal02", "Hexatr", "Hexatrc", "Hexatzr", "WipeVertical") var transition_type: int = 0
-
-## Si true, el trainer puede hacer rematches incluso después de ser derrotado
-@export var allow_rematch: bool = false
+@export_group("State Tracking")
+## Flag para guardar si el entrenador fue derrotado (usa GameStateManager)
+## Si está vacío, no se guarda el estado
+## Ejemplo: "route_1_youngster_joey_defeated"
+@export var defeated_flag: String = ""
 
 ## Animación de exclamación a mostrar sobre el trainer (64x32px, ocupa 2 tiles de alto)
 var exclamation_sprite: SpriteFrames = preload("res://Resources/Animations/Overworld/trainer_exclamation.tres")
@@ -59,21 +49,19 @@ func _ready() -> void:
 	# Buscar el Battler hijo
 	_find_battler()
 	
-	# Si el Trainer tiene un TrainerData configurado, asignarlo al Battler
-	if trainer_data and battler:
-		battler.trainer_data = trainer_data
-		# Forzar la carga del TrainerData (el Battler ya ejecutó _ready() sin trainer_data)
-		battler._load_from_trainer_data()
-		battler._initialize_party()
-		print("Trainer '%s': TrainerData asignado y cargado al Battler" % name)
+	# Restaurar estado desde GameStateManager si hay un defeated_flag configurado
+	if battler and not defeated_flag.is_empty():
+		var is_defeated_saved = GameStateManager.get_event_flag(defeated_flag)
+		if is_defeated_saved:
+			battler.is_defeated = true
+			print("Trainer '%s': Estado restaurado desde GameStateManager - Ya fue derrotado" % name)
 	
 	# Conectar señal de batalla terminada
 	SignalManager.battle_finished.connect(_on_battle_finished)
 	
-	# Conectar señales para detección (diferido para esperar a que Player esté listo)
-	if not is_defeated() or allow_rematch:
-		call_deferred("_connect_to_player_for_detection")
-		_connect_own_movement_for_detection()
+	# Activar/desactivar detección según la página activa
+	# (se hace después de que Event base haya llamado setup_current_page en super._ready())
+	call_deferred("_update_detection_state")
 
 
 ## Busca el nodo Battler hijo
@@ -100,8 +88,10 @@ func _connect_to_player_for_detection() -> void:
 	
 	var player_motion = player.get_node("GridMotion")
 	if player_motion:
-		player_motion.step_finished.connect(_on_movement_detected)
-		print("Trainer '%s': Conectado a movimiento del jugador" % name)
+		# Verificar si ya está conectado para evitar duplicados
+		if not player_motion.step_finished.is_connected(_on_movement_detected):
+			player_motion.step_finished.connect(_on_movement_detected)
+			print("Trainer '%s': Conectado a movimiento del jugador" % name)
 	else:
 		push_warning("Trainer '%s': No se pudo obtener GridMotion del Player." % name)
 
@@ -112,11 +102,56 @@ func _connect_own_movement_for_detection() -> void:
 		push_warning("Trainer '%s': No tiene GridMotion. La detección no funcionará." % name)
 		return
 	
-	# Conectar a step_finished (cuando termina un movimiento)
-	motion.step_finished.connect(_on_movement_detected)
-	# Conectar a direction_changed (cuando gira sin moverse - LOOK commands)
-	motion.direction_changed.connect(_on_direction_changed)
+	# Conectar a step_finished (cuando termina un movimiento) - verificar si ya está conectado
+	if not motion.step_finished.is_connected(_on_movement_detected):
+		motion.step_finished.connect(_on_movement_detected)
+	
+	# Conectar a direction_changed (cuando gira sin moverse - LOOK commands) - verificar si ya está conectado
+	if not motion.direction_changed.is_connected(_on_direction_changed):
+		motion.direction_changed.connect(_on_direction_changed)
+	
 	print("Trainer '%s': Conectado a propio movimiento y giros para detección" % name)
+
+
+## Actualiza el estado de detección según la página activa
+func _update_detection_state() -> void:
+	# Verificar si la página activa requiere detección
+	if not current_page:
+		_disconnect_detection_signals()
+		return
+	
+	# Validar que solo los Trainers puedan usar detección
+	if current_page.enable_trainer_detection and not self is Trainer:
+		push_error("EventPage: enable_trainer_detection=true pero el Event '%s' NO es un Trainer" % name)
+		return
+	
+	# Activar o desactivar detección según la página
+	if current_page.enable_trainer_detection:
+		# Activar detección
+		call_deferred("_connect_to_player_for_detection")
+		_connect_own_movement_for_detection()
+		print("Trainer '%s': Detección activada (rango: %d)" % [name, current_page.detection_range])
+	else:
+		# Desactivar detección
+		_disconnect_detection_signals()
+		print("Trainer '%s': Detección desactivada" % name)
+
+
+## Desconecta todas las señales de detección
+func _disconnect_detection_signals() -> void:
+	# Desconectar del jugador
+	var player = get_tree().get_first_node_in_group("Player")
+	if player and player.has_node("GridMotion"):
+		var player_motion = player.get_node("GridMotion")
+		if player_motion and player_motion.step_finished.is_connected(_on_movement_detected):
+			player_motion.step_finished.disconnect(_on_movement_detected)
+	
+	# Desconectar de propio movimiento
+	if motion:
+		if motion.step_finished.is_connected(_on_movement_detected):
+			motion.step_finished.disconnect(_on_movement_detected)
+		if motion.direction_changed.is_connected(_on_direction_changed):
+			motion.direction_changed.disconnect(_on_direction_changed)
 
 
 ## Verifica si el trainer está derrotado
@@ -134,11 +169,8 @@ func _on_direction_changed(_new_direction: Vector2) -> void:
 
 ## Callback cuando hay movimiento (del jugador o del trainer)
 func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
-	# No detectar si ya está iniciando batalla o si está derrotado (y no permite rematch)
+	# No detectar si ya está iniciando batalla
 	if _initiating_battle or _player_detected:
-		return
-	
-	if is_defeated() and not allow_rematch:
 		return
 	
 	# No detectar durante eventos o movimiento pausado
@@ -161,7 +193,12 @@ func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
 
 ## Verifica si el jugador está en la línea de visión del trainer
 func _is_player_in_sight(player_tile: Vector2i) -> bool:
-	if not motion or not motion.grid:
+	if not motion or not motion.grid or not current_page:
+		return false
+	
+	# Obtener detection_range de la página activa
+	var detect_range = current_page.detection_range if current_page.enable_trainer_detection else 0
+	if detect_range <= 0:
 		return false
 	
 	var trainer_tile = motion.current_tile()
@@ -173,28 +210,28 @@ func _is_player_in_sight(player_tile: Vector2i) -> bool:
 	# Determinar el eje de detección según la dirección
 	if direction == Vector2.UP:
 		# Mirar hacia arriba (Y negativo)
-		for i in range(1, detection_range + 1):
+		for i in range(1, detect_range + 1):
 			offset = Vector2i(0, -i)
 			if trainer_tile + offset == player_tile:
 				return true
 	
 	elif direction == Vector2.DOWN:
 		# Mirar hacia abajo (Y positivo)
-		for i in range(1, detection_range + 1):
+		for i in range(1, detect_range + 1):
 			offset = Vector2i(0, i)
 			if trainer_tile + offset == player_tile:
 				return true
 	
 	elif direction == Vector2.LEFT:
 		# Mirar hacia la izquierda (X negativo)
-		for i in range(1, detection_range + 1):
+		for i in range(1, detect_range + 1):
 			offset = Vector2i(-i, 0)
 			if trainer_tile + offset == player_tile:
 				return true
 	
 	elif direction == Vector2.RIGHT:
 		# Mirar hacia la derecha (X positivo)
-		for i in range(1, detection_range + 1):
+		for i in range(1, detect_range + 1):
 			offset = Vector2i(i, 0)
 			if trainer_tile + offset == player_tile:
 				return true
@@ -202,7 +239,7 @@ func _is_player_in_sight(player_tile: Vector2i) -> bool:
 	return false
 
 
-## Inicia la secuencia de batalla: Exclamación → Movimiento → Diálogo → Combate
+## Inicia la secuencia de batalla: Exclamación → Movimiento → Batalla
 func _start_battle_sequence() -> void:
 	_initiating_battle = true
 	
@@ -220,12 +257,8 @@ func _start_battle_sequence() -> void:
 
 	await get_tree().create_timer(0.2).timeout
 
-	# 3. Mostrar diálogo de introducción
-	if battler:
-		await _show_intro_dialogue()
-	
-	# 4. Iniciar batalla
-	_initiate_battle()
+	# 3. Buscar StartBattleEventCommand en la página activa e iniciar batalla
+	await _initiate_battle_from_page()
 
 
 ## Muestra la exclamación sobre el trainer
@@ -310,36 +343,50 @@ func _approach_player() -> void:
 			await motion.step_finished
 
 
-## Muestra el diálogo de introducción del trainer
-func _show_intro_dialogue() -> void:
-	if not battler:
-		return
-	
-	var intro_text = battler.get_intro_text()
-	
-	var config = {
-		"waitInput": true,
-		"closeAtEnd": false,
-		"waitTime": 0.0,
-		"showIconAtEnd": false  # Overworld: no mostrar icono al final
-	}
-	
-	# Emitir señal para mostrar mensaje
-	SignalManager.message_requested.emit(intro_text, config)
-	
-	# Esperar a que termine el mensaje
-	await SignalManager.message_finished
-
-
-## Inicia el combate con el jugador
-func _initiate_battle() -> void:
-	if not battler:
-		push_error("Trainer '%s': No se puede iniciar batalla sin Battler configurado" % name)
+## Busca el StartBattleEventCommand en la página activa e inicia la batalla
+func _initiate_battle_from_page() -> void:
+	if not current_page:
+		push_error("Trainer '%s': No hay página activa" % name)
 		SignalManager.player_control_unblocked.emit()
 		_initiating_battle = false
 		return
 	
-	# Obtener el Battler del jugador
+	# Buscar StartBattleEventCommand usando el método helper de EventPage
+	var battle_command = current_page.get_battle_command()
+	
+	if not battle_command:
+		push_error("Trainer '%s': No se encontró StartBattleEventCommand en la página activa" % name)
+		SignalManager.player_control_unblocked.emit()
+		_initiating_battle = false
+		return
+	
+	# Obtener trainer_data del comando
+	var trainer_data_from_command = battle_command.trainer_data
+	if not trainer_data_from_command:
+		push_error("Trainer '%s': StartBattleEventCommand no tiene trainer_data configurado" % name)
+		SignalManager.player_control_unblocked.emit()
+		_initiating_battle = false
+		return
+	
+	# Asignar el trainer_data del comando al battler
+	battler.trainer_data = trainer_data_from_command
+	battler.is_player = false
+	battler._load_from_trainer_data()
+	battler._initialize_party()
+	
+	# Mostrar mensaje intro del TrainerData
+	var intro_text = battler.get_intro_text()
+	if not intro_text.is_empty():
+		var config = {
+			"waitInput": true,
+			"closeAtEnd": false,
+			"waitTime": 0.0,
+			"showIconAtEnd": false
+		}
+		SignalManager.message_requested.emit(intro_text, config)
+		await SignalManager.message_finished
+	
+	# Obtener Battler del jugador
 	var player = get_tree().get_first_node_in_group("Player")
 	if not player:
 		push_error("Trainer '%s': No se encontró el jugador" % name)
@@ -347,40 +394,16 @@ func _initiate_battle() -> void:
 		_initiating_battle = false
 		return
 	
-	# Buscar el Battler del jugador
-	var player_battler: Battler = null
-	for child in player.get_children():
-		if child is Battler:
-			player_battler = child
-			break
-	
-	if not player_battler:
-		push_error("Trainer '%s': El jugador no tiene un Battler configurado" % name)
-		SignalManager.player_control_unblocked.emit()
-		_initiating_battle = false
-		return
-	
-	# Crear participantes de batalla
-	var player_participant = player_battler.to_battle_participant()
+	# Crear participantes
+	var player_participant = player.battler.to_battle_participant()
 	var trainer_participant = battler.to_battle_participant()
 	
-	# Determinar modo de batalla (single o double)
-	var battle_mode = BattleRules.BattleModes.SINGLE
-	if battler.allow_double_battle:
-		battle_mode = BattleRules.BattleModes.DOUBLE
+	# Crear reglas
+	var rules = BattleRules.new(BattleRules.BattleTypes.TRAINER, battle_command.battle_mode)
 	
-	# Crear reglas de batalla
-	var rules = BattleRules.new(
-		BattleRules.BattleTypes.TRAINER,
-		battle_mode
-	)
-	
-	# Configurar transición (si el sistema lo soporta)
-	# TODO: Pasar transition_type a BattleRules o al sistema de transiciones
-	
-	# Emitir señal de batalla solicitada
+	# Iniciar batalla
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
-	print("Trainer '%s': Iniciando batalla con %s" % [battler.get_full_name(), player_participant.name])
+	print("Trainer '%s': Iniciando batalla (por detección)" % name)
 	SignalManager.battle_requested.emit(participants, rules)
 
 
@@ -392,10 +415,17 @@ func _on_battle_finished(winner_side: String) -> void:
 	
 	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner_side])
 	
-	# Marcar como derrotado si perdió
-	if winner_side == "PLAYER" and battler:
+	# Marcar como derrotado si perdió y guardar en GameStateManager
+	if winner_side == "player" and battler:
 		battler.is_defeated = true
 		print("Trainer '%s': Marcado como derrotado" % name)
+		
+		# Guardar estado en GameStateManager si hay un defeated_flag configurado
+		if not defeated_flag.is_empty():
+			GameStateManager.set_event_flag(defeated_flag, true)
+			print("Trainer '%s': Estado guardado en GameStateManager (flag: '%s')" % [name, defeated_flag])
+			# La señal flag_changed hará que el Event reevalúe páginas
+			# y _update_detection_state() se encargará de desconectar si es necesario
 	
 	# Resetear flags
 	_initiating_battle = false
@@ -407,19 +437,6 @@ func _on_battle_finished(winner_side: String) -> void:
 	# Reanudar movimiento del trainer
 	_resume_movement()
 
-
-## Override del trigger() para mostrar mensaje post-derrota
-func trigger() -> void:
-	# Si está derrotado, mostrar mensaje alternativo
-	if is_defeated() and battler:
-		print("Trainer '%s' (derrotado): %s" % [battler.get_full_name(), battler.get_defeat_text()])
-		# TODO: Integrar con sistema de MessageBox
-		return
-	
-	# Si no está derrotado, comportamiento normal de NPC
-	super.trigger()
-
-
 ## Resetea el estado del trainer (útil para testing o rematches)
 func reset_trainer() -> void:
 	if battler:
@@ -429,3 +446,10 @@ func reset_trainer() -> void:
 	_initiating_battle = false
 	
 	print("Trainer '%s': Estado reseteado" % name)
+
+
+## Override de refresh_active_page para actualizar detección al cambiar de página
+func refresh_active_page() -> void:
+	super.refresh_active_page()
+	# Actualizar estado de detección con la nueva página
+	_update_detection_state()

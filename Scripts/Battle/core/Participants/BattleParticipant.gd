@@ -12,6 +12,11 @@ var sprite_path: String = ""  # Opcional, si usás esto para mostrar el entrenad
 var is_trainer: bool = true  # Nuevo flag, por compatibilidad futura
 var side: BattleSide = null  # Se asigna desde el add_participant()
 
+## Mensajes del entrenador (para mostrar al final del combate)
+var intro_message: String = ""
+var defeat_message: String = ""
+var victory_message: String = ""
+
 # Internal storage for the participant's battle team.
 # DO NOT modify this directly. Use add_pokemon or add_pokemon_team.
 var _pokemon_team: Array[BattlePokemon] = []

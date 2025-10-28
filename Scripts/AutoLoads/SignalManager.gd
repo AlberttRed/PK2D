@@ -52,6 +52,11 @@ signal battle_requested(participants: Array, rules: BattleRules)
 signal battle_started()
 signal battle_finished(winner_side)
 
+# === SEÑALES DEL SISTEMA DE GAME STATE ===
+signal game_flag_changed(flag_name: String, new_value: bool)
+signal game_variable_changed(variable_name: String, new_value: int)
+signal game_self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
+
 # === SEÑALES DE INPUT GLOBAL ===
 signal input_accept()
 signal input_cancel()
@@ -73,3 +78,20 @@ func disconnect_all(signal_obj: Signal) -> void:
 
 func _ready() -> void:
 	print("SignalManager: Bus de señales globales inicializado")
+	
+	# Conectar señales de GameStateManager para reenviarlas globalmente
+	GameStateManager.flag_changed.connect(_on_game_flag_changed)
+	GameStateManager.variable_changed.connect(_on_game_variable_changed)
+	GameStateManager.self_switch_changed.connect(_on_game_self_switch_changed)
+
+## Reenvía señal de flag cambiado
+func _on_game_flag_changed(flag_name: String, new_value: bool) -> void:
+	game_flag_changed.emit(flag_name, new_value)
+
+## Reenvía señal de variable cambiada
+func _on_game_variable_changed(variable_name: String, new_value: int) -> void:
+	game_variable_changed.emit(variable_name, new_value)
+
+## Reenvía señal de self-switch cambiado
+func _on_game_self_switch_changed(event_id: String, switch_letter: String, new_value: bool) -> void:
+	game_self_switch_changed.emit(event_id, switch_letter, new_value)

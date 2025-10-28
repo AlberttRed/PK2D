@@ -3,6 +3,11 @@ extends Node
 ## GameStateManager - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
 
+# === SEÑALES ===
+signal flag_changed(flag_name: String, new_value: bool)
+signal variable_changed(variable_name: String, new_value: int)
+signal self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
+
 # === DATOS DEL ESTADO DEL JUEGO ===
 var current_map_id: String = ""
 var current_position: Vector2i = Vector2i.ZERO
@@ -10,6 +15,13 @@ var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags de eventos (Dictionary para flexibilidad)
 var event_flags: Dictionary = {}
+
+# Variables globales del juego (Dictionary: nombre -> valor)
+var game_variables: Dictionary = {}
+
+# Self-switches por evento (Dictionary: "event_id:switch" -> bool)
+# Ejemplo: "map_route1_trainer01:A" -> true
+var self_switches: Dictionary = {}
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -22,6 +34,8 @@ func initialize_new_game() -> void:
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
 	event_flags = {}
+	game_variables = {}
+	self_switches = {}
 	
 	print("GameStateManager: Nueva partida inicializada - Mapa: %s, Posición: %s" % [current_map_id, current_position])
 
@@ -53,6 +67,17 @@ func get_event_flag(flag_name: String) -> bool:
 func get_all_event_flags() -> Dictionary:
 	return event_flags.duplicate()
 
+## Retorna el valor de una variable global
+func get_variable(var_name: String, default_value: int = 0) -> int:
+	return game_variables.get(var_name, default_value)
+
+## Retorna el valor de un self-switch
+## event_id: ID único del evento (ej: "map_route1_trainer01")
+## switch_letter: "A", "B", "C" o "D"
+func get_self_switch(event_id: String, switch_letter: String) -> bool:
+	var key = "%s:%s" % [event_id, switch_letter]
+	return self_switches.get(key, false)
+
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
 func set_current_map_id(map_id: String) -> void:
@@ -71,14 +96,43 @@ func set_facing_direction(direction: Vector2) -> void:
 
 ## Establece el valor de un flag de evento
 func set_event_flag(flag_name: String, value: bool) -> void:
+	var old_value = event_flags.get(flag_name, null)
 	event_flags[flag_name] = value
 	print("GameStateManager: Flag '%s' establecido a: %s" % [flag_name, value])
+	
+	# Emitir señal solo si el valor cambió
+	if old_value != value:
+		flag_changed.emit(flag_name, value)
 
 ## Elimina un flag de evento
 func clear_event_flag(flag_name: String) -> void:
 	if event_flags.has(flag_name):
 		event_flags.erase(flag_name)
 		print("GameStateManager: Flag '%s' eliminado" % flag_name)
+		flag_changed.emit(flag_name, false)
+
+## Establece el valor de una variable global
+func set_variable(var_name: String, value: int) -> void:
+	var old_value = game_variables.get(var_name, null)
+	game_variables[var_name] = value
+	print("GameStateManager: Variable '%s' establecida a: %d" % [var_name, value])
+	
+	# Emitir señal solo si el valor cambió
+	if old_value != value:
+		variable_changed.emit(var_name, value)
+
+## Establece el valor de un self-switch
+## event_id: ID único del evento (ej: nombre del nodo Event)
+## switch_letter: "A", "B", "C" o "D"
+func set_self_switch(event_id: String, switch_letter: String, value: bool) -> void:
+	var key = "%s:%s" % [event_id, switch_letter]
+	var old_value = self_switches.get(key, null)
+	self_switches[key] = value
+	print("GameStateManager: Self-switch '%s' establecido a: %s" % [key, value])
+	
+	# Emitir señal solo si el valor cambió
+	if old_value != value:
+		self_switch_changed.emit(event_id, switch_letter, value)
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición
@@ -103,4 +157,6 @@ func get_state_summary() -> String:
 	summary += "Posición: %s\n" % current_position
 	summary += "Dirección: %s\n" % facing_dir
 	summary += "Flags: %s\n" % event_flags
+	summary += "Variables: %s\n" % game_variables
+	summary += "Self-switches: %s\n" % self_switches
 	return summary

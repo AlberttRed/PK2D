@@ -209,8 +209,19 @@ func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
 	await show_message_from_dict(message_controller.get_switch_message(trainer_name, pokemon_name))
 
 # Mensaje de final de combate
-func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_trainer_names: Array[String]) -> void:
-	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_trainer_names))
+func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> void:
+	# Mostrar mensaje de victoria
+	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
+	
+	# Si el jugador ganó contra un entrenador, mostrar mensaje de derrota del trainer
+	if winner_side == "player" and rules.type == BattleRules.BattleTypes.TRAINER:
+		for participant in enemy_participants:
+			if participant is BattleParticipant and not participant.defeat_message.is_empty():
+				await show_message_from_dict({
+					"type": "input",
+					"text": participant.defeat_message,
+					"showIconAtEnd": true
+				})
 
 # Mensaje de debilitamiento
 func show_faint_message(pokemon: BattlePokemon) -> void:

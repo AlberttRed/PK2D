@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=4 uid="uid://1owe4s00dp15"]
+[gd_scene load_steps=52 format=4 uid="uid://1owe4s00dp15"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_07o4y"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -17,43 +17,30 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="14_eyjmi"]
 [ext_resource type="Texture2D" uid="uid://bfcane6ehs7ny" path="res://Sprites/Overworlds/Characters/NPC 06.png" id="15_lub8c"]
 [ext_resource type="PackedScene" uid="uid://c8a7yxm1qw8kb" path="res://Scenes/Overworld/Actors/Trainer.tscn" id="16_3rt2b"]
-[ext_resource type="Resource" uid="uid://ckvnqmn22p20f" path="res://Resources/Trainers/CAZABICHOS JANO.tres" id="17_6ysuj"]
+[ext_resource type="Resource" uid="uid://15sqbubj2mi7" path="res://Resources/Trainers/TEST.tres" id="17_8j1dd"]
 [ext_resource type="Texture2D" uid="uid://dqwosbe04hlbi" path="res://Sprites/Overworlds/Characters/trchar010.png" id="17_fih2l"]
+[ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="19_kcgog"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="20_kcgog"]
 
 [sub_resource type="Resource" id="Resource_s82w2"]
 script = ExtResource("6_fih2l")
-message = "¡Hola mundo!"
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_pga4s"]
 script = ExtResource("7_6ysuj")
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://bocuxh8svpgvc"
 
 [sub_resource type="Resource" id="Resource_dxx2e"]
 script = ExtResource("8_tb7x5")
 duration = 3.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_mv35c"]
 script = ExtResource("9_kcgog")
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://nr8r6pek166s"
 
 [sub_resource type="Resource" id="Resource_mnaxd"]
 script = ExtResource("6_fih2l")
-message = "¡Hola mundo!"
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mnaxd"]
@@ -73,20 +60,16 @@ animations = [{
 
 [sub_resource type="Resource" id="Resource_5slja"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
 trigger_type = 1
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_s82w2"), SubResource("Resource_pga4s"), SubResource("Resource_dxx2e"), SubResource("Resource_mv35c"), SubResource("Resource_mnaxd")])
-blocks_player = true
 through = true
 sprite_frames = SubResource("SpriteFrames_vfkak")
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_ai0v4"]
 script = ExtResource("11_emybb")
 mode = 0
 duration = 0.3
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_vfkak"]
@@ -94,24 +77,18 @@ script = ExtResource("12_hok4v")
 target_scene = "MapaPuebloTest"
 target_spawn = "SpawnProva"
 facing_direction = 0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_tjc6v"]
 script = ExtResource("11_emybb")
-mode = 1
 duration = 0.3
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_v81bm"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
 trigger_type = 1
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_ai0v4"), SubResource("Resource_vfkak"), SubResource("Resource_tjc6v")])
-blocks_player = true
 through = true
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_j5a51"]
@@ -119,55 +96,38 @@ script = ExtResource("12_hok4v")
 target_scene = "MapHouseTest"
 target_spawn = "SpawnEntrada"
 facing_direction = 0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_we81h"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
 trigger_type = 1
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_ai0v4"), SubResource("Resource_j5a51"), SubResource("Resource_tjc6v")])
-blocks_player = true
 through = true
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_w67m6"]
 script = ExtResource("6_fih2l")
 message = "¡Cuidado! Teleport a la izquierda."
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_8gxhw"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
-trigger_type = 0
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_w67m6")])
-blocks_player = true
-through = false
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_y2ivs"]
 script = ExtResource("8_tb7x5")
 duration = 7.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_j7sqr"]
 script = ExtResource("8_tb7x5")
 duration = 2.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_bny8y"]
 script = ExtResource("8_tb7x5")
 duration = 3.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_0asgo"]
@@ -175,27 +135,19 @@ script = ExtResource("4_lub8c")
 execution_mode = 1
 trigger_type = 2
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_y2ivs"), SubResource("Resource_j7sqr"), SubResource("Resource_bny8y")])
-blocks_player = true
 through = true
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_2b25c"]
 script = ExtResource("8_tb7x5")
-duration = 1.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_01pid"]
 script = ExtResource("8_tb7x5")
-duration = 1.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_i3b8l"]
 script = ExtResource("8_tb7x5")
-duration = 1.0
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://dy36hc326kn7v"
 
 [sub_resource type="Resource" id="Resource_wcme4"]
@@ -203,41 +155,46 @@ script = ExtResource("4_lub8c")
 execution_mode = 1
 trigger_type = 2
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_2b25c"), SubResource("Resource_01pid"), SubResource("Resource_i3b8l")])
-blocks_player = true
 through = true
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_3rt2b"]
 script = ExtResource("6_fih2l")
 message = "Yo si fuera tú le haría caso al cartel."
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_fih2l"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
-trigger_type = 0
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_3rt2b")])
-blocks_player = true
-through = false
 character_spritesheet = ExtResource("15_lub8c")
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_emybb"]
+script = ExtResource("19_kcgog")
+battle_type = 1
+trainer_data = ExtResource("17_8j1dd")
+defeated_flag = "test_defeated"
+metadata/_custom_type_script = "uid://qm4ouivf82wo"
 
 [sub_resource type="Resource" id="Resource_6ysuj"]
 script = ExtResource("4_lub8c")
-execution_mode = 0
-trigger_type = 0
-commands = Array[ExtResource("5_3rt2b")]([])
-blocks_player = true
-through = false
+commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_emybb")])
+enable_trainer_detection = true
+required_flag = "test_defeated"
+required_flag_value = false
 character_spritesheet = ExtResource("17_fih2l")
-frame_size = Vector2(32, 48)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_8j1dd"]
+script = ExtResource("6_fih2l")
+message = "Menuda paliza me has pegado."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_4hhom"]
+script = ExtResource("4_lub8c")
+commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_8j1dd")])
+required_flag = "test_defeated"
+character_spritesheet = ExtResource("17_fih2l")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [node name="MapaPuebloTest" type="Node2D"]
@@ -301,11 +258,11 @@ pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_fih2l")])
 
 [node name="Trainer" parent="OverworldGrid/Events" instance=ExtResource("16_3rt2b")]
 position = Vector2(48, 176)
-trainer_data = ExtResource("17_6ysuj")
+defeated_flag = "test_defeated"
 movement_type = 3
 initial_direction = 3
 awareness_enabled = true
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_6ysuj")])
+pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_6ysuj"), SubResource("Resource_4hhom")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
