@@ -35,18 +35,8 @@ enum BattleType {
 ## Configura cada Pokemon desde el inspector con su nivel, movimientos, IVs, etc.
 @export var wild_pokemon: Array[Pokemon] = []
 
-## Modo de batalla (SINGLE, DOUBLE, TRIPLE)
-@export_enum("SINGLE", "DOUBLE", "TRIPLE") var battle_mode: int = 0  # SINGLE por defecto
-
-@export_group("Messages")
-
-## Mensaje de introducción antes del combate (opcional)
-## Si está vacío, no se muestra mensaje
-## Para TRAINER, usa el intro_text del TrainerData si este está vacío
-@export_multiline var intro_message: String = ""
-
-## Mostrar mensaje de inicio incluso si está vacío (usar mensaje del TrainerData)
-@export var use_trainer_intro: bool = true
+## Modo de batalla (usa el mismo enum que BattleRules)
+@export_enum("NONE", "SINGLE", "DOUBLE", "TRIPLE") var battle_mode: int = 1  # SINGLE por defecto (índice 1)
 
 @export_group("Visual")
 
@@ -82,9 +72,9 @@ func execute(context: Node) -> void:
 		context.continue_execution()
 		return
 	
-	# Mostrar mensaje de introducción si está configurado
-	if not intro_message.is_empty() or (use_trainer_intro and battle_type == BattleType.TRAINER):
-		await _show_intro_message()
+	# Mostrar mensaje intro si es combate contra entrenador
+	if battle_type == BattleType.TRAINER:
+		await _show_trainer_intro_message()
 	
 	# Crear participantes según el tipo de batalla
 	var enemy_participant: BattleParticipant = null
@@ -107,23 +97,13 @@ func execute(context: Node) -> void:
 	# Crear participante del jugador
 	var player_participant = player_battler.to_battle_participant()
 	
-	# Determinar modo de batalla
-	var mode: BattleRules.BattleModes = BattleRules.BattleModes.SINGLE
-	match battle_mode:
-		0:
-			mode = BattleRules.BattleModes.SINGLE
-		1:
-			mode = BattleRules.BattleModes.DOUBLE
-		2:
-			mode = BattleRules.BattleModes.TRIPLE
-	
 	# Determinar tipo de batalla para las reglas
 	var type: BattleRules.BattleTypes = BattleRules.BattleTypes.WILD
 	if battle_type == BattleType.TRAINER:
 		type = BattleRules.BattleTypes.TRAINER
 	
-	# Crear reglas de batalla
-	var rules = BattleRules.new(type, mode)
+	# Crear reglas de batalla (battle_mode ya está en el formato correcto)
+	var rules = BattleRules.new(type, battle_mode)
 	
 	# Preparar array de participantes
 	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]
@@ -148,6 +128,9 @@ func execute(context: Node) -> void:
 		# Intentar marcar el Trainer NPC como derrotado (si existe)
 		# Esto también guardará el defeated_flag del Trainer automáticamente
 		_mark_trainer_as_defeated(context)
+	
+	# Resetear flags del Trainer (si existe) para permitir nuevas detecciones
+	_reset_trainer_flags(context)
 	
 	# Continuar con el siguiente comando
 	context.continue_execution()
@@ -191,17 +174,16 @@ func _get_player_battler(context: Node) -> Battler:
 	return null
 
 
-## Muestra el mensaje de introducción
-func _show_intro_message() -> void:
-	var message_text = intro_message
+## Muestra el mensaje de introducción del TrainerData
+func _show_trainer_intro_message() -> void:
+	if not trainer_data:
+		return
 	
-	# Si no hay mensaje configurado pero se debe usar el del trainer
-	if message_text.is_empty() and use_trainer_intro and battle_type == BattleType.TRAINER:
-		if trainer_data:
-			message_text = trainer_data.get_intro_message()
+	# Inicializar TrainerData para obtener el mensaje
+	trainer_data.initialize()
+	var intro_text = trainer_data.get_intro_message()
 	
-	# Si aún está vacío, no mostrar nada
-	if message_text.is_empty():
+	if intro_text.is_empty():
 		return
 	
 	var config = {
@@ -211,7 +193,7 @@ func _show_intro_message() -> void:
 		"showIconAtEnd": false
 	}
 	
-	SignalManager.message_requested.emit(message_text, config)
+	SignalManager.message_requested.emit(intro_text, config)
 	await SignalManager.message_finished
 
 
@@ -294,13 +276,23 @@ func _mark_trainer_as_defeated(context: Node) -> void:
 	if trainer and trainer.battler:
 		trainer.battler.is_defeated = true
 		print("StartBattleCommand: Trainer '%s' marcado como derrotado" % trainer.name)
-		
-		# Desconectar las señales de detección si el Trainer no permite rematches
-		if not trainer.allow_rematch:
-			trainer._disconnect_detection_signals()
-			print("StartBattleCommand: Señales de detección desconectadas del Trainer '%s'" % trainer.name)
+		# Las señales se desconectarán automáticamente cuando cambie la página
+		# (la nueva página tendrá enable_trainer_detection = false)
 	elif trainer and not trainer.battler:
 		push_warning("StartBattleCommand: El Trainer '%s' no tiene un Battler hijo" % trainer.name)
+
+
+## Resetea los flags internos del Trainer para permitir nuevas detecciones
+func _reset_trainer_flags(context: Node) -> void:
+	# Detectar el Trainer desde current_page.source_event
+	if context.current_page != null:
+		var page = context.current_page
+		if page.source_event and page.source_event is Trainer:
+			var trainer = page.source_event as Trainer
+			# Resetear flags para permitir nuevas detecciones (rematches)
+			trainer._initiating_battle = false
+			trainer._player_detected = false
+			print("StartBattleCommand: Flags de Trainer '%s' reseteados" % trainer.name)
 
 
 ## Callback cuando la batalla termina

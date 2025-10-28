@@ -141,4 +141,28 @@ func teleport_to_tile(t: Vector2i) -> void:
 	else:
 		grid.occupy(t, actor)
 
+
+## Actualiza el registro de ocupación en el grid según el estado actual del actor
+## Se llama cuando cambia la página activa de un evento (y cambia su propiedad through)
+func refresh_occupancy() -> void:
+	if not actor is Event:
+		return  # Solo eventos tienen páginas con through
+	
+	if not grid or not is_instance_valid(grid):
+		return
+	
+	var tile = grid.world_to_tile(actor.global_position)
+	var is_through = actor.current_page and actor.current_page.through
+	var is_occupied = grid.has_actor(tile) and grid.occ[tile].get_ref() == actor
+	
+	# Si debe ser "through" pero está ocupando, liberar el tile
+	if is_through and is_occupied:
+		grid.vacate(tile, actor)
+		print("Occupancy: Evento '%s' ahora es through (liberando tile %s)" % [actor.name, tile])
+	
+	# Si NO debe ser "through" pero no está ocupando, ocupar el tile
+	elif not is_through and not is_occupied:
+		grid.occupy(tile, actor)
+		print("Occupancy: Evento '%s' ya no es through (ocupando tile %s)" % [actor.name, tile])
+
 # Ya no necesitamos escuchar warp_finished; el grid se actualiza vía active_grid_changed

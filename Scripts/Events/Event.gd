@@ -54,7 +54,7 @@ func setup_current_page() -> void:
 	current_page = pages[0] if pages.size() > 0 else null
 	update_sprite_from_current_page()
 
-## Actualiza el sprite del evento según la página activa
+## Actualiza el sprite y propiedades del evento según la página activa
 func update_sprite_from_current_page() -> void:
 	if not sprite:
 		return
@@ -71,6 +71,9 @@ func update_sprite_from_current_page() -> void:
 	
 	# Revisar si necesita ocultar el sprite por defecto
 	hide_default_sprite_if_needed()
+	
+	# Actualizar ocupación en el grid (through, blocks_player)
+	_refresh_occupancy()
 
 func trigger() -> void:
 	if current_page:
@@ -172,6 +175,14 @@ func previous_page() -> void:
 
 func _to_string() -> String:
 	return name
+
+
+## Actualiza la ocupación del evento en el grid cuando cambia de página
+func _refresh_occupancy() -> void:
+	# Buscar el nodo Occupancy (si existe)
+	var occupancy_node = get_node_or_null("Occupancy")
+	if occupancy_node and occupancy_node.has_method("refresh_occupancy"):
+		occupancy_node.refresh_occupancy()
 
 
 ## Reevalúa las condiciones y actualiza la página activa

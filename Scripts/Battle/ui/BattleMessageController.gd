@@ -31,7 +31,7 @@ func get_intro_messages(
 					"showIconAtEnd": true
 				})
 				messages.append({
-					"type": "wait",
+					"type": "display",
 					"text": "¡" + enemy + " envió a " + enemy_pokemon[0].get_name() + "!",
 					"wait_time": 1.2
 				})
@@ -56,7 +56,7 @@ func get_intro_messages(
 						"showIconAtEnd": true
 					})
 					messages.append({
-						"type": "wait",
+						"type": "display",
 						"text": "¡" + enemy_trainers[0] + " envió a " + enemy_pokemon[0].get_name() + " y " + enemy_pokemon[1].get_name() + "!",
 						"wait_time": 1.4
 					})
@@ -67,7 +67,7 @@ func get_intro_messages(
 						"showIconAtEnd": true
 					})
 					messages.append({
-						"type": "wait",
+						"type": "display",
 						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " enviaron a " + enemy_pokemon[0].get_name() + " y " + enemy_pokemon[1].get_name() + "!",
 						"wait_time": 1.4
 					})

@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=4 uid="uid://1owe4s00dp15"]
+[gd_scene load_steps=52 format=4 uid="uid://1owe4s00dp15"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_07o4y"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -179,6 +179,21 @@ metadata/_custom_type_script = "uid://qm4ouivf82wo"
 [sub_resource type="Resource" id="Resource_6ysuj"]
 script = ExtResource("4_lub8c")
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_emybb")])
+enable_trainer_detection = true
+required_flag = "test_defeated"
+required_flag_value = false
+character_spritesheet = ExtResource("17_fih2l")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_8j1dd"]
+script = ExtResource("6_fih2l")
+message = "Menuda paliza me has pegado."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_4hhom"]
+script = ExtResource("4_lub8c")
+commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_8j1dd")])
+required_flag = "test_defeated"
 character_spritesheet = ExtResource("17_fih2l")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -243,12 +258,11 @@ pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_fih2l")])
 
 [node name="Trainer" parent="OverworldGrid/Events" instance=ExtResource("16_3rt2b")]
 position = Vector2(48, 176)
-trainer_data = ExtResource("17_8j1dd")
 defeated_flag = "test_defeated"
 movement_type = 3
 initial_direction = 3
 awareness_enabled = true
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_6ysuj")])
+pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_6ysuj"), SubResource("Resource_4hhom")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

@@ -72,22 +72,27 @@ Trainer "Jano":
   defeated_flag = "route_1_jano_defeated"
   
   pages[0] (Página de batalla):
+    Trainer Detection:
+      enable_trainer_detection = true  // Activa detección automática
+      detection_range = 5
+    
     Conditions:
       required_flag = "route_1_jano_defeated"
       required_flag_value = false  // Solo si NO está derrotado
-      invert_conditions = false
     
-    trigger_type = ACTION
     commands = [
-      ShowMessageCommand { message = "¡Te reto a un combate!" },
       StartBattleEventCommand {
         battle_type = TRAINER,
-        trainer_data = preload("..."),
+        trainer_data = preload("res://Resources/Trainers/jano.tres")
         // defeated_flag vacío = usa el del Trainer automáticamente
+        // intro_text se toma automáticamente del TrainerData
       }
     ]
   
   pages[1] (Página post-derrota):
+    Trainer Detection:
+      enable_trainer_detection = false  // NO detecta (ya derrotado)
+    
     Conditions:
       required_flag = "route_1_jano_defeated"
       required_flag_value = true  // Solo si YA está derrotado
@@ -105,10 +110,14 @@ Trainer "Jano":
    → Event evalúa condiciones
    → pages[0] cumple condiciones (required_flag=false)
    → Página activa = pages[0] (batalla)
+   → Trainer._update_detection_state() activa detección (enable_trainer_detection=true)
 
-2. Jugador interactúa → Activa trigger ACTION → Inicia batalla
+2. Jugador entra en rango → Trainer detecta → Exclamación → Aproximación → trigger()
+   → Ejecuta comandos de pages[0]
+   → Muestra mensaje + StartBattleEventCommand inicia batalla
 
 3. Jugador gana → StartBattleEventCommand:
+   → battler.is_defeated = true
    → GameStateManager.set_event_flag("route_1_jano_defeated", true)
    → Emite señal: flag_changed("route_1_jano_defeated", true)
    → SignalManager reenvía: game_flag_changed(...)
@@ -119,9 +128,12 @@ Trainer "Jano":
    → pages[0] YA NO cumple (required_flag=false pero flag=true)
    → pages[1] SÍ cumple (required_flag=true y flag=true)
    → Página activa = pages[1] (post-derrota)
-   → Actualiza sprite automáticamente
+   → Trainer.refresh_active_page() llama _update_detection_state()
+   → Detección DESACTIVADA (enable_trainer_detection=false en pages[1])
 
 5. Siguiente interacción:
+   → NO detecta automáticamente (detección desactivada)
+   → Jugador interactúa manualmente (ACTION)
    → Muestra mensaje de derrota
    → NO inicia batalla
 ```

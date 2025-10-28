@@ -11,6 +11,14 @@ enum ExecutionMode { QUEUED, PARALLEL }
 @export var blocks_player: bool = true
 @export var through: bool = false
 
+@export_group("Trainer Detection")
+## Si true, activa la detección de trainer cuando esta página está activa
+## SOLO funciona si el Event es de tipo Trainer
+@export var enable_trainer_detection: bool = false
+
+## Rango de detección en tiles (solo si enable_trainer_detection = true)
+@export_range(1, 10) var detection_range: int = 5
+
 @export_group("Conditions")
 ## Nombre del flag global requerido para activar esta página
 ## Ejemplo: "route_1_trainer_defeated"
@@ -111,3 +119,17 @@ func _compare_values(a: int, b: int, operator: int) -> bool:
 			return a <= b
 		_:
 			return false
+
+
+## Busca el primer comando de un tipo específico en esta página
+## Retorna el comando o null si no se encuentra
+func find_command_of_type(command_type) -> EventCommand:
+	for command in commands:
+		if command and is_instance_of(command, command_type):
+			return command
+	return null
+
+
+## Busca el primer StartBattleEventCommand en esta página
+func get_battle_command() -> StartBattleEventCommand:
+	return find_command_of_type(StartBattleEventCommand) as StartBattleEventCommand

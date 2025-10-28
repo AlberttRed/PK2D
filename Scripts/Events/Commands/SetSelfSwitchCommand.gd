@@ -26,7 +26,7 @@ func execute(context: Node) -> void:
 ## Obtiene el ID del evento que está ejecutando este comando
 func _get_current_event_id(context: Node) -> String:
 	# context es EventController, que tiene current_page con source_event
-	if context.has("current_page") and context.current_page != null:
+	if context.current_page != null:
 		var page = context.current_page
 		if page.source_event:
 			return page.source_event.name  # Usa el nombre del nodo como ID
@@ -38,4 +38,3 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return true
-

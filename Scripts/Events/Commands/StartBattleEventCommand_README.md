@@ -38,19 +38,16 @@ Battle Configuration:
   trainer_data = preload("res://Resources/Trainers/route_1_youngster_joey.tres")
   battle_mode = SINGLE
 
-Messages:
-  intro_message = ""  # Vacío para usar el del TrainerData
-  use_trainer_intro = true
-
 State Tracking:
   defeated_flag = "route_1_youngster_joey_defeated"
 ```
 
 **Flujo:**
-1. Muestra el `intro_text` del TrainerData
+1. Muestra automáticamente el `intro_text` del TrainerData
 2. Inicia combate usando el equipo del entrenador
 3. Al ganar el jugador, guarda `defeated_flag` en GameStateManager
-4. Continúa el evento
+4. Muestra el `defeat_text` del TrainerData
+5. Continúa el evento
 
 ### 3. Configurar Combate Salvaje
 
@@ -60,13 +57,11 @@ Battle Configuration:
   battle_type = WILD
   wild_pokemon = [preload("res://Resources/Pokemon/rattata_lv5.tres")]  # Pokemon runtime con nivel 5
   battle_mode = SINGLE
-
-Messages:
-  intro_message = "¡Un Rattata salvaje apareció!"
-  use_trainer_intro = false
 ```
 
-**Nota**: `wild_pokemon` usa `Pokemon` (runtime), no `PokemonData`. Cada Pokemon ya tiene su nivel, IVs, movimientos, etc. configurados desde el inspector.
+**Nota**: 
+- `wild_pokemon` usa `Pokemon` (runtime), no `PokemonData`. Cada Pokemon ya tiene su nivel, IVs, movimientos, etc. configurados desde el inspector.
+- Para combates WILD no se muestra mensaje intro automáticamente (debes añadir un ShowMessageCommand antes si lo necesitas)
 
 **Flujo:**
 1. Muestra el mensaje intro (si está configurado)
@@ -102,12 +97,7 @@ Messages:
 | `wild_pokemon` | Array[Pokemon] | Pokémon salvajes runtime con nivel incluido (solo WILD) |
 | `battle_mode` | int (enum) | Modo: SINGLE (0), DOUBLE (1), TRIPLE (2) |
 
-### Messages
-
-| Propiedad | Tipo | Descripción |
-|-----------|------|-------------|
-| `intro_message` | String | Mensaje antes del combate |
-| `use_trainer_intro` | bool | Usar intro_text del TrainerData si intro_message está vacío |
+**Nota sobre mensajes**: Para combates TRAINER, el mensaje intro se toma automáticamente del `intro_text` del TrainerData.
 
 ### Visual
 
@@ -136,8 +126,6 @@ EventPage:
       battle_type = TRAINER,
       trainer_data = preload("res://Resources/Trainers/rival_inicio.tres"),
       battle_mode = SINGLE,
-      intro_message = "",
-      use_trainer_intro = true,
       defeated_flag = "rival_inicio_defeated"
     },
     ShowMessageCommand {
@@ -154,11 +142,11 @@ EventPage:
   trigger_type = AUTORUN
   commands = [
     # (Aquí habría lógica de probabilidad con flags)
+    ShowMessageCommand { message = "¡Un Pokémon salvaje apareció!" },
     StartBattleEventCommand {
       battle_type = WILD,
       wild_pokemon = [preload("res://Resources/Pokemon/caterpie_lv4.tres")],  # Pokemon runtime Lv4
-      battle_mode = SINGLE,
-      intro_message = "¡Un Pokémon salvaje apareció!"
+      battle_mode = SINGLE
     }
   ]
 ```
@@ -174,7 +162,6 @@ EventPage:
       battle_type = TRAINER,
       trainer_data = preload("res://Resources/Trainers/CAZABICHOS JANO.tres"),
       battle_mode = SINGLE,
-      use_trainer_intro = true,
       defeated_flag = "route_1_jano_defeated"
     },
     ShowMessageCommand {
@@ -195,8 +182,7 @@ Trainer "Jano":
       StartBattleEventCommand {
         battle_type = TRAINER,
         trainer_data = preload("res://Resources/Trainers/CAZABICHOS JANO.tres"),
-        battle_mode = SINGLE,
-        use_trainer_intro = true
+        battle_mode = SINGLE
         # defeated_flag vacío = usa automáticamente el del Trainer ✅
       }
     ]
@@ -218,7 +204,6 @@ EventPage:
       battle_type = TRAINER,
       trainer_data = preload("res://Resources/Trainers/double_trainer.tres"),
       battle_mode = DOUBLE,
-      use_trainer_intro = true,
       defeated_flag = "route_5_double_trainer_defeated"
     }
   ]
@@ -330,8 +315,8 @@ Si alguna validación falla, el comando:
 **Solución**: Asegurar que todos los Pokemon estén asignados correctamente en el array
 
 ### ❌ El mensaje intro no se muestra
-**Causa**: `intro_message` está vacío y `use_trainer_intro = false`  
-**Solución**: Escribir un `intro_message` o activar `use_trainer_intro`
+**Causa**: El TrainerData no tiene `intro_text` configurado  
+**Solución**: Configurar `intro_text` en el TrainerData Resource
 
 ### ❌ El Trainer NPC sigue detectando después de vencerlo
 **Causa**: El Trainer no tiene `defeated_flag` configurado o el sistema no lo detectó  

@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var motion = $GridMotion
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var battler: Battler = $Battler
 
 var input_dir := Vector2.ZERO
 var holding := false
