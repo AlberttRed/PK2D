@@ -9,11 +9,25 @@ signal event_triggered(page)
 
 var current_page: Resource = null
 
-@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+var placeholder_sprite: AnimatedSprite2D
+var actor_animator: ActorAnimator
 
 func _ready() -> void:
+	print("Event '%s': _ready() iniciado" % name)
+	
+	# Obtener referencias a los nodos manualmente para controlar el orden
+	placeholder_sprite = $AnimatedSprite2D
+	actor_animator = $ActorAnimator
+	
+	print("Event '%s': actor_animator obtenido = %s" % [name, actor_animator])
+	
+	# Ocultar placeholder primero
+	hide_placeholder_sprite()
+	
+	# Ahora configurar la página actual (esto aplicará el sprite)
+	print("Event '%s': Llamando a setup_current_page()" % name)
 	setup_current_page()
-	hide_default_sprite_if_needed()
+	print("Event '%s': setup_current_page() completado" % name)
 	
 	# Conectar a señales de cambio de estado para reevaluación automática
 	_connect_to_state_signals()
@@ -25,9 +39,12 @@ func _ready() -> void:
 ## Configura current_page basado en current_page_index y pages
 ## Evalúa condiciones de todas las páginas para encontrar la activa
 func setup_current_page() -> void:
+	print("Event '%s': setup_current_page() - pages.size() = %d" % [name, pages.size()])
+	
 	if pages.size() == 0:
 		current_page = null
 		current_page_index = 0
+		print("Event '%s': No hay páginas, llamando update_sprite_from_current_page()" % name)
 		update_sprite_from_current_page()
 		return
 	
@@ -47,30 +64,41 @@ func setup_current_page() -> void:
 				print("Event '%s': Página activa cambiada a índice %d" % [name, i])
 			else:
 				current_page = page
+				update_sprite_from_current_page()  # También actualizar aunque no haya cambiado de página
 			return
 	
 	# Si ninguna página cumple las condiciones, usar la primera por defecto
 	current_page_index = 0
 	current_page = pages[0] if pages.size() > 0 else null
+	print("Event '%s': Usando página por defecto (índice 0), llamando update_sprite_from_current_page()" % name)
 	update_sprite_from_current_page()
 
 ## Actualiza el sprite y propiedades del evento según la página activa
 func update_sprite_from_current_page() -> void:
-	if not sprite:
+	if not actor_animator:
+		print("Event '%s': actor_animator es null" % name)
+		return
+	
+	if not actor_animator.sprite:
+		print("Event '%s': actor_animator.sprite es null" % name)
 		return
 	
 	if current_page:
 		# Usar el método get_sprite_frames() que soporta generación automática
 		var frames = current_page.get_sprite_frames()
 		if frames:
-			sprite.sprite_frames = frames
+			print("Event '%s': Aplicando frames al ActorAnimator" % name)
+			actor_animator.set_sprite_frames(frames)
+			actor_animator.set_sprite_offset(Vector2(0, 0))  # Aplicar offset de la página
+			actor_animator.show_sprite()
 		else:
-			sprite.sprite_frames = null
+			print("Event '%s': No hay frames en current_page" % name)
+			actor_animator.sprite.sprite_frames = null
+			actor_animator.hide_sprite()
 	else:
-		sprite.sprite_frames = null
-	
-	# Revisar si necesita ocultar el sprite por defecto
-	hide_default_sprite_if_needed()
+		print("Event '%s': current_page es null" % name)
+		actor_animator.sprite.sprite_frames = null
+		actor_animator.hide_sprite()
 	
 	# Actualizar ocupación en el grid (through, blocks_player)
 	_refresh_occupancy()
@@ -95,60 +123,20 @@ func on_player_touch() -> void:
 		print("Touched!")
 		trigger()
 
-## Oculta el sprite si está usando la imagen por defecto (solo visible en editor)
-func hide_default_sprite_if_needed() -> void:
-	if not sprite or not sprite.sprite_frames:
-		return
-	
-	# Verificar si está usando el sprite por defecto
-	var is_using_default_sprite = is_using_default_event_sprite()
-	
-	if is_using_default_sprite:
-		# Ocultar el sprite durante la ejecución del juego
-		sprite.visible = false
-		print("Event '%s': Sprite por defecto ocultado en ejecución" % name)
+## Oculta el sprite placeholder (solo se usa en el editor)
+func hide_placeholder_sprite() -> void:
+	if placeholder_sprite:
+		placeholder_sprite.visible = false
 
-## Verifica si el evento está usando el sprite por defecto
-func is_using_default_event_sprite() -> bool:
-	if not sprite or not sprite.sprite_frames:
-		return false
-	
-	# Obtener la ruta del sprite actual
-	var current_sprite_path = sprite.sprite_frames.resource_path
-	
-	# Verificar si coincide con el sprite por defecto
-	var default_sprite_path = "res://Sprites/Eventos/DefaultEventSprite.png"
-	
-	# También verificar por el nombre del recurso
-	if current_sprite_path.find("DefaultEventSprite") != -1:
-		return true
-	
-	# Verificar si la primera animación usa la textura por defecto
-	if sprite.sprite_frames.has_animation("default"):
-		var frame_count = sprite.sprite_frames.get_frame_count("default")
-		if frame_count > 0:
-			var frame_texture = sprite.sprite_frames.get_frame_texture("default", 0)
-			if frame_texture and frame_texture.resource_path == default_sprite_path:
-				return true
-	
-	return false
-
-## Permite mostrar temporalmente el sprite del evento (útil para eventos que cambian de apariencia)
+## Permite mostrar temporalmente el sprite del evento
 func show_sprite() -> void:
-	if sprite:
-		sprite.visible = true
+	if actor_animator:
+		actor_animator.show_sprite()
 
 ## Permite ocultar el sprite del evento
 func hide_sprite() -> void:
-	if sprite:
-		sprite.visible = false
-
-## Restablece la visibilidad del sprite según si es por defecto o no
-func reset_sprite_visibility() -> void:
-	if is_using_default_event_sprite():
-		sprite.visible = false
-	else:
-		sprite.visible = true
+	if actor_animator:
+		actor_animator.hide_sprite()
 
 ## Cambia a una página específica del evento
 func switch_to_page(page_index: int) -> void:

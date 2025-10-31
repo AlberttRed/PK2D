@@ -49,25 +49,52 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Se asigna cuando se duplica la página desde un Event
 var source_event: Event = null
 
-# Sistema de sprites: manual o automático
-@export var sprite_frames: SpriteFrames = null
+# Sistema de sprites
+@export_group("Sprite Configuration")
 
-@export_group("Auto-generate from Spritesheet")
-## Si se asigna, genera automáticamente SpriteFrames desde un spritesheet 4x4
-@export var character_spritesheet: Texture2D = null
-## Tamaño de cada frame en el spritesheet (ancho x alto en píxeles)
+## Textura del sprite (para spritesheets 4x4 de NPCs)
+@export var sprite_texture: Texture2D = null
+
+## Si está activado, genera automáticamente animaciones desde el spritesheet 4x4
+## Si está desactivado, la textura se usa como imagen simple estática
+@export var is_spritesheet: bool = false
+
+## Tamaño de cada frame en el spritesheet (solo si is_spritesheet = true)
 @export var frame_size := Vector2(32, 48)
+
+## SpriteFrames manual para casos personalizados (tiene prioridad sobre sprite_texture)
+@export var sprite_frames: SpriteFrames = null
 
 ## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
 func get_sprite_frames() -> SpriteFrames:
-	# Prioridad 1: Si hay spritesheet, generar automáticamente
-	if character_spritesheet:
-		return SpriteFramesGenerator.generate_from_4x4_spritesheet(character_spritesheet, frame_size)
-	# Prioridad 2: Usar el SpriteFrames manual
-	elif sprite_frames:
+	# Prioridad 1: Usar SpriteFrames manual si está asignado
+	if sprite_frames:
 		return sprite_frames
-	else:
+	
+	# Prioridad 2: Generar desde sprite_texture
+	if sprite_texture:
+		if is_spritesheet:
+			# Generar animaciones desde spritesheet 4x4
+			return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
+		else:
+			# Usar como imagen simple estática
+			return _generate_simple_sprite_frames(sprite_texture)
+	
+	# Sin sprite
+	return null
+
+## Genera un SpriteFrames simple con una sola animación "default" y un frame
+func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
+	if not texture:
 		return null
+	
+	var frames = SpriteFrames.new()
+	frames.add_animation("default")
+	frames.set_animation_loop("default", true)
+	frames.set_animation_speed("default", 5.0)
+	frames.add_frame("default", texture)
+	
+	return frames
 
 
 ## Evalúa si las condiciones de esta página se cumplen

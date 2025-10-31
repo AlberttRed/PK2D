@@ -66,8 +66,8 @@ var _path_directions_vector2: Array[Vector2] = []
 var _look_pattern_index: int = 0
 
 ## Componentes del NPC
-@onready var motion: GridMotion = $GridMotion
-@onready var animator = $ActorAnimator  # ActorAnimator (sin tipo explícito por compatibilidad del linter)
+var motion: GridMotion
+var animator: ActorAnimator  # Heredado de Event
 
 ## Estado interno para movimiento
 var movement_enabled: bool = true
@@ -82,15 +82,11 @@ var _random_turning_timer: Timer
 var _look_pattern_timer: Timer
 
 func _ready() -> void:
-	# El NPC usa ActorAnimator en lugar del sprite directo de Event
-	# Ocultar el sprite del Event si existe para evitar duplicados
-	if has_node("AnimatedSprite2D"):
-		$AnimatedSprite2D.visible = false
-	
 	super._ready()
 	
-	# Ocultar el sprite por defecto del Event base si está usando DefaultNPCSprite
-	_hide_default_npc_sprite_if_needed()
+	# Obtener referencias a los componentes (después de super._ready())
+	motion = $GridMotion
+	animator = actor_animator  # Usar el ActorAnimator heredado de Event
 	
 	# Configurar dirección inicial y velocidad
 	if motion:
@@ -164,6 +160,7 @@ func _update_animator_from_current_page() -> void:
 		var frames = current_page.get_sprite_frames()
 		if frames:
 			animator.set_sprite_frames(frames)
+			animator.set_sprite_offset(Vector2(0, -8))  # Aplicar offset de la página
 			animator.show_sprite()
 			
 			# Configurar la dirección inicial después de asignar los frames
@@ -552,41 +549,5 @@ func _on_event_finished(_event: Event) -> void:
 		
 		_resume_movement()
 
-## Oculta el sprite por defecto si el NPC está usando DefaultNPCSprite (solo visible en editor)
-func _hide_default_npc_sprite_if_needed() -> void:
-	# El NPC usa ActorAnimator, así que verificamos si el sprite del Event base está visible
-	if not sprite or not sprite.sprite_frames:
-		return
-	
-	# Verificar si está usando el sprite por defecto de NPC
-	var is_using_default = _is_using_default_npc_sprite()
-	
-	if is_using_default:
-		# Ocultar el sprite durante la ejecución del juego
-		sprite.visible = false
-		print("NPC '%s': DefaultNPCSprite ocultado en ejecución (usando ActorAnimator)" % name)
-
-## Verifica si el NPC está usando el sprite por defecto
-func _is_using_default_npc_sprite() -> bool:
-	if not sprite or not sprite.sprite_frames:
-		return false
-	
-	# Obtener la ruta del sprite actual
-	var current_sprite_path = sprite.sprite_frames.resource_path
-	
-	# Verificar si coincide con el sprite por defecto de NPC
-	var default_sprite_path = "res://Sprites/Eventos/DefaultNPCSprite.png"
-	
-	# Verificar por el nombre del recurso
-	if current_sprite_path.find("DefaultNPCSprite") != -1:
-		return true
-	
-	# Verificar si la primera animación usa la textura por defecto
-	if sprite.sprite_frames.has_animation("default"):
-		var frame_count = sprite.sprite_frames.get_frame_count("default")
-		if frame_count > 0:
-			var frame_texture = sprite.sprite_frames.get_frame_texture("default", 0)
-			if frame_texture and frame_texture.resource_path == default_sprite_path:
-				return true
-	
-	return false
+# Las funciones de ocultar sprites por defecto ya no son necesarias
+# Event.gd maneja el placeholder automáticamente

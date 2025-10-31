@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://da2qg21ij71cs"]
+[gd_scene load_steps=6 format=3 uid="uid://da2qg21ij71cs"]
 
 [ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="1_s1pap"]
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_x7w3d"]
+[ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="4_animator"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x7w3d"]
 animations = [{
@@ -20,6 +21,12 @@ script = ExtResource("1_s1pap")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_x7w3d")
+
+[node name="ActorAnimator" type="Node2D" parent="."]
+script = ExtResource("4_animator")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="ActorAnimator"]
+offset = Vector2(0, -8)
 
 [node name="Occupancy" type="Node" parent="."]
 script = ExtResource("3_x7w3d")
