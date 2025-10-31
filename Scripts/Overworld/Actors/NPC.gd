@@ -384,9 +384,12 @@ func _try_execute_next_path_action() -> void:
 	var dir_enum = path_directions[path_index]
 	var direction = _path_directions_vector2[path_index]
 	
-	# Verificar si es un comando LOOK (solo girar) o movimiento real
-	if DirectionEnum.is_movement(dir_enum):
-
+	# Verificar el tipo de comando
+	var is_movement = DirectionEnum.is_movement(dir_enum)
+	# Verificar si es wait (usando números directamente como workaround)
+	var is_wait = (dir_enum >= 8)  # WAIT_025=8, WAIT_050=9, WAIT_100=10
+	
+	if is_movement:
 		var from = motion.current_tile()
 		var to = from + Vector2i(direction)
 		var can_step = motion.grid.can_step_to(motion.actor, from, to)
@@ -402,6 +405,20 @@ func _try_execute_next_path_action() -> void:
 		else:
 			await get_tree().create_timer(0.5).timeout
 
+	elif is_wait:
+		# Comando WAIT: esperar sin moverse ni cambiar dirección
+		# Obtener duración según el tipo de wait (usando números directamente)
+		var wait_duration = 0.0
+		match dir_enum:
+			8:  # WAIT_025
+				wait_duration = 0.25
+			9:  # WAIT_050
+				wait_duration = 0.50
+			10: # WAIT_100
+				wait_duration = 1.00
+		path_index = (path_index + 1) % _path_directions_vector2.size()
+		await get_tree().create_timer(wait_duration).timeout
+		
 	else:
 		# Comando LOOK: solo girar sin moverse
 		motion.face(direction)

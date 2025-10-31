@@ -18,7 +18,10 @@ enum Type {
 	LOOK_UP,     ## Solo mirar arriba (sin moverse)
 	LOOK_DOWN,   ## Solo mirar abajo (sin moverse)
 	LOOK_LEFT,   ## Solo mirar izquierda (sin moverse)
-	LOOK_RIGHT   ## Solo mirar derecha (sin moverse)
+	LOOK_RIGHT,  ## Solo mirar derecha (sin moverse)
+	WAIT_025,    ## Espera de 0.25 segundos
+	WAIT_050,    ## Espera de 0.5 segundos
+	WAIT_100     ## Espera de 1.0 segundo
 }
 
 ## Convierte el enum a Vector2
@@ -39,10 +42,30 @@ static func is_movement(direction: int) -> bool:
 	match direction:
 		Type.UP, Type.DOWN, Type.LEFT, Type.RIGHT:
 			return true
-		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT:
+		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT, Type.WAIT_025, Type.WAIT_050, Type.WAIT_100:
 			return false
 		_:
 			return false
+
+## Verifica si es un comando de espera
+static func is_wait(direction: int) -> bool:
+	match direction:
+		Type.WAIT_025, Type.WAIT_050, Type.WAIT_100:
+			return true
+		_:
+			return false
+
+## Obtiene la duración del wait en segundos
+static func get_wait_duration(direction: int) -> float:
+	match direction:
+		Type.WAIT_025:
+			return 0.25
+		Type.WAIT_050:
+			return 0.50
+		Type.WAIT_100:
+			return 1.00
+		_:
+			return 0.0
 
 ## Convierte un array de enum a array de Vector2
 static func array_to_vector2(directions: Array[int]) -> Array[Vector2]:

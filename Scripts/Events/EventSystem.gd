@@ -30,6 +30,11 @@ func _on_event_requested(event: Event, _controller: EventController) -> void:
 	if not event or not event.current_page:
 		return
 	
+	# Verificar si este mismo evento ya está en ejecución
+	if _is_event_running(event):
+		print("EventSystem: Evento '%s' ya está en ejecución - ignorando solicitud duplicada" % event.name)
+		return
+	
 	# Copiar la EventPage para desacoplarla del nodo/escena original
 	var page_copy := event.current_page.duplicate(true) as EventPage
 	if not page_copy:
@@ -101,3 +106,19 @@ func block_player_control() -> void:
 
 func unblock_player_control() -> void:
 	SignalManager.player_control_unblocked.emit()
+
+## Verifica si un evento específico ya está en ejecución
+func _is_event_running(event: Event) -> bool:
+	# Verificar en el controlador principal
+	if controller and controller.current_page and controller.current_page.source_event == event:
+		return true
+	
+	# Verificar en la cola de eventos
+	if page_queue.any(func(page): return page.source_event == event):
+		return true
+	
+	# Verificar en los controladores paralelos
+	if parallel_controllers.any(func(ctrl): return is_instance_valid(ctrl) and ctrl.current_page and ctrl.current_page.source_event == event):
+		return true
+	
+	return false

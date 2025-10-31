@@ -1,0 +1,166 @@
+extends EventCommand
+class_name MoveNPCCommand
+
+## Comando para mover un NPC (o el Player) mediante instrucciones predefinidas
+## 
+## Este comando ejecuta desplazamientos paso a paso utilizando GridMotion,
+## similar al path movement de los NPCs.
+
+## Nombre o identificador del NPC a mover (o "Player" para el jugador)
+@export var target_name: String = ""
+
+## Lista de direcciones a seguir (usa el enum DirectionEnum.Type)
+@export var path: Array[DirectionEnum.Type] = []
+
+## Si es true, espera a que termine el movimiento antes de continuar
+@export var wait_until_finished: bool = true
+
+func execute(context: Node) -> void:
+	print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
+	
+	# Verificar que se especificó el nombre del objetivo
+	if target_name.is_empty():
+		push_error("MoveNPCCommand: No se especificó target_name")
+		context.continue_execution()
+		return
+	
+	# Buscar el actor (NPC o Player)
+	var actor = _find_actor(context, target_name)
+	if not actor:
+		push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
+		context.continue_execution()
+		return
+	
+	# Verificar que tiene GridMotion
+	var motion: GridMotion = actor.get_node_or_null("GridMotion")
+	if not motion:
+		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % target_name)
+		context.continue_execution()
+		return
+	
+	# Verificar que el path no esté vacío
+	if path.is_empty():
+		push_warning("MoveNPCCommand: El path está vacío")
+		context.continue_execution()
+		return
+	
+	print("MoveNPCCommand: Ejecutando path con %d direcciones" % path.size())
+	
+	# Ejecutar el movimiento
+	if wait_until_finished:
+		# Marcar como running y esperar a que termine todo el path antes de continuar
+		set_state(CommandState.RUNNING)
+		await _execute_path(motion)
+		set_state(CommandState.IDLE)
+		context.continue_execution()
+	else:
+		# No espera: ejecuta en background pero marca como running
+		# El EventController esperará a que termine cuando finalice la página
+		set_state(CommandState.RUNNING)
+		_execute_path_background(motion)
+		context.continue_execution()
+
+## Busca un actor (NPC o Player) por nombre en la escena
+func _find_actor(context: Node, name: String) -> Node2D:
+	# Si es "Player", buscar específicamente en el grupo Player
+	if name == "Player" or name.to_lower() == "player":
+		return context.get_tree().get_first_node_in_group("Player")
+	
+	# Buscar en el escenario actual (por nombre exacto)
+	var actor = context.get_tree().get_first_node_in_group(name)
+	
+	# Si no se encuentra en grupos, buscar recursivamente por nombre exacto
+	if not actor:
+		var root = context.get_tree().root
+		actor = _find_node_by_name_recursive(root, name)
+	
+	return actor
+
+## Búsqueda recursiva de nodo por nombre
+func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
+	if node.name == name and node is Node2D:
+		return node as Node2D
+	
+	for child in node.get_children():
+		var result = _find_node_by_name_recursive(child, name)
+		if result:
+			return result
+	
+	return null
+
+## Ejecuta el path paso a paso (función principal)
+func _execute_path(motion: GridMotion) -> void:
+	for dir_enum in path:
+		# Determinar el tipo de comando primero
+		var is_movement = DirectionEnum.is_movement(dir_enum)
+		# Verificar si es wait (usando números directamente como workaround)
+		var is_wait = (dir_enum >= 8)  # WAIT_025=8, WAIT_050=9, WAIT_100=10
+		
+		if is_movement:
+			# Movimiento normal: primero orientar, luego ejecutar paso
+			# Esto evita el "first step" cuando cambia de dirección
+			var direction = DirectionEnum.to_vector2(dir_enum)
+			motion.face(direction)
+			
+			# Verificar si puede moverse (similar al NPC path movement)
+			var from = motion.current_tile()
+			var to = from + Vector2i(direction)
+			var can_step = motion.grid.can_step_to(motion.actor, from, to)
+			
+			if can_step:
+				# Ejecutar paso
+				motion.try_step(direction)
+				
+				# Esperar a que termine el paso
+				await motion.step_finished
+			else:
+				# No puede moverse, esperar un momento antes de continuar
+				await motion.get_tree().create_timer(0.5).timeout
+		elif is_wait:
+			# Comando WAIT: esperar un tiempo determinado
+			# Obtener duración según el tipo de wait (usando números directamente)
+			var wait_duration = 0.0
+			match dir_enum:
+				8:  # WAIT_025
+					wait_duration = 0.25
+				9:  # WAIT_050
+					wait_duration = 0.50
+				10: # WAIT_100
+					wait_duration = 1.00
+			print("MoveNPCCommand: Esperando %s segundos" % wait_duration)
+			await motion.get_tree().create_timer(wait_duration).timeout
+		else:
+			# Comando LOOK: solo girar sin moverse
+			# Convertir el enum LOOK a Vector2 para la dirección
+			var direction = DirectionEnum.to_vector2(dir_enum)
+			print("MoveNPCCommand: Mirando hacia %s" % direction)
+			motion.face(direction)
+			
+			# Actualizar la animación del actor si tiene animator (NPC) o sprite (Player)
+			var actor_node = motion.actor
+			if actor_node.has_node("ActorAnimator"):
+				var animator = actor_node.get_node("ActorAnimator")
+				animator.idle(direction)
+			elif actor_node.has_node("AnimatedSprite2D"):
+				# Para el Player u otros actores sin ActorAnimator
+				# La animación se actualiza automáticamente en su lógica interna
+				pass
+			
+			# Esperar un breve delay para que se vea el giro
+			await motion.get_tree().create_timer(0.5).timeout
+	
+	print("MoveNPCCommand: Path completado")
+	set_state(CommandState.IDLE)
+
+## Ejecuta el path en background (sin bloquear el EventController)
+func _execute_path_background(motion: GridMotion) -> void:
+	# Esta función ejecuta el path de forma asíncrona
+	# El estado se marca como IDLE cuando termine automáticamente
+	_execute_path(motion)
+
+func is_async() -> bool:
+	return wait_until_finished
+
+func is_safe_for_parallel() -> bool:
+	return false
+
