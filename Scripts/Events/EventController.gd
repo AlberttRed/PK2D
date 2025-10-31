@@ -107,6 +107,10 @@ func finish_page() -> void:
 	
 	var finished := current_page
 	
+	# Comprobar si hay comandos todavía ejecutándose
+	if _has_commands_still_running():
+		await _wait_for_commands_to_complete()
+	
 	# Desbloquear control del jugador solo si fue bloqueado por la página (modo en cola)
 	if blocked_by_page:
 		SignalManager.player_control_unblocked.emit()
@@ -129,6 +133,18 @@ func block_player_control() -> void:
 
 func unblock_player_control() -> void:
 	SignalManager.player_control_unblocked.emit()
+
+## Comprueba si hay comandos todavía ejecutándose
+func _has_commands_still_running() -> bool:
+	for cmd in command_queue:
+		if cmd and cmd.has_method("is_running") and cmd.is_running():
+			return true
+	return false
+
+## Espera a que todos los comandos terminen su ejecución
+func _wait_for_commands_to_complete() -> void:
+	while _has_commands_still_running():
+		await get_tree().process_frame
 
 func _process(_delta: float) -> void:
 	if current_state != State.RUNNING or not is_parallel:

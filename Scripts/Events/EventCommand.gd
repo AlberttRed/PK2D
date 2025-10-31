@@ -5,6 +5,10 @@ class_name EventCommand
 ## Indica si el comando es seguro para ejecutarse en paralelo
 @export var safe_for_parallel: bool = false
 
+## Estado del comando (IDLE o RUNNING)
+enum CommandState { IDLE, RUNNING }
+var state: CommandState = CommandState.IDLE
+
 ## Aquí irían los parámetros comunes, si los hubiera
 # Por ejemplo, se puede poner un diccionario de argumentos:
 # @export var args: Dictionary = {}
@@ -26,3 +30,15 @@ func execute(_context: Node) -> void:
 ## Indica si este comando puede ejecutarse en modo paralelo
 func is_safe_for_parallel() -> bool:
 	return safe_for_parallel
+
+## Obtiene el estado actual del comando
+func get_state() -> CommandState:
+	return state
+
+## Establece el estado del comando
+func set_state(new_state: CommandState) -> void:
+	state = new_state
+
+## Indica si el comando está actualmente ejecutándose
+func is_running() -> bool:
+	return state == CommandState.RUNNING
