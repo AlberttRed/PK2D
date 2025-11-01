@@ -25,18 +25,18 @@ func start_page(page: EventPage) -> bool:
 	if current_state != State.IDLE or page == null:
 		push_warning("EventController: No se puede iniciar página - ya hay una en curso o es nula")
 		return false
-	
+
 	if page.commands.is_empty():
 		push_warning("EventController: La página no tiene comandos para ejecutar")
 		return false
-	
+
 	current_state = State.RUNNING
 	current_page = page
 	command_queue.clear()
 	current_command_index = 0
 	waiting_async = false
 	is_parallel = page.execution_mode == EventPage.ExecutionMode.PARALLEL
-	
+
 	# Trabajar con copias de los comandos para desacoplar de recursos originales
 	for c in page.commands:
 		if not c:
@@ -52,14 +52,14 @@ func start_page(page: EventPage) -> bool:
 				push_error("EventController(Parallel): Comando '%s' no es válido en paralelo. Se ignora." % command_name)
 		else:
 			command_queue.append(cmd)
-	
+
 	# Bloqueo de jugador según la página
 	blocked_by_page = (not is_parallel) and page.blocks_player
 	if blocked_by_page:
 		SignalManager.player_control_blocked.emit()
 	else:
 		SignalManager.player_control_unblocked.emit()
-	
+
 	page_started.emit(page)
 	if is_parallel:
 		set_process(true)
@@ -71,17 +71,20 @@ func execute_next_command() -> void:
 	if current_command_index >= command_queue.size():
 		finish_page()
 		return
-	
+
 	var command = command_queue[current_command_index]
 	# Ejecutar comando con este controlador como contexto
 	if command and command.has_method("execute"):
 		command.execute(self)
-	
-	current_command_index += 1
-	
+
 	# Si el comando no es asíncrono, continuar inmediatamente
-	if not command or not command.has_method("is_async") or not command.is_async():
+	var is_async = command and command.has_method("is_async") and command.is_async()
+
+	if not is_async:
+		current_command_index += 1
 		call_deferred("execute_next_command")
+	# Para comandos asíncronos, NO incrementamos aquí
+	# El comando llamará a continue_execution() cuando termine
 
 func continue_execution() -> void:
 	if current_state != State.RUNNING:
@@ -90,6 +93,8 @@ func continue_execution() -> void:
 		waiting_async = false
 		current_command_index += 1
 	else:
+		# Incrementar el índice AHORA que el comando asíncrono terminó
+		current_command_index += 1
 		call_deferred("execute_next_command")
 
 func skip_current_command() -> void:
@@ -104,17 +109,17 @@ func skip_current_command() -> void:
 func finish_page() -> void:
 	if current_state != State.RUNNING:
 		return
-	
+
 	var finished := current_page
-	
+
 	# Comprobar si hay comandos todavía ejecutándose
 	if _has_commands_still_running():
 		await _wait_for_commands_to_complete()
-	
+
 	# Desbloquear control del jugador solo si fue bloqueado por la página (modo en cola)
 	if blocked_by_page:
 		SignalManager.player_control_unblocked.emit()
-	
+
 	# Limpiar estado
 	current_state = State.IDLE
 	current_page = null
@@ -124,7 +129,7 @@ func finish_page() -> void:
 	if is_parallel:
 		set_process(false)
 	is_parallel = false
-	
+
 	page_finished.emit(finished)
 
 ## Compatibilidad con comandos existentes

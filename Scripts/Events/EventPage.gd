@@ -49,56 +49,83 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Se asigna cuando se duplica la página desde un Event
 var source_event: Event = null
 
-# Sistema de sprites: manual o automático
-@export var sprite_frames: SpriteFrames = null
+# Sistema de sprites
+@export_group("Sprite Configuration")
 
-@export_group("Auto-generate from Spritesheet")
-## Si se asigna, genera automáticamente SpriteFrames desde un spritesheet 4x4
-@export var character_spritesheet: Texture2D = null
-## Tamaño de cada frame en el spritesheet (ancho x alto en píxeles)
+## Textura del sprite (para spritesheets 4x4 de NPCs)
+@export var sprite_texture: Texture2D = null
+
+## Si está activado, genera automáticamente animaciones desde el spritesheet 4x4
+## Si está desactivado, la textura se usa como imagen simple estática
+@export var is_spritesheet: bool = false
+
+## Tamaño de cada frame en el spritesheet (solo si is_spritesheet = true)
 @export var frame_size := Vector2(32, 48)
+
+## SpriteFrames manual para casos personalizados (tiene prioridad sobre sprite_texture)
+@export var sprite_frames: SpriteFrames = null
 
 ## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
 func get_sprite_frames() -> SpriteFrames:
-	# Prioridad 1: Si hay spritesheet, generar automáticamente
-	if character_spritesheet:
-		return SpriteFramesGenerator.generate_from_4x4_spritesheet(character_spritesheet, frame_size)
-	# Prioridad 2: Usar el SpriteFrames manual
-	elif sprite_frames:
+	# Prioridad 1: Usar SpriteFrames manual si está asignado
+	if sprite_frames:
 		return sprite_frames
-	else:
+
+	# Prioridad 2: Generar desde sprite_texture
+	if sprite_texture:
+		if is_spritesheet:
+			# Generar animaciones desde spritesheet 4x4
+			return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
+		else:
+			# Usar como imagen simple estática
+			return _generate_simple_sprite_frames(sprite_texture)
+
+	# Sin sprite
+	return null
+
+## Genera un SpriteFrames simple con una sola animación "default" y un frame
+func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
+	if not texture:
 		return null
+
+	var frames = SpriteFrames.new()
+	frames.add_animation("default")
+	frames.set_animation_loop("default", true)
+	frames.set_animation_speed("default", 5.0)
+	frames.add_frame("default", texture)
+
+	return frames
 
 
 ## Evalúa si las condiciones de esta página se cumplen
 ## Retorna true si la página puede activarse
 func evaluate_conditions(event_id: String = "") -> bool:
 	var result = true
-	
+
 	# Evaluar flag global
 	if not required_flag.is_empty():
 		var flag_value = GameStateManager.get_event_flag(required_flag)
 		if flag_value != required_flag_value:
 			result = false
-	
+
 	# Evaluar variable global (futuro)
 	if not required_variable.is_empty():
 		var var_value = GameStateManager.get_variable(required_variable)
 		var comparison_result = _compare_values(var_value, variable_value, variable_operator)
 		if not comparison_result:
 			result = false
-	
+
 	# Evaluar self-switch
 	if required_self_switch > 0:  # 0 = NONE
 		var switch_letter = ["A", "B", "C", "D"][required_self_switch - 1]
 		var switch_value = GameStateManager.get_self_switch(event_id, switch_letter)
 		if switch_value != required_self_switch_value:
 			result = false
-	
+
 	# Invertir resultado si se configuró
 	if invert_conditions:
 		result = not result
-	
+
 	return result
 
 

@@ -19,6 +19,10 @@ var speed_multiplier := 1.0
 ## Flag para indicar si el actor está corriendo (controlado externamente por Player o NPCs)
 var is_running := false
 
+## Flag para indicar que el movimiento está siendo controlado por un comando
+## Cuando es true, el input del jugador no debe modificar is_running
+var is_command_controlled := false
+
 var hold_time:float
 var moving := false
 var dir := Vector2.DOWN
@@ -38,7 +42,7 @@ func _ready() -> void:
 	map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
 	if not map_system:
 		push_error("GridMotion: MapSystem no encontrado - el sistema seamless no funcionará")
-	
+
 	# Suscribirse a cambios de grid activo publicados por MapSystem
 	if SignalManager:
 		SignalManager.active_grid_changed.connect(func(g): grid = g)
@@ -52,14 +56,14 @@ func get_step_duration() -> float:
 ##Gets de speed scale that will be used to move and animate the actor when moving
 func get_speed_multiplier(_d: Vector2, can_step: bool, is_initial_step: bool) -> float:
 	var multiplier := base_speed
-	
+
 	# Aplicar boost de run si está activado (controlado externamente por Player/NPC)
 	if (is_initial_step or is_running) and can_step and base_speed == 1.0:
 		multiplier = 2.0
-	
+
 	if not can_step:
 		multiplier = 0.5
-	
+
 	return multiplier
 
 
@@ -89,33 +93,33 @@ func _try_seamless_crossing(from: Vector2i, to: Vector2i) -> Dictionary:
 	var tile_data = grid.get_tile_data(to)
 	if not tile_data.is_empty():
 		return {"success": false, "from": from, "to": to}
-	
+
 	# El tile no existe en este grid, puede ser un mapa vecino
 	var from_world_pos = actor.global_position
 	var to_world_pos = grid.tile_to_world_center(to)
-	
+
 	# Consultar movimiento en mapas vecinos (MapSystem ya validado en _ready)
 	var movement_result = map_system.check_world_movement(actor, from_world_pos, to_world_pos)
 	if not movement_result["can_move"]:
 		return {"success": false, "from": from, "to": to}
-	
+
 	var target_grid: OverworldGrid = movement_result["target_grid"]
 	if not target_grid or target_grid == grid:
 		return {"success": false, "from": from, "to": to}
-	
+
 	# Cruce exitoso: actualizar al nuevo grid
 	var from_map_id = grid.get_parent().name
 	var to_map_id = target_grid.get_parent().name
-	
+
 	# Emitir señal para que otros sistemas reaccionen (WorldSystem, Occupancy, etc.)
 	# NOTA: WorldSystem emitirá active_grid_changed, que hará que Occupancy limpie
 	# automáticamente la ocupación del grid anterior
 	SignalManager.seamless_map_crossed.emit(from_map_id, to_map_id)
-	
+
 	# Actualizar al nuevo grid
 	# IMPORTANTE: La limpieza de ocupación la hace Occupancy vía active_grid_changed
 	grid = target_grid
-	
+
 	# Retornar coordenadas convertidas
 	return {
 		"success": true,
@@ -131,11 +135,11 @@ func stop_movement() -> void:
 		active_tween.kill()
 		active_tween = null
 		print("GridMotion: Tween cancelado")
-	
+
 	# Resetear estado de movimiento
 	moving = false
 	hold_time = 0.0
-	
+
 	print("GridMotion: Movimiento detenido")
 
 func face(d: Vector2) -> void:
@@ -156,13 +160,13 @@ func try_step(d: Vector2) -> bool:
 	if moving or d == Vector2.ZERO:
 		return false
 	face(d)
-	
+
 	var from := current_tile()
 	var to := from + Vector2i(d)
-	
+
 	# PRIMERO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
-	
+
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
 	if not can_step:
 		var seamless_result = _try_seamless_crossing(from, to)
@@ -170,7 +174,10 @@ func try_step(d: Vector2) -> bool:
 			can_step = true
 			from = seamless_result["from"]
 			to = seamless_result["to"]
-	
+		else:
+			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
+			_check_player_collision(to)
+
 	self.initial_step = requires_initial_step(d)
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
@@ -184,7 +191,7 @@ func try_step(d: Vector2) -> bool:
 	grid.reserve(from, to, actor)
 
 	var target := grid.tile_to_world_center(to)
-	
+
 	if to == from:
 		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
@@ -206,7 +213,7 @@ func try_step(d: Vector2) -> bool:
 	grid.commit(from, to, actor)
 	moving = false
 	self.initial_step = false
-	
+
 	step_finished.emit(to)
 
 	# Solo llamar on_enter_tile si realmente nos movimos a un tile diferente
@@ -214,9 +221,9 @@ func try_step(d: Vector2) -> bool:
 		grid.on_enter_tile(actor, to)
 		# Alternar la zancada únicamente cuando hubo desplazamiento real
 	stride_is_left = not stride_is_left
-		
+
 	return true
-	
+
 func event_at_offset(offset: int = 1) -> Event:
 	# offset = 1 → el tile de delante
 	# offset = 2 → dos tiles más adelante
@@ -235,11 +242,22 @@ func requires_initial_step(direction: Vector2) -> bool:
 func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 	if not grid:
 		return
-	
+
 	# Desregistrar del tile anterior
 	grid.unregister_event(from_tile, actor)
-	
+
 	# Registrar en el tile nuevo
 	grid.register_event(to_tile, actor)
-	
+
 	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
+
+## Verifica si el Player colisionó con un evento de tipo PLAYER_TOUCH
+func _check_player_collision(target_tile: Vector2i) -> void:
+	# Solo verificar para el Player
+	if not actor.is_in_group("Player"):
+		return
+
+	# Verificar si hay un evento en la tile destino
+	var event = grid.event_at(target_tile)
+	if event and event.has_method("on_player_collision"):
+		event.on_player_collision()

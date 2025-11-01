@@ -1,10 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://n1ky2xjh4xtv"]
+[gd_scene load_steps=6 format=3 uid="uid://n1ky2xjh4xtv"]
 
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://duy6kphc27h5t" path="res://Scripts/Overworld/Actors/NPC.gd" id="2_npc"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="3_motion"]
 [ext_resource type="Texture2D" uid="uid://cj083rwmvqsho" path="res://Sprites/Eventos/DefaultNPCSprite.png" id="4_default"]
-[ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="5_animator"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_npc_default"]
 animations = [{
@@ -39,9 +38,3 @@ sprite_frames = SubResource("SpriteFrames_npc_default")
 
 [node name="GridMotion" type="Node" parent="." index="2"]
 script = ExtResource("3_motion")
-
-[node name="ActorAnimator" type="Node2D" parent="." index="3"]
-script = ExtResource("5_animator")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="ActorAnimator" index="0"]
-offset = Vector2(0, -8)

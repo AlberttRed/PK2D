@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://dpxa6dptr3hll"]
+[gd_scene load_steps=27 format=4 uid="uid://dpxa6dptr3hll"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_jvw5v"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="6_ubsjn"]
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="7_1qekf"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_j2c21"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="9_87lpp"]
 [ext_resource type="Texture2D" uid="uid://bpar5wu503m72" path="res://Sprites/Overworlds/Characters/trchar001.png" id="9_gxega"]
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="11_ubsjn"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="12_1qekf"]
@@ -19,95 +20,66 @@
 script = ExtResource("6_ubsjn")
 mode = 0
 duration = 0.3
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_87lpp"]
 script = ExtResource("7_1qekf")
 target_scene = "MapaPuebloTest"
 target_spawn = "SpawnPorta"
-facing_direction = 1
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_tugbi"]
+script = ExtResource("9_87lpp")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
 
 [sub_resource type="Resource" id="Resource_ardic"]
 script = ExtResource("6_ubsjn")
-mode = 1
 duration = 0.3
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_gc3x0"]
 script = ExtResource("4_j2c21")
-execution_mode = 0
 trigger_type = 1
-commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_87lpp"), SubResource("Resource_ardic")])
-blocks_player = true
+commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_87lpp"), SubResource("Resource_tugbi"), SubResource("Resource_ardic")])
 through = true
-frame_size = Vector2(32, 48)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_cvpjy"]
 script = ExtResource("8_j2c21")
 message = "¿Qué quieres?"
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_r1fj7"]
 script = ExtResource("4_j2c21")
-execution_mode = 0
-trigger_type = 0
 commands = Array[ExtResource("5_gxega")]([SubResource("Resource_cvpjy")])
-blocks_player = true
-through = false
-character_spritesheet = ExtResource("12_1qekf")
-frame_size = Vector2(32, 48)
+sprite_texture = ExtResource("12_1qekf")
+is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_uwbp3"]
 script = ExtResource("8_j2c21")
 message = "Jeje hola."
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_8p3xo"]
 script = ExtResource("4_j2c21")
-execution_mode = 0
-trigger_type = 0
 commands = Array[ExtResource("5_gxega")]([SubResource("Resource_uwbp3")])
-blocks_player = true
-through = false
-character_spritesheet = ExtResource("12_jv80v")
-frame_size = Vector2(32, 48)
+sprite_texture = ExtResource("12_jv80v")
+is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_ubsjn"]
 script = ExtResource("8_j2c21")
 message = "¡Ya a soy un NPC!"
-wait_input = true
-close_at_end = true
-wait_time = 0.0
-show_icon_at_end = false
-safe_for_parallel = false
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_1qekf"]
 script = ExtResource("4_j2c21")
-execution_mode = 0
-trigger_type = 0
 commands = Array[ExtResource("5_gxega")]([SubResource("Resource_ubsjn")])
-blocks_player = true
-through = false
-character_spritesheet = ExtResource("9_gxega")
-frame_size = Vector2(32, 48)
+sprite_texture = ExtResource("9_gxega")
+is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [node name="MapHouseTest" type="Node2D"]

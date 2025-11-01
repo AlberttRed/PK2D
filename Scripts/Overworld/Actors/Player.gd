@@ -13,11 +13,11 @@ func _ready() -> void:
 		add_to_group("Player")
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
-	
+
 	# Conectar señales de control del jugador
 	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
 	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
-	
+
 	sprite.animation = "walk_down_right"
 
 func _process(_delta: float):
@@ -33,10 +33,11 @@ func _process(_delta: float):
 		input_dir = Vector2.LEFT
 	elif Input.is_action_pressed("move_right"):
 		input_dir = Vector2.RIGHT
-	
-	# Actualizar flag de correr en GridMotion
-	motion.is_running = Input.is_action_pressed("run")
-	
+
+	# Actualizar flag de correr en GridMotion (solo si no está siendo controlado por comando)
+	if not motion.is_command_controlled:
+		motion.is_running = Input.is_action_pressed("run")
+
 	if input_dir != Vector2.ZERO:
 		motion.hold_time += _delta
 	else:
@@ -78,7 +79,7 @@ func _on_step_finished(_tile: Vector2i) -> void:
 	and not Input.is_action_pressed("move_left") \
 	and not Input.is_action_pressed("move_right"):
 		stop()
-		
+
 func stop():
 	sprite.animation = "idle"
 	sprite.stop()
@@ -87,11 +88,11 @@ func stop():
 		Vector2.DOWN: sprite.frame = 0
 		Vector2.LEFT: sprite.frame = 1
 		Vector2.RIGHT: sprite.frame = 2
-	
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not movement_enabled:
 		return
-		
+
 	if event.is_action_pressed("interact") and not motion.moving:
 		var e: Event = motion.event_in_front()
 		if e:
@@ -112,12 +113,12 @@ func teleport_to_tile(tile: Vector2i) -> void:
 	if not map_system:
 		push_error("Player: No se encontró el MapSystem en la escena")
 		return
-	
+
 	var grid: OverworldGrid = map_system.get_active_grid()
 	if not grid:
 		push_error("Player: No se pudo obtener el OverworldGrid del MapSystem")
 		return
-	
+
 	# Usar el método de Occupancy si está disponible
 	if has_node("Occupancy"):
 		$Occupancy.teleport_to_tile(tile)
