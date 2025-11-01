@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6s1oa8tssbi1"]
+[gd_scene load_steps=8 format=3 uid="uid://c6s1oa8tssbi1"]
 
 [ext_resource type="Script" uid="uid://b4kjg3acee1ud" path="res://Scripts/UI/GUI.gd" id="1"]
 [ext_resource type="Script" uid="uid://6d5fhb0upic7" path="res://Scripts/UI/FadeLayer.gd" id="4"]
 [ext_resource type="Shader" uid="uid://b6y7jt7lw00l6" path="res://Shaders/transition.gdshader" id="5_33e3g"]
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_rtl2r"]
+[ext_resource type="PackedScene" uid="uid://chb8xvfn0k7ml" path="res://Scenes/UI/MessageBox/ChoiceBox.tscn" id="6_choice"]
 [ext_resource type="PackedScene" uid="uid://notumsye5rrv" path="res://Scenes/Battle/core/Battle.tscn" id="13_n4y00"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j64dw"]
@@ -17,10 +18,22 @@ script = ExtResource("1")
 [node name="MSG" parent="." instance=ExtResource("5_rtl2r")]
 visible = false
 
+[node name="ChoiceBox" parent="." instance=ExtResource("6_choice")]
+visible = false
+anchors_preset = 6
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -144.0
+offset_top = 70.0
+offset_right = 0.0
+offset_bottom = 98.0
+grow_vertical = 2
+
 [node name="BattleNew" parent="." instance=ExtResource("13_n4y00")]
 visible = false
 
 [node name="FadeLayer" type="ColorRect" parent="."]
+visible = false
 z_index = 10
 anchors_preset = -1
 anchor_right = 0.85

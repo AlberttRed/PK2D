@@ -9,6 +9,7 @@ var next = false
 
 #@onready var msg = MessageBox.new($MSG)
 @onready var msg:MessageBox = $MSG
+@onready var choice_box:ChoiceBox = $ChoiceBox
 #onready var options = get_node("OPTIONS")
 #@onready var menu = $MAIN_MENU
 #@onready var battle:BattleUI = $BATTLE
@@ -30,7 +31,7 @@ func _ready():
 	SignalManager.battle_requested.connect(_on_battle_requested)
 	SignalManager.battle_finished.connect(_on_battle_finished)
 	SignalManager.hide_overworld_messagebox.connect(_on_hide_overworld_messagebox)
-	
+
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
 #	$INTRO.connect("continue", GAME_DATA, "load_game")
@@ -88,7 +89,7 @@ func showMessageNoClose(text):
 		#msg.setText("")
 	#
 	#return selectedOption
-	
+
 #func showPartyMoveSelection(pokemon:PokemonInstance, learningMove:MoveInstance):
 	#var moveIndexSelected = await party.showMoveSelection(pokemon, learningMove)
 	#return moveIndexSelected
@@ -98,7 +99,7 @@ func showMsg(text : String, showIcon : bool = true, _waitTime : float = 0.0, wai
 	msg.show_msgBattle(text, showIcon, _waitTime, waitInput)
 	await msg.finished
 
-	
+
 func show_msg(text="", wait = null, obj = null, sig="", _choices_options = [], _close = true):
 	msg.connect("finished", Callable(self, "close_msg"))
 	choices_options = _choices_options
@@ -110,7 +111,7 @@ func show_msg(text="", wait = null, obj = null, sig="", _choices_options = [], _
 				close = false
 				msg.disconnect("finished", Callable(self, "close_msg"))
 				msg.connect("finished", Callable(self, "show_choices"))
-				
+
 	msg.show_msg(text,wait,obj,sig, close)#choices_options.size() == 0 or ((choices_options[0] == null or choices_options[0].size() == 0) and close == true))
 #
 #func show_choices():
@@ -131,19 +132,19 @@ func show_msg(text="", wait = null, obj = null, sig="", _choices_options = [], _
 #
 	#close_msg()
 	#
-	
-	
+
+
 func add_choice_cmd(c):
 	selected_choice.emit(c)
-	
+
 func close_msg():
 	if msg.is_connected("finished", Callable(self, "show_choices")):
 		msg.disconnect("finished", Callable(self, "show_choices"))
-		
+
 	if msg.is_connected("finished", Callable(self, "close_msg")):
 		msg.disconnect("finished", Callable(self, "close_msg"))
 	input.emit()
-	
+
 
 #func show_options():
 #	options.show()
@@ -220,26 +221,26 @@ func _on_messagebox_cancel() -> void:
 func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleRules) -> void:
 	# Bloquear control del jugador al iniciar batalla
 	SignalManager.player_control_blocked.emit()
-	
+
 	# Separar participantes en player y enemy
 	var player_participants: Array[BattleParticipant] = []
 	var enemy_participants: Array[BattleParticipant] = []
-	
+
 	for participant in participants:
 		if participant.is_player:
 			player_participants.append(participant)
 		else:
 			enemy_participants.append(participant)
-	
+
 	# Emitir señal de inicio de batalla
 	SignalManager.battle_started.emit()
-	
+
 	# Mostrar la escena de batalla
 	BattleNew.visible = true
-	
+
 	# Iniciar el combate (esto ejecutará la transición que maneja todo el fade)
 	await BattleNew.start_battle(player_participants, enemy_participants, rules)
-	
+
 
 
 ## Oculta el MessageBox del overworld (llamado después de los parpadeos de transición)
@@ -251,16 +252,16 @@ func _on_hide_overworld_messagebox() -> void:
 ## Maneja el evento de finalización de la batalla
 func _on_battle_finished(_winner_side: String) -> void:
 	print("GUI: Batalla terminada, iniciando transición de salida...")
-	
+
 	# Hacer fade in (a negro) para ocultar la batalla
 	await fade_layer.fade_in(0.3)
-	
+
 	# Ocultar la escena de batalla (BattleScene gestiona su propia UI internamente)
 	BattleNew.cleanup_battle()
-	
+
 	# Hacer fade out para revelar el overworld
 	await fade_layer.fade_out(0.3)
-	
+
 	# Desbloquear control del jugador
 	SignalManager.player_control_unblocked.emit()
 	print("GUI: Control del jugador desbloqueado")
@@ -270,6 +271,17 @@ func _on_battle_finished(_winner_side: String) -> void:
 func show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	# Pasar TODA la configuración al MessageBox usando show_custom
 	await msg.show_custom(text, config)
+
+## Muestra el ChoiceBox con las opciones especificadas y devuelve el índice seleccionado
+func show_choices(options: Array[String]) -> int:
+	if options.is_empty():
+		push_error("GUI.show_choices: Array de opciones vacío")
+		return -1
+
+	# Mostrar el ChoiceBox y esperar la selección
+	var selected_index = await choice_box.show_choices(options)
+
+	return selected_index
 
 #
 #func showParty():
@@ -288,7 +300,7 @@ func show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	#if closeAtEnd:
 		#choices.hideContainer()
 	#return selectedChoice
-	
+
 #func showPartyBattle():
 	#await GUI.fadeIn(3)
 	#GUI.battle.hide()
@@ -412,9 +424,9 @@ func _input(event: InputEvent):
 			#INPUT.ui_left.free_state()
 			#print("GUI left")
 			#left.emit()
-				
-				
-				
+
+
+
 #func start_battle(double, trainer1, trainer2, trainer3 = null, trainer4 = null):#wild_encounter(id, level):
 #	battle.show()
 #	battle.start_battle(double, trainer1, trainer2, trainer3, trainer4)
@@ -435,12 +447,12 @@ func _input(event: InputEvent):
 ##
 #func play_transition(animation : String):
 	#transition.play(animation)
-	#await transition.finished 
+	#await transition.finished
 	#
 #func fadeOut(speed:int=1.0):
 	#transition.animationPlayer.speed_scale = speed
 	#transition.play("Transitions/FadeToNormal")
-	#await transition.finished 
+	#await transition.finished
 	#transition.animationPlayer.speed_scale = 1.0
 	#fading = false
 	#fadedOut.emit()
@@ -449,16 +461,16 @@ func _input(event: InputEvent):
 	#fading = true
 	#transition.animationPlayer.speed_scale = speed #set_speed_scale
 	#transition.play("Transitions/FadeToBlack")
-	#await transition.finished 
+	#await transition.finished
 	#transition.animationPlayer.speed_scale = 1.0
 	#fadedIn.emit()
 	#
 #func initBattleTransition():
 	#GUI.transition.play("Transitions/Battle_WildTransition")
-	#await transition.finished 
+	#await transition.finished
 	#
 	##await GUI.battle.playAnimation("START_BATTLE_GRASS")
 	#
 #func resetTransitionScreen():
 	#GUI.transition.play("RESET")
-	#await transition.finished 
+	#await transition.finished
