@@ -94,28 +94,50 @@ El ChoiceBox usa el mismo estilo que el MessageBox:
 - Panel: HGSS_MessageBox_Style.tres
 - Cursor: Triángulo gris oscuro
 
-## Próximos Pasos (PBI 482)
+## ✅ Integración con EventSystem (COMPLETADA)
 
-Una vez confirmado que el ChoiceBox funciona correctamente, los siguientes pasos serían:
+### EventBranch Resource
+**Ubicación**: `Scripts/Resources/EventBranch.gd`
 
-1. **EventBranch Resource**
-   - Crear `Scripts/Resources/EventBranch.gd`
-   - Estructura: `label: String`, `commands: Array[EventCommand]`
+```gdscript
+class_name EventBranch
+extends Resource
 
-2. **ShowChoicesCommand**
-   - Crear `Scripts/Events/Commands/ShowChoicesCommand.gd`
-   - Propiedades: `choices: Array[String]`, `branches: Array[EventBranch]`
-   - Lógica: Mostrar ChoiceBox → Ejecutar branch correspondiente
+@export var label: String = ""                    # Texto de la opción
+@export var commands: Array[EventCommand] = []     # Comandos a ejecutar
+```
 
-3. **Integración con EventSystem**
-   - El EventController debe pausar el flujo
-   - Ejecutar solo los comandos del branch seleccionado
-   - Continuar con el flujo principal después
+### ShowChoicesCommand
+**Ubicación**: `Scripts/Events/Commands/ShowChoicesCommand.gd`
 
-4. **Características Opcionales**
-   - Guardar resultado en variable global
-   - Animación de apertura/cierre
-   - Soporte para diferentes posiciones del ChoiceBox
+Comando de evento que muestra opciones al jugador y ejecuta comandos según la elección.
+
+**Propiedades:**
+- `message: String` - Mensaje mostrado antes de las opciones
+- `branches: Array[EventBranch]` - Lista de opciones con sus comandos
+- `store_result_in: String` - (Opcional) Variable global donde guardar el resultado
+
+**Ejemplo de uso desde el inspector:**
+1. Añadir `ShowChoicesCommand` a la lista de comandos de un evento
+2. Configurar el mensaje: "¿Te gusta este juego?"
+3. Añadir branches:
+   - Branch 0: label="Sí", commands=[ShowMessageCommand("¡Genial!")]
+   - Branch 1: label="No", commands=[ShowMessageCommand("Oh vaya...")]
+
+**Flujo de ejecución:**
+1. Muestra el mensaje y espera que termine de escribirse
+2. Automáticamente muestra las opciones (sin input intermedio)
+3. El jugador navega (↑↓) y selecciona (Enter)
+4. Ejecuta los comandos del branch seleccionado
+5. Continúa con el siguiente comando del evento principal
+
+### Características Implementadas
+✅ Pausado automático del flujo del evento
+✅ Ejecución condicional de comandos según elección
+✅ Guardar resultado en variable global (opcional)
+✅ Compatible con cualquier tipo de evento
+✅ Soporte para 2-4 opciones (recomendado)
+✅ Validación de configuración con mensajes de error descriptivos
 
 ## Notas Técnicas
 
