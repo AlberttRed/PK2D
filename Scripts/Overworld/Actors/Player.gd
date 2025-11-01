@@ -13,7 +13,7 @@ func _ready() -> void:
 		add_to_group("Player")
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
-
+	$Shadow.visible = false
 	# Conectar señales de control del jugador
 	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
 	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
