@@ -1,0 +1,204 @@
+[gd_scene load_steps=35 format=3 uid="uid://gcn6vvnlesbu"]
+
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="1_4n3h8"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="2_wad02"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="3_8pe36"]
+[ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="4_b1yju"]
+[ext_resource type="Script" uid="uid://dt7lapm5n8qrt" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="5_i2pw1"]
+[ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="6_ukxnn"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="7_wi8af"]
+[ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="8_oxplx"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="9_b5th6"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="10_u8t44"]
+[ext_resource type="Texture2D" uid="uid://bxdcduvjp18mw" path="res://Sprites/Eventos/Doors/door2.png" id="11_pdse7"]
+
+[sub_resource type="Resource" id="Resource_emybb"]
+script = ExtResource("4_b1yju")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_wv2fv"]
+script = ExtResource("5_i2pw1")
+target_event_name = "Door"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_7vpoe"]
+script = ExtResource("6_ukxnn")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_x0mvh"]
+script = ExtResource("7_wi8af")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_ph5q8"]
+script = ExtResource("4_b1yju")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_yteb7"]
+script = ExtResource("8_oxplx")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_a22sq"]
+script = ExtResource("9_b5th6")
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_eglkp"]
+script = ExtResource("7_wi8af")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_oem2p"]
+script = ExtResource("10_u8t44")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_v7ptp"]
+script = ExtResource("8_oxplx")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_emybb"]
+atlas = ExtResource("11_pdse7")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hok4v"]
+atlas = ExtResource("11_pdse7")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hhom"]
+atlas = ExtResource("11_pdse7")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxcq6"]
+atlas = ExtResource("11_pdse7")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vaxet"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_g8i1c"]
+script = ExtResource("2_wad02")
+trigger_type = 2
+commands = Array[ExtResource("3_8pe36")]([SubResource("Resource_emybb"), SubResource("Resource_wv2fv"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_a22sq"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+required_flag = "indoor"
+required_flag_value = false
+sprite_frames = SubResource("SpriteFrames_vaxet")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n84s5"]
+script = ExtResource("4_b1yju")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_ecx1p"]
+script = ExtResource("7_wi8af")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_2uahs"]
+script = ExtResource("6_ukxnn")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_h1dnx"]
+script = ExtResource("10_u8t44")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_piq08"]
+script = ExtResource("4_b1yju")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oem2p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_p8snc"]
+script = ExtResource("2_wad02")
+trigger_type = 1
+commands = Array[ExtResource("3_8pe36")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+through = true
+required_flag = "indoor"
+sprite_frames = SubResource("SpriteFrames_oem2p")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[node name="Door" instance=ExtResource("1_4n3h8")]
+pages = Array[ExtResource("2_wad02")]([SubResource("Resource_g8i1c"), SubResource("Resource_p8snc")])

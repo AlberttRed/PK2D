@@ -93,6 +93,11 @@ func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
 
 ## Ejecuta el path paso a paso (función principal)
 func _execute_path(motion: GridMotion) -> void:
+	# Marcar que el movimiento está siendo controlado por comando
+	# Esto evita que el input del jugador modifique is_running
+	motion.is_command_controlled = true
+	motion.is_running = false
+
 	for dir_enum in path:
 		# Determinar el tipo de comando primero
 		var is_movement = DirectionEnum.is_movement(dir_enum)
@@ -151,6 +156,9 @@ func _execute_path(motion: GridMotion) -> void:
 
 			# Esperar un breve delay para que se vea el giro
 			await motion.get_tree().create_timer(0.5).timeout
+
+	# Restaurar el control normal (el Player volverá a controlar is_running con input)
+	motion.is_command_controlled = false
 
 	print("MoveNPCCommand: Path completado")
 
