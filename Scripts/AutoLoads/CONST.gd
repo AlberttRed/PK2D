@@ -19,14 +19,14 @@ const OPTION_BATTLE_ANIM_OFF=1
 const OPTION_BATTLE_TYPE_SHIFT=0
 const OPTION_BATTLE_TYPE_SET=1
 
-const FacingInput = { 
+const FacingInput = {
 	0: Vector2(-1, 0),
 	1: Vector2(1, 0),
 	2: Vector2(0, -1),
 	3: Vector2(0, 1)
  }
 
-const MoveInput = { 
+const MoveInput = {
 	"left": Vector2(-1, 0),
 	"right": Vector2(1, 0),
 	"up": Vector2(0, -1),
@@ -35,7 +35,7 @@ const MoveInput = {
 
 enum InputDirections { LEFT, RIGHT, UP, DOWN }
 
-const InputActions = { 
+const InputActions = {
 	0: "left",
 	1: "right",
 	2: "up",
@@ -55,7 +55,7 @@ const functions = {}
 
 const NaturesName = ["None", "Activa", "Afable", "Agitada", "Alegre", "Alocada", "Amable", "Audaz", "Cauta", "Dócil", "Firme", "Floja", "Fuerte", "Grosera", "Huraña", "Ingenua", "Mansa", "Miedosa", "Modesta", "Osada", "Pícara", "Plácida", "Rara", "Serena", "Seria", "Tímida"]
 #
-const Personality_Table = [ 
+const Personality_Table = [
 							[[[0, 5, 10, 15, 20, 25, 30],"Orgulloso de su fuerza."], [[1, 6, 11, 16, 21, 26, 31],"Le gusta revolverse."], [[2, 7, 12, 17, 22, 27],"A veces se enfada."], [[3, 8, 13, 18, 23, 28],"Le gusta luchar."], [[4, 9, 14, 19, 24, 29],"Tiene mal genio."]], # ATAQUE
 							[[[0, 5, 10, 15, 20, 25, 30],"Cuerpo resistente."], [[1, 6, 11, 16, 21, 26, 31],"Es buen fajador."], [[2, 7, 12, 17, 22, 27],"Muy persistente."], [[3, 8, 13, 18, 23, 28],"Muy resistente."], [[4, 9, 14, 19, 24, 29],"Muy perseverante."]], # DEFENSA
 							[[[0, 5, 10, 15, 20, 25, 30],"Extremadamente curioso."], [[1, 6, 11, 16, 21, 26, 31],"Le gusta hacer travesuras."], [[2, 7, 12, 17, 22, 27],"Muy astuto."], [[3, 8, 13, 18, 23, 28],"A menudo está en Babia."], [[4, 9, 14, 19, 24, 29],"Muy melindroso."]], # ATAQUE ESPECIAL
@@ -92,7 +92,7 @@ const OPPOSITE_DIRECTIONS = {
 enum MOVE_COMMANDS { LEFT, RIGHT, UP, DOWN, TURN_LEFT, TURN_RIGHT, TURN_UP, TURN_DOWN, WAIT025, WAIT050, WAIT1 }
 
 class EVENT:
-	
+
 	enum TYPE {
 		NPC,
 		EVENT
@@ -107,7 +107,7 @@ enum BATTLER_TYPES {
 
 enum STATUS {
 	NONE = -1,
-	OK, 
+	OK,
 	SLEEP,
 	POISON,
 	BURN,
@@ -122,34 +122,34 @@ class BATTLE:
 	const  HPCOLORGREEN = Color("#18c020")#Color(24,192,32)
 	const  HPCOLORYELLOW = Color("#f8b000")#Color(248,176,0)
 	const  HPCOLORRED = Color("#f85828")#Color(248,88,40)
-	
+
 	# Exp bar color
 	const EXPCOLORBASE = Color("#4890f8")#Color(72,144,248)
-	
+
 	const SINGLE_BALL_POS = Vector2(58, -96)
 	const BACK_BALL_POS = Vector2(116, -36)
 	const FRONT_SINGLE_BALL_POS = Vector2(126, 60)
 	#const DOUBLE2_BALL_POS = Vector2(90, -80)
-	
+
 	const SHADOW_SPRITE_POS = Vector2(0, 80) # Si la imatge és 190x190, s'hi suma 16
 	#	const FRONT_SINGLE_SPRITE_POS = Vector2(128, -16)
 	const FRONT_SINGLE_SPRITE_POS = Vector2(128, 30)#-32 per 190x190, -16 per 160x160     SI HA DE SUMAR EL DOBLE DEL VALOR BattlerEnemyY DE L ESSENTIALS
 	const FRONT_POKEMONA_SPRITE_POS = Vector2(176, -16)#-32 per 190x190, -16 per 160x160     SI HA DE SUMAR EL DOBLE DEL VALOR BattlerEnemyY DE L ESSENTIALS
 	const FRONT_POKEMONB_SPRITE_POS = Vector2(96, -32)#-48 per 190x190, -32 per 160x160     SI HA DE SUMAR EL DOBLE DEL VALOR BattlerEnemyY DE L ESSENTIALS
-	
+
 	const BACK_SINGLE_SPRITE_POS = Vector2(256, -16)   #SI HA DE SUMAR EL DOBLE DEL VALOR BattlerPlayerY DE L ESSENTIALS ??
 	const BACK_POKEMONA_SPRITE_POS = Vector2(208, -16)   #SI HA DE SUMAR EL DOBLE DEL VALOR BattlerPlayerY DE L ESSENTIALS ??
 	const BACK_POKEMONB_SPRITE_POS = Vector2(288, 0)   #SI HA DE SUMAR EL DOBLE DEL VALOR BattlerPlayerY DE L ESSENTIALS ??
 
-	
-	const BACK_SINGLE_TRAINER_POS = Vector2(262,-16) #Vector2(256,-16) 
-	const BACK_DOUBLE1_TRAINER_POS = Vector2(-144,-80) 
-	const BACK_DOUBLE2_TRAINER_POS = Vector2(224,-80) 
-	
-	const FRONT_SINGLE_TRAINER_POS = Vector2(122, 8)#Vector2(64,-58) 
+
+	const BACK_SINGLE_TRAINER_POS = Vector2(262,-16) #Vector2(256,-16)
+	const BACK_DOUBLE1_TRAINER_POS = Vector2(-144,-80)
+	const BACK_DOUBLE2_TRAINER_POS = Vector2(224,-80)
+
+	const FRONT_SINGLE_TRAINER_POS = Vector2(122, 8)#Vector2(64,-58)
 	const FRONT_DOUBLE1_TRAINER_POS = Vector2(38, -58)
 	const FRONT_DOUBLE2_TRAINER_POS = Vector2(84, -58)
-	
+
 	const PLAYER_BASE_INITIALPOSITION = Vector2(476,240)
 	const PLAYER_BASE_FINALPOSITION = Vector2(-128,240)
 	const ENEMY_BASE_INITIALPOSITION = Vector2(-252,112)
@@ -159,12 +159,12 @@ class BATTLE:
 	const SINGLE_PLAYERHPBAR_A_FINALPOSITION = Vector2(526, -3)
 	const SINGLE_ENEMYHPBAR_A_INITIALPOSITION = Vector2(-386, -45)
 	const SINGLE_ENEMYHPBAR_A_FINALPOSITION = Vector2(-144, -45)
-	
+
 	const SINGLE_PLAYERPARTY_INITIALPOSITION = Vector2(562, 230)
 	const SINGLE_ENEMYPARTY_INITIALPOSITION = Vector2(270, 105)
 	const SINGLE_PLAYERBASE_INITIALPOSITION = Vector2(-148, 240)
 	const SINGLE_ENEMYBASE_INITIALPOSITION = Vector2(257, 111)
-	
+
 	const SINGLE_BACK_SLOT = 0
 	const DOUBLE_BACK_SLOT_1 = 1
 	const DOUBLE_BACK_SLOT_2 = 2
@@ -184,8 +184,8 @@ enum BATTLE_SIDES {
 	PLAYER,
 	ENEMY
 }
-	
-	
+
+
 
 
 enum BATTLE_ACTIONS {
@@ -200,7 +200,7 @@ enum BATTLE_STAGES {
 	SELECT_ACTION,
 	DO_ACTION
 }
-	
+
 class BATTLE_BACKGROUNDS:
 
 	const FIELD = 0
@@ -219,16 +219,16 @@ class BATTLE_BACKGROUNDS:
 	const SNOW = 13
 	const UNDERWATER = 14
 	const WATER = 15
-	
+
 enum DAMAGE_CLASS {
-	
+
 	ESTADO = 1,
 	FISICO = 2,
-	ESPECIAL = 3	
-	
-	
+	ESPECIAL = 3
+
+
 }
-	
+
 #enum WEATHER {
 	#NONE,
 	#SOLEADO = 1,
@@ -261,7 +261,7 @@ enum DAMAGE_CLASS {
 #
 #}
 
-const BATTLE_STAGE_MULT_STATS = { 
+const BATTLE_STAGE_MULT_STATS = {
 	6 : 4.0,
 	5 : 3.5,
 	4 : 3.0,
@@ -302,7 +302,7 @@ const BATTLE_STAGE_MULT_CRITICAL = {
 }
 
 #class MOVE_EFFECTS:
-	
+
 class TYPES:
 	const NONE = 0
 	const NORMAL = 1
@@ -330,7 +330,7 @@ enum HEAL_TYPE {
 }
 
 enum MOVE_CATEGORIES {
-	DAMAGE, #Moviments que "únicament" provoquen mal Ex: Placaje, Golpe Karate, Pistola Agua etc. 
+	DAMAGE, #Moviments que "únicament" provoquen mal Ex: Placaje, Golpe Karate, Pistola Agua etc.
 	AILMENT, # Moviments que "únicament" canvien l'status del pokemon rival. Ex: Onda Trueno, Somnífero... Cal tenir en compte que aqui també inclou atacs que provoquen confusió, o atacs com drenadoras.
 	CHANGE_STATS, # Moviments que "únicament" fan pujar stats de l'user o baixar stats del rival Ex: Danza Espada, Gruñido, Malicioso... Cal tenir en compte que aquí també inclou atacs que afecten a l'evasió i precisió, com Ataque Arena.
 	HEAL, # Moviments que ´únicament" curen. Exemple: Batido, Síntesis, Recuperación
@@ -360,7 +360,7 @@ class MEDALS:
 	const PANTANO = "Pantano"
 	const VOLCAN = "Volcán"
 	const TIERRA = "Tierra"
-	
+
 enum GENEROS {
 	NON_SELECTED,
 	MACHO,
@@ -395,7 +395,7 @@ class NATURES:
 	const SERENA = 23
 	const SERIA = 24
 	const TIMIDA = 25
-	
+
 enum STATS {
 	HP = 0,
 	ATA = 1,
@@ -462,7 +462,7 @@ class BAG_POCKETS:
 	const MAIL = 6
 	const BATTLE_ITEMS = 7
 	const KEY_ITEMS = 8
-	
+
 enum ENCOUNTER_METHODS {
 	NONE,
 	LAND,
@@ -494,7 +494,7 @@ enum EXPERIENCE_GROUP {SLOW = 1, MEDIUM, FAST, MEDIUM_SLOW, ERRATIC, FLUCTUATING
 	#const MEDIUM_SLOW = 4
 	#const ERRATIC = 5
 	#const FLUCTUATING = 6
-	
+
 func ready():
 	# Initialization here
 	pass
