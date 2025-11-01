@@ -167,6 +167,69 @@ func _get_opposite_direction_flag(dir_flag: int) -> int:
 			return DirectionFlagsEnum.Values.LEFT
 	return DirectionFlagsEnum.Values.NONE
 
+# --- Sistema de Saltos (Ledges) - PBI 455 ---
+## Verifica si un tile es un ledge (acantilado) y devuelve su dirección
+## @param tile: Posición del tile a verificar
+## @return Dictionary con {"is_ledge": bool, "direction": Vector2}
+func get_ledge_info(tile: Vector2i) -> Dictionary:
+	var datas = get_tile_data(tile)
+	if datas.is_empty():
+		return {"is_ledge": false, "direction": Vector2.ZERO}
+
+	for d in datas:
+		if d.has_custom_data("ledge_direction"):
+			var ledge_dir = d.get_custom_data("ledge_direction")
+			if ledge_dir is String and not ledge_dir.is_empty():
+				var direction = _string_to_direction(ledge_dir)
+				return {"is_ledge": true, "direction": direction}
+
+	return {"is_ledge": false, "direction": Vector2.ZERO}
+
+## Convierte un string de dirección a Vector2
+## @param dir_string: String con la dirección ("up", "down", "left", "right")
+## @return Vector2 con la dirección
+func _string_to_direction(dir_string: String) -> Vector2:
+	match dir_string.to_lower():
+		"up":
+			return Vector2.UP
+		"down":
+			return Vector2.DOWN
+		"left":
+			return Vector2.LEFT
+		"right":
+			return Vector2.RIGHT
+		_:
+			push_warning("OverworldGrid: Dirección de ledge no válida: " + dir_string)
+			return Vector2.ZERO
+
+## Verifica si un actor puede saltar un ledge en la dirección especificada
+## @param actor: Actor que intenta saltar
+## @param ledge_tile: El tile del ledge (donde el jugador está entrando)
+## @param direction: Dirección del salto
+## @return bool: true si puede saltar, false si no
+func can_jump_ledge(actor: Node, ledge_tile: Vector2i, direction: Vector2) -> bool:
+	# Solo el jugador puede saltar ledges
+	if not actor.is_in_group("Player"):
+		return false
+
+	# Verificar que el tile es un ledge
+	var ledge_info = get_ledge_info(ledge_tile)
+	if not ledge_info["is_ledge"]:
+		return false
+
+	# Verificar que la dirección del salto coincida con la dirección del ledge
+	if ledge_info["direction"] != direction:
+		return false
+
+	# El salto es de 1 tile después del ledge: verificar que el tile de aterrizaje está libre
+	var landing_tile = ledge_tile + Vector2i(direction)  # Tile de aterrizaje (inmediatamente después del ledge)
+
+	# Verificar que el tile de aterrizaje existe y no está bloqueado ni ocupado
+	if is_blocked(actor, landing_tile) or has_actor(landing_tile):
+		return false
+
+	return true
+
 func register_event(tile: Vector2i, event: Event) -> void:
 	events[tile] = weakref(event)
 
