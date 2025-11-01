@@ -8,27 +8,37 @@ class_name SetEventThroughCommand
 @export var through: bool = true
 
 func execute(context: Node) -> void:
+	var target_event: Event = null
+
+	# Si target_event_name está vacío, usar el evento actual (self)
 	if target_event_name.is_empty():
-		push_warning("SetEventThroughCommand: No se especificó un nombre de evento")
-		return
+		# El contexto es el EventController, necesitamos obtener el evento origen
+		if context is EventController and context.current_page:
+			target_event = context.current_page.source_event
+			if target_event:
+				print("SetEventThroughCommand: Usando evento actual '%s'" % target_event.name)
 
-	# Buscar el evento en la escena
-	var target_event = _find_event(context, target_event_name)
+		if not target_event:
+			push_warning("SetEventThroughCommand: No se pudo obtener el evento actual")
+			return
+	else:
+		# Buscar el evento por nombre
+		target_event = _find_event(context, target_event_name)
 
-	if not target_event:
-		push_warning("SetEventThroughCommand: No se encontró el evento '%s'" % target_event_name)
-		return
+		if not target_event:
+			push_warning("SetEventThroughCommand: No se encontró el evento '%s'" % target_event_name)
+			return
 
 	# Cambiar la propiedad through de la página actual
 	if target_event.current_page:
 		target_event.current_page.through = through
-		print("SetEventThroughCommand: Evento '%s' through = %s" % [target_event_name, through])
+		print("SetEventThroughCommand: Evento '%s' through = %s" % [target_event.name, through])
 
 		# Actualizar ocupación en el grid
 		if target_event.has_method("_refresh_occupancy"):
 			target_event._refresh_occupancy()
 	else:
-		push_warning("SetEventThroughCommand: El evento '%s' no tiene página activa" % target_event_name)
+		push_warning("SetEventThroughCommand: El evento '%s' no tiene página activa" % target_event.name)
 
 	# Los comandos síncronos NO llaman a continue_execution()
 	# El EventController lo hace automáticamente

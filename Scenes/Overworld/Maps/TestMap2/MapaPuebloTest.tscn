@@ -200,7 +200,6 @@ metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_qxcq6"]
 script = ExtResource("21_emybb")
-target_event_name = "Puerta"
 metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
 
 [sub_resource type="Resource" id="Resource_7vpoe"]
