@@ -21,6 +21,9 @@ func _ready() -> void:
 
 	print("Event '%s': actor_animator obtenido = %s" % [name, actor_animator])
 
+	# Duplicar páginas para evitar modificar Resources compartidos
+	_duplicate_all_pages()
+
 	# Ocultar placeholder primero
 	hide_placeholder_sprite()
 
@@ -75,27 +78,20 @@ func setup_current_page() -> void:
 
 ## Actualiza el sprite y propiedades del evento según la página activa
 func update_sprite_from_current_page() -> void:
-	if not actor_animator:
-		print("Event '%s': actor_animator es null" % name)
-		return
-
-	if not actor_animator.sprite:
-		print("Event '%s': actor_animator.sprite es null" % name)
+	if not actor_animator or not actor_animator.sprite:
 		return
 
 	if current_page:
 		# Usar el método get_sprite_frames() que soporta generación automática
 		var frames = current_page.get_sprite_frames()
 		if frames:
-			print("Event '%s': Aplicando frames al ActorAnimator" % name)
 			actor_animator.set_sprite_frames(frames)
+			actor_animator.set_sprite_offset(Vector2(0, 0))
 			actor_animator.show_sprite()
 		else:
-			print("Event '%s': No hay frames en current_page" % name)
 			actor_animator.sprite.sprite_frames = null
 			actor_animator.hide_sprite()
 	else:
-		print("Event '%s': current_page es null" % name)
 		actor_animator.sprite.sprite_frames = null
 		actor_animator.hide_sprite()
 
@@ -190,6 +186,15 @@ func refresh_active_page() -> void:
 		if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
 			call_deferred("trigger")
 
+## Duplica todas las páginas para evitar modificar los Resources originales
+## Esto permite que cada instancia del evento tenga sus propias copias que pueden modificarse
+## sin afectar el Resource original cacheado por Godot
+func _duplicate_all_pages() -> void:
+	var duplicated_pages: Array[EventPage] = []
+	for page in pages:
+		if page:
+			duplicated_pages.append(page.duplicate(true))
+	pages = duplicated_pages
 
 ## Conecta el evento a las señales globales de cambio de estado
 func _connect_to_state_signals() -> void:

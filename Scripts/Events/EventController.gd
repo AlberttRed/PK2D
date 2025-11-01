@@ -78,12 +78,13 @@ func execute_next_command() -> void:
 		command.execute(self)
 
 	# Si el comando no es asíncrono, continuar inmediatamente
-	if not command or not command.has_method("is_async") or not command.is_async():
+	var is_async = command and command.has_method("is_async") and command.is_async()
+
+	if not is_async:
 		current_command_index += 1
 		call_deferred("execute_next_command")
-	else:
-		# Es asíncrono: incrementar índice ahora para que continue_execution() ejecute el siguiente
-		current_command_index += 1
+	# Para comandos asíncronos, NO incrementamos aquí
+	# El comando llamará a continue_execution() cuando termine
 
 func continue_execution() -> void:
 	if current_state != State.RUNNING:
@@ -92,6 +93,8 @@ func continue_execution() -> void:
 		waiting_async = false
 		current_command_index += 1
 	else:
+		# Incrementar el índice AHORA que el comando asíncrono terminó
+		current_command_index += 1
 		call_deferred("execute_next_command")
 
 func skip_current_command() -> void:
