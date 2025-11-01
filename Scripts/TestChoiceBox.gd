@@ -15,13 +15,10 @@ func _ready() -> void:
 	# Esperar un frame para que todo esté inicializado
 	await get_tree().process_frame
 
-	# Mostrar un mensaje primero
-	await gui.msg.show_input("¿Te gusta este juego?")
-
-	# Mostrar opciones
-	print("Mostrando opciones...")
+	# Mostrar mensaje con opciones automáticas (estilo Pokémon)
+	print("Mostrando mensaje con opciones...")
 	var opciones:Array[String] = ["Sí", "No", "Tal vez", "Quizás", "No tengo ni idea"]
-	var selected = await gui.show_choices(opciones)
+	var selected = await gui.show_message_with_choices("¿Te gusta este juego?", opciones)
 
 	print("Opción seleccionada: ", selected, " (", opciones[selected] if selected >= 0 else "Cancelado", ")")
 

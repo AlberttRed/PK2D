@@ -283,6 +283,32 @@ func show_choices(options: Array[String]) -> int:
 
 	return selected_index
 
+## Muestra un mensaje seguido automáticamente de opciones (estilo Pokémon)
+## El ChoiceBox aparece automáticamente cuando el mensaje termina de escribirse
+func show_message_with_choices(text: String, options: Array[String]) -> int:
+	if options.is_empty():
+		push_error("GUI.show_message_with_choices: Array de opciones vacío")
+		return -1
+
+	# Mostrar el mensaje sin esperar input y sin cerrar
+	await msg.show_custom(text, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false
+	})
+
+	await get_tree().create_timer(0.3).timeout
+
+	# Automáticamente mostrar las opciones cuando el mensaje termina
+	var selected_index = await choice_box.show_choices(options)
+
+	# Cerrar el MessageBox después de la selección
+	msg.hide()
+	msg.clear()
+
+	return selected_index
+
 #
 #func showParty():
 	#await GUI.fadeIn(3)
