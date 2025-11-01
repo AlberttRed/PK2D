@@ -160,7 +160,6 @@ func _update_animator_from_current_page() -> void:
 		var frames = current_page.get_sprite_frames()
 		if frames:
 			animator.set_sprite_frames(frames)
-			animator.set_sprite_offset(Vector2(0, -8))  # Aplicar offset de la página
 			animator.show_sprite()
 			
 			# Configurar la dirección inicial después de asignar los frames

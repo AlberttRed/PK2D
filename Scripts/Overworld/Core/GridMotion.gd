@@ -170,6 +170,9 @@ func try_step(d: Vector2) -> bool:
 			can_step = true
 			from = seamless_result["from"]
 			to = seamless_result["to"]
+		else:
+			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
+			_check_player_collision(to)
 	
 	self.initial_step = requires_initial_step(d)
 
@@ -243,3 +246,14 @@ func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 	grid.register_event(to_tile, actor)
 	
 	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
+
+## Verifica si el Player colisionó con un evento de tipo PLAYER_TOUCH
+func _check_player_collision(target_tile: Vector2i) -> void:
+	# Solo verificar para el Player
+	if not actor.is_in_group("Player"):
+		return
+	
+	# Verificar si hay un evento en la tile destino
+	var event = grid.event_at(target_tile)
+	if event and event.has_method("on_player_collision"):
+		event.on_player_collision()

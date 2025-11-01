@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=4 uid="uid://1owe4s00dp15"]
+[gd_scene load_steps=59 format=4 uid="uid://1owe4s00dp15"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_07o4y"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -16,12 +16,11 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="14_eyjmi"]
 [ext_resource type="Texture2D" uid="uid://bfcane6ehs7ny" path="res://Sprites/Overworlds/Characters/NPC 06.png" id="15_lub8c"]
 [ext_resource type="PackedScene" uid="uid://c8a7yxm1qw8kb" path="res://Scenes/Overworld/Actors/Trainer.tscn" id="16_3rt2b"]
-[ext_resource type="Resource" uid="uid://15sqbubj2mi7" path="res://Resources/Trainers/TEST.tres" id="17_8j1dd"]
 [ext_resource type="Texture2D" uid="uid://dqwosbe04hlbi" path="res://Sprites/Overworlds/Characters/trchar010.png" id="17_fih2l"]
-[ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="19_kcgog"]
 [ext_resource type="Texture2D" uid="uid://bxdcduvjp18mw" path="res://Sprites/Eventos/Doors/door2.png" id="20_8j1dd"]
 [ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="20_emybb"]
-[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="20_kcgog"]
+[ext_resource type="Script" uid="uid://dt7lapm5n8qrt" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="21_emybb"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="22_hok4v"]
 
 [sub_resource type="Resource" id="Resource_kcgog"]
 script = ExtResource("7_tb7x5")
@@ -171,16 +170,8 @@ sprite_texture = ExtResource("15_lub8c")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_emybb"]
-script = ExtResource("19_kcgog")
-battle_type = 1
-trainer_data = ExtResource("17_8j1dd")
-defeated_flag = "test_defeated"
-metadata/_custom_type_script = "uid://qm4ouivf82wo"
-
 [sub_resource type="Resource" id="Resource_6ysuj"]
 script = ExtResource("4_lub8c")
-commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_emybb")])
 enable_trainer_detection = true
 required_flag = "test_defeated"
 required_flag_value = false
@@ -199,10 +190,27 @@ commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_8j1dd")])
 required_flag = "test_defeated"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_qxcq6"]
+[sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("20_emybb")
 animation_name = "default"
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_qxcq6"]
+script = ExtResource("21_emybb")
+target_event_name = "FakeDoor"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_7vpoe"]
+script = ExtResource("7_tb7x5")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_x0mvh"]
+script = ExtResource("22_hok4v")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_emybb"]
 atlas = ExtResource("20_8j1dd")
@@ -242,8 +250,8 @@ animations = [{
 
 [sub_resource type="Resource" id="Resource_ujg4f"]
 script = ExtResource("4_lub8c")
-trigger_type = 1
-commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_qxcq6")])
+trigger_type = 2
+commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh")])
 sprite_frames = SubResource("SpriteFrames_7vpoe")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -280,47 +288,47 @@ metadata/_edit_lock_ = true
 
 [node name="Hierba" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
 position = Vector2(240, 144)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_5slja")])
+pages = [SubResource("Resource_5slja")]
 
 [node name="Teleport" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
 position = Vector2(112, 16)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_v81bm")])
+pages = [SubResource("Resource_v81bm")]
 
 [node name="Porta" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
-position = Vector2(336, 144)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_we81h")])
+position = Vector2(432, 240)
+pages = [SubResource("Resource_we81h")]
 
 [node name="Cartel" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
 position = Vector2(144, 48)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_8gxhw")])
+pages = [SubResource("Resource_8gxhw")]
 
 [node name="EventParalel" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
 position = Vector2(48, 112)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_0asgo")])
+pages = [SubResource("Resource_0asgo")]
 
 [node name="EventParalel2" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
 position = Vector2(48, 112)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_wcme4")])
+pages = [SubResource("Resource_wcme4")]
 
 [node name="NPC" parent="OverworldGrid/Events" instance=ExtResource("14_eyjmi")]
 position = Vector2(176, 48)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_fih2l")])
+pages = [SubResource("Resource_fih2l")]
 
 [node name="NPC2" parent="OverworldGrid/Events" instance=ExtResource("14_eyjmi")]
 position = Vector2(208, 48)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_fih2l")])
+pages = [SubResource("Resource_fih2l")]
 
 [node name="Trainer" parent="OverworldGrid/Events" instance=ExtResource("16_3rt2b")]
 position = Vector2(48, 176)
-defeated_flag = "test_defeated"
 movement_type = 3
 initial_direction = 3
 awareness_enabled = true
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_6ysuj"), SubResource("Resource_4hhom")])
+defeated_flag = "test_defeated"
+pages = [SubResource("Resource_6ysuj"), SubResource("Resource_4hhom")]
 
 [node name="FakeDoor" parent="OverworldGrid/Events" instance=ExtResource("3_eyjmi")]
-position = Vector2(400, 176)
-pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_ujg4f")])
+position = Vector2(336, 144)
+pages = [SubResource("Resource_ujg4f")]
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

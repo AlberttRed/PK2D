@@ -70,7 +70,7 @@ func get_sprite_frames() -> SpriteFrames:
 	# Prioridad 1: Usar SpriteFrames manual si está asignado
 	if sprite_frames:
 		return sprite_frames
-	
+
 	# Prioridad 2: Generar desde sprite_texture
 	if sprite_texture:
 		if is_spritesheet:
@@ -79,7 +79,7 @@ func get_sprite_frames() -> SpriteFrames:
 		else:
 			# Usar como imagen simple estática
 			return _generate_simple_sprite_frames(sprite_texture)
-	
+
 	# Sin sprite
 	return null
 
@@ -87,13 +87,13 @@ func get_sprite_frames() -> SpriteFrames:
 func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
 	if not texture:
 		return null
-	
+
 	var frames = SpriteFrames.new()
 	frames.add_animation("default")
 	frames.set_animation_loop("default", true)
 	frames.set_animation_speed("default", 5.0)
 	frames.add_frame("default", texture)
-	
+
 	return frames
 
 
@@ -101,31 +101,31 @@ func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
 ## Retorna true si la página puede activarse
 func evaluate_conditions(event_id: String = "") -> bool:
 	var result = true
-	
+
 	# Evaluar flag global
 	if not required_flag.is_empty():
 		var flag_value = GameStateManager.get_event_flag(required_flag)
 		if flag_value != required_flag_value:
 			result = false
-	
+
 	# Evaluar variable global (futuro)
 	if not required_variable.is_empty():
 		var var_value = GameStateManager.get_variable(required_variable)
 		var comparison_result = _compare_values(var_value, variable_value, variable_operator)
 		if not comparison_result:
 			result = false
-	
+
 	# Evaluar self-switch
 	if required_self_switch > 0:  # 0 = NONE
 		var switch_letter = ["A", "B", "C", "D"][required_self_switch - 1]
 		var switch_value = GameStateManager.get_self_switch(event_id, switch_letter)
 		if switch_value != required_self_switch_value:
 			result = false
-	
+
 	# Invertir resultado si se configuró
 	if invert_conditions:
 		result = not result
-	
+
 	return result
 
 

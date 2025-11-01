@@ -14,24 +14,24 @@ var actor_animator: ActorAnimator
 
 func _ready() -> void:
 	print("Event '%s': _ready() iniciado" % name)
-	
+
 	# Obtener referencias a los nodos manualmente para controlar el orden
 	placeholder_sprite = $AnimatedSprite2D
 	actor_animator = $ActorAnimator
-	
+
 	print("Event '%s': actor_animator obtenido = %s" % [name, actor_animator])
-	
+
 	# Ocultar placeholder primero
 	hide_placeholder_sprite()
-	
+
 	# Ahora configurar la página actual (esto aplicará el sprite)
 	print("Event '%s': Llamando a setup_current_page()" % name)
 	setup_current_page()
 	print("Event '%s': setup_current_page() completado" % name)
-	
+
 	# Conectar a señales de cambio de estado para reevaluación automática
 	_connect_to_state_signals()
-	
+
 	# Autorun inmediato
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
 		trigger()
@@ -40,17 +40,17 @@ func _ready() -> void:
 ## Evalúa condiciones de todas las páginas para encontrar la activa
 func setup_current_page() -> void:
 	print("Event '%s': setup_current_page() - pages.size() = %d" % [name, pages.size()])
-	
+
 	if pages.size() == 0:
 		current_page = null
 		current_page_index = 0
 		print("Event '%s': No hay páginas, llamando update_sprite_from_current_page()" % name)
 		update_sprite_from_current_page()
 		return
-	
+
 	# Obtener ID único del evento para self-switches
 	var event_id = _get_event_id()
-	
+
 	# Evaluar páginas en orden inverso (prioridad a las últimas)
 	# Esto permite tener una página "por defecto" al inicio y páginas condicionales después
 	for i in range(pages.size() - 1, -1, -1):
@@ -66,7 +66,7 @@ func setup_current_page() -> void:
 				current_page = page
 				update_sprite_from_current_page()  # También actualizar aunque no haya cambiado de página
 			return
-	
+
 	# Si ninguna página cumple las condiciones, usar la primera por defecto
 	current_page_index = 0
 	current_page = pages[0] if pages.size() > 0 else null
@@ -78,18 +78,17 @@ func update_sprite_from_current_page() -> void:
 	if not actor_animator:
 		print("Event '%s': actor_animator es null" % name)
 		return
-	
+
 	if not actor_animator.sprite:
 		print("Event '%s': actor_animator.sprite es null" % name)
 		return
-	
+
 	if current_page:
 		# Usar el método get_sprite_frames() que soporta generación automática
 		var frames = current_page.get_sprite_frames()
 		if frames:
 			print("Event '%s': Aplicando frames al ActorAnimator" % name)
 			actor_animator.set_sprite_frames(frames)
-			actor_animator.set_sprite_offset(Vector2(0, 0))  # Aplicar offset de la página
 			actor_animator.show_sprite()
 		else:
 			print("Event '%s': No hay frames en current_page" % name)
@@ -99,7 +98,7 @@ func update_sprite_from_current_page() -> void:
 		print("Event '%s': current_page es null" % name)
 		actor_animator.sprite.sprite_frames = null
 		actor_animator.hide_sprite()
-	
+
 	# Actualizar ocupación en el grid (through, blocks_player)
 	_refresh_occupancy()
 
@@ -107,7 +106,7 @@ func trigger() -> void:
 	if current_page:
 		print("Event '%s' triggered!" % name)
 		event_triggered.emit(current_page)
-		
+
 		# Emitir señal global para solicitar ejecución del evento
 		SignalManager.event_requested.emit(self, null)
 
@@ -121,6 +120,12 @@ func on_player_touch() -> void:
 	# Si el jugador entra en la misma celda
 	if current_page and current_page.trigger_type == EventTriggers.TriggerType.TOUCH:
 		print("Touched!")
+		trigger()
+
+func on_player_collision() -> void:
+	# Si el jugador colisiona contra el evento (intenta entrar pero no puede)
+	if current_page and current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
+		print("Player collided!")
 		trigger()
 
 ## Oculta el sprite placeholder (solo se usa en el editor)
@@ -178,7 +183,7 @@ func _refresh_occupancy() -> void:
 func refresh_active_page() -> void:
 	var old_page_index = current_page_index
 	setup_current_page()
-	
+
 	# Si cambió de página, puede haber nuevo trigger type
 	if old_page_index != current_page_index:
 		# Si la nueva página es AUTORUN, trigger inmediato

@@ -52,11 +52,10 @@ func execute(context: Node) -> void:
 		set_state(CommandState.RUNNING)
 		await _execute_path(motion)
 		set_state(CommandState.IDLE)
+		print("MoveNPCCommand: Movimiento completado, continuando ejecución")
 		context.continue_execution()
 	else:
-		# No espera: ejecuta en background pero marca como running
-		# El EventController esperará a que termine cuando finalice la página
-		set_state(CommandState.RUNNING)
+		# No espera: ejecuta en background
 		_execute_path_background(motion)
 		context.continue_execution()
 
@@ -150,13 +149,18 @@ func _execute_path(motion: GridMotion) -> void:
 			await motion.get_tree().create_timer(0.5).timeout
 	
 	print("MoveNPCCommand: Path completado")
-	set_state(CommandState.IDLE)
 
 ## Ejecuta el path en background (sin bloquear el EventController)
 func _execute_path_background(motion: GridMotion) -> void:
-	# Esta función ejecuta el path de forma asíncrona
-	# El estado se marca como IDLE cuando termine automáticamente
-	_execute_path(motion)
+	# Esta función ejecuta el path de forma asíncrona sin esperar
+	# Marca como RUNNING mientras se ejecuta
+	set_state(CommandState.RUNNING)
+	# Ejecutar el path de forma asíncrona
+	var callable = func():
+		await _execute_path(motion)
+		set_state(CommandState.IDLE)
+		print("MoveNPCCommand: Movimiento en background completado")
+	callable.call()
 
 func is_async() -> bool:
 	return wait_until_finished
