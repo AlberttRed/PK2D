@@ -17,6 +17,9 @@ var spawn_points: Dictionary = {}   # {spawn_id: SpawnPoint}
 # Reservas de movimiento
 var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 
+# Debug mode para restricciones direccionales (PBI 454)
+@export var debug_show_directional_restrictions: bool = false
+
 
 
 func _enter_tree() -> void:
@@ -33,9 +36,17 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	# Registrar todos los SpawnPoints del mapa
 	_register_all_spawns()
-	
+
 	# El player se configura desde MapSystem, no desde aquí
 	# para evitar conflictos con la nueva lógica de GameStart
+
+	# Activar redibujado continuo si el modo debug está activado
+	if debug_show_directional_restrictions:
+		set_process(true)
+
+func _process(_delta: float) -> void:
+	if debug_show_directional_restrictions:
+		queue_redraw()
 
 ## --- Helpers coord ---
 func reference_layer() -> TileMapLayer:
@@ -70,7 +81,92 @@ func terrain_at(t: Vector2i) -> String:
 		if val is String:
 			return val
 	return "ground"
-	
+
+# --- Restricciones Direccionales (PBI 454) ---
+## Convierte un vector de dirección a una bandera de dirección (DirectionFlagsEnum)
+func _direction_to_flag(direction: Vector2) -> int:
+	if direction.x < 0:
+		return DirectionFlagsEnum.Values.LEFT
+	elif direction.x > 0:
+		return DirectionFlagsEnum.Values.RIGHT
+	elif direction.y < 0:
+		return DirectionFlagsEnum.Values.UP
+	elif direction.y > 0:
+		return DirectionFlagsEnum.Values.DOWN
+	return DirectionFlagsEnum.Values.NONE
+
+## Verifica si se puede SALIR del tile origen en la dirección especificada
+## @param from_tile: Tile de origen
+## @param direction: Dirección del movimiento (Vector2)
+## @return true si se permite salir en esa dirección, false si está bloqueado
+func can_exit_tile(from_tile: Vector2i, direction: Vector2) -> bool:
+	var datas = get_tile_data(from_tile)
+	if datas.is_empty():
+		return true  # Si no hay tile data, permitir movimiento (comportamiento por defecto)
+
+	var dir_flag = _direction_to_flag(direction)
+	if dir_flag == DirectionFlagsEnum.Values.NONE:
+		return true  # Sin dirección válida, permitir
+
+	# Verificar exit_mask en todas las capas del tile
+	for d in datas:
+		if d.has_custom_data("exit_mask"):
+			var exit_mask = d.get_custom_data("exit_mask")
+			if exit_mask is int:
+				# Si exit_mask es 0, significa sin restricciones (permitir todas)
+				if exit_mask == 0:
+					continue
+				# Verificar si la dirección está permitida en la máscara
+				# La máscara indica direcciones PERMITIDAS, si el bit está activo, se permite
+				if (exit_mask & dir_flag) == 0:
+					return false  # Dirección NO está en la máscara, bloquear salida
+
+	return true  # Por defecto, permitir salida
+
+## Verifica si se puede ENTRAR al tile destino desde la dirección especificada
+## @param to_tile: Tile de destino
+## @param direction: Dirección del movimiento (Vector2)
+## @return true si se permite entrar desde esa dirección, false si está bloqueado
+func can_enter_tile(to_tile: Vector2i, direction: Vector2) -> bool:
+	var datas = get_tile_data(to_tile)
+	if datas.is_empty():
+		return true  # Si no hay tile data, permitir movimiento
+
+	var dir_flag = _direction_to_flag(direction)
+	if dir_flag == DirectionFlagsEnum.Values.NONE:
+		return true  # Sin dirección válida, permitir
+
+	# Para la entrada, debemos verificar desde la dirección OPUESTA
+	# Si nos movemos hacia la DERECHA, entramos desde la IZQUIERDA
+	var entry_dir_flag = _get_opposite_direction_flag(dir_flag)
+
+	# Verificar entry_mask en todas las capas del tile
+	for d in datas:
+		if d.has_custom_data("entry_mask"):
+			var entry_mask = d.get_custom_data("entry_mask")
+			if entry_mask is int:
+				# Si entry_mask es 0, significa sin restricciones (permitir todas)
+				if entry_mask == 0:
+					continue
+				# Verificar si se puede entrar desde esa dirección
+				if (entry_mask & entry_dir_flag) == 0:
+					return false  # Dirección NO está en la máscara, bloquear entrada
+
+	return true  # Por defecto, permitir entrada
+
+## Obtiene la dirección opuesta de una bandera de dirección
+func _get_opposite_direction_flag(dir_flag: int) -> int:
+	match dir_flag:
+		DirectionFlagsEnum.Values.UP:
+			return DirectionFlagsEnum.Values.DOWN
+		DirectionFlagsEnum.Values.DOWN:
+			return DirectionFlagsEnum.Values.UP
+		DirectionFlagsEnum.Values.LEFT:
+			return DirectionFlagsEnum.Values.RIGHT
+		DirectionFlagsEnum.Values.RIGHT:
+			return DirectionFlagsEnum.Values.LEFT
+	return DirectionFlagsEnum.Values.NONE
+
 func register_event(tile: Vector2i, event: Event) -> void:
 	events[tile] = weakref(event)
 
@@ -86,12 +182,12 @@ func event_at(tile: Vector2i) -> Event:
 
 func is_blocked(actor: Node, t: Vector2i) -> bool:
 	var datas = get_tile_data(t)
-	
+
 	# Si el tile no está en este mapa, está "bloqueado" para este grid
 	# (No es responsabilidad de este grid verificar otros mapas)
 	if datas.is_empty():
 		return true
-	
+
 	# Verificar propiedades de bloqueo del tile
 	for d in datas:
 		if d.get_custom_data("blocked") == true:
@@ -106,10 +202,23 @@ func is_blocked(actor: Node, t: Vector2i) -> bool:
 func has_actor(t: Vector2i) -> bool:
 	return occ.has(t) and occ[t].get_ref() != null
 
-func can_step_to(actor: Node, _from: Vector2i, to: Vector2i) -> bool:
+func can_step_to(actor: Node, from: Vector2i, to: Vector2i) -> bool:
+	# Verificaciones clásicas de bloqueo
 	if is_blocked(actor, to): return false
 	if has_actor(to): return false
 	if res.has(to) and res[to].get_ref() != actor: return false
+
+	# Verificar restricciones direccionales (PBI 454)
+	var direction = Vector2(to - from)
+
+	# Verificar si se puede SALIR del tile origen en la dirección del movimiento
+	if not can_exit_tile(from, direction):
+		return false
+
+	# Verificar si se puede ENTRAR al tile destino desde la dirección del movimiento
+	if not can_enter_tile(to, direction):
+		return false
+
 	return true
 
 # --- Reservas / commit ---
@@ -172,12 +281,12 @@ func _register_spawns_recursive(node: Node) -> void:
 func register_spawn_point(spawn: SpawnPoint) -> void:
 	if not spawn:
 		return
-	
+
 	var spawn_id = spawn.get_spawn_id()
 	if spawn_id.is_empty():
 		push_warning("OverworldGrid: SpawnPoint sin ID válido: " + str(spawn))
 		return
-	
+
 	spawn_points[spawn_id] = spawn
 	print("OverworldGrid: SpawnPoint registrado - ID: ", spawn_id)
 
@@ -201,15 +310,15 @@ func position_player_at_tile(tile_position: Vector2i) -> bool:
 	if not map_system:
 		push_error("OverworldGrid: No se encontró el MapSystem")
 		return false
-	
+
 	var player: Node = map_system.get_player()
 	if not player:
 		push_error("OverworldGrid: No se encontró el jugador")
 		return false
-	
+
 	# Teletransportar al jugador a la posición especificada
 	player.teleport_to_tile(tile_position)
-	
+
 	print("OverworldGrid: Jugador posicionado en tile: ", tile_position)
 	return true
 
@@ -219,21 +328,21 @@ func position_player_at_spawn(spawn_id: String) -> bool:
 	if not spawn_point:
 		push_warning("OverworldGrid: No se encontró el spawn point: " + spawn_id)
 		return false
-	
+
 	# Obtener la posición del spawn point
 	var spawn_position = spawn_point.get_tile_position()
-	
+
 	# Usar el método de posicionamiento por tile
 	var success = position_player_at_tile(spawn_position)
-	
+
 	if success:
 		# Actualizar la dirección si el spawn point la especifica
 		var direction = spawn_point.get_facing_direction()
 		print("OverworldGrid: Dirección del SpawnPoint: ", direction)
 		set_player_facing_direction(direction)
-		
+
 		print("OverworldGrid: Jugador posicionado en spawn: ", spawn_id, " en posición: ", spawn_position, " mirando: ", direction)
-	
+
 	return success
 
 ## Establece la dirección del jugador
@@ -243,13 +352,106 @@ func set_player_facing_direction(direction: Vector2) -> void:
 	if not map_system:
 		push_error("OverworldGrid: No se encontró el MapSystem")
 		return
-	
+
 	var player: Node = map_system.get_player()
 	if not player:
 		push_error("OverworldGrid: No se encontró el jugador")
 		return
-	
+
 	# Establecer la dirección del jugador
 	player.set_facing_direction(direction)
-	
+
 	print("OverworldGrid: Dirección del jugador establecida a: ", direction)
+
+# --- Debug Visualization (PBI 454) ---
+func _draw() -> void:
+	if not debug_show_directional_restrictions:
+		return
+
+	var ref_layer = reference_layer()
+	if not ref_layer:
+		return
+
+	# Obtener el viewport visible actual para saber qué tiles dibujar
+	var camera = get_viewport().get_camera_2d()
+	if not camera:
+		return
+
+	# Calcular el área visible (con un margen)
+	var viewport_size = get_viewport_rect().size
+	var cam_pos = camera.global_position
+	var zoom = camera.zoom
+
+	var visible_rect = Rect2(
+		cam_pos - (viewport_size / zoom / 2.0) - Vector2(CONST.GRID_SIZE * 2, CONST.GRID_SIZE * 2),
+		viewport_size / zoom + Vector2(CONST.GRID_SIZE * 4, CONST.GRID_SIZE * 4)
+	)
+
+	# Convertir rect visible a coordenadas de tile
+	var top_left_tile = world_to_tile(visible_rect.position)
+	var bottom_right_tile = world_to_tile(visible_rect.position + visible_rect.size)
+
+	# Iterar sobre los tiles visibles
+	for y in range(top_left_tile.y, bottom_right_tile.y + 1):
+		for x in range(top_left_tile.x, bottom_right_tile.x + 1):
+			var tile_pos = Vector2i(x, y)
+			var datas = get_tile_data(tile_pos)
+
+			if datas.is_empty():
+				continue
+
+			# Dibujar restricciones de este tile
+			_draw_tile_restrictions(tile_pos, datas)
+
+## Dibuja las restricciones de un tile específico
+func _draw_tile_restrictions(tile_pos: Vector2i, datas: Array[TileData]) -> void:
+	var world_center = tile_to_world_center(tile_pos)
+	var half_size = CONST.GRID_SIZE / 2.0
+
+	for d in datas:
+		# Dibujar exit_mask
+		if d.has_custom_data("exit_mask"):
+			var exit_mask = d.get_custom_data("exit_mask")
+			if exit_mask is int and exit_mask != 0:
+				_draw_directional_arrows(world_center, exit_mask, Color.RED, half_size * 0.8, "EXIT")
+
+		# Dibujar entry_mask
+		if d.has_custom_data("entry_mask"):
+			var entry_mask = d.get_custom_data("entry_mask")
+			if entry_mask is int and entry_mask != 0:
+				_draw_directional_arrows(world_center, entry_mask, Color.GREEN, half_size * 0.6, "ENTRY")
+
+## Dibuja flechas direccionales según la máscara
+func _draw_directional_arrows(center: Vector2, mask: int, color: Color, length: float, _label: String) -> void:
+	var arrow_thickness = 2.0
+	var arrow_head_size = 4.0
+
+	# Dibujar flechas para cada dirección en la máscara
+	if mask & DirectionFlagsEnum.Values.UP:
+		_draw_arrow(center, Vector2.UP, length, color, arrow_thickness, arrow_head_size)
+
+	if mask & DirectionFlagsEnum.Values.RIGHT:
+		_draw_arrow(center, Vector2.RIGHT, length, color, arrow_thickness, arrow_head_size)
+
+	if mask & DirectionFlagsEnum.Values.DOWN:
+		_draw_arrow(center, Vector2.DOWN, length, color, arrow_thickness, arrow_head_size)
+
+	if mask & DirectionFlagsEnum.Values.LEFT:
+		_draw_arrow(center, Vector2.LEFT, length, color, arrow_thickness, arrow_head_size)
+
+## Dibuja una flecha individual
+func _draw_arrow(start: Vector2, direction: Vector2, length: float, color: Color, thickness: float, head_size: float) -> void:
+	var end = start + direction * length
+
+	# Línea principal
+	draw_line(start, end, color, thickness)
+
+	# Cabeza de la flecha
+	var perpendicular = Vector2(-direction.y, direction.x)
+	var head_base = end - direction * head_size
+	var head_left = head_base + perpendicular * head_size * 0.5
+	var head_right = head_base - perpendicular * head_size * 0.5
+
+	# Triángulo de la cabeza
+	var points = PackedVector2Array([end, head_left, head_right])
+	draw_colored_polygon(points, color)
