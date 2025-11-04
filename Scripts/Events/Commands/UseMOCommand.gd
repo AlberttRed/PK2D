@@ -1,0 +1,142 @@
+extends EventCommand
+class_name UseMOCommand
+
+## Comando para usar una Máquina Oculta (MO) desde un evento
+## GESTIONA TODO EL FLUJO: mensajes, choice, validación, animación
+##
+## Este comando se encarga de:
+## - Mostrar mensaje de detección del obstáculo
+## - Mostrar choice (Sí/No) si es necesario
+## - Ejecutar validación y lógica de la MO
+## - Mostrar mensaje de éxito/fallo
+## - Reproducir animación si está configurada
+##
+## Los mensajes y animación se definen en la MOAction (ej: CutAction)
+##
+## LÓGICA DE TARGET:
+## - Si target_path está vacío → usa el evento de origen como target
+## - Si target_path tiene valor → usa el nodo especificado en ese path
+
+## Tipo de MO a usar
+@export var mo_type: MOTypeEnum.Type = MOTypeEnum.Type.CUT
+
+## Target sobre el que se aplica la MO (opcional)
+## Si está vacío, se usa el evento de origen como target
+## Si tiene valor, se usa el nodo en ese path
+@export var target_path: NodePath = NodePath()
+
+## Self-Switch a activar tras éxito (opcional)
+## Si no está vacío, activa este self-switch cuando la MO se complete con éxito
+## Valores: "A", "B", "C", "D", o vacío para no activar ninguno
+@export var activate_self_switch_on_success: String = "A"
+
+func execute(context: Node) -> void:
+	var mo_type_str = MOTypeEnum.type_to_string(mo_type)
+	print("UseMOCommand: Solicitando MO '%s'" % mo_type_str)
+
+	# Obtener el target
+	var target: Node = _get_target(context)
+	if not target:
+		push_error("UseMOCommand: No se pudo obtener el target")
+		context.continue_execution()
+		return
+
+	# Obtener la MOAction para el mensaje de detección
+	var mo_system = Engine.get_main_loop().root.get_tree().get_first_node_in_group("MOSystem")
+	if not mo_system or not mo_system.has_mo_action(mo_type_str):
+		push_error("UseMOCommand: MO '%s' no encontrada" % mo_type_str)
+		context.continue_execution()
+		return
+
+	var mo_action = mo_system.mo_actions.get(mo_type_str)
+
+	# SIEMPRE mostrar mensaje de detección (antes de validar)
+	var detect_msg = mo_action.get_detect_message(target)
+	if not detect_msg.is_empty():
+		SignalManager.message_requested.emit(detect_msg, {"waitInput": true, "closeAtEnd": true})
+		await SignalManager.message_finished
+		await Engine.get_main_loop().process_frame
+
+	# Configurar callback para capturar mo_finished ANTES de emitir la petición
+	var result_state = {
+		"received": false,
+		"success": false,
+		"reason": ""
+	}
+
+	var on_finished = func(type: String, success: bool, reason: String):
+		if type == mo_type_str:
+			result_state["received"] = true
+			result_state["success"] = success
+			result_state["reason"] = reason
+
+	# Conectar ANTES de emitir
+	SignalManager.mo_finished.connect(on_finished)
+
+	# Emitir la petición de MO (MOAction gestiona el flujo SI can_use() pasa)
+	SignalManager.mo_requested.emit(mo_type_str, target)
+
+	# Esperar hasta que el callback capture el resultado
+	while not result_state["received"]:
+		await Engine.get_main_loop().process_frame
+
+	# Desconectar el callback
+	SignalManager.mo_finished.disconnect(on_finished)
+
+	# Si fue exitoso, activar self-switch
+	if result_state["success"] and not activate_self_switch_on_success.is_empty():
+		_activate_self_switch(target, activate_self_switch_on_success)
+
+	# Continuar con la ejecución del evento
+	context.continue_execution()
+
+## Obtiene el nodo target según la configuración
+## Si target_path está vacío → usa el evento de origen
+## Si target_path tiene valor → usa el nodo en ese path
+func _get_target(context: Node) -> Node:
+	var event_controller = context as EventController
+
+	# Si NO se especificó un NodePath, usar el evento de origen
+	if target_path.is_empty():
+		if event_controller and event_controller.current_page:
+			var source_event = event_controller.current_page.source_event
+			if source_event:
+				print("UseMOCommand: Usando evento de origen como target - %s" % source_event.name)
+				return source_event
+		push_error("UseMOCommand: No se pudo obtener el evento de origen")
+		return null
+
+	# Si se especificó un NodePath, usar ese nodo
+	var target = context.get_node_or_null(target_path)
+	if target:
+		print("UseMOCommand: Usando NodePath como target - %s" % target.name)
+		return target
+
+	push_error("UseMOCommand: No se encontró el nodo en el path '%s'" % target_path)
+	return null
+
+## Activa un self-switch en el target
+func _activate_self_switch(target: Node, switch_letter: String) -> void:
+	if not target:
+		push_warning("UseMOCommand: Target nulo, no se puede activar self-switch")
+		return
+
+	# Validar que es una letra válida
+	if not switch_letter in ["A", "B", "C", "D"]:
+		push_warning("UseMOCommand: Self-switch '%s' inválido. Usa A, B, C o D" % switch_letter)
+		return
+
+	# Obtener el ID del evento
+	var event_id = target.name
+
+	# Activar el self-switch en GameStateManager
+	GameStateManager.set_self_switch(event_id, switch_letter, true)
+	print("UseMOCommand: Self-switch '%s:%s' activado" % [event_id, switch_letter])
+
+## Indica que este comando es asíncrono
+func is_async() -> bool:
+	return true
+
+## No es seguro para ejecución paralela
+func is_safe_for_parallel() -> bool:
+	return false

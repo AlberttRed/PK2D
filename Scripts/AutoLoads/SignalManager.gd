@@ -57,6 +57,10 @@ signal game_flag_changed(flag_name: String, new_value: bool)
 signal game_variable_changed(variable_name: String, new_value: int)
 signal game_self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
 
+# === SEÑALES DEL SISTEMA DE MO (MÁQUINAS OCULTAS) ===
+signal mo_requested(mo_type: String, target: Node)
+signal mo_finished(mo_type: String, success: bool, reason: String)
+
 # === SEÑALES DE INPUT GLOBAL ===
 signal input_accept()
 signal input_cancel()
@@ -78,7 +82,7 @@ func disconnect_all(signal_obj: Signal) -> void:
 
 func _ready() -> void:
 	print("SignalManager: Bus de señales globales inicializado")
-	
+
 	# Conectar señales de GameStateManager para reenviarlas globalmente
 	GameStateManager.flag_changed.connect(_on_game_flag_changed)
 	GameStateManager.variable_changed.connect(_on_game_variable_changed)
