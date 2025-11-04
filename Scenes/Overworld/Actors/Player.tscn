@@ -351,7 +351,7 @@ animations = [{
 script = ExtResource("12_x884u")
 pokemon_id = 7
 gender = 1
-custom_move_ids = Array[int]([15])
+custom_move_ids = Array[int]([15, 70])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_p0ptx"]

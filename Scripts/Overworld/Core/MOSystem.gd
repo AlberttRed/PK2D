@@ -12,6 +12,10 @@ class_name MOSystem
 # Diccionario de acciones MO disponibles: {"CUT": MOAction, "SURF": MOAction, ...}
 var mo_actions: Dictionary = {}
 
+# Estados activos de MOs en el mapa actual (para STRENGTH, FLASH, etc.)
+# Ejemplo: {"STRENGTH_ENABLED": true, "FLASH_ACTIVE": true}
+var active_effects: Dictionary = {}
+
 # Estado actual del sistema
 var is_processing_mo: bool = false
 var current_mo_type: String = ""
@@ -21,7 +25,8 @@ func _ready() -> void:
 	# Conectar con el SignalManager para escuchar peticiones de MO
 	if SignalManager:
 		SignalManager.mo_requested.connect(_on_mo_requested)
-		print("MOSystem: Conectado a SignalManager.mo_requested")
+		SignalManager.warp_finished.connect(_on_map_changed)
+		print("MOSystem: Conectado a SignalManager.mo_requested y warp_finished")
 	else:
 		push_error("MOSystem: SignalManager no encontrado")
 
@@ -37,9 +42,12 @@ func _initialize_mo_actions() -> void:
 	var cut_action = preload("res://Scripts/Overworld/Core/MOActions/CutAction.gd").new()
 	register_mo_action("CUT", cut_action)
 
+	# Registrar MO: FUERZA (STRENGTH)
+	var strength_action = preload("res://Scripts/Overworld/Core/MOActions/StrengthAction.gd").new()
+	register_mo_action("STRENGTH", strength_action)
+
 	# Aquí se registrarán otras MO cuando se implementen:
 	# register_mo_action("SURF", preload("res://Scripts/Overworld/Core/MOActions/SurfAction.gd").new())
-	# register_mo_action("STRENGTH", preload("res://Scripts/Overworld/Core/MOActions/StrengthAction.gd").new())
 
 ## Registra una nueva acción MO en el sistema
 ## @param mo_type: Identificador de la MO (ej: "CUT", "SURF")
@@ -187,3 +195,49 @@ func get_current_mo_info() -> Dictionary:
 ## Obtiene todas las MO registradas
 func get_registered_mo_types() -> Array:
 	return mo_actions.keys()
+
+## ========================
+## GESTIÓN DE EFECTOS ACTIVOS
+## ========================
+
+## Activa un efecto de MO en el mapa actual
+## Útil para MOs como STRENGTH (habilita empujar rocas) o FLASH (ilumina cueva)
+## @param effect_name: Nombre del efecto (ej: "STRENGTH_ENABLED", "FLASH_ACTIVE")
+## @param value: Estado del efecto (true = activo, false = desactivo)
+func activate_effect(effect_name: String, value: bool = true) -> void:
+	if effect_name.is_empty():
+		push_warning("MOSystem: Nombre de efecto vacío")
+		return
+
+	active_effects[effect_name] = value
+	print("MOSystem: Efecto '%s' = %s" % [effect_name, value])
+
+## Verifica si un efecto de MO está activo
+## @param effect_name: Nombre del efecto a verificar
+## @return: true si está activo, false si no
+func is_effect_active(effect_name: String) -> bool:
+	return active_effects.get(effect_name, false)
+
+## Desactiva un efecto específico
+## @param effect_name: Nombre del efecto a desactivar
+func deactivate_effect(effect_name: String) -> void:
+	if active_effects.has(effect_name):
+		active_effects.erase(effect_name)
+		print("MOSystem: Efecto '%s' desactivado" % effect_name)
+
+## Resetea todos los efectos activos
+## Se llama automáticamente al cambiar de mapa
+func reset_effects() -> void:
+	if not active_effects.is_empty():
+		print("MOSystem: Reseteando %d efecto(s) activo(s)" % active_effects.size())
+		active_effects.clear()
+
+## Callback cuando el jugador cambia de mapa
+## Resetea los efectos de MO (STRENGTH y FLASH no persisten al cambiar de mapa)
+func _on_map_changed(_map_id: String, _spawn_id: String) -> void:
+	reset_effects()
+	print("MOSystem: Efectos de MO reseteados al cambiar de mapa")
+
+## Obtiene todos los efectos activos (para debug)
+func get_active_effects() -> Dictionary:
+	return active_effects.duplicate()

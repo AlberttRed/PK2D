@@ -35,9 +35,8 @@ func can_use(_player: Node, target: Node) -> bool:
 	print("CutAction: Validación exitosa - se puede usar CORTE")
 	return true
 
-## Busca en el party del jugador un Pokémon que tenga el movimiento especificado
-## @param move_name: Nombre del movimiento (ej: "CUT", "SURF")
-## @return: Pokemon que tiene el movimiento, o null si ninguno lo tiene
+## Busca en el party del jugador un Pokémon que tenga el movimiento CORTE
+## @return: Pokemon que tiene CORTE, o null si ninguno lo tiene
 func _find_pokemon_with_CUT(_player: Node) -> Pokemon:
 	# Obtener el party del jugador
 	var party = _player.battler.party
@@ -45,12 +44,12 @@ func _find_pokemon_with_CUT(_player: Node) -> Pokemon:
 		print("CutAction: El jugador no tiene Pokémon en el equipo")
 		return null
 
-	# Buscar un Pokémon que tenga el movimiento
+	# Buscar un Pokémon que tenga CORTE
 	for pokemon in party:
-		if pokemon and pokemon.movements:
-			for move in pokemon.movements:
-				if move and move.get_id() and move.get_id() == MovesEnum.Values.CUT:
-					return pokemon
+		if pokemon and pokemon.movements.any(func(move):
+			return move and move.get_id() == MovesEnum.Values.CUT
+		):
+			return pokemon
 
 	return null
 

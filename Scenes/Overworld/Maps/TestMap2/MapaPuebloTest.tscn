@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=4 uid="uid://1owe4s00dp15"]
+[gd_scene load_steps=95 format=4 uid="uid://1owe4s00dp15"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_07o4y"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -29,6 +29,7 @@
 [ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="22_hok4v"]
 [ext_resource type="Texture2D" uid="uid://cvsjona53tch5" path="res://Sprites/Eventos/MOs/Object tree 1.png" id="27_ujg4f"]
 [ext_resource type="Script" uid="uid://dhtm8wpq4l7x2" path="res://Scripts/Events/Commands/UseMOCommand.gd" id="27_x0mvh"]
+[ext_resource type="PackedScene" uid="uid://crrtsk2li8skn" path="res://Scenes/Events/PushableRock.tscn" id="29_ph5q8"]
 
 [sub_resource type="Resource" id="Resource_kcgog"]
 script = ExtResource("7_tb7x5")
@@ -549,10 +550,13 @@ pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_ujg4f"), SubResourc
 position = Vector2(112, 48)
 pages = Array[ExtResource("4_lub8c")]([SubResource("Resource_xbqjt"), SubResource("Resource_alami")])
 
+[node name="Rock" parent="OverworldGrid/Events" instance=ExtResource("29_ph5q8")]
+position = Vector2(336, 176)
+
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="SpawnProva" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_4hhom")]
 position = Vector2(112, 208)
 
 [node name="SpawnPorta" parent="OverworldGrid/SpawnPoints" instance=ExtResource("13_4hhom")]
-position = Vector2(336, 176)
+position = Vector2(304, 176)
