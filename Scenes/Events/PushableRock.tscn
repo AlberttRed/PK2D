@@ -1,0 +1,40 @@
+[gd_scene load_steps=11 format=3 uid="uid://crrtsk2li8skn"]
+
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="1_nad0e"]
+[ext_resource type="Script" uid="uid://b7k3nan5p2q8r" path="res://Scripts/Events/PushableRock.gd" id="2_ncovs"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="3_kd3cp"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="4_5lp41"]
+[ext_resource type="Script" uid="uid://dhtm8wpq4l7x2" path="res://Scripts/Events/Commands/UseMOCommand.gd" id="5_5lp41"]
+[ext_resource type="Texture2D" uid="uid://ccjqqsynd6kw3" path="res://Sprites/Eventos/MOs/Object boulder.png" id="5_v4d5r"]
+
+[sub_resource type="Resource" id="Resource_v4d5r"]
+script = ExtResource("5_5lp41")
+mo_type = 2
+activate_self_switch_on_success = ""
+metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4heq"]
+atlas = ExtResource("5_v4d5r")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_08ffj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4heq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_qrxa5"]
+script = ExtResource("3_kd3cp")
+commands = Array[ExtResource("4_5lp41")]([SubResource("Resource_v4d5r")])
+frame_size = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_08ffj")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[node name="Event" instance=ExtResource("1_nad0e")]
+script = ExtResource("2_ncovs")
+pages = Array[ExtResource("3_kd3cp")]([SubResource("Resource_qrxa5")])

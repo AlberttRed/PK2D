@@ -181,6 +181,11 @@ func try_step(d: Vector2) -> bool:
 	# SEGUNDO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
 
+	# VALIDACIÓN ADICIONAL: Si el jugador está en modo surfing, verificar si puede ir al tile
+	if can_step and actor.is_in_group("Player") and actor.has_method("can_surf_to_tile"):
+		if not actor.can_surf_to_tile(to):
+			can_step = false
+
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
 	if not can_step:
 		var seamless_result = _try_seamless_crossing(from, to)
@@ -271,9 +276,30 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 	if not actor.is_in_group("Player"):
 		return
 
-	# Verificar si hay un evento en la tile destino
-	var event = grid.event_at(target_tile)
-	if event and event.has_method("on_player_collision"):
+	# Obtener la posición mundial del tile destino
+	var target_world_pos = grid.tile_to_world_center(target_tile)
+
+	# Buscar evento en todos los grids (importante para seamless world)
+	var event: Event = null
+	var grids = get_tree().get_nodes_in_group("OverworldGrid")
+
+	for g in grids:
+		var grid_node = g as OverworldGrid
+		if not grid_node:
+			continue
+
+		# Convertir posición mundial a tile de este grid
+		var tile_in_grid = grid_node.world_to_tile(target_world_pos)
+		var event_in_grid = grid_node.event_at(tile_in_grid)
+
+		if event_in_grid:
+			event = event_in_grid
+			break
+
+	if not event:
+		return
+
+	if event.has_method("on_player_collision"):
 		event.on_player_collision()
 
 # --- Sistema de Saltos (Ledges) - PBI 455 ---

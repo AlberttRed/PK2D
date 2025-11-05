@@ -78,7 +78,7 @@ func get_tile_data(t: Vector2i) -> Array[TileData]:
 func terrain_at(t: Vector2i) -> String:
 	for d in get_tile_data(t):
 		var val = d.get_custom_data("terrain")
-		if val is String:
+		if val is String and not val.is_empty():
 			return val
 	return "ground"
 
