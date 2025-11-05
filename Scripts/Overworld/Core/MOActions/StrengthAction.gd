@@ -22,28 +22,21 @@ func _get_mo_system() -> Node:
 func can_use(_player: Node, target: Node) -> bool:
 	# 1. Verificar que el target es un nodo válido
 	if not target:
-		print("StrengthAction: Target es nulo")
 		return false
 
 	# 2. Verificar que el jugador tiene un Pokémon con el movimiento FUERZA
 	var pokemon_with_strength = _find_pokemon_with_STRENGTH(_player)
 	if not pokemon_with_strength:
-		print("StrengthAction: Ningún Pokémon en el equipo conoce FUERZA")
 		return false
-
-	print("StrengthAction: %s conoce FUERZA" % pokemon_with_strength.get_display_name())
 
 	# 3. TODO FUTURO: Verificar que tiene la medalla necesaria (RAINBOW_BADGE)
 
-	# Todas las validaciones pasaron
-	print("StrengthAction: Validación exitosa - se puede usar FUERZA")
 	return true
 
 ## Busca en el party del jugador un Pokémon que tenga el movimiento FUERZA
 func _find_pokemon_with_STRENGTH(_player: Node) -> Pokemon:
 	var party = _player.battler.party
 	if party.is_empty():
-		print("StrengthAction: El jugador no tiene Pokémon en el equipo")
 		return null
 
 	# Buscar un Pokémon que tenga STRENGTH
@@ -116,8 +109,6 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 
 ## Activa el modo de empuje en la roca target
 func _activate_push_mode(target: Node, player: Node, _context: Node) -> Dictionary:
-	print("StrengthAction: Activando modo de empuje en '%s'" % target.name)
-
 	# Verificar que la roca tiene el método push()
 	if not target.has_method("push"):
 		push_warning("StrengthAction: El target no tiene método push()")
@@ -126,16 +117,12 @@ func _activate_push_mode(target: Node, player: Node, _context: Node) -> Dictiona
 	# Calcular la dirección del empuje basándose en posiciones
 	var push_direction = _calculate_push_direction(player, target)
 
-	print("StrengthAction: Dirección calculada: %s" % push_direction)
-
 	# Intentar empujar la roca
 	var can_push = await target.push(push_direction)
 
 	if not can_push:
-		print("StrengthAction: La roca no se puede empujar en esa dirección")
 		return {"success": false, "error": "Bloqueado"}
 
-	print("StrengthAction: Roca empujada exitosamente")
 	return {"success": true}
 
 ## Calcula la dirección de empuje basándose en las posiciones del jugador y la roca

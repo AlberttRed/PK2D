@@ -88,7 +88,6 @@ func _on_step_finished(tile: Vector2i) -> void:
 				var terrain = grid.terrain_at(tile)
 				if terrain != "water":
 					# Llegó a tierra, desactivar surfing
-					print("Player: Desactivando surfing al llegar a tierra")
 					set_surfing_mode(false)
 
 	if not Input.is_action_pressed("move_up") \
@@ -220,7 +219,6 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.RIGHT: sprite.animation = "idle_right"
 		sprite.play()
 		set_meta("can_surf", true)
-		print("Player: Modo surfing activado")
 	else:
 		# Volver al sprite normal
 		sprite.sprite_frames = normal_spriteframes
@@ -233,7 +231,6 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.LEFT: sprite.frame = 1
 			Vector2.RIGHT: sprite.frame = 2
 		remove_meta("can_surf")
-		print("Player: Modo surfing desactivado")
 
 ## Verifica si el jugador puede moverse al tile destino en modo surfing
 ## Se llama desde GridMotion antes de validar movimiento
