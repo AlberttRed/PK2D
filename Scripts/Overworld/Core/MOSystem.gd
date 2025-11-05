@@ -46,8 +46,12 @@ func _initialize_mo_actions() -> void:
 	var strength_action = preload("res://Scripts/Overworld/Core/MOActions/StrengthAction.gd").new()
 	register_mo_action("STRENGTH", strength_action)
 
+	# Registrar MO: SURF
+	var surf_action = preload("res://Scripts/Overworld/Core/MOActions/SurfAction.gd").new()
+	register_mo_action("SURF", surf_action)
+
 	# Aquí se registrarán otras MO cuando se implementen:
-	# register_mo_action("SURF", preload("res://Scripts/Overworld/Core/MOActions/SurfAction.gd").new())
+	# register_mo_action("FLASH", preload("res://Scripts/Overworld/Core/MOActions/FlashAction.gd").new())
 
 ## Registra una nueva acción MO en el sistema
 ## @param mo_type: Identificador de la MO (ej: "CUT", "SURF")
@@ -96,12 +100,6 @@ func _on_mo_requested(mo_type: String, target: Node) -> void:
 		push_error("MOSystem: Tipo de MO vacío")
 		if SignalManager:
 			SignalManager.mo_finished.emit(mo_type, false, "Tipo de MO vacío")
-		return
-
-	if not target:
-		push_error("MOSystem: Target nulo")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Target nulo")
 		return
 
 	# Verificar si la MO está registrada

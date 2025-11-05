@@ -181,6 +181,11 @@ func try_step(d: Vector2) -> bool:
 	# SEGUNDO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
 
+	# VALIDACIÓN ADICIONAL: Si el jugador está en modo surfing, verificar si puede ir al tile
+	if can_step and actor.is_in_group("Player") and actor.has_method("can_surf_to_tile"):
+		if not actor.can_surf_to_tile(to):
+			can_step = false
+
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
 	if not can_step:
 		var seamless_result = _try_seamless_crossing(from, to)

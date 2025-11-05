@@ -4,9 +4,14 @@ extends Node2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
 
+# SpriteFrames para diferentes modos de movimiento
+var normal_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Walk.tres")
+var surf_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
+
 var input_dir := Vector2.ZERO
 var holding := false
 var movement_enabled: bool = true
+var is_surfing: bool = false  # Modo surfing activado
 
 func _ready() -> void:
 	if !is_in_group("Player"):
@@ -73,7 +78,19 @@ func _on_step_started() -> void:
 
 	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
 
-func _on_step_finished(_tile: Vector2i) -> void:
+func _on_step_finished(tile: Vector2i) -> void:
+	# Si está en modo surfing, verificar si llegó a tierra
+	if is_surfing:
+		var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+		if map_system:
+			var grid: OverworldGrid = map_system.get_active_grid()
+			if grid:
+				var terrain = grid.terrain_at(tile)
+				if terrain != "water":
+					# Llegó a tierra, desactivar surfing
+					print("Player: Desactivando surfing al llegar a tierra")
+					set_surfing_mode(false)
+
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
@@ -81,19 +98,37 @@ func _on_step_finished(_tile: Vector2i) -> void:
 		stop()
 
 func stop():
-	sprite.animation = "idle"
-	sprite.stop()
-	match motion.dir:
-		Vector2.UP: sprite.frame = 3
-		Vector2.DOWN: sprite.frame = 0
-		Vector2.LEFT: sprite.frame = 1
-		Vector2.RIGHT: sprite.frame = 2
+	# Resetear velocidad de animación a normal
+	sprite.speed_scale = 1.0
+
+	if is_surfing:
+		# En modo surfing, usar animaciones idle direccionales
+		match motion.dir:
+			Vector2.UP: sprite.animation = "idle_up"
+			Vector2.DOWN: sprite.animation = "idle_down"
+			Vector2.LEFT: sprite.animation = "idle_left"
+			Vector2.RIGHT: sprite.animation = "idle_right"
+		sprite.play()
+	else:
+		# Modo normal: idle con frames direccionales
+		sprite.animation = "idle"
+		sprite.stop()
+		match motion.dir:
+			Vector2.UP: sprite.frame = 3
+			Vector2.DOWN: sprite.frame = 0
+			Vector2.LEFT: sprite.frame = 1
+			Vector2.RIGHT: sprite.frame = 2
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not movement_enabled:
 		return
 
 	if event.is_action_pressed("interact") and not motion.moving:
+		# Primero verificar si hay agua frente al jugador (para SURF)
+		if _try_activate_surf():
+			return  # Ya procesado, no continuar
+
+		# Si no hay agua, procesar interacción normal con eventos
 		var e: Event = motion.event_in_front()
 		if e:
 			e.on_player_action()
@@ -138,3 +173,74 @@ func _on_player_control_unblocked() -> void:
 func set_facing_direction(new_direction:Vector2):
 	motion.dir = new_direction
 	stop()
+
+## --- SURF System ---
+## Intenta activar SURF si el jugador mira hacia agua
+func _try_activate_surf() -> bool:
+	if is_surfing:
+		return false  # Ya está en modo surfing
+
+	# Obtener el grid
+	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not map_system:
+		return false
+
+	var grid: OverworldGrid = map_system.get_active_grid()
+	if not grid:
+		return false
+
+	# Calcular tile frente al jugador
+	var current_tile = grid.world_to_tile(global_position)
+	var target_tile = current_tile + Vector2i(motion.dir)
+
+	# Verificar si el tile frente es agua
+	var terrain = grid.terrain_at(target_tile)
+	if terrain != "water":
+		return false
+
+	# Es agua - emitir señal para activar SURF
+	SignalManager.mo_requested.emit("SURF", null)
+	return true
+
+## Activa o desactiva el modo surfing
+func set_surfing_mode(enabled: bool) -> void:
+	if is_surfing == enabled:
+		return  # Ya está en ese modo
+
+	is_surfing = enabled
+
+	if enabled:
+		# Cambiar a sprite de surfing
+		sprite.sprite_frames = surf_spriteframes
+		# Convertir animación idle a idle direccional según la dirección actual
+		match motion.dir:
+			Vector2.UP: sprite.animation = "idle_up"
+			Vector2.DOWN: sprite.animation = "idle_down"
+			Vector2.LEFT: sprite.animation = "idle_left"
+			Vector2.RIGHT: sprite.animation = "idle_right"
+		sprite.play()
+		set_meta("can_surf", true)
+		print("Player: Modo surfing activado")
+	else:
+		# Volver al sprite normal
+		sprite.sprite_frames = normal_spriteframes
+		# En modo normal, usar idle estático
+		sprite.animation = "idle"
+		sprite.stop()
+		match motion.dir:
+			Vector2.UP: sprite.frame = 3
+			Vector2.DOWN: sprite.frame = 0
+			Vector2.LEFT: sprite.frame = 1
+			Vector2.RIGHT: sprite.frame = 2
+		remove_meta("can_surf")
+		print("Player: Modo surfing desactivado")
+
+## Verifica si el jugador puede moverse al tile destino en modo surfing
+## Se llama desde GridMotion antes de validar movimiento
+func can_surf_to_tile(_tile: Vector2i) -> bool:
+	if not is_surfing:
+		return true  # No está en surfing, movimiento normal
+
+	# En modo surfing, SIEMPRE permitir el movimiento
+	# Si es a tierra, el surf se desactivará automáticamente en _on_step_finished()
+	return true
