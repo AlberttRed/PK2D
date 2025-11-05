@@ -29,8 +29,15 @@ func push(direction: Vector2) -> bool:
 	var current_tile = grid.world_to_tile(global_position)
 	var next_tile = current_tile + Vector2i(direction)
 
+	# Verificar restricciones direccionales: ¿se puede "entrar" al tile de la roca desde donde viene el empuje?
+	# can_enter_tile espera la dirección del movimiento (hacia donde va el jugador)
+	# Si push es DOWN, el jugador se mueve hacia DOWN, y la función calcula entrada desde UP
+	if not grid.can_enter_tile(current_tile, direction):
+		# El tile de la roca no permite entrar desde esa dirección
+		return false
+
 	# Verificar si el tile destino es válido
-	if not _can_move_to_tile(next_tile, grid):
+	if not _can_move_to_tile(current_tile, next_tile, grid):
 		return false
 
 	# Empujar la roca (mover suavemente)
@@ -41,17 +48,18 @@ func push(direction: Vector2) -> bool:
 	return true
 
 ## Verifica si la roca puede moverse al tile destino
-func _can_move_to_tile(tile: Vector2i, grid: OverworldGrid) -> bool:
-	# Verificar que el tile no está bloqueado (terreno, colisiones)
-	if grid.is_blocked(self, tile):
-		return false
+func _can_move_to_tile(from: Vector2i, to: Vector2i, grid: OverworldGrid) -> bool:
+	# Verificar si el tile destino es un ledge - las rocas NO pueden ser empujadas a ledges
+	var ledge_info = grid.get_ledge_info(to)
+	if ledge_info["is_ledge"]:
+		return false  # Bloqueado: no se puede empujar una roca a un ledge
 
-	# Verificar si hay otro actor (jugador, NPC) en ese tile
-	if grid.has_actor(tile):
+	# Usar can_step_to que incluye validación de direcciones (ledges, etc.)
+	if not grid.can_step_to(self, from, to):
 		return false
 
 	# Verificar si hay otro evento en ese tile que bloquee el paso
-	var event_in_tile = grid.event_at(tile)
+	var event_in_tile = grid.event_at(to)
 	if event_in_tile and event_in_tile != self:
 		# Solo bloquear si el evento NO es "through"
 		if event_in_tile.current_page and not event_in_tile.current_page.through:
@@ -118,8 +126,23 @@ func _auto_push() -> void:
 	if not player:
 		return
 
+	# Obtener el grid
+	var grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
+	if not grid:
+		return
+
 	# Calcular dirección del empuje (jugador → roca)
 	var push_direction = _calculate_push_direction_from_player(player)
+
+	# Verificar restricciones direccionales del tile de la roca
+	var rock_tile = grid.world_to_tile(global_position)
+
+	# can_enter_tile espera la dirección del movimiento del jugador
+	# Si push_direction es DOWN, el jugador se mueve hacia DOWN (hacia la roca)
+	if not grid.can_enter_tile(rock_tile, push_direction):
+		# El tile de la roca no permite entrar desde esa dirección
+		# (por ejemplo, un ledge que bloquea subir)
+		return
 
 	# Bloquear el control del jugador durante el empuje
 	SignalManager.player_control_blocked.emit()
