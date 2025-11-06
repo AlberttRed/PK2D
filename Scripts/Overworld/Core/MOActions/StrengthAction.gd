@@ -4,19 +4,17 @@ class_name StrengthAction
 ## Implementación de la MO FUERZA (STRENGTH)
 ## Permite empujar rocas pesadas que bloquean el camino
 
-## Referencia al MOSystem (inicializada al primer uso)
-var mo_system: Node = null
+## Referencia al MOSystem (inyectada al registrarse)
+var mo_system: MOSystem = null
 
 func _init():
 	mo_name = "STRENGTH"
 	description = "Empuja rocas pesadas"
 	requires_confirmation = true
 
-## Obtiene o inicializa la referencia al MOSystem
-func _get_mo_system() -> Node:
-	if not mo_system or not is_instance_valid(mo_system):
-		mo_system = Engine.get_main_loop().root.get_tree().get_first_node_in_group("MOSystem")
-	return mo_system
+## Establece la referencia al MOSystem (llamado desde MOSystem.register_mo_action)
+func set_mo_system(system: MOSystem) -> void:
+	mo_system = system
 
 ## Valida si el jugador puede usar FUERZA
 func can_use(_player: Node, target: Node) -> bool:
@@ -51,8 +49,7 @@ func _find_pokemon_with_STRENGTH(_player: Node) -> Pokemon:
 ## Mensaje de detección que se muestra SIEMPRE
 func get_detect_message(_target: Node) -> String:
 	# Verificar si STRENGTH ya está activo
-	var mo_sys = _get_mo_system()
-	var strength_already_active = mo_sys and mo_sys.is_effect_active("STRENGTH_ENABLED")
+	var strength_already_active = mo_system and mo_system.is_effect_active("STRENGTH_ENABLED")
 
 	if strength_already_active:
 		return "Usar FUERZA ha permitido desplazar la roca a un lado."
@@ -61,15 +58,8 @@ func get_detect_message(_target: Node) -> String:
 
 ## Ejecuta el FLUJO de FUERZA: choice, empuje, animación
 func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
-	# Obtener GUI para mensajes y choices
-	var gui = context.get_tree().get_first_node_in_group("GUI")
-	if not gui:
-		push_error("StrengthAction: No se encontró el GUI")
-		return {"success": false, "cancelled": false}
-
 	# Verificar si STRENGTH ya está activo
-	var mo_sys = _get_mo_system()
-	var strength_already_active = mo_sys and mo_sys.is_effect_active("STRENGTH_ENABLED")
+	var strength_already_active = mo_system and mo_system.is_effect_active("STRENGTH_ENABLED")
 
 	# Si STRENGTH ya está activo, empujar directamente sin activar de nuevo
 	if strength_already_active:
@@ -80,28 +70,34 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	var pokemon_with_strength = _find_pokemon_with_STRENGTH(_player)
 	var pokemon_name = pokemon_with_strength.get_display_name() if pokemon_with_strength else "Tu Pokémon"
 
-	# 1. Choice de confirmación
+	# 1. Choice de confirmación usando SignalManager (método correcto para GUI)
 	if requires_confirmation:
-		var choice = await gui.show_message_with_choices("¿Usas FUERZA?", ["Sí", "No"] as Array[String])
+		SignalManager.choice_requested.emit("¿Usas FUERZA?", ["Sí", "No"])
+		var choice = await SignalManager.choice_finished
 		if choice != 0:
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
 	# 2. Activar el efecto STRENGTH en el mapa (persistente hasta cambiar de mapa)
-	if mo_sys:
-		mo_sys.activate_effect("STRENGTH_ENABLED", true)
+	if not mo_system:
+		push_error("StrengthAction: MOSystem no disponible")
+		return {"success": false, "cancelled": false}
+	
+	mo_system.activate_effect("STRENGTH_ENABLED", true)
 
-	# 3. Mensaje de activación
-	await gui.show_message_with_config("¡%s usó FUERZA!" % pokemon_name, {
+	# 3. Mensajes de activación usando SignalManager
+	SignalManager.message_requested.emit("¡%s usó FUERZA!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
+	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
-	await gui.show_message_with_config("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
+	SignalManager.message_requested.emit("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
+	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 4. Retornar éxito (la roca se empujará al colisionar)

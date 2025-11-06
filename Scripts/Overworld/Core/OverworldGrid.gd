@@ -20,6 +20,9 @@ var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 # Debug mode para restricciones direccionales (PBI 454)
 @export var debug_show_directional_restrictions: bool = false
 
+# Referencia al OverworldContext (obtenida del EventSystem)
+var context: OverworldContext = null
+
 
 
 func _enter_tree() -> void:
@@ -37,8 +40,8 @@ func _ready() -> void:
 	# Registrar todos los SpawnPoints del mapa
 	_register_all_spawns()
 
-	# El player se configura desde MapSystem, no desde aquí
-	# para evitar conflictos con la nueva lógica de GameStart
+	# El contexto se inyectará desde MapSystem cuando se active este mapa
+	# Los eventos recibirán el contexto después de que el grid lo reciba
 
 	# Activar redibujado continuo si el modo debug está activado
 	if debug_show_directional_restrictions:
@@ -367,16 +370,11 @@ func has_spawn_point(spawn_id: String) -> bool:
 
 # --- Player Positioning ---
 ## Posiciona al jugador en una posición específica (Vector2i)
-func position_player_at_tile(tile_position: Vector2i) -> bool:
-	# Buscar MapSystem (solo cuando se necesita, poco frecuente)
-	var map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
-	if not map_system:
-		push_error("OverworldGrid: No se encontró el MapSystem")
-		return false
-
-	var player: Node = map_system.get_player()
+## @param tile_position: Tile donde posicionar al jugador
+## @param player: Nodo del jugador (REQUERIDO - debe pasarse explícitamente)
+func position_player_at_tile(tile_position: Vector2i, player: Node) -> bool:
 	if not player:
-		push_error("OverworldGrid: No se encontró el jugador")
+		push_error("OverworldGrid.position_player_at_tile(): Player es requerido como parámetro")
 		return false
 
 	# Teletransportar al jugador a la posición especificada
@@ -386,7 +384,13 @@ func position_player_at_tile(tile_position: Vector2i) -> bool:
 	return true
 
 ## Posiciona al jugador en un SpawnPoint específico
-func position_player_at_spawn(spawn_id: String) -> bool:
+## @param spawn_id: ID del spawn point
+## @param player: Nodo del jugador (REQUERIDO - debe pasarse explícitamente)
+func position_player_at_spawn(spawn_id: String, player: Node) -> bool:
+	if not player:
+		push_error("OverworldGrid.position_player_at_spawn(): Player es requerido como parámetro")
+		return false
+
 	var spawn_point = get_spawn_point(spawn_id)
 	if not spawn_point:
 		push_warning("OverworldGrid: No se encontró el spawn point: " + spawn_id)
@@ -396,35 +400,55 @@ func position_player_at_spawn(spawn_id: String) -> bool:
 	var spawn_position = spawn_point.get_tile_position()
 
 	# Usar el método de posicionamiento por tile
-	var success = position_player_at_tile(spawn_position)
+	var success = position_player_at_tile(spawn_position, player)
 
 	if success:
 		# Actualizar la dirección si el spawn point la especifica
 		var direction = spawn_point.get_facing_direction()
 		print("OverworldGrid: Dirección del SpawnPoint: ", direction)
-		set_player_facing_direction(direction)
+		set_player_facing_direction(direction, player)
 
 		print("OverworldGrid: Jugador posicionado en spawn: ", spawn_id, " en posición: ", spawn_position, " mirando: ", direction)
 
 	return success
 
 ## Establece la dirección del jugador
-func set_player_facing_direction(direction: Vector2) -> void:
-	# Buscar MapSystem (solo cuando se necesita, poco frecuente)
-	var map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
-	if not map_system:
-		push_error("OverworldGrid: No se encontró el MapSystem")
-		return
-
-	var player: Node = map_system.get_player()
+## @param direction: Dirección a establecer
+## @param player: Nodo del jugador (REQUERIDO - debe pasarse explícitamente)
+func set_player_facing_direction(direction: Vector2, player: Node) -> void:
 	if not player:
-		push_error("OverworldGrid: No se encontró el jugador")
+		push_error("OverworldGrid.set_player_facing_direction(): Player es requerido como parámetro")
 		return
 
 	# Establecer la dirección del jugador
 	player.set_facing_direction(direction)
 
 	print("OverworldGrid: Dirección del jugador establecida a: ", direction)
+
+## ============================================================================
+## CONTEXT MANAGEMENT
+## ============================================================================
+
+## Establece el contexto del Overworld (llamado desde MapSystem al activar el mapa)
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	print("OverworldGrid: Contexto establecido")
+
+	# Propagar el contexto a todos los eventos hijos
+	_inject_context_to_events()
+
+## Propaga el contexto a todos los eventos hijos del grid
+func _inject_context_to_events() -> void:
+	if not context:
+		return
+
+	var events_container = get_node_or_null("Events")
+	if not events_container:
+		return
+
+	for event in events_container.get_children():
+		if event.has_method("set_overworld_context"):
+			event.set_overworld_context(context)
 
 # --- Debug Visualization (PBI 454) ---
 func _draw() -> void:

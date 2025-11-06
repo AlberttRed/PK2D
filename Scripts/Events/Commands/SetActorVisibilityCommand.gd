@@ -23,9 +23,11 @@ func execute(context: Node) -> void:
 				return
 
 		1:  # Player
-			target_actor = context.get_tree().get_first_node_in_group("Player")
+			var overworld_context = _get_overworld_context(context)
+			if overworld_context:
+				target_actor = overworld_context.get_player()
 			if not target_actor:
-				push_warning("SetActorVisibilityCommand: No se encontró el Player")
+				push_error("SetActorVisibilityCommand: Player no disponible")
 				return
 
 	# Cambiar visibilidad
@@ -81,4 +83,12 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return true
+
+## Obtiene el OverworldContext desde el EventController
+func _get_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		var event_system = context.get_parent() as EventSystem
+		if event_system and event_system.context:
+			return event_system.context
+	return null
 

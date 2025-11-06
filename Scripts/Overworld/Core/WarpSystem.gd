@@ -2,13 +2,17 @@ extends Node
 class_name WarpSystem
 
 ## WarpSystem - Sistema global para gestionar cambios de mapa/posición
-## Escucha las peticiones de warp del SignalManager y ejecuta los cambios correspondientes
+## Utiliza OverworldContext para acceder a otros sistemas sin acoplamiento
 
 signal warp_started(map_id: String, spawn_id: String)
 signal warp_finished(map_id: String, spawn_id: String)
 
+# Referencia al OverworldContext (inyectada desde OverworldCoordinator)
+var context: OverworldContext = null
+
 # Referencias a otros sistemas (inyectadas desde OverworldCoordinator)
-# NO usar get_tree().get_first_node_in_group() - usar inyección de dependencias
+# DEPRECATED: Usar context.get_X_system() en su lugar
+# Se mantienen temporalmente para compatibilidad
 var map_system: MapSystem = null
 var world_system: WorldSystem = null
 
@@ -18,14 +22,6 @@ var current_map_id: String = ""
 var current_spawn_id: String = ""
 
 func _ready() -> void:
-	# Las referencias se inyectan desde OverworldCoordinator
-	# Verificar que las tenemos (se ejecutará después de la inyección)
-	await get_tree().process_frame
-
-	if not map_system or not world_system:
-		push_warning("WarpSystem: Dependencias no inyectadas correctamente. Intentando fallback...")
-		_update_references()
-
 	# Conectar con las señales del SignalManager
 	if SignalManager:
 		SignalManager.warp_requested.connect(_on_warp_requested)
@@ -34,20 +30,21 @@ func _ready() -> void:
 		push_error("WarpSystem: SignalManager no encontrado")
 
 	print("WarpSystem: Sistema de warp inicializado")
+	# NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
+	# Se validará cuando se use, no aquí
 
-## Actualiza las referencias a otros sistemas (FALLBACK - no recomendado)
-## Las dependencias deberían ser inyectadas por OverworldCoordinator
+## Actualiza las referencias a otros sistemas desde el contexto
+## DEPRECATED: Este método solo sirve para obtener el contexto del coordinador como fallback inicial
 func _update_references() -> void:
-	# Solo ejecutar si las referencias no fueron inyectadas
-	if not map_system:
-		map_system = get_tree().get_first_node_in_group("MapSystem")
-		if map_system:
-			push_warning("WarpSystem: MapSystem detectado por fallback. Debería ser inyectado.")
-
-	if not world_system:
-		world_system = get_tree().get_first_node_in_group("WorldSystem")
-		if world_system:
-			push_warning("WarpSystem: WorldSystem detectado por fallback. Debería ser inyectado.")
+	# Intentar obtener el contexto del coordinador si no está disponible
+	if not context:
+		var coordinator = get_parent() as OverworldCoordinator
+		if coordinator and coordinator.has_method("get_context"):
+			context = coordinator.get_context()
+			if context:
+				print("WarpSystem: Contexto obtenido del coordinador")
+		else:
+			push_error("WarpSystem: Contexto no disponible y no se puede obtener del coordinador")
 
 ## Método público para solicitar un warp
 func request_warp(map_id: String, spawn_id: String) -> void:
@@ -76,7 +73,13 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 	is_warping = true
 
 	# 0. CRÍTICO: Detener completamente cualquier movimiento en curso
-	var player = get_tree().get_first_node_in_group("Player")
+	if not context:
+		push_error("WarpSystem: Contexto no disponible en _execute_warp")
+		is_warping = false
+		return
+
+	var player: Node = context.get_player()
+
 	if player and player.has_node("GridMotion"):
 		var motion = player.get_node("GridMotion")
 		if motion:
@@ -92,37 +95,47 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 
 			print("WarpSystem: Movimiento detenido, continuando warp")
 
-	# 1. Actualizar referencias antes de ejecutar el warp
-	_update_references()
+	# 1. Obtener referencias de sistemas del contexto
+	var ms: MapSystem = null
+	var ws: WorldSystem = null
+
+	if context:
+		ms = context.get_map_system()
+		ws = context.get_world_system()
+	else:
+		# Fallback temporal: actualizar referencias
+		_update_references()
+		ms = map_system
+		ws = world_system
 
 	# Verificar que tenemos las referencias necesarias
-	if not map_system:
+	if not ms:
 		push_error("WarpSystem: No se pudo obtener el MapSystem")
 		is_warping = false
 		return
 
-	if not world_system:
+	if not ws:
 		push_error("WarpSystem: No se pudo obtener el WorldSystem")
 		is_warping = false
 		return
 
 	# 1. Verificar si necesitamos cambiar de mapa
-	var current_map = map_system.get_active_map()
+	var current_map = ms.get_active_map()
 	var needs_map_change = not current_map or current_map.name != map_id
 
 	if needs_map_change:
 		print("WarpSystem: Cambiando de mapa a través de WorldSystem: ", map_id)
 
 		# Usar gestión de estado avanzada para interiores (PBI 374)
-		if world_system.has_method("warp_with_state_management"):
-			var success = await world_system.warp_with_state_management(map_id, spawn_id)
+		if ws.has_method("warp_with_state_management"):
+			var success = await ws.warp_with_state_management(map_id, spawn_id)
 			if not success:
 				push_error("WarpSystem: No se pudo cambiar al mapa con gestión de estado: " + map_id)
 				is_warping = false
 				return
 
 			# Verificar eventos TOUCH en la nueva posición
-			var active_grid = map_system.get_active_grid()
+			var active_grid = ms.get_active_grid()
 			if active_grid:
 				_check_touch_events_at_player_position(active_grid)
 
@@ -131,7 +144,7 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 			return
 		else:
 			# Fallback al método tradicional
-			var success = world_system.change_to_map(map_id)
+			var success = ws.change_to_map(map_id)
 			if not success:
 				push_error("WarpSystem: No se pudo cambiar al mapa: " + map_id)
 				is_warping = false
@@ -140,13 +153,13 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 
 	# 2. Posicionar al jugador en el spawn point correspondiente
 	print("WarpSystem: Posicionando jugador en spawn: ", spawn_id)
-	var grid = map_system.get_active_grid()
+	var grid = ms.get_active_grid()
 	if not grid:
 		push_error("WarpSystem: No se pudo obtener el OverworldGrid del mapa activo")
 		is_warping = false
 		return
 
-	var spawn_success = grid.position_player_at_spawn(spawn_id)
+	var spawn_success = grid.position_player_at_spawn(spawn_id, player)
 	if not spawn_success:
 		push_warning("WarpSystem: No se pudo posicionar al jugador en el spawn: " + spawn_id)
 
@@ -180,14 +193,23 @@ func get_current_warp_info() -> Dictionary:
 
 ## Verifica si el sistema está listo para realizar warps
 func is_ready() -> bool:
-	# Actualizar referencias antes de verificar
+	# Si tenemos contexto, verificar con él
+	if context:
+		return not is_warping and context.get_map_system() != null and context.get_world_system() != null
+
+	# Fallback temporal: actualizar referencias
 	_update_references()
 	return not is_warping and map_system != null and world_system != null
 
 ## Verifica si hay eventos con trigger TOUCH en la posición del jugador tras un warp
 func _check_touch_events_at_player_position(grid: Node) -> void:
-	var player = get_tree().get_first_node_in_group("Player")
+	if not context:
+		push_error("WarpSystem: Contexto no disponible en _check_touch_events")
+		return
+
+	var player: Node = context.get_player()
 	if not player:
+		push_error("WarpSystem: Player no disponible en el contexto")
 		return
 
 	# Obtener la tile del jugador

@@ -7,6 +7,26 @@ class_name NPC
 ## manteniendo compatibilidad total con el sistema de eventos, pero añadiendo capacidades
 ## de movimiento, animación y colisión mediante GridMotion, Occupancy y ActorAnimator.
 
+## Referencia al OverworldContext (inyectada desde OverworldGrid)
+var overworld_context: OverworldContext = null
+
+## Establece el contexto del Overworld (llamado desde OverworldGrid)
+func set_overworld_context(context: OverworldContext) -> void:
+	overworld_context = context
+
+	# Propagar a componentes hijos si existen
+	var grid_motion = get_node_or_null("GridMotion")
+	if grid_motion and grid_motion.has_method("set_context"):
+		grid_motion.set_context(context)
+
+	var occupancy = get_node_or_null("Occupancy")
+	if occupancy and occupancy.has_method("set_context"):
+		occupancy.set_context(context)
+
+## Helper para obtener el OverworldContext
+func _get_context() -> OverworldContext:
+	return overworld_context
+
 ## Tipo de movimiento del NPC
 @export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
 
@@ -204,8 +224,9 @@ func _setup_timers() -> void:
 
 ## Conecta a la señal step_finished del Player para awareness
 func _connect_to_player_movement() -> void:
-	# Buscar al jugador
-	var player = get_tree().get_first_node_in_group("Player")
+	# Buscar al jugador del contexto
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
 	if player and player.has_node("GridMotion"):
 		var player_motion = player.get_node("GridMotion")
 		if player_motion:
@@ -312,7 +333,8 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 		return
 
 	# Solo si está cerca, buscar el player
-	var player = get_tree().get_first_node_in_group("Player")
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
 	if not player:
 		return
 
@@ -429,8 +451,9 @@ func _try_execute_next_path_action() -> void:
 
 ## Hace que el NPC mire hacia el jugador
 func _face_player() -> void:
-	# Buscar al jugador
-	var player = get_tree().get_first_node_in_group("Player")
+	# Buscar al jugador del contexto
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
 	if not player or not motion:
 		return
 

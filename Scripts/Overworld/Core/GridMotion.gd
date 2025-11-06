@@ -39,21 +39,20 @@ var is_jumping_ledge := false  # Flag para indicar que se está saltando un ledg
 var grid: OverworldGrid
 var active_tween: Tween = null  # Referencia al tween activo
 
-## Referencia a MapSystem (inicializada en _ready, crítica para seamless world)
+## Referencia al OverworldContext (inyectada desde el actor padre)
+var context: OverworldContext = null
+
+## Referencia a MapSystem (obtenida del contexto)
 var map_system: MapSystem = null
 
 func _ready() -> void:
-	# Inicializar MapSystem (crítico para seamless world)
-	map_system = get_tree().get_first_node_in_group("MapSystem") as MapSystem
-	if not map_system:
-		push_error("GridMotion: MapSystem no encontrado - el sistema seamless no funcionará")
+	# El contexto se inyectará desde el Player/NPC padre después de _ready()
+	# NO intentar obtener MapSystem aquí - se hará cuando se reciba el contexto
 
-	# Suscribirse a cambios de grid activo publicados por MapSystem
+	# Suscribirse a cambios de grid activo (la señal actualiza grid automáticamente)
 	if SignalManager:
 		SignalManager.active_grid_changed.connect(func(g): grid = g)
-		# Inicializar con el grid activo si ya existe (usar MapSystem ya cargado)
-		if map_system:
-			grid = map_system.get_active_grid()
+		print("GridMotion: Suscrito a active_grid_changed")
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
@@ -82,11 +81,17 @@ func current_tile() -> Vector2i:
 			return Vector2i.ZERO
 	return grid.world_to_tile(actor.global_position)
 
-## Refresca la referencia al grid actual (con cache para evitar búsquedas repetidas)
-## Nota: Se usa get_first_node_in_group en lugar de señales porque current_tile()
-## es consultado frecuentemente (hot path) y necesita respuesta síncrona
+## Refresca la referencia al grid actual
+## Nota: Obtiene el grid activo del MapSystem
 func _refresh_grid() -> void:
-	grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
+	# Actualizar referencia a MapSystem si es necesario
+	_update_map_system_reference()
+
+	# Obtener grid del MapSystem
+	if map_system:
+		grid = map_system.get_active_grid()
+	# Si no hay MapSystem todavía, simplemente no hacer nada
+	# El grid se inicializará cuando se reciba el contexto
 
 func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
 	_refresh_grid()
@@ -281,6 +286,8 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 
 	# Buscar evento en todos los grids (importante para seamless world)
 	var event: Event = null
+	# NOTA: Para seamless world necesitamos buscar en múltiples grids
+	# Esto es una de las pocas excepciones donde get_nodes_in_group es necesario
 	var grids = get_tree().get_nodes_in_group("OverworldGrid")
 
 	for g in grids:
@@ -407,3 +414,32 @@ func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
 	# NO alternar la zancada aquí porque ya se hizo durante el salto (2 veces)
 
 	return true
+
+## ============================================================================
+## CONTEXT MANAGEMENT
+## ============================================================================
+
+## Actualiza la referencia a MapSystem desde el contexto
+func _update_map_system_reference() -> void:
+	# Si ya tenemos MapSystem, no hacer nada
+	if map_system:
+		return
+
+	# Obtener del contexto si está disponible
+	if not context:
+		# No es un error - simplemente el contexto aún no se ha inyectado
+		return
+
+	map_system = context.get_map_system()
+	if not map_system:
+		push_error("GridMotion: MapSystem no disponible en el contexto")
+
+## Establece el contexto del Overworld (llamado desde el actor padre)
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	_update_map_system_reference()
+
+	# Inicializar grid ahora que tenemos el contexto
+	_refresh_grid()
+
+	print("GridMotion: Contexto establecido, grid inicializado: %s" % ("OK" if grid else "FAIL"))

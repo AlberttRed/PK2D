@@ -29,6 +29,7 @@ const OVERLAY_Z_HIGH := 5  # Al llegar (player debajo)
 @onready var player: Node2D = get_parent()
 var grid_motion: GridMotion
 var map_system: MapSystem
+var context: OverworldContext = null
 
 ## Cache del MapAreaEncounters del mapa actual (optimización)
 var current_map_encounters: MapAreaEncounters = null
@@ -60,10 +61,7 @@ func _ready() -> void:
 	# Conectar a step_started para destruir overlay cuando se mueve a otro tile
 	grid_motion.step_started.connect(_on_step_started)
 	
-	# Obtener MapSystem
-	map_system = get_tree().get_first_node_in_group("MapSystem")
-	if not map_system:
-		push_warning("WildEncounterDetector: MapSystem no encontrado")
+	# MapSystem se obtendrá del contexto cuando esté disponible
 	
 	# Conectar a cambios de mapa para actualizar cache y señal
 	SignalManager.seamless_map_crossed.connect(_on_map_changed)
@@ -138,6 +136,10 @@ func _get_encounter_type_from_tile(grid: OverworldGrid, tile: Vector2i) -> Varia
 
 ## Obtiene el grid activo con validación
 func _get_active_grid() -> OverworldGrid:
+	# Actualizar referencia a MapSystem si es necesario
+	if not map_system and context:
+		map_system = context.get_map_system()
+	
 	if not map_system:
 		return null
 	return map_system.get_active_grid()
@@ -460,3 +462,11 @@ func get_current_map_debug_info() -> String:
 	var info := "Mapa actual '%s':\n" % current_map_name
 	info += current_map_encounters.get_debug_info()
 	return info
+
+## Establece el contexto del Overworld (llamado desde Player)
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	if context:
+		map_system = context.get_map_system()
+		# Actualizar cache de encuentros tras obtener MapSystem
+		_update_encounters_cache()

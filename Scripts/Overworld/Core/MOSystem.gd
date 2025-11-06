@@ -7,7 +7,11 @@ class_name MOSystem
 ## - Ejecutar el efecto lógico de la MO
 ## - Comunicar el resultado mediante señales
 ##
+## Utiliza OverworldContext para acceder a otros sistemas sin acoplamiento
 ## NO gestiona mensajes ni animaciones visuales, eso lo hacen los eventos
+
+# Referencia al OverworldContext (inyectada desde OverworldCoordinator)
+var context: OverworldContext = null
 
 # Diccionario de acciones MO disponibles: {"CUT": MOAction, "SURF": MOAction, ...}
 var mo_actions: Dictionary = {}
@@ -64,6 +68,10 @@ func register_mo_action(mo_type: String, action: Resource) -> void:
 	if not action:
 		push_error("MOSystem: No se puede registrar una acción MO nula")
 		return
+
+	# Inyectar referencia al MOSystem en la acción (para acceso a efectos activos)
+	if action.has_method("set_mo_system"):
+		action.set_mo_system(self)
 
 	mo_actions[mo_type] = action
 	print("MOSystem: MO registrada - Tipo: %s, Nombre: %s" % [mo_type, action.get_mo_name()])
@@ -123,12 +131,19 @@ func _process_mo_request(mo_type: String, target: Node) -> void:
 	# Obtener la acción MO
 	var action: Resource = mo_actions[mo_type]
 
-	# Obtener el jugador
-	var player = get_tree().get_first_node_in_group("Player")
-	if not player:
-		push_error("MOSystem: No se encontró el jugador")
+	# Obtener el jugador del contexto
+	if not context:
+		push_error("MOSystem: Contexto no disponible")
 		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "No se encontró el jugador")
+			SignalManager.mo_finished.emit(mo_type, false, "Contexto no disponible")
+		_reset_state()
+		return
+	
+	var player: Node = context.get_player()
+	if not player:
+		push_error("MOSystem: Player no disponible en el contexto")
+		if SignalManager:
+			SignalManager.mo_finished.emit(mo_type, false, "Player no disponible")
 		_reset_state()
 		return
 
@@ -140,19 +155,19 @@ func _process_mo_request(mo_type: String, target: Node) -> void:
 		_reset_state()
 		return
 
-	# Obtener el EventController como context
-	var event_system = get_tree().get_first_node_in_group("EventSystem")
-	if not event_system or not event_system.controller:
-		push_error("MOSystem: No se encontró el EventController")
+	# Obtener el EventSystem del contexto
+	var event_sys: EventSystem = context.get_event_system()
+	if not event_sys or not event_sys.controller:
+		push_error("MOSystem: EventController no disponible")
 		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "No se encontró el EventController")
+			SignalManager.mo_finished.emit(mo_type, false, "EventController no disponible")
 		_reset_state()
 		return
 
-	var context = event_system.controller
+	var event_controller = event_sys.controller
 
 	# Ejecutar el flujo completo de la MO (mensajes, choice, animación, etc.)
-	var result: Dictionary = await action.execute(player, target, context)
+	var result: Dictionary = await action.execute(player, target, event_controller)
 
 	# Verificar el resultado y emitir señal unificada
 	if result.get("success", false):

@@ -24,19 +24,16 @@ func get_spawn_id() -> String:
 
 ## Retorna la posición en tiles del spawn point
 func get_tile_position() -> Vector2i:
-	# Buscar el OverworldGrid del mapa actual
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
-	if not map_system:
-		push_warning("SpawnPoint: No se encontró el MapSystem")
-		return Vector2i.ZERO
+	# Obtener el OverworldGrid de la jerarquía local (SpawnPoint → SpawnPoints → OverworldGrid)
+	var spawn_container = get_parent()
+	if spawn_container and spawn_container.name == "SpawnPoints":
+		var overgrid = spawn_container.get_parent()
+		if overgrid is OverworldGrid:
+			# Convertir posición mundial a tiles usando el grid local
+			return overgrid.world_to_tile(global_position)
 	
-	var grid: OverworldGrid = map_system.get_active_grid()
-	if not grid:
-		push_warning("SpawnPoint: No se encontró el OverworldGrid")
-		return Vector2i.ZERO
-	
-	# Convertir posición mundial a tiles
-	return grid.world_to_tile(global_position)
+	push_error("SpawnPoint: No se encontró el OverworldGrid en la jerarquía local")
+	return Vector2i.ZERO
 
 ## Retorna la dirección a la que debe mirar el jugador
 func get_facing_direction() -> Vector2:

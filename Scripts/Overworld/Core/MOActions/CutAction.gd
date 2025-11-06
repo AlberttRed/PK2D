@@ -4,10 +4,17 @@ class_name CutAction
 ## Implementación de la MO CORTE
 ## Permite cortar árboles pequeños que bloquean el camino
 
+## Referencia al MOSystem (inyectada al registrarse)
+var mo_system: MOSystem = null
+
 func _init():
 	mo_name = "CUT"
 	description = "Corta árboles pequeños que bloquean el camino"
 	requires_confirmation = true
+
+## Establece la referencia al MOSystem (llamado desde MOSystem.register_mo_action)
+func set_mo_system(system: MOSystem) -> void:
+	mo_system = system
 
 ## Valida si el jugador puede usar CORTE en el contexto actual
 func can_use(_player: Node, target: Node) -> bool:
@@ -52,28 +59,24 @@ func get_detect_message(_target: Node) -> String:
 ## Ejecuta el FLUJO de CORTE: choice, animación, mensajes de éxito
 ## Se llama SOLO si can_use() retornó true
 func execute(_player: Node, target: Node, context: Node) -> Dictionary:
-	# Obtener GUI para mensajes y choices
-	var gui = context.get_tree().get_first_node_in_group("GUI")
-	if not gui:
-		push_error("CutAction: No se encontró el GUI")
-		return {"success": false, "cancelled": false}
-
 	# Obtener el Pokémon que tiene CORTE (ya validado en can_use)
 	var pokemon_with_cut = _find_pokemon_with_CUT(_player)
 	var pokemon_name = pokemon_with_cut.get_display_name() if pokemon_with_cut else "Tu Pokémon"
 
 	# 1. Choice de confirmación (si requires_confirmation)
 	if requires_confirmation:
-		var choice = await gui.show_message_with_choices("¿Usas CORTE?", ["Sí", "No"] as Array[String])
+		SignalManager.choice_requested.emit("¿Usas CORTE?", ["Sí", "No"])
+		var choice = await SignalManager.choice_finished
 		if choice != 0:  # No o cancelado
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
 	# 2. Mensaje de éxito con el nombre del Pokémon
-	await gui.show_message_with_config("¡%s usó CORTE!" % pokemon_name, {
+	SignalManager.message_requested.emit("¡%s usó CORTE!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
+	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 3. Reproducir animación
