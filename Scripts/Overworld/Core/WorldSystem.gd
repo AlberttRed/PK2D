@@ -58,7 +58,7 @@ class_name WorldSystem
 ## Ejemplo:
 ##   Estás en PuebloPaleta (vecinos: ["Ruta1", "Ruta21"])
 ##   → Precarga: Ruta1, Ruta21
-##   
+##
 ##   Cambias a Ruta1 (vecinos: ["PuebloPaleta", "CiudadVerde"])
 ##   → Mantiene: PuebloPaleta (ya cargado y es vecino)
 ##   → Precarga: CiudadVerde
@@ -176,7 +176,7 @@ class MapData:
 	var world_position: Vector2 = Vector2.ZERO  # Posición mundial para seamless
 	var cached_instance: Node = null  # Instancia cacheada (si aplica)
 	var is_rendered: bool = false     # Indica si está visible en el árbol
-	
+
 	func _init(p_id: String, p_scene_path: String = "") -> void:
 		id = p_id
 		scene_path = p_scene_path
@@ -190,8 +190,12 @@ var scene_index: Dictionary = {}
 ## Lista de escenas de mapa para exportación (migrada desde MapSystem)
 @export var world_map_scenes: Array[PackedScene] = []
 
+## Referencia al OverworldContext (inyectada desde OverworldCoordinator)
+var context: OverworldContext = null  # OverworldContext
+
 ## Referencia al MapSystem (inyectada desde OverworldCoordinator)
-## NO usar get_node("../MapSystem") - viola el principio de jerarquía
+## DEPRECATED: Usar context.get_map_system() en su lugar
+## Se mantiene temporalmente para compatibilidad
 var map_system: MapSystem = null
 
 ## Configuración de caché y precarga de vecinos
@@ -200,24 +204,18 @@ var map_system: MapSystem = null
 
 
 func _ready() -> void:
-	# NOTA: MapSystem se inyecta desde OverworldCoordinator
-	# Si por alguna razón no fue inyectado, intentar fallback (no recomendado)
-	if not map_system:
-		map_system = get_node("../MapSystem") as MapSystem
-		if map_system:
-			push_warning("WorldSystem: MapSystem detectado por fallback. Debería ser inyectado por OverworldCoordinator.")
-		else:
-			push_error("WorldSystem: MapSystem no encontrado ni inyectado")
-			return
-	
 	# Indexar todas las escenas de mapa
 	_build_scene_index()
-	
+
 	# Registrar mapas conocidos y sus vecinos
 	_register_maps()
-	
+
 	# Conectar señal de cruce seamless para gestionar neighbors y active_map
 	SignalManager.seamless_map_crossed.connect(_on_seamless_map_crossed)
+
+	print("WorldSystem: Sistema inicializado")
+	# NOTA: El contexto y map_system se inyectan desde OverworldCoordinator después de _ready()
+	# Se validarán cuando se usen en los métodos de lógica
 
 
 ## Construye un índice de escenas para búsqueda rápida
@@ -231,7 +229,7 @@ func _build_scene_index() -> void:
 			continue
 		var file_name := path.get_file().get_basename()
 		scene_index[file_name] = scene
-	
+
 	print("WorldSystem: Índice de escenas construido con %d entradas" % scene_index.size())
 
 
@@ -241,11 +239,11 @@ func _build_scene_index() -> void:
 ##   2. Si no están definidos, usa valores por defecto o configuración manual
 func _register_maps() -> void:
 	print("WorldSystem: Iniciando registro de mapas...")
-	
+
 	# Registrar todos los mapas del índice
 	for scene_name in scene_index.keys():
 		_register_map_from_scene(scene_name)
-	
+
 	# Configuración manual opcional (override)
 	# Usa esto solo si necesitas forzar vecinos o posiciones que no están en el inspector
 	# Ejemplo:
@@ -258,28 +256,28 @@ func _register_map_from_scene(scene_name: String) -> void:
 	if not scene_index.has(scene_name):
 		push_warning("WorldSystem: Escena '%s' no encontrada en índice" % scene_name)
 		return
-	
+
 	var packed_scene: PackedScene = scene_index[scene_name]
-	
+
 	# Intentar obtener el estado de la escena sin instanciarla completamente
 	# (más eficiente para solo leer propiedades exportadas)
 	var state := packed_scene.get_state()
 	var world_pos := Vector2.ZERO
 	var scene_neighbors: Array[String] = []
-	
+
 	# Buscar propiedades exportadas en el nodo raíz
 	for i in range(state.get_node_property_count(0)):
 		var prop_name = state.get_node_property_name(0, i)
 		var prop_value = state.get_node_property_value(0, i)
-		
+
 		if prop_name == "world_position":
 			world_pos = prop_value
 		elif prop_name == "neighbors":
 			scene_neighbors = prop_value
-	
+
 	# Registrar el mapa con la posición leída
 	register_map_with_position(scene_name, world_pos)
-	
+
 	# Configurar vecinos si están definidos
 	if not scene_neighbors.is_empty():
 		set_map_neighbors(scene_name, scene_neighbors)
@@ -297,14 +295,14 @@ func register_map_with_position(map_id: String, world_pos: Vector2) -> bool:
 	if map_registry.has(map_id):
 		push_warning("WorldSystem: El mapa '%s' ya está registrado" % map_id)
 		return false
-	
+
 	# Intentar resolver la escena desde el índice
 	var scene_path := _resolve_scene_path(map_id)
-	
+
 	var map_data := MapData.new(map_id, scene_path)
 	map_data.world_position = world_pos
 	map_registry[map_id] = map_data
-	
+
 	return true
 
 
@@ -313,7 +311,7 @@ func _resolve_scene_path(map_id: String) -> String:
 	# Buscar en el índice primero
 	if scene_index.has(map_id):
 		return scene_index[map_id].resource_path
-	
+
 	# Si no se encuentra, retornar vacío (se cargará bajo demanda)
 	print("WorldSystem: No se encontró escena para mapa: %s" % map_id)
 	return ""
@@ -325,7 +323,7 @@ func set_map_neighbors(map_id: String, neighbor_ids: Array[String]) -> void:
 	if not map_registry.has(map_id):
 		push_warning("WorldSystem: Intento de configurar vecinos para mapa no registrado: %s" % map_id)
 		return
-	
+
 	map_registry[map_id].neighbors = neighbor_ids
 	print("WorldSystem: Vecinos configurados para %s: %s" % [map_id, neighbor_ids])
 
@@ -335,13 +333,13 @@ func get_map(map_id: String) -> Node:
 	if not map_registry.has(map_id):
 		push_error("WorldSystem: Mapa no registrado: %s" % map_id)
 		return null
-	
+
 	var map_data: MapData = map_registry[map_id]
-	
+
 	# Si ya está cacheado, devolverlo
 	if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 		return map_data.cached_instance
-	
+
 	# Cargar el mapa
 	return _load_map(map_id)
 
@@ -350,31 +348,31 @@ func get_map(map_id: String) -> Node:
 func _load_map(map_id: String) -> Node:
 	if not map_registry.has(map_id):
 		return null
-	
+
 	var map_data: MapData = map_registry[map_id]
-	
+
 	# Obtener la escena
 	var scene: PackedScene = scene_index.get(map_id)
 	if not scene:
 		push_error("WorldSystem: No se encontró escena para el mapa: %s" % map_id)
 		return null
-	
+
 	print("WorldSystem: Cargando mapa: %s" % map_id)
-	
+
 	# Instanciar
 	var instance := scene.instantiate()
 	if not instance:
 		push_error("WorldSystem: No se pudo instanciar el mapa: %s" % map_id)
 		return null
-	
+
 	instance.name = map_id
-	
+
 	# Cachear si está habilitado (solo guardar referencia en memoria)
 	if enable_map_caching:
 		map_data.cached_instance = instance
 		# El mapa se añadirá al árbol cuando sea activado o renderizado como vecino
 		_manage_cache()
-	
+
 	print("WorldSystem: Mapa cargado exitosamente: %s" % map_id)
 	return instance
 
@@ -383,15 +381,15 @@ func _load_map(map_id: String) -> Node:
 func _manage_cache() -> void:
 	if not enable_map_caching:
 		return
-		
+
 	var cached_count := 0
 	var oldest_maps: Array[MapData] = []
-	
+
 	for map_data: MapData in map_registry.values():
 		if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 			cached_count += 1
 			oldest_maps.append(map_data)
-	
+
 	# Si excedemos el límite, liberar los más antiguos
 	if cached_count > max_cached_maps:
 		var to_free := cached_count - max_cached_maps
@@ -416,26 +414,26 @@ func change_to_map(map_id: String) -> bool:
 	if not map_system:
 		push_error("WorldSystem: MapSystem no disponible")
 		return false
-	
+
 	print("WorldSystem: Solicitando cambio de mapa a: %s" % map_id)
-	
+
 	var map_instance := get_map(map_id)
 	if not map_instance:
 		return false
-	
+
 	# Delegar al MapSystem (que manejará el jugador, grid, etc.)
 	var success = map_system.change_to_map_instance(map_instance)
-	
+
 	if success:
 		# Precarga de vecinos (para transiciones suaves)
 		_preload_neighbors(map_id)
-		
+
 		# Descarga de mapas no vecinos (liberar memoria)
 		_unload_non_neighbors(map_id)
-		
+
 		# Sincronización con GameState tras cambio de mapa
 		call_deferred("force_sync_to_gamestate")
-	
+
 	return success
 
 
@@ -443,19 +441,19 @@ func change_to_map(map_id: String) -> bool:
 func _preload_neighbors(map_id: String) -> void:
 	if not enable_map_caching or not map_registry.has(map_id):
 		return
-	
+
 	var map_data: MapData = map_registry[map_id]
-	
+
 	if map_data.neighbors.is_empty():
 		return
-	
+
 	for neighbor_id in map_data.neighbors:
 		if map_registry.has(neighbor_id):
 			var neighbor_data: MapData = map_registry[neighbor_id]
-			
+
 			# Obtener o cargar la instancia
 			var neighbor_instance = get_map(neighbor_id)
-			
+
 			if neighbor_instance and not neighbor_data.is_rendered:
 				# CRÍTICO: Añadir al MapSystem para que sea visible (no al cache)
 				if not map_system.is_ancestor_of(neighbor_instance):
@@ -463,23 +461,23 @@ func _preload_neighbors(map_id: String) -> void:
 					var current_parent = neighbor_instance.get_parent()
 					if current_parent:
 						current_parent.remove_child(neighbor_instance)
-					
+
 					# Añadir al MapSystem
 					map_system.add_child(neighbor_instance)
-				
+
 				# Posicionar según coordenadas mundiales
 				if neighbor_instance is Node2D:
 					neighbor_instance.global_position = neighbor_data.world_position
-				
+
 				# Hacer visible
 				neighbor_instance.visible = true
-				
+
 				# Desactivar procesamiento (solo el activo procesa)
 				if neighbor_instance.has_method("deactivate"):
 					neighbor_instance.deactivate()
 				else:
 					_disable_map_processing(neighbor_instance)
-				
+
 				neighbor_data.is_rendered = true
 
 
@@ -487,21 +485,21 @@ func _preload_neighbors(map_id: String) -> void:
 func _unload_non_neighbors(current_map_id: String) -> void:
 	if not enable_map_caching or not map_registry.has(current_map_id):
 		return
-	
+
 	var current_data: MapData = map_registry[current_map_id]
 	var current_neighbors = current_data.neighbors
-	
+
 	# Lista de mapas a mantener: mapa actual + sus vecinos
 	var maps_to_keep = [current_map_id] + current_neighbors
-	
+
 	# Recorrer todos los mapas
 	for map_id in map_registry.keys():
 		var map_data: MapData = map_registry[map_id]
-		
+
 		# Si está renderizado y NO está en la lista de mantener
 		if map_data.is_rendered and not map_id in maps_to_keep:
 			_unrender_map(map_data)
-		
+
 		# Liberar del caché si excedemos límite y no es necesario
 		if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 			if not map_id in maps_to_keep and not map_data.is_rendered:
@@ -512,19 +510,19 @@ func _unload_non_neighbors(current_map_id: String) -> void:
 func _unrender_map(map_data: MapData) -> void:
 	if not map_data.cached_instance or not is_instance_valid(map_data.cached_instance):
 		return
-	
+
 	var map_instance = map_data.cached_instance
-	
+
 	# Remover del MapSystem si está ahí
 	if map_system and map_system.is_ancestor_of(map_instance):
 		map_system.remove_child(map_instance)
-	
+
 	# El nodo queda sin padre pero en memoria vía cached_instance (referencia en GDScript)
 	# Esto es más limpio que moverlo entre contenedores
-	
+
 	# Marcar como no renderizado
 	map_data.is_rendered = false
-	
+
 	print("  ✓ Mapa des-renderizado: %s" % map_data.id)
 
 
@@ -534,7 +532,7 @@ func _disable_map_processing(map_node: Node) -> void:
 	var grid = map_node.get_node_or_null("OverworldGrid")
 	if grid:
 		grid.process_mode = Node.PROCESS_MODE_DISABLED
-	
+
 	# Eventos no procesan
 	var events_node = map_node.find_child("Events")
 	if events_node:
@@ -547,7 +545,7 @@ func _enable_map_processing(map_node: Node) -> void:
 	var grid = map_node.get_node_or_null("OverworldGrid")
 	if grid:
 		grid.process_mode = Node.PROCESS_MODE_INHERIT
-	
+
 	# Eventos procesan
 	var events_node = map_node.find_child("Events")
 	if events_node:
@@ -561,21 +559,21 @@ func _enable_map_processing(map_node: Node) -> void:
 ## Maneja el cruce seamless de mapas (escucha señal de GridMotion)
 ## SISTEMA UNIFICADO: Gestiona active_map, neighbors y GameState
 func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
-	
+
 	if not map_system:
 		return
-	
+
 	# Buscar el nuevo mapa por ID
 	var new_map: Node = null
 	for child in map_system.get_children():
 		if child.name == to_map_id:
 			new_map = child
 			break
-	
+
 	if not new_map:
 		push_warning("WorldSystem: No se encontró el mapa destino: %s" % to_map_id)
 		return
-	
+
 	# Cambiar el active_map en MapSystem
 	var old_map = map_system.active_map
 	if old_map != new_map:
@@ -585,27 +583,27 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 				old_map.deactivate()
 			else:
 				_disable_map_processing(old_map)
-		
+
 		# Activar el nuevo mapa
 		if new_map.has_method("activate"):
 			new_map.activate()
 		else:
 			_enable_map_processing(new_map)
-		
+
 		# Actualizar el active_map en MapSystem
 		map_system.active_map = new_map
-		
+
 		# Emitir cambio de grid activo (CRÍTICO para Occupancy y otros sistemas)
 		var new_grid = new_map.get_node_or_null("OverworldGrid")
 		if new_grid and SignalManager:
 			SignalManager.active_grid_changed.emit(new_grid)
-	
+
 	# Actualizar neighbors: precargar vecinos del nuevo mapa
 	_preload_neighbors(to_map_id)
-	
+
 	# Descargar mapas que ya no son necesarios
 	_unload_non_neighbors(to_map_id)
-	
+
 	# Actualizar GameState con el nuevo mapa
 	force_sync_to_gamestate()
 
@@ -679,21 +677,21 @@ func _count_cached_maps() -> int:
 func sync_position_for_save() -> void:
 	if not GameStateManager:
 		return
-	
+
 	# Obtener referencia al jugador si no la tenemos
 	var player_grid_motion = _get_player_grid_motion()
 	if not player_grid_motion:
 		push_warning("WorldSystem: No se pudo obtener GridMotion del jugador para sincronizar")
 		return
-	
+
 	# Obtener posición y dirección actual del jugador
 	var current_tile = player_grid_motion.current_tile()
 	var current_direction = player_grid_motion.dir
-	
+
 	# Actualizar solo posición y dirección (el mapa ya está sincronizado)
 	GameStateManager.set_current_position(current_tile)
 	GameStateManager.set_facing_direction(current_direction)
-	
+
 	print("WorldSystem: Posición sincronizada para guardado - Tile: %s, Dir: %s" % [current_tile, current_direction])
 
 
@@ -701,14 +699,14 @@ func sync_position_for_save() -> void:
 func verify_gamestate_sync() -> bool:
 	if not GameStateManager or not map_system:
 		return false
-	
+
 	var game_map_id = GameStateManager.get_current_map_id()
 	var actual_map_id = map_system.active_map.name if map_system.active_map else ""
-	
+
 	if game_map_id != actual_map_id:
 		push_warning("WorldSystem: Desincronización detectada - GameState: %s, Actual: %s" % [game_map_id, actual_map_id])
 		return false
-	
+
 	return true
 
 
@@ -716,17 +714,17 @@ func verify_gamestate_sync() -> bool:
 func force_sync_to_gamestate() -> void:
 	if not GameStateManager or not map_system:
 		return
-	
+
 	# Sincronizar mapa (lo más importante en cambios de mapa)
 	if map_system.active_map:
 		GameStateManager.set_current_map_id(map_system.active_map.name)
-	
+
 	# Sincronizar posición del jugador si está disponible
 	var player_grid_motion = _get_player_grid_motion()
 	if player_grid_motion:
 		var current_tile = player_grid_motion.current_tile()
 		GameStateManager.set_current_position(current_tile)
-		
+
 		# Sincronizar dirección
 		if "dir" in player_grid_motion:
 			GameStateManager.set_facing_direction(player_grid_motion.dir)
@@ -736,11 +734,9 @@ func force_sync_to_gamestate() -> void:
 func _get_player_grid_motion() -> Node:
 	var player = map_system.get_player() if map_system else null
 	if not player:
-		player = get_tree().get_first_node_in_group("Player")
-	
-	if not player:
+		push_error("WorldSystem: Player no disponible en _get_player_grid_motion")
 		return null
-	
+
 	return player.get_node("GridMotion")
 
 
@@ -761,13 +757,13 @@ func save_state_before_warp(from_map_id: String, to_map_id: String, player_tile:
 		"timestamp": Time.get_ticks_msec(),
 		"warp_to": to_map_id
 	}
-	
+
 	warp_history.push_front(state)
-	
+
 	# Limitar el historial
 	if warp_history.size() > max_warp_history:
 		warp_history = warp_history.slice(0, max_warp_history)
-	
+
 	print("WorldSystem: Estado guardado antes del warp - %s -> %s" % [from_map_id, to_map_id])
 
 
@@ -786,32 +782,34 @@ func restore_previous_overworld_state() -> bool:
 		var map_id = state.get("map_id", "")
 		if _is_overworld_map(map_id):
 			print("WorldSystem: Restaurando estado previo del overworld: %s" % map_id)
-			
+
 		# Cambiar al mapa del overworld
 		var success = change_to_map(map_id)
 		if not success:
 			return false
-		
+
 		# NOTA: El movimiento ya fue detenido por WarpSystem._execute_warp()
 		# Solo esperamos a que el grid se actualice
-		
+
 		# Esperar UN solo frame para que el grid se actualice
 		await get_tree().process_frame
-		
+
 		# Posicionar al jugador en la posición guardada
 		if map_system:
 			var grid = map_system.get_active_grid()
 			if grid:
 				var tile = state.get("tile", Vector2i.ZERO)
 				var direction = state.get("direction", Vector2.DOWN)
-				
-				grid.position_player_at_tile(tile)
-				grid.set_player_facing_direction(direction)
-				
+
+				var player = map_system.get_player() if map_system else null
+				if player:
+					grid.position_player_at_tile(tile, player)
+					grid.set_player_facing_direction(direction, player)
+
 				print("WorldSystem: Jugador restaurado en tile %s mirando %s" % [tile, direction])
-			
+
 			return true
-	
+
 	push_warning("WorldSystem: No se encontró estado previo del overworld para restaurar")
 	return false
 
@@ -820,11 +818,11 @@ func restore_previous_overworld_state() -> bool:
 func _is_overworld_map(map_id: String) -> bool:
 	# Lógica simple: mapas que contengan "House", "Interior", "Cave", etc. son interiores
 	var interior_keywords = ["House", "Interior", "Cave", "Building", "Shop"]
-	
+
 	for keyword in interior_keywords:
 		if map_id.contains(keyword):
 			return false
-	
+
 	return true
 
 
@@ -833,31 +831,31 @@ func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
 	if not map_system:
 		push_error("WorldSystem: MapSystem no disponible para warp con gestión de estado")
 		return false
-	
+
 	var player_grid_motion = _get_player_grid_motion()
 	if not player_grid_motion:
 		push_error("WorldSystem: No se pudo obtener GridMotion del jugador")
 		return false
-	
+
 	# Guardar estado actual si vamos a un interior
 	var current_map_id = map_system.active_map.name if map_system.active_map else ""
 	var is_going_to_interior = not _is_overworld_map(to_map_id)
 	var is_leaving_interior = not _is_overworld_map(current_map_id) and _is_overworld_map(to_map_id)
-	
+
 	if is_going_to_interior:
 		var current_tile = player_grid_motion.current_tile()
 		var current_direction = player_grid_motion.dir
 		print("WorldSystem: Guardando estado antes de entrar a interior - Tile: %s, Dir: %s" % [current_tile, current_direction])
 		save_state_before_warp(current_map_id, to_map_id, current_tile, current_direction)
-	
+
 	# Realizar el warp normal
 	var success = change_to_map(to_map_id)
 	if not success:
 		return false
-	
+
 	# NOTA: El movimiento ya fue detenido por WarpSystem._execute_warp()
 	# No es necesario volver a detenerlo aquí
-	
+
 	# Si salimos de un interior, intentar restaurar posición previa
 	if is_leaving_interior:
 		print("WorldSystem: Saliendo de interior, restaurando estado previo...")
@@ -869,9 +867,10 @@ func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
 		await get_tree().process_frame
 		if map_system:
 			var grid = map_system.get_active_grid()
-			if grid:
-				return grid.position_player_at_spawn(spawn_id)
-	
+			var player = map_system.get_player()
+			if grid and player:
+				return grid.position_player_at_spawn(spawn_id, player)
+
 	return true
 
 
@@ -888,9 +887,9 @@ func print_warp_history() -> void:
 	for i in range(warp_history.size()):
 		var state = warp_history[i]
 		print("  %d: %s -> %s (tile: %s, dir: %s)" % [
-			i, 
-			state.get("map_id", "?"), 
+			i,
+			state.get("map_id", "?"),
 			state.get("warp_to", "?"),
-			state.get("tile", "?"), 
+			state.get("tile", "?"),
 			state.get("direction", "?")
 		])

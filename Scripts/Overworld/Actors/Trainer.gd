@@ -195,7 +195,8 @@ func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
 		return
 
 	# Obtener posición actual del jugador
-	var player = get_tree().get_first_node_in_group("Player")
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
 	if not player or not motion or not motion.grid:
 		return
 
@@ -330,7 +331,8 @@ func _show_exclamation() -> void:
 
 ## Mueve el trainer hacia el jugador
 func _approach_player() -> void:
-	var player = get_tree().get_first_node_in_group("Player")
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
 	if not player or not motion or not motion.grid:
 		return
 
@@ -404,9 +406,16 @@ func _initiate_battle_from_page() -> void:
 		await SignalManager.message_finished
 
 	# Obtener Battler del jugador
-	var player = get_tree().get_first_node_in_group("Player")
+	var context = _get_context()
+	if not context:
+		push_error("Trainer '%s': OverworldContext no disponible" % name)
+		SignalManager.player_control_unblocked.emit()
+		_initiating_battle = false
+		return
+
+	var player: Node = context.get_player()
 	if not player:
-		push_error("Trainer '%s': No se encontró el jugador" % name)
+		push_error("Trainer '%s': Player no disponible" % name)
 		SignalManager.player_control_unblocked.emit()
 		_initiating_battle = false
 		return

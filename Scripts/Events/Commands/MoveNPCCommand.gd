@@ -65,17 +65,17 @@ func _execute_async(motion: GridMotion, context: Node) -> void:
 
 ## Busca un actor (NPC o Player) por nombre en la escena
 func _find_actor(context: Node, name: String) -> Node2D:
-	# Si es "Player", buscar específicamente en el grupo Player
+	# Si es "Player", obtener del contexto
 	if name == "Player" or name.to_lower() == "player":
-		return context.get_tree().get_first_node_in_group("Player")
+		var overworld_context = _get_overworld_context(context)
+		if overworld_context:
+			return overworld_context.get_player()
+		push_error("MoveNPCCommand: OverworldContext no disponible para obtener Player")
+		return null
 
-	# Buscar en el escenario actual (por nombre exacto)
-	var actor = context.get_tree().get_first_node_in_group(name)
-
-	# Si no se encuentra en grupos, buscar recursivamente por nombre exacto
-	if not actor:
-		var root = context.get_tree().root
-		actor = _find_node_by_name_recursive(root, name)
+	# Para NPCs, buscar en el escenario actual por nombre exacto
+	var root = context.get_tree().root
+	var actor = _find_node_by_name_recursive(root, name)
 
 	return actor
 
@@ -179,3 +179,11 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return false
+
+## Obtiene el OverworldContext desde el EventController
+func _get_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		var event_system = context.get_parent() as EventSystem
+		if event_system and event_system.context:
+			return event_system.context
+	return null

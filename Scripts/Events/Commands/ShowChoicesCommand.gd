@@ -55,15 +55,15 @@ func execute(context: Node) -> void:
 	for branch in branches:
 		options.append(branch.label)
 
-	# Obtener referencia al GUI
-	var gui = context.get_tree().get_first_node_in_group("GUI")
-	if not gui:
-		push_error("ShowChoicesCommand: No se encontró el nodo GUI")
+	# Usar SignalManager para comunicarse con el GUI (método correcto)
+	if not SignalManager:
+		push_error("ShowChoicesCommand: SignalManager no disponible")
 		context.continue_execution()
 		return
 
-	# Mostrar mensaje con opciones (estilo Pokémon)
-	_selected_index = await gui.show_message_with_choices(message, options)
+	# Mostrar mensaje con opciones usando SignalManager
+	SignalManager.choice_requested.emit(message, options)
+	_selected_index = await SignalManager.choice_finished
 
 	print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
 

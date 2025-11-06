@@ -4,6 +4,9 @@ extends Node2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
 
+# Referencia al OverworldContext (opcional, para acceso a sistemas)
+var context: OverworldContext = null
+
 # SpriteFrames para diferentes modos de movimiento
 var normal_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Walk.tres")
 var surf_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
@@ -12,6 +15,7 @@ var input_dir := Vector2.ZERO
 var holding := false
 var movement_enabled: bool = true
 var is_surfing: bool = false  # Modo surfing activado
+var _control_block_count: int = 0  # Contador de bloqueos anidados
 
 func _ready() -> void:
 	if !is_in_group("Player"):
@@ -19,7 +23,9 @@ func _ready() -> void:
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
 	$Shadow.visible = false
-	# Conectar señales de control del jugador
+
+	# Conectar señales de control del jugador (compatibilidad temporal)
+	# NOTA: El método preferido es usar block_controls() / unblock_controls() directamente
 	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
 	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
 
@@ -81,14 +87,15 @@ func _on_step_started() -> void:
 func _on_step_finished(tile: Vector2i) -> void:
 	# Si está en modo surfing, verificar si llegó a tierra
 	if is_surfing:
-		var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
-		if map_system:
-			var grid: OverworldGrid = map_system.get_active_grid()
-			if grid:
-				var terrain = grid.terrain_at(tile)
-				if terrain != "water":
-					# Llegó a tierra, desactivar surfing
-					set_surfing_mode(false)
+		if context:
+			var map_system: MapSystem = context.get_map_system()
+			if map_system:
+				var grid: OverworldGrid = map_system.get_active_grid()
+				if grid:
+					var terrain = grid.terrain_at(tile)
+					if terrain != "water":
+						# Llegó a tierra, desactivar surfing
+						set_surfing_mode(false)
 
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
@@ -143,9 +150,13 @@ func set_movement_enabled(enabled: bool) -> void:
 
 ##Teletransporta al jugador a la posición especificada
 func teleport_to_tile(tile: Vector2i) -> void:
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	if not context:
+		push_error("Player: Contexto no disponible para teleport")
+		return
+
+	var map_system: MapSystem = context.get_map_system()
 	if not map_system:
-		push_error("Player: No se encontró el MapSystem en la escena")
+		push_error("Player: MapSystem no disponible en el contexto")
 		return
 
 	var grid: OverworldGrid = map_system.get_active_grid()
@@ -179,8 +190,11 @@ func _try_activate_surf() -> bool:
 	if is_surfing:
 		return false  # Ya está en modo surfing
 
-	# Obtener el grid
-	var map_system: MapSystem = get_tree().get_first_node_in_group("MapSystem")
+	# Obtener el grid del contexto
+	if not context:
+		return false
+
+	var map_system: MapSystem = context.get_map_system()
 	if not map_system:
 		return false
 
@@ -241,3 +255,51 @@ func can_surf_to_tile(_tile: Vector2i) -> bool:
 	# En modo surfing, SIEMPRE permitir el movimiento
 	# Si es a tierra, el surf se desactivará automáticamente en _on_step_finished()
 	return true
+
+## ============================================================================
+## API DE CONTROL DIRECTO (método preferido sobre SignalManager)
+## ============================================================================
+
+## Bloquea los controles del jugador (método directo preferido)
+## Usa un contador para permitir bloqueos anidados
+func block_controls() -> void:
+	_control_block_count += 1
+	movement_enabled = false
+	# print("Player: Controles bloqueados (count: %d)" % _control_block_count)
+
+## Desbloquea los controles del jugador (método directo preferido)
+## Solo desbloquea realmente cuando el contador llega a 0
+func unblock_controls() -> void:
+	_control_block_count = max(0, _control_block_count - 1)
+	if _control_block_count == 0:
+		movement_enabled = true
+		# print("Player: Controles desbloqueados")
+
+## Fuerza el desbloqueo inmediato (resetea el contador)
+func force_unblock_controls() -> void:
+	_control_block_count = 0
+	movement_enabled = true
+	print("Player: Controles forzosamente desbloqueados")
+
+## Verifica si los controles están bloqueados
+func are_controls_blocked() -> bool:
+	return not movement_enabled
+
+## Establece el contexto del Overworld (llamado desde MapSystem)
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	print("Player: Contexto del Overworld establecido")
+
+	# Propagar el contexto a los componentes hijos
+	if motion and motion.has_method("set_context"):
+		motion.set_context(context)
+
+	# Propagar a Occupancy si existe
+	var occupancy = get_node_or_null("Occupancy")
+	if occupancy and occupancy.has_method("set_context"):
+		occupancy.set_context(context)
+
+	# Propagar a WildEncounterDetector si existe
+	var encounter_detector = get_node_or_null("WildEncounterDetector")
+	if encounter_detector and encounter_detector.has_method("set_context"):
+		encounter_detector.set_context(context)

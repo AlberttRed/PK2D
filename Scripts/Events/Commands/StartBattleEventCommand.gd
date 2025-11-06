@@ -162,8 +162,15 @@ func _validate_configuration() -> bool:
 
 ## Obtiene el Battler del jugador
 func _get_player_battler(context: Node) -> Battler:
-	var player = context.get_tree().get_first_node_in_group("Player")
+	# Obtener el player del contexto
+	var overworld_context = _get_overworld_context(context)
+	if not overworld_context:
+		push_error("StartBattleEventCommand: OverworldContext no disponible")
+		return null
+	
+	var player = overworld_context.get_player()
 	if not player:
+		push_error("StartBattleEventCommand: Player no disponible")
 		return null
 	
 	# Buscar el Battler hijo del jugador
@@ -310,3 +317,11 @@ func is_async() -> bool:
 ## Indica si este comando es seguro para ejecución paralela
 func is_safe_for_parallel() -> bool:
 	return false  # Las batallas bloquean el flujo
+
+## Obtiene el OverworldContext desde el EventController
+func _get_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		var event_system = context.get_parent() as EventSystem
+		if event_system and event_system.context:
+			return event_system.context
+	return null

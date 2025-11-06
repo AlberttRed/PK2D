@@ -41,8 +41,14 @@ func execute(context: Node) -> void:
 		context.continue_execution()
 		return
 
-	# Obtener la MOAction para el mensaje de detección
-	var mo_system = Engine.get_main_loop().root.get_tree().get_first_node_in_group("MOSystem")
+	# Obtener MOSystem del contexto
+	var overworld_context = _get_overworld_context(context)
+	if not overworld_context:
+		push_error("UseMOCommand: OverworldContext no disponible")
+		context.continue_execution()
+		return
+
+	var mo_system: MOSystem = overworld_context.get_mo_system()
 	if not mo_system or not mo_system.has_mo_action(mo_type_str):
 		push_error("UseMOCommand: MO '%s' no encontrada" % mo_type_str)
 		context.continue_execution()
@@ -140,3 +146,11 @@ func is_async() -> bool:
 ## No es seguro para ejecución paralela
 func is_safe_for_parallel() -> bool:
 	return false
+
+## Obtiene el OverworldContext desde el EventController
+func _get_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		var event_system = context.get_parent() as EventSystem
+		if event_system and event_system.context:
+			return event_system.context
+	return null

@@ -12,6 +12,9 @@ class_name PushableRock
 ## Flag para evitar empujar mientras ya se está moviendo
 var is_moving: bool = false
 
+## Referencia al OverworldContext (inyectada desde OverworldGrid)
+var overworld_context: OverworldContext = null
+
 ## Empuja la roca en una dirección
 ## @param direction: Vector2 (UP, DOWN, LEFT, RIGHT)
 ## @return: true si se pudo empujar, false si está bloqueado
@@ -19,8 +22,8 @@ func push(direction: Vector2) -> bool:
 	if is_moving:
 		return false
 
-	# Obtener el grid activo del grupo
-	var grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
+	# Obtener el grid de la jerarquía local (Event → Events → OverworldGrid)
+	var grid = _get_local_grid()
 	if not grid:
 		push_error("PushableRock: No se encontró el OverworldGrid")
 		return false
@@ -102,8 +105,10 @@ func _move_to_tile(tile: Vector2i, grid: OverworldGrid) -> void:
 ## Callback cuando el jugador colisiona con la roca
 ## Se llama automáticamente desde GridMotion cuando el jugador intenta entrar al tile de la roca
 func on_player_collision() -> void:
-	# Verificar si STRENGTH está activo
-	var mo_system = get_tree().get_first_node_in_group("MOSystem")
+	# Obtener MOSystem del contexto
+	var overworld_context = _get_context()
+	var mo_system: MOSystem = overworld_context.get_mo_system() if overworld_context else null
+
 	if not mo_system:
 		# Si no hay MOSystem, ejecutar el comportamiento normal del evento (ACTION_BUTTON)
 		super.on_player_collision()
@@ -121,14 +126,17 @@ func on_player_collision() -> void:
 
 ## Empuja la roca automáticamente cuando STRENGTH está activo
 func _auto_push() -> void:
-	# Obtener el jugador
-	var player = get_tree().get_first_node_in_group("Player")
+	# Obtener el jugador del contexto
+	var overworld_context = _get_context()
+	var player: Node = overworld_context.get_player() if overworld_context else null
 	if not player:
+		push_error("PushableRock: Player no disponible para auto-push")
 		return
 
-	# Obtener el grid
-	var grid = get_tree().get_first_node_in_group("OverworldGrid") as OverworldGrid
+	# Obtener el grid de la jerarquía local
+	var grid = _get_local_grid()
 	if not grid:
+		push_error("PushableRock: Grid no disponible para auto-push")
 		return
 
 	# Calcular dirección del empuje (jugador → roca)
@@ -164,3 +172,24 @@ func _calculate_push_direction_from_player(player: Node) -> Vector2:
 	else:
 		# Movimiento vertical predominante
 		return Vector2.DOWN if diff.y > 0 else Vector2.UP
+
+## ============================================================================
+## CONTEXT HELPERS
+## ============================================================================
+
+## Establece el contexto del Overworld (llamado desde OverworldGrid)
+func set_overworld_context(context: OverworldContext) -> void:
+	overworld_context = context
+
+## Helper para obtener el OverworldContext
+func _get_context() -> OverworldContext:
+	return overworld_context
+
+## Obtiene el OverworldGrid de la jerarquía local del evento
+func _get_local_grid() -> OverworldGrid:
+	var events_container = get_parent()
+	if events_container and events_container.name == "Events":
+		var overgrid = events_container.get_parent()
+		if overgrid is OverworldGrid:
+			return overgrid
+	return null
