@@ -70,10 +70,9 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	var pokemon_with_strength = _find_pokemon_with_STRENGTH(_player)
 	var pokemon_name = pokemon_with_strength.get_display_name() if pokemon_with_strength else "Tu Pokémon"
 
-	# 1. Choice de confirmación usando SignalManager (método correcto para GUI)
+	# 1. Choice de confirmación usando DisplayManager
 	if requires_confirmation:
-		SignalManager.choice_requested.emit("¿Usas FUERZA?", ["Sí", "No"])
-		var choice = await SignalManager.choice_finished
+		var choice = await DisplayManager.show_message_with_choices("¿Usas FUERZA?", ["Sí", "No"])
 		if choice != 0:
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
@@ -82,22 +81,20 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	if not mo_system:
 		push_error("StrengthAction: MOSystem no disponible")
 		return {"success": false, "cancelled": false}
-	
+
 	mo_system.activate_effect("STRENGTH_ENABLED", true)
 
-	# 3. Mensajes de activación usando SignalManager
-	SignalManager.message_requested.emit("¡%s usó FUERZA!" % pokemon_name, {
+	# 3. Mensajes de activación usando DisplayManager
+	await DisplayManager.show_message("¡%s usó FUERZA!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
-	SignalManager.message_requested.emit("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
+	await DisplayManager.show_message("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 4. Retornar éxito (la roca se empujará al colisionar)

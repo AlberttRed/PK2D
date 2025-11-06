@@ -19,40 +19,40 @@ func _ready() -> void:
 		# Pequeña pausa entre combates
 		await get_tree().create_timer(0.5).timeout
 	#get_tree().quit()
-	
+
 func wildSingleBattle():
 	# Usar equipo del jugador (configurado en Player Battler)
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
-	
+
 	# Usar el primer Pokémon del equipo WildPokemons (configurado desde inspector)
 	if wildPokemons.party.is_empty():
 		push_error("wildSingleBattle: No hay Pokémon configurados en WildPokemons")
 		return
-	
+
 	var wild_battle_pokemon = wildPokemons.party[0].to_battle_pokemon()
 	wild_battle_pokemon.is_wild = true
 	var wildParticipant: BattleParticipant = BattleParticipantWild.new([wild_battle_pokemon])
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
-		BattleRules.BattleModes.SINGLE  
+		BattleRules.BattleModes.SINGLE
 	)
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
-	
+
 	SignalManager.battle_requested.emit(participants, rules)
 	await SignalManager.battle_finished
-	
-	
+
+
 func wildDoubleBattle():
 	# Usar equipo del jugador (configurado en Player Battler)
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
-	
+
 	# Usar los primeros 2 Pokémon del equipo WildPokemons (configurado desde inspector)
 	if wildPokemons.party.size() < 2:
 		push_error("wildDoubleBattle: Se necesitan al menos 2 Pokémon en WildPokemons")
 		return
-	
+
 	var wild1 = wildPokemons.party[0].to_battle_pokemon()
 	wild1.is_wild = true
 	var wild2 = wildPokemons.party[1].to_battle_pokemon()
@@ -61,9 +61,9 @@ func wildDoubleBattle():
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
-		BattleRules.BattleModes.DOUBLE  
+		BattleRules.BattleModes.DOUBLE
 	)
-	
+
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
 	SignalManager.battle_requested.emit(participants, rules)
@@ -76,11 +76,11 @@ func wildRandomSingleBattle():
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
-		BattleRules.BattleModes.SINGLE  
+		BattleRules.BattleModes.SINGLE
 	)
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
-	
+
 	SignalManager.battle_requested.emit(participants, rules)
 	await SignalManager.battle_finished
 
@@ -91,14 +91,14 @@ func wildRandomDoubleBattle():
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
-		BattleRules.BattleModes.DOUBLE  
+		BattleRules.BattleModes.DOUBLE
 	)
-	
+
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
 	SignalManager.battle_requested.emit(participants, rules)
 	await SignalManager.battle_finished
-	
+
 func singleTrainerBattle():
 	# Usar equipos configurados en ambos Battlers (Player vs SingleTrainer)
 	var playerParticipant: BattleParticipant = player.to_battle_participant()
@@ -106,18 +106,18 @@ func singleTrainerBattle():
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.TRAINER,
-		BattleRules.BattleModes.SINGLE  
+		BattleRules.BattleModes.SINGLE
 	)
 
 	var participants:Array[BattleParticipant] = [playerParticipant, trainerParticipant]
-	
+
 	SignalManager.battle_requested.emit(participants, rules)
 	await SignalManager.battle_finished
 
 # Helper: genera un Pokémon aleatorio
 func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:
 	var random_id = randi_range(1, 151)
-	var pokemon_data = DatabaseManager.get_pokemon(random_id)
+	var pokemon_data = DatabaseService.get_pokemon(random_id)
 	var pkmn := Pokemon.new(
 		pokemon_data,         # pokemon_data
 		randi_range(1, 100),  # pokemon_level
@@ -145,13 +145,13 @@ func _create_random_player_participant(num_pokemon: int = 1) -> BattleParticipan
 	participant.is_player = true
 	participant.name = "Jugador"
 	return participant
-	
+
 #
 #func singleTrainerBattle_OLD():
 	#var selected_pokemon = null#getPokemon()
 	#var selected_level:int = 5#getLevel()
 	#
-	#var br : BattleRules = BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)	
+	#var br : BattleRules = BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
 	#var bc : BattleController = BattleController.new(br)
 #
 	#bc.playerSide.addParticipant($Player, true)
@@ -172,7 +172,7 @@ func _create_random_player_participant(num_pokemon: int = 1) -> BattleParticipan
 	#
 	#var enemyBattler : Battler = Battler.new().create(CONST.BATTLER_TYPES.WILD_POKEMON, [pkmn], BattleIA_Wild.new())
 	#
-	#var br : BattleRules = BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)	
+	#var br : BattleRules = BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	#var bc : BattleController = BattleController.new(br)
 	##var bs_player : BattleSide = BattleSide.new(CONST.BATTLE_SIDES.PLAYER)
 	##var bs_enemy : BattleSide = BattleSide.new(CONST.BATTLE_SIDES.ENEMY)

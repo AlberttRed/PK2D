@@ -18,7 +18,7 @@ class_name WorldSystem
 ## 2. Resolución de IDs: Convierte nombres de mapa (ej: "PuebloPaleta") a escenas
 ## 3. Caché inteligente: Mantiene mapas en memoria para transiciones rápidas
 ## 4. Carga dinámica: Carga/descarga mapas según la posición del jugador (chunks)
-## 5. Sincronización: Mantiene GameStateManager actualizado en puntos clave
+## 5. Sincronización: Mantiene GameStateService actualizado en puntos clave
 ## 6. Gestión de warps: Historial para restaurar estado al salir de interiores
 ##
 ## FLUJO DE INICIALIZACIÓN:
@@ -44,7 +44,7 @@ class_name WorldSystem
 ##   └── OverworldGrid.position_player_at_tile() → Posiciona jugador
 ##
 ## [Frame 2] Se ejecutan las llamadas diferidas
-##   └── force_sync_to_gamestate() → Sincroniza estado actual con GameStateManager
+##   └── force_sync_to_gamestate() → Sincroniza estado actual con GameStateService
 ##
 ## SISTEMA DE PRECARGA DE VECINOS (PBI 372):
 ## -------------------------------------------
@@ -73,7 +73,7 @@ class_name WorldSystem
 ## ---------------------------------------
 ## ¿POR QUÉ ES NECESARIA?
 ##
-## GameStateManager es la FUENTE ÚNICA DE VERDAD del estado del jugador.
+## GameStateService es la FUENTE ÚNICA DE VERDAD del estado del jugador.
 ## Para guardado manual (estilo Pokémon), solo sincronizamos en momentos clave:
 ##
 ## Sincronización EFICIENTE (no en cada paso):
@@ -84,17 +84,17 @@ class_name WorldSystem
 ##
 ## Beneficios del sistema:
 ##   1. GUARDADO MANUAL 💾
-##      Cuando el jugador abre el menú y guarda, GameStateManager ya tiene
+##      Cuando el jugador abre el menú y guarda, GameStateService ya tiene
 ##      el mapa y posición actualizados. Solo falta leer la posición exacta
 ##      del jugador en ese momento.
 ##
 ##   2. CONSISTENCIA ENTRE ESCENAS 🔄
-##      Al cambiar a batalla, menú, etc. el GameStateManager mantiene el
+##      Al cambiar a batalla, menú, etc. el GameStateService mantiene el
 ##      contexto para restaurar el overworld correctamente.
 ##
 ##   3. EVENTOS Y SCRIPTS 📜
 ##      Los eventos pueden consultar el mapa actual sin buscar nodos:
-##        if GameStateManager.current_map_id == "PuebloPaleta":
+##        if GameStateService.current_map_id == "PuebloPaleta":
 ##            activate_event()
 ##
 ## Métodos de sincronización:
@@ -675,7 +675,7 @@ func _count_cached_maps() -> int:
 ## Sincroniza solo la posición actual del jugador (para guardado manual)
 ## Este método se llama cuando el jugador abre el menú y guarda la partida
 func sync_position_for_save() -> void:
-	if not GameStateManager:
+	if not GameStateService:
 		return
 
 	# Obtener referencia al jugador si no la tenemos
@@ -689,18 +689,18 @@ func sync_position_for_save() -> void:
 	var current_direction = player_grid_motion.dir
 
 	# Actualizar solo posición y dirección (el mapa ya está sincronizado)
-	GameStateManager.set_current_position(current_tile)
-	GameStateManager.set_facing_direction(current_direction)
+	GameStateService.set_current_position(current_tile)
+	GameStateService.set_facing_direction(current_direction)
 
 	print("WorldSystem: Posición sincronizada para guardado - Tile: %s, Dir: %s" % [current_tile, current_direction])
 
 
 ## Verifica que la sincronización con GameState esté funcionando correctamente
 func verify_gamestate_sync() -> bool:
-	if not GameStateManager or not map_system:
+	if not GameStateService or not map_system:
 		return false
 
-	var game_map_id = GameStateManager.get_current_map_id()
+	var game_map_id = GameStateService.get_current_map_id()
 	var actual_map_id = map_system.active_map.name if map_system.active_map else ""
 
 	if game_map_id != actual_map_id:
@@ -712,22 +712,22 @@ func verify_gamestate_sync() -> bool:
 
 ## Fuerza la sincronización completa con GameState (usado en cambios de mapa)
 func force_sync_to_gamestate() -> void:
-	if not GameStateManager or not map_system:
+	if not GameStateService or not map_system:
 		return
 
 	# Sincronizar mapa (lo más importante en cambios de mapa)
 	if map_system.active_map:
-		GameStateManager.set_current_map_id(map_system.active_map.name)
+		GameStateService.set_current_map_id(map_system.active_map.name)
 
 	# Sincronizar posición del jugador si está disponible
 	var player_grid_motion = _get_player_grid_motion()
 	if player_grid_motion:
 		var current_tile = player_grid_motion.current_tile()
-		GameStateManager.set_current_position(current_tile)
+		GameStateService.set_current_position(current_tile)
 
 		# Sincronizar dirección
 		if "dir" in player_grid_motion:
-			GameStateManager.set_facing_direction(player_grid_motion.dir)
+			GameStateService.set_facing_direction(player_grid_motion.dir)
 
 
 ## Obtiene la referencia al componente GridMotion del jugador

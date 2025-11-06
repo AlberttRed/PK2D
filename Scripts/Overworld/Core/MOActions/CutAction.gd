@@ -65,18 +65,16 @@ func execute(_player: Node, target: Node, context: Node) -> Dictionary:
 
 	# 1. Choice de confirmación (si requires_confirmation)
 	if requires_confirmation:
-		SignalManager.choice_requested.emit("¿Usas CORTE?", ["Sí", "No"])
-		var choice = await SignalManager.choice_finished
+		var choice = await DisplayManager.show_message_with_choices("¿Usas CORTE?", ["Sí", "No"])
 		if choice != 0:  # No o cancelado
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
 	# 2. Mensaje de éxito con el nombre del Pokémon
-	SignalManager.message_requested.emit("¡%s usó CORTE!" % pokemon_name, {
+	await DisplayManager.show_message("¡%s usó CORTE!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 3. Reproducir animación

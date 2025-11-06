@@ -27,8 +27,9 @@ signal warp_system_ready(system: Node)
 signal map_system_ready(system: Node)
 
 # === SEÑALES DEL MESSAGEBOX ===
-signal message_requested(text: String, config: Dictionary)
-signal message_finished()
+## DEPRECATED: Usar DisplayManager.show_message() en su lugar
+# signal message_requested(text: String, config: Dictionary)
+# signal message_finished()
 signal message_input_received()
 
 # === SEÑALES DEL SISTEMA DE FADE ===
@@ -83,10 +84,10 @@ func disconnect_all(signal_obj: Signal) -> void:
 func _ready() -> void:
 	print("SignalManager: Bus de señales globales inicializado")
 
-	# Conectar señales de GameStateManager para reenviarlas globalmente
-	GameStateManager.flag_changed.connect(_on_game_flag_changed)
-	GameStateManager.variable_changed.connect(_on_game_variable_changed)
-	GameStateManager.self_switch_changed.connect(_on_game_self_switch_changed)
+	# Conectar señales de GameStateService para reenviarlas globalmente
+	GameStateService.flag_changed.connect(_on_game_flag_changed)
+	GameStateService.variable_changed.connect(_on_game_variable_changed)
+	GameStateService.self_switch_changed.connect(_on_game_self_switch_changed)
 
 ## Reenvía señal de flag cambiado
 func _on_game_flag_changed(flag_name: String, new_value: bool) -> void:

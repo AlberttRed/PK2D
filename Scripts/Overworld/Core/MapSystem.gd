@@ -47,10 +47,10 @@ func _ready() -> void:
 func configure_player_from_gamestate() -> void:
 	push_warning("MapSystem.configure_player_from_gamestate() está DEPRECATED. Usar OverworldCoordinator.configure_from_gamestate()")
 
-	# Obtener datos del GameStateManager
-	var map_id = GameStateManager.get_current_map_id()
-	var player_position = GameStateManager.get_current_position()
-	var facing_dir = GameStateManager.get_facing_direction()
+	# Obtener datos del GameStateService
+	var map_id = GameStateService.get_current_map_id()
+	var player_position = GameStateService.get_current_position()
+	var facing_dir = GameStateService.get_facing_direction()
 
 	print("MapSystem: Configurando jugador desde GameState - Mapa: %s, Posición: %s, Dirección: %s" % [map_id, player_position, facing_dir])
 

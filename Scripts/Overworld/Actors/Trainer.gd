@@ -17,7 +17,7 @@ class_name Trainer
 ## === CONFIGURACIÓN DE ENTRENADOR ===
 
 @export_group("State Tracking")
-## Flag para guardar si el entrenador fue derrotado (usa GameStateManager)
+## Flag para guardar si el entrenador fue derrotado (usa GameStateService)
 ## Si está vacío, no se guarda el estado
 ## Ejemplo: "route_1_youngster_joey_defeated"
 @export var defeated_flag: String = ""
@@ -49,12 +49,12 @@ func _ready() -> void:
 	# Buscar el Battler hijo
 	_find_battler()
 
-	# Restaurar estado desde GameStateManager si hay un defeated_flag configurado
+	# Restaurar estado desde GameStateService si hay un defeated_flag configurado
 	if battler and not defeated_flag.is_empty():
-		var is_defeated_saved = GameStateManager.get_event_flag(defeated_flag)
+		var is_defeated_saved = GameStateService.get_event_flag(defeated_flag)
 		if is_defeated_saved:
 			battler.is_defeated = true
-			print("Trainer '%s': Estado restaurado desde GameStateManager - Ya fue derrotado" % name)
+			print("Trainer '%s': Estado restaurado desde GameStateService - Ya fue derrotado" % name)
 
 	# Conectar señal de batalla terminada
 	SignalManager.battle_finished.connect(_on_battle_finished)
@@ -402,8 +402,7 @@ func _initiate_battle_from_page() -> void:
 			"waitTime": 0.0,
 			"showIconAtEnd": false
 		}
-		SignalManager.message_requested.emit(intro_text, config)
-		await SignalManager.message_finished
+		await DisplayManager.show_message(intro_text, config)
 
 	# Obtener Battler del jugador
 	var context = _get_context()
@@ -441,15 +440,15 @@ func _on_battle_finished(winner_side: String) -> void:
 
 	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner_side])
 
-	# Marcar como derrotado si perdió y guardar en GameStateManager
+	# Marcar como derrotado si perdió y guardar en GameStateService
 	if winner_side == "player" and battler:
 		battler.is_defeated = true
 		print("Trainer '%s': Marcado como derrotado" % name)
 
-		# Guardar estado en GameStateManager si hay un defeated_flag configurado
+		# Guardar estado en GameStateService si hay un defeated_flag configurado
 		if not defeated_flag.is_empty():
-			GameStateManager.set_event_flag(defeated_flag, true)
-			print("Trainer '%s': Estado guardado en GameStateManager (flag: '%s')" % [name, defeated_flag])
+			GameStateService.set_event_flag(defeated_flag, true)
+			print("Trainer '%s': Estado guardado en GameStateService (flag: '%s')" % [name, defeated_flag])
 			# La señal flag_changed hará que el Event reevalúe páginas
 			# y _update_detection_state() se encargará de desconectar si es necesario
 

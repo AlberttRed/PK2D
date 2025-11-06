@@ -153,7 +153,7 @@ func verify_systems() -> bool:
 ## CONFIGURACIÓN DESDE GAMESTATE
 ## ================================================================================
 
-## Configura el overworld según el estado del GameStateManager
+## Configura el overworld según el estado del GameStateService
 ## Este método de alto nivel orquesta WorldSystem y MapSystem para:
 ## - Cargar el mapa correcto
 ## - Crear el jugador
@@ -173,10 +173,10 @@ func configure_from_gamestate() -> bool:
 		push_error("OverworldCoordinator: Sistemas no disponibles para configuración")
 		return false
 
-	# Obtener datos del GameStateManager
-	var map_id = GameStateManager.get_current_map_id()
-	var position = GameStateManager.get_current_position()
-	var facing_dir = GameStateManager.get_facing_direction()
+	# Obtener datos del GameStateService
+	var map_id = GameStateService.get_current_map_id()
+	var position = GameStateService.get_current_position()
+	var facing_dir = GameStateService.get_facing_direction()
 
 	print("OverworldCoordinator: Configurando - Mapa: %s, Posición: %s, Dirección: %s" % [map_id, position, facing_dir])
 

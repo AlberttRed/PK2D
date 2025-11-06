@@ -55,21 +55,14 @@ func execute(context: Node) -> void:
 	for branch in branches:
 		options.append(branch.label)
 
-	# Usar SignalManager para comunicarse con el GUI (método correcto)
-	if not SignalManager:
-		push_error("ShowChoicesCommand: SignalManager no disponible")
-		context.continue_execution()
-		return
-
-	# Mostrar mensaje con opciones usando SignalManager
-	SignalManager.choice_requested.emit(message, options)
-	_selected_index = await SignalManager.choice_finished
+	# Mostrar mensaje con opciones usando DisplayManager
+	_selected_index = await DisplayManager.show_message_with_choices(message, options)
 
 	print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
 
 	# Guardar resultado en variable global si está configurado
 	if not store_result_in.is_empty():
-		GameStateManager.set_event_variable(store_result_in, _selected_index)
+		GameStateService.set_event_variable(store_result_in, _selected_index)
 		print("ShowChoicesCommand: Resultado guardado en variable '%s' = %d" % [store_result_in, _selected_index])
 
 	# Ejecutar los comandos del branch seleccionado

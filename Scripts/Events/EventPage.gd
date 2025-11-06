@@ -104,13 +104,13 @@ func evaluate_conditions(event_id: String = "") -> bool:
 
 	# Evaluar flag global
 	if not required_flag.is_empty():
-		var flag_value = GameStateManager.get_event_flag(required_flag)
+		var flag_value = GameStateService.get_event_flag(required_flag)
 		if flag_value != required_flag_value:
 			result = false
 
 	# Evaluar variable global (futuro)
 	if not required_variable.is_empty():
-		var var_value = GameStateManager.get_variable(required_variable)
+		var var_value = GameStateService.get_variable(required_variable)
 		var comparison_result = _compare_values(var_value, variable_value, variable_operator)
 		if not comparison_result:
 			result = false
@@ -118,7 +118,7 @@ func evaluate_conditions(event_id: String = "") -> bool:
 	# Evaluar self-switch
 	if required_self_switch > 0:  # 0 = NONE
 		var switch_letter = ["A", "B", "C", "D"][required_self_switch - 1]
-		var switch_value = GameStateManager.get_self_switch(event_id, switch_letter)
+		var switch_value = GameStateService.get_self_switch(event_id, switch_letter)
 		if switch_value != required_self_switch_value:
 			result = false
 

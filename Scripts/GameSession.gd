@@ -1,79 +1,82 @@
 extends Node
+class_name GameSession
 
-## GameStart - Punto de entrada principal del juego
-## Decide si cargar una partida existente o iniciar una nueva
-## Luego carga la escena Overworld con la configuración correcta
+## GameSession - Representa una sesión de juego completa
+## Gestiona el ciclo de vida de una partida (nueva o cargada)
+## Contiene el Overworld y mantiene el estado de la sesión activa
 
 # Referencias a escenas
 const OVERWORLD_SCENE = preload("res://Scenes/Overworld/Overworld.tscn")
 
 func _ready() -> void:
-	print("GameStart: Iniciando sistema de carga de partida")
-	
+	print("GameSession: Iniciando sesión de juego")
+
 	# Esperar un frame para asegurar que todos los sistemas estén inicializados
 	await get_tree().process_frame
-	
+
 	# Decidir si cargar partida existente o nueva partida
-	if GameStateManager.load_saved_game():
-		print("GameStart: Partida guardada encontrada, cargando...")
+	if GameStateService.load_saved_game():
+		print("GameSession: Partida guardada encontrada, cargando...")
 		_load_overworld_scene()
 	else:
-		print("GameStart: No hay partida guardada, iniciando nueva partida...")
-		GameStateManager.initialize_new_game()
+		print("GameSession: No hay partida guardada, iniciando nueva partida...")
+		GameStateService.initialize_new_game()
 		_load_overworld_scene()
 
 ## Carga la escena Overworld y configura el player según el GameState
 func _load_overworld_scene() -> void:
-	print("GameStart: Cargando escena Overworld...")
-	
+	print("GameSession: Cargando escena Overworld...")
+
 	# Instanciar la escena Overworld
 	var overworld_instance = OVERWORLD_SCENE.instantiate()
 	if not overworld_instance:
-		push_error("GameStart: No se pudo instanciar la escena Overworld")
+		push_error("GameSession: No se pudo instanciar la escena Overworld")
 		return
-	
-	# Reemplazar la escena actual
-	get_tree().root.add_child(overworld_instance)
-	get_tree().current_scene = overworld_instance
+
+	# Añadir como hijo de esta sesión (no reemplazar la escena actual)
+	add_child(overworld_instance)
+
 	# Bloquear el control del jugador durante la carga inicial hasta completar el fade
 	SignalManager.player_control_blocked.emit()
-	
+
 	# Configurar el overworld después de cargar la escena
 	await get_tree().process_frame
-	
+
 	# Obtener el coordinador (orquestador de sistemas del overworld)
 	var overworld_coordinator = overworld_instance as OverworldCoordinator
 	if overworld_coordinator and overworld_coordinator.has_method("configure_from_gamestate"):
-		print("GameStart: Configurando overworld según GameState...")
+		print("GameSession: Configurando overworld según GameState...")
 		var success = overworld_coordinator.configure_from_gamestate()
-		
+
 		if success:
-			print("GameStart: ✓ Overworld configurado exitosamente")
+			print("GameSession: ✓ Overworld configurado exitosamente")
 			# Desvanecer desde negro cuando todo está listo
 			SignalManager.fade_requested.emit("fade_out", 0.25)
 			await SignalManager.fade_finished
 			# Desbloquear control ahora que terminó el fade
 			SignalManager.player_control_unblocked.emit()
 		else:
-			push_error("GameStart: Error al configurar overworld desde GameState")
+			push_error("GameSession: Error al configurar overworld desde GameState")
 	else:
-		push_error("GameStart: OverworldCoordinator no encontrado o método no disponible")
-	
-	# Remover esta escena de la jerarquía
-	queue_free()
-	
-	print("GameStart: Escena Overworld cargada exitosamente")
+		push_error("GameSession: OverworldCoordinator no encontrado o método no disponible")
+
+	print("GameSession: Escena Overworld cargada exitosamente")
 
 ## Método público para forzar nueva partida (útil para testing)
 func force_new_game() -> void:
-	print("GameStart: Forzando nueva partida...")
-	GameStateManager.initialize_new_game()
+	print("GameSession: Forzando nueva partida...")
+	GameStateService.initialize_new_game()
 	_load_overworld_scene()
 
 ## Método público para simular carga de partida (útil para testing)
 func simulate_load_game(map_id: String, position: Vector2i, facing_dir: Vector2) -> void:
-	print("GameStart: Simulando carga de partida...")
-	GameStateManager.set_current_map_id(map_id)
-	GameStateManager.set_current_position(position)
-	GameStateManager.set_facing_direction(facing_dir)
+	print("GameSession: Simulando carga de partida...")
+	GameStateService.set_current_map_id(map_id)
+	GameStateService.set_current_position(position)
+	GameStateService.set_facing_direction(facing_dir)
 	_load_overworld_scene()
+
+## Finaliza la sesión actual (para volver al menú principal, por ejemplo)
+func end_session() -> void:
+	print("GameSession: Finalizando sesión de juego...")
+	queue_free()

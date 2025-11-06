@@ -53,22 +53,23 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	var pokemon_with_surf = _find_pokemon_with_SURF(_player)
 	var pokemon_name = pokemon_with_surf.get_display_name() if pokemon_with_surf else "Tu Pokémon"
 
-	# Choice de confirmación usando SignalManager (método correcto para GUI)
+	# Choice de confirmación usando DisplayManager
 	if requires_confirmation:
-		SignalManager.choice_requested.emit("El agua tiene buena pinta...\n¿Quieres hacer SURF?", ["Sí", "No"])
-		var choice = await SignalManager.choice_finished
+		var choice = await DisplayManager.show_message_with_choices(
+			"El agua tiene buena pinta...\n¿Quieres hacer SURF?",
+			["Sí", "No"]
+		)
 		if choice != 0:
 			# Usuario canceló - desbloquear control
 			SignalManager.player_control_unblocked.emit()
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
-	# Mensaje de activación usando SignalManager
-	SignalManager.message_requested.emit("¡%s usó SURF!" % pokemon_name, {
+	# Mensaje de activación usando DisplayManager
+	await DisplayManager.show_message("¡%s usó SURF!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# Activar modo surfing en el jugador

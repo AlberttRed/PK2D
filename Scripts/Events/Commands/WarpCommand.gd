@@ -58,7 +58,7 @@ func _apply_facing_direction(context: Node) -> void:
 
 	# Aplicar la dirección al jugador
 	player.set_facing_direction(direction)
-	GameStateManager.set_facing_direction(direction)
+	GameStateService.set_facing_direction(direction)
 	print("WarpCommand: Dirección aplicada correctamente")
 
 ## Obtiene el OverworldContext desde el EventController

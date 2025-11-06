@@ -59,8 +59,7 @@ func execute(context: Node) -> void:
 	# SIEMPRE mostrar mensaje de detección (antes de validar)
 	var detect_msg = mo_action.get_detect_message(target)
 	if not detect_msg.is_empty():
-		SignalManager.message_requested.emit(detect_msg, {"waitInput": true, "closeAtEnd": true})
-		await SignalManager.message_finished
+		await DisplayManager.show_message(detect_msg, {"waitInput": true, "closeAtEnd": true})
 		await Engine.get_main_loop().process_frame
 
 	# Configurar callback para capturar mo_finished ANTES de emitir la petición
@@ -135,8 +134,8 @@ func _activate_self_switch(target: Node, switch_letter: String) -> void:
 	# Obtener el ID del evento
 	var event_id = target.name
 
-	# Activar el self-switch en GameStateManager
-	GameStateManager.set_self_switch(event_id, switch_letter, true)
+	# Activar el self-switch en GameStateService
+	GameStateService.set_self_switch(event_id, switch_letter, true)
 	print("UseMOCommand: Self-switch '%s:%s' activado" % [event_id, switch_letter])
 
 ## Indica que este comando es asíncrono

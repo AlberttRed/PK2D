@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://dpxa6dptr3hll" path="res://Scenes/Overworld/Maps/MapHouseTest.tscn" id="3_ytpjq"]
 [ext_resource type="Script" uid="uid://cjx738lc2vvbb" path="res://Scripts/Overworld/Core/WarpSystem.gd" id="4_warp_system"]
 [ext_resource type="Script" uid="uid://by1tjq02r4a3s" path="res://Scripts/Overworld/Core/MOSystem.gd" id="4_mo_system"]
-[ext_resource type="PackedScene" uid="uid://c6s1oa8tssbi1" path="res://Scenes/UI/GUI.tscn" id="5_gui"]
 [ext_resource type="PackedScene" uid="uid://d1bs2x4y8nuby" path="res://Scenes/Overworld/Maps/MapNeighborTest.tscn" id="5_ius67"]
 [ext_resource type="PackedScene" uid="uid://ch2msdomuqykb" path="res://Scenes/Overworld/Maps/MapCiudadTest.tscn" id="6_de4hb"]
 [ext_resource type="Script" uid="uid://duu3c0stuk0nk" path="res://Scripts/Overworld/Core/WorldSystem.gd" id="6_world_system"]
@@ -32,5 +31,3 @@ script = ExtResource("4_warp_system")
 
 [node name="MOSystem" type="Node" parent="." groups=["MOSystem"]]
 script = ExtResource("4_mo_system")
-
-[node name="GUI" parent="." instance=ExtResource("5_gui")]

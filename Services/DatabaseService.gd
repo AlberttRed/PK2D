@@ -1,7 +1,8 @@
 extends Node
 
-## DatabaseManager - Autoload para centralizar acceso a Resources del juego
+## DatabaseService - Autoload para centralizar acceso a Resources del juego
 ## Carga e indexa Pokémon, Movimientos, Tipos, Habilidades, Naturalezas y Climas.
+## Accesible globalmente como autoload: DatabaseService
 
 const POKEMON_DIR := "res://Resources/Data/Pokemon"
 const MOVES_DIR := "res://Resources/Data/Moves"
@@ -61,7 +62,7 @@ func _load_all() -> void:
 	_load_trainer_classes()
 
 func _print_summary() -> void:
-	print("DatabaseManager: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers, %d trainer classes" % [
+	print("DatabaseService: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers, %d trainer classes" % [
 		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size(), _weathers_by_id.size(), _trainer_classes_by_id.size()
 	])
 
@@ -134,7 +135,7 @@ func _load_trainer_classes() -> void:
 	if dir == null:
 		# Si no existe el directorio, no hay problema (se crearán temporales)
 		return
-	
+
 	load_resources_from_dir(TRAINER_CLASSES_DIR, func(res):
 		if res == null: return
 		if not (res is TrainerClassData): return

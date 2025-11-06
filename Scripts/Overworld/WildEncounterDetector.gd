@@ -57,19 +57,19 @@ func _ready() -> void:
 	if not grid_motion:
 		push_error("WildEncounterDetector: No se encontró GridMotion en el Player")
 		return
-	
+
 	# Conectar a step_started para destruir overlay cuando se mueve a otro tile
 	grid_motion.step_started.connect(_on_step_started)
-	
+
 	# MapSystem se obtendrá del contexto cuando esté disponible
-	
+
 	# Conectar a cambios de mapa para actualizar cache y señal
 	SignalManager.seamless_map_crossed.connect(_on_map_changed)
 	SignalManager.warp_finished.connect(_on_map_changed_warp)
-	
+
 	# Inicializar cache y conectar/desconectar señal según corresponda
 	_update_encounters_cache()
-	
+
 	print("WildEncounterDetector: Sistema de encuentros inicializado")
 
 
@@ -78,14 +78,14 @@ func _on_step_started() -> void:
 	var active_grid := _get_active_grid()
 	if not active_grid:
 		return
-	
+
 	_tile_before_step = active_grid.world_to_tile(player.global_position)
-	
+
 	# Solo manejar overlay si NO es first step (en first step se mantiene)
 	if not grid_motion.initial_step:
 		var destination_tile := _tile_before_step + Vector2i(grid_motion.dir)
 		var can_move := active_grid.can_step_to(player, _tile_before_step, destination_tile)
-		
+
 		if can_move:
 			_handle_movement_to_destination(active_grid, destination_tile)
 
@@ -96,17 +96,17 @@ func _on_step_finished(tile: Vector2i) -> void:
 	var active_grid := _get_active_grid()
 	if not active_grid:
 		return
-	
+
 	var encounter_type: Variant = _get_encounter_type_from_tile(active_grid, tile)
 	var is_grass_tile: bool = encounter_type == EncounterAreaTypeEnum.Values.LAND
 	var had_collision: bool = (tile == _tile_before_step) and not grid_motion.initial_step
-	
+
 	# Manejar efectos visuales de hierba
 	if is_grass_tile:
 		_handle_grass_tile_arrival(active_grid, tile, had_collision)
 	else:
 		_clear_grass_state()
-	
+
 	# Intentar generar encuentro
 	if encounter_type and encounters_enabled and current_map_encounters:
 		if current_map_encounters.has_encounters_for_area(encounter_type):
@@ -118,19 +118,19 @@ func _get_encounter_type_from_tile(grid: OverworldGrid, tile: Vector2i) -> Varia
 	var tile_data_array := grid.get_tile_data(tile)
 	if tile_data_array.is_empty():
 		return null
-	
+
 	# Buscar en todas las capas del tile
 	for tile_data in tile_data_array:
 		if tile_data == null:
 			continue
-		
+
 		# Intentar obtener el custom_data "encounter_type"
 		var encounter_type_str: Variant = tile_data.get_custom_data("encounter_type")
-		
+
 		if encounter_type_str is String and not encounter_type_str.is_empty():
 			# Convertir string a enum
 			return EncounterAreaTypeEnum.parse_type(encounter_type_str)
-	
+
 	return null
 
 
@@ -139,7 +139,7 @@ func _get_active_grid() -> OverworldGrid:
 	# Actualizar referencia a MapSystem si es necesario
 	if not map_system and context:
 		map_system = context.get_map_system()
-	
+
 	if not map_system:
 		return null
 	return map_system.get_active_grid()
@@ -149,7 +149,7 @@ func _get_active_grid() -> OverworldGrid:
 func _handle_movement_to_destination(grid: OverworldGrid, destination_tile: Vector2i) -> void:
 	_hide_tall_grass_overlay()
 	_last_overlay_tile = INVALID_TILE
-	
+
 	var encounter_type: Variant = _get_encounter_type_from_tile(grid, destination_tile)
 	if encounter_type == EncounterAreaTypeEnum.Values.LAND:
 		var destination_pos := grid.tile_to_world_center(destination_tile)
@@ -170,7 +170,7 @@ func _handle_grass_tile_arrival(grid: OverworldGrid, tile: Vector2i, had_collisi
 		if tile != _last_grass_effect_tile:
 			_show_grass_effect()
 			_last_grass_effect_tile = tile
-		
+
 		# Gestionar overlay: verificar posición y ajustar z_index
 		_ensure_overlay_at_position(grid, tile, OVERLAY_Z_HIGH)
 
@@ -185,7 +185,7 @@ func _clear_grass_state() -> void:
 ## Asegura que el overlay esté en la posición correcta con el z_index adecuado
 func _ensure_overlay_at_position(grid: OverworldGrid, tile: Vector2i, z_idx: int) -> void:
 	var target_pos := grid.tile_to_world_center(tile)
-	
+
 	if _active_tall_grass_overlay and is_instance_valid(_active_tall_grass_overlay):
 		# Verificar si está en posición correcta
 		if _active_tall_grass_overlay.global_position.distance_to(target_pos) > 1.0:
@@ -238,7 +238,7 @@ func _show_tall_grass_overlay_at_position(world_position: Vector2, z_idx: int = 
 		return
 	if not tall_grass_overlay_scene:
 		return
-	
+
 	var overlay := tall_grass_overlay_scene.instantiate() as Sprite2D
 	overlay.global_position = world_position
 	overlay.z_index = z_idx
@@ -258,17 +258,17 @@ func _try_trigger_encounter(encounter_type: EncounterAreaTypeEnum.Values) -> voi
 	# Usar el cache de encuentros (ya verificado que existe)
 	if not current_map_encounters:
 		return  # No hay encuentros configurados en este mapa
-	
+
 	# Intentar generar un encuentro
 	var encounter_data := current_map_encounters.try_wild_encounter(encounter_type)
-	
+
 	if encounter_data.is_empty():
 		return  # No hubo encuentro esta vez
-	
+
 	# Hay un encuentro, generar el combate
 	print("WildEncounterDetector: ¡Encuentro salvaje!")
 	print("  Pokémon: %d, Nivel: %d" % [encounter_data["pokemon_id"], encounter_data["level"]])
-	
+
 	_start_wild_battle(encounter_data)
 
 
@@ -277,24 +277,24 @@ func _try_trigger_encounter(encounter_type: EncounterAreaTypeEnum.Values) -> voi
 func _update_encounters_cache() -> void:
 	current_map_encounters = null
 	current_map_name = ""
-	
+
 	if not map_system:
 		_disconnect_signal()
 		return
-	
+
 	var active_grid := map_system.get_active_grid()
 	if not active_grid:
 		_disconnect_signal()
 		return
-	
+
 	# MapAreaEncounters debería estar en el mapa (padre del grid)
 	var current_map = active_grid.get_parent()
 	if not current_map:
 		_disconnect_signal()
 		return
-	
+
 	current_map_name = current_map.name
-	
+
 	# Buscar MapAreaEncounters en el mapa
 	var encounters_node = current_map.get_node_or_null("MapAreaEncounters")
 	if encounters_node and encounters_node is MapAreaEncounters:
@@ -302,7 +302,7 @@ func _update_encounters_cache() -> void:
 		_connect_signal()
 		print("WildEncounterDetector: Mapa '%s' → CON encuentros (señal CONECTADA)" % current_map_name)
 		return
-	
+
 	# Buscar recursivamente
 	for child in current_map.get_children():
 		if child is MapAreaEncounters:
@@ -310,7 +310,7 @@ func _update_encounters_cache() -> void:
 			_connect_signal()
 			print("WildEncounterDetector: Mapa '%s' → CON encuentros (señal CONECTADA)" % current_map_name)
 			return
-	
+
 	# No se encontraron encuentros → desconectar señal
 	_disconnect_signal()
 	print("WildEncounterDetector: Mapa '%s' → SIN encuentros (señal DESCONECTADA)" % current_map_name)
@@ -320,7 +320,7 @@ func _update_encounters_cache() -> void:
 func _connect_signal() -> void:
 	if _signal_connected or not grid_motion:
 		return
-	
+
 	grid_motion.step_finished.connect(_on_step_finished)
 	_signal_connected = true
 
@@ -329,7 +329,7 @@ func _connect_signal() -> void:
 func _disconnect_signal() -> void:
 	if not _signal_connected or not grid_motion:
 		return
-	
+
 	grid_motion.step_finished.disconnect(_on_step_finished)
 	_signal_connected = false
 
@@ -355,28 +355,28 @@ func _start_wild_battle(encounter_data: Dictionary) -> void:
 	if not wild_pokemon_instance:
 		push_error("WildEncounterDetector: No se pudo crear el Pokémon salvaje")
 		return
-	
+
 	# Crear participante salvaje
 	var wild_participant := BattleParticipantWild.new([wild_pokemon_instance.to_battle_pokemon()])
-	
+
 	# Obtener participante del jugador
 	var player_participant := _get_player_participant()
 	if not player_participant:
 		push_error("WildEncounterDetector: No se pudo obtener el participante del jugador")
 		return
-	
+
 	# Crear reglas de batalla
 	var rules := BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.SINGLE
 	)
-	
+
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
-	
+
 	# Iniciar combate (GUI se encargará de bloquear/desbloquear el control)
 	print("WildEncounterDetector: Solicitando combate salvaje...")
 	SignalManager.battle_requested.emit(participants, rules)
-	
+
 	# Esperar a que termine el combate
 	await SignalManager.battle_finished
 	print("WildEncounterDetector: Combate terminado")
@@ -392,30 +392,30 @@ func _get_player_participant() -> BattleParticipant:
 		else:
 			push_error("WildEncounterDetector: El jugador no tiene Pokémon vivos")
 			return null
-	
-	# OPCIÓN 2: Usar GameStateManager (fallback para sistemas antiguos)
-	var player_team: Array = GameStateManager.get_player_party()
+
+	# OPCIÓN 2: Usar GameStateService (fallback para sistemas antiguos)
+	var player_team: Array = GameStateService.get_player_party()
 	if player_team.is_empty():
 		push_error("WildEncounterDetector: El jugador no tiene Pokémon en el party")
 		return null
-	
+
 	# Convertir equipo a BattlePokemon
 	var battle_team: Array[BattlePokemon] = []
 	for pokemon_instance in player_team:
 		if pokemon_instance is Pokemon:
 			var battle_pkmn: BattlePokemon = pokemon_instance.to_battle_pokemon()
 			battle_team.append(battle_pkmn)
-	
+
 	# Crear participante manual
 	var participant := BattleParticipant.new(battle_team)
 	participant.name = "Player"  # TODO: Obtener del GameState
 	participant.is_player = true
-	
+
 	return participant
 
 ## Crea un Pokémon salvaje
 func _create_wild_pokemon(pokemon_id: int, level: int):  # return: Pokemon
-	var pokemon_data = DatabaseManager.get_pokemon(pokemon_id)
+	var pokemon_data = DatabaseService.get_pokemon(pokemon_id)
 	var pokemon = Pokemon.new(
 		pokemon_data,  # pokemon_data
 		level,         # pokemon_level
@@ -430,7 +430,7 @@ func _create_wild_pokemon(pokemon_id: int, level: int):  # return: Pokemon
 ## Habilita o deshabilita los encuentros
 func set_encounters_enabled(enabled: bool) -> void:
 	encounters_enabled = enabled
-	
+
 	# Si se deshabilitan, desconectar señal
 	# Si se habilitan, reconectar si el mapa tiene encuentros
 	if enabled:
@@ -458,7 +458,7 @@ func get_current_map_name() -> String:
 func get_current_map_debug_info() -> String:
 	if not current_map_encounters:
 		return "Mapa actual '%s': SIN encuentros configurados" % current_map_name
-	
+
 	var info := "Mapa actual '%s':\n" % current_map_name
 	info += current_map_encounters.get_debug_info()
 	return info

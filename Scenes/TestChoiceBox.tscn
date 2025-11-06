@@ -1,12 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://dxddqt18y0wp0"]
 
 [ext_resource type="Script" uid="uid://dm6yvlljlwcr0" path="res://Scripts/TestChoiceBox.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://c6s1oa8tssbi1" path="res://Scenes/UI/GUI.tscn" id="2_gui"]
 
 [node name="TestChoiceBox" type="Node2D"]
 script = ExtResource("1_script")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
-
-[node name="GUI" parent="." instance=ExtResource("2_gui")]
