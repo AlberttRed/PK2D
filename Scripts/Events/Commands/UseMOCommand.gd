@@ -52,45 +52,20 @@ func execute(context: Node) -> void:
 	if not mo_system or not mo_system.has_mo_action(mo_type_str):
 		push_error("UseMOCommand: MO '%s' no encontrada" % mo_type_str)
 		context.continue_execution()
-		return
 
 	var mo_action = mo_system.mo_actions.get(mo_type_str)
 
 	# SIEMPRE mostrar mensaje de detección (antes de validar)
 	var detect_msg = mo_action.get_detect_message(target)
 	if not detect_msg.is_empty():
-		SignalManager.message_requested.emit(detect_msg, {"waitInput": true, "closeAtEnd": true})
-		await SignalManager.message_finished
+		await DisplayManager.show_message(detect_msg, {"waitInput": true, "closeAtEnd": true})
 		await Engine.get_main_loop().process_frame
 
-	# Configurar callback para capturar mo_finished ANTES de emitir la petición
-	var result_state = {
-		"received": false,
-		"success": false,
-		"reason": ""
-	}
-
-	var on_finished = func(type: String, success: bool, reason: String):
-		if type == mo_type_str:
-			result_state["received"] = true
-			result_state["success"] = success
-			result_state["reason"] = reason
-
-	# Conectar ANTES de emitir
-	SignalManager.mo_finished.connect(on_finished)
-
-	# Emitir la petición de MO (MOAction gestiona el flujo SI can_use() pasa)
-	SignalManager.mo_requested.emit(mo_type_str, target)
-
-	# Esperar hasta que el callback capture el resultado
-	while not result_state["received"]:
-		await Engine.get_main_loop().process_frame
-
-	# Desconectar el callback
-	SignalManager.mo_finished.disconnect(on_finished)
+	# Solicitar la ejecución de la MO a través del contexto
+	var result: Dictionary = await overworld_context.request_mo(mo_type_str, target)
 
 	# Si fue exitoso, activar self-switch
-	if result_state["success"] and not activate_self_switch_on_success.is_empty():
+	if result.get("success", false) and not activate_self_switch_on_success.is_empty():
 		_activate_self_switch(target, activate_self_switch_on_success)
 
 	# Continuar con la ejecución del evento
@@ -135,8 +110,8 @@ func _activate_self_switch(target: Node, switch_letter: String) -> void:
 	# Obtener el ID del evento
 	var event_id = target.name
 
-	# Activar el self-switch en GameStateManager
-	GameStateManager.set_self_switch(event_id, switch_letter, true)
+	# Activar el self-switch en GameStateService
+	GameStateService.set_self_switch(event_id, switch_letter, true)
 	print("UseMOCommand: Self-switch '%s:%s' activado" % [event_id, switch_letter])
 
 ## Indica que este comando es asíncrono

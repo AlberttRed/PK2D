@@ -32,7 +32,7 @@ func can_use(player: Node, target: Node) -> bool:
 
 	# 4. Verificar que el evento no ha sido cortado previamente
 	var event_id = target.name
-	if GameStateManager.get_event_flag("cut_%s" % event_id):
+	if GameStateService.get_event_flag("cut_%s" % event_id):
 		print("CutAction: Árbol ya fue cortado previamente")
 		return false
 
@@ -53,11 +53,11 @@ func execute(player: Node, target: Node) -> Dictionary:
 		print("CutAction: Evento '%s' desactivado" % event_id)
 
 	# 2. Marcar el flag global para persistencia
-	GameStateManager.set_event_flag("cut_%s" % event_id, true)
+	GameStateService.set_event_flag("cut_%s" % event_id, true)
 	print("CutAction: Flag 'cut_%s' establecido" % event_id)
 
 	# 3. Opcional: Guardar datos adicionales si es necesario
-	# GameStateManager.set_variable("trees_cut", GameStateManager.get_variable("trees_cut") + 1)
+	# GameStateService.set_variable("trees_cut", GameStateService.get_variable("trees_cut") + 1)
 
 	# 4. Retornar éxito con datos
 	return {

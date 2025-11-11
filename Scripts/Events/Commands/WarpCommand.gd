@@ -20,19 +20,17 @@ func execute(_context: Node) -> void:
 	# Verificar que se especificó la escena de destino
 	if target_scene.is_empty():
 		push_error("WarpCommand: No se especificó escena de destino")
+		_context.continue_execution()
 		return
 
-	# Verificar que el SignalManager esté disponible
-	if not SignalManager:
-		push_error("WarpCommand: SignalManager no está disponible")
+	var overworld_context = _get_overworld_context(_context)
+	if not overworld_context:
+		push_error("WarpCommand: OverworldContext no disponible")
+		_context.continue_execution()
 		return
 
-	# Emitir señal para solicitar warp
-	SignalManager.warp_requested.emit(target_scene, target_spawn)
-	print("WarpCommand: Señal warp_requested emitida correctamente")
-
-	# Esperar a que termine el warp realmente
-	await SignalManager.warp_finished
+	# Solicitar warp a través del contexto
+	await overworld_context.request_warp(target_scene, target_spawn)
 
 	# Aplicar la dirección con el nuevo mapa ya activo
 	_apply_facing_direction(_context)
@@ -58,7 +56,7 @@ func _apply_facing_direction(context: Node) -> void:
 
 	# Aplicar la dirección al jugador
 	player.set_facing_direction(direction)
-	GameStateManager.set_facing_direction(direction)
+	GameStateService.set_facing_direction(direction)
 	print("WarpCommand: Dirección aplicada correctamente")
 
 ## Obtiene el OverworldContext desde el EventController

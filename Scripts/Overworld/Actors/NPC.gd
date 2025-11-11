@@ -7,12 +7,10 @@ class_name NPC
 ## manteniendo compatibilidad total con el sistema de eventos, pero añadiendo capacidades
 ## de movimiento, animación y colisión mediante GridMotion, Occupancy y ActorAnimator.
 
-## Referencia al OverworldContext (inyectada desde OverworldGrid)
-var overworld_context: OverworldContext = null
-
 ## Establece el contexto del Overworld (llamado desde OverworldGrid)
 func set_overworld_context(context: OverworldContext) -> void:
 	overworld_context = context
+	super.set_overworld_context(context)
 
 	# Propagar a componentes hijos si existen
 	var grid_motion = get_node_or_null("GridMotion")
@@ -22,6 +20,12 @@ func set_overworld_context(context: OverworldContext) -> void:
 	var occupancy = get_node_or_null("Occupancy")
 	if occupancy and occupancy.has_method("set_context"):
 		occupancy.set_context(context)
+
+	# Conectar a las señales locales del EventSystem para reanudar movimiento
+	if overworld_context:
+		var event_sys = overworld_context.get_event_system()
+		if event_sys and not event_sys.event_finished.is_connected(_on_event_finished):
+			event_sys.event_finished.connect(_on_event_finished)
 
 ## Helper para obtener el OverworldContext
 func _get_context() -> OverworldContext:
@@ -122,9 +126,6 @@ func _ready() -> void:
 		motion.step_started.connect(_on_step_started)
 		motion.step_finished.connect(_on_step_finished)
 
-	# Conectar señales del sistema de eventos
-	SignalManager.event_finished.connect(_on_event_finished)
-
 	# Conectar a la señal step_finished del Player si el awareness está activo
 	if awareness_enabled and movement_type in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
 		_connect_to_player_movement()
@@ -141,12 +142,16 @@ func _ready() -> void:
 	_setup_timers()
 
 	# Iniciar path movement si corresponde
+	# Diferir hasta que el grid esté disponible
 	if movement_type == 2:
-		_try_execute_next_path_action()
+		call_deferred("_deferred_start_path_movement")
 
 ## Override del trigger() de Event para pausar movimiento
 func trigger() -> void:
-	SignalManager.player_control_blocked.emit()
+	if overworld_context:
+		overworld_context.block_player_control()
+	else:
+		push_warning("NPC '%s': OverworldContext no disponible para bloquear control" % name)
 	if motion.moving:
 		await motion.step_finished
 	# Pausar movimiento antes de ejecutar comandos
@@ -163,8 +168,12 @@ func trigger() -> void:
 			_face_player()
 
 	# Llamar al trigger() de la clase padre
-	SignalManager.player_control_unblocked.emit()
 	super.trigger()
+
+	if overworld_context:
+		overworld_context.unblock_player_control()
+	else:
+		push_warning("NPC '%s': OverworldContext no disponible para desbloquear control" % name)
 
 func _process(_delta: float) -> void:
 	# Los timers manejan todo ahora, no necesitamos _process
@@ -394,6 +403,23 @@ func _convert_path_to_vector2() -> void:
 			DirectionEnum.Type.LOOK_RIGHT: _path_directions_vector2.append(Vector2.RIGHT)
 			_: push_warning("NPC: Dirección inválida en path_directions: %d" % dir_enum)
 
+## Inicia el path movement después de que el grid esté disponible
+func _deferred_start_path_movement() -> void:
+	# Esperar hasta que el grid esté disponible
+	await get_tree().process_frame
+
+	# Verificar que el grid esté disponible antes de iniciar
+	if motion.grid == null:
+		motion._refresh_grid()
+
+	# Si aún no está disponible, esperar un frame más
+	if motion.grid == null:
+		await get_tree().process_frame
+		motion._refresh_grid()
+
+	# Iniciar el path movement
+	_try_execute_next_path_action()
+
 ## Intenta ejecutar la siguiente acción del path
 func _try_execute_next_path_action() -> void:
 	if not movement_enabled or motion.moving or _path_directions_vector2.is_empty() or _movement_paused:
@@ -409,6 +435,11 @@ func _try_execute_next_path_action() -> void:
 	var is_wait = (dir_enum >= 8)  # WAIT_025=8, WAIT_050=9, WAIT_100=10
 
 	if is_movement:
+		# Verificar que el grid esté disponible antes de obtener current_tile
+		if motion.grid == null:
+			push_warning("NPC '%s': Grid no disponible aún, esperando..." % name)
+			return
+
 		var from = motion.current_tile()
 		var to = from + Vector2i(direction)
 		var can_step = motion.grid.can_step_to(motion.actor, from, to)
@@ -560,7 +591,7 @@ func _resume_movement() -> void:
 	print("NPC: Movimiento reanudado")
 
 ## Callback cuando termina un evento (para reanudar movimiento)
-func _on_event_finished(_event: Event) -> void:
+func _on_event_finished(_event) -> void:
 	# Solo reanudar si este NPC estaba pausado
 	if _movement_paused:
 		# Restaurar dirección inicial si es necesario

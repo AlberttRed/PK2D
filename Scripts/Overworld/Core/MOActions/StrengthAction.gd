@@ -58,11 +58,17 @@ func get_detect_message(_target: Node) -> String:
 
 ## Ejecuta el FLUJO de FUERZA: choice, empuje, animación
 func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
+	var overworld_context := _extract_overworld_context(context)
+	if overworld_context:
+		overworld_context.block_player_control()
+
 	# Verificar si STRENGTH ya está activo
 	var strength_already_active = mo_system and mo_system.is_effect_active("STRENGTH_ENABLED")
 
 	# Si STRENGTH ya está activo, empujar directamente sin activar de nuevo
 	if strength_already_active:
+		if overworld_context:
+			overworld_context.unblock_player_control()
 		return {"success": true, "cancelled": false}
 
 	# STRENGTH no está activo - flujo normal de activación
@@ -70,37 +76,40 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	var pokemon_with_strength = _find_pokemon_with_STRENGTH(_player)
 	var pokemon_name = pokemon_with_strength.get_display_name() if pokemon_with_strength else "Tu Pokémon"
 
-	# 1. Choice de confirmación usando SignalManager (método correcto para GUI)
+	# 1. Choice de confirmación usando DisplayManager
 	if requires_confirmation:
-		SignalManager.choice_requested.emit("¿Usas FUERZA?", ["Sí", "No"])
-		var choice = await SignalManager.choice_finished
+		var choice = await DisplayManager.show_message_with_choices("¿Usas FUERZA?", ["Sí", "No"])
 		if choice != 0:
+			if overworld_context:
+				overworld_context.unblock_player_control()
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
 	# 2. Activar el efecto STRENGTH en el mapa (persistente hasta cambiar de mapa)
 	if not mo_system:
 		push_error("StrengthAction: MOSystem no disponible")
+		if overworld_context:
+			overworld_context.unblock_player_control()
 		return {"success": false, "cancelled": false}
-	
+
 	mo_system.activate_effect("STRENGTH_ENABLED", true)
 
-	# 3. Mensajes de activación usando SignalManager
-	SignalManager.message_requested.emit("¡%s usó FUERZA!" % pokemon_name, {
+	# 3. Mensajes de activación usando DisplayManager
+	await DisplayManager.show_message("¡%s usó FUERZA!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
-	SignalManager.message_requested.emit("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
+	await DisplayManager.show_message("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 4. Retornar éxito (la roca se empujará al colisionar)
+	if overworld_context:
+		overworld_context.unblock_player_control()
 	return {"success": true, "cancelled": false}
 
 ## Activa el modo de empuje en la roca target
@@ -136,3 +145,8 @@ func _calculate_push_direction(player: Node, target: Node) -> Vector2:
 	else:
 		# Movimiento vertical dominante
 		return Vector2.DOWN if diff.y > 0 else Vector2.UP
+
+func _extract_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		return context.context
+	return null

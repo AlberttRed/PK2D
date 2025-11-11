@@ -22,15 +22,15 @@ func is_valid() -> bool:
 	if min_level < 1 or max_level < 1:
 		push_error("MapPokemonEncounter: Los niveles deben ser al menos 1")
 		return false
-	
+
 	if min_level > max_level:
 		push_error("MapPokemonEncounter: min_level (%d) no puede ser mayor que max_level (%d)" % [min_level, max_level])
 		return false
-	
+
 	if pokemon_id <= 0:
 		push_error("MapPokemonEncounter: pokemon_id debe ser válido")
 		return false
-	
+
 	return true
 
 
@@ -43,8 +43,8 @@ func get_random_level() -> int:
 
 ## Obtiene el nombre del Pokémon para debug
 func get_pokemon_name() -> String:
-	if DatabaseManager and DatabaseManager.has_method("get_pokemon_data"):
-		var pkmn_data = DatabaseManager.get_pokemon_data(pokemon_id)
+	if DatabaseService and DatabaseService.has_method("get_pokemon_data"):
+		var pkmn_data = DatabaseService.get_pokemon_data(pokemon_id)
 		if pkmn_data:
 			return pkmn_data.name
 	return "Pokemon #%d" % pokemon_id

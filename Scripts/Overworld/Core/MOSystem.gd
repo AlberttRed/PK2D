@@ -10,6 +10,10 @@ class_name MOSystem
 ## Utiliza OverworldContext para acceder a otros sistemas sin acoplamiento
 ## NO gestiona mensajes ni animaciones visuales, eso lo hacen los eventos
 
+# Señales locales de MO
+signal mo_requested(mo_type: String, target: Node)
+signal mo_finished(mo_type: String, success: bool, reason: String)
+
 # Referencia al OverworldContext (inyectada desde OverworldCoordinator)
 var context: OverworldContext = null
 
@@ -26,14 +30,6 @@ var current_mo_type: String = ""
 var current_target: Node = null
 
 func _ready() -> void:
-	# Conectar con el SignalManager para escuchar peticiones de MO
-	if SignalManager:
-		SignalManager.mo_requested.connect(_on_mo_requested)
-		SignalManager.warp_finished.connect(_on_map_changed)
-		print("MOSystem: Conectado a SignalManager.mo_requested y warp_finished")
-	else:
-		push_error("MOSystem: SignalManager no encontrado")
-
 	# Inicializar el diccionario de acciones MO
 	_initialize_mo_actions()
 
@@ -89,44 +85,23 @@ func unregister_mo_action(mo_type: String) -> void:
 func has_mo_action(mo_type: String) -> bool:
 	return mo_actions.has(mo_type)
 
-## Maneja las peticiones de uso de MO desde el SignalManager
-## @param mo_type: Tipo de MO solicitada (ej: "CUT", "SURF")
-## @param target: Nodo sobre el que se intenta usar la MO
-func _on_mo_requested(mo_type: String, target: Node) -> void:
-	var target_name = target.name if target else "null"
-	print("MOSystem: Petición de MO recibida - Tipo: %s, Target: %s" % [mo_type, target_name])
-
-	# Verificar si ya hay una MO procesándose
-	if is_processing_mo:
-		push_warning("MOSystem: Ya hay una MO en proceso, ignorando solicitud")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Ya hay una MO en proceso")
-		return
-
-	# Validar parámetros
-	if mo_type.is_empty():
-		push_error("MOSystem: Tipo de MO vacío")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Tipo de MO vacío")
-		return
-
-	# Verificar si la MO está registrada
-	if not mo_actions.has(mo_type):
-		push_warning("MOSystem: MO '%s' no está registrada (aún no implementada)" % mo_type)
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "MO '%s' no está registrada" % mo_type)
-		return
-
-	# Ejecutar la validación y acción
-	_process_mo_request(mo_type, target)
-
 ## Procesa una petición de MO validando y ejecutando la acción
 ## @param mo_type: Tipo de MO
 ## @param target: Nodo target
-func _process_mo_request(mo_type: String, target: Node) -> void:
+func _process_mo_request(mo_type: String, target: Node) -> Dictionary:
 	is_processing_mo = true
 	current_mo_type = mo_type
 	current_target = target
+
+	var outcome: Dictionary = {}
+
+	# Verificar que la MO esté registrada
+	if not mo_actions.has(mo_type):
+		push_warning("MOSystem: MO '%s' no está registrada" % mo_type)
+		outcome = {"success": false, "error": "MO no registrada"}
+		mo_finished.emit(mo_type, false, outcome.error)
+		_reset_state()
+		return outcome
 
 	# Obtener la acción MO
 	var action: Resource = mo_actions[mo_type]
@@ -134,35 +109,35 @@ func _process_mo_request(mo_type: String, target: Node) -> void:
 	# Obtener el jugador del contexto
 	if not context:
 		push_error("MOSystem: Contexto no disponible")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Contexto no disponible")
+		outcome = {"success": false, "error": "Contexto no disponible"}
+		mo_finished.emit(mo_type, false, outcome.error)
 		_reset_state()
-		return
-	
+		return outcome
+
 	var player: Node = context.get_player()
 	if not player:
 		push_error("MOSystem: Player no disponible en el contexto")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Player no disponible")
+		outcome = {"success": false, "error": "Player no disponible"}
+		mo_finished.emit(mo_type, false, outcome.error)
 		_reset_state()
-		return
+		return outcome
 
 	# Validar si se puede usar la MO
 	if not action.can_use(player, target):
 		print("MOSystem: No se puede usar la MO '%s' en el contexto actual" % mo_type)
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "No se puede usar la MO en el contexto actual")
+		outcome = {"success": false, "error": "No se puede usar la MO en el contexto actual"}
+		mo_finished.emit(mo_type, false, outcome.error)
 		_reset_state()
-		return
+		return outcome
 
 	# Obtener el EventSystem del contexto
 	var event_sys: EventSystem = context.get_event_system()
 	if not event_sys or not event_sys.controller:
 		push_error("MOSystem: EventController no disponible")
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "EventController no disponible")
+		outcome = {"success": false, "error": "EventController no disponible"}
+		mo_finished.emit(mo_type, false, outcome.error)
 		_reset_state()
-		return
+		return outcome
 
 	var event_controller = event_sys.controller
 
@@ -172,19 +147,20 @@ func _process_mo_request(mo_type: String, target: Node) -> void:
 	# Verificar el resultado y emitir señal unificada
 	if result.get("success", false):
 		print("MOSystem: MO '%s' ejecutada con éxito" % mo_type)
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, true, "")
+		outcome = {"success": true}
+		mo_finished.emit(mo_type, true, "")
 	elif result.get("cancelled", false):
 		print("MOSystem: MO '%s' cancelada por el jugador" % mo_type)
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, "Cancelado")
+		outcome = {"success": false, "cancelled": true, "error": "Cancelado"}
+		mo_finished.emit(mo_type, false, "Cancelado")
 	else:
 		var error_msg = result.get("error", "Error desconocido")
 		print("MOSystem: MO '%s' falló - %s" % [mo_type, error_msg])
-		if SignalManager:
-			SignalManager.mo_finished.emit(mo_type, false, error_msg)
+		outcome = {"success": false, "error": error_msg}
+		mo_finished.emit(mo_type, false, error_msg)
 
 	_reset_state()
+	return outcome
 
 ## Resetea el estado interno del sistema
 func _reset_state() -> void:
@@ -254,3 +230,18 @@ func _on_map_changed(_map_id: String, _spawn_id: String) -> void:
 ## Obtiene todos los efectos activos (para debug)
 func get_active_effects() -> Dictionary:
 	return active_effects.duplicate()
+
+## Maneja solicitudes externas de MO
+func request_mo(mo_type: String, target: Node) -> Dictionary:
+	if is_processing_mo:
+		push_warning("MOSystem: Ya hay una MO en proceso, ignorando solicitud")
+		return {"success": false, "error": "MO en proceso"}
+	mo_requested.emit(mo_type, target)
+	return await _process_mo_request(mo_type, target)
+
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	if context:
+		var warp_sys = context.get_warp_system()
+		if warp_sys and not warp_sys.warp_finished.is_connected(_on_map_changed):
+			warp_sys.warp_finished.connect(_on_map_changed)

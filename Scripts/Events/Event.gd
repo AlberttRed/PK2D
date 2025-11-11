@@ -12,6 +12,9 @@ var current_page: Resource = null
 var placeholder_sprite: AnimatedSprite2D
 var actor_animator: ActorAnimator
 
+# Referencia al OverworldContext para coordinación con EventSystem
+var overworld_context: OverworldContext = null
+
 func _ready() -> void:
 	print("Event '%s': _ready() iniciado" % name)
 
@@ -103,8 +106,11 @@ func trigger() -> void:
 		print("Event '%s' triggered!" % name)
 		event_triggered.emit(current_page)
 
-		# Emitir señal global para solicitar ejecución del evento
-		SignalManager.event_requested.emit(self, null)
+		# Solicitar la ejecución del evento mediante el contexto
+		if overworld_context:
+			overworld_context.request_event(self)
+		else:
+			push_warning("Event '%s': OverworldContext no disponible al solicitar ejecución" % name)
 
 func on_player_action() -> void:
 	# Si el jugador pulsa "A" frente al evento
@@ -198,10 +204,13 @@ func _duplicate_all_pages() -> void:
 
 ## Conecta el evento a las señales globales de cambio de estado
 func _connect_to_state_signals() -> void:
-	# Conectar a las señales reenviadas por SignalManager
-	SignalManager.game_flag_changed.connect(_on_state_changed)
-	SignalManager.game_variable_changed.connect(_on_state_changed_var)
-	SignalManager.game_self_switch_changed.connect(_on_state_changed_switch)
+	# Conectar directamente a las señales del GameStateService (autoload)
+	if not GameStateService.flag_changed.is_connected(_on_state_changed):
+		GameStateService.flag_changed.connect(_on_state_changed)
+	if not GameStateService.variable_changed.is_connected(_on_state_changed_var):
+		GameStateService.variable_changed.connect(_on_state_changed_var)
+	if not GameStateService.self_switch_changed.is_connected(_on_state_changed_switch):
+		GameStateService.self_switch_changed.connect(_on_state_changed_switch)
 
 
 ## Callback cuando cambia un flag global
@@ -227,3 +236,6 @@ func _get_event_id() -> String:
 	# Usar el nombre del nodo como ID único
 	# En el futuro se puede mejorar con: "current_map_id + '_' + name"
 	return name
+
+func set_overworld_context(context: OverworldContext) -> void:
+	overworld_context = context

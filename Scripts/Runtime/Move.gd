@@ -1,5 +1,5 @@
 ## Clase Move (runtime)
-## 
+##
 ## Representa un movimiento "vivo" durante el juego.
 ## Se crea a partir de un MoveData y mantiene estado runtime como PP actual.
 ## Es un Resource para poder exportarlo, guardarlo como .tres y configurarlo desde el inspector.
@@ -19,27 +19,27 @@ var pp_actual: int = 5    # PP restante
 var mod_pp: int = 0       # Modificador de PP (PP Ups usados: 0-3)
 
 ## Constructor
-## 
+##
 ## @param move_data: MoveData, int (move_id), o null (creación desde inspector)
 func _init(move_data = null) -> void:
 	# Creación desde inspector: sin parámetros
 	if move_data == null:
 		return
-	
+
 	# Cargar MoveData
 	if move_data is int:
-		base = DatabaseManager.get_move(move_data)
+		base = DatabaseService.get_move(move_data)
 	elif move_data is MoveData:
 		base = move_data
 	else:
 		push_error("Move._init: move_data debe ser MoveData o int (move_id)")
 		return
-	
+
 	# Validar que se cargó correctamente
 	if base == null:
 		push_error("Move._init: No se pudo cargar MoveData para id %s" % str(move_data))
 		return
-	
+
 	# Inicializar PP
 	pp = base.pp
 	pp_actual = pp

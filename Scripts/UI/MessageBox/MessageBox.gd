@@ -28,7 +28,7 @@ var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var typing:bool:
 	get:
 		return label.visible_ratio > 0 and is_physics_processing()# $AnimationPlayer.is_playing() and $AnimationPlayer.current_animation == "Typing"
-		
+
 var messageHasFinished:bool:
 	get:
 		return label.messageHasFinished
@@ -55,7 +55,7 @@ func _ready():
 		#finsihedTyping.emit()
 func setText(_text):
 	label.text = _text
-	
+
 func show_custom(text: String, config := {}):
 	waitInput = config.get("waitInput", true)
 	closeAtEnd = config.get("closeAtEnd", true)
@@ -96,18 +96,18 @@ func show_no_close(text: String, show_icon_at_end: bool = false):
 		"showIconAtEnd": show_icon_at_end
 	})
 
-	
+
 func writeText():
 	set_physics_process(true)
 	while label.visible_characters < label.get_total_character_count():
 		if _stop:
 			_stop = false
 			return
-		label.visible_characters += 1 
+		label.visible_characters += 1
 		await get_tree().create_timer(typingSpeed/100.0).timeout
 	finsihedTyping.emit()
-	
-	
+
+
 func startText():
 	enable_input_handling()
 	label.line_displayed.connect(newLine)
@@ -119,13 +119,13 @@ func startText():
 		finishedAllText.connect(close)
 	#if !closeAtEnd:
 		#finishedAllText.connect(func(): finished.emit())
-	
+
 	#$AnimationPlayer.play("Typing")
 	await writeText()
-	
+
 func selectOption(): #(ui_accept)
 	print("selected")
-	
+
 	if messageHasFinished:
 		if waitInput:
 			# Lógica de cierre:
@@ -143,7 +143,7 @@ func selectOption(): #(ui_accept)
 			pass#SPEED UP TEXT
 		else:
 			if waitInput:
-				resumeText()	
+				resumeText()
 
 func cancelOption(): #(ui_cancel)
 		print("cancel")
@@ -160,7 +160,7 @@ func cancelOption(): #(ui_cancel)
 		else:
 			if typing:
 				pass#SPEED UP TEXT
-				
+
 func resumeText():
 	$AnimationPlayer2.stop()
 	$next.hide()
@@ -168,11 +168,11 @@ func resumeText():
 		await scrollText()
 	elif messageHasFinished and !isLastMessage:
 		label.text = getNextMessage()
-	
+
 	writeText()
 	#$AnimationPlayer.play("Typing")
 	resume.emit()
-	
+
 func pauseText():
 	set_physics_process(false)
 	_stop = true
@@ -189,13 +189,13 @@ func stopText():
 func newLine():
 	if messageHasFinished:
 		return
-	
+
 	if label.actualLine == label.nextLineStop:
 		label.nextLineStop += 1
 		pauseText()
 		if !waitInput:
 			resumeText()
-			
+
 func addMessage(message):
 	if message is String:
 		messageTextList.push_back(message)
@@ -209,15 +209,15 @@ func scrollText():
 	updateScroll(32*(label.actualLine-2), 32*(label.actualLine-1))
 	$AnimationPlayer2.play("Scroll")
 	await $AnimationPlayer2.animation_finished
-	
+
 func getNextMessage():
 	var nextMessage:String = messageTextList[actualMessageIndex]
 	actualMessageIndex += 1
 	return nextMessage
-	
+
 func _finishedMessage():
 	finishedMessage.emit()
-	
+
 	# Guardar los valores ANTES de que se puedan resetear por las señales
 	# Lógica del icono "next":
 	# - Si showIconAtEnd = false (overworld): Solo mostrar si hay más mensajes por procesar
@@ -232,19 +232,19 @@ func _finishedMessage():
 			should_show_arrow = actualMessageIndex < messageTextList.size()
 
 	await get_tree().process_frame
-	
+
 	if messageHasFinished and isLastMessage:
 		if waitTime > 0.0:
 			await get_tree().create_timer(waitTime).timeout
 		finishedAllText.emit()
-	
+
 	# Mostrar la flecha "next" si estamos esperando input del usuario
 	if should_show_arrow:
 		$AnimationPlayer2.play("Idle")
-		
+
 func showMessage(message = null):
 	_is_processing_message = true
-	
+
 	if message!=null:
 		addMessage(message)
 	label.text = getNextMessage()
@@ -252,37 +252,37 @@ func showMessage(message = null):
 	$next.hide()
 	self.show()
 	await startText()
-	
+
 	# CRÍTICO: En lugar de await finished (que puede perderse),
 	# usar polling del flag
 	while _is_processing_message:
 		await get_tree().process_frame
-	
+
 	print("MessageBox.showMessage: Completado")
-		
+
 func close():
 	# Si ya no está procesando, no hacer nada (ya se cerró)
 	if not _is_processing_message:
 		print("MessageBox.close(): Ya estaba cerrado, ignorando")
 		return
-	
+
 	print("MessageBox.close(): Cerrando...")
-	
+
 	# Deshabilitar input para evitar múltiples llamadas
 	disable_input_handling()
-	
+
 	$AnimationPlayer2.stop()
 	$next.hide()
 	if closeAtEnd:
 		hide()
-	
+
 	# CRÍTICO: Marcar como no procesando ANTES de emitir finished
 	_is_processing_message = false
-	
+
 	finished.emit()
-	
+
 	print("MessageBox.close(): Cerrado y señal emitida")
-	
+
 	# Si closeAtEnd = false, mantener el input deshabilitado para evitar reiniciar
 	# El input se rehabilitará solo cuando se muestre un nuevo mensaje
 
@@ -291,23 +291,23 @@ func close():
 func _finish_without_closing() -> void:
 	if not _is_processing_message:
 		return
-	
+
 	# Guardar estado visual antes de limpiar
 	var current_scroll_position = scroll.scroll_vertical
 	var current_text = label.text
-	
+
 	# Ocultar icono next
 	$AnimationPlayer2.stop()
 	$next.hide()
-	
+
 	# Hacer limpieza completa (reutiliza código de clear)
 	# Esto desconecta señales, resetea variables, marca _is_processing_message = false
 	clear()
-	
+
 	# Restaurar contenido visual para que se mantenga visible
 	label.text = current_text
 	scroll.scroll_vertical = current_scroll_position
-	
+
 	# El await en showMessage() ya se desbloqueó porque clear() pone _is_processing_message = false
 
 
@@ -341,7 +341,7 @@ func cleanup_and_hide() -> void:
 func show_clear_text():
 	label.text = ""
 	show()
-	
+
 func updateScroll(startingPosition:int, finalPosition:int):
 #### Sprite:position
 	var animation: Animation = $AnimationPlayer2.get_animation("Scroll")
@@ -350,18 +350,25 @@ func updateScroll(startingPosition:int, finalPosition:int):
 	animation.track_set_key_value(track_index, key_id, startingPosition)
 	key_id = animation.track_find_key(track_index, 1.0)
 	animation.track_set_key_value(track_index, key_id, finalPosition)
-	
+
 func onFinish():
 	clear()
 
 func enable_input_handling():
-	if not SignalManager.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
-		SignalManager.messagebox_input_accept.connect(Callable(self, "selectOption"))
-	if not SignalManager.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
-		SignalManager.messagebox_input_cancel.connect(Callable(self, "cancelOption"))
+	var dm := DisplayManager.instance
+	if not dm:
+		push_error("MessageBox: DisplayManager no disponible para gestionar input")
+		return
+	if not dm.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
+		dm.messagebox_input_accept.connect(Callable(self, "selectOption"))
+	if not dm.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
+		dm.messagebox_input_cancel.connect(Callable(self, "cancelOption"))
 
 func disable_input_handling():
-	if SignalManager.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
-		SignalManager.messagebox_input_accept.disconnect(Callable(self, "selectOption"))
-	if SignalManager.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
-		SignalManager.messagebox_input_cancel.disconnect(Callable(self, "cancelOption"))
+	var dm := DisplayManager.instance
+	if not dm:
+		return
+	if dm.messagebox_input_accept.is_connected(Callable(self, "selectOption")):
+		dm.messagebox_input_accept.disconnect(Callable(self, "selectOption"))
+	if dm.messagebox_input_cancel.is_connected(Callable(self, "cancelOption")):
+		dm.messagebox_input_cancel.disconnect(Callable(self, "cancelOption"))

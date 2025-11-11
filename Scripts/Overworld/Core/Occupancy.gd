@@ -31,8 +31,6 @@ func _ready() -> void:
 			call_deferred("register_event_occupancy", tile)
 	# PLAYER: Se inicializará cuando reciba el contexto (en set_context)
 
-	# Suscribirse a cambios de grid activo publicados por MapSystem
-	SignalManager.active_grid_changed.connect(_on_grid_changed)
 
 func current_tile() -> Vector2i:
 	if not grid or not is_instance_valid(grid):
@@ -146,6 +144,8 @@ func refresh_occupancy() -> void:
 ## Establece el contexto del Overworld (llamado desde el actor padre)
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
+	if context and not context.active_grid_changed.is_connected(_on_grid_changed):
+		context.active_grid_changed.connect(_on_grid_changed)
 
 	# Inicializar grid para Player/NPCs cuando se recibe el contexto
 	if not actor is Event and not grid:

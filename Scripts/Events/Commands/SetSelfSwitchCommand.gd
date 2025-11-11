@@ -17,11 +17,11 @@ func execute(context: Node) -> void:
 	if event_id.is_empty():
 		push_warning("SetSelfSwitchCommand: No se pudo determinar el ID del evento")
 		return
-	
+
 	var letter = ["A", "B", "C", "D"][switch_letter]
-	
+
 	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, letter, switch_value])
-	GameStateManager.set_self_switch(event_id, letter, switch_value)
+	GameStateService.set_self_switch(event_id, letter, switch_value)
 
 ## Obtiene el ID del evento que está ejecutando este comando
 func _get_current_event_id(context: Node) -> String:
@@ -30,7 +30,7 @@ func _get_current_event_id(context: Node) -> String:
 		var page = context.current_page
 		if page.source_event:
 			return page.source_event.name  # Usa el nombre del nodo como ID
-	
+
 	return ""
 
 func is_async() -> bool:

@@ -3,12 +3,9 @@
 [ext_resource type="Script" uid="uid://dfsjekxx61vm7" path="res://Scripts/Battle/TestBattle.gd" id="1_tse6d"]
 [ext_resource type="PackedScene" uid="uid://c22wi0px6h3ic" path="res://Scenes/Overworld/Core/Battler.tscn" id="2_rfkpo"]
 [ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="3_bfl41"]
-[ext_resource type="PackedScene" uid="uid://c6s1oa8tssbi1" path="res://Scenes/UI/GUI.tscn" id="7_gui01"]
 
 [node name="TestBattle" type="Node2D"]
 script = ExtResource("1_tse6d")
-
-[node name="GUI" parent="." instance=ExtResource("7_gui01")]
 
 [node name="Player" type="Node" parent="."]
 script = ExtResource("3_bfl41")

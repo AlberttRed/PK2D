@@ -1,5 +1,5 @@
 ## Clase TrainerData
-## 
+##
 ## Resource que define los datos completos de un entrenador.
 ## Se guarda como .tres en Resources/Trainers/ para reutilización.
 ##
@@ -81,14 +81,14 @@ var is_defeated: bool = false
 ## Inicializa el TrainerData (carga el TrainerClassData desde el enum)
 ## Llamar esto después de crear/cargar el TrainerData
 func initialize() -> void:
-	# Cargar TrainerClassData desde el enum (DatabaseManager o directorio)
+	# Cargar TrainerClassData desde el enum (DatabaseService o directorio)
 	# Por ahora, creamos uno temporal hasta que existan los .tres
 	_load_trainer_class()
 
 ## Carga el TrainerClassData desde el enum ID
 func _load_trainer_class() -> void:
-	# Intentar cargar desde DatabaseManager
-	trainer_class = DatabaseManager.get_trainer_class(trainer_class_id)
+	# Intentar cargar desde DatabaseService
+	trainer_class = DatabaseService.get_trainer_class(trainer_class_id)
 
 
 ## Retorna el equipo (ya están configurados como Pokemon desde el inspector)
@@ -98,7 +98,7 @@ func create_party() -> Array[Pokemon]:
 		if pokemon:
 			pokemon.trainer_id = trainer_id
 			pokemon.original_trainer = display_name
-	
+
 	return party_data
 
 ## Retorna el nombre completo (clase + nombre)
@@ -141,7 +141,7 @@ func calculate_reward() -> int:
 	# Si hay reward_money específico, usarlo
 	if reward_money > 0:
 		return reward_money
-	
+
 	# Si no, calcular según clase y nivel promedio del equipo
 	if trainer_class and not party_data.is_empty():
 		var total_level = 0
@@ -150,7 +150,7 @@ func calculate_reward() -> int:
 				total_level += pokemon.level
 		var avg_level = int(float(total_level) / float(party_data.size()))
 		return trainer_class.calculate_base_reward(avg_level)
-	
+
 	return 1000  # Recompensa por defecto
 
 ## Verifica si el entrenador tiene un equipo válido

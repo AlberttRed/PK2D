@@ -24,12 +24,8 @@ func _ready() -> void:
 	motion.step_finished.connect(_on_step_finished)
 	$Shadow.visible = false
 
-	# Conectar señales de control del jugador (compatibilidad temporal)
-	# NOTA: El método preferido es usar block_controls() / unblock_controls() directamente
-	SignalManager.player_control_blocked.connect(_on_player_control_blocked)
-	SignalManager.player_control_unblocked.connect(_on_player_control_unblocked)
-
 	sprite.animation = "walk_down_right"
+	call_deferred("_connect_display_manager_signals")
 
 func _process(_delta: float):
 	if not movement_enabled:
@@ -211,9 +207,14 @@ func _try_activate_surf() -> bool:
 	if terrain != "water":
 		return false
 
-	# Es agua - emitir señal para activar SURF
-	SignalManager.mo_requested.emit("SURF", null)
+	# Es agua - solicitar la MO de SURF a través del contexto
+	call_deferred("_request_surf_mo")
 	return true
+
+func _request_surf_mo() -> void:
+	if not context:
+		return
+	await context.request_mo("SURF", null)
 
 ## Activa o desactiva el modo surfing
 func set_surfing_mode(enabled: bool) -> void:
@@ -290,6 +291,12 @@ func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	print("Player: Contexto del Overworld establecido")
 
+	if context:
+		if not context.player_control_blocked.is_connected(_on_player_control_blocked):
+			context.player_control_blocked.connect(_on_player_control_blocked)
+		if not context.player_control_unblocked.is_connected(_on_player_control_unblocked):
+			context.player_control_unblocked.connect(_on_player_control_unblocked)
+
 	# Propagar el contexto a los componentes hijos
 	if motion and motion.has_method("set_context"):
 		motion.set_context(context)
@@ -303,3 +310,15 @@ func set_context(overworld_context: OverworldContext) -> void:
 	var encounter_detector = get_node_or_null("WildEncounterDetector")
 	if encounter_detector and encounter_detector.has_method("set_context"):
 		encounter_detector.set_context(context)
+		encounter_detector.player = self
+
+func _connect_display_manager_signals() -> void:
+	var dm := DisplayManager.instance
+	if not dm:
+		call_deferred("_connect_display_manager_signals")
+		return
+
+	if not dm.player_control_blocked.is_connected(_on_player_control_blocked):
+		dm.player_control_blocked.connect(_on_player_control_blocked)
+	if not dm.player_control_unblocked.is_connected(_on_player_control_unblocked):
+		dm.player_control_unblocked.connect(_on_player_control_unblocked)

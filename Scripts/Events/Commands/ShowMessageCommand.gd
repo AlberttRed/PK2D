@@ -10,7 +10,7 @@ class_name ShowMessageCommand
 
 func execute(context: Node) -> void:
 	print("ShowMessage: %s" % message)
-	
+
 	# Configurar parámetros del mensaje
 	var config = {
 		"waitInput": wait_input,
@@ -18,12 +18,9 @@ func execute(context: Node) -> void:
 		"waitTime": wait_time,
 		"showIconAtEnd": show_icon_at_end
 	}
-	
-	# Emitir señal para mostrar mensaje
-	SignalManager.message_requested.emit(message, config)
-	
-	# Esperar a que termine el mensaje
-	await SignalManager.message_finished
+
+	# Mostrar mensaje usando DisplayManager
+	await DisplayManager.show_message(message, config)
 	context.continue_execution()
 
 func is_async() -> bool:

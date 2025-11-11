@@ -1,7 +1,8 @@
 extends Node
 
-## GameStateManager - Gestiona el estado temporal del juego en memoria
+## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
+## Accesible globalmente como autoload: GameStateService
 
 # === SEÑALES ===
 signal flag_changed(flag_name: String, new_value: bool)
@@ -25,7 +26,7 @@ var self_switches: Dictionary = {}
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
-	print("GameStateManager: Inicializado con estado temporal")
+	print("GameStateService: Inicializado con estado temporal")
 	# No inicializar automáticamente - se hará cuando sea necesario
 
 ## Inicializa el estado con valores por defecto para nueva partida
@@ -36,14 +37,14 @@ func initialize_new_game() -> void:
 	event_flags = {}
 	game_variables = {}
 	self_switches = {}
-	
-	print("GameStateManager: Nueva partida inicializada - Mapa: %s, Posición: %s" % [current_map_id, current_position])
+
+	print("GameStateService: Nueva partida inicializada - Mapa: %s, Posición: %s" % [current_map_id, current_position])
 
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
 	# TODO: Implementar carga desde archivo de guardado
 	# Por ahora, simular que no hay partida guardada
-	print("GameStateManager: No hay partida guardada disponible")
+	print("GameStateService: No hay partida guardada disponible")
 	return false
 
 # === MÉTODOS DE LECTURA ===
@@ -82,24 +83,24 @@ func get_self_switch(event_id: String, switch_letter: String) -> bool:
 ## Establece el ID del mapa actual
 func set_current_map_id(map_id: String) -> void:
 	current_map_id = map_id
-	print("GameStateManager: Mapa cambiado a: %s" % map_id)
+	print("GameStateService: Mapa cambiado a: %s" % map_id)
 
 ## Establece la posición actual del jugador
 func set_current_position(position: Vector2i) -> void:
 	current_position = position
-	print("GameStateManager: Posición cambiada a: %s" % position)
+	print("GameStateService: Posición cambiada a: %s" % position)
 
 ## Establece la dirección a la que mira el jugador
 func set_facing_direction(direction: Vector2) -> void:
 	facing_dir = direction
-	print("GameStateManager: Dirección cambiada a: %s" % direction)
+	print("GameStateService: Dirección cambiada a: %s" % direction)
 
 ## Establece el valor de un flag de evento
 func set_event_flag(flag_name: String, value: bool) -> void:
 	var old_value = event_flags.get(flag_name, null)
 	event_flags[flag_name] = value
-	print("GameStateManager: Flag '%s' establecido a: %s" % [flag_name, value])
-	
+	print("GameStateService: Flag '%s' establecido a: %s" % [flag_name, value])
+
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
 		flag_changed.emit(flag_name, value)
@@ -108,15 +109,15 @@ func set_event_flag(flag_name: String, value: bool) -> void:
 func clear_event_flag(flag_name: String) -> void:
 	if event_flags.has(flag_name):
 		event_flags.erase(flag_name)
-		print("GameStateManager: Flag '%s' eliminado" % flag_name)
+		print("GameStateService: Flag '%s' eliminado" % flag_name)
 		flag_changed.emit(flag_name, false)
 
 ## Establece el valor de una variable global
 func set_variable(var_name: String, value: int) -> void:
 	var old_value = game_variables.get(var_name, null)
 	game_variables[var_name] = value
-	print("GameStateManager: Variable '%s' establecida a: %d" % [var_name, value])
-	
+	print("GameStateService: Variable '%s' establecida a: %d" % [var_name, value])
+
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
 		variable_changed.emit(var_name, value)
@@ -128,8 +129,8 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 	var key = "%s:%s" % [event_id, switch_letter]
 	var old_value = self_switches.get(key, null)
 	self_switches[key] = value
-	print("GameStateManager: Self-switch '%s' establecido a: %s" % [key, value])
-	
+	print("GameStateService: Self-switch '%s' establecido a: %s" % [key, value])
+
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
 		self_switch_changed.emit(event_id, switch_letter, value)
@@ -139,7 +140,7 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 func change_map(map_id: String, position: Vector2i) -> void:
 	set_current_map_id(map_id)
 	set_current_position(position)
-	print("GameStateManager: Transición a mapa '%s' en posición '%s'" % [map_id, position])
+	print("GameStateService: Transición a mapa '%s' en posición '%s'" % [map_id, position])
 
 ## Actualiza la posición después de una transición de mapa
 func update_position_after_transition(position: Vector2i) -> void:

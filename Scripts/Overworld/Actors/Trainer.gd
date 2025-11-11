@@ -17,7 +17,7 @@ class_name Trainer
 ## === CONFIGURACIÓN DE ENTRENADOR ===
 
 @export_group("State Tracking")
-## Flag para guardar si el entrenador fue derrotado (usa GameStateManager)
+## Flag para guardar si el entrenador fue derrotado (usa GameStateService)
 ## Si está vacío, no se guarda el estado
 ## Ejemplo: "route_1_youngster_joey_defeated"
 @export var defeated_flag: String = ""
@@ -49,19 +49,28 @@ func _ready() -> void:
 	# Buscar el Battler hijo
 	_find_battler()
 
-	# Restaurar estado desde GameStateManager si hay un defeated_flag configurado
+	# Restaurar estado desde GameStateService si hay un defeated_flag configurado
 	if battler and not defeated_flag.is_empty():
-		var is_defeated_saved = GameStateManager.get_event_flag(defeated_flag)
+		var is_defeated_saved = GameStateService.get_event_flag(defeated_flag)
 		if is_defeated_saved:
 			battler.is_defeated = true
-			print("Trainer '%s': Estado restaurado desde GameStateManager - Ya fue derrotado" % name)
+			print("Trainer '%s': Estado restaurado desde GameStateService - Ya fue derrotado" % name)
 
-	# Conectar señal de batalla terminada
-	SignalManager.battle_finished.connect(_on_battle_finished)
+	# Conectar señal de batalla terminada desde DisplayManager
+	call_deferred("_connect_display_manager_signals")
 
 	# Activar/desactivar detección según la página activa
 	# (se hace después de que Event base haya llamado setup_current_page en super._ready())
 	call_deferred("_update_detection_state")
+
+func _connect_display_manager_signals() -> void:
+	var dm := DisplayManager.instance
+	if not dm:
+		call_deferred("_connect_display_manager_signals")
+		return
+
+	if not dm.battle_finished.is_connected(_on_battle_finished):
+		dm.battle_finished.connect(_on_battle_finished)
 
 ## Limpia las conexiones de señales al eliminar el Trainer
 func _exit_tree() -> void:
@@ -262,8 +271,11 @@ func _start_battle_sequence() -> void:
 	_initiating_battle = true
 
 	# Bloquear controles del jugador
-	SignalManager.player_control_blocked.emit()
-
+	var context = _get_context()
+	if context:
+		context.block_player_control()
+	else:
+		push_warning("Trainer '%s': OverworldContext no disponible para bloquear el control del jugador" % name)
 	# Pausar movimiento del trainer
 	_pause_movement()
 
@@ -364,18 +376,25 @@ func _approach_player() -> void:
 
 ## Busca el StartBattleEventCommand en la página activa e inicia la batalla
 func _initiate_battle_from_page() -> void:
-	if not current_page:
-		push_error("Trainer '%s': No hay página activa" % name)
-		SignalManager.player_control_unblocked.emit()
+	if not overworld_context:
+		push_error("Trainer '%s': OverworldContext no disponible" % name)
 		_initiating_battle = false
 		return
+
+	if not current_page:
+		push_error("Trainer '%s': No hay página activa" % name)
+		if overworld_context:
+			overworld_context.unblock_player_control()
+		_initiating_battle = false
+		return
+
 
 	# Buscar StartBattleEventCommand usando el método helper de EventPage
 	var battle_command = current_page.get_battle_command()
 
 	if not battle_command:
 		push_error("Trainer '%s': No se encontró StartBattleEventCommand en la página activa" % name)
-		SignalManager.player_control_unblocked.emit()
+		overworld_context.unblock_player_control()
 		_initiating_battle = false
 		return
 
@@ -383,7 +402,7 @@ func _initiate_battle_from_page() -> void:
 	var trainer_data_from_command = battle_command.trainer_data
 	if not trainer_data_from_command:
 		push_error("Trainer '%s': StartBattleEventCommand no tiene trainer_data configurado" % name)
-		SignalManager.player_control_unblocked.emit()
+		overworld_context.unblock_player_control()
 		_initiating_battle = false
 		return
 
@@ -402,21 +421,13 @@ func _initiate_battle_from_page() -> void:
 			"waitTime": 0.0,
 			"showIconAtEnd": false
 		}
-		SignalManager.message_requested.emit(intro_text, config)
-		await SignalManager.message_finished
+		await DisplayManager.show_message(intro_text, config)
 
 	# Obtener Battler del jugador
-	var context = _get_context()
-	if not context:
-		push_error("Trainer '%s': OverworldContext no disponible" % name)
-		SignalManager.player_control_unblocked.emit()
-		_initiating_battle = false
-		return
-
-	var player: Node = context.get_player()
+	var player: Node = overworld_context.get_player()
 	if not player:
 		push_error("Trainer '%s': Player no disponible" % name)
-		SignalManager.player_control_unblocked.emit()
+		overworld_context.unblock_player_control()
 		_initiating_battle = false
 		return
 
@@ -430,7 +441,8 @@ func _initiate_battle_from_page() -> void:
 	# Iniciar batalla
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
 	print("Trainer '%s': Iniciando batalla (por detección)" % name)
-	SignalManager.battle_requested.emit(participants, rules)
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner])
 
 
 ## Callback cuando la batalla termina
@@ -441,15 +453,15 @@ func _on_battle_finished(winner_side: String) -> void:
 
 	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner_side])
 
-	# Marcar como derrotado si perdió y guardar en GameStateManager
+	# Marcar como derrotado si perdió y guardar en GameStateService
 	if winner_side == "player" and battler:
 		battler.is_defeated = true
 		print("Trainer '%s': Marcado como derrotado" % name)
 
-		# Guardar estado en GameStateManager si hay un defeated_flag configurado
+		# Guardar estado en GameStateService si hay un defeated_flag configurado
 		if not defeated_flag.is_empty():
-			GameStateManager.set_event_flag(defeated_flag, true)
-			print("Trainer '%s': Estado guardado en GameStateManager (flag: '%s')" % [name, defeated_flag])
+			GameStateService.set_event_flag(defeated_flag, true)
+			print("Trainer '%s': Estado guardado en GameStateService (flag: '%s')" % [name, defeated_flag])
 			# La señal flag_changed hará que el Event reevalúe páginas
 			# y _update_detection_state() se encargará de desconectar si es necesario
 
@@ -458,7 +470,8 @@ func _on_battle_finished(winner_side: String) -> void:
 	_player_detected = false
 
 	# Desbloquear controles del jugador
-	SignalManager.player_control_unblocked.emit()
+	if overworld_context:
+		overworld_context.unblock_player_control()
 
 	# Reanudar movimiento del trainer
 	_resume_movement()

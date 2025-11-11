@@ -9,7 +9,7 @@ signal newMoveLearned
 
 @export_group("Datos Base")
 ## ID del Pokémon (usa PokemonsEnum para ver la lista)
-## Se cargará automáticamente el PokemonData desde DatabaseManager
+## Se cargará automáticamente el PokemonData desde DatabaseService
 @export var pokemon_id: PokemonsEnum.Values = PokemonsEnum.Values.BULBASAUR
 
 @export_group("Información Básica")
@@ -45,7 +45,7 @@ signal newMoveLearned
 @export var held_item_id: int = 0
 
 @export_group("Moveset (Movimientos)")
-## Define hasta 4 movimientos personalizados (IDs). 
+## Define hasta 4 movimientos personalizados (IDs).
 ## Si está vacío, el Pokémon aprenderá movimientos automáticamente según su nivel.
 ## Ejemplo: [33, 45, 98, 156] para Tackle, Growl, Quick Attack, Rest
 @export var custom_move_ids: Array[MovesEnum.Values] = []
@@ -95,7 +95,7 @@ var fainted: bool:
 var learningMoves: Array[PokemonLearningMove] = []
 
 ## Constructor principal
-## 
+##
 ## Creación desde inspector: Llamar sin parámetros, luego _post_init() inicializará desde @export vars
 ## Creación por código: Proporcionar al menos pokemon_data o pokemon_id
 ##
@@ -116,25 +116,25 @@ func _init(
 	# Creación desde inspector: sin parámetros, inicializar después con _post_init()
 	if pokemon_data == null:
 		return
-	
+
 	# Cargar PokemonData
 	if pokemon_data is int:
 		pokemon_id = pokemon_data as PokemonsEnum.Values
-		base = DatabaseManager.get_pokemon(pokemon_data)
+		base = DatabaseService.get_pokemon(pokemon_data)
 	elif pokemon_data is PokemonData:
 		base = pokemon_data
 		pokemon_id = base.id as PokemonsEnum.Values
 	else:
 		push_error("Pokemon._init: pokemon_data debe ser PokemonData o int (pokemon_id)")
 		return
-	
+
 	if base == null:
 		push_error("Pokemon._init: No se pudo cargar PokemonData para id %s" % str(pokemon_data))
 		return
-	
+
 	# Configurar nivel
 	level = pokemon_level
-	
+
 	# Configurar género
 	if pokemon_gender == null:
 		# Mantener valor @export o calcular si es 0 ("Sin indicar")
@@ -144,7 +144,7 @@ func _init(
 		gender = _calculate_gender()
 	else:
 		gender = pokemon_gender
-	
+
 	# Configurar habilidad
 	if pokemon_ability == null:
 		# Mantener valor @export o calcular si es NONE
@@ -154,8 +154,8 @@ func _init(
 		ability_id = _calculate_ability() as AbilitiesEnum.Values
 	else:
 		ability_id = pokemon_ability as AbilitiesEnum.Values
-	ability = DatabaseManager.get_ability(ability_id)
-	
+	ability = DatabaseService.get_ability(ability_id)
+
 	# Configurar naturaleza
 	if pokemon_nature == null:
 		# Mantener valor @export (por defecto SERIOUS)
@@ -164,20 +164,20 @@ func _init(
 		nature_id = NaturesEnum.get_random_nature() as NaturesEnum.Values
 	else:
 		nature_id = pokemon_nature as NaturesEnum.Values
-	nature = DatabaseManager.get_nature(NaturesEnum.get_id(nature_id))
-	
+	nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
+
 	# Inicializar stats (IVs, EVs, base_stats)
 	_initialize_stats(randomize_stats)
-	
+
 	# Cargar movimientos
 	_load_learnable_moves()
 	_load_initial_moves()
-	
+
 	# Configurar estado inicial
 	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	totalExp = actualLevelExpBase
 	personality = get_personality_text()
-	
+
 	# Configurar nombre para el inspector
 	_update_resource_name()
 
@@ -185,33 +185,33 @@ func _init(
 ## Battler.gd llamará esto en _ready() para inicializar Pokemon del inspector
 func _post_init() -> void:
 	# Cargar PokemonData desde el enum pokemon_id
-	base = DatabaseManager.get_pokemon(pokemon_id)
+	base = DatabaseService.get_pokemon(pokemon_id)
 	if base == null:
 		push_error("Pokemon._post_init: No se pudo cargar PokemonData para id %d" % pokemon_id)
 		return
-	
+
 	# Calcular valores automáticos si no están configurados
 	if gender == 0:  # "Sin indicar"
 		gender = _calculate_gender()
-	
+
 	if ability_id == AbilitiesEnum.Values.NONE:
 		ability_id = _calculate_ability() as AbilitiesEnum.Values
-	ability = DatabaseManager.get_ability(ability_id)
-	
-	nature = DatabaseManager.get_nature(NaturesEnum.get_id(nature_id))
-	
+	ability = DatabaseService.get_ability(ability_id)
+
+	nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
+
 	# Inicializar stats (NO aleatorizar, usar valores @export)
 	_initialize_stats(false)
-	
+
 	# Cargar movimientos
 	_load_learnable_moves()
 	_load_initial_moves()
-	
+
 	# Configurar estado inicial
 	hp_actual = get_final_stat(StatsEnum.Values.HP)
 	totalExp = actualLevelExpBase
 	personality = get_personality_text()
-	
+
 	# Configurar nombre para el inspector
 	_update_resource_name()
 
@@ -220,25 +220,25 @@ func _update_resource_name() -> void:
 	if base == null:
 		resource_name = "Pokemon (sin configurar)"
 		return
-	
+
 	var display_text = ""
-	
+
 	# Mostrar nickname si existe
 	if not nickname.is_empty():
 		display_text = "%s (%s)" % [nickname, base.Name]
 	else:
 		display_text = base.Name
-	
+
 	# Añadir nivel
 	display_text += " Lv.%d" % level
-	
+
 	# Añadir género si no es "sin indicar"
 	match gender:
 		CONST.GENEROS.MACHO:
 			display_text += " ♂"
 		CONST.GENEROS.HEMBRA:
 			display_text += " ♀"
-	
+
 	resource_name = display_text
 
 ## Inicializa IVs, EVs y base stats
@@ -254,7 +254,7 @@ func _initialize_stats(_randomize: bool = false) -> void:
 		StatsEnum.Values.ACCURACY: 100,
 		StatsEnum.Values.EVASION: 100
 	}
-	
+
 	# IVs - usar los valores @export configurados o aleatorizar
 	if _randomize:
 		hp_IVs = randi_range(0, 31)
@@ -263,7 +263,7 @@ func _initialize_stats(_randomize: bool = false) -> void:
 		spAttack_IVs = randi_range(0, 31)
 		spDefense_IVs = randi_range(0, 31)
 		speed_IVs = randi_range(0, 31)
-	
+
 	# Copiar IVs exportados al diccionario
 	ivs = {
 		StatsEnum.Values.HP: hp_IVs,
@@ -273,7 +273,7 @@ func _initialize_stats(_randomize: bool = false) -> void:
 		StatsEnum.Values.SP_DEFENSE: spDefense_IVs,
 		StatsEnum.Values.SPEED: speed_IVs
 	}
-	
+
 	# Copiar EVs exportados al diccionario
 	evs = {
 		StatsEnum.Values.HP: hp_EVs,
@@ -301,11 +301,11 @@ func _calculate_gender() -> int:
 func _calculate_ability() -> int:
 	ability_slot = randi_range(0, 1)
 	var selected_ability = base.abilities[ability_slot]
-	
+
 	# Si es null, usar el slot 0
 	if selected_ability == null:
 		selected_ability = base.abilities[0]
-	
+
 	# Convertir string a int (abilities está guardado como array de strings en .tres)
 	if selected_ability is String:
 		return int(selected_ability)
@@ -327,29 +327,29 @@ func _load_learnable_moves() -> void:
 ## Carga los movimientos iniciales según el nivel actual o movimientos personalizados
 func _load_initial_moves() -> void:
 	movements.clear()
-	
+
 	# Si hay movimientos personalizados definidos, usarlos en lugar de los automáticos
 	if not custom_move_ids.is_empty():
 		_load_custom_moves()
 		return
-	
+
 	# Lógica por defecto: cargar movimientos según nivel
 	var available_moves: Array[PokemonLearningMove] = learningMoves.filter(
 		func(move: PokemonLearningMove):
 			return move.learningType == PokemonLearningMove.Type.LVL_UP and move.learningLevel <= level
 	).slice(0, 4)
-	
+
 	for learning_move in available_moves:
 		movements.append(learning_move.getMove())
 
 ## Carga movimientos personalizados desde custom_move_ids
 func _load_custom_moves() -> void:
 	var move_count = min(custom_move_ids.size(), 4)  # Máximo 4 movimientos
-	
+
 	for i in range(move_count):
 		var move_enum = custom_move_ids[i]
 		var move_id = int(move_enum)  # Convertir enum a int
-		
+
 		if move_id > 0:  # Validar que sea un ID válido
 			var move = Move.new(move_id)
 			if move.base != null:  # Verificar que el movimiento se cargó correctamente
@@ -369,9 +369,9 @@ func get_final_stat(stat: StatsEnum.Values, _level: int = self.level) -> int:
 	var base_stat = base_stats.get(stat, 0)
 	var iv = ivs.get(stat, 0)
 	var ev = evs.get(stat, 0)
-	
+
 	var total = ((2 * base_stat + iv + int(ev / 4)) * _level) / 100
-	
+
 	if stat == StatsEnum.Values.HP:
 		return int(total) + _level + 10
 	else:

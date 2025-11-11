@@ -7,16 +7,16 @@ var spots: Array[BattleSpot] = []
 var current_index := 0
 
 func _ready():
-	SignalManager.input_left.connect(_on_input_left)
-	SignalManager.input_right.connect(_on_input_right)
-	SignalManager.input_accept.connect(_on_input_accept)
+	call_deferred("_connect_display_manager_inputs")
 
 func show_targets(selectable_spots: Array[BattleSpot]) -> void:
 	spots = selectable_spots
 	current_index = 0
 	visible = true
-	if not SignalManager.input_cancel.is_connected(_on_input_cancel):
-		SignalManager.input_cancel.connect(_on_input_cancel)
+	var dm := DisplayManager.instance
+	if dm and not dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.connect(_on_input_cancel)
+
 	_update_selector()
 
 func _on_input_left():
@@ -51,8 +51,20 @@ func _update_selector():
 func hide_selector():
 	for spot in spots:
 		spot.highlight(false)
-	if SignalManager.input_cancel.is_connected(_on_input_cancel):
-		SignalManager.input_cancel.disconnect(_on_input_cancel)
+	var dm := DisplayManager.instance
+	if dm and dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.disconnect(_on_input_cancel)
 	visible = false
 
+func _connect_display_manager_inputs() -> void:
+	var dm := DisplayManager.instance
+	if not dm:
+		call_deferred("_connect_display_manager_inputs")
+		return
 
+	if not dm.input_left.is_connected(_on_input_left):
+		dm.input_left.connect(_on_input_left)
+	if not dm.input_right.is_connected(_on_input_right):
+		dm.input_right.connect(_on_input_right)
+	if not dm.input_accept.is_connected(_on_input_accept):
+		dm.input_accept.connect(_on_input_accept)

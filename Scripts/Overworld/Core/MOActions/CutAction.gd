@@ -59,30 +59,36 @@ func get_detect_message(_target: Node) -> String:
 ## Ejecuta el FLUJO de CORTE: choice, animación, mensajes de éxito
 ## Se llama SOLO si can_use() retornó true
 func execute(_player: Node, target: Node, context: Node) -> Dictionary:
+	var overworld_context := _extract_overworld_context(context)
+	if overworld_context:
+		overworld_context.block_player_control()
+
 	# Obtener el Pokémon que tiene CORTE (ya validado en can_use)
 	var pokemon_with_cut = _find_pokemon_with_CUT(_player)
 	var pokemon_name = pokemon_with_cut.get_display_name() if pokemon_with_cut else "Tu Pokémon"
 
 	# 1. Choice de confirmación (si requires_confirmation)
 	if requires_confirmation:
-		SignalManager.choice_requested.emit("¿Usas CORTE?", ["Sí", "No"])
-		var choice = await SignalManager.choice_finished
+		var choice = await DisplayManager.show_message_with_choices("¿Usas CORTE?", ["Sí", "No"])
 		if choice != 0:  # No o cancelado
+			if overworld_context:
+				overworld_context.unblock_player_control()
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
 	# 2. Mensaje de éxito con el nombre del Pokémon
-	SignalManager.message_requested.emit("¡%s usó CORTE!" % pokemon_name, {
+	await DisplayManager.show_message("¡%s usó CORTE!" % pokemon_name, {
 		"waitInput": true,
 		"closeAtEnd": true
 	})
-	await SignalManager.message_finished
 	await Engine.get_main_loop().process_frame
 
 	# 3. Reproducir animación
 	await _play_animation(target)
 
 	# 4. Retornar éxito
+	if overworld_context:
+		overworld_context.unblock_player_control()
 	return {"success": true, "cancelled": false}
 
 ## Reproduce la animación de corte en el target
@@ -121,4 +127,9 @@ func _find_actor_animator(node: Node) -> ActorAnimator:
 		if found:
 			return found
 
+	return null
+
+func _extract_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		return context.context
 	return null

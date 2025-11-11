@@ -1,0 +1,24 @@
+GUI.gd (legacy)
+================
+
+El script original `Scripts/UI/GUI.gd` se retiró en favor de `DisplayManager`.
+Su implementación completa puede recuperarse desde el historial de Git anterior
+a esta eliminación (ver commit inmediatamente anterior a la migración final de
+noviembre de 2025).
+
+Resumen de responsabilidades históricas:
+
+- Enrutaba todas las señales de `SignalManager` relacionadas con mensajes,
+  elecciones, fades y batallas.
+- Exponía métodos utilitarios (`show_message_with_config`, `show_choices`,
+  `show_message_with_choices`, etc.) que ahora delegan en `DisplayManager`.
+- Propagaba el bloqueo del jugador mediante `SignalManager.player_control_*`.
+
+Si necesitas consultar la implementación completa, ejecuta:
+
+```
+git show HEAD^:Scripts/UI/GUI.gd
+```
+
+o revisa la documentación del PBI 498 donde se describe la migración.
+
