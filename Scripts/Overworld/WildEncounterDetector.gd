@@ -63,10 +63,6 @@ func _ready() -> void:
 
 	# MapSystem se obtendrá del contexto cuando esté disponible
 
-	# Conectar a cambios de mapa para actualizar cache y señal
-	SignalManager.seamless_map_crossed.connect(_on_map_changed)
-	SignalManager.warp_finished.connect(_on_map_changed_warp)
-
 	# Inicializar cache y conectar/desconectar señal según corresponda
 	_update_encounters_cache()
 
@@ -373,13 +369,10 @@ func _start_wild_battle(encounter_data: Dictionary) -> void:
 
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 
-	# Iniciar combate (GUI se encargará de bloquear/desbloquear el control)
+	# Iniciar combate usando DisplayManager
 	print("WildEncounterDetector: Solicitando combate salvaje...")
-	SignalManager.battle_requested.emit(participants, rules)
-
-	# Esperar a que termine el combate
-	await SignalManager.battle_finished
-	print("WildEncounterDetector: Combate terminado")
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print("WildEncounterDetector: Combate terminado. Ganador: %s" % winner)
 
 
 ## Obtiene el BattleParticipant del jugador
@@ -468,5 +461,11 @@ func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	if context:
 		map_system = context.get_map_system()
+		# Conectar a las señales locales relevantes
+		if not context.seamless_map_crossed.is_connected(_on_map_changed):
+			context.seamless_map_crossed.connect(_on_map_changed)
+		var warp_sys = context.get_warp_system()
+		if warp_sys and not warp_sys.warp_finished.is_connected(_on_map_changed_warp):
+			warp_sys.warp_finished.connect(_on_map_changed_warp)
 		# Actualizar cache de encuentros tras obtener MapSystem
 		_update_encounters_cache()

@@ -210,9 +210,6 @@ func _ready() -> void:
 	# Registrar mapas conocidos y sus vecinos
 	_register_maps()
 
-	# Conectar señal de cruce seamless para gestionar neighbors y active_map
-	SignalManager.seamless_map_crossed.connect(_on_seamless_map_crossed)
-
 	print("WorldSystem: Sistema inicializado")
 	# NOTA: El contexto y map_system se inyectan desde OverworldCoordinator después de _ready()
 	# Se validarán cuando se usen en los métodos de lógica
@@ -595,8 +592,8 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 
 		# Emitir cambio de grid activo (CRÍTICO para Occupancy y otros sistemas)
 		var new_grid = new_map.get_node_or_null("OverworldGrid")
-		if new_grid and SignalManager:
-			SignalManager.active_grid_changed.emit(new_grid)
+		if new_grid and context:
+			context.emit_active_grid_changed(new_grid)
 
 	# Actualizar neighbors: precargar vecinos del nuevo mapa
 	_preload_neighbors(to_map_id)
@@ -893,3 +890,9 @@ func print_warp_history() -> void:
 			state.get("tile", "?"),
 			state.get("direction", "?")
 		])
+
+
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	if context and not context.seamless_map_crossed.is_connected(_on_seamless_map_crossed):
+		context.seamless_map_crossed.connect(_on_seamless_map_crossed)

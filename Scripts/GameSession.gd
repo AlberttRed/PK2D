@@ -36,14 +36,20 @@ func _load_overworld_scene() -> void:
 	# Añadir como hijo de esta sesión (no reemplazar la escena actual)
 	add_child(overworld_instance)
 
-	# Bloquear el control del jugador durante la carga inicial hasta completar el fade
-	SignalManager.player_control_blocked.emit()
-
-	# Configurar el overworld después de cargar la escena
+	# Esperar un frame para que el Overworld inicialice su contexto y sistemas
 	await get_tree().process_frame
 
 	# Obtener el coordinador (orquestador de sistemas del overworld)
 	var overworld_coordinator = overworld_instance as OverworldCoordinator
+	var overworld_context: OverworldContext = null
+	if overworld_coordinator and overworld_coordinator.has_method("get_context"):
+		overworld_context = overworld_coordinator.get_context()
+
+	if overworld_context:
+		overworld_context.block_player_control()
+	else:
+		push_warning("GameSession: OverworldContext no disponible para bloquear control del jugador")
+
 	if overworld_coordinator and overworld_coordinator.has_method("configure_from_gamestate"):
 		print("GameSession: Configurando overworld según GameState...")
 		var success = overworld_coordinator.configure_from_gamestate()
@@ -51,10 +57,12 @@ func _load_overworld_scene() -> void:
 		if success:
 			print("GameSession: ✓ Overworld configurado exitosamente")
 			# Desvanecer desde negro cuando todo está listo
-			SignalManager.fade_requested.emit("fade_out", 0.25)
-			await SignalManager.fade_finished
+			await DisplayManager.fade_out(0.25)
 			# Desbloquear control ahora que terminó el fade
-			SignalManager.player_control_unblocked.emit()
+			if overworld_context:
+				overworld_context.unblock_player_control()
+			else:
+				push_warning("GameSession: OverworldContext no disponible para desbloquear control del jugador")
 		else:
 			push_error("GameSession: Error al configurar overworld desde GameState")
 	else:

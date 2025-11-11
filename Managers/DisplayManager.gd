@@ -10,6 +10,20 @@ static var instance: DisplayManager = null
 # === SEÑALES ===
 signal input
 signal selected_choice
+signal battle_started()
+signal battle_finished(winner_side: String)
+signal messagebox_input_accept
+signal messagebox_input_cancel
+signal hide_overworld_messagebox
+signal input_accept
+signal input_cancel
+signal input_start
+signal input_left
+signal input_right
+signal input_up
+signal input_down
+signal player_control_blocked
+signal player_control_unblocked
 
 # === VARIABLES ===
 var fading: bool = false
@@ -34,14 +48,6 @@ func _ready() -> void:
 
 	instance = self
 	print("DisplayManager: Inicializado como singleton")
-
-	# Conectar señales del SignalManager (solo las que aún se usan)
-	# SignalManager.message_requested.connect(_on_message_requested)  # DEPRECATED: Usar DisplayManager.show_message()
-	SignalManager.messagebox_input_accept.connect(_on_messagebox_accept)
-	SignalManager.messagebox_input_cancel.connect(_on_messagebox_cancel)
-	SignalManager.battle_requested.connect(_on_battle_requested)
-	SignalManager.battle_finished.connect(_on_battle_finished)
-	SignalManager.hide_overworld_messagebox.connect(_on_hide_overworld_messagebox)
 
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
@@ -87,6 +93,34 @@ static func is_fading() -> bool:
 	if instance == null:
 		return false
 	return instance._is_fading()
+
+## Inicia una batalla y devuelve el ganador
+static func start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return ""
+	return await instance._start_battle(participants, rules)
+
+## Ejecuta la transición de entrada a batalla con efecto de máscara
+static func play_battle_transition(texture_path: String, duration: float = 1.5) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance.fade_layer.play_battle_transition(texture_path, duration)
+
+## Revela la escena de batalla con efecto de transición inversa
+static func reveal_battle(duration: float = 0.4) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance.fade_layer.reveal_battle(duration)
+
+## Solicita ocultar el MessageBox del overworld durante transiciones (p.ej. FadeLayer)
+static func request_hide_overworld_messagebox() -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	instance._handle_hide_overworld_messagebox()
 
 # === MÉTODOS DE INSTANCIA PRIVADOS ===
 ## Métodos internos (no llamar directamente, usar la API estática)
@@ -134,6 +168,51 @@ func _is_fading() -> bool:
 
 func _is_visible() -> bool:
 	return msg.is_visible() || BattleNew.visible || choice_box.visible
+
+## Método privado para iniciar batalla
+func _start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
+	print("DisplayManager: Iniciando batalla...")
+
+	# Bloquear control del jugador al iniciar batalla
+	player_control_blocked.emit()
+
+	# Separar participantes en player y enemy
+	var player_participants: Array[BattleParticipant] = []
+	var enemy_participants: Array[BattleParticipant] = []
+
+	for participant in participants:
+		if participant.is_player:
+			player_participants.append(participant)
+		else:
+			enemy_participants.append(participant)
+
+	# Emitir señal de inicio de batalla
+	battle_started.emit()
+
+	# Mostrar la escena de batalla
+	BattleNew.visible = true
+
+	# Iniciar el combate y esperar resultado
+	await BattleNew.start_battle(player_participants, enemy_participants, rules)
+
+	# La batalla ya terminó, ahora manejar el cierre
+	# (BattleController invoca DisplayManager._on_battle_finished)
+	# Esperamos a que _on_battle_finished complete el fade out
+	var winner = await _wait_for_battle_cleanup()
+
+	return winner
+
+## Espera a que termine el cleanup de batalla y devuelve el ganador
+var _battle_winner: String = ""
+var _battle_cleanup_done: bool = false
+
+func _wait_for_battle_cleanup() -> String:
+	# Esperar a que _on_battle_finished termine
+	while not _battle_cleanup_done:
+		await get_tree().process_frame
+
+	_battle_cleanup_done = false
+	return _battle_winner
 
 # === MÉTODOS DE INSTANCIA LEGACY (compatibilidad) ===
 func setMessageBox(msgBox: MessageBox) -> void:
@@ -200,44 +279,13 @@ func isVisible() -> bool:
 func isFading() -> bool:
 	return _is_fading()
 
-# === SEÑALES DEL SIGNALMANAGER ===
-## DEPRECATED: Esta función ya no se usa, las llamadas van directo a DisplayManager.show_message()
-# func _on_message_requested(text: String, config: Dictionary = {}) -> void:
-# 	await _show_message_with_config(text, config)
-# 	SignalManager.message_finished.emit()
-
 func _on_message_finished() -> void:
 	# Asegurar que no queden flags de pulsación retenidos tras cerrar el mensaje
 	pressed_actions.clear()
 
-func _on_messagebox_accept() -> void:
-	SignalManager.input_accept.emit()
-
-func _on_messagebox_cancel() -> void:
-	SignalManager.input_cancel.emit()
-
-func _on_battle_requested(participants: Array[BattleParticipant], rules: BattleRules) -> void:
-	# Bloquear control del jugador al iniciar batalla
-	SignalManager.player_control_blocked.emit()
-
-	# Separar participantes en player y enemy
-	var player_participants: Array[BattleParticipant] = []
-	var enemy_participants: Array[BattleParticipant] = []
-
-	for participant in participants:
-		if participant.is_player:
-			player_participants.append(participant)
-		else:
-			enemy_participants.append(participant)
-
-	# Emitir señal de inicio de batalla
-	SignalManager.battle_started.emit()
-
-	# Mostrar la escena de batalla
-	BattleNew.visible = true
-
-	# Iniciar el combate
-	await BattleNew.start_battle(player_participants, enemy_participants, rules)
+func _handle_hide_overworld_messagebox() -> void:
+	hide_overworld_messagebox.emit()
+	_on_hide_overworld_messagebox()
 
 func _on_hide_overworld_messagebox() -> void:
 	print("DisplayManager: Limpiando y ocultando MessageBox del overworld")
@@ -245,6 +293,9 @@ func _on_hide_overworld_messagebox() -> void:
 
 func _on_battle_finished(_winner_side: String) -> void:
 	print("DisplayManager: Batalla terminada, iniciando transición de salida...")
+
+	# Guardar el ganador
+	_battle_winner = _winner_side
 
 	# Hacer fade in (a negro) para ocultar la batalla
 	await fade_layer.fade_in(0.3)
@@ -255,9 +306,14 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Hacer fade out para revelar el overworld
 	await fade_layer.fade_out(0.3)
 
+	# Emitir señal de batalla terminada (señal de DisplayManager)
+	battle_finished.emit(_winner_side)
+
 	# Desbloquear control del jugador
-	SignalManager.player_control_unblocked.emit()
-	print("DisplayManager: Control del jugador desbloqueado")
+	player_control_unblocked.emit()
+
+	# Marcar cleanup como completado
+	_battle_cleanup_done = true
 
 # === INPUT ===
 func _input(event: InputEvent) -> void:
@@ -287,45 +343,45 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept") and !pressed_actions.has("ui_accept"):
 		pressed_actions["ui_accept"] = true
 		print("DisplayManager accept")
-		SignalManager.input_accept.emit()
-		SignalManager.messagebox_input_accept.emit()
+		input_accept.emit()
+		messagebox_input_accept.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_cancel") and !pressed_actions.has("ui_cancel"):
 		pressed_actions["ui_cancel"] = true
 		print("DisplayManager cancel")
-		SignalManager.input_cancel.emit()
-		SignalManager.messagebox_input_cancel.emit()
+		input_cancel.emit()
+		messagebox_input_cancel.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):
 		pressed_actions["ui_start"] = true
 		print("DisplayManager start")
-		SignalManager.input_start.emit()
+		input_start.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_up") and !pressed_actions.has("ui_up"):
 		pressed_actions["ui_up"] = true
 		print("DisplayManager up")
-		SignalManager.input_up.emit()
+		input_up.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_down") and !pressed_actions.has("ui_down"):
 		pressed_actions["ui_down"] = true
 		print("DisplayManager down")
-		SignalManager.input_down.emit()
+		input_down.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_right") and !pressed_actions.has("ui_right"):
 		pressed_actions["ui_right"] = true
 		print("DisplayManager right")
-		SignalManager.input_right.emit()
+		input_right.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_left") and !pressed_actions.has("ui_left"):
 		pressed_actions["ui_left"] = true
 		print("DisplayManager left")
-		SignalManager.input_left.emit()
+		input_left.emit()
 		input_consumed = true
 
 	# Consumir el input SOLO si ChoiceBox no está visible

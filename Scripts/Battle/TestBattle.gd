@@ -40,8 +40,8 @@ func wildSingleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	SignalManager.battle_requested.emit(participants, rules)
-	await SignalManager.battle_finished
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 
 func wildDoubleBattle():
@@ -66,8 +66,8 @@ func wildDoubleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	SignalManager.battle_requested.emit(participants, rules)
-	await SignalManager.battle_finished
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildRandomSingleBattle():
 	# Generar equipos completamente aleatorios para jugador y salvaje
@@ -81,8 +81,8 @@ func wildRandomSingleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	SignalManager.battle_requested.emit(participants, rules)
-	await SignalManager.battle_finished
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildRandomDoubleBattle():
 	# Generar equipos completamente aleatorios para jugador (2) y salvajes (2)
@@ -96,8 +96,8 @@ func wildRandomDoubleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	SignalManager.battle_requested.emit(participants, rules)
-	await SignalManager.battle_finished
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func singleTrainerBattle():
 	# Usar equipos configurados en ambos Battlers (Player vs SingleTrainer)
@@ -111,8 +111,8 @@ func singleTrainerBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, trainerParticipant]
 
-	SignalManager.battle_requested.emit(participants, rules)
-	await SignalManager.battle_finished
+	var winner = await DisplayManager.start_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 # Helper: genera un Pokémon aleatorio
 func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:

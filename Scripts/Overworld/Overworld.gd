@@ -77,30 +77,45 @@ func _inject_dependencies() -> void:
 
 	# Inyectar el contexto a todos los sistemas
 	if map_system:
-		map_system.context = context
+		if map_system.has_method("set_context"):
+			map_system.set_context(context)
+		else:
+			map_system.context = context
 		# Mantener compatibilidad temporal con world_system directo
 		map_system.world_system = world_system
 		print("  ✓ Context → MapSystem")
 
 	if world_system:
-		world_system.context = context
+		if world_system.has_method("set_context"):
+			world_system.set_context(context)
+		else:
+			world_system.context = context
 		# Mantener compatibilidad temporal con map_system directo
 		world_system.map_system = map_system
 		print("  ✓ Context → WorldSystem")
 
 	if warp_system:
-		warp_system.context = context
+		if warp_system.has_method("set_context"):
+			warp_system.set_context(context)
+		else:
+			warp_system.context = context
 		# Mantener compatibilidad temporal
 		warp_system.world_system = world_system
 		warp_system.map_system = map_system
 		print("  ✓ Context → WarpSystem")
 
 	if mo_system:
-		mo_system.context = context
+		if mo_system.has_method("set_context"):
+			mo_system.set_context(context)
+		else:
+			mo_system.context = context
 		print("  ✓ Context → MOSystem")
 
 	if event_system:
-		event_system.context = context
+		if event_system.has_method("set_context"):
+			event_system.set_context(context)
+		else:
+			event_system.context = context
 		print("  ✓ Context → EventSystem")
 
 	print("OverworldCoordinator: Inyección de dependencias completada")

@@ -26,17 +26,17 @@ func setup_sides(player_participants: Array[BattleParticipant], enemy_participan
 	for p in player_participants:
 		player_side.add_participant(p)
 	player_side.prepare_for_battle(_rules)
-	
+
 	self.enemy_side = BattleSide.new(BattleSide.Types.ENEMY)
 	for p in enemy_participants:
 		enemy_side.add_participant(p)
 	enemy_side.prepare_for_battle(_rules)
-	
+
 	self.sides = [player_side, enemy_side]
 	assign_opponent_sides()
 
 	self.rules = _rules
-	
+
 func assign_active_pokemons_to_spots():
 	var player_actives = player_side.get_active_pokemons()
 	var enemy_actives = enemy_side.get_active_pokemons()
@@ -62,7 +62,7 @@ func assign_active_pokemons_to_spots():
 func start_battle() -> void:
 	# Configurar UI para el nuevo combate
 	BattleEffectController.set_ui(ui)
-	
+
 	turn_controller.battle_controller = self
 	# Inyectar lógica de targeting en la UI
 	ui.target_selector = BattleTargetSelector.new()
@@ -80,7 +80,7 @@ func get_active_battle_spots() -> Array[BattleSpot]:
 				spots.append(spot)
 
 	return spots
-	
+
 func get_all_active_pokemon() -> Array[BattlePokemon]:
 	var result: Array[BattlePokemon] = []
 	result.assign(get_active_battle_spots().map(func(spot: BattleSpot): return spot.pokemon))
@@ -112,7 +112,7 @@ func battle_finished() -> bool:
 	if player_side.escapedBattle or enemy_side.escapedBattle:
 		finished = true
 		return true
-		
+
 	# Verificar si todos los Pokémon de algún lado están debilitados
 	var player_alive := player_side.count_alive_pokemons()
 	var enemy_alive := enemy_side.count_alive_pokemons()
@@ -153,28 +153,31 @@ func end_battle() -> void:
 		"draw":
 			result_msg = "Resultado del combate: empate"
 	print(result_msg)
-	
+
 	# Guardar el ganador antes de limpiar el estado
 	var battle_winner = winner_side
-	
+
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
-	
+
 
 	# Hacer esta función awaitable
 	await get_tree().process_frame
-	
+
 	# Emitir con el ganador guardado (antes del cleanup)
-	SignalManager.battle_finished.emit(battle_winner)
+	# SignalManager.battle_finished.emit(battle_winner)  # DEPRECATED
+	# Emitir en DisplayManager en su lugar
+	if DisplayManager.instance:
+		DisplayManager.instance._on_battle_finished(battle_winner)
 
 func _cleanup_battle_state():
 	# Resetear flags de control
 	finished = false
 	winner_side = ""
-	
+
 	# Resetear controlador de turnos
 	turn_controller.reset()
-	
+
 	# Limpiar efectos persistentes
 	BattleEffectController.reset_effects()
 

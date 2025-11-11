@@ -12,9 +12,6 @@ class_name PushableRock
 ## Flag para evitar empujar mientras ya se está moviendo
 var is_moving: bool = false
 
-## Referencia al OverworldContext (inyectada desde OverworldGrid)
-var overworld_context: OverworldContext = null
-
 ## Empuja la roca en una dirección
 ## @param direction: Vector2 (UP, DOWN, LEFT, RIGHT)
 ## @return: true si se pudo empujar, false si está bloqueado
@@ -153,13 +150,19 @@ func _auto_push() -> void:
 		return
 
 	# Bloquear el control del jugador durante el empuje
-	SignalManager.player_control_blocked.emit()
+	if overworld_context:
+		overworld_context.block_player_control()
+	else:
+		push_warning("PushableRock: OverworldContext no disponible para bloquear el control del jugador")
 
 	# Empujar la roca
 	await push(push_direction)
 
 	# Desbloquear el control del jugador
-	SignalManager.player_control_unblocked.emit()
+	if overworld_context:
+		overworld_context.unblock_player_control()
+	else:
+		push_warning("PushableRock: OverworldContext no disponible para desbloquear el control del jugador")
 
 ## Calcula la dirección de empuje basándose en la posición del jugador
 func _calculate_push_direction_from_player(player: Node) -> Vector2:

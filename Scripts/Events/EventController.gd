@@ -7,6 +7,9 @@ class_name EventController
 signal page_started(page: EventPage)
 signal page_finished(page: EventPage)
 
+# Referencia al contexto del Overworld para coordinar sistemas locales
+var context: OverworldContext = null
+
 enum State { IDLE, RUNNING }
 
 var current_state: State = State.IDLE
@@ -56,9 +59,15 @@ func start_page(page: EventPage) -> bool:
 	# Bloqueo de jugador según la página
 	blocked_by_page = (not is_parallel) and page.blocks_player
 	if blocked_by_page:
-		SignalManager.player_control_blocked.emit()
+		if context:
+			context.block_player_control()
+		else:
+			push_warning("EventController: Contexto no disponible para bloquear control del jugador")
 	else:
-		SignalManager.player_control_unblocked.emit()
+		if context:
+			context.unblock_player_control()
+		else:
+			push_warning("EventController: Contexto no disponible para desbloquear control del jugador")
 
 	page_started.emit(page)
 	if is_parallel:
@@ -118,7 +127,10 @@ func finish_page() -> void:
 
 	# Desbloquear control del jugador solo si fue bloqueado por la página (modo en cola)
 	if blocked_by_page:
-		SignalManager.player_control_unblocked.emit()
+		if context:
+			context.unblock_player_control()
+		else:
+			push_warning("EventController: Contexto no disponible para desbloquear control del jugador")
 
 	# Limpiar estado
 	current_state = State.IDLE
@@ -134,10 +146,16 @@ func finish_page() -> void:
 
 ## Compatibilidad con comandos existentes
 func block_player_control() -> void:
-	SignalManager.player_control_blocked.emit()
+	if context:
+		context.block_player_control()
+	else:
+		push_warning("EventController: Contexto no disponible para bloquear control del jugador (fallback)")
 
 func unblock_player_control() -> void:
-	SignalManager.player_control_unblocked.emit()
+	if context:
+		context.unblock_player_control()
+	else:
+		push_warning("EventController: Contexto no disponible para desbloquear control del jugador (fallback)")
 
 ## Comprueba si hay comandos todavía ejecutándose
 func _has_commands_still_running() -> bool:

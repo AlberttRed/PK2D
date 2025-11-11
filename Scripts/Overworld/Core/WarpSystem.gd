@@ -22,13 +22,6 @@ var current_map_id: String = ""
 var current_spawn_id: String = ""
 
 func _ready() -> void:
-	# Conectar con las señales del SignalManager
-	if SignalManager:
-		SignalManager.warp_requested.connect(_on_warp_requested)
-		print("WarpSystem: Conectado a SignalManager.warp_requested")
-	else:
-		push_error("WarpSystem: SignalManager no encontrado")
-
 	print("WarpSystem: Sistema de warp inicializado")
 	# NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
 	# Se validará cuando se use, no aquí
@@ -51,20 +44,19 @@ func request_warp(map_id: String, spawn_id: String) -> void:
 	print("WarpSystem: Solicitud de warp recibida - Mapa: ", map_id, ", Spawn: ", spawn_id)
 
 	if is_warping:
-		push_warning("WarpSystem: Ya hay un warp en progreso, ignorando solicitud")
+		push_warning("WarpSystem: Ya hay un warp en progreso, esperando a que finalice")
+		await self.warp_finished
 		return
 
-	# Emitir señal de inicio
+	# Emitir señal de inicio local
 	warp_started.emit(map_id, spawn_id)
-	if SignalManager:
-		SignalManager.warp_started.emit(map_id, spawn_id)
 
 	# Ejecutar el cambio de mapa/posición
-	_execute_warp(map_id, spawn_id)
+	await _execute_warp(map_id, spawn_id)
 
-## Maneja las peticiones de warp desde el SignalManager
-func _on_warp_requested(map_id: String, spawn_id: String) -> void:
-	request_warp(map_id, spawn_id)
+	# Esperar a que la señal de finalización sea emitida
+	if is_warping:
+		await self.warp_finished
 
 ## Ejecuta el cambio de mapa/posición
 func _execute_warp(map_id: String, spawn_id: String) -> void:
@@ -179,8 +171,6 @@ func _emit_warp_finished(map_id: String, spawn_id: String) -> void:
 	# Marcar que ya no estamos warpeando justo antes de emitir
 	is_warping = false
 	warp_finished.emit(map_id, spawn_id)
-	if SignalManager:
-		SignalManager.warp_finished.emit(map_id, spawn_id)
 	print("WarpSystem: Warp completado - Mapa: ", map_id, ", Spawn: ", spawn_id)
 
 ## Obtiene información del estado actual
@@ -226,3 +216,6 @@ func _trigger_event_touch(event: Event) -> void:
 	if event and event.has_method("on_player_touch"):
 		print("WarpSystem: Activando evento TOUCH '%s' en posición del jugador" % event.name)
 		event.on_player_touch()
+
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context

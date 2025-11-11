@@ -282,8 +282,8 @@ func change_to_map_instance(map_instance: Node) -> bool:
 
 	# Emitir grid activo tras activar el mapa
 	var grid := get_active_grid()
-	if SignalManager and grid:
-		SignalManager.active_grid_changed.emit(grid)
+	if context and grid:
+		context.emit_active_grid_changed(grid)
 
 	# Configurar el mapa activo
 	set_active_map(map_instance)

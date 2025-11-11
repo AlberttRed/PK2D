@@ -46,8 +46,10 @@ func get_detect_message(_target: Node) -> String:
 
 ## Ejecuta el FLUJO de SURF: activar modo surfing
 func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
+	var overworld_context := _extract_overworld_context(context)
 	# Bloquear control del jugador durante la secuencia
-	SignalManager.player_control_blocked.emit()
+	if overworld_context:
+		overworld_context.block_player_control()
 
 	# Obtener el Pokémon que tiene SURF
 	var pokemon_with_surf = _find_pokemon_with_SURF(_player)
@@ -61,7 +63,8 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 		)
 		if choice != 0:
 			# Usuario canceló - desbloquear control
-			SignalManager.player_control_unblocked.emit()
+			if overworld_context:
+				overworld_context.unblock_player_control()
 			return {"success": false, "cancelled": true}
 		await Engine.get_main_loop().process_frame
 
@@ -88,6 +91,12 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 			await motion.step_finished
 
 	# Desbloquear control del jugador al finalizar
-	SignalManager.player_control_unblocked.emit()
+	if overworld_context:
+		overworld_context.unblock_player_control()
 
 	return {"success": true, "cancelled": false}
+
+func _extract_overworld_context(context: Node) -> OverworldContext:
+	if context is EventController:
+		return context.context
+	return null

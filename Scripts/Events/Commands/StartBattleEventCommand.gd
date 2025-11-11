@@ -52,7 +52,6 @@ enum BattleType {
 
 ## === ESTADO INTERNO ===
 
-var _battle_finished: bool = false
 var _battle_winner: String = ""
 
 
@@ -108,20 +107,10 @@ func execute(context: Node) -> void:
 	# Preparar array de participantes
 	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]
 
-	# Conectar señal de batalla terminada
-	_battle_finished = false
-	SignalManager.battle_finished.connect(_on_battle_finished)
-
-	# Emitir señal de batalla solicitada
+	# Iniciar batalla usando DisplayManager
 	print("StartBattleCommand: Iniciando batalla (%s vs %s)" % [player_participant.name, enemy_participant.name])
-	SignalManager.battle_requested.emit(participants, rules)
-
-	# Esperar a que termine la batalla
-	while not _battle_finished:
-		await context.get_tree().process_frame
-
-	# Desconectar señal
-	SignalManager.battle_finished.disconnect(_on_battle_finished)
+	_battle_winner = await DisplayManager.start_battle(participants, rules)
+	print("StartBattleCommand: Batalla terminada. Ganador: %s" % _battle_winner)
 
 	# Guardar estado si es un entrenador derrotado
 	if battle_type == BattleType.TRAINER and _battle_winner == "player":
@@ -301,11 +290,11 @@ func _reset_trainer_flags(context: Node) -> void:
 			print("StartBattleCommand: Flags de Trainer '%s' reseteados" % trainer.name)
 
 
-## Callback cuando la batalla termina
-func _on_battle_finished(winner_side: String) -> void:
-	_battle_finished = true
-	_battle_winner = winner_side
-	print("StartBattleCommand: Batalla terminada, ganador: %s" % winner_side)
+## DEPRECATED: Ya no se usa, start_battle() devuelve el ganador directamente
+# func _on_battle_finished(winner_side: String) -> void:
+# 	_battle_finished = true
+# 	_battle_winner = winner_side
+# 	print("StartBattleCommand: Batalla terminada, ganador: %s" % winner_side)
 
 
 ## Indica si este comando es asíncrono

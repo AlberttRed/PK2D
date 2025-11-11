@@ -46,13 +46,9 @@ var context: OverworldContext = null
 var map_system: MapSystem = null
 
 func _ready() -> void:
+	pass
 	# El contexto se inyectará desde el Player/NPC padre después de _ready()
 	# NO intentar obtener MapSystem aquí - se hará cuando se reciba el contexto
-
-	# Suscribirse a cambios de grid activo (la señal actualiza grid automáticamente)
-	if SignalManager:
-		SignalManager.active_grid_changed.connect(func(g): grid = g)
-		print("GridMotion: Suscrito a active_grid_changed")
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
@@ -124,7 +120,8 @@ func _try_seamless_crossing(from: Vector2i, to: Vector2i) -> Dictionary:
 	# Emitir señal para que otros sistemas reaccionen (WorldSystem, Occupancy, etc.)
 	# NOTA: WorldSystem emitirá active_grid_changed, que hará que Occupancy limpie
 	# automáticamente la ocupación del grid anterior
-	SignalManager.seamless_map_crossed.emit(from_map_id, to_map_id)
+	if context:
+		context.emit_seamless_map_crossed(from_map_id, to_map_id)
 
 	# Actualizar al nuevo grid
 	# IMPORTANTE: La limpieza de ocupación la hace Occupancy vía active_grid_changed
@@ -320,7 +317,8 @@ func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
 	ledge_jump_started.emit()
 
 	# Bloquear el control del jugador durante el salto
-	SignalManager.player_control_blocked.emit()
+	if context:
+		context.block_player_control()
 
 	moving = true
 	grid.reserve(from, to, actor)
@@ -402,7 +400,8 @@ func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
 	is_jumping_ledge = false
 
 	# Desbloquear el control del jugador
-	SignalManager.player_control_unblocked.emit()
+	if context:
+		context.unblock_player_control()
 
 	# Emitir señales de finalización
 	ledge_jump_finished.emit()
@@ -438,8 +437,11 @@ func _update_map_system_reference() -> void:
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	_update_map_system_reference()
-
-	# Inicializar grid ahora que tenemos el contexto
+	if context and not context.active_grid_changed.is_connected(_on_active_grid_changed):
+		context.active_grid_changed.connect(_on_active_grid_changed)
 	_refresh_grid()
 
 	print("GridMotion: Contexto establecido, grid inicializado: %s" % ("OK" if grid else "FAIL"))
+
+func _on_active_grid_changed(new_grid: OverworldGrid) -> void:
+	grid = new_grid

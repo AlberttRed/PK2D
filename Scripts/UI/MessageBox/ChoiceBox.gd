@@ -214,22 +214,29 @@ func _cancel_selection() -> void:
 ## Habilita el manejo de input
 func _enable_input() -> void:
 	_input_enabled = true
-	SignalManager.input_up.connect(_on_input_up)
-	SignalManager.input_down.connect(_on_input_down)
-	SignalManager.input_accept.connect(_on_input_accept)
-	SignalManager.input_cancel.connect(_on_input_cancel)
+	var dm := DisplayManager.instance
+	if not dm:
+		push_error("ChoiceBox: DisplayManager no disponible para gestionar input")
+		return
+	dm.input_up.connect(_on_input_up)
+	dm.input_down.connect(_on_input_down)
+	dm.input_accept.connect(_on_input_accept)
+	dm.input_cancel.connect(_on_input_cancel)
 
 ## Deshabilita el manejo de input
 func _disable_input() -> void:
 	_input_enabled = false
-	if SignalManager.input_up.is_connected(_on_input_up):
-		SignalManager.input_up.disconnect(_on_input_up)
-	if SignalManager.input_down.is_connected(_on_input_down):
-		SignalManager.input_down.disconnect(_on_input_down)
-	if SignalManager.input_accept.is_connected(_on_input_accept):
-		SignalManager.input_accept.disconnect(_on_input_accept)
-	if SignalManager.input_cancel.is_connected(_on_input_cancel):
-		SignalManager.input_cancel.disconnect(_on_input_cancel)
+	var dm := DisplayManager.instance
+	if not dm:
+		return
+	if dm.input_up.is_connected(_on_input_up):
+		dm.input_up.disconnect(_on_input_up)
+	if dm.input_down.is_connected(_on_input_down):
+		dm.input_down.disconnect(_on_input_down)
+	if dm.input_accept.is_connected(_on_input_accept):
+		dm.input_accept.disconnect(_on_input_accept)
+	if dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.disconnect(_on_input_cancel)
 
 ## Callbacks de input
 func _on_input_up() -> void:

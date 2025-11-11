@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 CONST="*res://Scripts/AutoLoads/CONST.gd"
-SignalManager="*res://Scripts/AutoLoads/SignalManager.gd"
 GameStateService="*res://Services/GameStateService.gd"
 DatabaseService="*res://Services/DatabaseService.gd"
 

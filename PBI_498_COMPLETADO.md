@@ -419,6 +419,120 @@ await DisplayManager.show_message("Texto", config)
 
 ---
 
+## 🔄 Migración Adicional: Señales de Batalla a DisplayManager
+
+Tras migrar las señales de UI, se ha continuado con las señales de batalla:
+
+### Nuevas Señales en DisplayManager
+
+```gdscript
+signal battle_started()
+signal battle_finished(winner_side: String)
+```
+
+### Nuevo Método Estático
+
+```gdscript
+static func start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String
+```
+
+### Archivos Migrados (7 total)
+
+- ✅ `Trainer.gd` - Usa `DisplayManager.start_battle()`
+- ✅ `WildEncounterDetector.gd` - Usa `DisplayManager.start_battle()`
+- ✅ `StartBattleEventCommand.gd` - Simplificado (eliminados flags y callbacks)
+- ✅ `TestBattle.gd` - 5 batallas migradas
+- ✅ `BattleController.gd` - Llama a DisplayManager directamente
+- ✅ `DisplayManager.gd` - Implementado `start_battle()`
+- ✅ `SignalManager.gd` - Señales comentadas como deprecated
+
+### Comparación
+
+```gdscript
+# ANTES
+SignalManager.battle_requested.emit(participants, rules)
+await SignalManager.battle_finished
+
+# DESPUÉS
+var winner = await DisplayManager.start_battle(participants, rules)
+```
+
+**Ventajas:**
+- ✅ ~82% menos código boilerplate
+- ✅ Resultado disponible inmediatamente
+- ✅ Sin callbacks ni polling
+- ✅ API más intuitiva
+
+---
+
+## 🔄 Migración Adicional: Señales de Fade a DisplayManager
+
+Tras migrar mensajes, opciones y batallas, también se migraron los fades:
+
+### Señales Deprecated
+
+```gdscript
+## DEPRECATED: Usar DisplayManager.fade_in() / fade_out()
+# signal fade_requested(mode: String, duration: float)
+# signal fade_finished()
+```
+
+### Archivos Migrados (5 total)
+
+- ✅ `GameSession.gd` - Usa `DisplayManager.fade_out()`
+- ✅ `FadeCommand.gd` - Simplificado
+- ✅ `FadeExample.gd` - Reescrito con flujo lineal
+- ✅ `FadeLayer.gd` - Limpiado
+- ✅ `SignalManager.gd` - Señales comentadas
+
+### Comparación
+
+```gdscript
+# ANTES
+SignalManager.fade_requested.emit("fade_in", 0.5)
+await SignalManager.fade_finished
+
+# DESPUÉS
+await DisplayManager.fade_in(0.5)
+```
+
+**Ventajas:**
+- ✅ ~70% menos código
+- ✅ Sin conversiones de string
+- ✅ Sin callbacks
+- ✅ API más clara
+
+---
+
+### ✅ 7. Reestructuración de señales de Systems mediante OverworldContext (PBI 499)
+
+**Contexto:** Las señales internas del Overworld (eventos, warps, grids, MO) ahora se gestionan localmente a través de `OverworldContext`, eliminando la dependencia de `SignalManager` para comunicación entre Systems.
+
+#### Cambios clave
+- `OverworldContext` expone señales locales (`event_started`, `event_finished`, `warp_finished`, `seamless_map_crossed`, `active_grid_changed`) y métodos helper (`request_event`, `request_warp`, `request_mo`, `block_player_control`).
+- `EventSystem`, `EventController` y `Event` usan directamente el contexto; las señales públicas del EventSystem son reenviadas por el contexto.
+- `WarpSystem`, `WarpCommand`, `WildEncounterDetector`, `MOSystem`, `UseMOCommand` y el `Player` se comunican mediante `OverworldContext`.
+- `MapSystem`, `WorldSystem`, `GridMotion` y `Occupancy` publican/consumen cambios de grid y cruces seamles a través del contexto local.
+- `SignalManager` queda reservado a señales de alcance global (bloqueo de control para UI global, input, estado del juego, callbacks legacy de batalla).
+
+#### Código representativo
+```gdscript
+# Solicitud de warp desde un EventCommand
+var overworld_context = _get_overworld_context(context)
+await overworld_context.request_warp(target_scene, target_spawn)
+
+# Emisión local desde WarpSystem
+warp_started.emit(map_id, spawn_id)
+await _execute_warp(map_id, spawn_id)
+if is_warping:
+    await self.warp_finished
+
+# Conexión centralizada en OverworldContext
+event_system.event_finished.connect(func(event): event_finished.emit(event))
+```
+
+---
+
 ## 🚀 Próximos Pasos (Futuros PBIs)
 
 ### PBI Futuro: Eliminación Progresiva de SignalManager
