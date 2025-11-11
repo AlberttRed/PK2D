@@ -24,6 +24,8 @@ var mo_actions: Dictionary = {}
 # Ejemplo: {"STRENGTH_ENABLED": true, "FLASH_ACTIVE": true}
 var active_effects: Dictionary = {}
 
+const FLASH_EFFECT_KEY := "FLASH_ACTIVE"
+
 # Estado actual del sistema
 var is_processing_mo: bool = false
 var current_mo_type: String = ""
@@ -201,6 +203,9 @@ func activate_effect(effect_name: String, value: bool = true) -> void:
 	active_effects[effect_name] = value
 	print("MOSystem: Efecto '%s' = %s" % [effect_name, value])
 
+	if effect_name == FLASH_EFFECT_KEY:
+		_apply_flashlight_overlay(value)
+
 ## Verifica si un efecto de MO está activo
 ## @param effect_name: Nombre del efecto a verificar
 ## @return: true si está activo, false si no
@@ -214,12 +219,16 @@ func deactivate_effect(effect_name: String) -> void:
 		active_effects.erase(effect_name)
 		print("MOSystem: Efecto '%s' desactivado" % effect_name)
 
+		if effect_name == FLASH_EFFECT_KEY:
+			_apply_flashlight_overlay(false)
+
 ## Resetea todos los efectos activos
 ## Se llama automáticamente al cambiar de mapa
 func reset_effects() -> void:
 	if not active_effects.is_empty():
 		print("MOSystem: Reseteando %d efecto(s) activo(s)" % active_effects.size())
 		active_effects.clear()
+		_apply_flashlight_overlay(false)
 
 ## Callback cuando el jugador cambia de mapa
 ## Resetea los efectos de MO (STRENGTH y FLASH no persisten al cambiar de mapa)
@@ -230,6 +239,49 @@ func _on_map_changed(_map_id: String, _spawn_id: String) -> void:
 ## Obtiene todos los efectos activos (para debug)
 func get_active_effects() -> Dictionary:
 	return active_effects.duplicate()
+
+
+## Aplica el efecto de luz de destello a la capa de overlays
+func apply_flash_light(enabled: bool, config: Dictionary = {}) -> void:
+	if enabled:
+		activate_effect(FLASH_EFFECT_KEY, true)
+	else:
+		deactivate_effect(FLASH_EFFECT_KEY)
+
+	if config.is_empty():
+		return
+
+	if not context:
+		push_warning("MOSystem: Contexto no disponible para configurar overlay de destello")
+		return
+
+	var overlay := context.get_overlay_layer()
+	if not overlay:
+		push_warning("MOSystem: OverlayLayer no disponible para aplicar destello")
+		return
+
+	var radius: float = float(config.get("radius", -1.0))
+	var softness: float = float(config.get("softness", -1.0))
+	overlay.set_flashlight_enabled(enabled, radius, softness)
+
+	if config.has("center"):
+		var center_value = config["center"]
+		if center_value is Vector2:
+			overlay.set_flashlight_center_screen(center_value)
+
+
+func _apply_flashlight_overlay(enabled: bool) -> void:
+	if not context:
+		return
+
+	var overlay := context.get_overlay_layer()
+	if not overlay:
+		return
+
+	if enabled:
+		overlay.set_flashlight_enabled(true)
+	else:
+		overlay.set_flashlight_enabled(false)
 
 ## Maneja solicitudes externas de MO
 func request_mo(mo_type: String, target: Node) -> Dictionary:

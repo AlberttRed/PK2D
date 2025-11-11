@@ -147,6 +147,9 @@ func set_active_map(map_scene: Node) -> void:
 	# Configurar el jugador para el nuevo mapa
 	_setup_player_for_map()
 
+	# Aplicar configuración de overlay asociada al mapa
+	_apply_overlay_settings(map_scene)
+
 ## Obtiene el OverworldGrid del mapa activo
 func get_active_grid() -> OverworldGrid:
 	if not active_map:
@@ -321,6 +324,45 @@ func _cleanup_previous_map() -> void:
 	pass
 
 
+## Configura la capa de overlays según los metadatos del mapa activo
+func _apply_overlay_settings(map_scene: Node) -> void:
+	if not context:
+		return
+
+	var overlay := context.get_overlay_layer()
+	if not overlay:
+		return
+
+	if not map_scene or not map_scene.has_method("get_overlay_settings"):
+		overlay.reset_to_defaults()
+		return
+
+	var settings: Dictionary = map_scene.get_overlay_settings()
+
+	var darkness: float = float(settings.get("darkness", 0.0))
+	var weather: String = str(settings.get("weather", "none"))
+	var flashlight_required: bool = bool(settings.get("flashlight_required", false))
+	var flashlight_radius: float = float(settings.get("flashlight_radius", -1.0))
+	var flashlight_softness: float = float(settings.get("flashlight_softness", -1.0))
+
+	overlay.set_weather(weather)
+	overlay.set_darkness(darkness, 0.35)
+	if flashlight_required:
+		overlay.set_flashlight_enabled(true, flashlight_radius, flashlight_softness)
+	else:
+		overlay.set_flashlight_enabled(false)
+
+	var mo_system := context.get_mo_system()
+	if mo_system:
+		if flashlight_required:
+			mo_system.apply_flash_light(true, {
+				"radius": flashlight_radius,
+				"softness": flashlight_softness,
+			})
+		else:
+			mo_system.apply_flash_light(false)
+
+
 ## ============================================================================
 ## CONSULTAS DE MOVIMIENTO MUNDIAL (para seamless world)
 ## ============================================================================
@@ -373,3 +415,8 @@ func check_world_movement(actor: Node, from_world_pos: Vector2, to_world_pos: Ve
 		"from_tile": from_tile,
 		"to_tile": to_tile
 	}
+
+
+## Reaplica la configuración de overlay para el mapa activo
+func refresh_overlay_settings() -> void:
+	_apply_overlay_settings(active_map)

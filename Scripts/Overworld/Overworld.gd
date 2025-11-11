@@ -65,6 +65,11 @@ func _register_systems_in_context() -> void:
 	if mo_system:
 		context.register_system("MO", mo_system)
 
+	var overlay_layer := DisplayManager.get_overlay_layer()
+	if overlay_layer:
+		context.register_system("Overlay", overlay_layer)
+		print("  ✓ OverlayLayer registrado en contexto")
+
 	# El Player se registrará dinámicamente cuando MapSystem lo cargue
 	print("OverworldCoordinator: Player se cargará dinámicamente desde MapSystem")
 
@@ -110,6 +115,13 @@ func _inject_dependencies() -> void:
 		else:
 			mo_system.context = context
 		print("  ✓ Context → MOSystem")
+
+	var overlay_layer := context.get_overlay_layer()
+	if overlay_layer and overlay_layer.has_method("set_context"):
+		overlay_layer.set_context(context)
+		print("  ✓ Context → OverlayLayer")
+		if map_system and map_system.has_method("refresh_overlay_settings"):
+			map_system.refresh_overlay_settings()
 
 	if event_system:
 		if event_system.has_method("set_context"):
