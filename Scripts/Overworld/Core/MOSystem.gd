@@ -24,6 +24,7 @@ var mo_actions: Dictionary = {}
 # Ejemplo: {"STRENGTH_ENABLED": true, "FLASH_ACTIVE": true}
 var active_effects: Dictionary = {}
 
+const FLASH_EFFECT_KEY := "FLASH_ACTIVE"
 # Estado actual del sistema
 var is_processing_mo: bool = false
 var current_mo_type: String = ""
@@ -50,8 +51,9 @@ func _initialize_mo_actions() -> void:
 	var surf_action = preload("res://Scripts/Overworld/Core/MOActions/SurfAction.gd").new()
 	register_mo_action("SURF", surf_action)
 
-	# Aquí se registrarán otras MO cuando se implementen:
-	# register_mo_action("FLASH", preload("res://Scripts/Overworld/Core/MOActions/FlashAction.gd").new())
+	# Registrar MO: DESTELLO (FLASH)
+	var flash_action = preload("res://Scripts/Overworld/Core/MOActions/FlashAction.gd").new()
+	register_mo_action("FLASH", flash_action)
 
 ## Registra una nueva acción MO en el sistema
 ## @param mo_type: Identificador de la MO (ej: "CUT", "SURF")
@@ -201,6 +203,9 @@ func activate_effect(effect_name: String, value: bool = true) -> void:
 	active_effects[effect_name] = value
 	print("MOSystem: Efecto '%s' = %s" % [effect_name, value])
 
+	if effect_name == FLASH_EFFECT_KEY:
+		_apply_flashlight_overlay(value)
+
 ## Verifica si un efecto de MO está activo
 ## @param effect_name: Nombre del efecto a verificar
 ## @return: true si está activo, false si no
@@ -214,12 +219,16 @@ func deactivate_effect(effect_name: String) -> void:
 		active_effects.erase(effect_name)
 		print("MOSystem: Efecto '%s' desactivado" % effect_name)
 
+		if effect_name == FLASH_EFFECT_KEY:
+			_apply_flashlight_overlay(false)
+
 ## Resetea todos los efectos activos
 ## Se llama automáticamente al cambiar de mapa
 func reset_effects() -> void:
 	if not active_effects.is_empty():
 		print("MOSystem: Reseteando %d efecto(s) activo(s)" % active_effects.size())
 		active_effects.clear()
+		_apply_flashlight_overlay(false)
 
 ## Callback cuando el jugador cambia de mapa
 ## Resetea los efectos de MO (STRENGTH y FLASH no persisten al cambiar de mapa)
@@ -230,6 +239,53 @@ func _on_map_changed(_map_id: String, _spawn_id: String) -> void:
 ## Obtiene todos los efectos activos (para debug)
 func get_active_effects() -> Dictionary:
 	return active_effects.duplicate()
+
+
+## Aplica el efecto de luz de destello a la capa de overlays
+func apply_flash_light(enabled: bool, _config: Dictionary = {}) -> void:
+	if enabled:
+		activate_effect(FLASH_EFFECT_KEY, true)
+	else:
+		deactivate_effect(FLASH_EFFECT_KEY)
+
+	var overlay := _get_overlay_or_warn()
+	if not overlay:
+		return
+
+	overlay.set_flashlight_enabled(enabled)
+
+
+func _apply_flashlight_overlay(enabled: bool) -> void:
+	var overlay := _get_overlay()
+	if not overlay:
+		return
+
+	overlay.set_flashlight_enabled(enabled)
+
+
+## ========================
+## DESTELLO - GESTIÓN DE ILUMINACIÓN
+## ========================
+
+func enable_flash_override(_map_id: String, _config: Dictionary = {}) -> void:
+	# Destello persistente se gestionará más adelante con flag global
+	print("MOSystem: enable_flash_override() sin efecto (pendiente de implementación)")
+
+
+func disable_flash_override() -> void:
+	print("MOSystem: disable_flash_override() sin efecto (pendiente de implementación)")
+
+
+func apply_overlay_overrides(_overlay: OverlayLayer, _map_id: String) -> void:
+	pass
+
+
+func is_flash_override_active() -> bool:
+	return false
+
+
+func _apply_flash_override_to_overlay() -> void:
+	pass
 
 ## Maneja solicitudes externas de MO
 func request_mo(mo_type: String, target: Node) -> Dictionary:
@@ -245,3 +301,16 @@ func set_context(overworld_context: OverworldContext) -> void:
 		var warp_sys = context.get_warp_system()
 		if warp_sys and not warp_sys.warp_finished.is_connected(_on_map_changed):
 			warp_sys.warp_finished.connect(_on_map_changed)
+
+
+func _get_overlay() -> OverlayLayer:
+	if not context:
+		return null
+	return context.get_overlay_layer()
+
+
+func _get_overlay_or_warn() -> OverlayLayer:
+	var overlay := _get_overlay()
+	if not overlay:
+		push_warning("MOSystem: OverlayLayer no disponible para aplicar efecto de destello")
+	return overlay

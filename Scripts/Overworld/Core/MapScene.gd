@@ -22,6 +22,14 @@ class_name MapScene
 ## Ejemplo: ["Ruta1", "Ruta21"] para un pueblo con dos rutas
 @export var neighbors: Array[String] = []
 
+@export_group("Overlay Settings")
+## Nivel de oscuridad global al entrar en este mapa (0 = sin oscuridad, 1 = negro)
+@export_range(0.0, 1.0, 0.01) var overlay_darkness: float = 0.0
+## Clima visual inicial
+@export_enum("none", "rain", "snow", "fog", "storm") var overlay_weather: String = "none"
+## Indica si este mapa requiere iluminación tipo destello
+@export var overlay_flashlight_required: bool = false
+
 ## Referencia al grid de este mapa
 @onready var grid: OverworldGrid = $OverworldGrid
 
@@ -39,13 +47,13 @@ func _ready() -> void:
 	# Auto-detectar map_id del nombre de la escena si no está configurado
 	if map_id.is_empty():
 		map_id = name
-	
+
 	# Aplicar posición mundial
 	global_position = world_position
-	
+
 	# Calcular límites del mapa y offset de tiles
 	_calculate_tile_bounds()
-	
+
 	# El mapa inicia visible pero con procesamiento deshabilitado
 	# (se habilitará cuando sea el mapa activo)
 	visible = true
@@ -57,15 +65,15 @@ func _calculate_tile_bounds() -> void:
 	if not grid:
 		push_warning("MapScene '%s': No tiene OverworldGrid" % map_id)
 		return
-	
+
 	var terrain = grid.reference_layer()
 	if not terrain:
 		push_warning("MapScene '%s': No tiene capa de terreno" % map_id)
 		return
-	
+
 	# Obtener el rectángulo de tiles usados
 	tile_bounds = terrain.get_used_rect()
-	
+
 	# Calcular offset de tiles en coordenadas mundiales
 	var tile_size = terrain.tile_set.tile_size.x if terrain.tile_set else 16
 	tile_offset = Vector2i(
@@ -79,7 +87,7 @@ func _calculate_tile_bounds() -> void:
 func contains_world_tile(world_tile: Vector2i) -> bool:
 	# Convertir tile mundial a tile local del mapa
 	var local_tile = world_tile - tile_offset
-	
+
 	# Verificación ultra-rápida con Rect2i
 	return tile_bounds.has_point(local_tile)
 
@@ -89,11 +97,11 @@ func contains_world_tile(world_tile: Vector2i) -> bool:
 func contains_world_position(world_pos: Vector2) -> bool:
 	if not grid:
 		return false
-	
+
 	# Convertir posición a tile
 	var local_pos = to_local(world_pos)
 	var local_tile = grid.world_to_tile(local_pos)
-	
+
 	# Usar verificación rápida por tile
 	return tile_bounds.has_point(local_tile)
 
@@ -115,7 +123,7 @@ func _enable_processing() -> void:
 	# Habilitar el grid para colisiones y eventos
 	if grid:
 		grid.process_mode = Node.PROCESS_MODE_INHERIT
-	
+
 	# Habilitar eventos del mapa
 	var events_node = find_child("Events")
 	if events_node:
@@ -127,7 +135,7 @@ func _disable_processing() -> void:
 	# Deshabilitar el grid (no procesa colisiones ni eventos)
 	if grid:
 		grid.process_mode = Node.PROCESS_MODE_DISABLED
-	
+
 	# Deshabilitar eventos del mapa
 	var events_node = find_child("Events")
 	if events_node:
@@ -147,3 +155,12 @@ func print_info() -> void:
 	print("  Activo: %s" % is_active)
 	print("  Visible: %s" % visible)
 	print("  Grid válido: %s" % (grid != null))
+
+
+## Devuelve la configuración de overlay asociada a este mapa
+func get_overlay_settings() -> Dictionary:
+	return {
+		"darkness": clampf(overlay_darkness, 0.0, 1.0),
+		"weather": overlay_weather,
+		"flashlight_required": overlay_flashlight_required,
+	}

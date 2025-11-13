@@ -27,6 +27,7 @@ var mo_system: MOSystem = null
 var event_system: EventSystem = null
 var world_system: WorldSystem = null
 var player: Node = null
+var overlay_layer: OverlayLayer = null
 
 # === Señales locales del Overworld ===
 signal event_requested(event)
@@ -73,6 +74,8 @@ func register_system(sys_name: String, system: Node) -> void:
 			world_system = system as WorldSystem
 		"Player":
 			player = system
+		"Overlay":
+			overlay_layer = system as OverlayLayer
 
 	print("OverworldContext: Sistema registrado → %s (%s)" % [sys_name, system.name])
 
@@ -104,6 +107,10 @@ func get_event_system() -> EventSystem:
 ## Obtiene el WorldSystem (acceso directo tipado)
 func get_world_system() -> WorldSystem:
 	return world_system
+
+## Obtiene la capa de overlays (OverlayLayer)
+func get_overlay_layer() -> OverlayLayer:
+	return overlay_layer
 
 ## Obtiene el Player (acceso directo)
 func get_player() -> Node:

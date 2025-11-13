@@ -36,6 +36,7 @@ var choices_options = null
 @onready var msg: MessageBox = $MSG
 @onready var choice_box: ChoiceBox = $ChoiceBox
 @onready var BattleNew: BattleScene = $BattleNew
+@onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
 # === INICIALIZACIÓN ===
@@ -51,6 +52,9 @@ func _ready() -> void:
 
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
+
+	if overlay_layer:
+		overlay_layer.reset_to_defaults()
 
 # === API PÚBLICA ESTÁTICA (Métodos globales) ===
 ## Muestra un mensaje con configuración específica
@@ -114,6 +118,59 @@ static func reveal_battle(duration: float = 0.4) -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance.fade_layer.reveal_battle(duration)
+
+## ========================
+## OVERLAY API
+## ========================
+
+static func get_overlay_layer() -> OverlayLayer:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return null
+	return instance.overlay_layer
+
+static func set_overlay_darkness(level: float, duration: float = 0.3) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		return
+	overlay.set_darkness(level, duration)
+
+static func set_overlay_weather(weather_type: String) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		return
+	overlay.set_weather(weather_type)
+
+static func reset_overlay() -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		return
+	overlay.reset_to_defaults()
+
+static func play_flash_reveal(target_darkness: float, duration: float = 0.55) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		push_warning("DisplayManager: OverlayLayer no disponible para animar DESTELLO")
+		return
+	await overlay.play_flash_reveal(target_darkness, duration)
+
+static func set_overlay_flashlight(enabled: bool, config: Dictionary = {}) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		return
+	var radius: float = float(config.get("radius", -1.0))
+	var softness: float = float(config.get("softness", -1.0))
+	overlay.set_flashlight_enabled(enabled, radius, softness)
+	if config.has("center"):
+		var center_value = config["center"]
+		if center_value is Vector2:
+			overlay.set_flashlight_center_screen(center_value)
+
+static func set_overlay_flashlight_center(center: Vector2) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		return
+	overlay.set_flashlight_center_screen(center)
 
 ## Solicita ocultar el MessageBox del overworld durante transiciones (p.ej. FadeLayer)
 static func request_hide_overworld_messagebox() -> void:

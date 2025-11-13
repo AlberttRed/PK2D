@@ -6,14 +6,110 @@
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://chb8xvfn0k7ml" path="res://Scenes/UI/MessageBox/ChoiceBox.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://notumsye5rrv" path="res://Scenes/Battle/core/Battle.tscn" id="6"]
+[ext_resource type="Script" path="res://Scripts/UI/OverlayLayer.gd" id="7"]
+[ext_resource type="Shader" path="res://Shaders/overlay_flashlight.gdshader" id="8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j64dw"]
 shader = ExtResource("3")
 shader_parameter/progress = 0.0
 shader_parameter/smoothness = 0.1
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
+shader = ExtResource("8")
+shader_parameter/center = Vector2(0.5, 0.5)
+shader_parameter/radius = 0.35
+shader_parameter/softness = 0.25
+
 [node name="DisplayManager" type="CanvasLayer" groups=["GUI"]]
 script = ExtResource("1")
+
+[node name="OverlayLayer" type="Control" parent="."]
+z_index = -5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7")
+
+[node name="DarknessRect" type="ColorRect" parent="OverlayLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="WeatherContainer" type="Control" parent="OverlayLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RainOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0)
+color = Color(0.6, 0.7, 0.9, 0.4)
+
+[node name="SnowOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0)
+color = Color(0.9, 0.9, 1, 0.45)
+
+[node name="FogOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0)
+color = Color(0.8, 0.85, 0.95, 0.35)
+
+[node name="StormOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0)
+color = Color(0.3, 0.35, 0.45, 0.55)
+
+[node name="FlashlightMask" type="ColorRect" parent="OverlayLayer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_flashlight")
+color = Color(0, 0, 0, 1)
 
 [node name="MSG" parent="." instance=ExtResource("4")]
 visible = false
