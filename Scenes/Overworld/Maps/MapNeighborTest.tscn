@@ -1,11 +1,73 @@
-[gd_scene load_steps=9 format=4 uid="uid://d1bs2x4y8nuby"]
+[gd_scene load_steps=24 format=4 uid="uid://d1bs2x4y8nuby"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_6gkq1"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_lsbij"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="2_bjew2"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_642jf"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="4_jlk61"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="5_1hs3e"]
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="5_etrda"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="6_e31w4"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_t6plj"]
+[ext_resource type="Script" uid="uid://dhtm8wpq4l7x2" path="res://Scripts/Events/Commands/UseMOCommand.gd" id="7_dqkqt"]
+[ext_resource type="Script" uid="uid://ck4iaxpchitgx" path="res://Scripts/Resources/AreaEncounter.gd" id="7_etrda"]
+[ext_resource type="Texture2D" uid="uid://cadmiaa4sth38" path="res://Sprites/Eventos/MOs/Object rock.png" id="8_642jf"]
+
+[sub_resource type="Resource" id="Resource_642jf"]
+script = ExtResource("7_dqkqt")
+mo_type = 4
+metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hs3e"]
+atlas = ExtResource("8_642jf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t6plj"]
+atlas = ExtResource("8_642jf")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqkqt"]
+atlas = ExtResource("8_642jf")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2qcu"]
+atlas = ExtResource("8_642jf")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8r4y1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hs3e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t6plj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqkqt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2qcu")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_splwt"]
+script = ExtResource("5_1hs3e")
+commands = Array[ExtResource("6_t6plj")]([SubResource("Resource_642jf")])
+sprite_frames = SubResource("SpriteFrames_8r4y1")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_1hs3e"]
+script = ExtResource("5_1hs3e")
+through = true
+required_self_switch = 1
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("6_e31w4")
@@ -20,6 +82,12 @@ pokemon_id = 19
 min_level = 2
 max_level = 4
 probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_etrda"]
+script = ExtResource("6_e31w4")
+pokemon_id = 74
+probability = 100.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="MapNieghborTest" type="Node2D"]
@@ -54,9 +122,39 @@ metadata/_edit_lock_ = true
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
+[node name="BreakableRock" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(240, 144)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
+[node name="BreakableRock2" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(272, 80)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
+[node name="BreakableRock3" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(368, 144)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
+[node name="BreakableRock4" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(176, 112)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
+[node name="BreakableRock5" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(176, 16)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
+[node name="BreakableRock6" parent="OverworldGrid/Events" instance=ExtResource("4_642jf")]
+position = Vector2(336, 16)
+pages = Array[ExtResource("5_1hs3e")]([SubResource("Resource_splwt"), SubResource("Resource_1hs3e")])
+
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("4_jlk61")]
 
 [node name="Land" parent="MapAreaEncounters" instance=ExtResource("5_etrda")]
 pokemon_encounters = Array[ExtResource("6_e31w4")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])
+
+[node name="Rock Smash" type="Node" parent="MapAreaEncounters"]
+script = ExtResource("7_etrda")
+area_type = 6
+pokemon_encounters = Array[ExtResource("6_e31w4")]([SubResource("Resource_etrda")])
+metadata/_custom_type_script = "uid://ck4iaxpchitgx"

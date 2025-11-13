@@ -587,12 +587,11 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 		else:
 			_enable_map_processing(new_map)
 
-		# Actualizar el active_map en MapSystem
-		map_system.active_map = new_map
-		map_system._apply_overlay_settings(new_map)
+		# Reutilizar la ruta estándar de MapSystem para establecer mapa activo
+		map_system.set_active_map(new_map)
 
 		# Emitir cambio de grid activo (CRÍTICO para Occupancy y otros sistemas)
-		var new_grid = new_map.get_node_or_null("OverworldGrid")
+		var new_grid = map_system.get_active_grid()
 		if new_grid and context:
 			context.emit_active_grid_changed(new_grid)
 

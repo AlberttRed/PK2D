@@ -43,6 +43,10 @@ func _initialize_mo_actions() -> void:
 	var cut_action = preload("res://Scripts/Overworld/Core/MOActions/CutAction.gd").new()
 	register_mo_action("CUT", cut_action)
 
+	# Registrar MO: GOLPE ROCA (ROCK SMASH)
+	var rock_smash_action = preload("res://Scripts/Overworld/Core/MOActions/RockSmashAction.gd").new()
+	register_mo_action("ROCK_SMASH", rock_smash_action)
+
 	# Registrar MO: FUERZA (STRENGTH)
 	var strength_action = preload("res://Scripts/Overworld/Core/MOActions/StrengthAction.gd").new()
 	register_mo_action("STRENGTH", strength_action)

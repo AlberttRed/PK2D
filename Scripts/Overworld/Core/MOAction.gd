@@ -69,4 +69,3 @@ func get_mo_name() -> String:
 ## Obtiene la descripción de la MO
 func get_description() -> String:
 	return description
-
