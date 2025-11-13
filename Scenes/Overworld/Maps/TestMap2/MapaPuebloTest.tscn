@@ -431,28 +431,25 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 script = ExtResource("27_x0mvh")
 metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_x0mvh"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ph5q8"]
 atlas = ExtResource("27_ujg4f")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ph5q8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_yteb7"]
 atlas = ExtResource("27_ujg4f")
 region = Rect2(0, 32, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yteb7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_b1xv2"]
 atlas = ExtResource("27_ujg4f")
 region = Rect2(0, 64, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_b1xv2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_v7ptp"]
 atlas = ExtResource("27_ujg4f")
 region = Rect2(0, 96, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7ptp"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x0mvh")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ph5q8")
 }, {
@@ -461,6 +458,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_b1xv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v7ptp")
+}, {
+"duration": 1.0,
+"texture": null
 }],
 "loop": false,
 "name": &"default",
@@ -484,7 +487,6 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 y_sort_enabled = true
 script = ExtResource("1_mapscene")
 neighbors = Array[String](["MapNeighborTest"])
-overlay_flashlight_required = true
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
