@@ -28,10 +28,11 @@ var default_darkness: float = 0.0
 @export_enum("none", "rain", "snow", "fog", "storm")
 var default_weather: String = WEATHER_NONE
 
-@export_group("Flashlight Defaults")
-@export_range(0.05, 1.0, 0.01)
-var default_flashlight_radius: float = 0.35
-@export var default_flashlight_softness: float = 0.25
+const FLASHLIGHT_DEFAULT_RADIUS: float = 0.14
+const FLASHLIGHT_DEFAULT_SOFTNESS: float = 0.02
+const FLASH_ANIM_START_RADIUS: float = FLASHLIGHT_DEFAULT_RADIUS
+const FLASH_ANIM_END_RADIUS: float = 1.0
+const FLASH_ANIM_DURATION: float = 3.0
 
 var context: OverworldContext = null
 
@@ -41,9 +42,11 @@ var darkness_tween: Tween = null
 
 var current_weather: String = WEATHER_NONE
 var flashlight_enabled: bool = false
-var flashlight_radius: float = 0.0
-var flashlight_softness: float = 0.0
+var flashlight_radius: float = FLASHLIGHT_DEFAULT_RADIUS
+var flashlight_softness: float = FLASHLIGHT_DEFAULT_SOFTNESS
 var flashlight_center: Vector2 = Vector2(0.5, 0.5)
+var viewport_size: Vector2 = Vector2(1, 1)
+var flash_animation_tween: Tween = null
 
 @onready var darkness_rect: ColorRect = $DarknessRect
 @onready var weather_container: Control = $WeatherContainer
@@ -54,6 +57,7 @@ var flashlight_center: Vector2 = Vector2(0.5, 0.5)
 @onready var flashlight_mask: ColorRect = $FlashlightMask
 
 func _ready() -> void:
+
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_update_viewport_size()
@@ -136,17 +140,10 @@ func get_weather() -> String:
 	return current_weather
 
 
-func set_flashlight_enabled(enabled: bool, radius: float = -1.0, softness: float = -1.0) -> void:
+func set_flashlight_enabled(enabled: bool, _radius: float = -1.0, _softness: float = -1.0) -> void:
 	flashlight_enabled = enabled
-	if radius > 0.0:
-		flashlight_radius = clampf(radius, 0.05, 1.0)
-	else:
-		flashlight_radius = default_flashlight_radius
-
-	if softness > 0.0:
-		flashlight_softness = clampf(softness, 0.01, 0.5)
-	else:
-		flashlight_softness = default_flashlight_softness
+	flashlight_radius = FLASHLIGHT_DEFAULT_RADIUS
+	flashlight_softness = FLASHLIGHT_DEFAULT_SOFTNESS
 
 	_update_flashlight_material()
 	flashlight_mask.visible = flashlight_enabled
@@ -220,18 +217,80 @@ func _update_flashlight_material() -> void:
 		mat.set_shader_parameter("radius", flashlight_radius)
 		mat.set_shader_parameter("softness", flashlight_softness)
 		mat.set_shader_parameter("center", flashlight_center)
+		mat.set_shader_parameter("viewport_size", viewport_size)
+		mat.set_shader_parameter("pixel_snap", 1.0)
+		var hardness := clampf(1.0 - flashlight_softness * 4.0, 0.0, 1.0)
+		var min_softness_px: float = lerp(1.25, 0.08, hardness)
+		mat.set_shader_parameter("min_softness_px", min_softness_px)
+
+		var pixel_block: float = 1.0
+		if hardness > 0.95:
+			pixel_block = 3.0
+		elif hardness > 0.85:
+			pixel_block = 2.0
+		mat.set_shader_parameter("pixel_block_size", pixel_block)
+
+		var edge_sharpness: float = 1.0 + pow(hardness, 3.2) * 55.0
+		mat.set_shader_parameter("edge_sharpness", edge_sharpness)
+
+		var alpha_steps: float = 0.0
+		if hardness > 0.92:
+			alpha_steps = 3.0
+		elif hardness > 0.8:
+			alpha_steps = 2.0
+		mat.set_shader_parameter("alpha_steps", alpha_steps)
 
 
 func _update_viewport_size() -> void:
 	var viewport_rect := Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size)
+	viewport_size = viewport_rect.size
 	set_custom_minimum_size(viewport_rect.size)
 	darkness_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	weather_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	fog_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	flashlight_mask.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_update_flashlight_material()
 
 
 func _color_with_alpha(color: Color, alpha: float) -> Color:
 	return Color(color.r, color.g, color.b, alpha)
 
 
+func play_flash_reveal(_desired_darkness: float, duration: float = FLASH_ANIM_DURATION) -> void:
+	if flash_animation_tween:
+		flash_animation_tween.kill()
+		flash_animation_tween = null
+
+	var original_darkness := current_darkness
+
+	flashlight_enabled = true
+	flashlight_radius = FLASH_ANIM_START_RADIUS
+	flashlight_mask.visible = true
+	_update_flashlight_material()
+
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	flash_animation_tween = tween
+	var shader_mat := flashlight_mask.material as ShaderMaterial
+	if shader_mat:
+		shader_mat.set_shader_parameter("radius", FLASH_ANIM_START_RADIUS)
+		tween.parallel().tween_property(shader_mat, "shader_parameter/radius", FLASH_ANIM_END_RADIUS, duration)
+	else:
+		tween.parallel().tween_method(_set_flash_radius, FLASH_ANIM_START_RADIUS, FLASH_ANIM_END_RADIUS, duration)
+
+	await tween.finished
+	flash_animation_tween = null
+
+	flashlight_enabled = false
+	flashlight_mask.visible = false
+	if shader_mat:
+		shader_mat.set_shader_parameter("radius", FLASHLIGHT_DEFAULT_RADIUS)
+	else:
+		_set_flash_radius(FLASHLIGHT_DEFAULT_RADIUS)
+
+	_apply_darkness_immediate(original_darkness)
+
+
+func _set_flash_radius(value: float) -> void:
+	flashlight_radius = value
+	_update_flashlight_material()

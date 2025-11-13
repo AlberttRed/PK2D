@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://dpxa6dptr3hll"]
+[gd_scene load_steps=29 format=4 uid="uid://dpxa6dptr3hll"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_jvw5v"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mapscene"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_j2c21"]
 [ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="9_87lpp"]
 [ext_resource type="Texture2D" uid="uid://bpar5wu503m72" path="res://Sprites/Overworlds/Characters/trchar001.png" id="9_gxega"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="10_ardic"]
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="11_ubsjn"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="12_1qekf"]
 [ext_resource type="Texture2D" uid="uid://bfcane6ehs7ny" path="res://Sprites/Overworlds/Characters/NPC 06.png" id="12_jv80v"]
@@ -22,17 +23,23 @@ mode = 0
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
-[sub_resource type="Resource" id="Resource_87lpp"]
-script = ExtResource("7_1qekf")
-target_scene = "MapaPuebloTest"
-target_spawn = "SpawnPorta"
-metadata/_custom_type_script = "uid://c5vehg44neoyq"
-
 [sub_resource type="Resource" id="Resource_tugbi"]
 script = ExtResource("9_87lpp")
 target_type = 1
 visible = false
 metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_6i0d0"]
+script = ExtResource("10_ardic")
+flag_name = "flash_on"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_87lpp"]
+script = ExtResource("7_1qekf")
+target_scene = "MapaPuebloTest"
+target_spawn = "SpawnPorta"
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_ardic"]
 script = ExtResource("6_ubsjn")
@@ -42,7 +49,7 @@ metadata/_custom_type_script = "uid://k6r0axpkwn50"
 [sub_resource type="Resource" id="Resource_gc3x0"]
 script = ExtResource("4_j2c21")
 trigger_type = 1
-commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_87lpp"), SubResource("Resource_tugbi"), SubResource("Resource_ardic")])
+commands = Array[ExtResource("5_gxega")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_87lpp"), SubResource("Resource_ardic")])
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 

@@ -147,6 +147,13 @@ static func reset_overlay() -> void:
 		return
 	overlay.reset_to_defaults()
 
+static func play_flash_reveal(target_darkness: float, duration: float = 0.55) -> void:
+	var overlay := get_overlay_layer()
+	if overlay == null:
+		push_warning("DisplayManager: OverlayLayer no disponible para animar DESTELLO")
+		return
+	await overlay.play_flash_reveal(target_darkness, duration)
+
 static func set_overlay_flashlight(enabled: bool, config: Dictionary = {}) -> void:
 	var overlay := get_overlay_layer()
 	if overlay == null:

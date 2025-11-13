@@ -25,7 +25,6 @@ var mo_actions: Dictionary = {}
 var active_effects: Dictionary = {}
 
 const FLASH_EFFECT_KEY := "FLASH_ACTIVE"
-
 # Estado actual del sistema
 var is_processing_mo: bool = false
 var current_mo_type: String = ""
@@ -52,8 +51,9 @@ func _initialize_mo_actions() -> void:
 	var surf_action = preload("res://Scripts/Overworld/Core/MOActions/SurfAction.gd").new()
 	register_mo_action("SURF", surf_action)
 
-	# Aquí se registrarán otras MO cuando se implementen:
-	# register_mo_action("FLASH", preload("res://Scripts/Overworld/Core/MOActions/FlashAction.gd").new())
+	# Registrar MO: DESTELLO (FLASH)
+	var flash_action = preload("res://Scripts/Overworld/Core/MOActions/FlashAction.gd").new()
+	register_mo_action("FLASH", flash_action)
 
 ## Registra una nueva acción MO en el sistema
 ## @param mo_type: Identificador de la MO (ej: "CUT", "SURF")
@@ -242,46 +242,50 @@ func get_active_effects() -> Dictionary:
 
 
 ## Aplica el efecto de luz de destello a la capa de overlays
-func apply_flash_light(enabled: bool, config: Dictionary = {}) -> void:
+func apply_flash_light(enabled: bool, _config: Dictionary = {}) -> void:
 	if enabled:
 		activate_effect(FLASH_EFFECT_KEY, true)
 	else:
 		deactivate_effect(FLASH_EFFECT_KEY)
 
-	if config.is_empty():
-		return
-
-	if not context:
-		push_warning("MOSystem: Contexto no disponible para configurar overlay de destello")
-		return
-
-	var overlay := context.get_overlay_layer()
+	var overlay := _get_overlay_or_warn()
 	if not overlay:
-		push_warning("MOSystem: OverlayLayer no disponible para aplicar destello")
 		return
 
-	var radius: float = float(config.get("radius", -1.0))
-	var softness: float = float(config.get("softness", -1.0))
-	overlay.set_flashlight_enabled(enabled, radius, softness)
-
-	if config.has("center"):
-		var center_value = config["center"]
-		if center_value is Vector2:
-			overlay.set_flashlight_center_screen(center_value)
+	overlay.set_flashlight_enabled(enabled)
 
 
 func _apply_flashlight_overlay(enabled: bool) -> void:
-	if not context:
-		return
-
-	var overlay := context.get_overlay_layer()
+	var overlay := _get_overlay()
 	if not overlay:
 		return
 
-	if enabled:
-		overlay.set_flashlight_enabled(true)
-	else:
-		overlay.set_flashlight_enabled(false)
+	overlay.set_flashlight_enabled(enabled)
+
+
+## ========================
+## DESTELLO - GESTIÓN DE ILUMINACIÓN
+## ========================
+
+func enable_flash_override(_map_id: String, _config: Dictionary = {}) -> void:
+	# Destello persistente se gestionará más adelante con flag global
+	print("MOSystem: enable_flash_override() sin efecto (pendiente de implementación)")
+
+
+func disable_flash_override() -> void:
+	print("MOSystem: disable_flash_override() sin efecto (pendiente de implementación)")
+
+
+func apply_overlay_overrides(_overlay: OverlayLayer, _map_id: String) -> void:
+	pass
+
+
+func is_flash_override_active() -> bool:
+	return false
+
+
+func _apply_flash_override_to_overlay() -> void:
+	pass
 
 ## Maneja solicitudes externas de MO
 func request_mo(mo_type: String, target: Node) -> Dictionary:
@@ -297,3 +301,16 @@ func set_context(overworld_context: OverworldContext) -> void:
 		var warp_sys = context.get_warp_system()
 		if warp_sys and not warp_sys.warp_finished.is_connected(_on_map_changed):
 			warp_sys.warp_finished.connect(_on_map_changed)
+
+
+func _get_overlay() -> OverlayLayer:
+	if not context:
+		return null
+	return context.get_overlay_layer()
+
+
+func _get_overlay_or_warn() -> OverlayLayer:
+	var overlay := _get_overlay()
+	if not overlay:
+		push_warning("MOSystem: OverlayLayer no disponible para aplicar efecto de destello")
+	return overlay

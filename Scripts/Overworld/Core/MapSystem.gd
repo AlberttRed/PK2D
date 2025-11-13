@@ -342,25 +342,15 @@ func _apply_overlay_settings(map_scene: Node) -> void:
 	var darkness: float = float(settings.get("darkness", 0.0))
 	var weather: String = str(settings.get("weather", "none"))
 	var flashlight_required: bool = bool(settings.get("flashlight_required", false))
-	var flashlight_radius: float = float(settings.get("flashlight_radius", -1.0))
-	var flashlight_softness: float = float(settings.get("flashlight_softness", -1.0))
-
 	overlay.set_weather(weather)
-	overlay.set_darkness(darkness, 0.35)
-	if flashlight_required:
-		overlay.set_flashlight_enabled(true, flashlight_radius, flashlight_softness)
-	else:
-		overlay.set_flashlight_enabled(false)
 
-	var mo_system := context.get_mo_system()
-	if mo_system:
-		if flashlight_required:
-			mo_system.apply_flash_light(true, {
-				"radius": flashlight_radius,
-				"softness": flashlight_softness,
-			})
-		else:
-			mo_system.apply_flash_light(false)
+	var flash_on := GameStateService.get_event_flag("flash_on")
+	if flash_on:
+		overlay.set_darkness(0.0, 0.0)
+		overlay.set_flashlight_enabled(false)
+	else:
+		overlay.set_darkness(darkness, 0.0)
+		overlay.set_flashlight_enabled(flashlight_required)
 
 
 ## ============================================================================

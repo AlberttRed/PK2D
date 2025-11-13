@@ -29,10 +29,6 @@ class_name MapScene
 @export_enum("none", "rain", "snow", "fog", "storm") var overlay_weather: String = "none"
 ## Indica si este mapa requiere iluminación tipo destello
 @export var overlay_flashlight_required: bool = false
-## Radio normalizado del destello (0.05 - 1.0, relativo al tamaño de la pantalla)
-@export_range(0.05, 1.0, 0.01) var overlay_flashlight_radius: float = 0.35
-## Suavidad del borde del destello (0.01 - 0.5)
-@export_range(0.01, 0.5, 0.01) var overlay_flashlight_softness: float = 0.25
 
 ## Referencia al grid de este mapa
 @onready var grid: OverworldGrid = $OverworldGrid
@@ -167,6 +163,4 @@ func get_overlay_settings() -> Dictionary:
 		"darkness": clampf(overlay_darkness, 0.0, 1.0),
 		"weather": overlay_weather,
 		"flashlight_required": overlay_flashlight_required,
-		"flashlight_radius": clampf(overlay_flashlight_radius, 0.05, 1.0),
-		"flashlight_softness": clampf(overlay_flashlight_softness, 0.01, 0.5),
 	}
