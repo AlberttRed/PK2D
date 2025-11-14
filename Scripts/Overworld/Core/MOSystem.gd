@@ -174,6 +174,24 @@ func _reset_state() -> void:
 	current_mo_type = ""
 	current_target = null
 
+func play_overlay_for_pokemon(pokemon: Pokemon, visual_override: Variant = null) -> void:
+	var overlay_visual: Variant = visual_override
+	if overlay_visual == null and pokemon:
+		overlay_visual = pokemon.get_battle_front_sprite()
+
+	if overlay_visual == null:
+		return
+
+	var blocked := false
+	if context:
+		context.block_player_control()
+		blocked = true
+
+	await DisplayManager.play_mo_overlay(overlay_visual)
+
+	if blocked and context:
+		context.unblock_player_control()
+
 ## Verifica si el sistema está procesando una MO
 func is_busy() -> bool:
 	return is_processing_mo
