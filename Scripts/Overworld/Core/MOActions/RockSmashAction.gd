@@ -81,6 +81,9 @@ func execute(player: Node, target: Node, context: Node) -> Dictionary:
 	})
 	await Engine.get_main_loop().process_frame
 
+	if mo_system:
+		await mo_system.play_overlay_for_pokemon(pokemon_with_move)
+
 	await _play_animation(target)
 
 	await _maybe_trigger_rock_smash_encounter(overworld_context, player)

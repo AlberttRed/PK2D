@@ -461,6 +461,14 @@ func get_battle_back_sprite() -> AtlasTexture:
 func get_icon_sprite() -> AtlasTexture:
 	return base.icon_sprite
 
+func get_overworld_sprite() -> Texture2D:
+	if shiny and base.overworld_shiny_spritesheet:
+		return base.overworld_shiny_spritesheet
+	if base.overworld_spritesheet:
+		return base.overworld_spritesheet
+	# Fallback al sprite trasero si no existe overworld dedicado
+	return get_battle_back_sprite()
+
 ## Helpers de estado
 func has_full_health() -> bool:
 	return hp_actual == get_final_stat(StatsEnum.Values.HP)

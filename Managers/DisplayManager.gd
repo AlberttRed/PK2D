@@ -25,6 +25,9 @@ signal input_down
 signal player_control_blocked
 signal player_control_unblocked
 
+# === CONSTANTES ===
+const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
+
 # === VARIABLES ===
 var fading: bool = false
 var next = false
@@ -153,6 +156,12 @@ static func play_flash_reveal(target_darkness: float, duration: float = 0.55) ->
 		push_warning("DisplayManager: OverlayLayer no disponible para animar DESTELLO")
 		return
 	await overlay.play_flash_reveal(target_darkness, duration)
+
+static func play_mo_overlay(pokemon_visual: Variant = null) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._play_mo_overlay(pokemon_visual)
 
 static func set_overlay_flashlight(enabled: bool, config: Dictionary = {}) -> void:
 	var overlay := get_overlay_layer()
@@ -371,6 +380,28 @@ func _on_battle_finished(_winner_side: String) -> void:
 
 	# Marcar cleanup como completado
 	_battle_cleanup_done = true
+
+func _play_mo_overlay(pokemon_visual: Variant) -> void:
+	if MO_OVERLAY_SCENE == null:
+		push_error("DisplayManager: Escena de MOOverlay no disponible")
+		return
+
+	var overlay = MO_OVERLAY_SCENE.instantiate()
+	if overlay == null:
+		push_error("DisplayManager: No se pudo instanciar MOOverlay")
+		return
+
+	add_child(overlay)
+
+	var previous_input_locked := input_locked
+	input_locked = true
+
+	await overlay.play(pokemon_visual)
+
+	if is_instance_valid(overlay):
+		overlay.queue_free()
+
+	input_locked = previous_input_locked
 
 # === INPUT ===
 func _input(event: InputEvent) -> void:

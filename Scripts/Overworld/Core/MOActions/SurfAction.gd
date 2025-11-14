@@ -75,6 +75,9 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	})
 	await Engine.get_main_loop().process_frame
 
+	if mo_system:
+		await mo_system.play_overlay_for_pokemon(pokemon_with_surf)
+
 	# Activar modo surfing en el jugador
 	if _player.has_method("set_surfing_mode"):
 		_player.set_surfing_mode(true)
