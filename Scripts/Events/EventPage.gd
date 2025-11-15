@@ -52,6 +52,9 @@ var source_event: Event = null
 # Sistema de sprites
 @export_group("Sprite Configuration")
 
+## Recurso ActorStyle que define el set completo de animaciones para esta página
+@export var actor_style: ActorStyle = null
+
 ## Textura del sprite (para spritesheets 4x4 de NPCs)
 @export var sprite_texture: Texture2D = null
 
@@ -62,25 +65,19 @@ var source_event: Event = null
 ## Tamaño de cada frame en el spritesheet (solo si is_spritesheet = true)
 @export var frame_size := Vector2(32, 48)
 
-## SpriteFrames manual para casos personalizados (tiene prioridad sobre sprite_texture)
+## SpriteFrames manual para casos personalizados
 @export var sprite_frames: SpriteFrames = null
 
 ## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
 func get_sprite_frames() -> SpriteFrames:
-	# Prioridad 1: Usar SpriteFrames manual si está asignado
+	if actor_style:
+		return null
+	if sprite_texture and is_spritesheet:
+		return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
 	if sprite_frames:
 		return sprite_frames
-
-	# Prioridad 2: Generar desde sprite_texture
 	if sprite_texture:
-		if is_spritesheet:
-			# Generar animaciones desde spritesheet 4x4
-			return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
-		else:
-			# Usar como imagen simple estática
-			return _generate_simple_sprite_frames(sprite_texture)
-
-	# Sin sprite
+		return _generate_simple_sprite_frames(sprite_texture)
 	return null
 
 ## Genera un SpriteFrames simple con una sola animación "default" y un frame

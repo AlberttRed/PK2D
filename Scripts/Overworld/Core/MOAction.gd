@@ -69,3 +69,11 @@ func get_mo_name() -> String:
 ## Obtiene la descripción de la MO
 func get_description() -> String:
 	return description
+
+func _play_player_mo_start(player: Node) -> void:
+	if player and player.has_method("play_mo_start"):
+		await player.play_mo_start()
+
+func _play_player_mo_end(player: Node) -> void:
+	if player and player.has_method("play_mo_end"):
+		await player.play_mo_end()

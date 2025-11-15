@@ -185,20 +185,32 @@ func _update_animator_from_current_page() -> void:
 		return
 
 	if current_page:
-		# Usar el método get_sprite_frames() que soporta generación automática
-		var frames = current_page.get_sprite_frames()
-		if frames:
-			animator.set_sprite_frames(frames)
+		var style: ActorStyle = current_page.actor_style
+		if style:
+			animator.apply_style(style)
 			animator.set_sprite_offset(Vector2(0, -8))
 			animator.show_sprite()
 
-			# Configurar la dirección inicial después de asignar los frames
 			if motion:
 				var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(initial_direction)
 				animator.idle(initial_dir)
 		else:
-			animator.hide_sprite()
+			animator.apply_style(null)
+			# Usar el método get_sprite_frames() que soporta generación automática
+			var frames = current_page.get_sprite_frames()
+			if frames:
+				animator.set_sprite_frames(frames)
+				animator.set_sprite_offset(Vector2(0, -8))
+				animator.show_sprite()
+
+				# Configurar la dirección inicial después de asignar los frames
+				if motion:
+					var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(initial_direction)
+					animator.idle(initial_dir)
+			else:
+				animator.hide_sprite()
 	else:
+		animator.apply_style(null)
 		animator.hide_sprite()
 
 ## Override del método de Event para actualizar también el animator

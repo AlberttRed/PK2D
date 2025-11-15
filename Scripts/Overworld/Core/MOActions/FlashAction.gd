@@ -46,8 +46,10 @@ func execute(player: Node, _target: Node, context: Node) -> Dictionary:
 	if pokemon_used:
 		var pokemon_name := pokemon_used.get_display_name() if pokemon_used.has_method("get_display_name") else "Un Pokémon"
 		print("FlashAction: %s iluminó el entorno con DESTELLO" % pokemon_name)
+		await _play_player_mo_start(player)
 		if mo_system:
 			await mo_system.play_overlay_for_pokemon(pokemon_used)
+		await _play_player_mo_end(player)
 
 	# Determinar oscuridad objetivo en función del estado actual del overlay
 	var target_darkness := 0.0

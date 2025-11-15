@@ -4,18 +4,21 @@ extends Node2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
 
+#const DEFAULT_WALK_FRAMES: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Walk.tres")
+#const DEFAULT_SURF_FRAMES: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
+
+@export var actor_style: ActorStyle
 # Referencia al OverworldContext (opcional, para acceso a sistemas)
 var context: OverworldContext = null
-
-# SpriteFrames para diferentes modos de movimiento
-var normal_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Walk.tres")
-var surf_spriteframes: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
 
 var input_dir := Vector2.ZERO
 var holding := false
 var movement_enabled: bool = true
 var is_surfing: bool = false  # Modo surfing activado
 var _control_block_count: int = 0  # Contador de bloqueos anidados
+var _is_playing_mo_segment: bool = false
+var _mo_sequence_active: bool = false
+var _mo_idle_direction: Vector2 = Vector2.DOWN
 
 func _ready() -> void:
 	if !is_in_group("Player"):
@@ -24,7 +27,8 @@ func _ready() -> void:
 	motion.step_finished.connect(_on_step_finished)
 	$Shadow.visible = false
 
-	sprite.animation = "walk_down_right"
+	_refresh_actor_style_frames()
+	sprite.animation = "down_right"
 	call_deferred("_connect_display_manager_signals")
 
 func _process(_delta: float):
@@ -56,6 +60,7 @@ func _process(_delta: float):
 
 func _on_step_started() -> void:
 	var use_run: bool = (motion.speed_multiplier > 1.0 and not motion.initial_step)
+	_apply_ground_frames_for_motion(use_run)
 	var dir_name := "down"
 	match motion.dir:
 		Vector2.UP: dir_name = "up"
@@ -63,17 +68,9 @@ func _on_step_started() -> void:
 		Vector2.LEFT: dir_name = "left"
 		Vector2.RIGHT: dir_name = "right"
 
-	# Animaciones con zancada: walk_<dir>_<left|right>
+	# Animaciones con zancada: <dir>_<left|right>
 	var stride := ("left" if motion.stride_is_left else "right")
-	var walk_anim := "walk_" + dir_name + "_" + stride
-	var run_anim := "run_" + dir_name + "_" + stride
-
-	var frames: SpriteFrames = sprite.sprite_frames
-	var anim_to_play := ""
-	if use_run and frames and frames.has_animation(run_anim):
-		anim_to_play = run_anim
-	elif frames and frames.has_animation(walk_anim):
-		anim_to_play = walk_anim
+	var anim_to_play := dir_name + "_" + stride
 	if sprite.is_playing():
 		sprite.stop()
 	sprite.play(anim_to_play)
@@ -100,6 +97,8 @@ func _on_step_finished(tile: Vector2i) -> void:
 		stop()
 
 func stop():
+	if _mo_sequence_active:
+		return
 	# Resetear velocidad de animación a normal
 	sprite.speed_scale = 1.0
 
@@ -225,7 +224,9 @@ func set_surfing_mode(enabled: bool) -> void:
 
 	if enabled:
 		# Cambiar a sprite de surfing
-		sprite.sprite_frames = surf_spriteframes
+		var surf_frames = _get_surf_frames()
+		if surf_frames:
+			sprite.sprite_frames = surf_frames
 		# Convertir animación idle a idle direccional según la dirección actual
 		match motion.dir:
 			Vector2.UP: sprite.animation = "idle_up"
@@ -236,7 +237,7 @@ func set_surfing_mode(enabled: bool) -> void:
 		set_meta("can_surf", true)
 	else:
 		# Volver al sprite normal
-		sprite.sprite_frames = normal_spriteframes
+		_refresh_actor_style_frames()
 		# En modo normal, usar idle estático
 		sprite.animation = "idle"
 		sprite.stop()
@@ -322,3 +323,100 @@ func _connect_display_manager_signals() -> void:
 		dm.player_control_blocked.connect(_on_player_control_blocked)
 	if not dm.player_control_unblocked.is_connected(_on_player_control_unblocked):
 		dm.player_control_unblocked.connect(_on_player_control_unblocked)
+
+func apply_actor_style(style: ActorStyle) -> void:
+	actor_style = style
+	_refresh_actor_style_frames()
+
+func _refresh_actor_style_frames() -> void:
+	if _mo_sequence_active:
+		return
+	if is_surfing:
+		sprite.sprite_frames = _get_surf_frames()
+	else:
+		_apply_ground_frames_for_motion(_should_use_run_frames())
+
+func _get_walk_frames() -> SpriteFrames:
+	if actor_style and actor_style.walk_frames:
+		return actor_style.walk_frames
+	return null#DEFAULT_WALK_FRAMES
+
+func _get_surf_frames() -> SpriteFrames:
+	if actor_style and actor_style.surf_frames:
+		return actor_style.surf_frames
+	return null#DEFAULT_SURF_FRAMES
+
+func _get_run_frames() -> SpriteFrames:
+	if actor_style and actor_style.run_frames:
+		return actor_style.run_frames
+	return _get_walk_frames()
+
+func _apply_ground_frames_for_motion(use_run: bool) -> void:
+	if is_surfing or _mo_sequence_active:
+		return
+	var target_frames = _get_run_frames() if use_run else _get_walk_frames()
+	if target_frames and sprite.sprite_frames != target_frames:
+		sprite.sprite_frames = target_frames
+
+func _should_use_run_frames() -> bool:
+	if not motion:
+		return false
+	return motion.speed_multiplier > 1.0 and not motion.initial_step
+
+func play_mo_start() -> void:
+	if _mo_sequence_active:
+		return
+	_mo_sequence_active = true
+	_mo_idle_direction = motion.dir
+	await _play_mo_segment(_get_mo_start_frames(), true)
+
+func play_mo_end() -> void:
+	if not _mo_sequence_active:
+		return
+	await _play_mo_segment(_get_mo_end_frames(), false)
+	_mo_sequence_active = false
+	_restore_mo_state()
+
+func _get_mo_start_frames() -> SpriteFrames:
+	if actor_style and actor_style.mo_start_frames:
+		return actor_style.mo_start_frames
+	return null
+
+func _get_mo_end_frames() -> SpriteFrames:
+	if actor_style and actor_style.mo_end_frames:
+		return actor_style.mo_end_frames
+	return null
+
+func _play_mo_segment(frames: SpriteFrames, keep_pose: bool) -> void:
+	if _is_playing_mo_segment or not frames:
+		return
+	_is_playing_mo_segment = true
+	var anim_name := "default"
+	if not frames.has_animation(anim_name):
+		var names := frames.get_animation_names()
+		if names.is_empty():
+			_is_playing_mo_segment = false
+			return
+		anim_name = names[0]
+
+	sprite.sprite_frames = frames
+	if not sprite.sprite_frames.has_animation(anim_name):
+		sprite.sprite_frames = _get_walk_frames()
+		_is_playing_mo_segment = false
+		return
+
+	sprite.play(anim_name)
+	await sprite.animation_finished
+
+	if keep_pose:
+		var last_frame: int = max(sprite.sprite_frames.get_frame_count(anim_name) - 1, 0)
+		sprite.animation = anim_name
+		sprite.frame = last_frame
+	else:
+		sprite.stop()
+	_is_playing_mo_segment = false
+
+func _restore_mo_state() -> void:
+	_refresh_actor_style_frames()
+	motion.face(_mo_idle_direction)
+	stop()

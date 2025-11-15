@@ -35,6 +35,19 @@ EventSystem=""
 WarpSystem=""
 GUI=""
 
+[global_script_class_icons]
+
+ActorStyle=""
+
+[global_script_classes]
+
+global_script_classes=[{
+"base": "Resource",
+"class": "ActorStyle",
+"language": "GDScript",
+"path": "res://Scripts/Resources/ActorStyle.gd"
+}]
+
 [input]
 
 ui_accept={
