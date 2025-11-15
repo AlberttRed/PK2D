@@ -85,16 +85,24 @@ func update_sprite_from_current_page() -> void:
 		return
 
 	if current_page:
-		# Usar el método get_sprite_frames() que soporta generación automática
-		var frames = current_page.get_sprite_frames()
-		if frames:
-			actor_animator.set_sprite_frames(frames)
+		var style: ActorStyle = current_page.actor_style
+		if style:
+			actor_animator.apply_style(style)
 			actor_animator.set_sprite_offset(Vector2(0, 0))
 			actor_animator.show_sprite()
 		else:
-			actor_animator.sprite.sprite_frames = null
-			actor_animator.hide_sprite()
+			actor_animator.apply_style(null)
+			# Usar el método get_sprite_frames() que soporta generación automática
+			var frames = current_page.get_sprite_frames()
+			if frames:
+				actor_animator.set_sprite_frames(frames)
+				actor_animator.set_sprite_offset(Vector2(0, 0))
+				actor_animator.show_sprite()
+			else:
+				actor_animator.sprite.sprite_frames = null
+				actor_animator.hide_sprite()
 	else:
+		actor_animator.apply_style(null)
 		actor_animator.sprite.sprite_frames = null
 		actor_animator.hide_sprite()
 

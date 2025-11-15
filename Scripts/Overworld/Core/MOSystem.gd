@@ -182,15 +182,7 @@ func play_overlay_for_pokemon(pokemon: Pokemon, visual_override: Variant = null)
 	if overlay_visual == null:
 		return
 
-	var blocked := false
-	if context:
-		context.block_player_control()
-		blocked = true
-
 	await DisplayManager.play_mo_overlay(overlay_visual)
-
-	if blocked and context:
-		context.unblock_player_control()
 
 ## Verifica si el sistema está procesando una MO
 func is_busy() -> bool:

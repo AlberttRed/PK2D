@@ -101,8 +101,12 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 	})
 	await Engine.get_main_loop().process_frame
 
+	await _play_player_mo_start(_player)
+
 	if mo_system:
 		await mo_system.play_overlay_for_pokemon(pokemon_with_strength)
+
+	await _play_player_mo_end(_player)
 
 	await DisplayManager.show_message("La FUERZA de %s logró desplazar la roca." % pokemon_name, {
 		"waitInput": true,

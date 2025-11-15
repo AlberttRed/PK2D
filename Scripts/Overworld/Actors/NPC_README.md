@@ -19,6 +19,21 @@ Componente reutilizable para gestionar animaciones de actores del overworld.
 - `set_speed_scale(scale: float)`: Ajusta la velocidad de reproducción
 - `set_sprite_frames(frames: SpriteFrames)`: Cambia el conjunto de animaciones
 
+### ActorStyle
+Recurso centralizado para definir los diferentes conjuntos de animaciones de un actor.
+
+- **Ubicación:** `res://Resources/Actor Styles/`
+- **Script:** `Scripts/Resources/ActorStyle.gd`
+- Propiedades principales:
+  - `walk_frames`, `run_frames`, `surf_frames`, `bike_frames`
+  - `mo_start_frames`, `mo_end_frames` para animaciones de inicio/fin de movimientos especiales
+  - `extra_animations` (diccionario de `SpriteFrames`) para emotes u overrides puntuales
+- `ActorAnimator.apply_style(style)` aplica dinámicamente estos recursos y hace fallback automático si falta alguna animación.
+
+Cada `EventPage` expone `@export var actor_style: ActorStyle`, por lo que el mismo NPC puede cambiar de apariencia por página (ej: uniforme nocturno, animación mirando hacia otro lado, etc.). Cuando una página está activa el `Event` aplica el estilo en su `ActorAnimator` y el NPC actualiza idle/walk inmediatamente.
+
+El `Player` también cuenta con `@export var actor_style: ActorStyle` (por defecto `PlayerDefaultStyle.tres`). Sus animaciones normales y de surf leen directamente de ese recurso, reemplazando los SpriteFrames sueltos.
+
 ### NPC
 Clase que hereda de `Event` y añade capacidades de movimiento.
 
@@ -233,7 +248,7 @@ func chase_player():
     motion.is_running = true  # Activar carrera temporalmente
     var direction = _calculate_direction_to_player()
     motion.try_step(direction)  # Este paso será a velocidad de carrera (2.0x)
-    
+
 func stop_chasing():
     motion.is_running = false  # Volver a velocidad normal
 ```

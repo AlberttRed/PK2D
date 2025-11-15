@@ -83,8 +83,12 @@ func execute(_player: Node, target: Node, context: Node) -> Dictionary:
 	})
 	await Engine.get_main_loop().process_frame
 
+	await _play_player_mo_start(_player)
+
 	if mo_system:
 		await mo_system.play_overlay_for_pokemon(pokemon_with_cut)
+
+	await _play_player_mo_end(_player)
 
 	# 3. Reproducir animación
 	await _play_animation(target)

@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" load_steps=37 format=3 uid="uid://b4f0w26o6ko5l"]
 
-[ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/trchar000.png" id="1_m8dlc"]
-[ext_resource type="Texture2D" uid="uid://b4u12a3ypo5hc" path="res://Sprites/Overworlds/Characters/boy_run.png" id="2_u5d88"]
+[ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/Red/red_walk.png" id="1_m8dlc"]
+[ext_resource type="Texture2D" uid="uid://b4u12a3ypo5hc" path="res://Sprites/Overworlds/Characters/Red/red_run.png" id="2_u5d88"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4p3nb"]
 atlas = ExtResource("1_m8dlc")

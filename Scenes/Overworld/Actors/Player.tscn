@@ -1,6 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=17 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
+[ext_resource type="Resource" uid="uid://but4gb65vkb58" path="res://Resources/Actor Styles/Red.tres" id="2_5yaag"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_sxj1f"]
 [ext_resource type="Script" uid="uid://cpkd2doka4oah" path="res://Scripts/Overworld/WildEncounterDetector.gd" id="3_wild_encounter"]
@@ -8,17 +9,18 @@
 [ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="4_stepped"]
 [ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="4_tall_grass"]
 [ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
-[ext_resource type="SpriteFrames" uid="uid://b4f0w26o6ko5l" path="res://Resources/Animations/Overworld/Player_Walk.tres" id="8_5yaag"]
 [ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="11_5yaag"]
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="12_x884u"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="13_5yaag"]
 [ext_resource type="Texture2D" uid="uid://cdck4xo6iqrah" path="res://Sprites/Others/Player_Shadow.png" id="14_p0ptx"]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_5yaag"]
+
 [sub_resource type="Resource" id="Resource_5yaag"]
 script = ExtResource("12_x884u")
 pokemon_id = 7
 gender = 1
-custom_move_ids = Array[int]([148, 70])
+custom_move_ids = Array[int]([148, 70, 57])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_p0ptx"]
@@ -33,6 +35,7 @@ metadata/_custom_type_script = "uid://ddsodfhwbf6ce"
 [node name="Player" type="Node2D" groups=["Player"]]
 z_index = 1
 script = ExtResource("1_re7j4")
+actor_style = ExtResource("2_5yaag")
 
 [node name="GridMotion" type="Node" parent="."]
 script = ExtResource("2_slkcw")
@@ -47,8 +50,7 @@ tall_grass_overlay_scene = ExtResource("4_tall_grass")
 grass_stepped_effect_scene = ExtResource("4_stepped")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("8_5yaag")
-animation = &"idle"
+sprite_frames = SubResource("SpriteFrames_5yaag")
 offset = Vector2(0, -8)
 metadata/_edit_lock_ = true
 
