@@ -82,6 +82,8 @@ func _on_step_started() -> void:
 
 func _on_step_finished(tile: Vector2i) -> void:
 	# Si está en modo surfing, verificar si llegó a tierra
+	# Nota: end_surf() ya se ejecutó en can_surf_to_tile() antes del movimiento,
+	# así que solo verificamos si aún está en modo surf (por si acaso)
 	if is_surfing:
 		if context:
 			var map_system: MapSystem = context.get_map_system()
@@ -90,9 +92,9 @@ func _on_step_finished(tile: Vector2i) -> void:
 				if grid:
 					var terrain = grid.terrain_at(tile)
 					if terrain != "water":
-						# Llegó a tierra, desactivar surfing
+						# Si aún está en modo surf, desactivarlo sin animación
+						# (la animación ya se ejecutó en can_surf_to_tile())
 						set_surfing_mode(false)
-
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
@@ -263,23 +265,8 @@ func set_surfing_mode(enabled: bool) -> void:
 		remove_meta("can_surf")
 
 func start_surf() -> void:
-	if not context:
-		push_error("Player: Contexto no disponible para start_surf")
-		return
-
 	var map_system: MapSystem = context.get_map_system()
-	if not map_system:
-		push_error("Player: MapSystem no disponible para start_surf")
-		return
-
 	var grid: OverworldGrid = map_system.get_active_grid()
-	if not grid:
-		push_error("Player: OverworldGrid no disponible para start_surf")
-		return
-
-	if not motion:
-		push_error("Player: GridMotion no disponible para start_surf")
-		return
 
 	var front_tile: Vector2i = motion.current_tile() + Vector2i(motion.dir)
 	var direction_frame := _direction_to_frame_index(motion.dir)
@@ -301,9 +288,10 @@ func start_surf() -> void:
 	else:
 		add_child(splash)
 
-	_play_surf_jump_pose(direction_frame)
+	set_movement_enabled(false)
+	_play_surf_jump_pose(direction_frame, -16)
 	sprite.z_index = 1
-	var jump_success: bool = await motion.jump_to_tile(front_tile, false)
+	var jump_success: bool = await motion.jump_to_tile(front_tile, false, -16)
 
 	if is_instance_valid(splash):
 		splash.queue_free()
@@ -314,8 +302,59 @@ func start_surf() -> void:
 		global_position = front_world
 
 	set_surfing_mode(true)
+	set_movement_enabled(true)
+	
 
-func _play_surf_jump_pose(direction_frame: int) -> void:
+func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
+	var map_system: MapSystem = context.get_map_system()
+	var grid: OverworldGrid = map_system.get_active_grid()
+
+	var current_tile: Vector2i = motion.current_tile()
+	var destination_tile: Vector2i = target_tile if target_tile != Vector2i(-1, -1) else current_tile + Vector2i(motion.dir)
+
+	var direction_frame := _direction_to_frame_index(motion.dir)
+	var splash_world := grid.tile_to_world_center(current_tile)  # El splash aparece donde está el jugador (en el agua)
+	var destination_world := grid.tile_to_world_center(destination_tile)
+
+	# Aparece el splash en el tile donde está el jugador (en el agua)
+	var splash := SURF_POKEMON_SCENE.instantiate()
+	if splash is Sprite2D:
+		var splash_sprite := splash as Sprite2D
+		splash_sprite.z_index = 1
+		if surf_texture:
+			splash_sprite.texture = surf_texture
+		var available_frames: int = max(splash_sprite.hframes * splash_sprite.vframes, 1) - 1
+		splash_sprite.frame = clamp(direction_frame, 0, available_frames)
+	splash.global_position = splash_world
+
+	var parent_node := get_parent()
+	if parent_node:
+		parent_node.add_child(splash)
+	else:
+		add_child(splash)
+
+	set_movement_enabled(false)
+	_play_surf_jump_pose(direction_frame, -16)
+	sprite.z_index = 1
+	var jump_success: bool = await motion.jump_to_tile(destination_tile, false, -8)
+
+	if is_instance_valid(splash):
+		splash.queue_free()
+
+	sprite.z_index = 0
+
+	if not jump_success:
+		global_position = destination_world
+
+	set_surfing_mode(false)
+	set_movement_enabled(true)
+	motion.step_finished.emit(destination_tile)
+
+func _execute_end_surf_before_move(target_tile: Vector2i) -> void:
+	# Ejecutar end_surf y luego permitir el movimiento
+	await end_surf(target_tile)
+
+func _play_surf_jump_pose(direction_frame: int, height: int) -> void:
 	var surf_jump_frames := _get_surf_jump_frames()
 	if not surf_jump_frames:
 		return
@@ -323,10 +362,9 @@ func _play_surf_jump_pose(direction_frame: int) -> void:
 	if not surf_jump_frames.has_animation("default"):
 		return
 
-	sprite.offset = Vector2(0,-14)
+	sprite.offset = Vector2(0,height)
 	sprite.sprite_frames = surf_jump_frames
 	sprite.animation = "default"
-	sprite.stop()
 	var frame_count := surf_jump_frames.get_frame_count("default")
 	if frame_count > 0:
 		sprite.frame = clamp(direction_frame, 0, frame_count - 1)
@@ -335,12 +373,21 @@ func _play_surf_jump_pose(direction_frame: int) -> void:
 
 ## Verifica si el jugador puede moverse al tile destino en modo surfing
 ## Se llama desde GridMotion antes de validar movimiento
-func can_surf_to_tile(_tile: Vector2i) -> bool:
+## Si va a salir del agua, retorna false para que GridMotion ejecute end_surf()
+func can_surf_to_tile(tile: Vector2i) -> bool:
 	if not is_surfing:
 		return true  # No está en surfing, movimiento normal
 
-	# En modo surfing, SIEMPRE permitir el movimiento
-	# Si es a tierra, el surf se desactivará automáticamente en _on_step_finished()
+	# Verificar si el tile destino es agua
+	if context:
+		var map_system: MapSystem = context.get_map_system()
+		if map_system:
+			var grid: OverworldGrid = map_system.get_active_grid()
+			if grid:
+				var terrain = grid.terrain_at(tile)
+				if terrain != "water":
+					# Va a salir del agua, retornar false para que GridMotion ejecute end_surf()
+					return false
 	return true
 
 ## ============================================================================

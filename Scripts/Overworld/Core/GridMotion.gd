@@ -186,6 +186,12 @@ func try_step(d: Vector2) -> bool:
 	# VALIDACIÓN ADICIONAL: Si el jugador está en modo surfing, verificar si puede ir al tile
 	if can_step and actor.is_in_group("Player") and actor.has_method("can_surf_to_tile"):
 		if not actor.can_surf_to_tile(to):
+			# Si retorna false, puede ser porque necesita ejecutar end_surf() primero
+			# Verificar si tiene el método para ejecutarlo
+			if actor.has_method("_execute_end_surf_before_move"):
+				await actor._execute_end_surf_before_move(to)
+				# Después de end_surf(), el movimiento ya se ejecutó, así que retornar
+				return true
 			can_step = false
 
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
@@ -309,7 +315,7 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 # --- Sistema de Saltos (Ledges) - PBI 455 ---
 
 ## Ejecuta un salto genérico hacia el tile indicado con la animación de arco usada en los ledges.
-func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, duration: float = ledge_jump_duration, height: float = ledge_jump_height) -> bool:
+func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, final_y_offset: int = 0) -> bool:
 	if not grid or not is_instance_valid(grid):
 		_refresh_grid()
 		if not grid or not is_instance_valid(grid):
@@ -319,31 +325,27 @@ func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, duration: flo
 	if from_tile == target_tile:
 		return true
 
-	return await _perform_arc_jump(from_tile, target_tile, duration, height, show_shadow, true, false)
+	return await _perform_arc_jump(from_tile, target_tile, show_shadow, final_y_offset)
 
 ## Ejecuta un salto sobre un ledge (método interno legado)
 func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
-	return await _perform_arc_jump(from, to, ledge_jump_duration, ledge_jump_height, true, true, true)
+	context.block_player_control()
+	is_jumping_ledge = true
+	ledge_jump_started.emit()
+	var succeeded:bool = await _perform_arc_jump(from, to, true)
+	is_jumping_ledge = false
+	ledge_jump_finished.emit()
+	context.unblock_player_control()
+	return succeeded
 
 func _perform_arc_jump(
 	from: Vector2i,
 	to: Vector2i,
-	duration: float,
-	height: float,
 	show_shadow: bool,
-	block_controls: bool,
-	emit_ledge_signals: bool
+	final_y_offset: int = -8,
+	duration: float = ledge_jump_duration,
+	height: float = ledge_jump_height
 ) -> bool:
-	duration = duration if duration > 0.0 else ledge_jump_duration
-	height = height if height > 0.0 else ledge_jump_height
-
-	is_jumping_ledge = true
-	if emit_ledge_signals:
-		ledge_jump_started.emit()
-
-	if block_controls and context:
-		context.block_player_control()
-
 	moving = true
 	grid.reserve(from, to, actor)
 
@@ -361,14 +363,12 @@ func _perform_arc_jump(
 	if sprite_node:
 		original_y_offset = sprite_node.offset.y
 
-	var shadow_node: Sprite2D = null
 	if show_shadow and actor.has_node("Shadow"):
-		shadow_node = actor.get_node("Shadow") as Sprite2D
-		if shadow_node:
-			shadow_node.visible = true
+		actor.get_node("Shadow").visible = true
 
-	step_started.emit()
-	stride_is_left = not stride_is_left
+	if is_jumping_ledge:
+		step_started.emit()
+		stride_is_left = not stride_is_left
 
 	active_tween = actor.create_tween()
 	active_tween.set_parallel(true)
@@ -382,35 +382,30 @@ func _perform_arc_jump(
 			.set_ease(Tween.EASE_OUT)\
 			.set_trans(Tween.TRANS_QUAD)
 
-		active_tween.tween_property(sprite_node, "offset:y", original_y_offset, half_duration)\
+		active_tween.tween_property(sprite_node, "offset:y", final_y_offset, half_duration)\
 			.set_delay(half_duration)\
 			.set_ease(Tween.EASE_IN)\
 			.set_trans(Tween.TRANS_QUAD)
 
 	var wait_time: float = max(duration / 2.0, 0.01)
 	await get_tree().create_timer(wait_time).timeout
-	step_started.emit()
-	stride_is_left = not stride_is_left
+	
+	if is_jumping_ledge:
+		step_started.emit()
+		stride_is_left = not stride_is_left
 
 	await active_tween.finished
 	active_tween = null
 
 	if sprite_node:
-		sprite_node.offset.y = original_y_offset
+		sprite_node.offset.y = final_y_offset
 
-	if shadow_node:
-		shadow_node.visible = false
+	if actor.has_node("Shadow"):
+		actor.get_node("Shadow").visible = false
 
 	grid.commit(from, to, actor)
 	moving = false
-	is_jumping_ledge = false
 
-	if block_controls and context:
-		context.unblock_player_control()
-
-	if emit_ledge_signals:
-		ledge_jump_finished.emit()
-	step_finished.emit(to)
 	grid.on_enter_tile(actor, to)
 
 	return true
