@@ -336,6 +336,7 @@ func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
 	is_jumping_ledge = false
 	ledge_jump_finished.emit()
 	context.unblock_player_control()
+	step_finished.emit(to)
 	return succeeded
 
 func _perform_arc_jump(
