@@ -21,7 +21,6 @@ class_name OverworldContext
 var systems := {}
 
 # Referencias directas para acceso rápido y tipado
-var map_system: MapSystem = null
 var warp_system: WarpSystem = null
 var mo_system: MOSystem = null
 var event_system: EventSystem = null
@@ -62,8 +61,6 @@ func register_system(sys_name: String, system: Node) -> void:
 
 	# Actualizar referencias directas para acceso tipado
 	match sys_name:
-		"Map":
-			map_system = system as MapSystem
 		"Warp":
 			warp_system = system as WarpSystem
 		"MO":
@@ -87,10 +84,6 @@ func get_system(sys_name: String) -> Node:
 		push_warning("OverworldContext: Sistema no registrado: %s" % sys_name)
 		return null
 	return systems.get(sys_name)
-
-## Obtiene el MapSystem (acceso directo tipado)
-func get_map_system() -> MapSystem:
-	return map_system
 
 ## Obtiene el WarpSystem (acceso directo tipado)
 func get_warp_system() -> WarpSystem:
@@ -130,7 +123,7 @@ func get_registered_systems() -> Array:
 ## Valida que todos los sistemas críticos estén registrados
 ## @return: true si todos los sistemas críticos están presentes
 func validate() -> bool:
-	var required_systems := ["Map", "Warp", "MO", "Event", "World"]
+	var required_systems := ["Warp", "MO", "Event", "World"]
 	var all_ok := true
 
 	for sys_name in required_systems:

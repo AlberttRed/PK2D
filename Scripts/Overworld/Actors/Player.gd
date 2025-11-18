@@ -86,9 +86,9 @@ func _on_step_finished(tile: Vector2i) -> void:
 	# así que solo verificamos si aún está en modo surf (por si acaso)
 	if is_surfing:
 		if context:
-			var map_system: MapSystem = context.get_map_system()
-			if map_system:
-				var grid: OverworldGrid = map_system.get_active_grid()
+			var world_system: WorldSystem = context.get_world_system()
+			if world_system:
+				var grid: OverworldGrid = world_system.get_active_grid()
 				if grid:
 					var terrain = grid.terrain_at(tile)
 					if terrain != "water":
@@ -161,14 +161,14 @@ func teleport_to_tile(tile: Vector2i) -> void:
 		push_error("Player: Contexto no disponible para teleport")
 		return
 
-	var map_system: MapSystem = context.get_map_system()
-	if not map_system:
-		push_error("Player: MapSystem no disponible en el contexto")
+	var world_system: WorldSystem = context.get_world_system()
+	if not world_system:
+		push_error("Player: WorldSystem no disponible en el contexto")
 		return
 
-	var grid: OverworldGrid = map_system.get_active_grid()
+	var grid: OverworldGrid = world_system.get_active_grid()
 	if not grid:
-		push_error("Player: No se pudo obtener el OverworldGrid del MapSystem")
+		push_error("Player: No se pudo obtener el OverworldGrid del WorldSystem")
 		return
 
 	# Usar el método de Occupancy si está disponible
@@ -201,11 +201,11 @@ func _try_activate_surf() -> bool:
 	if not context:
 		return false
 
-	var map_system: MapSystem = context.get_map_system()
-	if not map_system:
+	var world_system: WorldSystem = context.get_world_system()
+	if not world_system:
 		return false
 
-	var grid: OverworldGrid = map_system.get_active_grid()
+	var grid: OverworldGrid = world_system.get_active_grid()
 	if not grid:
 		return false
 
@@ -265,8 +265,8 @@ func set_surfing_mode(enabled: bool) -> void:
 		remove_meta("can_surf")
 
 func start_surf() -> void:
-	var map_system: MapSystem = context.get_map_system()
-	var grid: OverworldGrid = map_system.get_active_grid()
+	var world_system: WorldSystem = context.get_world_system()
+	var grid: OverworldGrid = world_system.get_active_grid()
 
 	var front_tile: Vector2i = motion.current_tile() + Vector2i(motion.dir)
 	var direction_frame := _direction_to_frame_index(motion.dir)
@@ -303,11 +303,11 @@ func start_surf() -> void:
 
 	set_surfing_mode(true)
 	set_movement_enabled(true)
-	
+
 
 func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
-	var map_system: MapSystem = context.get_map_system()
-	var grid: OverworldGrid = map_system.get_active_grid()
+	var world_system: WorldSystem = context.get_world_system()
+	var grid: OverworldGrid = world_system.get_active_grid()
 
 	var current_tile: Vector2i = motion.current_tile()
 	var destination_tile: Vector2i = target_tile if target_tile != Vector2i(-1, -1) else current_tile + Vector2i(motion.dir)
@@ -380,9 +380,9 @@ func can_surf_to_tile(tile: Vector2i) -> bool:
 
 	# Verificar si el tile destino es agua
 	if context:
-		var map_system: MapSystem = context.get_map_system()
-		if map_system:
-			var grid: OverworldGrid = map_system.get_active_grid()
+		var world_system: WorldSystem = context.get_world_system()
+		if world_system:
+			var grid: OverworldGrid = world_system.get_active_grid()
 			if grid:
 				var terrain = grid.terrain_at(tile)
 				if terrain != "water":
@@ -419,7 +419,7 @@ func force_unblock_controls() -> void:
 func are_controls_blocked() -> bool:
 	return not movement_enabled
 
-## Establece el contexto del Overworld (llamado desde MapSystem)
+## Establece el contexto del Overworld (llamado desde WorldSystem)
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	print("Player: Contexto del Overworld establecido")

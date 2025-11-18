@@ -2,7 +2,7 @@ extends Node
 class_name OverworldCoordinator
 
 ## OverworldCoordinator - Gestor principal del overworld
-## Coordina las dependencias entre WorldSystem, MapSystem, EventSystem, etc.
+## Coordina las dependencias entre WorldSystem, EventSystem, etc.
 ## Utiliza OverworldContext para reducir acoplamiento y eliminar búsquedas globales
 ##
 ## Responsabilidades:
@@ -13,7 +13,6 @@ class_name OverworldCoordinator
 ## - Proveer acceso centralizado a los sistemas del overworld
 
 @onready var world_system: WorldSystem = $WorldSystem
-@onready var map_system: MapSystem = $MapSystem
 @onready var event_system: EventSystem = $EventSystem
 @onready var warp_system: WarpSystem = $WarpSystem
 @onready var mo_system: MOSystem = $MOSystem
@@ -53,9 +52,6 @@ func _register_systems_in_context() -> void:
 	if world_system:
 		context.register_system("World", world_system)
 
-	if map_system:
-		context.register_system("Map", map_system)
-
 	if event_system:
 		context.register_system("Event", event_system)
 
@@ -70,8 +66,8 @@ func _register_systems_in_context() -> void:
 		context.register_system("Overlay", overlay_layer)
 		print("  ✓ OverlayLayer registrado en contexto")
 
-	# El Player se registrará dinámicamente cuando MapSystem lo cargue
-	print("OverworldCoordinator: Player se cargará dinámicamente desde MapSystem")
+	# El Player se registrará dinámicamente cuando WorldSystem lo cargue
+	print("OverworldCoordinator: Player se cargará dinámicamente desde WorldSystem")
 
 	print("OverworldCoordinator: Registro de sistemas completado")
 
@@ -81,22 +77,11 @@ func _inject_dependencies() -> void:
 	print("OverworldCoordinator: Inyectando dependencias entre sistemas...")
 
 	# Inyectar el contexto a todos los sistemas
-	if map_system:
-		if map_system.has_method("set_context"):
-			map_system.set_context(context)
-		else:
-			map_system.context = context
-		# Mantener compatibilidad temporal con world_system directo
-		map_system.world_system = world_system
-		print("  ✓ Context → MapSystem")
-
 	if world_system:
 		if world_system.has_method("set_context"):
 			world_system.set_context(context)
 		else:
 			world_system.context = context
-		# Mantener compatibilidad temporal con map_system directo
-		world_system.map_system = map_system
 		print("  ✓ Context → WorldSystem")
 
 	if warp_system:
@@ -106,7 +91,6 @@ func _inject_dependencies() -> void:
 			warp_system.context = context
 		# Mantener compatibilidad temporal
 		warp_system.world_system = world_system
-		warp_system.map_system = map_system
 		print("  ✓ Context → WarpSystem")
 
 	if mo_system:
@@ -120,8 +104,8 @@ func _inject_dependencies() -> void:
 	if overlay_layer and overlay_layer.has_method("set_context"):
 		overlay_layer.set_context(context)
 		print("  ✓ Context → OverlayLayer")
-		if map_system and map_system.has_method("refresh_overlay_settings"):
-			map_system.refresh_overlay_settings()
+		if world_system and world_system.has_method("refresh_overlay_settings"):
+			world_system.refresh_overlay_settings()
 
 	if event_system:
 		if event_system.has_method("set_context"):
@@ -138,9 +122,6 @@ func _inject_dependencies() -> void:
 
 func get_world_system() -> WorldSystem:
 	return world_system
-
-func get_map_system() -> MapSystem:
-	return map_system
 
 func get_event_system() -> EventSystem:
 	return event_system
@@ -161,10 +142,6 @@ func verify_systems() -> bool:
 		push_error("OverworldCoordinator: WorldSystem no encontrado")
 		all_ok = false
 
-	if not map_system:
-		push_error("OverworldCoordinator: MapSystem no encontrado")
-		all_ok = false
-
 	if not event_system:
 		push_error("OverworldCoordinator: EventSystem no encontrado")
 		all_ok = false
@@ -181,7 +158,7 @@ func verify_systems() -> bool:
 ## ================================================================================
 
 ## Configura el overworld según el estado del GameStateService
-## Este método de alto nivel orquesta WorldSystem y MapSystem para:
+## Este método de alto nivel orquesta WorldSystem para:
 ## - Cargar el mapa correcto
 ## - Crear el jugador
 ## - Posicionarlo en las coordenadas guardadas
@@ -189,15 +166,14 @@ func verify_systems() -> bool:
 ## Flujo:
 ## GameStart → OverworldCoordinator.configure_from_gamestate()
 ##   ├→ WorldSystem.change_to_map(map_id)
-##   │   └→ MapSystem.change_to_map_instance()
-##   ├→ MapSystem.load_player()
+##   ├→ WorldSystem.load_player()
 ##   └→ Posicionar jugador vía OverworldGrid
 func configure_from_gamestate() -> bool:
 	print("OverworldCoordinator: Iniciando configuración desde GameState...")
 
 	# Verificar que tenemos los sistemas necesarios
-	if not world_system or not map_system:
-		push_error("OverworldCoordinator: Sistemas no disponibles para configuración")
+	if not world_system:
+		push_error("OverworldCoordinator: WorldSystem no disponible para configuración")
 		return false
 
 	# Obtener datos del GameStateService
@@ -214,10 +190,10 @@ func configure_from_gamestate() -> bool:
 		push_error("OverworldCoordinator: No se pudo cargar el mapa: " + map_id)
 		return false
 
-	# 2. Cargar el jugador si no existe (vía MapSystem)
-	if not map_system.player:
+	# 2. Cargar el jugador si no existe (vía WorldSystem)
+	if not world_system.player:
 		print("OverworldCoordinator: Cargando jugador...")
-		success = map_system.load_player()
+		success = world_system.load_player()
 		if not success:
 			push_error("OverworldCoordinator: No se pudo cargar el jugador")
 			return false
@@ -226,12 +202,12 @@ func configure_from_gamestate() -> bool:
 
 	# 3. Posicionar al jugador en las coordenadas guardadas
 	print("OverworldCoordinator: Posicionando jugador...")
-	var grid = map_system.get_active_grid()
+	var grid = world_system.get_active_grid()
 	if not grid:
 		push_error("OverworldCoordinator: No se pudo obtener el OverworldGrid")
 		return false
 
-	var player = map_system.get_player()
+	var player = world_system.get_player()
 	if not player:
 		push_error("OverworldCoordinator: Player no disponible")
 		return false

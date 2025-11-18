@@ -89,11 +89,12 @@ func _find_battler() -> void:
 
 ## Conecta a la señal de movimiento del jugador para detección
 func _connect_to_player_for_detection() -> void:
-	var tree = get_tree()
-	if not tree or not is_instance_valid(tree):
+	var context = _get_context()
+	if not context:
+		push_warning("Trainer '%s': OverworldContext no disponible. La detección no funcionará." % name)
 		return
 
-	var player = tree.get_first_node_in_group("Player")
+	var player = context.get_player()
 	if not player or not is_instance_valid(player):
 		push_warning("Trainer '%s': No se encontró el Player válido. La detección no funcionará." % name)
 		return
@@ -163,9 +164,9 @@ func _update_detection_state() -> void:
 ## Desconecta todas las señales de detección
 func _disconnect_detection_signals() -> void:
 	# Desconectar del jugador (con verificación robusta)
-	var tree = get_tree()
-	if tree and is_instance_valid(tree):
-		var player = tree.get_first_node_in_group("Player")
+	var context = _get_context()
+	if context:
+		var player = context.get_player()
 		if player and is_instance_valid(player) and player.has_node("GridMotion"):
 			var player_motion = player.get_node("GridMotion")
 			if player_motion and is_instance_valid(player_motion):
