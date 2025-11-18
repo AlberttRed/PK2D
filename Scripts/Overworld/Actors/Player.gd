@@ -1,5 +1,7 @@
 extends Node2D
 
+const SURF_POKEMON_SCENE := preload("res://Scenes/Overworld/MO/SurfPokemonSprite.tscn")
+
 @onready var motion = $GridMotion
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
@@ -8,6 +10,7 @@ extends Node2D
 #const DEFAULT_SURF_FRAMES: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
 
 @export var actor_style: ActorStyle
+@export var surf_texture: Texture2D = preload("res://Sprites/Overworlds/Misc/surf_blob.png")
 # Referencia al OverworldContext (opcional, para acceso a sistemas)
 var context: OverworldContext = null
 
@@ -110,9 +113,16 @@ func stop():
 			Vector2.LEFT: sprite.animation = "idle_left"
 			Vector2.RIGHT: sprite.animation = "idle_right"
 		sprite.play()
-	else:
+	elif sprite.sprite_frames.has_animation("idle"):
 		# Modo normal: idle con frames direccionales
 		sprite.animation = "idle"
+		sprite.stop()
+		match motion.dir:
+			Vector2.UP: sprite.frame = 3
+			Vector2.DOWN: sprite.frame = 0
+			Vector2.LEFT: sprite.frame = 1
+			Vector2.RIGHT: sprite.frame = 2
+	else:
 		sprite.stop()
 		match motion.dir:
 			Vector2.UP: sprite.frame = 3
@@ -226,6 +236,7 @@ func set_surfing_mode(enabled: bool) -> void:
 		# Cambiar a sprite de surfing
 		var surf_frames = _get_surf_frames()
 		if surf_frames:
+			sprite.offset = Vector2(0,-8)
 			sprite.sprite_frames = surf_frames
 		# Convertir animación idle a idle direccional según la dirección actual
 		match motion.dir:
@@ -239,14 +250,88 @@ func set_surfing_mode(enabled: bool) -> void:
 		# Volver al sprite normal
 		_refresh_actor_style_frames()
 		# En modo normal, usar idle estático
-		sprite.animation = "idle"
-		sprite.stop()
+		if sprite.sprite_frames.has_animation("idle"):
+			sprite.animation = "idle"
+			sprite.stop()
+		else:
+			sprite.stop()
 		match motion.dir:
 			Vector2.UP: sprite.frame = 3
 			Vector2.DOWN: sprite.frame = 0
 			Vector2.LEFT: sprite.frame = 1
 			Vector2.RIGHT: sprite.frame = 2
 		remove_meta("can_surf")
+
+func start_surf() -> void:
+	if not context:
+		push_error("Player: Contexto no disponible para start_surf")
+		return
+
+	var map_system: MapSystem = context.get_map_system()
+	if not map_system:
+		push_error("Player: MapSystem no disponible para start_surf")
+		return
+
+	var grid: OverworldGrid = map_system.get_active_grid()
+	if not grid:
+		push_error("Player: OverworldGrid no disponible para start_surf")
+		return
+
+	if not motion:
+		push_error("Player: GridMotion no disponible para start_surf")
+		return
+
+	var front_tile: Vector2i = motion.current_tile() + Vector2i(motion.dir)
+	var direction_frame := _direction_to_frame_index(motion.dir)
+	var front_world := grid.tile_to_world_center(front_tile)
+
+	var splash := SURF_POKEMON_SCENE.instantiate()
+	if splash is Sprite2D:
+		var splash_sprite := splash as Sprite2D
+		splash_sprite.z_index = 1
+		if surf_texture:
+			splash_sprite.texture = surf_texture
+		var available_frames: int = max(splash_sprite.hframes * splash_sprite.vframes, 1) - 1
+		splash_sprite.frame = clamp(direction_frame, 0, available_frames)
+	splash.global_position = front_world
+
+	var parent_node := get_parent()
+	if parent_node:
+		parent_node.add_child(splash)
+	else:
+		add_child(splash)
+
+	_play_surf_jump_pose(direction_frame)
+	sprite.z_index = 1
+	var jump_success: bool = await motion.jump_to_tile(front_tile, false)
+
+	if is_instance_valid(splash):
+		splash.queue_free()
+
+	sprite.z_index = 0
+
+	if not jump_success:
+		global_position = front_world
+
+	set_surfing_mode(true)
+
+func _play_surf_jump_pose(direction_frame: int) -> void:
+	var surf_jump_frames := _get_surf_jump_frames()
+	if not surf_jump_frames:
+		return
+
+	if not surf_jump_frames.has_animation("default"):
+		return
+
+	sprite.offset = Vector2(0,-14)
+	sprite.sprite_frames = surf_jump_frames
+	sprite.animation = "default"
+	sprite.stop()
+	var frame_count := surf_jump_frames.get_frame_count("default")
+	if frame_count > 0:
+		sprite.frame = clamp(direction_frame, 0, frame_count - 1)
+	else:
+		sprite.frame = 0
 
 ## Verifica si el jugador puede moverse al tile destino en modo surfing
 ## Se llama desde GridMotion antes de validar movimiento
@@ -346,6 +431,11 @@ func _get_surf_frames() -> SpriteFrames:
 		return actor_style.surf_frames
 	return null#DEFAULT_SURF_FRAMES
 
+func _get_surf_jump_frames() -> SpriteFrames:
+	if actor_style and actor_style.surf_jump_frames:
+		return actor_style.surf_jump_frames
+	return null
+
 func _get_run_frames() -> SpriteFrames:
 	if actor_style and actor_style.run_frames:
 		return actor_style.run_frames
@@ -420,3 +510,15 @@ func _restore_mo_state() -> void:
 	_refresh_actor_style_frames()
 	motion.face(_mo_idle_direction)
 	stop()
+
+func _direction_to_frame_index(direction: Vector2) -> int:
+	match direction:
+		Vector2.UP:
+			return 0
+		Vector2.DOWN:
+			return 1
+		Vector2.LEFT:
+			return 2
+		Vector2.RIGHT:
+			return 3
+	return 0

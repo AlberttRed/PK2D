@@ -8,6 +8,8 @@ class_name ActorStyle
 @export var mo_start_frames: SpriteFrames
 @export var mo_end_frames: SpriteFrames
 
+@export var surf_jump_frames: SpriteFrames
+
 @export var bike_frames: SpriteFrames
 
 @export var extra_animations: Dictionary[String, SpriteFrames] = {}

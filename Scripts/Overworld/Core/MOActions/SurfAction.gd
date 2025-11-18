@@ -82,18 +82,17 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 
 	await _play_player_mo_end(_player)
 
-	# Activar modo surfing en el jugador
-	if _player.has_method("set_surfing_mode"):
+	var played_start_surf := false
+	if _player.has_method("start_surf"):
+		await _player.start_surf()
+		played_start_surf = true
+	elif _player.has_method("set_surfing_mode"):
 		_player.set_surfing_mode(true)
 
-	# Hacer un paso automático hacia el agua
-	if _player.has_node("GridMotion"):
+	if not played_start_surf and _player.has_node("GridMotion"):
 		var motion = _player.get_node("GridMotion")
-		# Obtener dirección actual del jugador
 		var facing_direction = motion.dir
-		# Hacer el paso hacia el agua
 		motion.try_step(facing_direction)
-		# Esperar a que termine el movimiento
 		if motion.moving:
 			await motion.step_finished
 
