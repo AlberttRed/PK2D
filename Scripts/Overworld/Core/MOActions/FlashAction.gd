@@ -30,14 +30,14 @@ func can_use(player: Node, _target: Node) -> bool:
 
 func execute(player: Node, _target: Node, context: Node) -> Dictionary:
 	var overworld_context := _extract_overworld_context(context)
-	var map_system: MapSystem = overworld_context.get_map_system() if overworld_context else null
+	var world_system: WorldSystem = overworld_context.get_world_system() if overworld_context else null
 	var _overlay := overworld_context.get_overlay_layer() if overworld_context else null
 
-	if not mo_system or not overworld_context or not map_system:
+	if not mo_system or not overworld_context or not world_system:
 		push_warning("FlashAction: Dependencias no disponibles. Abortando.")
 		return {"success": false, "cancelled": false, "error": "Dependencias no disponibles"}
 
-	var active_map := map_system.get_active_map()
+	var active_map := world_system.get_active_map()
 	if active_map == null:
 		push_warning("FlashAction: No hay mapa activo para aplicar destello.")
 		return {"success": false, "cancelled": false, "error": "Mapa no disponible"}
@@ -59,7 +59,7 @@ func execute(player: Node, _target: Node, context: Node) -> Dictionary:
 	GameStateService.set_event_flag("flash_on", true)
 
 	# Reaplicar configuraciones del mapa para reflejar flag global
-	map_system.refresh_overlay_settings()
+	world_system.refresh_overlay_settings()
 
 	return {"success": true, "cancelled": false}
 

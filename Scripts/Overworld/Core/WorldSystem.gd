@@ -10,7 +10,7 @@ class_name WorldSystem
 ## -------------------
 ## WorldSystem es el gestor global de mapas del juego. Centraliza la carga, descarga,
 ## cacheo y gestión de todos los MapChunks (escenas de mapa) del mundo.
-## Actúa como capa superior al MapSystem, que solo mantiene el mapa activo y el jugador.
+## Gestiona el mapa activo, los mapas vecinos y el jugador.
 ##
 ## RESPONSABILIDADES PRINCIPALES:
 ## -----------------------------
@@ -25,22 +25,20 @@ class_name WorldSystem
 ## -----------------------
 ## [Frame 0] Overworld.tscn se instancia
 ##   ├── WorldSystem._ready()
-##   │   ├── Obtiene referencia a MapSystem (nodo hermano)
 ##   │   ├── _build_scene_index() → Indexa escenas de world_map_scenes
 ##   │   └── _register_maps() → Registra mapas y sus vecinos
 ##   │
-##   ├── MapSystem._ready()
 ##   └── EventSystem._ready()
 ##
 ## [Frame 1] GameStart llama a OverworldCoordinator.configure_from_gamestate()
 ##   ├── WorldSystem.change_to_map("MapaPuebloTest")
 ##   │   ├── get_map() → Carga/obtiene instancia del mapa
-##   │   ├── MapSystem.change_to_map_instance() → Activa el mapa
+##   │   ├── change_to_map_instance() → Activa el mapa
 ##   │   ├── _preload_neighbors() → Precarga vecinos (Ruta1, Ruta21...)
 ##   │   ├── _unload_non_neighbors() → Descarga mapas no vecinos
 ##   │   └── Cola llamada diferida: force_sync_to_gamestate()
 ##   │
-##   ├── MapSystem.load_player() → Crea el nodo Player
+##   ├── WorldSystem.load_player() → Crea el nodo Player
 ##   └── OverworldGrid.position_player_at_tile() → Posiciona jugador
 ##
 ## [Frame 2] Se ejecutan las llamadas diferidas
@@ -126,10 +124,8 @@ class_name WorldSystem
 ##
 ## JERARQUÍA DE SISTEMAS:
 ## ---------------------
-##   WorldSystem (Gestor global)
-##       ↓ delega activación
-##   MapSystem (Mapa activo + Jugador)
-##       ↓ utiliza
+##   WorldSystem (Gestor global: mapas, jugador, vecinos)
+##       ↓ contiene
 ##   OverworldGrid (Lógica de tiles del mapa activo)
 ##
 ## MÉTODOS PÚBLICOS IMPORTANTES:
@@ -187,16 +183,20 @@ var map_registry: Dictionary = {} # {map_id: MapData}
 ## Índice de escenas para búsqueda rápida (nombre_archivo: PackedScene)
 var scene_index: Dictionary = {}
 
-## Lista de escenas de mapa para exportación (migrada desde MapSystem)
+## Lista de escenas de mapa para exportación
 @export var world_map_scenes: Array[PackedScene] = []
 
 ## Referencia al OverworldContext (inyectada desde OverworldCoordinator)
 var context: OverworldContext = null  # OverworldContext
 
-## Referencia al MapSystem (inyectada desde OverworldCoordinator)
-## DEPRECATED: Usar context.get_map_system() en su lugar
-## Se mantiene temporalmente para compatibilidad
-var map_system: MapSystem = null
+## Mapa activo actual
+var active_map: Node = null
+
+## Referencia al jugador (instanciado como hijo de WorldSystem)
+var player: Node = null
+
+## Mapa anterior (para limpieza)
+var previous_map: Node = null
 
 ## Configuración de caché y precarga de vecinos
 @export var enable_map_caching: bool = true
@@ -211,8 +211,8 @@ func _ready() -> void:
 	_register_maps()
 
 	print("WorldSystem: Sistema inicializado")
-	# NOTA: El contexto y map_system se inyectan desde OverworldCoordinator después de _ready()
-	# Se validarán cuando se usen en los métodos de lógica
+	# NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
+	# Se validará cuando se use en los métodos de lógica
 
 
 ## Construye un índice de escenas para búsqueda rápida
@@ -400,26 +400,22 @@ func _manage_cache() -> void:
 func _free_cached_map(map_data: MapData) -> void:
 	if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 		# Solo liberar si NO es el mapa activo
-		if map_system and map_data.cached_instance != map_system.active_map:
+		if map_data.cached_instance != active_map:
 			print("WorldSystem: Liberando mapa cacheado: %s" % map_data.id)
 			map_data.cached_instance.queue_free()
 			map_data.cached_instance = null
 
 
-## Solicita cambio al MapSystem
+## Cambia al mapa especificado
 func change_to_map(map_id: String) -> bool:
-	if not map_system:
-		push_error("WorldSystem: MapSystem no disponible")
-		return false
-
-	print("WorldSystem: Solicitando cambio de mapa a: %s" % map_id)
+	print("WorldSystem: Cambiando a mapa: %s" % map_id)
 
 	var map_instance := get_map(map_id)
 	if not map_instance:
 		return false
 
-	# Delegar al MapSystem (que manejará el jugador, grid, etc.)
-	var success = map_system.change_to_map_instance(map_instance)
+	# Cambiar al mapa usando la instancia
+	var success = change_to_map_instance(map_instance)
 
 	if success:
 		# Precarga de vecinos (para transiciones suaves)
@@ -432,6 +428,61 @@ func change_to_map(map_id: String) -> bool:
 		call_deferred("force_sync_to_gamestate")
 
 	return success
+
+
+## Cambia al mapa usando una instancia ya proporcionada (por WorldSystem)
+## NOTA: En sistema seamless, el mapa puede ya estar renderizado como vecino
+func change_to_map_instance(map_instance: Node) -> bool:
+	if not map_instance:
+		push_error("WorldSystem: Instancia de mapa inválida")
+		return false
+
+	var map_id := map_instance.name
+	print("WorldSystem: Cambiando a instancia de mapa: ", map_id)
+
+	# Si ya estamos en este mapa, no hacer nada
+	if active_map == map_instance:
+		print("WorldSystem: Ya estamos en el mapa: ", map_id)
+		return true
+
+	# Desactivar el mapa anterior (pero NO removerlo - sistema seamless)
+	if active_map:
+		_cleanup_previous_map()
+
+		# En sistema seamless, los mapas pueden permanecer visibles
+		# Solo desactivamos el procesamiento si tiene el método
+		if active_map.has_method("deactivate"):
+			active_map.deactivate()
+		else:
+			_disable_map_processing(active_map)
+
+	# Añadir como child si no está ya en la jerarquía (primera carga)
+	if not is_ancestor_of(map_instance):
+		# CRÍTICO: Remover del padre actual si tiene uno (puede estar en cache_container)
+		var current_parent = map_instance.get_parent()
+		if current_parent:
+			current_parent.remove_child(map_instance)
+			print("  → Removido de: %s" % current_parent.name)
+
+		add_child(map_instance)
+		print("  ✓ Mapa añadido a WorldSystem")
+	else:
+		print("  ✓ Mapa ya estaba en WorldSystem (seamless)")
+
+	# Configurar visibilidad y procesamiento
+	_set_subtree_visibility(map_instance, true)
+
+	# Activar el procesamiento si tiene el método
+	if map_instance.has_method("activate"):
+		map_instance.activate()
+	else:
+		_enable_map_processing(map_instance)
+
+	# Configurar el mapa activo (esto establece active_map y ejecuta toda la configuración)
+	set_active_map(map_instance)
+
+	print("WorldSystem: Cambio de mapa completado: ", map_id)
+	return true
 
 
 ## Precarga y RENDERIZA mapas vecinos (para mundo seamless)
@@ -452,15 +503,15 @@ func _preload_neighbors(map_id: String) -> void:
 			var neighbor_instance = get_map(neighbor_id)
 
 			if neighbor_instance and not neighbor_data.is_rendered:
-				# CRÍTICO: Añadir al MapSystem para que sea visible (no al cache)
-				if not map_system.is_ancestor_of(neighbor_instance):
+				# CRÍTICO: Añadir al WorldSystem para que sea visible (no al cache)
+				if not is_ancestor_of(neighbor_instance):
 					# Remover del padre actual si tiene uno
 					var current_parent = neighbor_instance.get_parent()
 					if current_parent:
 						current_parent.remove_child(neighbor_instance)
 
-					# Añadir al MapSystem
-					map_system.add_child(neighbor_instance)
+					# Añadir al WorldSystem
+					add_child(neighbor_instance)
 
 				# Posicionar según coordenadas mundiales
 				if neighbor_instance is Node2D:
@@ -510,9 +561,9 @@ func _unrender_map(map_data: MapData) -> void:
 
 	var map_instance = map_data.cached_instance
 
-	# Remover del MapSystem si está ahí
-	if map_system and map_system.is_ancestor_of(map_instance):
-		map_system.remove_child(map_instance)
+	# Remover del WorldSystem si está ahí
+	if is_ancestor_of(map_instance):
+		remove_child(map_instance)
 
 	# El nodo queda sin padre pero en memoria vía cached_instance (referencia en GDScript)
 	# Esto es más limpio que moverlo entre contenedores
@@ -556,14 +607,10 @@ func _enable_map_processing(map_node: Node) -> void:
 ## Maneja el cruce seamless de mapas (escucha señal de GridMotion)
 ## SISTEMA UNIFICADO: Gestiona active_map, neighbors y GameState
 func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
-
-	if not map_system:
-		return
-
 	# Buscar el nuevo mapa por ID
 	var new_map: Node = null
-	for child in map_system.get_children():
-		if child.name == to_map_id:
+	for child in get_children():
+		if child.name == to_map_id and not child.is_in_group("Player"):
 			new_map = child
 			break
 
@@ -571,8 +618,8 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 		push_warning("WorldSystem: No se encontró el mapa destino: %s" % to_map_id)
 		return
 
-	# Cambiar el active_map en MapSystem
-	var old_map = map_system.active_map
+	# Cambiar el active_map
+	var old_map = active_map
 	if old_map != new_map:
 		# Desactivar el mapa anterior
 		if old_map:
@@ -587,11 +634,11 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 		else:
 			_enable_map_processing(new_map)
 
-		# Reutilizar la ruta estándar de MapSystem para establecer mapa activo
-		map_system.set_active_map(new_map)
+		# Establecer mapa activo
+		set_active_map(new_map)
 
 		# Emitir cambio de grid activo (CRÍTICO para Occupancy y otros sistemas)
-		var new_grid = map_system.get_active_grid()
+		var new_grid = get_active_grid()
 		if new_grid and context:
 			context.emit_active_grid_changed(new_grid)
 
@@ -608,11 +655,6 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 ## ========================================================================================
 ## FIN SISTEMA DE DETECCIÓN SEAMLESS
 ## ========================================================================================
-
-
-## Método para compatibilidad con el MapSystem actual
-func load_map(map_id: String) -> Node:
-	return get_map(map_id)
 
 
 ## Obtiene información de un mapa sin cargarlo
@@ -636,7 +678,7 @@ func clear_cache() -> void:
 	for map_data: MapData in map_registry.values():
 		if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 			# No liberar el mapa activo
-			if not map_system or map_data.cached_instance != map_system.active_map:
+			if map_data.cached_instance != active_map:
 				map_data.cached_instance.queue_free()
 				map_data.cached_instance = null
 
@@ -647,8 +689,8 @@ func print_registry_status() -> void:
 	print("Total mapas registrados: %d" % map_registry.size())
 	print("Mapas cacheados: %d" % _count_cached_maps())
 	var active_map_name = "ninguno"
-	if map_system and map_system.active_map:
-		active_map_name = map_system.active_map.name
+	if active_map:
+		active_map_name = active_map.name
 	print("Mapa activo: %s" % active_map_name)
 	for map_id in map_registry.keys():
 		var map_data: MapData = map_registry[map_id]
@@ -694,11 +736,11 @@ func sync_position_for_save() -> void:
 
 ## Verifica que la sincronización con GameState esté funcionando correctamente
 func verify_gamestate_sync() -> bool:
-	if not GameStateService or not map_system:
+	if not GameStateService:
 		return false
 
 	var game_map_id = GameStateService.get_current_map_id()
-	var actual_map_id = map_system.active_map.name if map_system.active_map else ""
+	var actual_map_id = active_map.name if active_map else ""
 
 	if game_map_id != actual_map_id:
 		push_warning("WorldSystem: Desincronización detectada - GameState: %s, Actual: %s" % [game_map_id, actual_map_id])
@@ -709,12 +751,12 @@ func verify_gamestate_sync() -> bool:
 
 ## Fuerza la sincronización completa con GameState (usado en cambios de mapa)
 func force_sync_to_gamestate() -> void:
-	if not GameStateService or not map_system:
+	if not GameStateService:
 		return
 
 	# Sincronizar mapa (lo más importante en cambios de mapa)
-	if map_system.active_map:
-		GameStateService.set_current_map_id(map_system.active_map.name)
+	if active_map:
+		GameStateService.set_current_map_id(active_map.name)
 
 	# Sincronizar posición del jugador si está disponible
 	var player_grid_motion = _get_player_grid_motion()
@@ -729,7 +771,6 @@ func force_sync_to_gamestate() -> void:
 
 ## Obtiene la referencia al componente GridMotion del jugador
 func _get_player_grid_motion() -> Node:
-	var player = map_system.get_player() if map_system else null
 	if not player:
 		push_error("WorldSystem: Player no disponible en _get_player_grid_motion")
 		return null
@@ -792,20 +833,18 @@ func restore_previous_overworld_state() -> bool:
 		await get_tree().process_frame
 
 		# Posicionar al jugador en la posición guardada
-		if map_system:
-			var grid = map_system.get_active_grid()
-			if grid:
-				var tile = state.get("tile", Vector2i.ZERO)
-				var direction = state.get("direction", Vector2.DOWN)
+		var grid = get_active_grid()
+		if grid:
+			var tile = state.get("tile", Vector2i.ZERO)
+			var direction = state.get("direction", Vector2.DOWN)
 
-				var player = map_system.get_player() if map_system else null
-				if player:
-					grid.position_player_at_tile(tile, player)
-					grid.set_player_facing_direction(direction, player)
+			if player:
+				grid.position_player_at_tile(tile, player)
+				grid.set_player_facing_direction(direction, player)
 
-				print("WorldSystem: Jugador restaurado en tile %s mirando %s" % [tile, direction])
+			print("WorldSystem: Jugador restaurado en tile %s mirando %s" % [tile, direction])
 
-			return true
+		return true
 
 	push_warning("WorldSystem: No se encontró estado previo del overworld para restaurar")
 	return false
@@ -825,17 +864,13 @@ func _is_overworld_map(map_id: String) -> bool:
 
 ## Método público para warps con restauración automática de estado
 func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
-	if not map_system:
-		push_error("WorldSystem: MapSystem no disponible para warp con gestión de estado")
-		return false
-
 	var player_grid_motion = _get_player_grid_motion()
 	if not player_grid_motion:
 		push_error("WorldSystem: No se pudo obtener GridMotion del jugador")
 		return false
 
 	# Guardar estado actual si vamos a un interior
-	var current_map_id = map_system.active_map.name if map_system.active_map else ""
+	var current_map_id = active_map.name if active_map else ""
 	var is_going_to_interior = not _is_overworld_map(to_map_id)
 	var is_leaving_interior = not _is_overworld_map(current_map_id) and _is_overworld_map(to_map_id)
 
@@ -862,11 +897,9 @@ func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
 	else:
 		# Warp normal usando spawn_id
 		await get_tree().process_frame
-		if map_system:
-			var grid = map_system.get_active_grid()
-			var player = map_system.get_player()
-			if grid and player:
-				return grid.position_player_at_spawn(spawn_id, player)
+		var grid = get_active_grid()
+		if grid and player:
+			return grid.position_player_at_spawn(spawn_id, player)
 
 	return true
 
@@ -890,6 +923,219 @@ func print_warp_history() -> void:
 			state.get("tile", "?"),
 			state.get("direction", "?")
 		])
+
+
+## ========================================================================================
+## MÉTODOS DE MAPSYSTEM (MIGRADOS)
+## ========================================================================================
+
+## Obtiene el mapa activo actual
+func get_active_map() -> Node:
+	return active_map
+
+## Obtiene el OverworldGrid del mapa activo
+func get_active_grid() -> OverworldGrid:
+	if not active_map:
+		push_warning("WorldSystem: No hay mapa activo")
+		return null
+
+	var grid = active_map.get_node("OverworldGrid")
+	if not grid or not grid is OverworldGrid:
+		push_warning("WorldSystem: El mapa activo no tiene un OverworldGrid válido")
+		return null
+
+	return grid
+
+## Obtiene el jugador
+func get_player() -> Node:
+	return player
+
+## Carga el jugador dinámicamente
+func load_player() -> bool:
+	print("WorldSystem: Cargando jugador dinámicamente...")
+
+	# Cargar la escena del jugador
+	var player_scene = preload("res://Scenes/Overworld/Actors/Player.tscn")
+	if not player_scene:
+		push_error("WorldSystem: No se pudo cargar la escena del jugador")
+		return false
+
+	# Instanciar el jugador
+	var player_instance = player_scene.instantiate()
+	if not player_instance:
+		push_error("WorldSystem: No se pudo instanciar el jugador")
+		return false
+
+	# Añadir el jugador como hijo del WorldSystem
+	add_child(player_instance)
+	player = player_instance
+
+	# Registrar el jugador en el contexto si está disponible
+	if context:
+		context.register_system("Player", player_instance)
+		print("WorldSystem: Jugador registrado en el contexto")
+
+	# Inyectar el contexto al jugador si tiene el método
+	if player_instance.has_method("set_context"):
+		player_instance.set_context(context)
+
+	print("WorldSystem: Jugador cargado dinámicamente")
+	return true
+
+## Asigna un mapa como activo
+func set_active_map(map_scene: Node) -> void:
+	if not map_scene:
+		push_error("WorldSystem: No se puede asignar un mapa nulo")
+		return
+
+	# Si ya hay un mapa activo, lo removemos
+	if active_map and active_map != map_scene:
+		# Desconectar el jugador del mapa anterior si es necesario
+		_cleanup_previous_map()
+
+	active_map = map_scene
+
+	# Asegurar que el mapa esté en la escena
+	if not is_instance_valid(active_map) or not is_ancestor_of(active_map):
+		push_error("WorldSystem: El mapa debe ser un nodo hijo de WorldSystem")
+		return
+
+	# Obtener el grid una sola vez
+	var grid = get_active_grid()
+
+	# Inyectar contexto al grid del mapa
+	if context and grid:
+		if grid.has_method("set_context"):
+			grid.set_context(context)
+
+	# Configurar el jugador para el nuevo mapa
+	_setup_player_for_map()
+
+	# Aplicar configuración de overlay asociada al mapa
+	_apply_overlay_settings(map_scene)
+
+	# Emitir cambio de grid activo
+	if context and grid:
+		context.emit_active_grid_changed(grid)
+
+## Limpia la configuración del mapa anterior
+func _cleanup_previous_map() -> void:
+	if not active_map:
+		return
+
+	# Aquí se pueden añadir limpiezas específicas si es necesario
+	# Por ejemplo, desconectar señales, limpiar referencias, etc.
+	pass
+
+## Configura el jugador para el mapa activo
+func _setup_player_for_map() -> void:
+	if not player or not active_map:
+		return
+
+	# Asegurar que el jugador esté en la jerarquía correcta
+	if not is_ancestor_of(player):
+		# Si el jugador no está bajo WorldSystem, moverlo
+		var parent = player.get_parent()
+		if parent:
+			parent.remove_child(player)
+		add_child(player)
+
+	# Configurar la cámara del jugador para el nuevo mapa
+	var camera = player.get_node("Camera2D")
+	if camera and camera.has_method("set_map_layer_path"):
+		var grid = get_active_grid()
+		if grid:
+			var terrain_layer = grid.get_node("Terrain")
+			if terrain_layer:
+				camera.map_layer_path = terrain_layer.get_path()
+
+## Configura la visibilidad del nodo raíz (NO recursivo)
+## Los nodos hijos gestionan su propia visibilidad (respeta SpawnPoints, etc.)
+func _set_subtree_visibility(node: Node, vis: bool) -> void:
+	if node is CanvasItem:
+		(node as CanvasItem).visible = vis
+	# NO hacer recursivo - respeta la visibilidad configurada de los hijos
+	# Ejemplo: SpawnPoints con sprite oculto, eventos con sprites personalizados, etc.
+
+## Configura la capa de overlays según los metadatos del mapa activo
+func _apply_overlay_settings(map_scene: Node) -> void:
+	if not context:
+		return
+
+	var overlay := context.get_overlay_layer()
+	if not overlay:
+		return
+
+	if not map_scene or not map_scene.has_method("get_overlay_settings"):
+		overlay.reset_to_defaults()
+		return
+
+	var settings: Dictionary = map_scene.get_overlay_settings()
+
+	var darkness: float = float(settings.get("darkness", 0.0))
+	var weather: String = str(settings.get("weather", "none"))
+	var flashlight_required: bool = bool(settings.get("flashlight_required", false))
+	overlay.set_weather(weather)
+
+	var flash_on := GameStateService.get_event_flag("flash_on")
+	if flash_on:
+		overlay.set_darkness(0.0, 0.0)
+		overlay.set_flashlight_enabled(false)
+	else:
+		overlay.set_darkness(darkness, 0.0)
+		overlay.set_flashlight_enabled(flashlight_required)
+
+## Reaplica la configuración de overlay para el mapa activo
+func refresh_overlay_settings() -> void:
+	_apply_overlay_settings(active_map)
+
+## Encuentra el grid que contiene una posición global y retorna grid + tile convertido
+## Optimizado: convierte una sola vez, evitando cálculos duplicados
+## Retorna: {"grid": OverworldGrid, "tile": Vector2i}
+func find_grid_and_tile_at_world_position(world_pos: Vector2) -> Dictionary:
+	# Iterar por todos los hijos de WorldSystem (mapas renderizados)
+	for child in get_children():
+		if child.is_in_group("Player"):
+			continue
+
+		var grid = child.get_grid() if child.has_method("get_grid") else null
+		if not grid:
+			continue
+
+		# Convertir posición global a tile local de este grid
+		var tile_local = grid.world_to_tile(world_pos)
+
+		# Verificar si el grid tiene tile data en esa posición
+		var tile_data = grid.get_tile_data(tile_local)
+		if not tile_data.is_empty():
+			return {"grid": grid, "tile": tile_local}  # Encontrado!
+
+	return {"grid": null, "tile": Vector2i.ZERO}
+
+## Verifica movimiento usando posiciones globales y retorna resultado + grid destino
+## Optimizado: usa find_grid_and_tile_at_world_position para evitar conversiones duplicadas
+## Retorna: {"can_move": bool, "target_grid": OverworldGrid, "from_tile": Vector2i, "to_tile": Vector2i}
+func check_world_movement(actor: Node, from_world_pos: Vector2, to_world_pos: Vector2) -> Dictionary:
+	# Encontrar el grid que contiene la posición destino (con tile ya convertido)
+	var to_result = find_grid_and_tile_at_world_position(to_world_pos)
+	var target_grid: OverworldGrid = to_result["grid"]
+	var to_tile: Vector2i = to_result["tile"]
+
+	if not target_grid:
+		return {"can_move": false, "target_grid": null, "from_tile": Vector2i.ZERO, "to_tile": Vector2i.ZERO}
+
+	# Convertir posición origen al sistema del grid destino
+	var from_tile = target_grid.world_to_tile(from_world_pos)
+
+	# Verificar si puede moverse usando la lógica del grid correspondiente
+	var can_move = target_grid.can_step_to(actor, from_tile, to_tile)
+
+	return {
+		"can_move": can_move,
+		"target_grid": target_grid,
+		"from_tile": from_tile,
+		"to_tile": to_tile
+	}
 
 
 func set_context(overworld_context: OverworldContext) -> void:

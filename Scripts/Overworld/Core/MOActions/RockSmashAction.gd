@@ -154,11 +154,11 @@ func _maybe_trigger_rock_smash_encounter(overworld_context: OverworldContext, pl
 
 
 func _get_current_map_encounters(overworld_context: OverworldContext) -> MapAreaEncounters:
-	var map_system := overworld_context.get_map_system()
-	if not map_system:
+	var world_system := overworld_context.get_world_system()
+	if not world_system:
 		return null
 
-	var active_map := map_system.get_active_map()
+	var active_map := world_system.get_active_map()
 	if not active_map:
 		return null
 

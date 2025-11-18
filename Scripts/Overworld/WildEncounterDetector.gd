@@ -28,7 +28,7 @@ const OVERLAY_Z_HIGH := 5  # Al llegar (player debajo)
 
 @onready var player: Node2D = get_parent()
 var grid_motion: GridMotion
-var map_system: MapSystem
+var world_system: WorldSystem
 var context: OverworldContext = null
 
 ## Cache del MapAreaEncounters del mapa actual (optimización)
@@ -132,13 +132,13 @@ func _get_encounter_type_from_tile(grid: OverworldGrid, tile: Vector2i) -> Varia
 
 ## Obtiene el grid activo con validación
 func _get_active_grid() -> OverworldGrid:
-	# Actualizar referencia a MapSystem si es necesario
-	if not map_system and context:
-		map_system = context.get_map_system()
+	# Actualizar referencia a WorldSystem si es necesario
+	if not world_system and context:
+		world_system = context.get_world_system()
 
-	if not map_system:
+	if not world_system:
 		return null
-	return map_system.get_active_grid()
+	return world_system.get_active_grid()
 
 
 ## Maneja el movimiento hacia un tile de destino (destruye overlay anterior y crea nuevo si es hierba)
@@ -274,11 +274,11 @@ func _update_encounters_cache() -> void:
 	current_map_encounters = null
 	current_map_name = ""
 
-	if not map_system:
+	if not world_system:
 		_disconnect_signal()
 		return
 
-	var active_grid := map_system.get_active_grid()
+	var active_grid := world_system.get_active_grid()
 	if not active_grid:
 		_disconnect_signal()
 		return
@@ -460,12 +460,12 @@ func get_current_map_debug_info() -> String:
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	if context:
-		map_system = context.get_map_system()
+		world_system = context.get_world_system()
 		# Conectar a las señales locales relevantes
 		if not context.seamless_map_crossed.is_connected(_on_map_changed):
 			context.seamless_map_crossed.connect(_on_map_changed)
 		var warp_sys = context.get_warp_system()
 		if warp_sys and not warp_sys.warp_finished.is_connected(_on_map_changed_warp):
 			warp_sys.warp_finished.connect(_on_map_changed_warp)
-		# Actualizar cache de encuentros tras obtener MapSystem
+		# Actualizar cache de encuentros tras obtener WorldSystem
 		_update_encounters_cache()

@@ -157,14 +157,14 @@ func _initialize_player_grid() -> void:
 		push_error("Occupancy: Contexto no disponible para inicializar grid")
 		return
 
-	var map_system: MapSystem = context.get_map_system()
-	if not map_system:
-		push_error("Occupancy: MapSystem no disponible en el contexto")
+	var world_system: WorldSystem = context.get_world_system()
+	if not world_system:
+		push_error("Occupancy: WorldSystem no disponible en el contexto")
 		return
 
-	grid = map_system.get_active_grid()
+	grid = world_system.get_active_grid()
 	if not grid:
-		push_error("Occupancy: No se pudo obtener el OverworldGrid del MapSystem")
+		push_error("Occupancy: No se pudo obtener el OverworldGrid del WorldSystem")
 		return
 
 	previous_grid = grid  # Inicializar para evitar null en primer cruce

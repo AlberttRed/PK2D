@@ -40,7 +40,7 @@ func _ready() -> void:
 	# Registrar todos los SpawnPoints del mapa
 	_register_all_spawns()
 
-	# El contexto se inyectará desde MapSystem cuando se active este mapa
+	# El contexto se inyectará desde WorldSystem cuando se active este mapa
 	# Los eventos recibirán el contexto después de que el grid lo reciba
 
 	# Activar redibujado continuo si el modo debug está activado
@@ -429,7 +429,7 @@ func set_player_facing_direction(direction: Vector2, player: Node) -> void:
 ## CONTEXT MANAGEMENT
 ## ============================================================================
 
-## Establece el contexto del Overworld (llamado desde MapSystem al activar el mapa)
+## Establece el contexto del Overworld (llamado desde WorldSystem al activar el mapa)
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	print("OverworldGrid: Contexto establecido")

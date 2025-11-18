@@ -13,7 +13,6 @@ var context: OverworldContext = null
 # Referencias a otros sistemas (inyectadas desde OverworldCoordinator)
 # DEPRECATED: Usar context.get_X_system() en su lugar
 # Se mantienen temporalmente para compatibilidad
-var map_system: MapSystem = null
 var world_system: WorldSystem = null
 
 # Variables del estado actual
@@ -88,31 +87,23 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 			print("WarpSystem: Movimiento detenido, continuando warp")
 
 	# 1. Obtener referencias de sistemas del contexto
-	var ms: MapSystem = null
 	var ws: WorldSystem = null
 
 	if context:
-		ms = context.get_map_system()
 		ws = context.get_world_system()
 	else:
 		# Fallback temporal: actualizar referencias
 		_update_references()
-		ms = map_system
 		ws = world_system
 
 	# Verificar que tenemos las referencias necesarias
-	if not ms:
-		push_error("WarpSystem: No se pudo obtener el MapSystem")
-		is_warping = false
-		return
-
 	if not ws:
 		push_error("WarpSystem: No se pudo obtener el WorldSystem")
 		is_warping = false
 		return
 
 	# 1. Verificar si necesitamos cambiar de mapa
-	var current_map = ms.get_active_map()
+	var current_map = ws.get_active_map()
 	var needs_map_change = not current_map or current_map.name != map_id
 
 	if needs_map_change:
@@ -127,7 +118,7 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 				return
 
 			# Verificar eventos TOUCH en la nueva posición
-			var active_grid = ms.get_active_grid()
+			var active_grid = ws.get_active_grid()
 			if active_grid:
 				_check_touch_events_at_player_position(active_grid)
 
@@ -145,7 +136,7 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 
 	# 2. Posicionar al jugador en el spawn point correspondiente
 	print("WarpSystem: Posicionando jugador en spawn: ", spawn_id)
-	var grid = ms.get_active_grid()
+	var grid = ws.get_active_grid()
 	if not grid:
 		push_error("WarpSystem: No se pudo obtener el OverworldGrid del mapa activo")
 		is_warping = false
@@ -185,11 +176,11 @@ func get_current_warp_info() -> Dictionary:
 func is_ready() -> bool:
 	# Si tenemos contexto, verificar con él
 	if context:
-		return not is_warping and context.get_map_system() != null and context.get_world_system() != null
+		return not is_warping and context.get_world_system() != null
 
 	# Fallback temporal: actualizar referencias
 	_update_references()
-	return not is_warping and map_system != null and world_system != null
+	return not is_warping and world_system != null
 
 ## Verifica si hay eventos con trigger TOUCH en la posición del jugador tras un warp
 func _check_touch_events_at_player_position(grid: Node) -> void:

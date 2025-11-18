@@ -1,12 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=10 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
 [ext_resource type="PackedScene" uid="uid://1owe4s00dp15" path="res://Scenes/Overworld/Maps/TestMap2/MapaPuebloTest.tscn" id="2_a8jsd"]
-[ext_resource type="Script" uid="uid://dce34esefkiqj" path="res://Scripts/Overworld/Core/MapSystem.gd" id="3_map_system"]
 [ext_resource type="PackedScene" uid="uid://dpxa6dptr3hll" path="res://Scenes/Overworld/Maps/MapHouseTest.tscn" id="3_ytpjq"]
-[ext_resource type="Script" uid="uid://cjx738lc2vvbb" path="res://Scripts/Overworld/Core/WarpSystem.gd" id="4_warp_system"]
 [ext_resource type="Script" uid="uid://by1tjq02r4a3s" path="res://Scripts/Overworld/Core/MOSystem.gd" id="4_mo_system"]
+[ext_resource type="Script" uid="uid://cjx738lc2vvbb" path="res://Scripts/Overworld/Core/WarpSystem.gd" id="4_warp_system"]
 [ext_resource type="PackedScene" uid="uid://d1bs2x4y8nuby" path="res://Scenes/Overworld/Maps/MapNeighborTest.tscn" id="5_ius67"]
 [ext_resource type="PackedScene" uid="uid://ch2msdomuqykb" path="res://Scenes/Overworld/Maps/MapCiudadTest.tscn" id="6_de4hb"]
 [ext_resource type="Script" uid="uid://duu3c0stuk0nk" path="res://Scripts/Overworld/Core/WorldSystem.gd" id="6_world_system"]
@@ -17,10 +16,6 @@ script = ExtResource("1_overworld")
 [node name="WorldSystem" type="Node" parent="." groups=["WorldSystem"]]
 script = ExtResource("6_world_system")
 world_map_scenes = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq"), ExtResource("5_ius67"), ExtResource("6_de4hb")])
-
-[node name="MapSystem" type="Node2D" parent="." groups=["MapSystem"]]
-y_sort_enabled = true
-script = ExtResource("3_map_system")
 
 [node name="EventSystem" type="Node" parent="." groups=["EventSystem"]]
 script = ExtResource("1_fvdb5")

@@ -42,13 +42,13 @@ var active_tween: Tween = null  # Referencia al tween activo
 ## Referencia al OverworldContext (inyectada desde el actor padre)
 var context: OverworldContext = null
 
-## Referencia a MapSystem (obtenida del contexto)
-var map_system: MapSystem = null
+## Referencia a WorldSystem (obtenida del contexto)
+var world_system: WorldSystem = null
 
 func _ready() -> void:
 	pass
 	# El contexto se inyectará desde el Player/NPC padre después de _ready()
-	# NO intentar obtener MapSystem aquí - se hará cuando se reciba el contexto
+	# NO intentar obtener WorldSystem aquí - se hará cuando se reciba el contexto
 
 func get_step_duration() -> float:
 	return step_duration / speed_multiplier
@@ -78,15 +78,15 @@ func current_tile() -> Vector2i:
 	return grid.world_to_tile(actor.global_position)
 
 ## Refresca la referencia al grid actual
-## Nota: Obtiene el grid activo del MapSystem
+## Nota: Obtiene el grid activo del WorldSystem
 func _refresh_grid() -> void:
-	# Actualizar referencia a MapSystem si es necesario
-	_update_map_system_reference()
+	# Actualizar referencia a WorldSystem si es necesario
+	_update_world_system_reference()
 
-	# Obtener grid del MapSystem
-	if map_system:
-		grid = map_system.get_active_grid()
-	# Si no hay MapSystem todavía, simplemente no hacer nada
+	# Obtener grid del WorldSystem
+	if world_system:
+		grid = world_system.get_active_grid()
+	# Si no hay WorldSystem todavía, simplemente no hacer nada
 	# El grid se inicializará cuando se reciba el contexto
 
 func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
@@ -104,8 +104,8 @@ func _try_seamless_crossing(from: Vector2i, to: Vector2i) -> Dictionary:
 	var from_world_pos = actor.global_position
 	var to_world_pos = grid.tile_to_world_center(to)
 
-	# Consultar movimiento en mapas vecinos (MapSystem ya validado en _ready)
-	var movement_result = map_system.check_world_movement(actor, from_world_pos, to_world_pos)
+	# Consultar movimiento en mapas vecinos (WorldSystem ya validado en _ready)
+	var movement_result = world_system.check_world_movement(actor, from_world_pos, to_world_pos)
 	if not movement_result["can_move"]:
 		return {"success": false, "from": from, "to": to}
 
@@ -309,21 +309,27 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 	# Buscar evento en todos los grids (importante para seamless world)
 	var event: Event = null
 	# NOTA: Para seamless world necesitamos buscar en múltiples grids
-	# Esto es una de las pocas excepciones donde get_nodes_in_group es necesario
-	var grids = get_tree().get_nodes_in_group("OverworldGrid")
+	# Usamos WorldSystem que tiene acceso a todos los mapas renderizados
+	if not world_system:
+		_update_world_system_reference()
 
-	for g in grids:
-		var grid_node = g as OverworldGrid
-		if not grid_node:
-			continue
+	if world_system:
+		# Iterar por todos los hijos de WorldSystem (mapas renderizados)
+		for child in world_system.get_children():
+			if child.is_in_group("Player"):
+				continue
 
-		# Convertir posición mundial a tile de este grid
-		var tile_in_grid = grid_node.world_to_tile(target_world_pos)
-		var event_in_grid = grid_node.event_at(tile_in_grid)
+			var grid_node = child.get_node_or_null("OverworldGrid") as OverworldGrid
+			if not grid_node:
+				continue
 
-		if event_in_grid:
-			event = event_in_grid
-			break
+			# Convertir posición mundial a tile de este grid
+			var tile_in_grid = grid_node.world_to_tile(target_world_pos)
+			var event_in_grid = grid_node.event_at(tile_in_grid)
+
+			if event_in_grid:
+				event = event_in_grid
+				break
 
 	if not event:
 		return
@@ -434,10 +440,10 @@ func _perform_arc_jump(
 ## CONTEXT MANAGEMENT
 ## ============================================================================
 
-## Actualiza la referencia a MapSystem desde el contexto
-func _update_map_system_reference() -> void:
-	# Si ya tenemos MapSystem, no hacer nada
-	if map_system:
+## Actualiza la referencia a WorldSystem desde el contexto
+func _update_world_system_reference() -> void:
+	# Si ya tenemos WorldSystem, no hacer nada
+	if world_system:
 		return
 
 	# Obtener del contexto si está disponible
@@ -445,14 +451,14 @@ func _update_map_system_reference() -> void:
 		# No es un error - simplemente el contexto aún no se ha inyectado
 		return
 
-	map_system = context.get_map_system()
-	if not map_system:
-		push_error("GridMotion: MapSystem no disponible en el contexto")
+	world_system = context.get_world_system()
+	if not world_system:
+		push_error("GridMotion: WorldSystem no disponible en el contexto")
 
 ## Establece el contexto del Overworld (llamado desde el actor padre)
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
-	_update_map_system_reference()
+	_update_world_system_reference()
 	if context and not context.active_grid_changed.is_connected(_on_active_grid_changed):
 		context.active_grid_changed.connect(_on_active_grid_changed)
 	_refresh_grid()
