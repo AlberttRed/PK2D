@@ -180,15 +180,42 @@ func try_step(d: Vector2) -> bool:
 		# Ejecutar salto de ledge (desde from, pasando por to/ledge, hasta landing_tile)
 		return await _execute_ledge_jump(from, landing_tile)
 
+	# Calcular si es un initial step ANTES de verificar lógica especial (surf, seamless crossing)
+	# Esto evita ejecutar animaciones cuando solo se está girando sin moverse
+	self.initial_step = requires_initial_step(d)
+
+	# Si es un initial step (solo giro sin movimiento), no ejecutar lógica especial
+	if self.initial_step:
+		# Giro simple sin movimiento, no verificar surf ni seamless crossing
+		speed_multiplier = get_speed_multiplier(d, false, self.initial_step)
+		step_started.emit()
+		to = from
+		moving = true
+		grid.reserve(from, to, actor)
+		await get_tree().create_timer(turn_duration).timeout
+		grid.commit(from, to, actor)
+		moving = false
+		self.initial_step = false
+		step_finished.emit(to)
+		return true
+
 	# SEGUNDO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
 
 	# VALIDACIÓN ADICIONAL: Si el jugador está en modo surfing, verificar si puede ir al tile
+	# Solo se ejecuta si realmente va a moverse (no es initial_step)
 	if can_step and actor.is_in_group("Player") and actor.has_method("can_surf_to_tile"):
 		if not actor.can_surf_to_tile(to):
+			# Si retorna false, puede ser porque necesita ejecutar end_surf() primero
+			# Verificar si tiene el método para ejecutarlo
+			if actor.has_method("_execute_end_surf_before_move"):
+				await actor._execute_end_surf_before_move(to)
+				# Después de end_surf(), el movimiento ya se ejecutó, así que retornar
+				return true
 			can_step = false
 
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
+	# Solo se ejecuta si realmente va a moverse (no es initial_step)
 	if not can_step:
 		var seamless_result = _try_seamless_crossing(from, to)
 		if seamless_result["success"]:
@@ -199,13 +226,11 @@ func try_step(d: Vector2) -> bool:
 			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
 			_check_player_collision(to)
 
-	self.initial_step = requires_initial_step(d)
-
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
 	step_started.emit()
 
-	#If cannot move to next tile, or trying a first quick tap to another direction when idle, stay in same position
-	if self.initial_step or !can_step:
+	#If cannot move to next tile, stay in same position
+	if !can_step:
 		to = from
 
 	moving = true
@@ -307,110 +332,101 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 		event.on_player_collision()
 
 # --- Sistema de Saltos (Ledges) - PBI 455 ---
-## Ejecuta un salto sobre un ledge (método interno)
-## @param from: Tile de origen
-## @param to: Tile de destino (2 tiles adelante)
-## @return bool: siempre true (el salto se ejecuta)
+
+## Ejecuta un salto genérico hacia el tile indicado con la animación de arco usada en los ledges.
+func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, final_y_offset: int = 0) -> bool:
+	if not grid or not is_instance_valid(grid):
+		_refresh_grid()
+		if not grid or not is_instance_valid(grid):
+			return false
+
+	var from_tile := current_tile()
+	if from_tile == target_tile:
+		return true
+
+	return await _perform_arc_jump(from_tile, target_tile, show_shadow, final_y_offset)
+
+## Ejecuta un salto sobre un ledge (método interno legado)
 func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
-	# Emitir señal de inicio de salto
+	context.block_player_control()
 	is_jumping_ledge = true
 	ledge_jump_started.emit()
+	var succeeded:bool = await _perform_arc_jump(from, to, true)
+	is_jumping_ledge = false
+	ledge_jump_finished.emit()
+	context.unblock_player_control()
+	step_finished.emit(to)
+	return succeeded
 
-	# Bloquear el control del jugador durante el salto
-	if context:
-		context.block_player_control()
-
+func _perform_arc_jump(
+	from: Vector2i,
+	to: Vector2i,
+	show_shadow: bool,
+	final_y_offset: int = -8,
+	duration: float = ledge_jump_duration,
+	height: float = ledge_jump_height
+) -> bool:
 	moving = true
 	grid.reserve(from, to, actor)
 
-	# Calcular posición de destino
 	var target := grid.tile_to_world_center(to)
-
-	# Vaciar el tile de origen
 	grid.vacate(from, actor)
 
-	# Actualizar registro si es un evento (aunque los eventos no deberían llegar aquí)
 	if actor is Event:
 		_update_event_registration(from, to)
 
-	# Obtener el sprite del actor para animar el arco
-	var sprite_node: Node = null
+	var sprite_node: AnimatedSprite2D = null
 	if actor.has_node("AnimatedSprite2D"):
-		sprite_node = actor.get_node("AnimatedSprite2D")
+		sprite_node = actor.get_node("AnimatedSprite2D") as AnimatedSprite2D
 
-	var original_y_offset = 0.0
+	var original_y_offset := 0.0
 	if sprite_node:
 		original_y_offset = sprite_node.offset.y
 
-	# Obtener la sombra del jugador (si existe)
-	var shadow_node: Sprite2D = null
-	if actor.has_node("Shadow"):
-		shadow_node = actor.get_node("Shadow") as Sprite2D
-		if shadow_node:
-			shadow_node.visible = true  # Mostrar sombra durante el salto
+	if show_shadow and actor.has_node("Shadow"):
+		actor.get_node("Shadow").visible = true
 
-	# PRIMER PASO: Emitir step_started para iniciar la animación
-	step_started.emit()
-	# Alternar la zancada para el siguiente paso
-	stride_is_left = not stride_is_left
+	if is_jumping_ledge:
+		step_started.emit()
+		stride_is_left = not stride_is_left
 
-	# Crear el tween para el salto con animación suave
 	active_tween = actor.create_tween()
 	active_tween.set_parallel(true)
-
-	# Movimiento horizontal/vertical principal
-	active_tween.tween_property(actor, "global_position", target, ledge_jump_duration)\
+	active_tween.tween_property(actor, "global_position", target, duration)\
 		.set_ease(Tween.EASE_IN_OUT)\
 		.set_trans(Tween.TRANS_QUAD)
 
-	# Animación del arco del salto (usando offset del sprite)
 	if sprite_node:
-		# Subir primero (primera mitad del salto)
-		active_tween.tween_property(sprite_node, "offset:y", original_y_offset-ledge_jump_height, ledge_jump_duration / 2.0)\
+		var half_duration := duration / 2.0
+		active_tween.tween_property(sprite_node, "offset:y", original_y_offset - height, half_duration)\
 			.set_ease(Tween.EASE_OUT)\
 			.set_trans(Tween.TRANS_QUAD)
 
-		# Bajar después (segunda mitad del salto)
-		active_tween.tween_property(sprite_node, "offset:y", original_y_offset, ledge_jump_duration / 2.0)\
-			.set_delay(ledge_jump_duration / 2.0)\
+		active_tween.tween_property(sprite_node, "offset:y", final_y_offset, half_duration)\
+			.set_delay(half_duration)\
 			.set_ease(Tween.EASE_IN)\
 			.set_trans(Tween.TRANS_QUAD)
 
-	# Esperar a la mitad del salto para emitir el SEGUNDO PASO
-	await get_tree().create_timer(ledge_jump_duration / 2.0).timeout
-	step_started.emit()
-	# Alternar la zancada de nuevo para el siguiente movimiento después del salto
-	stride_is_left = not stride_is_left
+	var wait_time: float = max(duration / 2.0, 0.01)
+	await get_tree().create_timer(wait_time).timeout
 
-	# Esperar a que termine el resto del tween
+	if is_jumping_ledge:
+		step_started.emit()
+		stride_is_left = not stride_is_left
+
 	await active_tween.finished
 	active_tween = null
 
-	# Asegurar que el offset vuelve al valor original (por si hubo algún problema)
 	if sprite_node:
-		sprite_node.offset.y = original_y_offset
+		sprite_node.offset.y = final_y_offset
 
-	# Ocultar la sombra al finalizar el salto
-	if shadow_node:
-		shadow_node.visible = false
+	if actor.has_node("Shadow"):
+		actor.get_node("Shadow").visible = false
 
-	# Confirmar el movimiento
 	grid.commit(from, to, actor)
 	moving = false
-	is_jumping_ledge = false
 
-	# Desbloquear el control del jugador
-	if context:
-		context.unblock_player_control()
-
-	# Emitir señales de finalización
-	ledge_jump_finished.emit()
-	step_finished.emit(to)
-
-	# Llamar a on_enter_tile para triggers
 	grid.on_enter_tile(actor, to)
-
-	# NO alternar la zancada aquí porque ya se hizo durante el salto (2 veces)
 
 	return true
 

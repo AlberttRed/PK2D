@@ -1,5 +1,7 @@
 extends Node2D
 
+const SURF_POKEMON_SCENE := preload("res://Scenes/Overworld/MO/SurfPokemonSprite.tscn")
+
 @onready var motion = $GridMotion
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
@@ -8,6 +10,7 @@ extends Node2D
 #const DEFAULT_SURF_FRAMES: SpriteFrames = preload("res://Resources/Animations/Overworld/Player_Surf.tres")
 
 @export var actor_style: ActorStyle
+@export var surf_texture: Texture2D = preload("res://Sprites/Overworlds/Misc/surf_blob.png")
 # Referencia al OverworldContext (opcional, para acceso a sistemas)
 var context: OverworldContext = null
 
@@ -79,6 +82,8 @@ func _on_step_started() -> void:
 
 func _on_step_finished(tile: Vector2i) -> void:
 	# Si está en modo surfing, verificar si llegó a tierra
+	# Nota: end_surf() ya se ejecutó en can_surf_to_tile() antes del movimiento,
+	# así que solo verificamos si aún está en modo surf (por si acaso)
 	if is_surfing:
 		if context:
 			var map_system: MapSystem = context.get_map_system()
@@ -87,9 +92,9 @@ func _on_step_finished(tile: Vector2i) -> void:
 				if grid:
 					var terrain = grid.terrain_at(tile)
 					if terrain != "water":
-						# Llegó a tierra, desactivar surfing
+						# Si aún está en modo surf, desactivarlo sin animación
+						# (la animación ya se ejecutó en can_surf_to_tile())
 						set_surfing_mode(false)
-
 	if not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
@@ -110,9 +115,16 @@ func stop():
 			Vector2.LEFT: sprite.animation = "idle_left"
 			Vector2.RIGHT: sprite.animation = "idle_right"
 		sprite.play()
-	else:
+	elif sprite.sprite_frames.has_animation("idle"):
 		# Modo normal: idle con frames direccionales
 		sprite.animation = "idle"
+		sprite.stop()
+		match motion.dir:
+			Vector2.UP: sprite.frame = 3
+			Vector2.DOWN: sprite.frame = 0
+			Vector2.LEFT: sprite.frame = 1
+			Vector2.RIGHT: sprite.frame = 2
+	else:
 		sprite.stop()
 		match motion.dir:
 			Vector2.UP: sprite.frame = 3
@@ -226,6 +238,7 @@ func set_surfing_mode(enabled: bool) -> void:
 		# Cambiar a sprite de surfing
 		var surf_frames = _get_surf_frames()
 		if surf_frames:
+			sprite.offset = Vector2(0,-8)
 			sprite.sprite_frames = surf_frames
 		# Convertir animación idle a idle direccional según la dirección actual
 		match motion.dir:
@@ -239,8 +252,11 @@ func set_surfing_mode(enabled: bool) -> void:
 		# Volver al sprite normal
 		_refresh_actor_style_frames()
 		# En modo normal, usar idle estático
-		sprite.animation = "idle"
-		sprite.stop()
+		if sprite.sprite_frames.has_animation("idle"):
+			sprite.animation = "idle"
+			sprite.stop()
+		else:
+			sprite.stop()
 		match motion.dir:
 			Vector2.UP: sprite.frame = 3
 			Vector2.DOWN: sprite.frame = 0
@@ -248,14 +264,130 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.RIGHT: sprite.frame = 2
 		remove_meta("can_surf")
 
+func start_surf() -> void:
+	var map_system: MapSystem = context.get_map_system()
+	var grid: OverworldGrid = map_system.get_active_grid()
+
+	var front_tile: Vector2i = motion.current_tile() + Vector2i(motion.dir)
+	var direction_frame := _direction_to_frame_index(motion.dir)
+	var front_world := grid.tile_to_world_center(front_tile)
+
+	var splash := SURF_POKEMON_SCENE.instantiate()
+	if splash is Sprite2D:
+		var splash_sprite := splash as Sprite2D
+		splash_sprite.z_index = 1
+		if surf_texture:
+			splash_sprite.texture = surf_texture
+		var available_frames: int = max(splash_sprite.hframes * splash_sprite.vframes, 1) - 1
+		splash_sprite.frame = clamp(direction_frame, 0, available_frames)
+	splash.global_position = front_world
+
+	var parent_node := get_parent()
+	if parent_node:
+		parent_node.add_child(splash)
+	else:
+		add_child(splash)
+
+	set_movement_enabled(false)
+	_play_surf_jump_pose(direction_frame, -16)
+	sprite.z_index = 1
+	var jump_success: bool = await motion.jump_to_tile(front_tile, false, -16)
+
+	if is_instance_valid(splash):
+		splash.queue_free()
+
+	sprite.z_index = 0
+
+	if not jump_success:
+		global_position = front_world
+
+	set_surfing_mode(true)
+	set_movement_enabled(true)
+	
+
+func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
+	var map_system: MapSystem = context.get_map_system()
+	var grid: OverworldGrid = map_system.get_active_grid()
+
+	var current_tile: Vector2i = motion.current_tile()
+	var destination_tile: Vector2i = target_tile if target_tile != Vector2i(-1, -1) else current_tile + Vector2i(motion.dir)
+
+	var direction_frame := _direction_to_frame_index(motion.dir)
+	var splash_world := grid.tile_to_world_center(current_tile)  # El splash aparece donde está el jugador (en el agua)
+	var destination_world := grid.tile_to_world_center(destination_tile)
+
+	# Aparece el splash en el tile donde está el jugador (en el agua)
+	var splash := SURF_POKEMON_SCENE.instantiate()
+	if splash is Sprite2D:
+		var splash_sprite := splash as Sprite2D
+		splash_sprite.z_index = 1
+		if surf_texture:
+			splash_sprite.texture = surf_texture
+		var available_frames: int = max(splash_sprite.hframes * splash_sprite.vframes, 1) - 1
+		splash_sprite.frame = clamp(direction_frame, 0, available_frames)
+	splash.global_position = splash_world
+
+	var parent_node := get_parent()
+	if parent_node:
+		parent_node.add_child(splash)
+	else:
+		add_child(splash)
+
+	set_movement_enabled(false)
+	_play_surf_jump_pose(direction_frame, -16)
+	sprite.z_index = 1
+	var jump_success: bool = await motion.jump_to_tile(destination_tile, false, -8)
+
+	if is_instance_valid(splash):
+		splash.queue_free()
+
+	sprite.z_index = 0
+
+	if not jump_success:
+		global_position = destination_world
+
+	set_surfing_mode(false)
+	set_movement_enabled(true)
+	motion.step_finished.emit(destination_tile)
+
+func _execute_end_surf_before_move(target_tile: Vector2i) -> void:
+	# Ejecutar end_surf y luego permitir el movimiento
+	await end_surf(target_tile)
+
+func _play_surf_jump_pose(direction_frame: int, height: int) -> void:
+	var surf_jump_frames := _get_surf_jump_frames()
+	if not surf_jump_frames:
+		return
+
+	if not surf_jump_frames.has_animation("default"):
+		return
+
+	sprite.offset = Vector2(0,height)
+	sprite.sprite_frames = surf_jump_frames
+	sprite.animation = "default"
+	var frame_count := surf_jump_frames.get_frame_count("default")
+	if frame_count > 0:
+		sprite.frame = clamp(direction_frame, 0, frame_count - 1)
+	else:
+		sprite.frame = 0
+
 ## Verifica si el jugador puede moverse al tile destino en modo surfing
 ## Se llama desde GridMotion antes de validar movimiento
-func can_surf_to_tile(_tile: Vector2i) -> bool:
+## Si va a salir del agua, retorna false para que GridMotion ejecute end_surf()
+func can_surf_to_tile(tile: Vector2i) -> bool:
 	if not is_surfing:
 		return true  # No está en surfing, movimiento normal
 
-	# En modo surfing, SIEMPRE permitir el movimiento
-	# Si es a tierra, el surf se desactivará automáticamente en _on_step_finished()
+	# Verificar si el tile destino es agua
+	if context:
+		var map_system: MapSystem = context.get_map_system()
+		if map_system:
+			var grid: OverworldGrid = map_system.get_active_grid()
+			if grid:
+				var terrain = grid.terrain_at(tile)
+				if terrain != "water":
+					# Va a salir del agua, retornar false para que GridMotion ejecute end_surf()
+					return false
 	return true
 
 ## ============================================================================
@@ -346,6 +478,11 @@ func _get_surf_frames() -> SpriteFrames:
 		return actor_style.surf_frames
 	return null#DEFAULT_SURF_FRAMES
 
+func _get_surf_jump_frames() -> SpriteFrames:
+	if actor_style and actor_style.surf_jump_frames:
+		return actor_style.surf_jump_frames
+	return null
+
 func _get_run_frames() -> SpriteFrames:
 	if actor_style and actor_style.run_frames:
 		return actor_style.run_frames
@@ -420,3 +557,15 @@ func _restore_mo_state() -> void:
 	_refresh_actor_style_frames()
 	motion.face(_mo_idle_direction)
 	stop()
+
+func _direction_to_frame_index(direction: Vector2) -> int:
+	match direction:
+		Vector2.UP:
+			return 0
+		Vector2.DOWN:
+			return 1
+		Vector2.LEFT:
+			return 2
+		Vector2.RIGHT:
+			return 3
+	return 0

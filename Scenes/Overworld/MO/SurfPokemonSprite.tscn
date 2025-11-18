@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bj2syy1ny2ouy"]
+
+[ext_resource type="Texture2D" uid="uid://b6qfc40fiabih" path="res://Sprites/Overworlds/Misc/surf_blob.png" id="1_3raql"]
+
+[node name="SurfPokemonSprite" type="Sprite2D"]
+texture = ExtResource("1_3raql")
+offset = Vector2(0, -8)
+hframes = 4
+frame = 2
