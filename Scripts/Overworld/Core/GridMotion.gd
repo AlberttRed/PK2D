@@ -180,10 +180,30 @@ func try_step(d: Vector2) -> bool:
 		# Ejecutar salto de ledge (desde from, pasando por to/ledge, hasta landing_tile)
 		return await _execute_ledge_jump(from, landing_tile)
 
+	# Calcular si es un initial step ANTES de verificar lógica especial (surf, seamless crossing)
+	# Esto evita ejecutar animaciones cuando solo se está girando sin moverse
+	self.initial_step = requires_initial_step(d)
+
+	# Si es un initial step (solo giro sin movimiento), no ejecutar lógica especial
+	if self.initial_step:
+		# Giro simple sin movimiento, no verificar surf ni seamless crossing
+		speed_multiplier = get_speed_multiplier(d, false, self.initial_step)
+		step_started.emit()
+		to = from
+		moving = true
+		grid.reserve(from, to, actor)
+		await get_tree().create_timer(turn_duration).timeout
+		grid.commit(from, to, actor)
+		moving = false
+		self.initial_step = false
+		step_finished.emit(to)
+		return true
+
 	# SEGUNDO: Intentar movimiento normal en el grid actual (99% de los casos)
 	var can_step := grid.can_step_to(actor, from, to)
 
 	# VALIDACIÓN ADICIONAL: Si el jugador está en modo surfing, verificar si puede ir al tile
+	# Solo se ejecuta si realmente va a moverse (no es initial_step)
 	if can_step and actor.is_in_group("Player") and actor.has_method("can_surf_to_tile"):
 		if not actor.can_surf_to_tile(to):
 			# Si retorna false, puede ser porque necesita ejecutar end_surf() primero
@@ -195,6 +215,7 @@ func try_step(d: Vector2) -> bool:
 			can_step = false
 
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
+	# Solo se ejecuta si realmente va a moverse (no es initial_step)
 	if not can_step:
 		var seamless_result = _try_seamless_crossing(from, to)
 		if seamless_result["success"]:
@@ -205,13 +226,11 @@ func try_step(d: Vector2) -> bool:
 			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
 			_check_player_collision(to)
 
-	self.initial_step = requires_initial_step(d)
-
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
 	step_started.emit()
 
-	#If cannot move to next tile, or trying a first quick tap to another direction when idle, stay in same position
-	if self.initial_step or !can_step:
+	#If cannot move to next tile, stay in same position
+	if !can_step:
 		to = from
 
 	moving = true
@@ -390,7 +409,7 @@ func _perform_arc_jump(
 
 	var wait_time: float = max(duration / 2.0, 0.01)
 	await get_tree().create_timer(wait_time).timeout
-	
+
 	if is_jumping_ledge:
 		step_started.emit()
 		stride_is_left = not stride_is_left
