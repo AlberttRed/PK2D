@@ -13,6 +13,7 @@ use_texture_padding = false
 4:0/0 = 0
 5:0/0 = 0
 6:0/0 = 0
+6:0/0/custom_data_0 = "grass"
 6:0/0/custom_data_2 = "land"
 7:0/0 = 0
 0:1/0 = 0

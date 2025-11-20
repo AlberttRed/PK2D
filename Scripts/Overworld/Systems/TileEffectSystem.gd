@@ -12,7 +12,6 @@ signal tile_effect_triggered(tile_pos: Vector2i, encounter_type: String, actor: 
 
 var context: OverworldContext = null
 var world_system: WorldSystem = null
-var chunk_controller: WorldChunkController = null
 
 # Registro de handlers por tipo de terreno
 var effect_handlers: Dictionary = {}  # {String: TileEffectHandler}
@@ -37,7 +36,6 @@ func _ready() -> void:
 func initialize(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	world_system = context.get_world_system()
-	chunk_controller = world_system.get_chunk_controller()
 
 	# Registrar handlers
 	_register_effect_handlers()
@@ -57,7 +55,7 @@ func _register_effect_handlers() -> void:
 		tall_grass_overlay_scene,
 		grass_stepped_effect_scene
 	)
-	effect_handlers["Land"] = grass_handler  # "Land" es el encounter_type
+	effect_handlers["grass"] = grass_handler  # "grass" es el terrain type
 
 	# Futuro: Handler de agua
 	# var water_handler = WaterEffectHandler.new(self)
@@ -105,41 +103,35 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 	if not active_grid:
 		return
 
-	# OPTIMIZACIÓN: Solo verificar si el tile está en chunks activos
-	var active_map = world_system.get_active_map()
-	if not active_map:
-		return
-	var map_id = active_map.name
+	# Una sola llamada que recoge toda la información del tile
+	var tile_info = active_grid.get_tile_info(tile)
+	var terrain_type = tile_info.terrain
 
-	var encounter_type = chunk_controller.get_encounter_type_for_tile(tile, map_id)
-
-	if not encounter_type:
-		# No hay encuentro en este tile o chunk no activo
+	if not terrain_type or terrain_type == "ground":
+		# No hay efectos especiales para este terreno
 		_clear_all_handlers(actor)
 		return
 
 	# Obtener handler para este tipo de terreno
-	var handler = get_handler_for_terrain(encounter_type)
+	var handler = get_handler_for_terrain(terrain_type)
 	if handler:
 		var grid_motion = actor.get_node("GridMotion")
 		var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
 		handler.on_step_finished_on_tile(active_grid, tile, actor, had_collision)
 
-	# Emitir señal para WildEncounterSystem (solo si es jugador)
-	if actor.is_in_group("Player"):
-		tile_effect_triggered.emit(tile, encounter_type, actor)
+	# Para encuentros salvajes, usar encounter_type del tile_info
+	if actor.is_in_group("Player") and not tile_info.encounter_type.is_empty():
+		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
 
 
 ## Maneja el movimiento hacia un tile de destino
 func _handle_movement_to_destination(grid: OverworldGrid, destination_tile: Vector2i, actor: Node2D) -> void:
-	var active_map = world_system.get_active_map()
-	if not active_map:
-		return
-	var map_id = active_map.name
-	var encounter_type = chunk_controller.get_encounter_type_for_tile(destination_tile, map_id)
+	# Leer la información del tile de destino
+	var tile_info = grid.get_tile_info(destination_tile)
+	var terrain_type = tile_info.terrain
 
-	if encounter_type:
-		var handler = get_handler_for_terrain(encounter_type)
+	if terrain_type and terrain_type != "ground":
+		var handler = get_handler_for_terrain(terrain_type)
 		if handler:
 			handler.on_step_started_to_tile(grid, destination_tile, actor)
 

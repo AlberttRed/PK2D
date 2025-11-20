@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://c0njj2ydft1ai"]
 
-[ext_resource type="Texture2D" uid="uid://sbrjil64gm66" path="res://Sprites/Tilesets/Animated tiles/Grass Step/Grass_Step.png" id="1_0772e"]
+[ext_resource type="Texture2D" uid="uid://sbrjil64gm66" path="res://Sprites/Others/Grass Step/Grass_Step.png" id="1_0772e"]
 [ext_resource type="Script" uid="uid://fdl1uh8ejpag" path="res://Scripts/Overworld/GrassEffect.gd" id="2_grass_effect"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eyvl5"]

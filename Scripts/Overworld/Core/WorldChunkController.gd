@@ -39,14 +39,6 @@ class ChunkData:
 	var events_initialized: bool = false  # ¿Ya se calcularon los eventos?
 	var event_refs: Array[WeakRef] = []   # Referencias a eventos en este chunk
 
-	var tiles_initialized: bool = false   # ¿Ya se calcularon los tiles especiales?
-	var special_tiles: Array[Vector2i] = []  # Tiles especiales en este chunk (por mapa)
-
-	# Tiles de encuentro salvaje (lazy)
-	var encounter_tiles_initialized: bool = false
-	# Estructura: {map_id: {tile_pos: encounter_type}}
-	var encounter_tiles: Dictionary = {}  # {String: Dictionary{Vector2i: String}}
-
 	func _init(p_id: String) -> void:
 		id = p_id
 
@@ -413,7 +405,7 @@ func _initialize_chunk_tiles(chunk_id: String) -> void:
 	for map_id in chunk_data.map_ids:
 		_initialize_map_tiles_in_chunk(map_id, chunk_id)
 
-	chunk_data.encounter_tiles_initialized = true
+	chunk_data.tiles_initialized = true
 
 
 ## Inicializa tiles de un mapa específico en un chunk
@@ -450,10 +442,6 @@ func _initialize_map_tiles_in_chunk(map_id: String, chunk_id: String) -> void:
 	var start_tile = ref_layer.local_to_map(chunk_local_bounds.position)
 	var end_tile = ref_layer.local_to_map(chunk_local_bounds.end)
 
-	# Inicializar diccionario de encounter_tiles para este mapa
-	if not chunk_data.encounter_tiles.has(map_id):
-		chunk_data.encounter_tiles[map_id] = {}
-
 	# Iterar solo sobre tiles que podrían estar en el chunk
 	for y in range(start_tile.y, end_tile.y + 1):
 		for x in range(start_tile.x, end_tile.x + 1):
@@ -472,11 +460,6 @@ func _initialize_map_tiles_in_chunk(map_id: String, chunk_id: String) -> void:
 				# Verificar si es tile especial
 				if _is_special_tile(tile_data):
 					chunk_data.special_tiles.append(tile_pos)
-
-				# Detectar tiles de encuentro
-				var encounter_type_str = tile_data.get_custom_data("encounter_type")
-				if encounter_type_str is String and not encounter_type_str.is_empty():
-					chunk_data.encounter_tiles[map_id][tile_pos] = encounter_type_str
 
 
 ## Verifica si un tile es "especial" (necesita procesamiento)
@@ -756,35 +739,6 @@ func is_chunk_active(chunk_id: String) -> bool:
 
 
 ## Cuenta el total de tiles de encuentro en un chunk
-func _count_encounter_tiles(chunk_data: ChunkData) -> int:
-	var count = 0
-	for map_id in chunk_data.encounter_tiles.keys():
-		count += chunk_data.encounter_tiles[map_id].size()
-	return count
-
-
-## Obtiene el tipo de encuentro de un tile si está en chunks activos
-## @param tile_pos: Posición del tile (Vector2i) en coordenadas del mapa
-## @param map_id: ID del mapa
-## @return: String con el encounter_type, o null si no hay encuentro o el chunk no está activo
-func get_encounter_type_for_tile(tile_pos: Vector2i, map_id: String) -> Variant:
-	# Obtener chunks que cubren este mapa
-	var chunks = map_to_chunks.get(map_id, [])
-
-	# Buscar el tile en los chunks activos de este mapa
-	for chunk_id in chunks:
-		var chunk_data = chunk_registry.get(chunk_id)
-		if not chunk_data or not chunk_data.is_active:
-			continue  # Solo buscar en chunks activos
-
-		# Verificar si el tile está registrado en este chunk
-		if chunk_data.encounter_tiles.has(map_id):
-			if chunk_data.encounter_tiles[map_id].has(tile_pos):
-				return chunk_data.encounter_tiles[map_id][tile_pos]
-
-	return null  # No hay encuentro en este tile o chunk no activo
-
-
 ## Conecta a las señales del jugador para actualizar chunks activos
 func _connect_to_player() -> void:
 	if not context:

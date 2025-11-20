@@ -19,7 +19,7 @@ const OVERLAY_Z_HIGH := 5
 
 
 func _init(p_effect_system: TileEffectSystem) -> void:
-	super._init("Land", p_effect_system)  # "Land" es el encounter_type para hierba
+	super._init("grass", p_effect_system)  # "grass" es el terrain type para hierba
 
 
 ## Configura las escenas de efectos
@@ -29,7 +29,7 @@ func setup_effects(grass_effect: PackedScene, overlay: PackedScene, stepped: Pac
 	grass_stepped_effect_scene = stepped
 
 
-func on_step_started_to_tile(grid: OverworldGrid, destination_tile: Vector2i, actor: Node2D) -> void:
+func on_step_started_to_tile(grid: OverworldGrid, destination_tile: Vector2i, _actor: Node2D) -> void:
 	_hide_overlay()
 	_last_overlay_tile = Vector2i(-9999, -9999)
 

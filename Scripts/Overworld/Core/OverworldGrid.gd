@@ -66,13 +66,39 @@ func get_tile_data(t: Vector2i) -> Array[TileData]:
 			result.append(d)
 	return result
 
+## Obtiene toda la información relevante de un tile en un solo paso
+## Evita múltiples llamadas a get_tile_data()
+## @param t: Posición del tile
+## @return: Dictionary con terrain, encounter_type, y otros datos del tile
+func get_tile_info(t: Vector2i) -> Dictionary:
+	var info = {
+		"terrain": "ground",  # Por defecto
+		"encounter_type": ""
+	}
+
+	# Un solo loop sobre todas las capas
+	for layer in layers:
+		var tile_data = layer.get_cell_tile_data(t)
+		if not tile_data:
+			continue
+
+		# Recoger terrain (el primero que encuentre)
+		if info.terrain == "ground" and tile_data.has_custom_data("terrain"):
+			var terrain_val = tile_data.get_custom_data("terrain")
+			if terrain_val is String and not terrain_val.is_empty():
+				info.terrain = terrain_val
+
+		# Recoger encounter_type (el primero que encuentre)
+		if info.encounter_type.is_empty() and tile_data.has_custom_data("encounter_type"):
+			var encounter_val = tile_data.get_custom_data("encounter_type")
+			if encounter_val is String and not encounter_val.is_empty():
+				info.encounter_type = encounter_val
+
+	return info
+
 # --- Terreno / Pasabilidad ---
 func terrain_at(t: Vector2i) -> String:
-	for d in get_tile_data(t):
-		var val = d.get_custom_data("terrain")
-		if val is String and not val.is_empty():
-			return val
-	return "ground"
+	return get_tile_info(t).terrain
 
 # --- Restricciones Direccionales (PBI 454) ---
 ## Convierte un vector de dirección a una bandera de dirección (DirectionFlagsEnum)
