@@ -202,17 +202,45 @@ var previous_map: Node = null
 @export var enable_map_caching: bool = true
 @export var max_cached_maps: int = 5
 
+## Configuración de chunks del mundo
+## Tamaño de chunk en tiles (basado en tamaño de pantalla visible: ~14 tiles + 2 de margen = 16x16)
+@export var chunk_size: Vector2i = Vector2i(16, 16)
+## Distancia de activación (en chunks) desde la posición del jugador
+@export var chunk_activation_radius: int = 1
+
+## Referencia al WorldChunkController (hijo de WorldSystem)
+var chunk_controller: Node = null  # WorldChunkController (usamos Node para evitar problemas de orden de carga)
+
 
 func _ready() -> void:
+	# Crear e inicializar WorldChunkController
+	_setup_chunk_controller()
+
 	# Indexar todas las escenas de mapa
 	_build_scene_index()
 
 	# Registrar mapas conocidos y sus vecinos
 	_register_maps()
 
-	print("WorldSystem: Sistema inicializado")
 	# NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
 	# Se validará cuando se use en los métodos de lógica
+
+
+## Configura el WorldChunkController como hijo de WorldSystem
+func _setup_chunk_controller() -> void:
+	# Crear instancia del WorldChunkController
+	var controller_script = load("res://Scripts/Overworld/Core/WorldChunkController.gd")
+	if not controller_script:
+		push_error("WorldSystem: No se pudo cargar WorldChunkController.gd")
+		return
+
+	chunk_controller = Node.new()
+	chunk_controller.set_script(controller_script)
+	chunk_controller.name = "WorldChunkController"
+	add_child(chunk_controller)
+
+	# Inicializar con referencia a WorldSystem y configuración de chunks
+	chunk_controller.initialize(self, chunk_size, chunk_activation_radius)
 
 
 ## Construye un índice de escenas para búsqueda rápida
@@ -227,15 +255,12 @@ func _build_scene_index() -> void:
 		var file_name := path.get_file().get_basename()
 		scene_index[file_name] = scene
 
-	print("WorldSystem: Índice de escenas construido con %d entradas" % scene_index.size())
-
 
 ## Registra todos los mapas del mundo y sus vecinos
 ## SISTEMA HÍBRIDO:
 ##   1. Intenta leer neighbors y world_position desde cada MapScene (inspector)
 ##   2. Si no están definidos, usa valores por defecto o configuración manual
 func _register_maps() -> void:
-	print("WorldSystem: Iniciando registro de mapas...")
 
 	# Registrar todos los mapas del índice
 	for scene_name in scene_index.keys():
@@ -278,7 +303,6 @@ func _register_map_from_scene(scene_name: String) -> void:
 	# Configurar vecinos si están definidos
 	if not scene_neighbors.is_empty():
 		set_map_neighbors(scene_name, scene_neighbors)
-		print("  → '%s': Vecinos configurados desde inspector: %s" % [scene_name, scene_neighbors])
 
 
 ## Registra un nuevo mapa en el sistema (sin posición)
@@ -322,7 +346,6 @@ func set_map_neighbors(map_id: String, neighbor_ids: Array[String]) -> void:
 		return
 
 	map_registry[map_id].neighbors = neighbor_ids
-	print("WorldSystem: Vecinos configurados para %s: %s" % [map_id, neighbor_ids])
 
 
 ## Obtiene un mapa (cargándolo si es necesario)
@@ -354,8 +377,6 @@ func _load_map(map_id: String) -> Node:
 		push_error("WorldSystem: No se encontró escena para el mapa: %s" % map_id)
 		return null
 
-	print("WorldSystem: Cargando mapa: %s" % map_id)
-
 	# Instanciar
 	var instance := scene.instantiate()
 	if not instance:
@@ -370,7 +391,6 @@ func _load_map(map_id: String) -> Node:
 		# El mapa se añadirá al árbol cuando sea activado o renderizado como vecino
 		_manage_cache()
 
-	print("WorldSystem: Mapa cargado exitosamente: %s" % map_id)
 	return instance
 
 
@@ -408,8 +428,6 @@ func _free_cached_map(map_data: MapData) -> void:
 
 ## Cambia al mapa especificado
 func change_to_map(map_id: String) -> bool:
-	print("WorldSystem: Cambiando a mapa: %s" % map_id)
-
 	var map_instance := get_map(map_id)
 	if not map_instance:
 		return false
@@ -438,7 +456,6 @@ func change_to_map_instance(map_instance: Node) -> bool:
 		return false
 
 	var map_id := map_instance.name
-	print("WorldSystem: Cambiando a instancia de mapa: ", map_id)
 
 	# Si ya estamos en este mapa, no hacer nada
 	if active_map == map_instance:
@@ -465,9 +482,6 @@ func change_to_map_instance(map_instance: Node) -> bool:
 			print("  → Removido de: %s" % current_parent.name)
 
 		add_child(map_instance)
-		print("  ✓ Mapa añadido a WorldSystem")
-	else:
-		print("  ✓ Mapa ya estaba en WorldSystem (seamless)")
 
 	# Configurar visibilidad y procesamiento
 	_set_subtree_visibility(map_instance, true)
@@ -481,11 +495,16 @@ func change_to_map_instance(map_instance: Node) -> bool:
 	# Configurar el mapa activo (esto establece active_map y ejecuta toda la configuración)
 	set_active_map(map_instance)
 
-	print("WorldSystem: Cambio de mapa completado: ", map_id)
+	# Registrar el mapa en chunks globales (si no estaba ya registrado)
+	if chunk_controller:
+		chunk_controller.register_map_to_global_chunks(map_id)
+
 	return true
 
 
 ## Precarga y RENDERIZA mapas vecinos (para mundo seamless)
+## Los mapas se cargan por sistema de vecinos (como siempre)
+## Los chunks solo se usan para activar/desactivar eventos/tiles, no para cargar mapas
 func _preload_neighbors(map_id: String) -> void:
 	if not enable_map_caching or not map_registry.has(map_id):
 		return
@@ -495,41 +514,69 @@ func _preload_neighbors(map_id: String) -> void:
 	if map_data.neighbors.is_empty():
 		return
 
+	# Cargar vecinos del mapa actual (sistema original - siempre ha funcionado así)
 	for neighbor_id in map_data.neighbors:
 		if map_registry.has(neighbor_id):
-			var neighbor_data: MapData = map_registry[neighbor_id]
+			_load_neighbor_map(neighbor_id)
 
-			# Obtener o cargar la instancia
-			var neighbor_instance = get_map(neighbor_id)
+	# Actualizar chunks activos después de cargar vecinos
+	# (los chunks se usan solo para activar/desactivar eventos/tiles, no para cargar mapas)
+	if chunk_controller:
+		var player_position = Vector2.ZERO
+		if player:
+			player_position = player.global_position
+		elif active_map:
+			if active_map is Node2D:
+				player_position = (active_map as Node2D).global_position
 
-			if neighbor_instance and not neighbor_data.is_rendered:
-				# CRÍTICO: Añadir al WorldSystem para que sea visible (no al cache)
-				if not is_ancestor_of(neighbor_instance):
-					# Remover del padre actual si tiene uno
-					var current_parent = neighbor_instance.get_parent()
-					if current_parent:
-						current_parent.remove_child(neighbor_instance)
+		chunk_controller.initialize_active_chunks(player_position)
 
-					# Añadir al WorldSystem
-					add_child(neighbor_instance)
 
-				# Posicionar según coordenadas mundiales
-				if neighbor_instance is Node2D:
-					neighbor_instance.global_position = neighbor_data.world_position
+## Carga y renderiza un mapa vecino (método auxiliar)
+## También registra el mapa en chunks globales cuando se carga
+func _load_neighbor_map(neighbor_id: String) -> void:
+	if not map_registry.has(neighbor_id):
+		return
 
-				# Hacer visible
-				neighbor_instance.visible = true
+	var neighbor_data: MapData = map_registry[neighbor_id]
 
-				# Desactivar procesamiento (solo el activo procesa)
-				if neighbor_instance.has_method("deactivate"):
-					neighbor_instance.deactivate()
-				else:
-					_disable_map_processing(neighbor_instance)
+	# Obtener o cargar la instancia
+	var neighbor_instance = get_map(neighbor_id)
 
-				neighbor_data.is_rendered = true
+	if neighbor_instance and not neighbor_data.is_rendered:
+		# CRÍTICO: Añadir al WorldSystem para que sea visible (no al cache)
+		if not is_ancestor_of(neighbor_instance):
+			# Remover del padre actual si tiene uno
+			var current_parent = neighbor_instance.get_parent()
+			if current_parent:
+				current_parent.remove_child(neighbor_instance)
+
+			# Añadir al WorldSystem
+			add_child(neighbor_instance)
+
+		# Posicionar según coordenadas mundiales
+		if neighbor_instance is Node2D:
+			neighbor_instance.global_position = neighbor_data.world_position
+
+		# Hacer visible
+		neighbor_instance.visible = true
+
+		# Desactivar procesamiento (solo el activo procesa)
+		if neighbor_instance.has_method("deactivate"):
+			neighbor_instance.deactivate()
+		else:
+			_disable_map_processing(neighbor_instance)
+
+		neighbor_data.is_rendered = true
+
+		# Registrar el mapa en chunks globales (cuando se carga por primera vez)
+		if chunk_controller:
+			chunk_controller.register_map_to_global_chunks(neighbor_id)
 
 
 ## Descarga mapas que ya no son vecinos del mapa actual (libera memoria)
+## Los mapas se descargan por sistema de vecinos (como siempre)
+## Los chunks solo se usan para activar/desactivar eventos/tiles, no para descargar mapas
 func _unload_non_neighbors(current_map_id: String) -> void:
 	if not enable_map_caching or not map_registry.has(current_map_id):
 		return
@@ -537,7 +584,7 @@ func _unload_non_neighbors(current_map_id: String) -> void:
 	var current_data: MapData = map_registry[current_map_id]
 	var current_neighbors = current_data.neighbors
 
-	# Lista de mapas a mantener: mapa actual + sus vecinos
+	# Lista de mapas a mantener: mapa actual + sus vecinos (sistema original)
 	var maps_to_keep = [current_map_id] + current_neighbors
 
 	# Recorrer todos los mapas
@@ -552,6 +599,18 @@ func _unload_non_neighbors(current_map_id: String) -> void:
 		if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
 			if not map_id in maps_to_keep and not map_data.is_rendered:
 				_free_cached_map(map_data)
+
+	# Actualizar chunks activos después de descargar mapas
+	# (los chunks se usan solo para activar/desactivar eventos/tiles)
+	if chunk_controller:
+		var player_position = Vector2.ZERO
+		if player:
+			player_position = player.global_position
+		elif active_map:
+			if active_map is Node2D:
+				player_position = (active_map as Node2D).global_position
+
+		chunk_controller.initialize_active_chunks(player_position)
 
 
 ## Des-renderiza un mapa (lo oculta pero mantiene en caché)
@@ -575,29 +634,23 @@ func _unrender_map(map_data: MapData) -> void:
 
 
 ## Deshabilita el procesamiento de un mapa (optimización para vecinos visibles)
-func _disable_map_processing(map_node: Node) -> void:
-	# El grid no procesa (sin colisiones, eventos, etc.)
-	var grid = map_node.get_node_or_null("OverworldGrid")
-	if grid:
-		grid.process_mode = Node.PROCESS_MODE_DISABLED
-
-	# Eventos no procesan
-	var events_node = map_node.find_child("Events")
-	if events_node:
-		events_node.process_mode = Node.PROCESS_MODE_DISABLED
+## NOTA: El grid y los eventos NO se desactivan aquí - el sistema de chunks controla su activación
+## Solo se desactivan si no hay eventos activos en ese mapa (verificado por WorldChunkController)
+func _disable_map_processing(_map_node: Node) -> void:
+	# NO desactivar grid ni eventos aquí - el sistema de chunks (WorldChunkController)
+	# controla qué eventos/grids están activos basándose en chunks activos, no en el mapa activo
+	# Los eventos/grids se activan/desactivan según si están en chunks activos
+	# Si desactivamos aquí, rompemos el sistema de chunks
+	pass
 
 
 ## Habilita el procesamiento de un mapa (cuando se vuelve activo)
-func _enable_map_processing(map_node: Node) -> void:
-	# El grid procesa normalmente
-	var grid = map_node.get_node_or_null("OverworldGrid")
-	if grid:
-		grid.process_mode = Node.PROCESS_MODE_INHERIT
-
-	# Eventos procesan
-	var events_node = map_node.find_child("Events")
-	if events_node:
-		events_node.process_mode = Node.PROCESS_MODE_INHERIT
+## NOTA: El grid y los eventos NO se activan aquí - el sistema de chunks controla su activación
+func _enable_map_processing(_map_node: Node) -> void:
+	# NO activar grid ni eventos aquí - el sistema de chunks (WorldChunkController)
+	# controla qué eventos/grids están activos basándose en chunks activos, no en el mapa activo
+	# Los eventos/grids se activan/desactivan según si están en chunks activos
+	pass
 
 
 ## ========================================================================================
@@ -647,6 +700,10 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 
 	# Descargar mapas que ya no son necesarios
 	_unload_non_neighbors(to_map_id)
+
+	# Inicializar chunks activos según nueva posición del jugador (después de cambiar de mapa)
+	if chunk_controller and player:
+		chunk_controller.initialize_active_chunks(player.global_position)
 
 	# Actualizar GameState con el nuevo mapa
 	force_sync_to_gamestate()
@@ -952,8 +1009,6 @@ func get_player() -> Node:
 
 ## Carga el jugador dinámicamente
 func load_player() -> bool:
-	print("WorldSystem: Cargando jugador dinámicamente...")
-
 	# Cargar la escena del jugador
 	var player_scene = preload("res://Scenes/Overworld/Actors/Player.tscn")
 	if not player_scene:
@@ -973,13 +1028,11 @@ func load_player() -> bool:
 	# Registrar el jugador en el contexto si está disponible
 	if context:
 		context.register_system("Player", player_instance)
-		print("WorldSystem: Jugador registrado en el contexto")
 
 	# Inyectar el contexto al jugador si tiene el método
 	if player_instance.has_method("set_context"):
 		player_instance.set_context(context)
 
-	print("WorldSystem: Jugador cargado dinámicamente")
 	return true
 
 ## Asigna un mapa como activo
@@ -1142,3 +1195,19 @@ func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	if context and not context.seamless_map_crossed.is_connected(_on_seamless_map_crossed):
 		context.seamless_map_crossed.connect(_on_seamless_map_crossed)
+
+	# Pasar el contexto al WorldChunkController
+	if chunk_controller and chunk_controller.has_method("set_context"):
+		chunk_controller.set_context(overworld_context)
+
+
+## Obtiene el WorldChunkController (para acceso externo)
+func get_chunk_controller() -> WorldChunkController:
+	return chunk_controller as WorldChunkController
+
+
+## Obtiene el ID del mapa activo
+func get_active_map_id() -> String:
+	if not active_map:
+		return ""
+	return active_map.name

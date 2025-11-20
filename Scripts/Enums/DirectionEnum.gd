@@ -1,7 +1,7 @@
 class_name DirectionEnum
 
 ## Enum para direcciones de movimiento y orientación
-## 
+##
 ## Direcciones de MOVIMIENTO (UP, DOWN, LEFT, RIGHT):
 ## - Mueven al actor 1 tile en esa dirección
 ## - Si el actor mira a otra dirección, primero hace un "initial step" (giro sin movimiento)

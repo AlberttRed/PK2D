@@ -12,8 +12,6 @@ class_name Main
 var active_session = null
 
 func _ready() -> void:
-	print("Main: Inicializando escena raíz...")
-
 	# Esperar un frame para asegurar que DisplayManager esté listo
 	await get_tree().process_frame
 
@@ -23,8 +21,6 @@ func _ready() -> void:
 
 ## Inicia una nueva sesión de juego (nueva partida)
 func start_new_game_session() -> void:
-	print("Main: Iniciando nueva sesión de juego...")
-
 	# Limpiar sesión anterior si existe
 	if active_session:
 		active_session.queue_free()
@@ -39,8 +35,6 @@ func start_new_game_session() -> void:
 	# Instanciar y añadir al contenedor
 	active_session = game_session_scene.instantiate()
 	game_container.add_child(active_session)
-
-	print("Main: GameSession cargada exitosamente")
 
 ## Continúa una partida guardada (futuro)
 func continue_game_session() -> void:

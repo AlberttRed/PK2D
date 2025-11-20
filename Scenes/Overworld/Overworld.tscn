@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=13 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
@@ -9,20 +9,29 @@
 [ext_resource type="PackedScene" uid="uid://d1bs2x4y8nuby" path="res://Scenes/Overworld/Maps/MapNeighborTest.tscn" id="5_ius67"]
 [ext_resource type="PackedScene" uid="uid://ch2msdomuqykb" path="res://Scenes/Overworld/Maps/MapCiudadTest.tscn" id="6_de4hb"]
 [ext_resource type="Script" uid="uid://duu3c0stuk0nk" path="res://Scripts/Overworld/Core/WorldSystem.gd" id="6_world_system"]
+[ext_resource type="Script" uid="uid://1d5yn4tjx356" path="res://Scripts/Overworld/Systems/TileEffectSystem.gd" id="7_tile_effect"]
+[ext_resource type="PackedScene" uid="uid://d23pcwt66gk3p" path="res://Scenes/Overworld/Maps/MapGigante.tscn" id="7_y04h8"]
+[ext_resource type="Script" uid="uid://bn0u5uhjlhjda" path="res://Scripts/Overworld/Systems/WildEncounterSystem.gd" id="8_wild_encounter"]
 
 [node name="Overworld" type="Node"]
 script = ExtResource("1_overworld")
 
-[node name="WorldSystem" type="Node" parent="." groups=["WorldSystem"]]
+[node name="WorldSystem" type="Node" parent="."]
 script = ExtResource("6_world_system")
-world_map_scenes = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq"), ExtResource("5_ius67"), ExtResource("6_de4hb")])
+world_map_scenes = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq"), ExtResource("5_ius67"), ExtResource("6_de4hb"), ExtResource("7_y04h8")])
 
-[node name="EventSystem" type="Node" parent="." groups=["EventSystem"]]
+[node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")
 metadata/_custom_type_script = "uid://cbeq2k7hem4nw"
 
-[node name="WarpSystem" type="Node" parent="." groups=["WarpSystem"]]
+[node name="WarpSystem" type="Node" parent="."]
 script = ExtResource("4_warp_system")
 
-[node name="MOSystem" type="Node" parent="." groups=["MOSystem"]]
+[node name="MOSystem" type="Node" parent="."]
 script = ExtResource("4_mo_system")
+
+[node name="TileEffectSystem" type="Node" parent="."]
+script = ExtResource("7_tile_effect")
+
+[node name="WildEncounterSystem" type="Node" parent="."]
+script = ExtResource("8_wild_encounter")

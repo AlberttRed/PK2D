@@ -74,8 +74,6 @@ func register_system(sys_name: String, system: Node) -> void:
 		"Overlay":
 			overlay_layer = system as OverlayLayer
 
-	print("OverworldContext: Sistema registrado → %s (%s)" % [sys_name, system.name])
-
 ## Obtiene un sistema registrado por su nombre
 ## @param sys_name: Nombre del sistema (ej: "Map", "Warp")
 ## @return: Instancia del sistema o null si no existe
@@ -138,14 +136,7 @@ func validate() -> bool:
 
 ## Imprime un resumen de los sistemas registrados (útil para debug)
 func print_summary() -> void:
-	print("OverworldContext: Sistemas registrados (%d):" % systems.size())
-	for sys_name in systems.keys():
-		var system = systems[sys_name]
-		var type_name = system.get_class() if system else "null"
-		print("  ✓ %s → %s (%s)" % [sys_name, system.name if system else "null", type_name])
-
-		# Configurar conexiones de señales locales
-		_connect_system_signals(sys_name, system)
+	pass
 
 ## Conecta las señales locales de un sistema registrado al contexto
 func _connect_system_signals(sys_name: String, system: Node) -> void:

@@ -9,24 +9,18 @@ class_name GameSession
 const OVERWORLD_SCENE = preload("res://Scenes/Overworld/Overworld.tscn")
 
 func _ready() -> void:
-	print("GameSession: Iniciando sesión de juego")
-
 	# Esperar un frame para asegurar que todos los sistemas estén inicializados
 	await get_tree().process_frame
 
 	# Decidir si cargar partida existente o nueva partida
 	if GameStateService.load_saved_game():
-		print("GameSession: Partida guardada encontrada, cargando...")
 		_load_overworld_scene()
 	else:
-		print("GameSession: No hay partida guardada, iniciando nueva partida...")
 		GameStateService.initialize_new_game()
 		_load_overworld_scene()
 
 ## Carga la escena Overworld y configura el player según el GameState
 func _load_overworld_scene() -> void:
-	print("GameSession: Cargando escena Overworld...")
-
 	# Instanciar la escena Overworld
 	var overworld_instance = OVERWORLD_SCENE.instantiate()
 	if not overworld_instance:
@@ -51,11 +45,9 @@ func _load_overworld_scene() -> void:
 		push_warning("GameSession: OverworldContext no disponible para bloquear control del jugador")
 
 	if overworld_coordinator and overworld_coordinator.has_method("configure_from_gamestate"):
-		print("GameSession: Configurando overworld según GameState...")
 		var success = overworld_coordinator.configure_from_gamestate()
 
 		if success:
-			print("GameSession: ✓ Overworld configurado exitosamente")
 			# Desvanecer desde negro cuando todo está listo
 			await DisplayManager.fade_out(0.25)
 			# Desbloquear control ahora que terminó el fade
@@ -67,8 +59,6 @@ func _load_overworld_scene() -> void:
 			push_error("GameSession: Error al configurar overworld desde GameState")
 	else:
 		push_error("GameSession: OverworldCoordinator no encontrado o método no disponible")
-
-	print("GameSession: Escena Overworld cargada exitosamente")
 
 ## Método público para forzar nueva partida (útil para testing)
 func force_new_game() -> void:

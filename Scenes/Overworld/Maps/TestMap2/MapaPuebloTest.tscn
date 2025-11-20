@@ -481,7 +481,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="MapaPuebloTest" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_mapscene")
-neighbors = Array[String](["MapNeighborTest"])
+neighbors = Array[String](["MapNeighborTest", "MapGigante"])
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
