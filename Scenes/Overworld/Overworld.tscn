@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=17 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="12_565oj"]
 [ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="13_2m6j0"]
 [ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="14_g3sn4"]
+[ext_resource type="PackedScene" uid="uid://b8k3m4n5p6q7r" path="res://Scenes/Overworld/Others/RippleEffect.tscn" id="15_2m6j0"]
 
 [node name="Overworld" type="Node"]
 script = ExtResource("1_overworld")
@@ -38,6 +39,7 @@ script = ExtResource("7_tile_effect")
 grass_effect_scene = ExtResource("12_565oj")
 tall_grass_overlay_scene = ExtResource("13_2m6j0")
 grass_stepped_effect_scene = ExtResource("14_g3sn4")
+ripple_effect_scene = ExtResource("15_2m6j0")
 
 [node name="WildEncounterSystem" type="Node" parent="."]
 script = ExtResource("8_wild_encounter")

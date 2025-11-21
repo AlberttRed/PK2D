@@ -316,18 +316,13 @@ func activate_chunk(chunk_id: String) -> void:
 
 	chunk_data.is_active = true
 
-	# LAZY: Calcular eventos/tiles solo si es la primera vez que se activa
+	# LAZY: Calcular eventos solo si es la primera vez que se activa
 	if not chunk_data.events_initialized:
 		_initialize_chunk_events(chunk_id)
 		chunk_data.events_initialized = true
 
-	if not chunk_data.tiles_initialized:
-		_initialize_chunk_tiles(chunk_id)
-		chunk_data.tiles_initialized = true
-
-	# Activar eventos/tiles (ya calculados)
+	# Activar eventos (ya calculados)
 	_activate_chunk_events(chunk_id)
-	_activate_chunk_tiles(chunk_id)
 
 
 ## Desactiva un chunk
@@ -392,86 +387,6 @@ func _initialize_map_events_in_chunk(map_id: String, chunk_id: String) -> void:
 		if not registered_events.has(event):
 			chunk_data.event_refs.append(weakref(event))
 			registered_events[event] = true
-
-
-## Inicializa tiles especiales de un chunk (LAZY: solo cuando se activa por primera vez)
-## @param chunk_id: ID del chunk
-func _initialize_chunk_tiles(chunk_id: String) -> void:
-	var chunk_data = chunk_registry.get(chunk_id)
-	if not chunk_data:
-		return
-
-	# Iterar solo sobre mapas de este chunk
-	for map_id in chunk_data.map_ids:
-		_initialize_map_tiles_in_chunk(map_id, chunk_id)
-
-	chunk_data.tiles_initialized = true
-
-
-## Inicializa tiles de un mapa específico en un chunk
-## @param map_id: ID del mapa
-## @param chunk_id: ID del chunk
-func _initialize_map_tiles_in_chunk(map_id: String, chunk_id: String) -> void:
-	var chunk_data = chunk_registry.get(chunk_id)
-	if not chunk_data:
-		return
-
-	var map_instance = world_system.get_map(map_id)
-	if not map_instance:
-		return
-
-	var grid = map_instance.get_node_or_null("OverworldGrid")
-	if not grid or not grid is OverworldGrid:
-		return
-
-	var ref_layer = grid.reference_layer()
-	if not ref_layer:
-		return
-
-	var map_info = world_system.get_map_info(map_id)
-	if not map_info:
-		return
-
-	# Convertir world_bounds del chunk a coordenadas locales del mapa
-	var chunk_local_bounds = Rect2(
-		chunk_data.world_bounds.position - map_info.world_position,
-		chunk_data.world_bounds.size
-	)
-
-	# Calcular rango de tiles a verificar
-	var start_tile = ref_layer.local_to_map(chunk_local_bounds.position)
-	var end_tile = ref_layer.local_to_map(chunk_local_bounds.end)
-
-	# Iterar solo sobre tiles que podrían estar en el chunk
-	for y in range(start_tile.y, end_tile.y + 1):
-		for x in range(start_tile.x, end_tile.x + 1):
-			var tile_pos = Vector2i(x, y)
-			var world_pos = grid.tile_to_world_center(tile_pos)
-
-			# Verificar si está realmente en el chunk
-			if not chunk_data.world_bounds.has_point(world_pos):
-				continue
-
-			var tile_data_array = grid.get_tile_data(tile_pos)
-			for tile_data in tile_data_array:
-				if not tile_data:
-					continue
-
-				# Verificar si es tile especial
-				if _is_special_tile(tile_data):
-					chunk_data.special_tiles.append(tile_pos)
-
-
-## Verifica si un tile es "especial" (necesita procesamiento)
-## @param tile_data: TileData del tile
-## @return: true si es especial, false en caso contrario
-func _is_special_tile(tile_data: TileData) -> bool:
-	# Por ahora, todos los tiles con custom_data se consideran especiales
-	# En el futuro se puede refinar esta lógica
-	if tile_data.has_custom_data("is_special"):
-		return tile_data.get_custom_data("is_special")
-	# Por defecto, considerar todos los tiles como no especiales (optimización)
-	return false
 
 
 ## Activa eventos de un chunk

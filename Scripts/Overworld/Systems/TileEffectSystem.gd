@@ -20,10 +20,10 @@ var effect_handlers: Dictionary = {}  # {String: TileEffectHandler}
 @export var grass_effect_scene: PackedScene
 @export var tall_grass_overlay_scene: PackedScene
 @export var grass_stepped_effect_scene: PackedScene
-# Futuro: @export var water_ripple_scene: PackedScene
+@export var ripple_effect_scene: PackedScene
 # Futuro: @export var sand_footprint_scene: PackedScene
 
-# Estado temporal para step_started
+# Estado temporal para detectar colisiones
 var _tile_before_step: Vector2i = Vector2i(-9999, -9999)
 
 
@@ -48,34 +48,42 @@ func initialize(overworld_context: OverworldContext) -> void:
 
 ## Registra todos los handlers de efectos
 func _register_effect_handlers() -> void:
-	# Handler de hierba
 	var grass_handler = GrassEffectHandler.new(self)
-	grass_handler.setup_effects(
-		grass_effect_scene,
-		tall_grass_overlay_scene,
-		grass_stepped_effect_scene
-	)
-	effect_handlers["grass"] = grass_handler  # "grass" es el terrain type
+	grass_handler.setup_effects(grass_effect_scene, tall_grass_overlay_scene, grass_stepped_effect_scene)
+	effect_handlers["grass"] = grass_handler
 
-	# Futuro: Handler de agua
-	# var water_handler = WaterEffectHandler.new(self)
-	# water_handler.setup_effects(water_ripple_scene, surf_trail_scene)
-	# effect_handlers["Water"] = water_handler
-
-	# Futuro: Handler de arena (usa terrain, no encounter_type)
-	# var sand_handler = SandEffectHandler.new(self)
-	# sand_handler.setup_effects(sand_footprint_scene)
-	# effect_handlers["sand"] = sand_handler
+	var ripple_handler = RippleEffectHandler.new(self)
+	ripple_handler.setup_effects(ripple_effect_scene)
+	effect_handlers["water"] = ripple_handler
 
 
 ## Obtiene el handler para un tipo de terreno
 func get_handler_for_terrain(terrain_type: String) -> TileEffectHandler:
-	return effect_handlers.get(terrain_type)
+	return effect_handlers.get(terrain_type, null)
 
 
 ## Registra un nuevo handler (para extensibilidad)
 func register_handler(terrain_type: String, handler: TileEffectHandler) -> void:
 	effect_handlers[terrain_type] = handler
+
+
+## Obtiene el grid y la info del tile en una posición mundial
+func _get_tile_info_at_world_pos(world_pos: Vector2) -> Dictionary:
+	var result = world_system.find_grid_and_tile_at_world_position(world_pos)
+	var grid = result.get("grid")
+	var tile = result.get("tile", Vector2i.ZERO)
+
+	if grid:
+		return {
+			"grid": grid,
+			"tile": tile,
+			"info": grid.get_tile_info(tile)
+		}
+	return {
+		"grid": null,
+		"tile": Vector2i.ZERO,
+		"info": {"terrain": "ground", "encounter_type": ""}
+	}
 
 
 ## Se ejecuta cuando un actor EMPIEZA un paso
@@ -86,15 +94,29 @@ func _on_actor_step_started(actor: Node2D) -> void:
 
 	_tile_before_step = active_grid.world_to_tile(actor.global_position)
 	var grid_motion = actor.get_node_or_null("GridMotion")
-	if not grid_motion:
+	if not grid_motion or grid_motion.initial_step:
 		return
 
-	if not grid_motion.initial_step:
-		var destination_tile = _tile_before_step + Vector2i(grid_motion.dir)
-		var can_move = active_grid.can_step_to(actor, _tile_before_step, destination_tile)
+	var destination_tile = _tile_before_step + Vector2i(grid_motion.dir)
+	if not active_grid.can_step_to(actor, _tile_before_step, destination_tile):
+		return
 
-		if can_move:
-			_handle_movement_to_destination(active_grid, destination_tile, actor)
+	# Obtener info del tile actual (puede estar en otro mapa)
+	var from_data = _get_tile_info_at_world_pos(actor.global_position)
+
+	# Obtener info del tile destino
+	var dest_world_pos = active_grid.tile_to_world_center(destination_tile)
+	var to_data = _get_tile_info_at_world_pos(dest_world_pos)
+
+	# Si salimos de un tile con efectos, limpiar el handler
+	if from_data.grid and from_data.info.terrain != "ground":
+		var handler = get_handler_for_terrain(from_data.info.terrain)
+		if handler and to_data.info.terrain != from_data.info.terrain:
+			handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
+
+	# Manejar entrada al tile destino
+	if to_data.grid:
+		_handle_movement_to_destination(to_data.grid, to_data.tile, actor)
 
 
 ## Se ejecuta cuando un actor TERMINA un paso
@@ -103,48 +125,38 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 	if not active_grid:
 		return
 
-	# Una sola llamada que recoge toda la información del tile
 	var tile_info = active_grid.get_tile_info(tile)
 	var terrain_type = tile_info.terrain
 
-	if not terrain_type or terrain_type == "ground":
-		# No hay efectos especiales para este terreno
+	if terrain_type == "ground" or terrain_type.is_empty():
 		_clear_all_handlers(actor)
 		return
 
-	# Obtener handler para este tipo de terreno
 	var handler = get_handler_for_terrain(terrain_type)
 	if handler:
 		var grid_motion = actor.get_node("GridMotion")
 		var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
 		handler.on_step_finished_on_tile(active_grid, tile, actor, had_collision)
 
-	# Para encuentros salvajes, usar encounter_type del tile_info
 	if actor.is_in_group("Player") and not tile_info.encounter_type.is_empty():
 		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
 
 
 ## Maneja el movimiento hacia un tile de destino
 func _handle_movement_to_destination(grid: OverworldGrid, destination_tile: Vector2i, actor: Node2D) -> void:
-	# Leer la información del tile de destino
-	var tile_info = grid.get_tile_info(destination_tile)
-	var terrain_type = tile_info.terrain
-
-	if terrain_type and terrain_type != "ground":
-		var handler = get_handler_for_terrain(terrain_type)
-		if handler:
-			handler.on_step_started_to_tile(grid, destination_tile, actor)
+	var terrain_type = grid.get_tile_info(destination_tile).terrain
+	var handler = get_handler_for_terrain(terrain_type)
+	if handler and terrain_type != "ground":
+		handler.on_step_started_to_tile(grid, destination_tile, actor)
 
 
 ## Limpia el estado de todos los handlers
 func _clear_all_handlers(actor: Node2D) -> void:
-	for handler in effect_handlers.values():
-		if handler:
-			# Obtener el tile actual del actor
-			var active_grid = world_system.get_active_grid()
-			if active_grid:
-				var current_tile = active_grid.world_to_tile(actor.global_position)
-				handler.on_step_exited_tile(active_grid, current_tile, actor)
+	var tile_data = _get_tile_info_at_world_pos(actor.global_position)
+	if tile_data.grid:
+		for handler in effect_handlers.values():
+			if handler:
+				handler.on_step_exited_tile(tile_data.grid, tile_data.tile, actor)
 
 
 ## Conecta a las señales del jugador
@@ -156,17 +168,12 @@ func _connect_to_player() -> void:
 
 	var player = context.get_player()
 	if not player:
-		# Reintentar después de un frame
 		await get_tree().process_frame
 		_connect_to_player()
 		return
 
 	var grid_motion = player.get_node_or_null("GridMotion")
-	if not grid_motion:
-		return
-
-	# Verificar si ya está conectado para evitar duplicados
-	if grid_motion.step_finished.is_connected(_on_actor_step_finished):
+	if not grid_motion or grid_motion.step_finished.is_connected(_on_actor_step_finished):
 		return
 
 	grid_motion.step_finished.connect(_on_actor_step_finished.bind(player))
@@ -175,9 +182,5 @@ func _connect_to_player() -> void:
 
 ## Agrega un efecto a la escena (método helper compartido)
 func _add_effect_to_scene(effect: Node2D) -> void:
-	# Añadir el efecto como hijo del Overworld (padre del sistema)
-	var overworld = get_parent()
-	if overworld:
-		overworld.add_child(effect)
-	else:
-		get_tree().root.add_child(effect)
+	var parent = get_parent()
+	(parent if parent else get_tree().root).add_child(effect)

@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=3 uid="uid://b8k3m4n5p6q7r"]
+
+[ext_resource type="Texture2D" uid="uid://dlr0pfk4m8ss5" path="res://Sprites/Others/Ripple/ripple.png" id="1_h7nqg"]
+[ext_resource type="Script" uid="uid://c42wbhecysw2f" path="res://Scripts/Overworld/RippleEffect.gd" id="2_ripple_effect"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_osaae"]
+atlas = ExtResource("1_h7nqg")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iktt0"]
+atlas = ExtResource("1_h7nqg")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fq52g"]
+atlas = ExtResource("1_h7nqg")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p13uy"]
+atlas = ExtResource("1_h7nqg")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lphh1"]
+atlas = ExtResource("1_h7nqg")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ripple"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_osaae")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iktt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fq52g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p13uy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iktt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p13uy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_osaae")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iktt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fq52g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lphh1")
+}],
+"loop": false,
+"name": &"default",
+"speed": 6.0
+}]
+
+[node name="RippleEffect" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_ripple")
+autoplay = "default"
+frame = 9
+frame_progress = 1.0
+script = ExtResource("2_ripple_effect")

@@ -114,4 +114,3 @@ func _hide_overlay() -> void:
 	if _active_overlay != null and is_instance_valid(_active_overlay):
 		_active_overlay.queue_free()
 		_active_overlay = null
-
