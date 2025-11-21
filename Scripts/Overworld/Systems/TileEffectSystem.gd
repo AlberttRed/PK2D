@@ -108,10 +108,10 @@ func _on_actor_step_started(actor: Node2D) -> void:
 	var dest_world_pos = active_grid.tile_to_world_center(destination_tile)
 	var to_data = _get_tile_info_at_world_pos(dest_world_pos)
 
-	# Si salimos de un tile con efectos, limpiar el handler
+	# Si salimos de un tile con efectos
 	if from_data.grid and from_data.info.terrain != "ground":
 		var handler = get_handler_for_terrain(from_data.info.terrain)
-		if handler and to_data.info.terrain != from_data.info.terrain:
+		if handler:
 			handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
 
 	# Manejar entrada al tile destino
@@ -156,7 +156,7 @@ func _clear_all_handlers(actor: Node2D) -> void:
 	if tile_data.grid:
 		for handler in effect_handlers.values():
 			if handler:
-				handler.on_step_exited_tile(tile_data.grid, tile_data.tile, actor)
+				handler.clear_state()
 
 
 ## Conecta a las señales del jugador

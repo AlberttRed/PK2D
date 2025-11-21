@@ -334,6 +334,7 @@ func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
 		add_child(splash)
 
 	set_movement_enabled(false)
+	motion.step_started.emit()
 	_play_surf_jump_pose(direction_frame, -16)
 	sprite.z_index = 1
 	var jump_success: bool = await motion.jump_to_tile(destination_tile, false, -8)

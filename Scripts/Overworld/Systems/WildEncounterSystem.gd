@@ -23,7 +23,7 @@ var encounter_cooldown: int = 0
 var steps_since_last_encounter: int = 0
 
 # Flag para deshabilitar encuentros
-var encounters_enabled: bool = true
+@export var encounters_enabled: bool = false
 
 
 func _ready() -> void:

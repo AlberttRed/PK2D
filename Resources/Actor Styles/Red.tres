@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dkogrto37y1yu" path="res://Scripts/Resources/ActorStyle.gd" id="1_ymykc"]
 [ext_resource type="Texture2D" uid="uid://b4u12a3ypo5hc" path="res://Sprites/Overworlds/Characters/Red/red_run.png" id="2_nm6ay"]
 [ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/Red/red_walk.png" id="3_b2epo"]
-[ext_resource type="Texture2D" uid="uid://c1yecugb441gm" path="res://Sprites/Overworlds/Characters/Red/red_surf_offset.png" id="5_4cej1"]
+[ext_resource type="Texture2D" uid="uid://blpe4nml1yy78" path="res://Sprites/Overworlds/Characters/Red/red_surf_offset.png" id="5_4cej1"]
 [ext_resource type="Texture2D" uid="uid://c0mrrq6cntv7b" path="res://Sprites/Overworlds/Characters/Red/red_surf_jump.png" id="6_nm6ay"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3drw2"]
@@ -289,7 +289,7 @@ region = Rect2(128, 128, 64, 64)
 atlas = ExtResource("5_4cej1")
 region = Rect2(0, 192, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tw076"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_nm6ay"]
 atlas = ExtResource("5_4cej1")
 region = Rect2(128, 192, 64, 64)
 
@@ -382,7 +382,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_down",
-"speed": 1.0
+"speed": 4.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -411,7 +411,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_u58to")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_tw076")
+"texture": SubResource("AtlasTexture_nm6ay")
 }],
 "loop": true,
 "name": &"idle_up",

@@ -52,10 +52,10 @@ func on_step_finished_on_tile(grid: OverworldGrid, tile: Vector2i, actor: Node2D
 
 
 func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) -> void:
-	_clear_state()
+	clear_state()
 
 
-func _clear_state() -> void:
+func clear_state() -> void:
 	_hide_overlay()
 	_last_effect_tile = Vector2i(-9999, -9999)
 	_last_overlay_tile = Vector2i(-9999, -9999)

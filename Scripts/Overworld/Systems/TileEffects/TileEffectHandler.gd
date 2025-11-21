@@ -48,4 +48,6 @@ func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) 
 ## Retorna true si este handler puede manejar el tipo de terreno especificado
 func can_handle(terrain_type_to_check: String) -> bool:
 	return terrain_type == terrain_type_to_check
-
+	
+func clear_state():
+	pass
