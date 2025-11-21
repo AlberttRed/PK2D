@@ -1,6 +1,17 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://bo4svjmq1mi66"]
+[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://bo4svjmq1mi66"]
 
+[ext_resource type="Texture2D" uid="uid://b54w4pqtu26o1" path="res://Sprites/Tilesets/Animated tiles/Floewrs1/Flowers1.png" id="1_6sahi"]
 [ext_resource type="Texture2D" uid="uid://ccncf5rus5o6e" path="res://Sprites/Tilesets/Outside.png" id="1_slg0e"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20srp"]
+texture = ExtResource("1_6sahi")
+texture_region_size = Vector2i(32, 32)
+0:0/animation_columns = 4
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7n1ec"]
 texture = ExtResource("1_slg0e")
@@ -4188,3 +4199,4 @@ custom_data_layer_4/type = 2
 custom_data_layer_5/name = "ledge_direction"
 custom_data_layer_5/type = 4
 sources/3 = SubResource("TileSetAtlasSource_7n1ec")
+sources/0 = SubResource("TileSetAtlasSource_20srp")
