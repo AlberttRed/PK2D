@@ -62,9 +62,7 @@ func _load_all() -> void:
 	_load_trainer_classes()
 
 func _print_summary() -> void:
-	print("DatabaseService: Loaded %d Pokémon, %d moves, %d types, %d abilities, %d natures, %d weathers, %d trainer classes" % [
-		_pokemon_by_id.size(), _moves_by_id.size(), _types_by_id.size(), _abilities_by_id.size(), _natures_by_id.size(), _weathers_by_id.size(), _trainer_classes_by_id.size()
-	])
+	pass
 
 func _load_moves() -> void:
 	load_resources_from_dir(MOVES_DIR, func(res):

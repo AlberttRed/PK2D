@@ -34,8 +34,6 @@ func _ready() -> void:
 	# Inicializar el diccionario de acciones MO
 	_initialize_mo_actions()
 
-	print("MOSystem: Sistema de Máquinas Ocultas inicializado con %d MO(s)" % mo_actions.size())
-
 ## Inicializa el diccionario de acciones MO disponibles
 ## Las clases específicas de cada MO se registrarán aquí cuando se implementen
 func _initialize_mo_actions() -> void:
@@ -76,7 +74,6 @@ func register_mo_action(mo_type: String, action: Resource) -> void:
 		action.set_mo_system(self)
 
 	mo_actions[mo_type] = action
-	print("MOSystem: MO registrada - Tipo: %s, Nombre: %s" % [mo_type, action.get_mo_name()])
 
 ## Elimina una acción MO del sistema
 ## @param mo_type: Identificador de la MO a eliminar

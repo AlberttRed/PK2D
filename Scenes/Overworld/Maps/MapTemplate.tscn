@@ -1,7 +1,25 @@
-[gd_scene load_steps=3 format=3 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=8 format=3 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mmedn"]
+[ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_mpvrs"]
+[ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_n2uib"]
+[ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_b03hq"]
+
+[sub_resource type="Resource" id="Resource_f2pe6"]
+script = ExtResource("5_b03hq")
+pokemon_id = 16
+min_level = 2
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_jlk61"]
+script = ExtResource("5_b03hq")
+pokemon_id = 19
+min_level = 2
+max_level = 4
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="MapScene" type="Node2D"]
 script = ExtResource("1_mmedn")
@@ -24,3 +42,8 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
+
+[node name="MapAreaEncounters" parent="." instance=ExtResource("3_mpvrs")]
+
+[node name="Land" parent="MapAreaEncounters" instance=ExtResource("4_n2uib")]
+pokemon_encounters = Array[ExtResource("5_b03hq")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])

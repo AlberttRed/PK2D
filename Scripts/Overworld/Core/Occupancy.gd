@@ -128,12 +128,10 @@ func refresh_occupancy() -> void:
 	# Si debe ser "through" pero está ocupando, liberar el tile
 	if is_through and is_occupied:
 		grid.vacate(tile, actor)
-		print("Occupancy: Evento '%s' ahora es through (liberando tile %s)" % [actor.name, tile])
 
 	# Si NO debe ser "through" pero no está ocupando, ocupar el tile
 	elif not is_through and not is_occupied:
 		grid.occupy(tile, actor)
-		print("Occupancy: Evento '%s' ya no es through (ocupando tile %s)" % [actor.name, tile])
 
 # Ya no necesitamos escuchar warp_finished; el grid se actualiza vía active_grid_changed
 
@@ -172,5 +170,3 @@ func _initialize_player_grid() -> void:
 	# Registrar ocupación inicial
 	var tile := grid.world_to_tile(actor.global_position)
 	grid.occupy(tile, actor)
-
-	print("Occupancy: Grid inicializado para %s en tile %s" % [actor.name, tile])

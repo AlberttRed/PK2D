@@ -26,8 +26,7 @@ var self_switches: Dictionary = {}
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
-	print("GameStateService: Inicializado con estado temporal")
-	# No inicializar automáticamente - se hará cuando sea necesario
+	pass  # No inicializar automáticamente - se hará cuando sea necesario
 
 ## Inicializa el estado con valores por defecto para nueva partida
 func initialize_new_game() -> void:
@@ -38,13 +37,10 @@ func initialize_new_game() -> void:
 	game_variables = {}
 	self_switches = {}
 
-	print("GameStateService: Nueva partida inicializada - Mapa: %s, Posición: %s" % [current_map_id, current_position])
-
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
 	# TODO: Implementar carga desde archivo de guardado
 	# Por ahora, simular que no hay partida guardada
-	print("GameStateService: No hay partida guardada disponible")
 	return false
 
 # === MÉTODOS DE LECTURA ===
@@ -83,17 +79,14 @@ func get_self_switch(event_id: String, switch_letter: String) -> bool:
 ## Establece el ID del mapa actual
 func set_current_map_id(map_id: String) -> void:
 	current_map_id = map_id
-	print("GameStateService: Mapa cambiado a: %s" % map_id)
 
 ## Establece la posición actual del jugador
 func set_current_position(position: Vector2i) -> void:
 	current_position = position
-	print("GameStateService: Posición cambiada a: %s" % position)
 
 ## Establece la dirección a la que mira el jugador
 func set_facing_direction(direction: Vector2) -> void:
 	facing_dir = direction
-	print("GameStateService: Dirección cambiada a: %s" % direction)
 
 ## Establece el valor de un flag de evento
 func set_event_flag(flag_name: String, value: bool) -> void:

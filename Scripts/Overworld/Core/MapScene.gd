@@ -107,15 +107,20 @@ func contains_world_position(world_pos: Vector2) -> bool:
 
 
 ## Activa este mapa (jugador está aquí)
+## NOTA: NO activa grid ni eventos - el sistema de chunks controla su activación
 func activate() -> void:
 	is_active = true
-	_enable_processing()
+	# NO llamar a _enable_processing() - el sistema de chunks (WorldChunkController)
+	# controla qué eventos/grids están activos basándose en chunks activos, no en el mapa activo
 
 
 ## Desactiva este mapa (jugador en otro mapa)
+## NOTA: NO desactiva grid ni eventos - el sistema de chunks controla su activación
 func deactivate() -> void:
 	is_active = false
-	_disable_processing()
+	# NO llamar a _disable_processing() - el sistema de chunks (WorldChunkController)
+	# controla qué eventos/grids están activos basándose en chunks activos, no en el mapa activo
+	# Si desactivamos aquí, rompemos el sistema de chunks
 
 
 ## Habilita el procesamiento de este mapa

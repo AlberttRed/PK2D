@@ -15,14 +15,19 @@ var actor_animator: ActorAnimator
 # Referencia al OverworldContext para coordinación con EventSystem
 var overworld_context: OverworldContext = null
 
-func _ready() -> void:
-	print("Event '%s': _ready() iniciado" % name)
+## Métodos virtuales para conectar/desconectar señales externas
+## Se llaman cuando el evento se activa/desactiva en un chunk
+## Las clases hijas (NPC, Trainer) pueden sobrescribir estos métodos
+func connect_external_signals() -> void:
+	pass
 
+func disconnect_external_signals() -> void:
+	pass
+
+func _ready() -> void:
 	# Obtener referencias a los nodos manualmente para controlar el orden
 	placeholder_sprite = $AnimatedSprite2D
 	actor_animator = $ActorAnimator
-
-	print("Event '%s': actor_animator obtenido = %s" % [name, actor_animator])
 
 	# Duplicar páginas para evitar modificar Resources compartidos
 	_duplicate_all_pages()
@@ -31,9 +36,7 @@ func _ready() -> void:
 	hide_placeholder_sprite()
 
 	# Ahora configurar la página actual (esto aplicará el sprite)
-	print("Event '%s': Llamando a setup_current_page()" % name)
 	setup_current_page()
-	print("Event '%s': setup_current_page() completado" % name)
 
 	# Conectar a señales de cambio de estado para reevaluación automática
 	_connect_to_state_signals()
@@ -45,7 +48,6 @@ func _ready() -> void:
 ## Configura current_page basado en current_page_index y pages
 ## Evalúa condiciones de todas las páginas para encontrar la activa
 func setup_current_page() -> void:
-	print("Event '%s': setup_current_page() - pages.size() = %d" % [name, pages.size()])
 
 	if pages.size() == 0:
 		current_page = null

@@ -16,13 +16,13 @@ class_name OverworldCoordinator
 @onready var event_system: EventSystem = $EventSystem
 @onready var warp_system: WarpSystem = $WarpSystem
 @onready var mo_system: MOSystem = $MOSystem
+@onready var tile_effect_system: TileEffectSystem = $TileEffectSystem
+@onready var wild_encounter_system: WildEncounterSystem = $WildEncounterSystem
 
 # Contexto compartido entre sistemas del Overworld
 var context: OverworldContext = null
 
 func _ready() -> void:
-	print("OverworldCoordinator: Inicializando sistemas del overworld...")
-
 	# Crear el contexto antes de la inicialización
 	context = OverworldContext.new()
 	context.name = "OverworldContext"
@@ -41,13 +41,9 @@ func _ready() -> void:
 	context.validate()
 	context.print_summary()
 
-	print("OverworldCoordinator: Todos los sistemas inicializados y conectados")
-
 
 ## Registra todos los sistemas en el OverworldContext
 func _register_systems_in_context() -> void:
-	print("OverworldCoordinator: Registrando sistemas en el contexto...")
-
 	# Registrar sistemas principales
 	if world_system:
 		context.register_system("World", world_system)
@@ -61,28 +57,27 @@ func _register_systems_in_context() -> void:
 	if mo_system:
 		context.register_system("MO", mo_system)
 
+	if tile_effect_system:
+		context.register_system("TileEffect", tile_effect_system)
+
+	if wild_encounter_system:
+		context.register_system("WildEncounter", wild_encounter_system)
+
 	var overlay_layer := DisplayManager.get_overlay_layer()
 	if overlay_layer:
 		context.register_system("Overlay", overlay_layer)
-		print("  ✓ OverlayLayer registrado en contexto")
 
 	# El Player se registrará dinámicamente cuando WorldSystem lo cargue
-	print("OverworldCoordinator: Player se cargará dinámicamente desde WorldSystem")
-
-	print("OverworldCoordinator: Registro de sistemas completado")
 
 ## Inyecta las referencias necesarias entre sistemas
 ## Este es el único lugar donde se establecen las conexiones entre sistemas
 func _inject_dependencies() -> void:
-	print("OverworldCoordinator: Inyectando dependencias entre sistemas...")
-
 	# Inyectar el contexto a todos los sistemas
 	if world_system:
 		if world_system.has_method("set_context"):
 			world_system.set_context(context)
 		else:
 			world_system.context = context
-		print("  ✓ Context → WorldSystem")
 
 	if warp_system:
 		if warp_system.has_method("set_context"):
@@ -91,19 +86,16 @@ func _inject_dependencies() -> void:
 			warp_system.context = context
 		# Mantener compatibilidad temporal
 		warp_system.world_system = world_system
-		print("  ✓ Context → WarpSystem")
 
 	if mo_system:
 		if mo_system.has_method("set_context"):
 			mo_system.set_context(context)
 		else:
 			mo_system.context = context
-		print("  ✓ Context → MOSystem")
 
 	var overlay_layer := context.get_overlay_layer()
 	if overlay_layer and overlay_layer.has_method("set_context"):
 		overlay_layer.set_context(context)
-		print("  ✓ Context → OverlayLayer")
 		if world_system and world_system.has_method("refresh_overlay_settings"):
 			world_system.refresh_overlay_settings()
 
@@ -112,9 +104,22 @@ func _inject_dependencies() -> void:
 			event_system.set_context(context)
 		else:
 			event_system.context = context
-		print("  ✓ Context → EventSystem")
 
-	print("OverworldCoordinator: Inyección de dependencias completada")
+	if tile_effect_system:
+		if tile_effect_system.has_method("initialize"):
+			tile_effect_system.initialize(context)
+
+	if wild_encounter_system:
+		if wild_encounter_system.has_method("initialize"):
+			wild_encounter_system.initialize(context)
+		# Conectar señal de battle_requested a DisplayManager
+		if not wild_encounter_system.battle_requested.is_connected(_on_wild_battle_requested):
+			wild_encounter_system.battle_requested.connect(_on_wild_battle_requested)
+
+
+## Callback cuando WildEncounterSystem solicita un combate
+func _on_wild_battle_requested(participants: Array, rules: BattleRules) -> void:
+	var winner = await DisplayManager.start_battle(participants, rules)
 
 
 ## Métodos de utilidad para obtener sistemas específicos
@@ -169,8 +174,6 @@ func verify_systems() -> bool:
 ##   ├→ WorldSystem.load_player()
 ##   └→ Posicionar jugador vía OverworldGrid
 func configure_from_gamestate() -> bool:
-	print("OverworldCoordinator: Iniciando configuración desde GameState...")
-
 	# Verificar que tenemos los sistemas necesarios
 	if not world_system:
 		push_error("OverworldCoordinator: WorldSystem no disponible para configuración")
@@ -181,10 +184,7 @@ func configure_from_gamestate() -> bool:
 	var position = GameStateService.get_current_position()
 	var facing_dir = GameStateService.get_facing_direction()
 
-	print("OverworldCoordinator: Configurando - Mapa: %s, Posición: %s, Dirección: %s" % [map_id, position, facing_dir])
-
 	# 1. Cambiar al mapa correcto (vía WorldSystem)
-	print("OverworldCoordinator: Cargando mapa '%s'..." % map_id)
 	var success = world_system.change_to_map(map_id)
 	if not success:
 		push_error("OverworldCoordinator: No se pudo cargar el mapa: " + map_id)
@@ -192,16 +192,12 @@ func configure_from_gamestate() -> bool:
 
 	# 2. Cargar el jugador si no existe (vía WorldSystem)
 	if not world_system.player:
-		print("OverworldCoordinator: Cargando jugador...")
 		success = world_system.load_player()
 		if not success:
 			push_error("OverworldCoordinator: No se pudo cargar el jugador")
 			return false
-	else:
-		print("OverworldCoordinator: Jugador ya existe")
 
 	# 3. Posicionar al jugador en las coordenadas guardadas
-	print("OverworldCoordinator: Posicionando jugador...")
 	var grid = world_system.get_active_grid()
 	if not grid:
 		push_error("OverworldCoordinator: No se pudo obtener el OverworldGrid")
@@ -215,5 +211,4 @@ func configure_from_gamestate() -> bool:
 	grid.position_player_at_tile(position, player)
 	grid.set_player_facing_direction(facing_dir, player)
 
-	print("OverworldCoordinator: ✓ Configuración desde GameState completada exitosamente")
 	return true

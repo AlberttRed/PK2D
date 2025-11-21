@@ -21,8 +21,7 @@ var current_map_id: String = ""
 var current_spawn_id: String = ""
 
 func _ready() -> void:
-	print("WarpSystem: Sistema de warp inicializado")
-	# NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
+	pass  # NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
 	# Se validará cuando se use, no aquí
 
 ## Actualiza las referencias a otros sistemas desde el contexto

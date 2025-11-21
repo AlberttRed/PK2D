@@ -334,6 +334,7 @@ func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
 		add_child(splash)
 
 	set_movement_enabled(false)
+	motion.step_started.emit()
 	_play_surf_jump_pose(direction_frame, -16)
 	sprite.z_index = 1
 	var jump_success: bool = await motion.jump_to_tile(destination_tile, false, -8)
@@ -422,7 +423,6 @@ func are_controls_blocked() -> bool:
 ## Establece el contexto del Overworld (llamado desde WorldSystem)
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
-	print("Player: Contexto del Overworld establecido")
 
 	if context:
 		if not context.player_control_blocked.is_connected(_on_player_control_blocked):
@@ -438,12 +438,6 @@ func set_context(overworld_context: OverworldContext) -> void:
 	var occupancy = get_node_or_null("Occupancy")
 	if occupancy and occupancy.has_method("set_context"):
 		occupancy.set_context(context)
-
-	# Propagar a WildEncounterDetector si existe
-	var encounter_detector = get_node_or_null("WildEncounterDetector")
-	if encounter_detector and encounter_detector.has_method("set_context"):
-		encounter_detector.set_context(context)
-		encounter_detector.player = self
 
 func _connect_display_manager_signals() -> void:
 	var dm := DisplayManager.instance

@@ -78,12 +78,17 @@ func current_tile() -> Vector2i:
 	return grid.world_to_tile(actor.global_position)
 
 ## Refresca la referencia al grid actual
-## Nota: Obtiene el grid activo del WorldSystem
+## Nota: Para eventos (NPCs), usa su home_grid. Para Player, usa el grid activo.
 func _refresh_grid() -> void:
-	# Actualizar referencia a WorldSystem si es necesario
-	_update_world_system_reference()
+	# Para eventos (NPCs), usar su home_grid en lugar del grid activo
+	if actor is Event:
+		var occupancy = actor.get_node_or_null("Occupancy")
+		if occupancy and occupancy.home_grid:
+			grid = occupancy.home_grid
+			return
 
-	# Obtener grid del WorldSystem
+	# Para Player, obtener el grid activo del WorldSystem
+	_update_world_system_reference()
 	if world_system:
 		grid = world_system.get_active_grid()
 	# Si no hay WorldSystem todavía, simplemente no hacer nada
@@ -459,11 +464,20 @@ func _update_world_system_reference() -> void:
 func set_context(overworld_context: OverworldContext) -> void:
 	context = overworld_context
 	_update_world_system_reference()
-	if context and not context.active_grid_changed.is_connected(_on_active_grid_changed):
-		context.active_grid_changed.connect(_on_active_grid_changed)
+
+	# Solo conectar a active_grid_changed si es el Player
+	# Los eventos (NPCs) no deben cambiar su grid cuando cambia el mapa activo
+	if not actor is Event:
+		if context and not context.active_grid_changed.is_connected(_on_active_grid_changed):
+			context.active_grid_changed.connect(_on_active_grid_changed)
+
 	_refresh_grid()
 
-	print("GridMotion: Contexto establecido, grid inicializado: %s" % ("OK" if grid else "FAIL"))
-
 func _on_active_grid_changed(new_grid: OverworldGrid) -> void:
+	# Los eventos (NPCs) no deben cambiar su grid cuando cambia el mapa activo
+	# Solo el Player debe usar el grid activo
+	if actor is Event:
+		return  # Mantener su home_grid
+
+	# Solo el Player actualiza su grid al grid activo
 	grid = new_grid

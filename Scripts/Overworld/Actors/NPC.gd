@@ -126,9 +126,8 @@ func _ready() -> void:
 		motion.step_started.connect(_on_step_started)
 		motion.step_finished.connect(_on_step_finished)
 
-	# Conectar a la señal step_finished del Player si el awareness está activo
-	if awareness_enabled and movement_type in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
-		_connect_to_player_movement()
+	# NO conectar awareness aquí - se conectará cuando el chunk se active
+	# La conexión se hace en connect_external_signals() que se llama desde WorldChunkController
 
 	# Convertir el path de enum a Vector2 (2 = PATH)
 	if movement_type == 2:
@@ -251,7 +250,39 @@ func _connect_to_player_movement() -> void:
 	if player and player.has_node("GridMotion"):
 		var player_motion = player.get_node("GridMotion")
 		if player_motion:
-			player_motion.step_finished.connect(_on_player_moved)
+			if not player_motion.step_finished.is_connected(_on_player_moved):
+				player_motion.step_finished.connect(_on_player_moved)
+
+## Desconecta de la señal step_finished del Player para awareness
+func _disconnect_from_player_movement() -> void:
+	var context = _get_context()
+	if context:
+		var player = context.get_player()
+		if player and is_instance_valid(player) and player.has_node("GridMotion"):
+			var player_motion = player.get_node("GridMotion")
+			if player_motion and is_instance_valid(player_motion):
+				if player_motion.step_finished.is_connected(_on_player_moved):
+					player_motion.step_finished.disconnect(_on_player_moved)
+
+## Sobrescribe el método virtual de Event para conectar señales externas
+## Se llama cuando el NPC se activa en un chunk
+func connect_external_signals() -> void:
+	super.connect_external_signals()
+	# Conectar awareness si está habilitado
+	if awareness_enabled and movement_type in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+		_connect_to_player_movement()
+
+	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
+	if movement_type == 3 and _random_turning_timer:  # RANDOM_TURNING
+		_random_turning_timer.stop()  # Detener si estaba corriendo
+		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+
+## Sobrescribe el método virtual de Event para desconectar señales externas
+## Se llama cuando el NPC se desactiva en un chunk
+func disconnect_external_signals() -> void:
+	super.disconnect_external_signals()
+	# Desconectar awareness
+	_disconnect_from_player_movement()
 
 ## Callback del timer de movimiento aleatorio
 func _on_random_timer_timeout() -> void:
@@ -301,6 +332,9 @@ func _on_random_turning_timer_timeout() -> void:
 	# Solo girar sin moverse
 	motion.face(direction)
 	animator.idle(direction)
+
+	print("NPC '%s': Cambio de dirección (RandomTurning) → %s" % [name, DirectionEnum.Type.keys()[random_look]])
+
 
 	# Reiniciar timer con intervalo aleatorio
 	_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))

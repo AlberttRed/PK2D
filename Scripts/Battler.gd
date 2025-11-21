@@ -52,48 +52,44 @@ func _load_from_trainer_data() -> void:
 	if trainer_data == null:
 		push_warning("Battler: No se ha asignado TrainerData. El Battler no tendrá datos configurados.")
 		return
-	
+
 	# Inicializar TrainerData (carga TrainerClassData desde el enum)
 	trainer_data.initialize()
-	
+
 	# Cargar propiedades básicas
 	trainer_id = trainer_data.trainer_id
 	trainer_name = trainer_data.display_name
 	battle_ia = trainer_data.ai_profile
 	allow_double_battle = trainer_data.double_battle
-	
+
 	# Cargar sprites (front y back) con fallback a los de la clase
 	battle_front_sprite = trainer_data.get_battle_front_sprite()
 	battle_back_sprite = trainer_data.get_battle_back_sprite()
-	
+
 	# Cargar textos
 	before_battle_message = trainer_data.intro_text
 	init_battle_message = trainer_data.intro_text  # Usar intro para ambos
 	end_battle_message = trainer_data.defeat_text
-	
+
 	# Cargar equipo desde TrainerData
 	party = trainer_data.create_party()
-	
-	print("Battler: Cargado desde TrainerData '%s' (%d Pokémon)" % [trainer_data.get_full_name(), party.size()])
 
 
 ## Inicializa el equipo cargado desde TrainerData
 ## Si el equipo está vacío, muestra una advertencia
 func _initialize_party() -> void:
 	var trainer_display_name = trainer_data.display_name if trainer_data else trainer_name
-	
+
 	if party.is_empty():
 		push_warning("Battler '%s': No tiene Pokémon en el equipo. Asegúrate de configurar party_data en el TrainerData." % trainer_display_name)
 		return
-	
+
 	# Inicializar cada Pokemon del array (cargados desde TrainerData)
 	for pokemon in party:
 		if pokemon:
 			# Solo llamar _post_init si el Pokemon no está inicializado
 			if pokemon.base == null:
 				pokemon._post_init()
-	
-	print("Battler '%s': Equipo cargado e inicializado (%d Pokémon)" % [trainer_display_name, party.size()])
 
 
 ## Agrega un Pokémon al equipo (runtime)
@@ -101,7 +97,7 @@ func add_pokemon_to_party(pokemon) -> void:  # pokemon: Pokemon
 	if pokemon == null:
 		push_warning("Battler: Intentando agregar un Pokémon nulo")
 		return
-	
+
 	party.append(pokemon)
 
 ## Agrega un Pokémon desde PokemonData (crea el runtime automáticamente)
@@ -109,7 +105,7 @@ func add_pokemon_from_data(pokemon_data: PokemonData, level: int = 5, gender: in
 	if pokemon_data == null:
 		push_warning("Battler: PokemonData nulo")
 		return
-	
+
 	# Crear Pokemon con stats aleatorios
 	var pokemon = Pokemon.new(
 		pokemon_data,     # pokemon_data
@@ -119,11 +115,11 @@ func add_pokemon_from_data(pokemon_data: PokemonData, level: int = 5, gender: in
 		0,                # pokemon_nature (0 = aleatorio)
 		true              # randomize_stats (IVs aleatorios)
 	)
-	
+
 	if battler_type == CONST.BATTLER_TYPES.TRAINER:
 		pokemon.trainer_id = trainer_id
 		pokemon.original_trainer = trainer_name if not trainer_name.is_empty() else "Desconocido"
-	
+
 	party.append(pokemon)
 
 
@@ -191,7 +187,7 @@ func get_defeat_text() -> String:
 ## Convierte este Battler a un BattleParticipant para usar en combate
 func to_battle_participant() -> BattleParticipant:
 	var participant := BattleParticipant.new()
-	
+
 	# Configurar datos del participante
 	participant.trainer_id = trainer_id
 	# Usar get_full_name() para incluir la clase del trainer (ej: "Cazabichos Jano")
@@ -200,19 +196,19 @@ func to_battle_participant() -> BattleParticipant:
 	participant.is_player = is_player
 	participant.ai_controller = battle_ia
 	participant.is_trainer = (battler_type != CONST.BATTLER_TYPES.WILD_POKEMON)
-	
+
 	# Pasar mensajes del trainer (para mostrar al final del combate)
 	participant.intro_message = before_battle_message
 	participant.defeat_message = end_battle_message
 	participant.victory_message = ""  # Por si se añade en el futuro
-	
+
 	# Convertir el equipo a BattlePokemon
 	for pokemon in party:
 		var battle_pokemon = pokemon.to_battle_pokemon()  # BattlePokemon
 		battle_pokemon.controllable = is_player
 		battle_pokemon.participant = participant
 		participant.add_pokemon(battle_pokemon)
-	
+
 	return participant
 
 
@@ -222,11 +218,11 @@ func to_battle_participant() -> BattleParticipant:
 func get_partner() -> Battler:
 	if partner_path.is_empty():
 		return null
-	
+
 	var partner_node = get_node_or_null(partner_path)
 	if partner_node and partner_node is Battler:
 		return partner_node
-	
+
 	return null
 
 
@@ -265,7 +261,7 @@ func create(
 	_is_playable: bool = false,
 	_partner: NodePath = NodePath("")
 ) -> Battler:
-	
+
 	battler_type = _type
 	battle_ia = _IA
 	trainer_name = _name
@@ -278,11 +274,11 @@ func create(
 	allow_double_battle = _double_battle
 	is_player = _is_playable
 	partner_path = _partner
-	
+
 	# Agregar Pokémon al equipo
 	party.clear()
 	for p in _party:
 		if p is Pokemon:
 			add_pokemon_to_party(p)
-	
+
 	return self

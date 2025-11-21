@@ -51,7 +51,6 @@ func _ready() -> void:
 		return
 
 	instance = self
-	print("DisplayManager: Inicializado como singleton")
 
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)

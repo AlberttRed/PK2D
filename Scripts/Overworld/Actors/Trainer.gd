@@ -81,7 +81,6 @@ func _find_battler() -> void:
 	for child in get_children():
 		if child is Battler:
 			battler = child
-			print("Trainer '%s': Battler encontrado (%s)" % [name, battler.get_full_name()])
 			return
 
 	push_warning("Trainer '%s': No se encontró un nodo Battler hijo. Configura un Battler para este entrenador." % name)
@@ -108,7 +107,6 @@ func _connect_to_player_for_detection() -> void:
 		# Verificar si ya está conectado para evitar duplicados
 		if not player_motion.step_finished.is_connected(_on_movement_detected):
 			player_motion.step_finished.connect(_on_movement_detected)
-			print("Trainer '%s': Conectado a movimiento del jugador" % name)
 	else:
 		push_warning("Trainer '%s': No se pudo obtener GridMotion del Player." % name)
 
@@ -127,10 +125,9 @@ func _connect_own_movement_for_detection() -> void:
 	if not motion.direction_changed.is_connected(_on_direction_changed):
 		motion.direction_changed.connect(_on_direction_changed)
 
-	print("Trainer '%s': Conectado a propio movimiento y giros para detección" % name)
-
 
 ## Actualiza el estado de detección según la página activa
+## Si el evento está activo (en un chunk activo), reconecta/desconecta las señales según la página
 func _update_detection_state() -> void:
 	# Verificar que el evento está en un mapa activo antes de intentar conectar
 	if not is_inside_tree() or not motion or not is_instance_valid(motion):
@@ -139,27 +136,35 @@ func _update_detection_state() -> void:
 	if not motion.grid or not is_instance_valid(motion.grid):
 		return
 
-	# Verificar si la página activa requiere detección
-	if not current_page:
-		_disconnect_detection_signals()
-		return
-
 	# Validar que solo los Trainers puedan usar detección
-	if current_page.enable_trainer_detection and not self is Trainer:
+	if current_page and current_page.enable_trainer_detection and not self is Trainer:
 		push_error("EventPage: enable_trainer_detection=true pero el Event '%s' NO es un Trainer" % name)
 		return
 
-	# Activar o desactivar detección según la página
-	if current_page.enable_trainer_detection:
-		# Activar detección
-		call_deferred("_connect_to_player_for_detection")
-		_connect_own_movement_for_detection()
-		print("Trainer '%s': Detección activada (rango: %d)" % [name, current_page.detection_range])
-	else:
-		# Desactivar detección
-		_disconnect_detection_signals()
-		print("Trainer '%s': Detección desactivada" % name)
+	# Si el evento está activo (process_mode != DISABLED), actualizar las conexiones
+	# Esto puede pasar cuando cambia la página del evento mientras está en un chunk activo
+	if process_mode != Node.PROCESS_MODE_DISABLED:
+		# Desconectar primero (por si acaso)
+		disconnect_external_signals()
+		# Reconectar si la página actual requiere detección
+		connect_external_signals()
 
+
+## Sobrescribe el método virtual de Event para conectar señales externas
+## Se llama cuando el Trainer se activa en un chunk
+func connect_external_signals() -> void:
+	super.connect_external_signals()
+	# Conectar detección si está habilitada en la página actual
+	if current_page and current_page.enable_trainer_detection:
+		_connect_to_player_for_detection()
+		_connect_own_movement_for_detection()
+
+## Sobrescribe el método virtual de Event para desconectar señales externas
+## Se llama cuando el Trainer se desactiva en un chunk
+func disconnect_external_signals() -> void:
+	super.disconnect_external_signals()
+	# Desconectar todas las señales de detección
+	_disconnect_detection_signals()
 
 ## Desconecta todas las señales de detección
 func _disconnect_detection_signals() -> void:
