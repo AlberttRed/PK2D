@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=14 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Resource" uid="uid://but4gb65vkb58" path="res://Resources/Actor Styles/Red.tres" id="2_5yaag"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="12_x884u"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="13_5yaag"]
 [ext_resource type="Texture2D" uid="uid://cdck4xo6iqrah" path="res://Sprites/Others/Player_Shadow.png" id="14_p0ptx"]
+[ext_resource type="PackedScene" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="15_reflection"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5yaag"]
 
@@ -43,6 +44,8 @@ script = ExtResource("3_sxj1f")
 sprite_frames = SubResource("SpriteFrames_5yaag")
 offset = Vector2(0, -8)
 metadata/_edit_lock_ = true
+
+[node name="ReflectionSprite" parent="." instance=ExtResource("15_reflection")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("5_0hlcb")

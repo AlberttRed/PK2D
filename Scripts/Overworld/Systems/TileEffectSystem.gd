@@ -1,6 +1,8 @@
 extends Node
 class_name TileEffectSystem
 
+const ReflectionEffectHandler = preload("res://Scripts/Overworld/Systems/TileEffects/ReflectionEffectHandler.gd")
+
 ## Sistema coordinador de efectos visuales de terreno
 ## Delega en handlers específicos según el tipo de terreno
 ##
@@ -55,6 +57,11 @@ func _register_effect_handlers() -> void:
 	var ripple_handler = RippleEffectHandler.new(self)
 	ripple_handler.setup_effects(ripple_effect_scene)
 	effect_handlers["water"] = ripple_handler
+
+	# ReflectionEffectHandler maneja reflejos en agua (comparte "water" con ripple)
+	# Se registra después para que tenga prioridad en on_step_started_to_tile
+	var reflection_handler = ReflectionEffectHandler.new(self)
+	effect_handlers["water_reflection"] = reflection_handler
 
 
 ## Obtiene el handler para un tipo de terreno
@@ -114,6 +121,12 @@ func _on_actor_step_started(actor: Node2D) -> void:
 		if handler:
 			handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
 
+		# También llamar al reflection handler si es agua
+		if from_data.info.terrain == "water":
+			var reflection_handler = effect_handlers.get("water_reflection")
+			if reflection_handler:
+				reflection_handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
+
 	# Manejar entrada al tile destino
 	if to_data.grid:
 		_handle_movement_to_destination(to_data.grid, to_data.tile, actor)
@@ -138,6 +151,14 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 		var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
 		handler.on_step_finished_on_tile(active_grid, tile, actor, had_collision)
 
+	# También llamar al reflection handler si es agua
+	if terrain_type == "water":
+		var reflection_handler = effect_handlers.get("water_reflection")
+		if reflection_handler:
+			var grid_motion = actor.get_node("GridMotion")
+			var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
+			reflection_handler.on_step_finished_on_tile(active_grid, tile, actor, had_collision)
+
 	if actor.is_in_group("Player") and not tile_info.encounter_type.is_empty():
 		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
 
@@ -148,6 +169,18 @@ func _handle_movement_to_destination(grid: OverworldGrid, destination_tile: Vect
 	var handler = get_handler_for_terrain(terrain_type)
 	if handler and terrain_type != "ground":
 		handler.on_step_started_to_tile(grid, destination_tile, actor)
+
+	# También llamar al reflection handler si es agua
+	if terrain_type == "water":
+		var reflection_handler = effect_handlers.get("water_reflection")
+		if reflection_handler:
+			reflection_handler.on_step_started_to_tile(grid, destination_tile, actor)
+
+	# También llamar al reflection handler si es agua
+	if terrain_type == "water":
+		var reflection_handler = effect_handlers.get("water_reflection")
+		if reflection_handler:
+			reflection_handler.on_step_started_to_tile(grid, destination_tile, actor)
 
 
 ## Limpia el estado de todos los handlers

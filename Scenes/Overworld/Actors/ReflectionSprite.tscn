@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3 uid="uid://b6ccbitbcnnr1"]
+
+[ext_resource type="Script" uid="uid://dwku5tkhg12ss" path="res://Scripts/Overworld/Actors/ReflectionSprite.gd" id="1_reflection"]
+[ext_resource type="Shader" uid="uid://c0h3emoetcpno" path="res://Shaders/water_reflection.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("2_shader")
+shader_parameter/reflection_alpha = 0.45
+shader_parameter/reflection_tint = Color(0.7, 0.8, 1, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_31ift"]
+
+[node name="ReflectionSprite" type="AnimatedSprite2D"]
+material = SubResource("ShaderMaterial_1")
+sprite_frames = SubResource("SpriteFrames_31ift")
+script = ExtResource("1_reflection")
