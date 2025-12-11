@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_x7w3d"]
 [ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="4_animator"]
-[ext_resource type="PackedScene" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="5_reflection"]
+[ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="5_reflection"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x7w3d"]
 animations = [{
@@ -29,6 +29,7 @@ script = ExtResource("4_animator")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="ActorAnimator"]
 
 [node name="ReflectionSprite" parent="." instance=ExtResource("5_reflection")]
+visible = false
 offset = Vector2(0, -8)
 
 [node name="Occupancy" type="Node" parent="."]

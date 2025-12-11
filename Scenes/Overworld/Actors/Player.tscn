@@ -1,17 +1,32 @@
-[gd_scene load_steps=14 format=3 uid="uid://2oyo1q14ygm7"]
+[gd_scene load_steps=16 format=3 uid="uid://2oyo1q14ygm7"]
 
 [ext_resource type="Script" uid="uid://duw6kf82blnay" path="res://Scripts/Overworld/Actors/Player.gd" id="1_re7j4"]
 [ext_resource type="Resource" uid="uid://but4gb65vkb58" path="res://Resources/Actor Styles/Red.tres" id="2_5yaag"]
 [ext_resource type="Script" uid="uid://dale7m71abypb" path="res://Scripts/Overworld/Core/GridMotion.gd" id="2_slkcw"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_sxj1f"]
 [ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
+[ext_resource type="Shader" uid="uid://c0h3emoetcpno" path="res://Shaders/water_reflection.gdshader" id="6_x884u"]
 [ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="11_5yaag"]
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="12_x884u"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="13_5yaag"]
 [ext_resource type="Texture2D" uid="uid://cdck4xo6iqrah" path="res://Sprites/Others/Player_Shadow.png" id="14_p0ptx"]
-[ext_resource type="PackedScene" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="15_reflection"]
+[ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="15_reflection"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5yaag"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5yaag"]
+shader = ExtResource("6_x884u")
+shader_parameter/hFrames = 4
+shader_parameter/vFrames = 4
+shader_parameter/enableMovement = true
+shader_parameter/displacementPixels = 1
+shader_parameter/timeGap = 0.4
+shader_parameter/speed = 1.25
+shader_parameter/leftSideRelationTime = 0.3
+shader_parameter/rightSideRelationTime = 0.3
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/colorMix = 0.249999994412
+shader_parameter/alpha = 1.0
 
 [sub_resource type="Resource" id="Resource_5yaag"]
 script = ExtResource("12_x884u")
@@ -46,6 +61,8 @@ offset = Vector2(0, -8)
 metadata/_edit_lock_ = true
 
 [node name="ReflectionSprite" parent="." instance=ExtResource("15_reflection")]
+material = SubResource("ShaderMaterial_5yaag")
+flip_v = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("5_0hlcb")

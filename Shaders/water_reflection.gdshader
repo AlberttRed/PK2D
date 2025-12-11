@@ -1,23 +1,29 @@
 shader_type canvas_item;
 
-// Shader para recortar el reflejo según la máscara de agua
-// La máscara se pasa como textura y solo muestra el reflejo donde la máscara es blanca
+group_uniforms Wave;
+uniform bool enableWave = true;
+uniform float waveAmplitude : hint_range(0.0, 10.0, 0.1) = 1.0; // Amplitud de la ola en píxeles
+uniform float waveFrequency : hint_range(0.0, 20.0, 0.1) = 4.0; // Frecuencia de la ola
+uniform float waveSpeed : hint_range(0.0, 5.0, 0.1) = 1.0; // Velocidad de la ola
 
-uniform sampler2D reflection_mask : source_color, hint_default_white;
-uniform float reflection_alpha : hint_range(0.0, 1.0) = 0.45;
-uniform vec4 reflection_tint : source_color = vec4(0.7, 0.8, 1.0, 1.0);
+group_uniforms Color;
+uniform vec3 color: source_color = vec3(1.0);
+uniform float colorMix: hint_range(0.0, 1.0, 0.01) = 0.25;
+uniform float alpha: hint_range(0.0, 1.0, 0.01) = 1.0;
 
 void fragment() {
-	vec4 sprite_color = texture(TEXTURE, UV);
-	vec4 mask_color = texture(reflection_mask, SCREEN_UV);
+	vec2 uv = UV;
 
-	// Solo mostrar reflejo donde la máscara tiene alpha > 0.5
-	float mask_alpha = mask_color.a;
+	if (enableWave) {
+		// Efecto de ola simple: desplazamiento horizontal basado en la posición Y
+		float wave = sin(UV.y * waveFrequency + TIME * waveSpeed) * waveAmplitude * TEXTURE_PIXEL_SIZE.x;
+		uv.x += wave;
+	}
 
-	// Aplicar tint y alpha
-	vec4 final_color = sprite_color * reflection_tint;
-	final_color.a *= reflection_alpha * mask_alpha;
+	// Clamp UV para evitar muestrear fuera de la textura
+	uv = clamp(uv, vec2(0.0), vec2(1.0));
 
-	COLOR = final_color;
+	COLOR = texture(TEXTURE, uv);
+	COLOR.rgb = mix(COLOR.rgb, color, colorMix);
+	COLOR.a *= alpha;
 }
-

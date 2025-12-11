@@ -7,8 +7,6 @@ class_name ReflectionSprite
 ## Referencia al sprite original del actor
 var original_sprite: AnimatedSprite2D = null
 
-## Referencia al grid para obtener la máscara
-var grid: OverworldGrid = null
 
 func _ready() -> void:
 	# Configurar propiedades del reflejo
@@ -16,6 +14,8 @@ func _ready() -> void:
 	z_index = -1  # Debajo del mundo
 	visible = false  # Oculto por defecto
 	position.y = 32
+	# El offset del reflejo siempre debe ser 0,0 (no heredar el offset del sprite original)
+	offset = Vector2.ZERO
 	# Buscar el sprite original del actor padre
 	_find_original_sprite()
 
@@ -26,9 +26,8 @@ func _ready() -> void:
 	if original_sprite:
 		_sync_with_original()
 
-func _process(_delta: float) -> void:
-	# Verificar continuamente si el tile inferior es agua
-	_check_bottom_tile_water()
+	# La visibilidad se controla desde ReflectionEffectHandler
+	# No necesitamos conectar a señales de movimiento aquí
 
 ## Busca el sprite original del actor
 func _find_original_sprite() -> void:
@@ -86,26 +85,8 @@ func _sync_with_original() -> void:
 	# Sincronizar flip horizontal
 	flip_h = original_sprite.flip_h
 
-## Obtiene el grid del actor
-func _get_actor_grid(actor: Node2D) -> OverworldGrid:
-	if not actor:
-		return null
-
-	# Para Player: usar grid activo
-	if actor.is_in_group("Player"):
-		var context := actor.get("context") as OverworldContext
-		if context:
-			var world_system := context.get_world_system()
-			if world_system:
-				return world_system.get_active_grid()
-
-	# Para Events: usar home_grid
-	if actor is Event:
-		var occupancy := actor.get_node_or_null("Occupancy")
-		if occupancy and occupancy.home_grid:
-			return occupancy.home_grid
-
-	return null
+	# Asegurar que el offset siempre sea 0,0 (no heredar el offset del sprite original)
+	offset = Vector2.ZERO
 
 ## Callback cuando cambia la animación del sprite original
 func _on_original_animation_changed() -> void:
@@ -119,26 +100,5 @@ func _on_original_frame_changed() -> void:
 			sprite_frames = original_sprite.sprite_frames
 		frame = original_sprite.frame
 
-## Verifica si el tile inferior es agua y muestra/oculta el reflejo
-func _check_bottom_tile_water() -> void:
-	var actor := get_parent() as Node2D
-	if not actor:
-		return
-
-	# Obtener grid del actor
-	if not grid:
-		grid = _get_actor_grid(actor)
-		if not grid:
-			return
-
-	# Obtener tile actual del actor
-	var world_pos: Vector2 = actor.global_position
-	var current_tile: Vector2i = grid.world_to_tile(world_pos)
-
-	# El tile inferior es el tile debajo (Y+1)
-	var bottom_tile := current_tile + Vector2i(0, 1)
-	var bottom_tile_info := grid.get_tile_info(bottom_tile)
-	var is_water: bool = (bottom_tile_info.terrain == "water")
-
-	# Mostrar/ocultar reflejo según si el tile inferior es agua
-	visible = is_water
+	# La visibilidad se controla desde ReflectionEffectHandler
+	# Este sprite solo se encarga de la sincronización visual con el sprite original

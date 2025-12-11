@@ -92,6 +92,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="MapNieghborTest" type="Node2D"]
 y_sort_enabled = true
+texture_repeat = 1
 script = ExtResource("1_6gkq1")
 world_position = Vector2(0, -512)
 neighbors = Array[String](["MapaPuebloTest", "MapCiudadTest"])
