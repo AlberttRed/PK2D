@@ -20,6 +20,11 @@ var player_inside: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Configurar para que las animaciones continúen aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	if anim_player:
+		anim_player.process_mode = Node.PROCESS_MODE_ALWAYS
+
 	#get_tree().current_scene.get_node("Player")
 	GLOBAL.PLAYER.connect("moving_signal", Callable(self, "player_exiting_grass"))
 	GLOBAL.PLAYER.connect("moved_signal", Callable(self, "player_in_grass"))
@@ -27,20 +32,20 @@ func _ready():
 func player_exiting_grass():
 	player_inside = false
 	timer.start()
-	
+
 func player_in_grass():
 	if player_inside:
 		var grass_effect = GrassEffect.instantiate()
 		grass_effect.position = global_position
 		get_tree().current_scene.add_child(grass_effect)
-		
+
 		if !is_instance_valid(grass_overlay):
 			grass_overlay = Sprite2D.new()
 			grass_overlay.texture = grass_overlay_texture
 			grass_overlay.z_index = 2
 			grass_overlay.position = global_position
 			get_tree().current_scene.add_child(grass_overlay)
-		
+
 func get_custom_data(n):
 	return get(n)
 

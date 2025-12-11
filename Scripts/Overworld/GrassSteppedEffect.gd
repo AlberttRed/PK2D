@@ -6,9 +6,12 @@ class_name GrassSteppedEffect
 
 
 func _ready() -> void:
+	# Configurar para que la animación continúe aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Reproducir la animación automáticamente
 	play("stepped")
-	
+
 	# Conectar señal para autodestruirse cuando termine
 	animation_finished.connect(_on_animation_finished)
 

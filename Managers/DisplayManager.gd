@@ -34,11 +34,13 @@ var next = false
 var input_locked := false
 var pressed_actions := {}
 var choices_options = null
+var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
 @onready var choice_box: ChoiceBox = $ChoiceBox
 @onready var BattleNew: BattleScene = $BattleNew
+@onready var pause_menu = $PauseMenu
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -52,11 +54,51 @@ func _ready() -> void:
 
 	instance = self
 
+	# Configurar para que continúe procesando aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# Configurar todos los elementos de UI para que continúen procesando cuando el árbol esté pausado
+	msg.process_mode = Node.PROCESS_MODE_ALWAYS
+	choice_box.process_mode = Node.PROCESS_MODE_ALWAYS
+	if pause_menu:
+		pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Conectar señales del MessageBox
 	msg.finished.connect(_on_message_finished)
+	# Conectar señal de visibilidad del MessageBox
+	if msg.has_signal("visibility_changed"):
+		msg.visibility_changed.connect(_on_ui_visibility_changed)
+
+	# Conectar señales del ChoiceBox
+	if choice_box.has_signal("visibility_changed"):
+		choice_box.visibility_changed.connect(_on_ui_visibility_changed)
+
+	# Conectar señales del PauseMenu
+	if pause_menu:
+		pause_menu.pokedex_requested.connect(_on_pause_pokedex_requested)
+		pause_menu.party_requested.connect(_on_pause_party_requested)
+		pause_menu.bag_requested.connect(_on_pause_bag_requested)
+		pause_menu.player_requested.connect(_on_pause_player_requested)
+		pause_menu.save_requested.connect(_on_pause_save_requested)
+		pause_menu.options_requested.connect(_on_pause_options_requested)
+		pause_menu.exit_requested.connect(_on_pause_exit_requested)
+		pause_menu.menu_closed.connect(_on_pause_menu_closed)
+		if pause_menu.has_signal("visibility_changed"):
+			pause_menu.visibility_changed.connect(_on_ui_visibility_changed)
+
+	# Conectar señal de visibilidad de BattleNew
+	if BattleNew.has_signal("visibility_changed"):
+		BattleNew.visibility_changed.connect(_on_ui_visibility_changed)
 
 	if overlay_layer:
 		overlay_layer.reset_to_defaults()
+
+	# Conectar señales de GridMotion del Player para saltos de ledge
+	call_deferred("_connect_player_motion_signals")
+
+	# Verificar estado inicial de pausa
+	call_deferred("_update_game_pause_state")
 
 # === API PÚBLICA ESTÁTICA (Métodos globales) ===
 ## Muestra un mensaje con configuración específica
@@ -232,7 +274,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.is_visible() || BattleNew.visible || choice_box.visible
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible)
 
 ## Método privado para iniciar batalla
 func _start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
@@ -392,6 +434,12 @@ func _play_mo_overlay(pokemon_visual: Variant) -> void:
 
 	add_child(overlay)
 
+	# Conectar señales para rastrear cuando empieza/termina la animación
+	if overlay.has_signal("mo_animation_started"):
+		overlay.mo_animation_started.connect(_on_mo_animation_started)
+	if overlay.has_signal("mo_animation_finished"):
+		overlay.mo_animation_finished.connect(_on_mo_animation_finished)
+
 	var previous_input_locked := input_locked
 	input_locked = true
 
@@ -417,14 +465,42 @@ func _input(event: InputEvent) -> void:
 		if battle_ui != null and focus_owner != null and battle_ui.is_ancestor_of(focus_owner):
 			return
 
-	if input_locked or !isVisible() or isFading():
+	# Procesar ui_start ANTES del check de isVisible() para poder abrir el menú
+	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):
+		pressed_actions["ui_start"] = true
+		print("DisplayManager start")
+		# Si el menú de pausa no está visible, intentar abrirlo
+		if pause_menu and not pause_menu.visible:
+			# Verificar si el jugador está en movimiento - no abrir menú si está moviéndose
+			var player = get_tree().get_first_node_in_group("Player")
+			if player and player.has_node("GridMotion"):
+				var motion = player.get_node("GridMotion")
+				if motion.moving:
+					# El jugador está en movimiento, ignorar el input de ESC
+					return
+
+			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
+			if not BattleNew.visible and not msg.visible and not choice_box.visible:
+				pause_menu.open()
+				get_viewport().set_input_as_handled()
+				return
+		# Si el menú está visible, emitir la señal para que pueda cerrarse
+		input_start.emit()
+		# No consumir el input si el menú está visible (para que pueda procesarlo)
+		if pause_menu and pause_menu.visible:
+			return
+		get_viewport().set_input_as_handled()
+		return
+
+	if input_locked or isFading():
 		return
 
 	var input_consumed = false
 
-	# Si el ChoiceBox está visible, solo emitir señales pero NO consumir input
-	# Esto permite que el ChoiceBox reciba las señales y las procese
-	var should_consume_input = !choice_box.visible
+	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
+	# Dejarlos pasar para que el Player pueda usarlos (interact)
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible):
+		return
 
 	# Evitar repeticiones automáticas
 	if event.is_action_pressed("ui_accept") and !pressed_actions.has("ui_accept"):
@@ -439,12 +515,6 @@ func _input(event: InputEvent) -> void:
 		print("DisplayManager cancel")
 		input_cancel.emit()
 		messagebox_input_cancel.emit()
-		input_consumed = true
-
-	if event.is_action_pressed("ui_start") and !pressed_actions.has("ui_start"):
-		pressed_actions["ui_start"] = true
-		print("DisplayManager start")
-		input_start.emit()
 		input_consumed = true
 
 	if event.is_action_pressed("ui_up") and !pressed_actions.has("ui_up"):
@@ -471,7 +541,121 @@ func _input(event: InputEvent) -> void:
 		input_left.emit()
 		input_consumed = true
 
-	# Consumir el input SOLO si ChoiceBox no está visible
-	# Cuando ChoiceBox está visible, permitimos que el input pase a través
-	if input_consumed and should_consume_input:
+	# Consumir el input SOLO si hay menús visibles y se procesó algún input
+	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible)):
 		get_viewport().set_input_as_handled()
+
+# === CALLBACKS DEL PAUSE MENU ===
+func _on_pause_pokedex_requested() -> void:
+	print("PauseMenu: Pokédex solicitado (placeholder)")
+
+func _on_pause_party_requested() -> void:
+	print("PauseMenu: Party solicitado (placeholder)")
+
+func _on_pause_bag_requested() -> void:
+	print("PauseMenu: Bag solicitado (placeholder)")
+
+func _on_pause_player_requested() -> void:
+	print("PauseMenu: Player solicitado (placeholder)")
+
+func _on_pause_save_requested() -> void:
+	print("PauseMenu: Guardar solicitado (placeholder)")
+
+func _on_pause_options_requested() -> void:
+	print("PauseMenu: Opciones solicitado (placeholder)")
+
+func _on_pause_exit_requested() -> void:
+	print("PauseMenu: Salir solicitado")
+
+func _on_pause_menu_closed() -> void:
+	print("PauseMenu: Menú cerrado")
+
+# === SISTEMA DE PAUSA AUTOMÁTICA ===
+## Verifica si hay UI visible o animaciones MO activas y pausa/reanuda el juego automáticamente
+func _update_game_pause_state() -> void:
+	var has_ui_visible = (
+		msg.visible or
+		choice_box.visible or
+		(pause_menu != null && pause_menu.visible) or
+		BattleNew.visible
+	)
+
+	# Verificar si hay animaciones MO activas (Player, saltos de ledge, etc.)
+	var has_mo_animation = _check_mo_animations_active()
+
+	var should_pause = has_ui_visible or has_mo_animation
+
+	if should_pause and not get_tree().paused:
+		get_tree().paused = true
+		if has_mo_animation:
+			print("DisplayManager: Juego pausado (animación MO activa)")
+		else:
+			print("DisplayManager: Juego pausado (UI visible)")
+	elif not should_pause and get_tree().paused:
+		get_tree().paused = false
+		print("DisplayManager: Juego reanudado (sin UI visible ni animaciones MO)")
+
+## Callback cuando cambia la visibilidad de cualquier elemento de UI
+func _on_ui_visibility_changed() -> void:
+	_update_game_pause_state()
+
+## Verifica si hay animaciones MO activas (Player MO sequences, ledge jumps, etc.)
+func _check_mo_animations_active() -> bool:
+	# Si hay animaciones MO contadas, están activas
+	if _mo_animation_count > 0:
+		return true
+
+	# Verificar Player MO sequences (como fallback)
+	var player = get_tree().get_first_node_in_group("Player")
+	if player and player.has_method("is_mo_sequence_active"):
+		if player.is_mo_sequence_active():
+			return true
+
+	# Verificar saltos de ledge en GridMotion del Player
+	if player:
+		var motion = player.get_node_or_null("GridMotion")
+		if motion and motion is GridMotion:
+			if motion.is_jumping_ledge:
+				return true
+
+	return false
+
+## Callbacks para animaciones MO
+func _on_mo_animation_started() -> void:
+	_mo_animation_count += 1
+	_update_game_pause_state()
+
+func _on_mo_animation_finished() -> void:
+	_mo_animation_count = max(0, _mo_animation_count - 1)
+	_update_game_pause_state()
+
+## Conecta las señales del GridMotion del Player para detectar saltos de ledge
+func _connect_player_motion_signals() -> void:
+	var player = get_tree().get_first_node_in_group("Player")
+	if player:
+		var motion = player.get_node_or_null("GridMotion")
+		if motion:
+			if not motion.ledge_jump_started.is_connected(_on_ledge_jump_started):
+				motion.ledge_jump_started.connect(_on_ledge_jump_started)
+			if not motion.ledge_jump_finished.is_connected(_on_ledge_jump_finished):
+				motion.ledge_jump_finished.connect(_on_ledge_jump_finished)
+
+## Métodos públicos para notificar animaciones MO del Player
+## Estos métodos pueden ser llamados desde Player cuando empiezan/terminan animaciones MO
+func notify_mo_animation_started() -> void:
+	_mo_animation_count += 1
+	_update_game_pause_state()
+
+func notify_mo_animation_finished() -> void:
+	_mo_animation_count = max(0, _mo_animation_count - 1)
+	_update_game_pause_state()
+
+## Callbacks para saltos de ledge
+func _on_ledge_jump_started() -> void:
+	_mo_animation_count += 1
+	_update_game_pause_state()
+
+func _on_ledge_jump_finished() -> void:
+	_mo_animation_count = max(0, _mo_animation_count - 1)
+	_update_game_pause_state()

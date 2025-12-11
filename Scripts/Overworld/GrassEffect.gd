@@ -3,9 +3,12 @@ extends AnimatedSprite2D
 ## Se auto-destruye cuando termina la animación.
 
 func _ready() -> void:
+	# Configurar para que la animación continúe aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Conectar señal de fin de animación
 	animation_finished.connect(_on_animation_finished)
-	
+
 	# Reproducir animación por defecto
 	if sprite_frames and sprite_frames.has_animation("default"):
 		play("default")

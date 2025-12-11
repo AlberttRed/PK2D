@@ -77,3 +77,10 @@ func _play_player_mo_start(player: Node) -> void:
 func _play_player_mo_end(player: Node) -> void:
 	if player and player.has_method("play_mo_end"):
 		await player.play_mo_end()
+
+## Notifica a DisplayManager que terminó toda la secuencia MO
+## Debe llamarse al final de execute() después de todas las animaciones
+func _notify_mo_sequence_finished() -> void:
+	var dm := DisplayManager.instance
+	if dm:
+		dm.notify_mo_animation_finished()

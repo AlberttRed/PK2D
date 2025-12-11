@@ -17,4 +17,3 @@ func _ready() -> void:
 	push_warning("GUI.gd está obsoleto. Usa DisplayManager en su lugar.")
 	# La instancia se elimina para que no interfiera con la UI actual.
 	queue_free()
-

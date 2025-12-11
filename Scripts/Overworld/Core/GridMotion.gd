@@ -46,7 +46,9 @@ var context: OverworldContext = null
 var world_system: WorldSystem = null
 
 func _ready() -> void:
-	pass
+	# Configurar para que los Tweens continúen aunque el árbol esté pausado
+	# Esto permite que las animaciones de movimiento continúen durante pausas de MO
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	# El contexto se inyectará desde el Player/NPC padre después de _ready()
 	# NO intentar obtener WorldSystem aquí - se hará cuando se reciba el contexto
 

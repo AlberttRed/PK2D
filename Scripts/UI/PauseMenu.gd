@@ -1,60 +1,80 @@
 extends Panel
 
-class_name ChoiceBox
+class_name PauseMenu
 
-## ChoiceBox - Sistema de selección de opciones para eventos
-## Muestra una lista de opciones y permite al jugador navegar y seleccionar
+## PauseMenu - Menú de pausa del Overworld estilo FireRed/LeafGreen
+## Muestra las opciones principales: Pokémon, Bolsa, Pokédex, Guardar, Opciones, Salir
 
-signal choice_made(index: int)
-signal choice_cancelled()
+# Señales para cada opción del menú
+signal pokedex_requested()
+signal party_requested()
+signal bag_requested()
+signal player_requested()
+signal save_requested()
+signal options_requested()
+signal exit_requested()
+signal menu_closed()
 
 ## Índice de la opción actualmente seleccionada
 var selected_index: int = 0
 
-## Array de opciones disponibles
-var options: Array[String] = []
+## Array de opciones del menú
+var menu_options: Array[String] = [
+	"POKéDEX",
+	"POKéMON",
+	"MOCHILA",
+	"PLAYER",
+	"GUARDAR",
+	"OPCIONES",
+	"SALIR"
+]
 
 ## Referencias a los nodos
 @onready var options_container: VBoxContainer = $MarginContainer/OptionsContainer
 @onready var cursor: Sprite2D = $Cursor
 
+
 ## Flag para evitar múltiples inputs
 var _input_enabled: bool = false
 
 ## Posición base del panel (guardada al inicio para mantener la posición configurada)
+var _base_offset_left: float = 0
+var _base_offset_top: float = 0
 var _base_offset_right: float = 0
-var _base_offset_bottom: float = 0
 
 func _ready() -> void:
+	# Configurar para que continúe procesando aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Guardar los offsets configurados en la escena
+	# Posición fija: x:358 (offset_left = -154 desde anchor_right=1.0), y:0
+	_base_offset_left = offset_left
+	_base_offset_top = offset_top
 	_base_offset_right = offset_right
-	_base_offset_bottom = offset_bottom
 	hide()
 
-## Muestra el ChoiceBox con las opciones especificadas
-func show_choices(choice_options: Array[String]) -> int:
-	if choice_options.is_empty():
-		push_error("ChoiceBox: No se pueden mostrar opciones vacías")
-		return -1
+## Abre el menú de pausa
+func open() -> void:
+	if visible:
+		return
+
+	selected_index = 0
 
 	# Limpiar opciones previas
 	_clear_options()
 
-	# Guardar opciones
-	options = choice_options
-	selected_index = 0
-
 	# Crear labels para cada opción
-	for i in range(options.size()):
-		var label = _create_label_hgss(options[i])
+	for i in range(menu_options.size()):
+		var label = _create_label_hgss(menu_options[i])
 		label.name = "Option" + str(i)
 		options_container.add_child(label)
 
-	# Ajustar tamaño del panel según número de opciones
+	# Ajustar tamaño del panel según número de opciones (esto también ajusta la posición)
 	_adjust_panel_size()
 
 	# Mostrar el panel
 	show()
+	# La pausa se manejará automáticamente por DisplayManager cuando detecte que el menú está visible
 
 	# Posicionar cursor
 	_update_cursor_position()
@@ -62,21 +82,26 @@ func show_choices(choice_options: Array[String]) -> int:
 	# Habilitar input
 	_enable_input()
 
-	# Esperar a que el jugador seleccione
-	var choice = await choice_made
+	# Bloquear control del jugador
+	_block_player_control()
+
+## Cierra el menú de pausa
+func close() -> void:
+	if not visible:
+		return
 
 	# Deshabilitar input
 	_disable_input()
 
-	# Esperar un frame para asegurar que el input se consuma antes de ocultar
-	# Esto evita que el mismo input que se usó para seleccionar también active
-	# interacciones del mundo (como SURF) cuando el ChoiceBox se oculta
-	await get_tree().process_frame
-
-	# Ocultar después de que el input se haya consumido
+	# Ocultar el panel
 	hide()
+	# La reanudación se manejará automáticamente por DisplayManager cuando detecte que el menú está oculto
 
-	return choice
+	# Desbloquear control del jugador
+	_unblock_player_control()
+
+	# Emitir señal de cierre
+	menu_closed.emit()
 
 ## Crea un label con el estilo HGSS (3 capas de sombreado)
 func _create_label_hgss(text: String) -> LabelHGSS:
@@ -153,7 +178,7 @@ func _adjust_panel_size() -> void:
 	var font_size = 26
 
 	# Calcular el ancho real del texto más largo
-	for option_text in options:
+	for option_text in menu_options:
 		# Usar get_string_size para obtener el ancho real del texto
 		var text_size = font.get_string_size(option_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
 		if text_size.x > max_text_width:
@@ -164,18 +189,22 @@ func _adjust_panel_size() -> void:
 	var calculated_width = max_text_width + 58
 
 	# Altura: base 28 + (34px por opción)
-	var calculated_height = 28 + (options.size() * 34)
+	var calculated_height = 28 + (menu_options.size() * 34)
 
 	# Actualizar el tamaño del panel
 	custom_minimum_size = Vector2(calculated_width, calculated_height)
 	size = custom_minimum_size
 
-	# Ajustar offsets para que crezca hacia arriba y hacia la izquierda
-	# Mantener fijos los valores configurados en la escena
-	offset_right = _base_offset_right
-	offset_bottom = _base_offset_bottom
-	offset_left = offset_right - calculated_width
-	offset_top = offset_bottom - calculated_height
+	# Ajustar offsets para que crezca hacia abajo manteniendo la posición Y fija
+	# Mantener la posición superior fija (y:0) y crecer hacia abajo
+	# Con anchors anclados a la derecha (anchor_left=1.0, anchor_right=1.0):
+	# offset_left y offset_right son relativos al borde derecho
+	# Posición fija: x:358 (desde izquierda) = offset_left = -154 (desde derecha)
+	# Posición fija: y:0 (desde arriba) = offset_top = 0
+	offset_left = -154.0  # Posición x:358 desde la izquierda
+	offset_top = 0.0      # Posición y:0 desde arriba (fija)
+	offset_right = -154.0 + calculated_width  # Ancho dinámico
+	offset_bottom = calculated_height   # Altura dinámica (crece hacia abajo)
 
 	# Forzar actualización del layout
 	await get_tree().process_frame
@@ -195,14 +224,14 @@ func _update_cursor_position() -> void:
 func _navigate_up() -> void:
 	selected_index -= 1
 	if selected_index < 0:
-		selected_index = options.size() - 1
+		selected_index = menu_options.size() - 1
 	_update_cursor_position()
 	_play_cursor_sound()
 
 ## Navega hacia abajo en las opciones
 func _navigate_down() -> void:
 	selected_index += 1
-	if selected_index >= options.size():
+	if selected_index >= menu_options.size():
 		selected_index = 0
 	_update_cursor_position()
 	_play_cursor_sound()
@@ -210,25 +239,45 @@ func _navigate_down() -> void:
 ## Confirma la selección actual
 func _confirm_selection() -> void:
 	_play_select_sound()
-	choice_made.emit(selected_index)
 
-## Cancela la selección (opcional, emite -1)
+	# Emitir la señal correspondiente según la opción seleccionada
+	match selected_index:
+		0:  # POKéDEX
+			pokedex_requested.emit()
+		1:  # POKéMON
+			party_requested.emit()
+		2:  # MOCHILA
+			bag_requested.emit()
+		3:  # PLAYER
+			player_requested.emit()
+		4:  # GUARDAR
+			save_requested.emit()
+		5:  # OPCIONES
+			options_requested.emit()
+		6:  # SALIR
+			exit_requested.emit()
+			close()
+
+	# Por ahora, no cerramos el menú al seleccionar (excepto SALIR)
+	# Esto permitirá implementar los submenús más adelante
+
+## Cancela la selección (cierra el menú)
 func _cancel_selection() -> void:
 	_play_cancel_sound()
-	choice_cancelled.emit()
-	choice_made.emit(-1)
+	close()
 
 ## Habilita el manejo de input
 func _enable_input() -> void:
 	_input_enabled = true
 	var dm := DisplayManager.instance
 	if not dm:
-		push_error("ChoiceBox: DisplayManager no disponible para gestionar input")
+		push_error("PauseMenu: DisplayManager no disponible para gestionar input")
 		return
 	dm.input_up.connect(_on_input_up)
 	dm.input_down.connect(_on_input_down)
 	dm.input_accept.connect(_on_input_accept)
 	dm.input_cancel.connect(_on_input_cancel)
+	dm.input_start.connect(_on_input_start)
 
 ## Deshabilita el manejo de input
 func _disable_input() -> void:
@@ -244,6 +293,8 @@ func _disable_input() -> void:
 		dm.input_accept.disconnect(_on_input_accept)
 	if dm.input_cancel.is_connected(_on_input_cancel):
 		dm.input_cancel.disconnect(_on_input_cancel)
+	if dm.input_start.is_connected(_on_input_start):
+		dm.input_start.disconnect(_on_input_start)
 
 ## Callbacks de input
 func _on_input_up() -> void:
@@ -261,6 +312,22 @@ func _on_input_accept() -> void:
 func _on_input_cancel() -> void:
 	if _input_enabled:
 		_cancel_selection()
+
+func _on_input_start() -> void:
+	if _input_enabled:
+		_cancel_selection()
+
+## Bloquea el control del jugador
+func _block_player_control() -> void:
+	var dm := DisplayManager.instance
+	if dm:
+		dm.player_control_blocked.emit()
+
+## Desbloquea el control del jugador
+func _unblock_player_control() -> void:
+	var dm := DisplayManager.instance
+	if dm:
+		dm.player_control_unblocked.emit()
 
 ## Efectos de sonido (placeholder - implementar cuando haya sistema de audio)
 func _play_cursor_sound() -> void:
