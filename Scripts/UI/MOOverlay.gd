@@ -10,11 +10,16 @@ const DEFAULT_ANIMATION := "show_MO_overlay"
 var _current_animation: StringName = DEFAULT_ANIMATION
 var _is_playing := false
 
+# Señales para notificar cuando empieza/termina la animación MO
+signal mo_animation_started
+signal mo_animation_finished
+
 func play(pokemon_visual: Variant = null) -> void:
 	if _is_playing:
 		animation_player.stop()
 
 	_is_playing = true
+	mo_animation_started.emit()
 	_prepare_nodes()
 	_apply_pokemon_visual(pokemon_visual)
 
@@ -22,6 +27,7 @@ func play(pokemon_visual: Variant = null) -> void:
 	await animation_player.animation_finished
 
 	_is_playing = false
+	mo_animation_finished.emit()
 
 func _prepare_nodes() -> void:
 	if curtain:

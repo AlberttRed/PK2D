@@ -9,6 +9,9 @@ var original_sprite: AnimatedSprite2D = null
 
 
 func _ready() -> void:
+	# Configurar para que la animación continúe aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	# Configurar propiedades del reflejo
 	flip_v = true  # Invertir verticalmente
 	z_index = -1  # Debajo del mundo

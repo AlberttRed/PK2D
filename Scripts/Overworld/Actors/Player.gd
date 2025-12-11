@@ -26,6 +26,12 @@ var _mo_idle_direction: Vector2 = Vector2.DOWN
 func _ready() -> void:
 	if !is_in_group("Player"):
 		add_to_group("Player")
+
+	# Configurar para que las animaciones continúen aunque el árbol esté pausado
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	if sprite:
+		sprite.process_mode = Node.PROCESS_MODE_ALWAYS
+
 	motion.step_started.connect(_on_step_started)
 	motion.step_finished.connect(_on_step_finished)
 	$Shadow.visible = false
@@ -35,6 +41,10 @@ func _ready() -> void:
 	call_deferred("_connect_display_manager_signals")
 
 func _process(_delta: float):
+	# No procesar input si el juego está pausado (excepto para animaciones)
+	if get_tree().paused:
+		return
+
 	if not movement_enabled:
 		return
 
@@ -265,6 +275,11 @@ func set_surfing_mode(enabled: bool) -> void:
 		remove_meta("can_surf")
 
 func start_surf() -> void:
+	# Notificar que empieza una animación MO (el salto de SURF)
+	var dm := DisplayManager.instance
+	if dm:
+		dm.notify_mo_animation_started()
+
 	var world_system: WorldSystem = context.get_world_system()
 	var grid: OverworldGrid = world_system.get_active_grid()
 
@@ -304,8 +319,17 @@ func start_surf() -> void:
 	set_surfing_mode(true)
 	set_movement_enabled(true)
 
+	# Notificar que termina la animación MO
+	if dm:
+		dm.notify_mo_animation_finished()
+
 
 func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
+	# Notificar que empieza una animación MO (el salto de salida de SURF)
+	var dm := DisplayManager.instance
+	if dm:
+		dm.notify_mo_animation_started()
+
 	var world_system: WorldSystem = context.get_world_system()
 	var grid: OverworldGrid = world_system.get_active_grid()
 
@@ -350,6 +374,10 @@ func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
 	set_surfing_mode(false)
 	set_movement_enabled(true)
 	motion.step_finished.emit(destination_tile)
+
+	# Notificar que termina la animación MO
+	if dm:
+		dm.notify_mo_animation_finished()
 
 func _execute_end_surf_before_move(target_tile: Vector2i) -> void:
 	# Ejecutar end_surf y luego permitir el movimiento
@@ -499,6 +527,10 @@ func play_mo_start() -> void:
 		return
 	_mo_sequence_active = true
 	_mo_idle_direction = motion.dir
+	# Notificar a DisplayManager que empieza una animación MO
+	var dm := DisplayManager.instance
+	if dm:
+		dm.notify_mo_animation_started()
 	await _play_mo_segment(_get_mo_start_frames(), true)
 
 func play_mo_end() -> void:
@@ -507,6 +539,8 @@ func play_mo_end() -> void:
 	await _play_mo_segment(_get_mo_end_frames(), false)
 	_mo_sequence_active = false
 	_restore_mo_state()
+	# NO notificar que terminó aquí - puede haber más animaciones MO después (como start_surf)
+	# La notificación se hará cuando termine toda la secuencia (en start_surf, end_surf, etc.)
 
 func _get_mo_start_frames() -> SpriteFrames:
 	if actor_style and actor_style.mo_start_frames:
@@ -522,11 +556,19 @@ func _play_mo_segment(frames: SpriteFrames, keep_pose: bool) -> void:
 	if _is_playing_mo_segment or not frames:
 		return
 	_is_playing_mo_segment = true
+	# Notificar a DisplayManager que empieza un segmento MO
+	var dm := DisplayManager.instance
+	if dm and not _mo_sequence_active:
+		# Solo notificar si no es parte de una secuencia completa (ya se notificó en play_mo_start)
+		dm.notify_mo_animation_started()
+
 	var anim_name := "default"
 	if not frames.has_animation(anim_name):
 		var names := frames.get_animation_names()
 		if names.is_empty():
 			_is_playing_mo_segment = false
+			if dm and not _mo_sequence_active:
+				dm.notify_mo_animation_finished()
 			return
 		anim_name = names[0]
 
@@ -534,6 +576,8 @@ func _play_mo_segment(frames: SpriteFrames, keep_pose: bool) -> void:
 	if not sprite.sprite_frames.has_animation(anim_name):
 		sprite.sprite_frames = _get_walk_frames()
 		_is_playing_mo_segment = false
+		if dm and not _mo_sequence_active:
+			dm.notify_mo_animation_finished()
 		return
 
 	sprite.play(anim_name)
@@ -546,11 +590,19 @@ func _play_mo_segment(frames: SpriteFrames, keep_pose: bool) -> void:
 	else:
 		sprite.stop()
 	_is_playing_mo_segment = false
+	# Notificar a DisplayManager que termina un segmento MO
+	if dm and not _mo_sequence_active:
+		# Solo notificar si no es parte de una secuencia completa (se notificará en play_mo_end)
+		dm.notify_mo_animation_finished()
 
 func _restore_mo_state() -> void:
 	_refresh_actor_style_frames()
 	motion.face(_mo_idle_direction)
 	stop()
+
+## Verifica si hay una secuencia MO activa (para DisplayManager)
+func is_mo_sequence_active() -> bool:
+	return _mo_sequence_active or _is_playing_mo_segment
 
 func _direction_to_frame_index(direction: Vector2) -> int:
 	match direction:

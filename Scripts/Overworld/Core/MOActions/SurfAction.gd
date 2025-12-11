@@ -96,6 +96,9 @@ func execute(_player: Node, _target: Node, context: Node) -> Dictionary:
 		if motion.moving:
 			await motion.step_finished
 
+	# Notificar que terminó toda la secuencia MO (incluyendo animaciones como start_surf)
+	_notify_mo_sequence_finished()
+
 	# Desbloquear control del jugador al finalizar
 	if overworld_context:
 		overworld_context.unblock_player_control()

@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8k7m2oap4q5r"]
+
+[ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/ChoicesBox_Style.tres" id="1_tcuqx"]
+[ext_resource type="Script" uid="uid://c7k8m3n0p5q6s" path="res://Scripts/UI/PauseMenu.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://d100gf0i5byxn" path="res://Sprites/Pictures/arrowSpriteOK2.png" id="4_arrow"]
+
+[node name="PauseMenu" type="Panel"]
+custom_minimum_size = Vector2(144, 28)
+anchors_preset = 2
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -154.0
+offset_top = 0.0
+offset_right = -10.0
+offset_bottom = 28.0
+grow_horizontal = 0
+grow_vertical = 1
+theme_override_styles/panel = ExtResource("1_tcuqx")
+script = ExtResource("2_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+metadata/_edit_lock_ = true
+
+[node name="OptionsContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+
+[node name="Cursor" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(24, 30)
+texture = ExtResource("4_arrow")
+metadata/_edit_lock_ = true
