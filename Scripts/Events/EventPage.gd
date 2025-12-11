@@ -68,6 +68,9 @@ var source_event: Event = null
 ## SpriteFrames manual para casos personalizados
 @export var sprite_frames: SpriteFrames = null
 
+## Si true, este evento mostrará reflejo en el agua cuando esté sobre tiles de agua
+@export var has_water_reflection: bool = false
+
 ## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
 func get_sprite_frames() -> SpriteFrames:
 	if actor_style:

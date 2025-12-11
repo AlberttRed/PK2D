@@ -48,6 +48,12 @@ func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) 
 ## Retorna true si este handler puede manejar el tipo de terreno especificado
 func can_handle(terrain_type_to_check: String) -> bool:
 	return terrain_type == terrain_type_to_check
-	
+
 func clear_state():
 	pass
+
+## Se llama cuando un actor se desactiva (sale de un chunk, se desconecta, etc.)
+## Permite a cada handler limpiar su estado específico para ese actor
+## @param actor: Actor que se está desactivando (Node2D)
+func deactivate_actor(_actor: Node2D) -> void:
+	pass  # Implementar en subclases si es necesario
