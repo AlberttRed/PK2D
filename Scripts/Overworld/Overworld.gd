@@ -18,6 +18,7 @@ class_name OverworldCoordinator
 @onready var mo_system: MOSystem = $MOSystem
 @onready var tile_effect_system: TileEffectSystem = $TileEffectSystem
 @onready var wild_encounter_system: WildEncounterSystem = $WildEncounterSystem
+@onready var effects_layer: Node2D = $OverworldEffectsLayer
 
 # Contexto compartido entre sistemas del Overworld
 var context: OverworldContext = null
@@ -66,6 +67,9 @@ func _register_systems_in_context() -> void:
 	var overlay_layer := DisplayManager.get_overlay_layer()
 	if overlay_layer:
 		context.register_system("Overlay", overlay_layer)
+
+	if effects_layer:
+		context.register_system("EffectsLayer", effects_layer)
 
 	# El Player se registrará dinámicamente cuando WorldSystem lo cargue
 

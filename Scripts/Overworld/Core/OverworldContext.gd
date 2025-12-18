@@ -27,6 +27,7 @@ var event_system: EventSystem = null
 var world_system: WorldSystem = null
 var player: Node = null
 var overlay_layer: OverlayLayer = null
+var effects_layer: Node2D = null
 
 # === Señales locales del Overworld ===
 signal event_requested(event)
@@ -73,6 +74,8 @@ func register_system(sys_name: String, system: Node) -> void:
 			player = system
 		"Overlay":
 			overlay_layer = system as OverlayLayer
+		"EffectsLayer":
+			effects_layer = system as Node2D
 
 ## Obtiene un sistema registrado por su nombre
 ## @param sys_name: Nombre del sistema (ej: "Map", "Warp")
@@ -102,6 +105,10 @@ func get_world_system() -> WorldSystem:
 ## Obtiene la capa de overlays (OverlayLayer)
 func get_overlay_layer() -> OverlayLayer:
 	return overlay_layer
+
+## Obtiene la capa de efectos visuales (OverworldEffectsLayer)
+func get_effects_layer() -> Node2D:
+	return effects_layer
 
 ## Obtiene el Player (acceso directo)
 func get_player() -> Node:

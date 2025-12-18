@@ -349,6 +349,17 @@ func _disconnect_from_actor(actor: Node2D) -> void:
 
 
 ## Agrega un efecto a la escena (método helper compartido)
+## Añade el efecto a OverworldEffectsLayer si está disponible
 func _add_effect_to_scene(effect: Node2D) -> void:
-	var parent = get_parent()
-	(parent if parent else get_tree().root).add_child(effect)
+	if not context:
+		push_error("TileEffectSystem: Contexto no disponible, no se puede añadir efecto")
+		effect.queue_free()
+		return
+
+	var effects_layer = context.get_effects_layer()
+	if not effects_layer:
+		push_error("TileEffectSystem: OverworldEffectsLayer no disponible, no se puede añadir efecto")
+		effect.queue_free()
+		return
+
+	effects_layer.add_child(effect)
