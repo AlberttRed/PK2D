@@ -1,0 +1,524 @@
+[gd_scene load_steps=73 format=4 uid="uid://ckeno4wg1vrv8"]
+
+[ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
+[ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
+[ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_1slxk"]
+[ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_xijbj"]
+[ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_jobp8"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_nocjb"]
+[ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_n4566"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="5_u1wff"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_o2kon"]
+[ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="7_0876j"]
+[ext_resource type="Script" uid="uid://dt7lapm5n8qrt" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="8_dr37c"]
+[ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="9_tsofr"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="10_7u2qs"]
+[ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="11_qv1ht"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="12_0pviq"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="13_ey1f0"]
+[ext_resource type="Texture2D" uid="uid://bxdcduvjp18mw" path="res://Sprites/Eventos/Doors/door2.png" id="14_rwrw8"]
+[ext_resource type="Texture2D" uid="uid://wa3pvrqt6v8x" path="res://Sprites/Eventos/Doors/door1.png" id="15_u1wff"]
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="16_0876j"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="17_dr37c"]
+[ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="18_dr37c"]
+
+[sub_resource type="Resource" id="Resource_emybb"]
+script = ExtResource("7_0876j")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_qxcq6"]
+script = ExtResource("8_dr37c")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_7vpoe"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_x0mvh"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_ph5q8"]
+script = ExtResource("7_0876j")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_yteb7"]
+script = ExtResource("11_qv1ht")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_b1xv2"]
+script = ExtResource("12_0pviq")
+target_scene = "Casa_Red"
+target_spawn = "SpawnEntrada"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_eglkp"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_oem2p"]
+script = ExtResource("13_ey1f0")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_v7ptp"]
+script = ExtResource("11_qv1ht")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_emybb"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hok4v"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hhom"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxcq6"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7vpoe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_rjs0j"]
+script = ExtResource("5_u1wff")
+trigger_type = 2
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_b1xv2"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+required_flag = "indoor"
+required_flag_value = false
+sprite_frames = SubResource("SpriteFrames_7vpoe")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n84s5"]
+script = ExtResource("7_0876j")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_ecx1p"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_2uahs"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_h1dnx"]
+script = ExtResource("13_ey1f0")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_piq08"]
+script = ExtResource("7_0876j")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oem2p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_ihud3"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+through = true
+required_flag = "indoor"
+sprite_frames = SubResource("SpriteFrames_oem2p")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_tsofr"]
+script = ExtResource("12_0pviq")
+target_scene = "Casa_Blue"
+target_spawn = "SpawnEntrada"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_a1jip"]
+script = ExtResource("5_u1wff")
+trigger_type = 2
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_tsofr"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+required_flag = "indoor"
+required_flag_value = false
+sprite_frames = SubResource("SpriteFrames_7vpoe")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_05x7i"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+through = true
+required_flag = "indoor"
+sprite_frames = SubResource("SpriteFrames_oem2p")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_qv1ht"]
+script = ExtResource("12_0pviq")
+target_scene = "Laboratorio"
+target_spawn = "SpawnEntrada"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o2kon"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0876j"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dr37c"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tsofr"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7u2qs"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qv1ht"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0pviq"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ey1f0"]
+atlas = ExtResource("15_u1wff")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rwrw8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o2kon")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0876j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dr37c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tsofr")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7u2qs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qv1ht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0pviq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ey1f0")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_guue8"]
+script = ExtResource("5_u1wff")
+trigger_type = 2
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_qv1ht"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+required_flag = "indoor"
+required_flag_value = false
+sprite_frames = SubResource("SpriteFrames_rwrw8")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u1wff"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxcq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hhom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hok4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emybb")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_o2kon"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+through = true
+required_flag = "indoor"
+sprite_frames = SubResource("SpriteFrames_u1wff")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_3rt2b"]
+script = ExtResource("17_dr37c")
+message = "¡La tecnología es increíble!"
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_0pviq"]
+script = ExtResource("17_dr37c")
+message = "¡Ahora puedes guardar y sacar objetos y POKéMON, vía PC!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tsofr"]
+load_path = "res://.godot/imported/NPC 06.png-207e8477efa523f336b544bc1f6041dd.ctex"
+
+[sub_resource type="Resource" id="Resource_7u2qs"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_3rt2b"), SubResource("Resource_0pviq")])
+sprite_texture = SubResource("CompressedTexture2D_tsofr")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_cvpjy"]
+script = ExtResource("17_dr37c")
+message = "¡Yo también entreno a mis POKéMON!"
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_0876j"]
+script = ExtResource("17_dr37c")
+message = "¡Cuando se hagan fuertes me protegerán!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0876j"]
+load_path = "res://.godot/imported/trchar042.png-ac648df27b7631f8f4fdda8d741f26f8.ctex"
+
+[sub_resource type="Resource" id="Resource_dr37c"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_cvpjy"), SubResource("Resource_0876j")])
+sprite_texture = SubResource("CompressedTexture2D_0876j")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_w67m6"]
+script = ExtResource("17_dr37c")
+message = "¡Cuidado! Teleport a la izquierda."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_8gxhw"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_w67m6")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_f2pe6"]
+script = ExtResource("5_n4566")
+pokemon_id = 16
+min_level = 2
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_jlk61"]
+script = ExtResource("5_n4566")
+pokemon_id = 19
+min_level = 2
+max_level = 4
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[node name="Pueblo_Paleta" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_wr4o0")
+neighbors = Array[String](["Ruta_1", "Ruta_21"])
+
+[node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
+y_sort_enabled = true
+script = ExtResource("2_on1ha")
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
+
+[node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
+tile_map_data = PackedByteArray("AAAAAAAAAwADAAEAAAAAAAEAAwADAAIAAAAAAAIAAwADAAIAAAAAAAMAAwADAAIAAAAAAAQAAwADAAIAAAAAAAUAAwADAAIAAAAAAAYAAwADAAIAAAAAAAcAAwADAAIAAAAAAAgAAwADAAIAAAAAAAkAAwADAAIAAAAAAAoAAwADAAIAAAABAAAAAwABAAEAAAABAAEAAwABAAIAAAABAAIAAwAFAAEAAAABAAMAAwACAAIAAAABAAQAAwACAAIAAAABAAUAAwACAAIAAAABAAgAAwABAAIAAAABAAkAAwABAAIAAAABAAoAAwABAAIAAAACAAAAAwABAAEAAAACAAEAAwABAAIAAAACAAIAAwABAAMAAAACAAMAAwABAAAAAAACAAQAAwABAAAAAAACAAUAAwABAAAAAAACAAgAAwABAAIAAAACAAkAAwAFAAEAAAACAAoAAwACAAIAAAADAAAAAwABAAEAAAADAAEAAwABAAIAAAADAAIAAwABAAMAAAADAAMAAwABAAAAAAADAAQAAwABAAAAAAADAAUAAwABAAAAAAADAAgAAwABAAIAAAADAAkAAwABAAMAAAADAAoAAwABAAAAAAAEAAAAAwABAAEAAAAEAAEAAwABAAIAAAAEAAIAAwABAAMAAAAEAAMAAwABAAAAAAAEAAQAAwABAAAAAAAEAAUAAwABAAAAAAAEAAgAAwABAAIAAAAEAAkAAwABAAMAAAAEAAoAAwABAAAAAAAFAAAAAwABAAEAAAAFAAEAAwABAAIAAAAFAAIAAwABAAMAAAAFAAMAAwABAAAAAAAFAAQAAwABAAAAAAAFAAUAAwABAAAAAAAFAAgAAwABAAIAAAAFAAkAAwABAAMAAAAFAAoAAwABAAAAAAAGAAAAAwABAAEAAAAGAAEAAwABAAIAAAAGAAIAAwABAAMAAAAGAAMAAwABAAAAAAAGAAQAAwABAAAAAAAGAAUAAwABAAAAAAAGAAgAAwABAAIAAAAGAAkAAwABAAMAAAAGAAoAAwABAAAAAAAHAAAAAwABAAEAAAAHAAEAAwABAAIAAAAHAAIAAwABAAMAAAAHAAMAAwABAAAAAAAHAAQAAwABAAAAAAAHAAUAAwABAAAAAAAHAAgAAwABAAIAAAAHAAkAAwABAAMAAAAHAAoAAwABAAAAAAAIAAAAAwABAAEAAAAIAAEAAwABAAIAAAAIAAIAAwAGAAEAAAAIAAMAAwAAAAIAAAAIAAQAAwAAAAIAAAAIAAUAAwAAAAIAAAAIAAgAAwABAAIAAAAIAAkAAwAGAAEAAAAIAAoAAwAAAAIAAAAJAAAAAwABAAEAAAAJAAEAAwABAAIAAAAJAAIAAwABAAIAAAAJAAMAAwABAAIAAAAJAAQAAwABAAIAAAAJAAUAAwABAAIAAAAJAAgAAwABAAIAAAAJAAkAAwABAAIAAAAJAAoAAwABAAIAAAAKAAAAAwAGAAQAAAAKAAEAAwABAAIAAAAKAAgAAwAFAAEAAAAKAAkAAwACAAIAAAAKAAoAAwACAAIAAAALAAAAAwAFAAQAAAALAAEAAwABAAIAAAALAAIAAwABAAMAAAALAAMAAwABAAAAAAALAAQAAwABAAAAAAALAAUAAwABAAAAAAALAAYAAwABAAEAAAALAAcAAwABAAIAAAALAAgAAwABAAMAAAALAAkAAwABAAAAAAALAAoAAwABAAAAAAAMAAAAAwABAAEAAAAMAAEAAwABAAIAAAAMAAIAAwABAAMAAAAMAAMAAwABAAAAAAAMAAQAAwABAAAAAAAMAAUAAwABAAAAAAAMAAYAAwAGAAIAAAAMAAcAAwABAAIAAAAMAAgAAwABAAMAAAAMAAkAAwABAAAAAAAMAAoAAwABAAAAAAANAAAAAwABAAEAAAANAAEAAwABAAIAAAANAAIAAwABAAMAAAANAAMAAwABAAAAAAANAAQAAwABAAAAAAANAAUAAwABAAAAAAANAAYAAwABAAIAAAANAAcAAwABAAIAAAANAAgAAwABAAMAAAANAAkAAwABAAAAAAANAAoAAwABAAAAAAAOAAAAAwABAAEAAAAOAAEAAwABAAIAAAAOAAIAAwABAAMAAAAOAAMAAwABAAAAAAAOAAQAAwABAAAAAAAOAAUAAwABAAAAAAAOAAYAAwAFAAIAAAAOAAcAAwABAAIAAAAOAAgAAwABAAMAAAAOAAkAAwABAAAAAAAOAAoAAwABAAAAAAAAAAsAAwADAAIAAAAAAAwAAwADAAIAAAAAAA0AAwADAAIAAAAAAA4AAwADAAIAAAAAAA8AAwADAAMAAAAAABAAAwABAAAAAAAAABEAAwABAAAAAAABAAsAAwABAAIAAAABAAwAAwABAAIAAAABAA0AAwABAAIAAAABAA4AAwABAAIAAAABAA8AAwABAAMAAAABABAAAwABAAAAAAABABEAAwABAAAAAAACAAsAAwACAAIAAAACAAwAAwACAAIAAAACAA0AAwAFAAIAAAACAA4AAwABAAIAAAACAA8AAwABAAMAAAACABAAAwABAAAAAAACABEAAwABAAAAAAADAAsAAwABAAAAAAADAAwAAwABAAAAAAADAA0AAwABAAEAAAADAA4AAwABAAIAAAADAA8AAwABAAMAAAADABAAAwABAAAAAAADABEAAwABAAAAAAAEAAsAAwABAAAAAAAEAAwAAwABAAAAAAAEAA0AAwABAAEAAAAEAA4AAwABAAIAAAAEAA8AAwABAAMAAAAEABAAAwABAAAAAAAEABEAAwABAAAAAAAFAAsAAwABAAAAAAAFAAwAAwABAAAAAAAFAA0AAwABAAEAAAAFAA4AAwABAAIAAAAFAA8AAwABAAMAAAAFABAAAwABAAAAAAAFABEAAwABAAAAAAAGAAsAAwABAAAAAAAGAAwAAwABAAAAAAAGAA0AAwABAAEAAAAGAA4AAwABAAIAAAAGAA8AAwABAAMAAAAGABAAAwABAAAAAAAGABEAAwABAAAAAAAHAAsAAwABAAAAAAAHAAwAAwABAAAAAAAHAA0AAwABAAEAAAAHAA4AAwABAAIAAAAHAA8AAwAGAAEAAAAHABAAAwAAAAMAAAAHABEAAwABAAAAAAAIAAsAAwAAAAIAAAAIAAwAAwAAAAIAAAAIAA0AAwAGAAIAAAAIAA4AAwABAAIAAAAIAA8AAwABAAIAAAAIABAAAwABAAMAAAAIABEAAwABAAAAAAAJAAsAAwABAAIAAAAJAAwAAwABAAIAAAAJAA0AAwABAAIAAAAJAA4AAwABAAIAAAAJAA8AAwABAAIAAAAJABAAAwABAAMAAAAJABEAAwABAAAAAAAKAAsAAwACAAIAAAAKAAwAAwAFAAIAAAAKAA0AAwAFAAEAAAAKAA4AAwADAAQAAAAKAA8AAwABAAIAAAAKABAAAwABAAMAAAAKABEAAwABAAAAAAALAAsAAwABAAAAAAALAAwAAwABAAEAAAALAA0AAwABAAMAAAALAA4AAwABAAQAAAALAA8AAwABAAIAAAALABAAAwABAAMAAAALABEAAwABAAAAAAAMAAsAAwABAAAAAAAMAAwAAwABAAEAAAAMAA0AAwABAAMAAAAMAA4AAwABAAQAAAAMAA8AAwABAAIAAAAMABAAAwABAAMAAAAMABEAAwABAAAAAAANAAsAAwABAAAAAAANAAwAAwAGAAIAAAANAA0AAwABAAMAAAANAA4AAwABAAQAAAANAA8AAwABAAIAAAANABAAAwABAAMAAAANABEAAwABAAAAAAAOAAsAAwABAAAAAAAOAAwAAwABAAIAAAAOAA0AAwABAAMAAAAOAA4AAwABAAQAAAAOAA8AAwABAAIAAAAOABAAAwABAAMAAAAOABEAAwABAAAAAAAPAAAAAwABAAEAAAAPAAEAAwABAAIAAAAPAAIAAwABAAMAAAAPAAMAAwABAAAAAAAPAAQAAwABAAAAAAAPAAUAAwABAAAAAAAPAAYAAwABAAEAAAAPAAcAAwABAAIAAAAPAAgAAwABAAMAAAAPAAkAAwABAAAAAAAPAAoAAwABAAAAAAAPAAsAAwABAAAAAAAPAAwAAwAFAAIAAAAPAA0AAwABAAMAAAAPAA4AAwABAAQAAAAPAA8AAwABAAIAAAAPABAAAwABAAMAAAAPABEAAwABAAAAAAAQAAAAAwABAAEAAAAQAAEAAwABAAIAAAAQAAIAAwABAAMAAAAQAAMAAwABAAAAAAAQAAQAAwABAAAAAAAQAAUAAwABAAAAAAAQAAYAAwABAAEAAAAQAAcAAwABAAIAAAAQAAgAAwABAAMAAAAQAAkAAwABAAAAAAAQAAoAAwABAAAAAAAQAAsAAwABAAAAAAAQAAwAAwABAAEAAAAQAA0AAwABAAMAAAAQAA4AAwABAAQAAAAQAA8AAwABAAIAAAAQABAAAwABAAMAAAAQABEAAwABAAAAAAARAAAAAwABAAEAAAARAAEAAwABAAIAAAARAAIAAwAGAAEAAAARAAMAAwAAAAIAAAARAAQAAwAAAAIAAAARAAUAAwAAAAIAAAARAAYAAwAGAAIAAAARAAcAAwABAAIAAAARAAgAAwABAAMAAAARAAkAAwABAAAAAAARAAoAAwABAAAAAAARAAsAAwABAAAAAAARAAwAAwABAAEAAAARAA8AAwABAAIAAAARABAAAwABAAMAAAARABEAAwABAAAAAAASAAAAAwABAAEAAAASAAEAAwABAAIAAAASAAIAAwABAAIAAAASAAMAAwABAAIAAAASAAQAAwABAAIAAAASAAUAAwABAAIAAAASAAYAAwABAAIAAAASAAcAAwABAAIAAAASAAgAAwAGAAMAAAASAAkAAwADAAIAAAASAAoAAwADAAIAAAASAAsAAwADAAIAAAASAAwAAwAGAAQAAAASAA8AAwABAAIAAAASABAAAwABAAMAAAASABEAAwABAAAAAAAAAP7/AwACADUAAAAAAP//AwAAADYAAAABAP7/AwADADUAAAABAP//AwABADYAAAACAP7/AwACADUAAAACAP//AwAAADYAAAADAP7/AwADADUAAAADAP//AwABADYAAAAEAP7/AwACADUAAAAEAP//AwAAADYAAAAFAP7/AwADADUAAAAFAP//AwABADYAAAAGAP7/AwACADUAAAAGAP//AwAAADYAAAAHAP7/AwADADUAAAAHAP//AwABADYAAAAIAP7/AwACADUAAAAIAP//AwAAADYAAAAJAP7/AwADADUAAAAJAP//AwABADYAAAD+//7/AwACADUAAAD///7/AwADADUAAAD+////AwACADQAAAD+/wAAAwACADUAAAD/////AwADADQAAAD//wAAAwADADUAAAD+/wEAAwACADQAAAD+/wIAAwACADUAAAD//wEAAwADADQAAAD//wIAAwADADUAAAD+/wMAAwACADQAAAD+/wQAAwACADUAAAD//wMAAwADADQAAAD//wQAAwADADUAAAD+/wUAAwACADQAAAD+/wYAAwACADUAAAD//wUAAwADADQAAAD//wYAAwADADUAAAD+/wcAAwACADQAAAD+/wgAAwACADUAAAD//wcAAwADADQAAAD//wgAAwADADUAAAD+/wkAAwACADQAAAD+/woAAwACADUAAAD//wkAAwADADQAAAD//woAAwADADUAAAD+/wsAAwACADQAAAD+/wwAAwACADUAAAD//wsAAwADADQAAAD//wwAAwADADUAAAD+/w0AAwACADQAAAD+/w4AAwACADUAAAD//w0AAwADADQAAAD//w4AAwADADUAAAD+/w8AAwACADQAAAD+/xAAAwACADUAAAD//w8AAwADADQAAAD//xAAAwADADUAAAAMAP7/AwAAADUAAAAMAP//AwAAADYAAAANAP7/AwABADUAAAANAP//AwABADYAAAAOAP7/AwAAADUAAAAOAP//AwAAADYAAAAPAP7/AwABADUAAAAPAP//AwABADYAAAAQAP7/AwAAADUAAAAQAP//AwAAADYAAAARAP7/AwABADUAAAARAP//AwABADYAAAASAP7/AwAAADUAAAASAP//AwAAADYAAAATAP7/AwABADUAAAATAP//AwABADYAAAAUAP7/AwAAADUAAAAUAP//AwACADQAAAAVAP7/AwABADUAAAAVAP//AwADADQAAAAUAAAAAwACADUAAAAVAAAAAwADADUAAAAUAAEAAwACADQAAAAUAAIAAwACADUAAAAVAAEAAwADADQAAAAVAAIAAwADADUAAAAUAAMAAwACADQAAAAUAAQAAwACADUAAAAVAAMAAwADADQAAAAVAAQAAwADADUAAAAUAAUAAwACADQAAAAUAAYAAwACADUAAAAVAAUAAwADADQAAAAVAAYAAwADADUAAAAUAAcAAwACADQAAAAUAAgAAwACADUAAAAVAAcAAwADADQAAAAVAAgAAwADADUAAAAUAAkAAwACADQAAAAUAAoAAwACADUAAAAVAAkAAwADADQAAAAVAAoAAwADADUAAAAUAAsAAwACADQAAAAUAAwAAwACADUAAAAVAAsAAwADADQAAAAVAAwAAwADADUAAAAUAA0AAwACADQAAAAUAA4AAwACADUAAAAVAA0AAwADADQAAAAVAA4AAwADADUAAAAUAA8AAwACADQAAAAUABAAAwACADUAAAAVAA8AAwADADQAAAAVABAAAwADADUAAAAUABEAAwACADQAAAAVABEAAwADADQAAAATABEAAwABAAAAAAATABAAAwACAAMAAAATAA8AAwACAAIAAAATAA4AAwACAAIAAAATAA0AAwACAAIAAAATAAwAAwACAAIAAAATAAsAAwACAAIAAAATAAoAAwACAAIAAAATAAkAAwACAAIAAAATAAgAAwACAAIAAAATAAcAAwACAAIAAAATAAYAAwACAAIAAAATAAUAAwACAAIAAAATAAQAAwACAAIAAAATAAMAAwACAAIAAAATAAIAAwACAAIAAAATAAEAAwACAAIAAAATAAAAAwACAAEAAAAKAP7/AwADAAEAAAAKAP//AwADAAIAAAALAP7/AwAEAAEAAAALAP//AwAEAAIAAAABAAcAAwABAAIAAAACAAcAAwABAAIAAAADAAcAAwABAAIAAAAEAAcAAwABAAIAAAAFAAcAAwABAAIAAAAGAAcAAwABAAIAAAAHAAcAAwABAAIAAAAIAAcAAwABAAIAAAAJAAcAAwABAAIAAAAKAAcAAwABAAIAAAAIAAYAAwAGAAIAAAAJAAYAAwABAAIAAAAKAAYAAwAFAAIAAAAKAAUAAwACAAIAAAAKAAQAAwACAAIAAAAKAAMAAwACAAIAAAAKAAIAAwAFAAEAAAABAAYAAwAFAAIAAAACAAYAAwABAAEAAAADAAYAAwAGAAIAAAAEAAYAAwABAAIAAAAFAAYAAwAFAAIAAAAGAAYAAwABAAEAAAAHAAYAAwABAAEAAAARAA0AAwAGAAEAAAARAA4AAwAEAAQAAAASAA0AAwABAAIAAAASAA4AAwABAAIAAAD+/xEAAwACADQAAAD//xEAAwADADQAAAA=")
+tile_set = ExtResource("3_xijbj")
+metadata/_edit_lock_ = true
+
+[node name="MaskLayer" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 1
+tile_set = ExtResource("3_xijbj")
+metadata/_edit_lock_ = true
+
+[node name="Objects" type="TileMapLayer" parent="OverworldGrid"]
+tile_map_data = PackedByteArray("AAAEAAIAAwABAMYAAAAEAAMAAwABAMcAAAAEAAQAAwABAMgAAAAFAAIAAwACAMYAAAAFAAMAAwACAMcAAAAFAAQAAwACAMgAAAAGAAIAAwADAMYAAAAGAAMAAwADAMcAAAAGAAQAAwADAMgAAAAGAAUAAwADAMkAAAAHAAIAAwAEAMYAAAAHAAMAAwAEAMcAAAAHAAQAAwAEAMgAAAAHAAUAAwAEAMkAAAADAAIAAwAAAMYAAAADAAMAAwAAAMcAAAADAAQAAwAAAMgAAAADAAUAAwAAAMkAAAAFAAUAAwACAMkAAAAMAAIAAwAAAMYAAAAMAAMAAwAAAMcAAAAMAAQAAwAAAMgAAAAMAAUAAwAAAMkAAAANAAIAAwABAMYAAAANAAMAAwABAMcAAAANAAQAAwABAMgAAAAOAAIAAwACAMYAAAAOAAMAAwACAMcAAAAOAAQAAwACAMgAAAAOAAUAAwACAMkAAAAPAAIAAwADAMYAAAAPAAMAAwADAMcAAAAPAAQAAwADAMgAAAAPAAUAAwADAMkAAAAQAAIAAwAEAMYAAAAQAAMAAwAEAMcAAAAQAAQAAwAEAMgAAAAQAAUAAwAEAMkAAAALAAgAAwAAAIMBAAALAAkAAwAAAIQBAAALAAoAAwAAAIUBAAALAAsAAwAAAIYBAAAMAAgAAwABAIMBAAAMAAkAAwABAIQBAAAMAAoAAwABAIUBAAAMAAsAAwABAIYBAAANAAgAAwACAIMBAAANAAkAAwACAIQBAAANAAoAAwACAIUBAAANAAsAAwACAIYBAAAOAAgAAwADAIMBAAAOAAkAAwADAIQBAAAOAAoAAwADAIUBAAAPAAgAAwAFAIMBAAAPAAkAAwAFAIQBAAAPAAoAAwAFAIUBAAAPAAsAAwAFAIYBAAAQAAgAAwAGAIMBAAAQAAkAAwAGAIQBAAAQAAoAAwAGAIUBAAAQAAsAAwAGAIYBAAARAAgAAwAHAIMBAAARAAkAAwAHAIQBAAARAAoAAwAHAIUBAAARAAsAAwAHAIYBAAADAAoAAAAAAAAAAAAEAAoAAAAAAAAAAAAFAAoAAAAAAAAAAAAGAAoAAAAAAAAAAAAGAAsAAAAAAAAAAAAFAAsAAAAAAAAAAAAEAAsAAAAAAAAAAAADAAsAAAAAAAAAAAAHAAkAAwAAAHcAAAADAAwAAwABAHcAAAALAA4AAwABAKIAAAAMAA4AAwABAKIAAAANAA4AAwABAKIAAAAPAA4AAwABAKIAAAAQAA4AAwABAKIAAAADAAkAAwABAKIAAAAEAAkAAwABAKIAAAAFAAkAAwABAKIAAAAGAAkAAwABAKIAAAAOAA4AAwAAAHcAAAALAAUAAwACAHkAAAACAAUAAwACAHkAAAAGAA8ABAABAAEAAAAFAA8ABAAAAAEAAAAHAA8ABAABAAEAAAAIAA8ABAACAAEAAAAGABAABAABAAIAAAAHABAABAABAAIAAAAFABAABAAAAAIAAAAIABAABAACAAIAAAAFABEABAAAAAIAAAAGABEABAABAAIAAAAHABEABAABAAIAAAAIABEABAACAAIAAAAEAAUAAwAFAMkAAAANAAUAAwAFAMkAAAAOAAsAAwADAIYBAAA=")
+tile_set = ExtResource("3_xijbj")
+metadata/_edit_lock_ = true
+
+[node name="Above" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 2
+tile_map_data = PackedByteArray("AAADAAEAAwAAAMUAAAAEAAEAAwABAMUAAAAFAAEAAwACAMUAAAAGAAEAAwADAMUAAAAHAAEAAwAEAMUAAAAMAAEAAwAAAMUAAAANAAEAAwABAMUAAAAOAAEAAwACAMUAAAAPAAEAAwADAMUAAAAQAAEAAwAEAMUAAAALAAcAAwAAAIIBAAAMAAcAAwABAIIBAAANAAcAAwACAIIBAAAOAAcAAwADAIIBAAAPAAcAAwAEAIIBAAAQAAcAAwAGAIIBAAARAAcAAwAHAIIBAAACAAQAAwACAHgAAAALAAQAAwACAHgAAAAQABEAAwAEADQAAAARABEAAwAFADQAAAASABEAAwAEADQAAAATABEAAwAFADQAAAAAABEAAwAEADQAAAABABEAAwAFADQAAAACABEAAwAEADQAAAADABEAAwAFADQAAAAAAP3/AwAEADQAAAABAP3/AwAFADQAAAD+//3/AwAEADQAAAD///3/AwAFADQAAAACAP3/AwAEADQAAAADAP3/AwAFADQAAAAEAP3/AwAEADQAAAAFAP3/AwAFADQAAAAGAP3/AwAEADQAAAAHAP3/AwAFADQAAAAIAP3/AwAEADQAAAAJAP3/AwAFADQAAAAMAP3/AwAEADQAAAANAP3/AwAFADQAAAAOAP3/AwAEADQAAAAPAP3/AwAFADQAAAAQAP3/AwAEADQAAAARAP3/AwAFADQAAAASAP3/AwAEADQAAAATAP3/AwAFADQAAAAUAP3/AwAEADQAAAAVAP3/AwAFADQAAAA=")
+tile_set = ExtResource("3_xijbj")
+metadata/_edit_lock_ = true
+
+[node name="Events" type="Node2D" parent="OverworldGrid"]
+y_sort_enabled = true
+metadata/_edit_lock_ = true
+
+[node name="Puerta_Red" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(144, 176)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_rjs0j"), SubResource("Resource_ihud3")])
+
+[node name="Puerta_Blue" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(432, 176)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_a1jip"), SubResource("Resource_05x7i")])
+
+[node name="Puerta_Lab" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(464, 368)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_guue8"), SubResource("Resource_o2kon")])
+
+[node name="Fat_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
+position = Vector2(368, 496)
+movement_type = 1
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_7u2qs")])
+
+[node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
+position = Vector2(48, 272)
+movement_type = 1
+random_move_interval_min = 5.0
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c")])
+
+[node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(240, 304)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+
+[node name="Cartel_Madera" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(112, 400)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+
+[node name="Cartel_Blanco2" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(464, 464)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+
+[node name="SpawnPoints" type="Node" parent="OverworldGrid"]
+
+[node name="Spawn_CasaRed" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+visible = false
+position = Vector2(144, 176)
+
+[node name="Spawn_CasaBlue" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+visible = false
+position = Vector2(432, 176)
+
+[node name="Spawn_Lab" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+visible = false
+position = Vector2(464, 368)
+
+[node name="MapAreaEncounters" parent="." instance=ExtResource("3_1slxk")]
+
+[node name="Land" parent="MapAreaEncounters" instance=ExtResource("4_jobp8")]
+pokemon_encounters = Array[ExtResource("5_n4566")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])

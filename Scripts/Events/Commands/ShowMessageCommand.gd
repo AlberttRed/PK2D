@@ -2,7 +2,7 @@ extends EventCommand
 class_name ShowMessageCommand
 
 ## Comando para mostrar un mensaje al jugador
-@export var message: String = "¡Hola mundo!"
+@export_multiline var message: String = "¡Hola mundo!"
 @export var wait_input: bool = true
 @export var close_at_end: bool = true
 @export var wait_time: float = 0.0

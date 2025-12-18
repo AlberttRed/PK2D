@@ -22,13 +22,19 @@ probability = 50.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="MapScene" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_mmedn")
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
+y_sort_enabled = true
 script = ExtResource("1_03vl0")
 layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
 
 [node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
+metadata/_edit_lock_ = true
+
+[node name="MaskLayer" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 1
 metadata/_edit_lock_ = true
 
 [node name="Objects" type="TileMapLayer" parent="OverworldGrid"]
@@ -39,6 +45,7 @@ z_index = 2
 metadata/_edit_lock_ = true
 
 [node name="Events" type="Node2D" parent="OverworldGrid"]
+y_sort_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
