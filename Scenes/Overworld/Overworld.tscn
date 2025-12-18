@@ -1,28 +1,31 @@
-[gd_scene load_steps=17 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=19 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
-[ext_resource type="PackedScene" uid="uid://1owe4s00dp15" path="res://Scenes/Overworld/Maps/TestMap2/MapaPuebloTest.tscn" id="2_a8jsd"]
-[ext_resource type="PackedScene" uid="uid://dpxa6dptr3hll" path="res://Scenes/Overworld/Maps/MapHouseTest.tscn" id="3_ytpjq"]
+[ext_resource type="PackedScene" uid="uid://ckeno4wg1vrv8" path="res://Scenes/Overworld/Maps/Pueblo Paleta/Pueblo_Paleta.tscn" id="3_565oj"]
+[ext_resource type="PackedScene" uid="uid://c0wo0k68yn6wi" path="res://Scenes/Overworld/Maps/Pueblo Paleta/Edificios/Casa_Red.tscn" id="4_2m6j0"]
 [ext_resource type="Script" uid="uid://by1tjq02r4a3s" path="res://Scripts/Overworld/Core/MOSystem.gd" id="4_mo_system"]
 [ext_resource type="Script" uid="uid://cjx738lc2vvbb" path="res://Scripts/Overworld/Core/WarpSystem.gd" id="4_warp_system"]
-[ext_resource type="PackedScene" uid="uid://d1bs2x4y8nuby" path="res://Scenes/Overworld/Maps/MapNeighborTest.tscn" id="5_ius67"]
-[ext_resource type="PackedScene" uid="uid://ch2msdomuqykb" path="res://Scenes/Overworld/Maps/MapCiudadTest.tscn" id="6_de4hb"]
+[ext_resource type="PackedScene" uid="uid://dx5ysjvdkng4b" path="res://Scenes/Overworld/Maps/Pueblo Paleta/Edificios/Casa_Blue.tscn" id="5_g3sn4"]
+[ext_resource type="PackedScene" uid="uid://c1amvh7rkmkou" path="res://Scenes/Overworld/Maps/Pueblo Paleta/Edificios/Laboratorio.tscn" id="6_1hg53"]
 [ext_resource type="Script" uid="uid://duu3c0stuk0nk" path="res://Scripts/Overworld/Core/WorldSystem.gd" id="6_world_system"]
+[ext_resource type="PackedScene" uid="uid://djy5tdk6yi3oa" path="res://Scenes/Overworld/Maps/Ruta 1/Ruta_1.tscn" id="7_2m6j0"]
 [ext_resource type="Script" uid="uid://1d5yn4tjx356" path="res://Scripts/Overworld/Systems/TileEffectSystem.gd" id="7_tile_effect"]
-[ext_resource type="PackedScene" uid="uid://d23pcwt66gk3p" path="res://Scenes/Overworld/Maps/MapGigante.tscn" id="7_y04h8"]
+[ext_resource type="PackedScene" uid="uid://8c1hq6blxu0b" path="res://Scenes/Overworld/Maps/Ruta 21/Ruta_21.tscn" id="8_g3sn4"]
 [ext_resource type="Script" uid="uid://bn0u5uhjlhjda" path="res://Scripts/Overworld/Systems/WildEncounterSystem.gd" id="8_wild_encounter"]
 [ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="12_565oj"]
 [ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="13_2m6j0"]
 [ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="14_g3sn4"]
 [ext_resource type="PackedScene" uid="uid://b8k3m4n5p6q7r" path="res://Scenes/Overworld/Others/RippleEffect.tscn" id="15_2m6j0"]
+[ext_resource type="PackedScene" uid="uid://bq8k2m5n6p7r8" path="res://Scenes/Overworld/Effects/ExitArrowEffect.tscn" id="16_exit_arrow"]
 
 [node name="Overworld" type="Node"]
 script = ExtResource("1_overworld")
 
-[node name="WorldSystem" type="Node" parent="."]
+[node name="WorldSystem" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("6_world_system")
-world_map_scenes = Array[PackedScene]([ExtResource("2_a8jsd"), ExtResource("3_ytpjq"), ExtResource("5_ius67"), ExtResource("6_de4hb"), ExtResource("7_y04h8")])
+world_map_scenes = Array[PackedScene]([ExtResource("3_565oj"), ExtResource("4_2m6j0"), ExtResource("5_g3sn4"), ExtResource("6_1hg53"), ExtResource("7_2m6j0"), ExtResource("8_g3sn4")])
 
 [node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")
@@ -40,6 +43,9 @@ grass_effect_scene = ExtResource("12_565oj")
 tall_grass_overlay_scene = ExtResource("13_2m6j0")
 grass_stepped_effect_scene = ExtResource("14_g3sn4")
 ripple_effect_scene = ExtResource("15_2m6j0")
+exit_arrow_scene = ExtResource("16_exit_arrow")
 
 [node name="WildEncounterSystem" type="Node" parent="."]
 script = ExtResource("8_wild_encounter")
+
+[node name="OverworldEffectsLayer" type="Node2D" parent="."]

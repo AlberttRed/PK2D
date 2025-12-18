@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://dwey8ik2pkcox"]
+
+[ext_resource type="Texture2D" uid="uid://c77cw86aql5eu" path="res://Sprites/Others/Exit Arrow/exit_arrow.png" id="1_cjddo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vji4c"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5avm"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q67v0"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jbt41"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wph46"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3x3j"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ltd2"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbmlj"]
+atlas = ExtResource("1_cjddo")
+region = Rect2(0, 32, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vji4c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l5avm")
+}],
+"loop": true,
+"name": &"arrow_down",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q67v0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jbt41")
+}],
+"loop": true,
+"name": &"arrow_left",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wph46")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3x3j")
+}],
+"loop": true,
+"name": &"arrow_right",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ltd2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbmlj")
+}],
+"loop": true,
+"name": &"arrow_up",
+"speed": 2.0
+}]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bq8k2m5n6p7r8"]
+
+[ext_resource type="SpriteFrames" uid="uid://dwey8ik2pkcox" path="res://Resources/Animations/Overworld/exit_arrow.tres" id="1_exit_arrow"]
+
+[node name="ExitArrowEffect" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 10
+sprite_frames = ExtResource("1_exit_arrow")
+

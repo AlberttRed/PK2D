@@ -22,6 +22,7 @@ var effect_handlers: Dictionary = {}  # {String: TileEffectHandler}
 @export var tall_grass_overlay_scene: PackedScene
 @export var grass_stepped_effect_scene: PackedScene
 @export var ripple_effect_scene: PackedScene
+@export var exit_arrow_scene: PackedScene
 # Futuro: @export var sand_footprint_scene: PackedScene
 
 # Estado temporal para detectar colisiones
@@ -53,6 +54,9 @@ func initialize(overworld_context: OverworldContext) -> void:
 	# Conectar a cambios de chunks para conectar/desconectar eventos dinámicamente
 	_connect_to_chunk_system()
 
+	# Conectar a señales de warp para limpiar efectos cuando termina el warp
+	_connect_to_warp_signals()
+
 
 ## Registra todos los handlers de efectos
 func _register_effect_handlers() -> void:
@@ -67,6 +71,12 @@ func _register_effect_handlers() -> void:
 	# ReflectionEffectHandler maneja reflejos en agua (comparte "water" con ripple)
 	var reflection_handler = ReflectionEffectHandler.new(self)
 	effect_handlers["water_reflection"] = reflection_handler
+
+	# ExitArrowEffectHandler maneja la flecha de salida (no está basado en terrain_type)
+	var exit_arrow_handler = ExitArrowEffectHandler.new(self)
+	if exit_arrow_scene:
+		exit_arrow_handler.setup_effects(exit_arrow_scene)
+	effect_handlers["exit_arrow"] = exit_arrow_handler
 
 
 ## Obtiene el handler para un tipo de terreno
@@ -132,6 +142,12 @@ func _on_actor_step_started(actor: Node2D) -> void:
 			if reflection_handler:
 				reflection_handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
 
+	# Llamar al exit arrow handler cuando el jugador sale de un tile
+	if actor.is_in_group("Player") and from_data.grid:
+		var exit_arrow_handler = effect_handlers.get("exit_arrow")
+		if exit_arrow_handler:
+			exit_arrow_handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
+
 	# Manejar entrada al tile destino
 	if to_data.grid:
 		_handle_movement_to_destination(to_data.grid, to_data.tile, actor)
@@ -160,7 +176,6 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 		if reflection_handler:
 			reflection_handler.on_step_finished_on_tile(grid, tile, actor, false)
 		_clear_all_handlers(actor)
-		return
 
 	var handler = get_handler_for_terrain(terrain_type)
 	if handler:
@@ -176,8 +191,16 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 			var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
 			reflection_handler.on_step_finished_on_tile(grid, tile, actor, had_collision)
 
-	if actor.is_in_group("Player") and not tile_info.encounter_type.is_empty():
-		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
+	# Llamar al exit arrow handler siempre que sea el jugador (independiente del terrain_type)
+	if actor.is_in_group("Player"):
+		var exit_arrow_handler = effect_handlers.get("exit_arrow")
+		if exit_arrow_handler:
+			var grid_motion = actor.get_node("GridMotion")
+			var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
+			exit_arrow_handler.on_step_finished_on_tile(grid, tile, actor, had_collision)
+
+		if not tile_info.encounter_type.is_empty():
+			tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
 
 
 ## Maneja el movimiento hacia un tile de destino
@@ -349,6 +372,55 @@ func _disconnect_from_actor(actor: Node2D) -> void:
 
 
 ## Agrega un efecto a la escena (método helper compartido)
+## Añade el efecto a OverworldEffectsLayer si está disponible
 func _add_effect_to_scene(effect: Node2D) -> void:
-	var parent = get_parent()
-	(parent if parent else get_tree().root).add_child(effect)
+	if not context:
+		push_error("TileEffectSystem: Contexto no disponible, no se puede añadir efecto")
+		effect.queue_free()
+		return
+
+	var effects_layer = context.get_effects_layer()
+	if not effects_layer:
+		push_error("TileEffectSystem: OverworldEffectsLayer no disponible, no se puede añadir efecto")
+		effect.queue_free()
+		return
+
+	effects_layer.add_child(effect)
+
+
+## Limpia todos los efectos visuales del OverworldEffectsLayer
+## Útil para limpiar efectos al cambiar de mapa o realizar warps
+func clear_all_effects() -> void:
+	if not context:
+		return
+
+	var effects_layer = context.get_effects_layer()
+	if not effects_layer:
+		return
+
+	# Eliminar todos los nodos hijos del OverworldEffectsLayer
+	var children = effects_layer.get_children()
+	for child in children:
+		if is_instance_valid(child):
+			child.queue_free()
+
+	# También limpiar el estado de todos los handlers
+	for handler in effect_handlers.values():
+		if handler and handler.has_method("clear_state"):
+			handler.clear_state()
+
+
+## Conecta a señales de warp para limpiar efectos al cambiar de mapa
+func _connect_to_warp_signals() -> void:
+	if not context:
+		return
+
+	# Conectar a warp_finished para limpiar efectos cuando termina el warp
+	if not context.warp_finished.is_connected(_on_warp_finished):
+		context.warp_finished.connect(_on_warp_finished)
+
+
+## Callback cuando termina un warp
+func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
+	# Limpiar todos los efectos visuales cuando termina el warp (nuevo mapa cargado)
+	clear_all_effects()

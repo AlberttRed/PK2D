@@ -85,4 +85,3 @@ func deactivate_actor(actor: Node2D) -> void:
 	var reflection_sprite := actor.get_node_or_null("ReflectionSprite")
 	if reflection_sprite:
 		reflection_sprite.visible = false
-
