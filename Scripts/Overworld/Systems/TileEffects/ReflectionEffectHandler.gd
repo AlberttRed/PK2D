@@ -10,24 +10,35 @@ func _init(p_effect_system: TileEffectSystem) -> void:
 	super._init("water", p_effect_system)
 
 ## Se llama cuando un actor EMPIEZA a moverse hacia un tile
-func on_step_started_to_tile(_grid: OverworldGrid, _destination_tile: Vector2i, _actor: Node2D) -> void:
-	# No verificar al inicio del movimiento - se verifica al final para evitar ocultar prematuramente
-	pass
+func on_step_started_to_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) -> void:
+	var direction: Vector2 = Vector2.DOWN  # Por defecto abajo
+	var motion := _actor.get_node_or_null("GridMotion")
+	direction = motion.get("dir")
+	if direction == Vector2.DOWN:
+		_check_water_reflection(_grid, _tile, _actor)
 
 ## Se llama cuando un actor TERMINA un paso
-func on_step_finished_on_tile(grid: OverworldGrid, tile: Vector2i, actor: Node2D, _had_collision: bool) -> void:
-	# Verificar agua después de que el movimiento termine completamente
-	call_deferred("_check_water_reflection", grid, tile, actor)
+func on_step_finished_on_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D, _had_collision: bool) -> void:
+	_check_water_reflection(_grid, _tile, _actor)
 
 ## Se llama cuando un actor SALE de un tile
 func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) -> void:
-	# No verificar al salir del tile - se verifica al final del movimiento
-	pass
+	var direction: Vector2 = Vector2.DOWN  # Por defecto abajo
+	var motion := _actor.get_node_or_null("GridMotion")
+	direction = motion.get("dir")
+	var front_tile = Vector2(_tile) + direction
+
+	var tile_info := _grid.get_tile_info(front_tile)
+	if !tile_info.water_reflection:
+		if direction == Vector2.UP:
+			await _grid.get_tree().create_timer(motion.get_step_duration()/1.5).timeout
+		deactivate_actor(_actor)
+		return
 
 ## Verifica si hay agua en los tiles relevantes y actualiza la visibilidad del reflejo
 func _check_water_reflection(grid: OverworldGrid, current_tile: Vector2i, actor: Node2D) -> void:
 	var reflection_sprite := actor.get_node_or_null("ReflectionSprite")
-	if not reflection_sprite:
+	if not reflection_sprite or reflection_sprite.visible:
 		return
 
 	# Para Events: verificar si el EventPage actual permite reflejo
@@ -42,8 +53,7 @@ func _check_water_reflection(grid: OverworldGrid, current_tile: Vector2i, actor:
 	# Obtener dirección del actor
 	var direction: Vector2 = Vector2.DOWN  # Por defecto abajo
 	var motion := actor.get_node_or_null("GridMotion")
-	if motion and "dir" in motion:
-		direction = motion.get("dir")
+	direction = motion.get("dir")
 
 	# Calcular los tiles a verificar: actual, inferior, delante, delante inferior
 	var tiles_to_check: Array[Vector2i] = []
@@ -61,7 +71,6 @@ func _check_water_reflection(grid: OverworldGrid, current_tile: Vector2i, actor:
 	elif direction == Vector2.DOWN:
 		tiles_to_check.append(current_tile + Vector2i(0, 2))
 		# Delante (abajo) ya es el inferior, ya incluido - no agregar más tiles
-		pass
 	elif direction == Vector2.LEFT:
 		tiles_to_check.append(current_tile + Vector2i(-1, 0))  # Delante (izquierda)
 		tiles_to_check.append(current_tile + Vector2i(-1, 1))  # Delante inferior (izquierda + abajo)
@@ -73,7 +82,7 @@ func _check_water_reflection(grid: OverworldGrid, current_tile: Vector2i, actor:
 	var has_water_nearby: bool = false
 	for tile in tiles_to_check:
 		var tile_info := grid.get_tile_info(tile)
-		if tile_info.terrain == "water":
+		if tile_info.water_reflection:
 			has_water_nearby = true
 			break
 

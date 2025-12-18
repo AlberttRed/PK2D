@@ -77,6 +77,8 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 	var info = {
 		"terrain": "ground",  # Por defecto
 		"encounter_type": "",
+		"water_reflection": false, # Indica si el tile muestra el efecto de reflejo del Sprite
+		"water_ripple": false, # Indica si el tile muestra el efecto de ripple
 		"exit_dir": ""  # Dirección de salida (para flecha de salida)
 	}
 
@@ -97,6 +99,18 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 			var encounter_val = tile_data.get_custom_data("encounter_type")
 			if encounter_val is String and not encounter_val.is_empty():
 				info.encounter_type = encounter_val
+
+		# Recoger water_reflection (el primero que encuentre)
+		if !info.water_reflection and tile_data.has_custom_data("water_reflection"):
+			var water_reflection_val = tile_data.get_custom_data("water_reflection")
+			if water_reflection_val is bool:
+				info.water_reflection = water_reflection_val
+
+		# Recoger water_ripple (el primero que encuentre)
+		if !info.water_ripple and tile_data.has_custom_data("water_ripple"):
+			var water_ripple_val = tile_data.get_custom_data("water_ripple")
+			if water_ripple_val is bool:
+				info.water_ripple = water_ripple_val
 
 		# Recoger exit_dir (el primero que encuentre)
 		if info.exit_dir.is_empty() and tile_data.has_custom_data("exit_dir"):
