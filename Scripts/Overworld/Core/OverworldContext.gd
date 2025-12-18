@@ -77,6 +77,9 @@ func register_system(sys_name: String, system: Node) -> void:
 		"EffectsLayer":
 			effects_layer = system as Node2D
 
+	# Conectar las señales del sistema al contexto
+	_connect_system_signals(sys_name, system)
+
 ## Obtiene un sistema registrado por su nombre
 ## @param sys_name: Nombre del sistema (ej: "Map", "Warp")
 ## @return: Instancia del sistema o null si no existe

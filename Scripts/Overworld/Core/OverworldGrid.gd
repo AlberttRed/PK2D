@@ -76,7 +76,8 @@ func get_tile_data(t: Vector2i) -> Array[TileData]:
 func get_tile_info(t: Vector2i) -> Dictionary:
 	var info = {
 		"terrain": "ground",  # Por defecto
-		"encounter_type": ""
+		"encounter_type": "",
+		"exit_dir": ""  # Dirección de salida (para flecha de salida)
 	}
 
 	# Un solo loop sobre todas las capas
@@ -96,6 +97,12 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 			var encounter_val = tile_data.get_custom_data("encounter_type")
 			if encounter_val is String and not encounter_val.is_empty():
 				info.encounter_type = encounter_val
+
+		# Recoger exit_dir (el primero que encuentre)
+		if info.exit_dir.is_empty() and tile_data.has_custom_data("exit_dir"):
+			var exit_dir_val = tile_data.get_custom_data("exit_dir")
+			if exit_dir_val is String and not exit_dir_val.is_empty():
+				info.exit_dir = exit_dir_val
 
 	return info
 
