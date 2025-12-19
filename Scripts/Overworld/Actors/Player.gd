@@ -2,7 +2,7 @@ extends Node2D
 
 const SURF_POKEMON_SCENE := preload("res://Scenes/Overworld/MO/SurfPokemonSprite.tscn")
 
-@onready var motion = $GridMotion
+@onready var motion: GridMotion = $GridMotion
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var battler: Battler = $Battler
 
@@ -66,6 +66,10 @@ func _process(_delta: float):
 		motion.hold_time += _delta
 	else:
 		motion.hold_time = 0.0
+
+	#If colliding and direction changed, cancel movement
+	if motion.is_colliding and motion.dir != input_dir:
+		motion.cancel_movement()
 
 	#If one direction has been pressed and is not doing move animation, try move to next tile
 	if input_dir != Vector2.ZERO and not motion.moving:

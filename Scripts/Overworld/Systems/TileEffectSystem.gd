@@ -66,7 +66,7 @@ func _register_effect_handlers() -> void:
 
 	var ripple_handler = RippleEffectHandler.new(self)
 	ripple_handler.setup_effects(ripple_effect_scene)
-	effect_handlers["water"] = ripple_handler
+	effect_handlers["water_ripple"] = ripple_handler
 
 	# ReflectionEffectHandler maneja reflejos en agua (comparte "water" con ripple)
 	var reflection_handler = ReflectionEffectHandler.new(self)
@@ -82,6 +82,36 @@ func _register_effect_handlers() -> void:
 ## Obtiene el handler para un tipo de terreno
 func get_handler_for_terrain(terrain_type: String) -> TileEffectHandler:
 	return effect_handlers.get(terrain_type, null)
+
+## Obtiene la lista de handlers activos para un tile según su información
+## @param tile_info: Dictionary con la información del tile (terrain, exit_dir, etc.)
+## @param actor: Actor que está interactuando con el tile (para verificar si es Player, etc.)
+## @return: Array de TileEffectHandler que deben ejecutarse para este tile
+func _get_active_handlers_for_tile(tile_info: Dictionary, actor: Node2D) -> Array[TileEffectHandler]:
+	var active_handlers: Array[TileEffectHandler] = []
+
+	# Handlers basados en terrain
+	var terrain_type = tile_info.get("terrain", "")
+	if terrain_type == "grass":
+		active_handlers.append(effect_handlers.get("grass"))
+
+	# Reflection handler siempre se ejecuta (se gestiona internamente según el terreno)
+	var has_reflection = tile_info.get("water_reflection", false)
+	var reflection_handler: ReflectionEffectHandler = effect_handlers.get("water_reflection", "")
+	if has_reflection:
+		active_handlers.append(reflection_handler)
+
+	# Reflection handler siempre se ejecuta (se gestiona internamente según el terreno)
+	var show_ripple = tile_info.get("water_ripple", false)
+	if show_ripple:
+		active_handlers.append(effect_handlers.get("water_ripple", "") )
+
+	# Exit arrow handler solo si hay exit_dir y el actor es el jugador
+	var exit_dir = tile_info.get("exit_dir", "")
+	if not exit_dir.is_empty() and actor.is_in_group("Player"):
+		active_handlers.append(effect_handlers.get("exit_arrow"))
+
+	return active_handlers
 
 
 ## Registra un nuevo handler (para extensibilidad)
@@ -130,23 +160,11 @@ func _on_actor_step_started(actor: Node2D) -> void:
 	var dest_world_pos = active_grid.tile_to_world_center(destination_tile)
 	var to_data = _get_tile_info_at_world_pos(dest_world_pos)
 
-	# Si salimos de un tile con efectos
-	if from_data.grid and from_data.info.terrain != "ground":
-		var handler = get_handler_for_terrain(from_data.info.terrain)
-		if handler:
+	# Obtener handlers activos para el tile de origen y ejecutar on_step_exited_tile
+	if from_data.grid:
+		var active_handlers = _get_active_handlers_for_tile(from_data.info, actor)
+		for handler in active_handlers:
 			handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
-
-		# También llamar al reflection handler si es agua
-		if from_data.info.terrain == "water":
-			var reflection_handler = effect_handlers.get("water_reflection")
-			if reflection_handler:
-				reflection_handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
-
-	# Llamar al exit arrow handler cuando el jugador sale de un tile
-	if actor.is_in_group("Player") and from_data.grid:
-		var exit_arrow_handler = effect_handlers.get("exit_arrow")
-		if exit_arrow_handler:
-			exit_arrow_handler.on_step_exited_tile(from_data.grid, from_data.tile, actor)
 
 	# Manejar entrada al tile destino
 	if to_data.grid:
@@ -168,53 +186,27 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 		return
 
 	var tile_info = grid.get_tile_info(tile)
-	var terrain_type = tile_info.terrain
+	var grid_motion = actor.get_node("GridMotion")
+	var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
 
-	if terrain_type == "ground" or terrain_type.is_empty():
-		# Ocultar reflejo si estamos en terreno normal
-		var reflection_handler = effect_handlers.get("water_reflection")
-		if reflection_handler:
-			reflection_handler.on_step_finished_on_tile(grid, tile, actor, false)
-		_clear_all_handlers(actor)
-
-	var handler = get_handler_for_terrain(terrain_type)
-	if handler:
-		var grid_motion = actor.get_node("GridMotion")
-		var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
+	# Obtener handlers activos para este tile y ejecutarlos
+	var active_handlers = _get_active_handlers_for_tile(tile_info, actor)
+	for handler in active_handlers:
 		handler.on_step_finished_on_tile(grid, tile, actor, had_collision)
 
-	# También llamar al reflection handler si es agua
-	if terrain_type == "water":
-		var reflection_handler = effect_handlers.get("water_reflection")
-		if reflection_handler:
-			var grid_motion = actor.get_node("GridMotion")
-			var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
-			reflection_handler.on_step_finished_on_tile(grid, tile, actor, had_collision)
-
-	# Llamar al exit arrow handler siempre que sea el jugador (independiente del terrain_type)
-	if actor.is_in_group("Player"):
-		var exit_arrow_handler = effect_handlers.get("exit_arrow")
-		if exit_arrow_handler:
-			var grid_motion = actor.get_node("GridMotion")
-			var had_collision = (tile == _tile_before_step) and not grid_motion.initial_step
-			exit_arrow_handler.on_step_finished_on_tile(grid, tile, actor, had_collision)
-
-		if not tile_info.encounter_type.is_empty():
-			tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
+	# Emitir señal de efecto de tile si hay encounter_type
+	if not tile_info.encounter_type.is_empty() and actor.is_in_group("Player"):
+		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
 
 
 ## Maneja el movimiento hacia un tile de destino
 func _handle_movement_to_destination(grid: OverworldGrid, destination_tile: Vector2i, actor: Node2D) -> void:
-	var terrain_type = grid.get_tile_info(destination_tile).terrain
-	var handler = get_handler_for_terrain(terrain_type)
-	if handler and terrain_type != "ground":
-		handler.on_step_started_to_tile(grid, destination_tile, actor)
+	var tile_info = grid.get_tile_info(destination_tile)
 
-	# También llamar al reflection handler si es agua
-	if terrain_type == "water":
-		var reflection_handler = effect_handlers.get("water_reflection")
-		if reflection_handler:
-			reflection_handler.on_step_started_to_tile(grid, destination_tile, actor)
+	# Obtener handlers activos para el tile destino y ejecutarlos
+	var active_handlers = _get_active_handlers_for_tile(tile_info, actor)
+	for handler in active_handlers:
+		handler.on_step_started_to_tile(grid, destination_tile, actor)
 
 
 

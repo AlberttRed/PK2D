@@ -3,17 +3,20 @@
 [ext_resource type="Texture2D" uid="uid://2sxqgsr0rvix" path="res://Sprites/Tilesets/Tiles Objects/Grass1.png" id="1_ifs2r"]
 [ext_resource type="Script" uid="uid://ntr4lj2wkk1o" path="res://Scripts/Overworld/GrassSteppedEffect.gd" id="2_stepped_script"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_rtt6r"]
-atlas = ExtResource("1_ifs2r")
-region = Rect2(32, 0, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_oitk7"]
 atlas = ExtResource("1_ifs2r")
 region = Rect2(0, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_rtt6r"]
+atlas = ExtResource("1_ifs2r")
+region = Rect2(32, 0, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_stepped"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oitk7")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rtt6r")
 }, {
@@ -29,4 +32,6 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_stepped")
 animation = &"stepped"
 autoplay = "stepped"
+frame = 2
+frame_progress = 1.0
 script = ExtResource("2_stepped_script")

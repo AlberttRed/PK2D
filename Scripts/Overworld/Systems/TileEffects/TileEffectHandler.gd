@@ -36,7 +36,6 @@ func on_step_started_to_tile(_grid: OverworldGrid, _destination_tile: Vector2i, 
 func on_step_finished_on_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D, _had_collision: bool) -> void:
 	pass  # Implementar en subclases
 
-
 ## Se llama cuando un actor SALE de un tile de este terreno
 ## @param grid: OverworldGrid del mapa
 ## @param tile: Tile del que sale (Vector2i)
@@ -49,7 +48,7 @@ func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) 
 func can_handle(terrain_type_to_check: String) -> bool:
 	return terrain_type == terrain_type_to_check
 
-func clear_state():
+func clear_state() -> void:
 	pass
 
 ## Se llama cuando un actor se desactiva (sale de un chunk, se desconecta, etc.)

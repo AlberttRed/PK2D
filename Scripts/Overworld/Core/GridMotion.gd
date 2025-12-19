@@ -34,10 +34,12 @@ var previous_dir := dir
 var initial_step := false
 var stride_is_left := true
 var is_jumping_ledge := false  # Flag para indicar que se está saltando un ledge
+var is_colliding := false
 
 @onready var actor := get_parent() as Node2D
 var grid: OverworldGrid
 var active_tween: Tween = null  # Referencia al tween activo
+var step_timer: Timer = Timer.new()
 
 ## Referencia al OverworldContext (inyectada desde el actor padre)
 var context: OverworldContext = null
@@ -46,6 +48,8 @@ var context: OverworldContext = null
 var world_system: WorldSystem = null
 
 func _ready() -> void:
+	add_child(step_timer)
+	step_timer.one_shot = true
 	# Configurar para que los Tweens continúen aunque el árbol esté pausado
 	# Esto permite que las animaciones de movimiento continúen durante pausas de MO
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -145,16 +149,22 @@ func _try_seamless_crossing(from: Vector2i, to: Vector2i) -> Dictionary:
 ## Detiene inmediatamente cualquier movimiento en curso (para warps)
 func stop_movement() -> void:
 	# Cancelar tween activo si existe
-	if active_tween and active_tween.is_valid():
-		active_tween.kill()
-		active_tween = null
-		print("GridMotion: Tween cancelado")
-
+	cancel_movement()
 	# Resetear estado de movimiento
 	moving = false
 	hold_time = 0.0
 
 	print("GridMotion: Movimiento detenido")
+
+## Resetea todos los valores relacionados con el movimiento a sus valores por defecto
+## Útil para cancelar movimientos y dejar el estado limpio
+func cancel_movement() -> void:
+	step_timer.stop()
+	step_timer.timeout.emit()
+	if active_tween and active_tween.is_valid():
+		active_tween.kill()
+		active_tween = null
+
 
 func face(d: Vector2) -> void:
 	if d != Vector2.ZERO:
@@ -224,6 +234,7 @@ func try_step(d: Vector2) -> bool:
 	# SOLO si no se puede mover, verificar si es porque el tile está en otro mapa (seamless)
 	# Solo se ejecuta si realmente va a moverse (no es initial_step)
 	if not can_step:
+		is_colliding = true
 		var seamless_result = _try_seamless_crossing(from, to)
 		if seamless_result["success"]:
 			can_step = true
@@ -231,7 +242,8 @@ func try_step(d: Vector2) -> bool:
 			to = seamless_result["to"]
 		else:
 			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
-			_check_player_collision(to)
+			if _check_player_collision(to):
+				return false
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
 	step_started.emit()
@@ -239,14 +251,18 @@ func try_step(d: Vector2) -> bool:
 	#If cannot move to next tile, stay in same position
 	if !can_step:
 		to = from
+	else:
+		is_colliding = false
 
 	moving = true
 	grid.reserve(from, to, actor)
 
 	var target := grid.tile_to_world_center(to)
-
 	if to == from:
-		await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
+		step_timer.wait_time = turn_duration if initial_step else get_step_duration()
+		step_timer.start()
+		await step_timer.timeout
+		#await get_tree().create_timer(turn_duration if initial_step else get_step_duration()).timeout
 	else:
 		# if actor is Event:
 		# 	# Desregistrar del tile anterior
@@ -262,7 +278,6 @@ func try_step(d: Vector2) -> bool:
 		# if actor is Event:
 		# 	# Registrar en el tile nuevo
 		# 	grid.register_event(to, actor)
-
 	grid.commit(from, to, actor)
 	moving = false
 	self.initial_step = false
@@ -274,7 +289,6 @@ func try_step(d: Vector2) -> bool:
 		grid.on_enter_tile(actor, to)
 		# Alternar la zancada únicamente cuando hubo desplazamiento real
 	stride_is_left = not stride_is_left
-
 	return true
 
 func event_at_offset(offset: int = 1) -> Event:
@@ -305,10 +319,10 @@ func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
 
 ## Verifica si el Player colisionó con un evento de tipo PLAYER_TOUCH
-func _check_player_collision(target_tile: Vector2i) -> void:
+func _check_player_collision(target_tile: Vector2i) -> bool:
 	# Solo verificar para el Player
 	if not actor.is_in_group("Player"):
-		return
+		return false
 
 	# Obtener la posición mundial del tile destino
 	var target_world_pos = grid.tile_to_world_center(target_tile)
@@ -339,11 +353,13 @@ func _check_player_collision(target_tile: Vector2i) -> void:
 				break
 
 	if not event:
-		return
+		return false
 
 	if event.has_method("on_player_collision"):
 		event.on_player_collision()
+		return true
 
+	return false
 # --- Sistema de Saltos (Ledges) - PBI 455 ---
 
 ## Ejecuta un salto genérico hacia el tile indicado con la animación de arco usada en los ledges.
