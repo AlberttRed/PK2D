@@ -188,14 +188,14 @@ func try_step(d: Vector2) -> bool:
 	var from := current_tile()
 	var to := from + Vector2i(d)
 
-	# VERIFICAR PRIMERO: ¿El tile destino es un ledge? (Solo para jugadores)
-	# El jugador está ENTRANDO al ledge, no está sobre él
-	if actor.is_in_group("Player") and grid.can_jump_ledge(actor, to, d):
-		# Para ledges, el salto es de 2 tiles en total desde la posición actual
-		# landing_tile = from + 2 tiles
-		var landing_tile := from + Vector2i(d) * 2
-		# Ejecutar salto de ledge (desde from, pasando por to/ledge, hasta landing_tile)
-		return await _execute_ledge_jump(from, landing_tile)
+	# VERIFICAR: ¿El tile destino requiere movimiento especial? (TileMotionSystem)
+
+
+	# Consultar al TileMotionSystem antes de ejecutar movimiento normal
+	var motion_consumed = await _check_tile_motion_system(from, to, d)
+	if motion_consumed:
+		# El movimiento fue consumido por un handler, no ejecutar movimiento normal
+		return true
 
 	# Calcular si es un initial step ANTES de verificar lógica especial (surf, seamless crossing)
 	# Esto evita ejecutar animaciones cuando solo se está girando sin moverse
@@ -375,18 +375,6 @@ func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, final_y_offse
 
 	return await _perform_arc_jump(from_tile, target_tile, show_shadow, final_y_offset)
 
-## Ejecuta un salto sobre un ledge (método interno legado)
-func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
-	context.block_player_control()
-	is_jumping_ledge = true
-	ledge_jump_started.emit()
-	var succeeded:bool = await _perform_arc_jump(from, to, true)
-	is_jumping_ledge = false
-	ledge_jump_finished.emit()
-	context.unblock_player_control()
-	step_finished.emit(to)
-	return succeeded
-
 func _perform_arc_jump(
 	from: Vector2i,
 	to: Vector2i,
@@ -499,3 +487,13 @@ func _on_active_grid_changed(new_grid: OverworldGrid) -> void:
 
 	# Solo el Player actualiza su grid al grid activo
 	grid = new_grid
+
+## Consulta al TileMotionSystem si debe interceptar el movimiento
+## Retorna true si el movimiento fue consumido por un handler, false si debe continuar con movimiento normal
+func _check_tile_motion_system(from_tile: Vector2i, to_tile: Vector2i, direction: Vector2) -> bool:
+
+	var tile_motion_system = context.get_system("TileMotion") as TileMotionSystem
+
+	# Consultar al TileMotionSystem si debe interceptar este movimiento
+	# Este método es async porque los handlers pueden ejecutar animaciones asíncronas
+	return await tile_motion_system.try_handle_motion(grid, from_tile, to_tile, actor, direction)
