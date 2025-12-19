@@ -92,8 +92,6 @@ func _get_active_handlers_for_tile(tile_info: Dictionary, actor: Node2D) -> Arra
 
 	# Handlers basados en terrain
 	var terrain_type = tile_info.get("terrain", "")
-	print(typeof(terrain_type))
-	print(terrain_type)
 	if terrain_type == "grass":
 		active_handlers.append(effect_handlers.get("grass"))
 

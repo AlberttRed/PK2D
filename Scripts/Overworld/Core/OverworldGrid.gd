@@ -309,10 +309,13 @@ func has_actor(t: Vector2i) -> bool:
 
 func can_step_to(actor: Node, from: Vector2i, to: Vector2i) -> bool:
 	# Verificaciones clásicas de bloqueo
-	if is_blocked(actor, to): return false
-	if has_actor(to): return false
-	if res.has(to) and res[to].get_ref() != actor: return false
-
+	if is_blocked(actor, to):
+		return false
+	if has_actor(to):
+		print("IS ACTOR " + str(occ[to].get_ref()))
+		return false
+	if res.has(to) and res[to].get_ref() != actor:
+		return false
 	# Verificar restricciones direccionales (PBI 454)
 	var direction = Vector2(to - from)
 
