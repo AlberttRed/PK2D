@@ -80,7 +80,8 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 		"water_reflection": false, # Indica si el tile muestra el efecto de reflejo del Sprite
 		"water_ripple": false, # Indica si el tile muestra el efecto de ripple
 		"exit_dir": "",  # Dirección de salida (para flecha de salida)
-		"ledge_direction": ""  # Dirección del salto de ledge (para TileMotionSystem)
+		"ledge_direction": "",  # Dirección del salto de ledge (para TileMotionSystem)
+		"stair_dir": ""  # Dirección de la escalera (para TileMotionSystem)
 	}
 
 	# Un solo loop sobre todas las capas
@@ -124,6 +125,12 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 			var ledge_dir_val = tile_data.get_custom_data("ledge_direction")
 			if ledge_dir_val is String and not ledge_dir_val.is_empty():
 				info.ledge_direction = ledge_dir_val
+
+		# Recoger stair_dir (el primero que encuentre)
+		if info.stair_dir.is_empty() and tile_data.has_custom_data("stair_dir"):
+			var stair_dir_val = tile_data.get_custom_data("stair_dir")
+			if stair_dir_val is String and not stair_dir_val.is_empty():
+				info.stair_dir = stair_dir_val
 
 	return info
 

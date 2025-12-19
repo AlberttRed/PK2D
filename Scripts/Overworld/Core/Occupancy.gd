@@ -100,6 +100,11 @@ func teleport_to_tile(t: Vector2i) -> void:
 	else:
 		grid.vacate(cur, actor)
 
+	# Verificar si hay un evento en el tile destino (antes de mover)
+	var event_at_dest: Event = null
+	if not actor is Event:
+		event_at_dest = grid.event_at(t)
+
 	# Reubicar
 	actor.global_position = grid.tile_to_world_center(t)
 
@@ -109,7 +114,18 @@ func teleport_to_tile(t: Vector2i) -> void:
 		if not actor.current_page or not actor.current_page.through:
 			grid.occupy(t, actor)
 	else:
-		grid.occupy(t, actor)
+		# Si hay un evento en el tile destino y no es "through", asegurar que esté registrado en occ
+		# y no ocupar el tile con el jugador
+		if event_at_dest and event_at_dest.current_page and not event_at_dest.current_page.through:
+			# Asegurar que el evento esté registrado en events[tile] y occ[tile]
+			grid.register_event(t, event_at_dest)
+			# Verificar si el evento ya está en occ[tile], si no, registrarlo
+			if not grid.has_actor(t) or grid.occ.get(t) == null or grid.occ[t].get_ref() != event_at_dest:
+				grid.occupy(t, event_at_dest)
+			# No ocupar el tile con el jugador - el evento mantiene su ocupación
+			# El jugador está visualmente en el tile, pero el evento controla la ocupación
+		else:
+			grid.occupy(t, actor)
 
 
 ## Actualiza el registro de ocupación en el grid según el estado actual del actor

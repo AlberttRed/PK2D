@@ -46,6 +46,9 @@ func _register_motion_handlers() -> void:
 	var ledge_handler = LedgeMotionHandler.new("ledge", self)
 	motion_handlers["ledge"] = ledge_handler
 
+	var stair_handler = StairMotionHandler.new("stair", self)
+	motion_handlers["stair"] = stair_handler
+
 
 ## Obtiene el handler para un tipo de movimiento
 func get_handler_for_motion(motion_type: String) -> TileMotionHandler:
@@ -92,8 +95,8 @@ func try_handle_motion(
 	direction: Vector2
 ) -> bool:
 	# Verificar si el movimiento es válido primero
-	if not grid.can_step_to(actor, from_tile, to_tile):
-		return false
+	#if not grid.can_step_to(actor, from_tile, to_tile):
+		#return false
 
 	# Obtener información del tile destino
 	var to_tile_info = grid.get_tile_info(to_tile)
