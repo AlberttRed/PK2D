@@ -23,8 +23,8 @@ DatabaseService="*res://Services/DatabaseService.gd"
 
 [display]
 
-window/size/viewport_width=480
-window/size/viewport_height=320
+window/size/viewport_width=512
+window/size/viewport_height=384
 
 [global_group]
 

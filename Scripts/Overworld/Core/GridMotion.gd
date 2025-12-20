@@ -188,14 +188,14 @@ func try_step(d: Vector2) -> bool:
 	var from := current_tile()
 	var to := from + Vector2i(d)
 
-	# VERIFICAR PRIMERO: ¿El tile destino es un ledge? (Solo para jugadores)
-	# El jugador está ENTRANDO al ledge, no está sobre él
-	if actor.is_in_group("Player") and grid.can_jump_ledge(actor, to, d):
-		# Para ledges, el salto es de 2 tiles en total desde la posición actual
-		# landing_tile = from + 2 tiles
-		var landing_tile := from + Vector2i(d) * 2
-		# Ejecutar salto de ledge (desde from, pasando por to/ledge, hasta landing_tile)
-		return await _execute_ledge_jump(from, landing_tile)
+	# VERIFICAR: ¿El tile destino requiere movimiento especial? (TileMotionSystem)
+
+
+	# Consultar al TileMotionSystem antes de ejecutar movimiento normal
+	var motion_consumed = await _check_tile_motion_system(from, to, d)
+	if motion_consumed:
+		# El movimiento fue consumido por un handler, no ejecutar movimiento normal
+		return true
 
 	# Calcular si es un initial step ANTES de verificar lógica especial (surf, seamless crossing)
 	# Esto evita ejecutar animaciones cuando solo se está girando sin moverse
@@ -241,8 +241,9 @@ func try_step(d: Vector2) -> bool:
 			from = seamless_result["from"]
 			to = seamless_result["to"]
 		else:
-			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
-			if _check_player_collision(to):
+			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_COLLISION
+			# Solo activar si realmente puede entrar al tile (no bloqueado por entry_mask)
+			if _check_player_collision(from, to, d):
 				return false
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
@@ -318,24 +319,20 @@ func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 
 	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
 
-## Verifica si el Player colisionó con un evento de tipo PLAYER_TOUCH
-func _check_player_collision(target_tile: Vector2i) -> bool:
+## Verifica si el Player colisionó con un evento de tipo PLAYER_COLLISION
+## Solo activa el evento si el jugador realmente puede entrar al tile (no bloqueado por entry_mask)
+func _check_player_collision(_from_tile: Vector2i, target_tile: Vector2i, direction: Vector2) -> bool:
 	# Solo verificar para el Player
 	if not actor.is_in_group("Player"):
 		return false
 
-	# Obtener la posición mundial del tile destino
+	# Verificar si el jugador puede entrar al tile destino
+	# Si está bloqueado por entry_mask, no activar el evento
+	var target_grid: OverworldGrid = grid
 	var target_world_pos = grid.tile_to_world_center(target_tile)
 
-	# Buscar evento en todos los grids (importante para seamless world)
-	var event: Event = null
-	# NOTA: Para seamless world necesitamos buscar en múltiples grids
-	# Usamos WorldSystem que tiene acceso a todos los mapas renderizados
-	if not world_system:
-		_update_world_system_reference()
-
+	# Buscar el grid correcto (puede ser otro grid en seamless world)
 	if world_system:
-		# Iterar por todos los hijos de WorldSystem (mapas renderizados)
 		for child in world_system.get_children():
 			if child.is_in_group("Player"):
 				continue
@@ -344,18 +341,24 @@ func _check_player_collision(target_tile: Vector2i) -> bool:
 			if not grid_node:
 				continue
 
-			# Convertir posición mundial a tile de este grid
 			var tile_in_grid = grid_node.world_to_tile(target_world_pos)
-			var event_in_grid = grid_node.event_at(tile_in_grid)
-
-			if event_in_grid:
-				event = event_in_grid
+			if grid_node.event_at(tile_in_grid):
+				target_grid = grid_node
+				target_tile = tile_in_grid
 				break
+
+	# Verificar si puede entrar al tile (entry_mask)
+	if not target_grid.can_enter_tile(target_tile, direction):
+		# Bloqueado por entry_mask, no activar evento
+		return false
+
+	# Buscar evento en el tile destino
+	var event: Event = target_grid.event_at(target_tile)
 
 	if not event:
 		return false
 
-	if event.has_method("on_player_collision"):
+	if event.current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
 		event.on_player_collision()
 		return true
 
@@ -374,18 +377,6 @@ func jump_to_tile(target_tile: Vector2i, show_shadow: bool = true, final_y_offse
 		return true
 
 	return await _perform_arc_jump(from_tile, target_tile, show_shadow, final_y_offset)
-
-## Ejecuta un salto sobre un ledge (método interno legado)
-func _execute_ledge_jump(from: Vector2i, to: Vector2i) -> bool:
-	context.block_player_control()
-	is_jumping_ledge = true
-	ledge_jump_started.emit()
-	var succeeded:bool = await _perform_arc_jump(from, to, true)
-	is_jumping_ledge = false
-	ledge_jump_finished.emit()
-	context.unblock_player_control()
-	step_finished.emit(to)
-	return succeeded
 
 func _perform_arc_jump(
 	from: Vector2i,
@@ -499,3 +490,13 @@ func _on_active_grid_changed(new_grid: OverworldGrid) -> void:
 
 	# Solo el Player actualiza su grid al grid activo
 	grid = new_grid
+
+## Consulta al TileMotionSystem si debe interceptar el movimiento
+## Retorna true si el movimiento fue consumido por un handler, false si debe continuar con movimiento normal
+func _check_tile_motion_system(from_tile: Vector2i, to_tile: Vector2i, direction: Vector2) -> bool:
+
+	var tile_motion_system = context.get_system("TileMotion") as TileMotionSystem
+
+	# Consultar al TileMotionSystem si debe interceptar este movimiento
+	# Este método es async porque los handlers pueden ejecutar animaciones asíncronas
+	return await tile_motion_system.try_handle_motion(grid, from_tile, to_tile, actor, direction)

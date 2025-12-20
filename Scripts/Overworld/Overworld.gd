@@ -17,6 +17,7 @@ class_name OverworldCoordinator
 @onready var warp_system: WarpSystem = $WarpSystem
 @onready var mo_system: MOSystem = $MOSystem
 @onready var tile_effect_system: TileEffectSystem = $TileEffectSystem
+@onready var tile_motion_system: TileMotionSystem = $TileMotionSystem
 @onready var wild_encounter_system: WildEncounterSystem = $WildEncounterSystem
 @onready var effects_layer: Node2D = $OverworldEffectsLayer
 
@@ -60,6 +61,9 @@ func _register_systems_in_context() -> void:
 
 	if tile_effect_system:
 		context.register_system("TileEffect", tile_effect_system)
+
+	if tile_motion_system:
+		context.register_system("TileMotion", tile_motion_system)
 
 	if wild_encounter_system:
 		context.register_system("WildEncounter", wild_encounter_system)
@@ -112,6 +116,10 @@ func _inject_dependencies() -> void:
 	if tile_effect_system:
 		if tile_effect_system.has_method("initialize"):
 			tile_effect_system.initialize(context)
+
+	if tile_motion_system:
+		if tile_motion_system.has_method("initialize"):
+			tile_motion_system.initialize(context)
 
 	if wild_encounter_system:
 		if wild_encounter_system.has_method("initialize"):
