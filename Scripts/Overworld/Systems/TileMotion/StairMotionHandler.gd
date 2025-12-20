@@ -50,7 +50,7 @@ func on_step_started_to_tile(
 		return false  # No puede moverse, permitir movimiento normal
 
 	if  grid.has_actor(to_tile):
-		grid_motion._check_player_collision(to_tile)
+		grid_motion._check_player_collision(from_tile, to_tile, direction)
 
 	# Obtener contexto para bloquear controles (solo si es Player)
 	var context: OverworldContext = null
@@ -109,12 +109,16 @@ func _execute_stair_movement(
 	if actor is Event:
 		grid_motion._update_event_registration(from_tile, to_tile)
 
+	# Forzar velocidad normal: actualizar is_running y speed_multiplier
+	grid_motion.is_running = false
+	grid_motion.speed_multiplier = grid_motion.get_speed_multiplier(direction, true, false)
+
 	# Emitir step_started inicial y alternar zancada (primer paso)
 	grid_motion.step_started.emit()
 	grid_motion.stride_is_left = not grid_motion.stride_is_left
 
-	# Crear tween para el movimiento
-	var duration = grid_motion.get_step_duration() * 4
+	# Crear tween para el movimiento (usar duración base sin multiplicadores de velocidad)
+	var duration = grid_motion.step_duration * 4
 	var tween = actor.create_tween()
 	tween.set_parallel(true)
 

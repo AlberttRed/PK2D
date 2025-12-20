@@ -241,8 +241,9 @@ func try_step(d: Vector2) -> bool:
 			from = seamless_result["from"]
 			to = seamless_result["to"]
 		else:
-			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_TOUCH
-			if _check_player_collision(to):
+			# El Player no puede moverse: verificar si colisiona con un evento PLAYER_COLLISION
+			# Solo activar si realmente puede entrar al tile (no bloqueado por entry_mask)
+			if _check_player_collision(from, to, d):
 				return false
 
 	speed_multiplier = get_speed_multiplier(d, can_step, self.initial_step)
@@ -318,24 +319,20 @@ func _update_event_registration(from_tile: Vector2i, to_tile: Vector2i) -> void:
 
 	#print("GridMotion: Event movido de tile ", from_tile, " a ", to_tile)
 
-## Verifica si el Player colisionó con un evento de tipo PLAYER_TOUCH
-func _check_player_collision(target_tile: Vector2i) -> bool:
+## Verifica si el Player colisionó con un evento de tipo PLAYER_COLLISION
+## Solo activa el evento si el jugador realmente puede entrar al tile (no bloqueado por entry_mask)
+func _check_player_collision(_from_tile: Vector2i, target_tile: Vector2i, direction: Vector2) -> bool:
 	# Solo verificar para el Player
 	if not actor.is_in_group("Player"):
 		return false
 
-	# Obtener la posición mundial del tile destino
+	# Verificar si el jugador puede entrar al tile destino
+	# Si está bloqueado por entry_mask, no activar el evento
+	var target_grid: OverworldGrid = grid
 	var target_world_pos = grid.tile_to_world_center(target_tile)
 
-	# Buscar evento en todos los grids (importante para seamless world)
-	var event: Event = null
-	# NOTA: Para seamless world necesitamos buscar en múltiples grids
-	# Usamos WorldSystem que tiene acceso a todos los mapas renderizados
-	if not world_system:
-		_update_world_system_reference()
-
+	# Buscar el grid correcto (puede ser otro grid en seamless world)
 	if world_system:
-		# Iterar por todos los hijos de WorldSystem (mapas renderizados)
 		for child in world_system.get_children():
 			if child.is_in_group("Player"):
 				continue
@@ -344,18 +341,24 @@ func _check_player_collision(target_tile: Vector2i) -> bool:
 			if not grid_node:
 				continue
 
-			# Convertir posición mundial a tile de este grid
 			var tile_in_grid = grid_node.world_to_tile(target_world_pos)
-			var event_in_grid = grid_node.event_at(tile_in_grid)
-
-			if event_in_grid:
-				event = event_in_grid
+			if grid_node.event_at(tile_in_grid):
+				target_grid = grid_node
+				target_tile = tile_in_grid
 				break
+
+	# Verificar si puede entrar al tile (entry_mask)
+	if not target_grid.can_enter_tile(target_tile, direction):
+		# Bloqueado por entry_mask, no activar evento
+		return false
+
+	# Buscar evento en el tile destino
+	var event: Event = target_grid.event_at(target_tile)
 
 	if not event:
 		return false
 
-	if event.has_method("on_player_collision"):
+	if event.current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
 		event.on_player_collision()
 		return true
 
