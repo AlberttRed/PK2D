@@ -8,11 +8,11 @@ enum Values {
 }
 
 ## Retorna el path del StyleBox correspondiente al estilo
-static func get_stylebox_path(style: Values) -> String:
+static func get_messagebox_theme(style: Values) -> MessageBoxTheme:
 	match style:
-		Values.HGSS: return "res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres"
-		Values.SIGN_1: return "res://Resources/UI/MessageBox/Message Styles/Sign1_MessageBox_Style.tres"
-		_: return "res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres"  # Por defecto HGSS
+		Values.HGSS: return preload("res://Resources/UI/MessageBox/Themes/Default.tres") as MessageBoxTheme
+		Values.SIGN_1: return preload("res://Resources/UI/MessageBox/Themes/Sign1.tres") as MessageBoxTheme
+		_: return preload("res://Resources/UI/MessageBox/Themes/Default.tres") as MessageBoxTheme # Por defecto HGSS
 
 ## Retorna el nombre legible del estilo
 static func get_display_name(style: Values) -> String:
