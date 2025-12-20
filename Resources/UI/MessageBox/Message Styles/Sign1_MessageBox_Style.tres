@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://c0ibdnbf0jmel"]
+
+[ext_resource type="Texture2D" uid="uid://tvpt51n80prt" path="res://Sprites/UI/Message Skins/signskin.png" id="1_nntv2"]
+
+[resource]
+texture = ExtResource("1_nntv2")
+texture_margin_left = 32.0
+texture_margin_top = 20.675
+texture_margin_right = 48.0
+texture_margin_bottom = 14.0536
+region_rect = Rect2(0, 0, 96, 48)

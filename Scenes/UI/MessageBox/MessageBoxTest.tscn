@@ -1,14 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://brvsn2vfev6ng"]
+[gd_scene load_steps=13 format=3 uid="uid://cye3jukjtjdkr"]
 
-[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_1g85p"]
-[ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_re8jy"]
-[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_15orl"]
-[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="4_icamg"]
-[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_ugtco"]
-[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_thy6l"]
+[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_js7it"]
+[ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_hmrit"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_eax5n"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="4_xiqp8"]
+[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_7w7r3"]
+[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_a2ici"]
 
 [sub_resource type="FontVariation" id="FontVariation_djhwc"]
-base_font = ExtResource("3_15orl")
+base_font = ExtResource("3_eax5n")
 spacing_top = 4
 
 [sub_resource type="Theme" id="Theme_x4phv"]
@@ -54,7 +54,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5i0nh"]
 _data = {
-&"Idle": ExtResource("6_thy6l"),
+&"Idle": ExtResource("6_a2ici"),
 &"RESET": SubResource("Animation_bs852"),
 &"Scroll": SubResource("Animation_8ajbi"),
 &"Typing": SubResource("Animation_mbf3k")
@@ -68,8 +68,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/panel = ExtResource("1_1g85p")
-script = ExtResource("2_re8jy")
+theme_override_styles/panel = ExtResource("1_js7it")
+script = ExtResource("2_hmrit")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_direction = 1
@@ -114,7 +114,7 @@ tab_size = 2
 visible_characters = 0
 visible_characters_behavior = 1
 visible_ratio = 0.0
-script = ExtResource("4_icamg")
+script = ExtResource("4_xiqp8")
 metadata/_edit_lock_ = true
 
 [node name="Outline" type="RichTextLabel" parent="ScrollContainer/Container/LabelHGSS"]
@@ -173,7 +173,7 @@ metadata/_edit_lock_ = true
 
 [node name="next" type="Sprite2D" parent="."]
 position = Vector2(491, 69)
-texture = ExtResource("5_ugtco")
+texture = ExtResource("5_7w7r3")
 hframes = 4
 
 [node name="Timer" type="Timer" parent="."]

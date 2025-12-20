@@ -14,6 +14,7 @@ enum {YES, NO}
 @onready var label2:RichTextLabel = $ScrollContainer/Container/LabelHGSS/Outline
 @onready var label3:RichTextLabel = $ScrollContainer/Container/LabelHGSS/Outline2
 @onready var scroll:ScrollContainer = $ScrollContainer
+@onready var container: Control = $ScrollContainer/Container
 
 var typingSpeed:float = 5
 var _stop:bool = false
@@ -25,6 +26,7 @@ var waitInput:bool = true
 var closeAtEnd:bool = true
 var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aunque no haya más mensajes (batalla)
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
+var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var typing:bool:
 	get:
 		return label.visible_ratio > 0 and is_physics_processing()# $AnimationPlayer.is_playing() and $AnimationPlayer.current_animation == "Typing"
@@ -39,13 +41,7 @@ var isLastMessage:bool:
 
 # Called when the node entzers the scene tree for the first time.
 func _ready():
-	pass
-	#waitInput = true
-	##waitTime = 2.0
-	#showMessage("Esta es la primera línea
-#Esta es la segunda línea
-#Esta es la tercera línea
-#Esta es la cuarta línea")
+	setText("")
 
 #func _physics_process(delta: float) -> void:
 	#if label.visible_ratio < 1:
@@ -61,6 +57,15 @@ func show_custom(text: String, config := {}):
 	closeAtEnd = config.get("closeAtEnd", true)
 	waitTime = config.get("waitTime", 0.0)
 	showIconAtEnd = config.get("showIconAtEnd", false)
+
+	# Aplicar estilo de marco si se especifica
+	if config.has("frameStyle"):
+		var frame_style = config.get("frameStyle")
+		if frame_style is int:
+			set_frame_style(frame_style as MessageBoxFrameStyle.Values)
+		elif frame_style is MessageBoxFrameStyle.Values:
+			set_frame_style(frame_style)
+
 	await showMessage(text)
 
 func show_input(text: String, show_icon_at_end: bool = false):
@@ -96,6 +101,19 @@ func show_no_close(text: String, show_icon_at_end: bool = false):
 		"showIconAtEnd": show_icon_at_end
 	})
 
+## Cambia el estilo de marco del MessageBox
+## @param style: El estilo de marco (MessageBoxFrameStyle.Values)
+func set_frame_style(style: MessageBoxFrameStyle.Values) -> void:
+	var stylebox_path = MessageBoxFrameStyle.get_stylebox_path(style)
+	var stylebox = load(stylebox_path)
+
+	if stylebox == null:
+		push_error("MessageBox: No se pudo cargar el StyleBox desde: %s" % stylebox_path)
+		return
+
+	# Aplicar el StyleBox al panel
+	add_theme_stylebox_override("panel", stylebox)
+	print("MessageBox: Estilo de marco cambiado a %s" % MessageBoxFrameStyle.get_display_name(style))
 
 func writeText():
 	set_physics_process(true)
@@ -113,7 +131,16 @@ func startText():
 	label.line_displayed.connect(newLine)
 	finsihedTyping.connect(_finishedMessage)
 	finished.connect(onFinish)
+
+	# Asegurar scroll en 0 antes de empezar
+	scroll.scroll_vertical = 0
+
 	label.visible_characters = 0
+
+	# Esperar frame y resetear scroll de nuevo por si algo lo cambió
+	await get_tree().process_frame
+	scroll.scroll_vertical = 0
+
 	#$AnimationPlayer.animation_finished.connect(_finishedMessage)
 	if !waitInput:#waitTime > 0.0:
 		finishedAllText.connect(close)
@@ -125,6 +152,10 @@ func startText():
 
 func selectOption(): #(ui_accept)
 	print("selected")
+
+	# Ignorar input si se está haciendo scroll
+	if _is_scrolling:
+		return
 
 	if messageHasFinished:
 		if waitInput:
@@ -146,20 +177,25 @@ func selectOption(): #(ui_accept)
 				resumeText()
 
 func cancelOption(): #(ui_cancel)
-		print("cancel")
-		if messageHasFinished:
-			if waitInput:
-				# Lógica de cierre (igual que selectOption):
-				if closeAtEnd:
-					close()
-				elif not isLastMessage:
-					resumeText()
-				else:
-					# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
-					_finish_without_closing()
-		else:
-			if typing:
-				pass#SPEED UP TEXT
+	print("cancel")
+
+	# Ignorar input si se está haciendo scroll
+	if _is_scrolling:
+		return
+
+	if messageHasFinished:
+		if waitInput:
+			# Lógica de cierre (igual que selectOption):
+			if closeAtEnd:
+				close()
+			elif not isLastMessage:
+				resumeText()
+			else:
+				# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
+				_finish_without_closing()
+	else:
+		if typing:
+			pass#SPEED UP TEXT
 
 func resumeText():
 	$AnimationPlayer2.stop()
@@ -206,9 +242,11 @@ func addMessage(message):
 		push_error("MessageBox: Tipo de mensaje inválido. Se esperaba String o Array[String]")
 
 func scrollText():
-	updateScroll(32*(label.actualLine-2), 32*(label.actualLine-1))
+	_is_scrolling = true
+	updateScroll(scroll.scroll_vertical, 32*(label.actualLine-1))
 	$AnimationPlayer2.play("Scroll")
 	await $AnimationPlayer2.animation_finished
+	_is_scrolling = false
 
 func getNextMessage():
 	var nextMessage:String = messageTextList[actualMessageIndex]
@@ -247,10 +285,26 @@ func showMessage(message = null):
 
 	if message!=null:
 		addMessage(message)
+
+	# Resetear scroll y estado del label para nuevo mensaje
+	scroll.scroll_vertical = 0
+	label.reset()
+	label.nextLineStop = 2
+
 	label.text = getNextMessage()
 	$AnimationPlayer2.stop()
 	$next.hide()
 	self.show()
+
+	# Esperar frame para que el layout se calcule y podamos obtener el número de líneas
+	await get_tree().process_frame
+
+	# Calcular y ajustar el tamaño del Container y los RichTextLabel según el número de líneas
+	_adjust_container_size()
+
+	# Forzar scroll a 0 después de ajustar el tamaño
+	scroll.scroll_vertical = 0
+
 	await startText()
 
 	# CRÍTICO: En lugar de await finished (que puede perderse),
@@ -273,6 +327,7 @@ func close():
 
 	$AnimationPlayer2.stop()
 	$next.hide()
+	scroll.scroll_vertical = 0
 	if closeAtEnd:
 		hide()
 
@@ -323,6 +378,7 @@ func clear():
 	#SignalManager.disconnectAll(finishedAllText)
 	if finished.is_connected(onFinish):
 		finished.disconnect(onFinish)
+	scroll.scroll_vertical = 0
 	waitTime = 0.0
 	messageTextList.clear()
 	closeAtEnd = true
@@ -341,6 +397,34 @@ func cleanup_and_hide() -> void:
 func show_clear_text():
 	label.text = ""
 	show()
+
+## Ajusta el tamaño del Container y los RichTextLabel según el número de líneas del texto
+## Cada línea ocupa 32px (altura de línea + separación)
+func _adjust_container_size() -> void:
+	if not is_node_ready() or not container or not label:
+		return
+
+	# Obtener el número de líneas del texto
+	var line_count = label.get_line_count()
+	if line_count == 0:
+		line_count = 1  # Mínimo 1 línea
+
+	# Calcular la altura necesaria: 32px por línea
+	var required_height = line_count * 32
+
+	# Ajustar el tamaño del Container
+	container.custom_minimum_size.y = required_height
+	container.size.y = required_height
+
+	# Ajustar el tamaño de los 3 RichTextLabel
+	label.custom_minimum_size.y = required_height
+	label.size.y = required_height
+
+	label2.custom_minimum_size.y = required_height
+	label2.size.y = required_height
+
+	label3.custom_minimum_size.y = required_height
+	label3.size.y = required_height
 
 func updateScroll(startingPosition:int, finalPosition:int):
 #### Sprite:position

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://btj5i08qahepp" path="res://Scenes/Battle/ui/ActionMenu.tscn" id="4_hkwg8"]
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_alpup"]
 [ext_resource type="PackedScene" uid="uid://dauokklht8873" path="res://Scenes/Battle/ui/MoveMenu.tscn" id="6_x8cud"]
-[ext_resource type="StyleBox" uid="uid://ci1q4xtpco246" path="res://Resources/UI/MessageBox/HGSS_BattleMessageBox_Style.tres" id="7_f6frr"]
+[ext_resource type="StyleBox" uid="uid://ci1q4xtpco246" path="res://Resources/UI/MessageBox/Battle Styles/HGSS_BattleMessageBox_Style.tres" id="7_f6frr"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fm4l"]
 

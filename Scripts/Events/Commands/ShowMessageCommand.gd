@@ -7,6 +7,7 @@ class_name ShowMessageCommand
 @export var close_at_end: bool = true
 @export var wait_time: float = 0.0
 @export var show_icon_at_end: bool = false  ## Si true, muestra icono al final aunque no haya más mensajes (batalla)
+@export var frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.HGSS  ## Estilo de marco del mensaje
 
 func execute(context: Node) -> void:
 	print("ShowMessage: %s" % message)
@@ -16,7 +17,8 @@ func execute(context: Node) -> void:
 		"waitInput": wait_input,
 		"closeAtEnd": close_at_end,
 		"waitTime": wait_time,
-		"showIconAtEnd": show_icon_at_end
+		"showIconAtEnd": show_icon_at_end,
+		"frameStyle": frame_style
 	}
 
 	# Mostrar mensaje usando DisplayManager
