@@ -1,4 +1,4 @@
-[gd_scene load_steps=82 format=4 uid="uid://ckeno4wg1vrv8"]
+[gd_scene load_steps=87 format=4 uid="uid://ckeno4wg1vrv8"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="16_0876j"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="17_dr37c"]
 [ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="18_dr37c"]
+[ext_resource type="Script" uid="uid://dmcq3yagkvlqy" path="res://Scripts/Events/Commands/FollowActorCommand.gd" id="18_tsofr"]
 
 [sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("7_0876j")
@@ -411,6 +412,32 @@ sprite_texture = SubResource("CompressedTexture2D_0876j")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_rmtse"]
+script = ExtResource("17_dr37c")
+message = "Te sigo o me sigues?"
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_odi7m"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Follower"
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_pijpc"]
+script = ExtResource("9_tsofr")
+path = Array[int]([1, 1, 1, 3, 0, 0, 1, 6, 7, 1, 1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_vusqy"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_rmtse"), SubResource("Resource_odi7m"), SubResource("Resource_pijpc")])
+movement_type = 1
+movement_speed = 0
+sprite_texture = SubResource("CompressedTexture2D_0876j")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_ey1f0"]
 script = ExtResource("17_dr37c")
 message = "PUEBLO PALETA
@@ -540,14 +567,17 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_guue8"), SubResourc
 
 [node name="Fat_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(368, 496)
-movement_type = 1
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_7u2qs")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(48, 272)
-movement_type = 1
 random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c")])
+
+[node name="Follower" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
+position = Vector2(304, 112)
+random_move_interval_min = 5.0
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_vusqy")])
 
 [node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(240, 304)

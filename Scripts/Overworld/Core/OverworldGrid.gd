@@ -321,15 +321,42 @@ func is_blocked(actor: Node, t: Vector2i) -> bool:
 func has_actor(t: Vector2i) -> bool:
 	return occ.has(t) and occ[t].get_ref() != null
 
+## Verifica si dos actores están en una relación leader-follower
+func _are_actors_following(actor1: Node, actor2: Node) -> bool:
+	if not actor1 or not actor2:
+		return false
+
+	# Verificar si actor1 tiene FollowerComponent que sigue a actor2
+	var follower_comp1 = actor1.get_node_or_null("FollowerComponent")
+	if follower_comp1 and follower_comp1.is_active() and follower_comp1.leader == actor2:
+		return true
+
+	# Verificar si actor2 tiene FollowerComponent que sigue a actor1
+	var follower_comp2 = actor2.get_node_or_null("FollowerComponent")
+	if follower_comp2 and follower_comp2.is_active() and follower_comp2.leader == actor1:
+		return true
+
+	return false
+
 func can_step_to(actor: Node, from: Vector2i, to: Vector2i) -> bool:
 	# Verificaciones clásicas de bloqueo
 	if is_blocked(actor, to):
 		return false
 	if has_actor(to):
-		print("IS ACTOR " + str(occ[to].get_ref()))
-		return false
+		var occupying_actor = occ[to].get_ref()
+		# Si el actor ocupante está en relación leader-follower con el actor que intenta moverse,
+		# ignorar la ocupación para permitir el movimiento simultáneo
+		if occupying_actor and _are_actors_following(actor, occupying_actor):
+			# Permitir el movimiento, ignorando la ocupación
+			pass
+		else:
+			print("IS ACTOR " + str(occupying_actor))
+			return false
 	if res.has(to) and res[to].get_ref() != actor:
-		return false
+		var reserving_actor = res[to].get_ref()
+		# También ignorar reservas si están en relación leader-follower
+		if not reserving_actor or not _are_actors_following(actor, reserving_actor):
+			return false
 	# Verificar restricciones direccionales (PBI 454)
 	var direction = Vector2(to - from)
 
