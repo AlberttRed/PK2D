@@ -31,17 +31,33 @@ func set_overworld_context(context: OverworldContext) -> void:
 func _get_context() -> OverworldContext:
 	return overworld_context
 
-## Tipo de movimiento del NPC
-@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
+## Obtiene el movement_type desde current_page
+func get_movement_type() -> int:
+	if current_page:
+		return current_page.movement_type
+	# Fallback por si no hay página actual (no debería pasar en uso normal)
+	return 0  # None
 
-## Comportamiento de orientación al interactuar
-@export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
+## Obtiene el orientation_behavior desde current_page
+func get_orientation_behavior() -> int:
+	if current_page:
+		return current_page.orientation_behavior
+	# Fallback por si no hay página actual (no debería pasar en uso normal)
+	return 0  # Face Player
 
-## Dirección inicial del NPC
-@export_enum("Up", "Down", "Left", "Right") var initial_direction: int = 1  # 1 = Down
+## Obtiene el initial_direction desde current_page
+func get_initial_direction() -> int:
+	if current_page:
+		return current_page.initial_direction
+	# Fallback por si no hay página actual (no debería pasar en uso normal)
+	return 1  # Down
 
-## Velocidad de movimiento del NPC
-@export_enum("Slowest", "Slower", "Normal", "Faster", "Fastest") var movement_speed: int = 2  # 2 = Normal
+## Obtiene el movement_speed desde current_page
+func get_movement_speed() -> int:
+	if current_page:
+		return current_page.movement_speed
+	# Fallback por si no hay página actual (no debería pasar en uso normal)
+	return 2  # Normal
 
 @export_group("Random Movement")
 ## Tiempo mínimo entre movimientos aleatorios (en segundos)
@@ -112,14 +128,14 @@ func _ready() -> void:
 	motion = $GridMotion
 	animator = actor_animator  # Usar el ActorAnimator heredado de Event
 
-	# Configurar dirección inicial y velocidad
+	# Configurar dirección inicial y velocidad (leer desde current_page si está disponible)
 	if motion:
-		motion.dir = DirectionEnum.to_vector2(initial_direction)
-		motion.base_speed = MoveSpeedEnum.to_multiplier(movement_speed)
+		motion.dir = DirectionEnum.to_vector2(get_initial_direction())
+		motion.base_speed = MoveSpeedEnum.to_multiplier(get_movement_speed())
 
 	# Configurar animación idle inicial
 	if animator:
-		animator.idle(DirectionEnum.to_vector2(initial_direction))
+		animator.idle(DirectionEnum.to_vector2(get_initial_direction()))
 
 	# Conectar señales de GridMotion
 	if motion:
@@ -130,7 +146,7 @@ func _ready() -> void:
 	# La conexión se hace en connect_external_signals() que se llama desde WorldChunkController
 
 	# Convertir el path de enum a Vector2 (2 = PATH)
-	if movement_type == 2:
+	if get_movement_type() == 2:
 		_convert_path_to_vector2()
 
 	# Reemplazar el sprite del Event con el ActorAnimator
@@ -142,7 +158,7 @@ func _ready() -> void:
 
 	# Iniciar path movement si corresponde
 	# Diferir hasta que el grid esté disponible
-	if movement_type == 2:
+	if get_movement_type() == 2:
 		call_deferred("_deferred_start_path_movement")
 
 ## Override del trigger() de Event para pausar movimiento
@@ -157,7 +173,7 @@ func trigger() -> void:
 	_pause_movement()
 
 	# Manejar orientación según el comportamiento
-	match orientation_behavior:
+	match get_orientation_behavior():
 		OrientationBehaviorEnum.Type.FACE_PLAYER:
 			_face_player()
 		OrientationBehaviorEnum.Type.FIXED:
@@ -191,7 +207,7 @@ func _update_animator_from_current_page() -> void:
 			animator.show_sprite()
 
 			if motion:
-				var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(initial_direction)
+				var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(get_initial_direction())
 				animator.idle(initial_dir)
 		else:
 			animator.apply_style(null)
@@ -204,7 +220,7 @@ func _update_animator_from_current_page() -> void:
 
 				# Configurar la dirección inicial después de asignar los frames
 				if motion:
-					var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(initial_direction)
+					var initial_dir = motion.dir if motion.dir != Vector2.ZERO else DirectionEnum.to_vector2(get_initial_direction())
 					animator.idle(initial_dir)
 			else:
 				animator.hide_sprite()
@@ -212,29 +228,68 @@ func _update_animator_from_current_page() -> void:
 		animator.apply_style(null)
 		animator.hide_sprite()
 
-## Override del método de Event para actualizar también el animator
+## Override del método de Event para actualizar también el animator y el movimiento
 func update_sprite_from_current_page() -> void:
 	super.update_sprite_from_current_page()
 	_update_animator_from_current_page()
+	_update_movement_from_current_page()
+
+## Actualiza los valores de movimiento cuando cambia la página actual
+func _update_movement_from_current_page() -> void:
+	if not current_page or not motion:
+		return
+
+	# Actualizar velocidad desde la página actual
+	motion.base_speed = MoveSpeedEnum.to_multiplier(get_movement_speed())
+
+	# Si la dirección actual es cero, aplicar la dirección inicial de la página
+	if motion.dir == Vector2.ZERO:
+		motion.dir = DirectionEnum.to_vector2(get_initial_direction())
+		if animator:
+			animator.idle(motion.dir)
+
+	# Si cambió el tipo de movimiento, reconfigurear timers
+	# Primero eliminar timers existentes
+	if _random_timer:
+		_random_timer.queue_free()
+		_random_timer = null
+	if _random_turning_timer:
+		_random_turning_timer.queue_free()
+		_random_turning_timer = null
+	if _look_pattern_timer:
+		_look_pattern_timer.queue_free()
+		_look_pattern_timer = null
+
+	# Convertir path si es necesario
+	if get_movement_type() == 2:
+		_convert_path_to_vector2()
+		path_index = 0  # Reiniciar índice del path
+
+	# Reconfigurear timers según el nuevo tipo de movimiento
+	_setup_timers()
+
+	# Si es path movement, iniciarlo
+	if get_movement_type() == 2:
+		call_deferred("_deferred_start_path_movement")
 
 ## Configura los timers según el tipo de movimiento
 func _setup_timers() -> void:
 	# Timer para movimiento aleatorio (solo para Random)
-	if movement_type == 1:  # RANDOM
+	if get_movement_type() == 1:  # RANDOM
 		_random_timer = Timer.new()
 		add_child(_random_timer)
 		_random_timer.timeout.connect(_on_random_timer_timeout)
 		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
 
 	# Timer para giro aleatorio (solo para RandomTurning)
-	elif movement_type == 3:  # RANDOM_TURNING
+	elif get_movement_type() == 3:  # RANDOM_TURNING
 		_random_turning_timer = Timer.new()
 		add_child(_random_turning_timer)
 		_random_turning_timer.timeout.connect(_on_random_turning_timer_timeout)
 		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
 
 	# Timer para patrón de mirada (solo para LookPattern)
-	elif movement_type == 4:  # LOOK_PATTERN
+	elif get_movement_type() == 4:  # LOOK_PATTERN
 		_look_pattern_timer = Timer.new()
 		add_child(_look_pattern_timer)
 		_look_pattern_timer.timeout.connect(_on_look_pattern_timer_timeout)
@@ -269,11 +324,11 @@ func _disconnect_from_player_movement() -> void:
 func connect_external_signals() -> void:
 	super.connect_external_signals()
 	# Conectar awareness si está habilitado
-	if awareness_enabled and movement_type in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if awareness_enabled and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
 		_connect_to_player_movement()
 
 	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
-	if movement_type == 3 and _random_turning_timer:  # RANDOM_TURNING
+	if get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
 		_random_turning_timer.stop()  # Detener si estaba corriendo
 		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
 
@@ -376,7 +431,7 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 		return
 
 	# Solo activar en tipos sin movimiento
-	if movement_type not in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if get_movement_type() not in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
 		return
 
 	# OPTIMIZACIÓN: Verificar distancia con tiles ANTES de buscar el player
@@ -447,6 +502,7 @@ func _convert_path_to_vector2() -> void:
 			DirectionEnum.Type.LOOK_DOWN: _path_directions_vector2.append(Vector2.DOWN)
 			DirectionEnum.Type.LOOK_LEFT: _path_directions_vector2.append(Vector2.LEFT)
 			DirectionEnum.Type.LOOK_RIGHT: _path_directions_vector2.append(Vector2.RIGHT)
+			DirectionEnum.Type.LOOK_PLAYER: _path_directions_vector2.append(Vector2.ZERO)  # Se calculará dinámicamente
 			_: push_warning("NPC: Dirección inválida en path_directions: %d" % dir_enum)
 
 ## Inicia el path movement después de que el grid esté disponible
@@ -478,7 +534,7 @@ func _try_execute_next_path_action() -> void:
 	# Verificar el tipo de comando
 	var is_movement = DirectionEnum.is_movement(dir_enum)
 	# Verificar si es wait (usando números directamente como workaround)
-	var is_wait = (dir_enum >= 8)  # WAIT_025=8, WAIT_050=9, WAIT_100=10
+	var is_wait = (dir_enum >= 9)  # WAIT_025=9, WAIT_050=10, WAIT_100=11 (LOOK_PLAYER=8)
 
 	if is_movement:
 		# Verificar que el grid esté disponible antes de obtener current_tile
@@ -506,23 +562,56 @@ func _try_execute_next_path_action() -> void:
 		# Obtener duración según el tipo de wait (usando números directamente)
 		var wait_duration = 0.0
 		match dir_enum:
-			8:  # WAIT_025
+			9:  # WAIT_025
 				wait_duration = 0.25
-			9:  # WAIT_050
+			10:  # WAIT_050
 				wait_duration = 0.50
-			10: # WAIT_100
+			11: # WAIT_100
 				wait_duration = 1.00
 		path_index = (path_index + 1) % _path_directions_vector2.size()
 		await get_tree().create_timer(wait_duration).timeout
 
 	else:
 		# Comando LOOK: solo girar sin moverse
+		# Si es LOOK_PLAYER, calcular la dirección hacia el jugador
+		if dir_enum == DirectionEnum.Type.LOOK_PLAYER:
+			var look_direction = _calculate_direction_to_player_for_path()
+			if look_direction != Vector2.ZERO:
+				direction = look_direction
+			else:
+				# Si no se pudo calcular, saltar este comando
+				path_index = (path_index + 1) % _path_directions_vector2.size()
+				return
+
 		motion.face(direction)
 		animator.idle(direction)
 		path_index = (path_index + 1) % _path_directions_vector2.size()
 		await get_tree().create_timer(0.5).timeout
 	call_deferred("_try_execute_next_path_action")
 
+
+## Calcula la dirección hacia el jugador para uso en path movement
+func _calculate_direction_to_player_for_path() -> Vector2:
+	var context = _get_context()
+	var player: Node = context.get_player() if context else null
+	if not player or not motion or not motion.grid:
+		return Vector2.ZERO
+
+	# Calcular diferencia en tiles
+	var npc_tile = motion.current_tile()
+	var player_tile = motion.grid.world_to_tile(player.global_position)
+	var diff = player_tile - npc_tile
+
+	# Determinar la dirección predominante
+	var direction = Vector2.ZERO
+	if abs(diff.x) > abs(diff.y):
+		# Movimiento horizontal predominante
+		direction = Vector2.RIGHT if diff.x > 0 else Vector2.LEFT
+	else:
+		# Movimiento vertical predominante
+		direction = Vector2.DOWN if diff.y > 0 else Vector2.UP
+
+	return direction
 
 ## Procesa el comportamiento de mirar al jugador
 
@@ -571,7 +660,7 @@ func _on_step_finished(_tile: Vector2i) -> void:
 
 	# Para Path movement, intentar ejecutar la siguiente acción
 	# Usar call_deferred para esperar a que GridMotion alterne el stride_is_left
-	if movement_type == 2:  # PATH
+	if get_movement_type() == 2:  # PATH
 		call_deferred("_try_execute_next_path_action")
 
 ## Detiene el movimiento del NPC
@@ -624,14 +713,14 @@ func _resume_movement() -> void:
 	_movement_paused = false
 
 	# Reiniciar timers según el tipo de movimiento
-	if movement_type == 1 and _random_timer:  # RANDOM
+	if get_movement_type() == 1 and _random_timer:  # RANDOM
 		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
-	elif movement_type == 2:  # PATH
+	elif get_movement_type() == 2:  # PATH
 		# Reanudar path movement
 		call_deferred("_try_execute_next_path_action")
-	elif movement_type == 3 and _random_turning_timer:  # RANDOM_TURNING
+	elif get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
 		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
-	elif movement_type == 4 and _look_pattern_timer:  # LOOK_PATTERN
+	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
 		_look_pattern_timer.start(look_pattern_delay)
 
 	print("NPC: Movimiento reanudado")
@@ -641,8 +730,8 @@ func _on_event_finished(_event) -> void:
 	# Solo reanudar si este NPC estaba pausado
 	if _movement_paused:
 		# Restaurar dirección inicial si es necesario
-		if orientation_behavior == OrientationBehaviorEnum.Type.FACE_AND_RESTORE:
-			var initial_dir = DirectionEnum.to_vector2(initial_direction)
+		if get_orientation_behavior() == OrientationBehaviorEnum.Type.FACE_AND_RESTORE:
+			var initial_dir = DirectionEnum.to_vector2(get_initial_direction())
 			motion.dir = initial_dir
 			if animator:
 				animator.idle(initial_dir)

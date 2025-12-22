@@ -88,6 +88,7 @@ load_path = "res://.godot/imported/trchar029.png-46215f8c62b9fcffcd0f8830d91e533
 [sub_resource type="Resource" id="Resource_esu18"]
 script = ExtResource("5_qy02h")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_077yi"), SubResource("Resource_eibtc"), SubResource("Resource_to1bf"), SubResource("Resource_vfmvs")])
+movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_oqqnf")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -106,6 +107,7 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="Resource" id="Resource_5lwew"]
 script = ExtResource("5_qy02h")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_8cj4d"), SubResource("Resource_yeqrt")])
+movement_type = 1
 sprite_texture = ExtResource("14_8cj4d")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -127,6 +129,7 @@ load_path = "res://.godot/imported/trchar029.png-46215f8c62b9fcffcd0f8830d91e533
 [sub_resource type="Resource" id="Resource_kngbo"]
 script = ExtResource("5_qy02h")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6wtby"), SubResource("Resource_afg6e")])
+movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_to1bf")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -192,6 +195,7 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 script = ExtResource("16_6wtby")
 label = "Sí"
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_4qtb2"), SubResource("Resource_bvtm4"), SubResource("Resource_rok3h"), SubResource("Resource_52bmq")])
+close_previous_message = false
 metadata/_custom_type_script = "uid://bhk1tuersl1iy"
 
 [sub_resource type="Resource" id="Resource_n2obv"]
@@ -345,17 +349,14 @@ pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_gc3x0")])
 
 [node name="Scientist_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(336, 144)
-movement_type = 1
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_esu18")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(80, 112)
-movement_type = 1
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5lwew")])
 
 [node name="Scientist_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(144, 144)
-movement_type = 1
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_kngbo")])
 
 [node name="Oak_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]

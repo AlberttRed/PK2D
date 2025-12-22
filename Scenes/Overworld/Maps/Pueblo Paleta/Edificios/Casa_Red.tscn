@@ -126,6 +126,8 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="Resource" id="Resource_hx57r"]
 script = ExtResource("5_7lm0v")
 commands = Array[ExtResource("6_8qtck")]([SubResource("Resource_3rt2b"), SubResource("Resource_0pviq")])
+orientation_behavior = 2
+initial_direction = 2
 sprite_texture = ExtResource("13_w55lx")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"

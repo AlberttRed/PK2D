@@ -384,6 +384,7 @@ load_path = "res://.godot/imported/NPC 06.png-207e8477efa523f336b544bc1f6041dd.c
 [sub_resource type="Resource" id="Resource_7u2qs"]
 script = ExtResource("5_u1wff")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_3rt2b"), SubResource("Resource_0pviq")])
+movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_tsofr")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -405,6 +406,7 @@ load_path = "res://.godot/imported/trchar042.png-ac648df27b7631f8f4fdda8d741f26f
 [sub_resource type="Resource" id="Resource_dr37c"]
 script = ExtResource("5_u1wff")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_cvpjy"), SubResource("Resource_0876j")])
+movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_0876j")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"

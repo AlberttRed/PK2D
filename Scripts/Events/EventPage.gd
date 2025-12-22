@@ -45,6 +45,19 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Si true, invierte todas las condiciones (NOT)
 @export var invert_conditions: bool = false
 
+@export_group("Movement (NPC)")
+## Tipo de movimiento del NPC (solo para NPCs)
+@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
+
+## Comportamiento de orientación al interactuar (solo para NPCs)
+@export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
+
+## Dirección inicial del NPC (solo para NPCs)
+@export_enum("Up", "Down", "Left", "Right") var initial_direction: int = 1  # 1 = Down
+
+## Velocidad de movimiento del NPC (solo para NPCs)
+@export_enum("Slowest", "Slower", "Normal", "Faster", "Fastest") var movement_speed: int = 2  # 2 = Normal
+
 ## Referencia al Event de origen (no exportada, solo runtime)
 ## Se asigna cuando se duplica la página desde un Event
 var source_event: Event = null

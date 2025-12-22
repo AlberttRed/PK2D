@@ -119,11 +119,19 @@ static func show_choices(options: Array[String]) -> int:
 	return await instance._show_choices(options)
 
 ## Muestra un mensaje seguido de opciones
-static func show_message_with_choices(text: String, options: Array[String]) -> int:
+## close_at_end: Si true, cierra el MessageBox después de la selección. Si false, lo mantiene visible.
+static func show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
-	return await instance._show_message_with_choices(text, options)
+	return await instance._show_message_with_choices(text, options, close_at_end)
+
+## Cierra el MessageBox del overworld si está visible
+static func close_message() -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	instance._close_message()
 
 ## Hace fade out (de visible a negro)
 static func fade_out(duration: float = 0.3) -> void:
@@ -287,7 +295,7 @@ func _show_choices(options: Array[String]) -> int:
 
 	return selected_index
 
-func _show_message_with_choices(text: String, options: Array[String]) -> int:
+func _show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true) -> int:
 	if options.is_empty():
 		push_error("DisplayManager._show_message_with_choices: Array de opciones vacío")
 		return -1
@@ -307,11 +315,17 @@ func _show_message_with_choices(text: String, options: Array[String]) -> int:
 	# Mostrar las opciones (el MessageBox permanece visible de fondo)
 	var selected_index = await choice_box.show_choices(options)
 
-	# Cerrar el MessageBox después de la selección
-	msg.hide()
-	msg.clear()
+	# Cerrar el MessageBox después de la selección solo si close_at_end es true
+	if close_at_end:
+		msg.hide()
+		msg.clear()
 
 	return selected_index
+
+func _close_message() -> void:
+	if msg.visible:
+		msg.hide()
+		msg.clear()
 
 func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())

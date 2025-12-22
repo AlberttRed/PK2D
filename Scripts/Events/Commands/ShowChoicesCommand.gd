@@ -56,7 +56,8 @@ func execute(context: Node) -> void:
 		options.append(branch.label)
 
 	# Mostrar mensaje con opciones usando DisplayManager
-	_selected_index = await DisplayManager.show_message_with_choices(message, options)
+	# Siempre pasar close_at_end=false para dejar que el branch decida
+	_selected_index = await DisplayManager.show_message_with_choices(message, options, false)
 
 	print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
 
@@ -81,8 +82,14 @@ func execute(context: Node) -> void:
 
 			# Esperar un frame entre comandos para evitar bloqueos
 			await context.get_tree().process_frame
+
+		# Cerrar el MessageBox si el branch lo indica
+		if selected_branch.close_previous_message:
+			DisplayManager.close_message()
 	elif _selected_index == -1:
 		print("ShowChoicesCommand: El jugador canceló la selección")
+		# Si se cancela, cerrar el MessageBox
+		DisplayManager.close_message()
 	else:
 		push_error("ShowChoicesCommand: Índice seleccionado fuera de rango: %d" % _selected_index)
 
