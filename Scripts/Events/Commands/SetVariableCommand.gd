@@ -20,7 +20,7 @@ func execute(_context: Node) -> void:
 		push_warning("SetVariableCommand: variable_name está vacío")
 		return
 
-	var current_value = GameStateManager.get_variable(variable_name, 0)
+	var current_value = GameStateService.get_variable(variable_name, 0)
 	var new_value = current_value
 
 	match operation:
@@ -46,7 +46,7 @@ func execute(_context: Node) -> void:
 				new_value = current_value
 
 	print("SetVariableCommand: '%s' %s %d = %d" % [variable_name, _get_operation_name(), value, new_value])
-	GameStateManager.set_variable(variable_name, new_value)
+	GameStateService.set_variable(variable_name, new_value)
 
 func _get_operation_name() -> String:
 	match operation:

@@ -27,8 +27,12 @@ var _restore_mode_after_temp: String = "walk"
 var _last_animation_name: String = ""
 
 func _ready() -> void:
-	if sprite and not sprite.animation_finished.is_connected(_on_animation_finished_internal):
-		sprite.animation_finished.connect(_on_animation_finished_internal)
+	if sprite:
+		# Configurar process_mode para que las animaciones funcionen aunque el árbol esté pausado
+		# Esto es crítico para animaciones de eventos (puertas, cofres, etc.) durante transiciones
+		sprite.process_mode = Node.PROCESS_MODE_ALWAYS
+		if not sprite.animation_finished.is_connected(_on_animation_finished_internal):
+			sprite.animation_finished.connect(_on_animation_finished_internal)
 
 ## Reproduce una animación por nombre
 ## @param anim_name: Nombre de la animación a reproducir

@@ -15,7 +15,8 @@ var current_position: Vector2i = Vector2i.ZERO
 var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags de eventos (Dictionary para flexibilidad)
-var event_flags: Dictionary = {}
+var event_flags: Dictionary = {	"CHOOSING_STARTER": true,
+								"HAS_POKEDEX": false}
 
 # Variables globales del juego (Dictionary: nombre -> valor)
 var game_variables: Dictionary = {}
@@ -33,9 +34,9 @@ func initialize_new_game() -> void:
 	current_map_id = "Pueblo_Paleta"
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
-	event_flags = {}
-	game_variables = {}
-	self_switches = {}
+	#event_flags = {}
+	#game_variables = {}
+	#self_switches = {}
 
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:

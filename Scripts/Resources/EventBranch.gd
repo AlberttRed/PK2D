@@ -17,6 +17,10 @@ class_name EventBranch
 ## Lista de comandos que se ejecutarán si esta opción es seleccionada
 @export var commands: Array[EventCommand] = []
 
+## Si true, cierra el MessageBox después de ejecutar los comandos de este branch
+## Si false, mantiene el MessageBox visible (útil para mostrar más mensajes después)
+@export var close_previous_message: bool = true
+
 ## Constructor opcional para facilitar creación desde código
 func _init(p_label: String = "", p_commands: Array[EventCommand] = []) -> void:
 	label = p_label

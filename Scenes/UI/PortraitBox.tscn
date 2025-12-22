@@ -1,0 +1,64 @@
+[gd_scene load_steps=5 format=3 uid="uid://bq8x7k2m3n4p5"]
+
+[ext_resource type="Script" path="res://Scripts/UI/PortraitBox.gd" id="1_portrait"]
+[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="2_stylebox"]
+[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="3_wait"]
+[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="4_anim"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wait"]
+_data = {
+&"Idle": ExtResource("4_anim")
+}
+
+[node name="PortraitBox" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_portrait")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_stylebox")
+
+[node name="TextureRect" type="TextureRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 4
+# Nota: Los offsets (16.0 en todos los lados) definen el margen entre la imagen y el marco
+# Este valor coincide con la constante IMAGE_MARGIN en PortraitBox.gd
+
+[node name="WaitIndicator" type="Sprite2D" parent="Panel"]
+position = Vector2(170, 170)
+texture = ExtResource("3_wait")
+hframes = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Panel/WaitIndicator"]
+root_node = NodePath(".")
+libraries = {
+&"": SubResource("AnimationLibrary_wait")
+}
+

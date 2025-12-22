@@ -14,13 +14,24 @@ func execute(context: Node) -> void:
 	match target_type:
 		0:  # Event
 			if target_event_name.is_empty():
-				push_warning("SetActorVisibilityCommand: No se especificó un nombre de evento")
-				return
-
-			target_actor = _find_event(context, target_event_name)
-			if not target_actor:
-				push_warning("SetActorVisibilityCommand: No se encontró el evento '%s'" % target_event_name)
-				return
+				# Si no se especificó nombre, usar el evento actual donde se ejecuta el comando
+				if context is EventController and context.current_page:
+					var source_event = context.current_page.source_event
+					if source_event:
+						target_actor = source_event
+						print("SetActorVisibilityCommand: Usando evento actual '%s' (no se especificó nombre)" % source_event.name)
+					else:
+						push_warning("SetActorVisibilityCommand: No se pudo obtener el evento actual (source_event es nulo)")
+						return
+				else:
+					push_warning("SetActorVisibilityCommand: No se especificó un nombre de evento y no se pudo obtener el evento actual")
+					return
+			else:
+				# Buscar el evento por nombre
+				target_actor = _find_event(context, target_event_name)
+				if not target_actor:
+					push_warning("SetActorVisibilityCommand: No se encontró el evento '%s'" % target_event_name)
+					return
 
 		1:  # Player
 			var overworld_context = _get_overworld_context(context)
@@ -33,7 +44,11 @@ func execute(context: Node) -> void:
 	# Cambiar visibilidad
 	_set_visibility(target_actor, visible)
 
-	var target_name = target_event_name if target_type == 0 else "Player"
+	var target_name = ""
+	if target_type == 0:
+		target_name = target_actor.name if target_actor else target_event_name
+	else:
+		target_name = "Player"
 	print("SetActorVisibilityCommand: '%s' visible = %s" % [target_name, visible])
 
 	# Los comandos síncronos NO llaman a continue_execution()

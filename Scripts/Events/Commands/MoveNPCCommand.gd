@@ -7,6 +7,7 @@ class_name MoveNPCCommand
 ## similar al path movement de los NPCs.
 
 ## Nombre o identificador del NPC a mover (o "Player" para el jugador)
+## Si está vacío, usa el evento actual donde se ejecuta el comando
 @export var target_name: String = ""
 
 ## Lista de direcciones a seguir (usa el enum DirectionEnum.Type)
@@ -16,26 +17,43 @@ class_name MoveNPCCommand
 @export var wait_until_finished: bool = true
 
 func execute(context: Node) -> void:
-	print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
+	var actor: Node2D = null
 
-	# Verificar que se especificó el nombre del objetivo
+	# Si no se especificó nombre, usar el evento actual
 	if target_name.is_empty():
-		push_error("MoveNPCCommand: No se especificó target_name")
-		# Los errores en comandos asíncronos SÍ deben llamar continue_execution() para no bloquear
-		context.continue_execution()
-		return
-
-	# Buscar el actor (NPC o Player)
-	var actor = _find_actor(context, target_name)
-	if not actor:
-		push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
-		context.continue_execution()
-		return
+		if context is EventController and context.current_page:
+			var source_event = context.current_page.source_event
+			if source_event:
+				actor = source_event as Node2D
+				print("MoveNPCCommand: Usando evento actual '%s' (no se especificó nombre)" % source_event.name)
+			else:
+				push_warning("MoveNPCCommand: No se pudo obtener el evento actual (source_event es nulo)")
+				context.continue_execution()
+				return
+		else:
+			push_warning("MoveNPCCommand: No se especificó target_name y no se pudo obtener el evento actual")
+			context.continue_execution()
+			return
+	else:
+		print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
+		# Buscar el actor (NPC o Player) por nombre
+		actor = _find_actor(context, target_name)
+		if not actor:
+			push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
+			context.continue_execution()
+			return
 
 	# Verificar que tiene GridMotion
 	var motion: GridMotion = actor.get_node_or_null("GridMotion")
 	if not motion:
-		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % target_name)
+		var actor_name: String
+		if not target_name.is_empty():
+			actor_name = target_name
+		elif actor:
+			actor_name = actor.name
+		else:
+			actor_name = "desconocido"
+		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % actor_name)
 		context.continue_execution()
 		return
 
@@ -55,11 +73,11 @@ func execute(context: Node) -> void:
 	else:
 		# No espera: ejecuta en background
 		# Como is_async() = false, el EventController continuará automáticamente
-		_execute_path_background(motion)
+		_execute_path_background(motion, context)
 
 ## Ejecuta el movimiento de forma asíncrona
 func _execute_async(motion: GridMotion, context: Node) -> void:
-	await _execute_path(motion)
+	await _execute_path(motion, context)
 	set_state(CommandState.IDLE)
 	context.continue_execution()
 
@@ -92,7 +110,7 @@ func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
 	return null
 
 ## Ejecuta el path paso a paso (función principal)
-func _execute_path(motion: GridMotion) -> void:
+func _execute_path(motion: GridMotion, context: Node) -> void:
 	# Marcar que el movimiento está siendo controlado por comando
 	# Esto evita que el input del jugador modifique is_running
 	motion.is_command_controlled = true
@@ -102,7 +120,7 @@ func _execute_path(motion: GridMotion) -> void:
 		# Determinar el tipo de comando primero
 		var is_movement = DirectionEnum.is_movement(dir_enum)
 		# Verificar si es wait (usando números directamente como workaround)
-		var is_wait = (dir_enum >= 8)  # WAIT_025=8, WAIT_050=9, WAIT_100=10
+		var is_wait = (dir_enum >= 9)  # WAIT_025=9, WAIT_050=10, WAIT_100=11 (LOOK_PLAYER=8)
 
 		if is_movement:
 			# Movimiento normal: primero orientar, luego ejecutar paso
@@ -129,19 +147,30 @@ func _execute_path(motion: GridMotion) -> void:
 			# Obtener duración según el tipo de wait (usando números directamente)
 			var wait_duration = 0.0
 			match dir_enum:
-				8:  # WAIT_025
+				9:  # WAIT_025
 					wait_duration = 0.25
-				9:  # WAIT_050
+				10:  # WAIT_050
 					wait_duration = 0.50
-				10: # WAIT_100
+				11: # WAIT_100
 					wait_duration = 1.00
 			print("MoveNPCCommand: Esperando %s segundos" % wait_duration)
 			await motion.get_tree().create_timer(wait_duration).timeout
 		else:
 			# Comando LOOK: solo girar sin moverse
-			# Convertir el enum LOOK a Vector2 para la dirección
-			var direction = DirectionEnum.to_vector2(dir_enum)
-			print("MoveNPCCommand: Mirando hacia %s" % direction)
+			var direction: Vector2
+
+			# Si es LOOK_PLAYER, calcular la dirección hacia el jugador
+			if dir_enum == DirectionEnum.Type.LOOK_PLAYER:
+				direction = _calculate_direction_to_player(motion, context)
+				if direction == Vector2.ZERO:
+					push_warning("MoveNPCCommand: No se pudo calcular dirección hacia el jugador, saltando LOOK_PLAYER")
+					continue
+				print("MoveNPCCommand: Mirando hacia el jugador (%s)" % direction)
+			else:
+				# Convertir el enum LOOK a Vector2 para la dirección
+				direction = DirectionEnum.to_vector2(dir_enum)
+				print("MoveNPCCommand: Mirando hacia %s" % direction)
+
 			motion.face(direction)
 
 			# Actualizar la animación del actor si tiene animator (NPC) o sprite (Player)
@@ -163,13 +192,13 @@ func _execute_path(motion: GridMotion) -> void:
 	print("MoveNPCCommand: Path completado")
 
 ## Ejecuta el path en background (sin bloquear el EventController)
-func _execute_path_background(motion: GridMotion) -> void:
+func _execute_path_background(motion: GridMotion, context: Node) -> void:
 	# Esta función ejecuta el path de forma asíncrona sin esperar
 	# Marca como RUNNING mientras se ejecuta
 	set_state(CommandState.RUNNING)
 	# Ejecutar el path de forma asíncrona
 	var callable = func():
-		await _execute_path(motion)
+		await _execute_path(motion, context)
 		set_state(CommandState.IDLE)
 		print("MoveNPCCommand: Movimiento en background completado")
 	callable.call()
@@ -179,6 +208,37 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return false
+
+## Calcula la dirección hacia el jugador usando la misma lógica que NPC.gd
+## Reutiliza el cálculo basado en tiles para consistencia con el comportamiento de NPCs
+func _calculate_direction_to_player(motion: GridMotion, context: Node) -> Vector2:
+	var overworld_context = _get_overworld_context(context)
+	if not overworld_context:
+		push_warning("MoveNPCCommand: OverworldContext no disponible para calcular dirección hacia el jugador")
+		return Vector2.ZERO
+
+	var player = overworld_context.get_player()
+	if not player:
+		push_warning("MoveNPCCommand: Player no disponible")
+		return Vector2.ZERO
+
+	# Requiere grid para calcular dirección (misma lógica que NPC._calculate_direction_to_player_for_path)
+	if not motion.grid:
+		push_warning("MoveNPCCommand: Grid no disponible para calcular dirección hacia el jugador")
+		return Vector2.ZERO
+
+	# Calcular diferencia en tiles (mismo método que NPC._calculate_direction_to_player_for_path)
+	var actor_tile = motion.current_tile()
+	var player_tile = motion.grid.world_to_tile(player.global_position)
+	var tile_diff = player_tile - actor_tile
+
+	# Determinar la dirección predominante (misma lógica que NPC)
+	if abs(tile_diff.x) > abs(tile_diff.y):
+		# Movimiento horizontal predominante
+		return Vector2.RIGHT if tile_diff.x > 0 else Vector2.LEFT
+	else:
+		# Movimiento vertical predominante
+		return Vector2.DOWN if tile_diff.y > 0 else Vector2.UP
 
 ## Obtiene el OverworldContext desde el EventController
 func _get_overworld_context(context: Node) -> OverworldContext:

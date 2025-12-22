@@ -123,28 +123,30 @@ func apply_theme(messagebox_theme: MessageBoxTheme) -> void:
 
 ## Actualiza el WaitIndicator según el tema
 ## @param messagebox_theme: El MessageBoxTheme con la configuración del indicador
+## NOTA: Este método solo CONFIGURA el wait indicator, no controla su visibilidad.
+## La visibilidad se controla en pauseText() y _finishedMessage() según waitInput y showIconAtEnd
 func _update_wait_indicator(messagebox_theme: MessageBoxTheme) -> void:
 	if not wait_indicator:
 		return
 
-	# Aplicar textura si está definida
+	# Aplicar textura si está definida (si no hay textura, el wait indicator no se mostrará)
 	if messagebox_theme.wait_indicator_texture:
 		wait_indicator.texture = messagebox_theme.wait_indicator_texture
 
-	# Configurar posicionamiento según el modo
-	match messagebox_theme.wait_indicator_mode:
-		MessageBoxTheme.WaitIndicatorMode.BOTTOM_RIGHT:
-			# Posición fija en esquina inferior derecha
-			wait_indicator.position = Vector2(491, 69) + messagebox_theme.wait_indicator_offset
+		# Configurar posicionamiento según el modo
+		match messagebox_theme.wait_indicator_mode:
+			MessageBoxTheme.WaitIndicatorMode.BOTTOM_RIGHT:
+				# Posición fija en esquina inferior derecha
+				wait_indicator.position = Vector2(491, 69) + messagebox_theme.wait_indicator_offset
 
-		MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
-			# Posición al final del texto visible (dentro del área de texto)
-			# Calcular posición basada en el texto visible
-			_update_wait_indicator_inline(messagebox_theme)
+			MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
+				# Posición al final del texto visible (dentro del área de texto)
+				# Calcular posición basada en el texto visible
+				_update_wait_indicator_inline(messagebox_theme)
 
-	# Aplicar velocidad de animación al AnimationPlayer2
-	if animation_player:
-		animation_player.speed_scale = messagebox_theme.wait_indicator_blink_speed
+		# Aplicar velocidad de animación al AnimationPlayer2
+		if animation_player:
+			animation_player.speed_scale = messagebox_theme.wait_indicator_blink_speed
 
 ## Actualiza la posición del WaitIndicator en modo INLINE_END_OF_TEXT
 ## @param messagebox_theme: El MessageBoxTheme con la configuración
@@ -353,11 +355,16 @@ func pauseText():
 	# Mostrar icono "next" en pausas intermedias (saltos de línea) SIEMPRE si waitInput
 	# (porque hay más texto por mostrar del mensaje actual)
 	# closeAtEnd NO afecta aquí - las pausas intermedias siempre muestran icono
-	if waitInput:
-		# Actualizar posición del indicador si está en modo INLINE
-		if _current_theme and _current_theme.wait_indicator_mode == MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
-			_update_wait_indicator_inline(_current_theme)
-		$AnimationPlayer2.play("Idle")
+	if waitInput and wait_indicator:
+		# Solo mostrar si hay textura configurada en el tema
+		if _current_theme and _current_theme.wait_indicator_texture:
+			wait_indicator.visible = true
+			# Actualizar posición del indicador si está en modo INLINE
+			if _current_theme.wait_indicator_mode == MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
+				_update_wait_indicator_inline(_current_theme)
+			$AnimationPlayer2.play("Idle")
+		else:
+			wait_indicator.visible = false
 
 func stopText():
 		$AnimationPlayer.stop()
@@ -421,11 +428,16 @@ func _finishedMessage():
 		finishedAllText.emit()
 
 	# Mostrar la flecha "next" si estamos esperando input del usuario
-	if should_show_arrow:
-		# Actualizar posición del indicador si está en modo INLINE
-		if _current_theme and _current_theme.wait_indicator_mode == MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
-			_update_wait_indicator_inline(_current_theme)
-		$AnimationPlayer2.play("Idle")
+	if should_show_arrow and wait_indicator:
+		# Solo mostrar si hay textura configurada en el tema
+		if _current_theme and _current_theme.wait_indicator_texture:
+			wait_indicator.visible = true
+			# Actualizar posición del indicador si está en modo INLINE
+			if _current_theme.wait_indicator_mode == MessageBoxTheme.WaitIndicatorMode.INLINE_END_OF_TEXT:
+				_update_wait_indicator_inline(_current_theme)
+			$AnimationPlayer2.play("Idle")
+		else:
+			wait_indicator.visible = false
 
 func showMessage(message = null):
 	_is_processing_message = true

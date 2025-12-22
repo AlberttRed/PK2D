@@ -45,6 +45,19 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Si true, invierte todas las condiciones (NOT)
 @export var invert_conditions: bool = false
 
+@export_group("Movement (NPC)")
+## Tipo de movimiento del NPC (solo para NPCs)
+@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
+
+## Comportamiento de orientación al interactuar (solo para NPCs)
+@export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
+
+## Dirección inicial del NPC (solo para NPCs)
+@export_enum("Up", "Down", "Left", "Right") var initial_direction: int = 1  # 1 = Down
+
+## Velocidad de movimiento del NPC (solo para NPCs)
+@export_enum("Slowest", "Slower", "Normal", "Faster", "Fastest") var movement_speed: int = 2  # 2 = Normal
+
 ## Referencia al Event de origen (no exportada, solo runtime)
 ## Se asigna cuando se duplica la página desde un Event
 var source_event: Event = null
@@ -89,9 +102,17 @@ func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
 		return null
 
 	var frames = SpriteFrames.new()
-	frames.add_animation("default")
+
+	# SpriteFrames.new() ya crea una animación "default" por defecto
+	# Si no existe, la añadimos; si existe, solo la configuramos
+	if not frames.has_animation("default"):
+		frames.add_animation("default")
+
 	frames.set_animation_loop("default", true)
 	frames.set_animation_speed("default", 5.0)
+
+	# Limpiar frames existentes si los hay y añadir el nuestro
+	frames.clear("default")
 	frames.add_frame("default", texture)
 
 	return frames
@@ -127,6 +148,11 @@ func evaluate_conditions(event_id: String = "") -> bool:
 		result = not result
 
 	return result
+
+
+## Retorna true si esta página tiene alguna condición configurada
+func has_conditions() -> bool:
+	return not required_flag.is_empty() or not required_variable.is_empty() or required_self_switch > 0
 
 
 ## Compara dos valores según el operador

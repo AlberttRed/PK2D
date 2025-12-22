@@ -35,6 +35,8 @@ func _ready() -> void:
 	# Ocultar placeholder primero
 	hide_placeholder_sprite()
 
+	if name == "Bulbasaur":
+		pass
 	# Ahora configurar la página actual (esto aplicará el sprite)
 	setup_current_page()
 
@@ -59,26 +61,59 @@ func setup_current_page() -> void:
 	# Obtener ID único del evento para self-switches
 	var event_id = _get_event_id()
 
+	# Buscar todas las páginas que cumplen condiciones, separadas por si tienen condiciones o no
+	var best_page_with_conditions: EventPage = null
+	var best_index_with_conditions: int = -1
+	var best_page_without_conditions: EventPage = null
+	var best_index_without_conditions: int = -1
+
 	# Evaluar páginas en orden inverso (prioridad a las últimas)
 	# Esto permite tener una página "por defecto" al inicio y páginas condicionales después
 	for i in range(pages.size() - 1, -1, -1):
 		var page = pages[i]
-		if page and page.evaluate_conditions(event_id):
-			# Esta página cumple las condiciones
-			if current_page_index != i:
-				current_page_index = i
-				current_page = page
-				update_sprite_from_current_page()
-				print("Event '%s': Página activa cambiada a índice %d" % [name, i])
-			else:
-				current_page = page
-				update_sprite_from_current_page()  # También actualizar aunque no haya cambiado de página
-			return
+		if not page:
+			continue
 
-	# Si ninguna página cumple las condiciones, usar la primera por defecto
-	current_page_index = 0
-	current_page = pages[0] if pages.size() > 0 else null
-	print("Event '%s': Usando página por defecto (índice 0), llamando update_sprite_from_current_page()" % name)
+		if page.evaluate_conditions(event_id):
+			# Esta página cumple las condiciones
+			if page.has_conditions():
+				# Tiene condiciones y las cumple
+				if best_page_with_conditions == null or i > best_index_with_conditions:
+					best_page_with_conditions = page
+					best_index_with_conditions = i
+			else:
+				# No tiene condiciones y cumple (siempre cumple si no tiene condiciones)
+				if best_page_without_conditions == null or i > best_index_without_conditions:
+					best_page_without_conditions = page
+					best_index_without_conditions = i
+
+	# Prioridad: páginas con condiciones sobre páginas sin condiciones
+	var selected_page: EventPage = null
+	var selected_index: int = -1
+
+	if best_page_with_conditions:
+		selected_page = best_page_with_conditions
+		selected_index = best_index_with_conditions
+	elif best_page_without_conditions:
+		selected_page = best_page_without_conditions
+		selected_index = best_index_without_conditions
+
+	# Si encontramos una página válida, usarla
+	if selected_page:
+		if current_page_index != selected_index:
+			current_page_index = selected_index
+			current_page = selected_page
+			update_sprite_from_current_page()
+			print("Event '%s': Página activa cambiada a índice %d" % [name, selected_index])
+		else:
+			current_page = selected_page
+			update_sprite_from_current_page()
+		return
+
+	# Si todas tienen condiciones y ninguna cumple, no ejecutar ninguna página
+	current_page = null
+	current_page_index = -1
+	print("Event '%s': Ninguna página cumple condiciones, evento desactivado" % name)
 	update_sprite_from_current_page()
 
 ## Actualiza el sprite y propiedades del evento según la página activa
@@ -241,11 +276,13 @@ func _on_state_changed_switch(event_id: String, _switch_letter: String, _new_val
 
 
 ## Obtiene un ID único para este evento (usado para self-switches)
-## Formato: "mapid_eventname" o solo el nombre del nodo
+## Formato: "mapid_eventname" para evitar colisiones entre eventos con el mismo nombre en diferentes mapas
 func _get_event_id() -> String:
-	# Usar el nombre del nodo como ID único
-	# En el futuro se puede mejorar con: "current_map_id + '_' + name"
-	return name
+	var map_id = GameStateService.get_current_map_id()
+	if map_id.is_empty():
+		# Si no hay mapa actual, usar solo el nombre (fallback)
+		return name
+	return "%s_%s" % [map_id, name]
 
 func set_overworld_context(context: OverworldContext) -> void:
 	overworld_context = context
