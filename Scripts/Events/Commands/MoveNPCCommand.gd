@@ -7,6 +7,7 @@ class_name MoveNPCCommand
 ## similar al path movement de los NPCs.
 
 ## Nombre o identificador del NPC a mover (o "Player" para el jugador)
+## Si está vacío, usa el evento actual donde se ejecuta el comando
 @export var target_name: String = ""
 
 ## Lista de direcciones a seguir (usa el enum DirectionEnum.Type)
@@ -16,26 +17,43 @@ class_name MoveNPCCommand
 @export var wait_until_finished: bool = true
 
 func execute(context: Node) -> void:
-	print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
+	var actor: Node2D = null
 
-	# Verificar que se especificó el nombre del objetivo
+	# Si no se especificó nombre, usar el evento actual
 	if target_name.is_empty():
-		push_error("MoveNPCCommand: No se especificó target_name")
-		# Los errores en comandos asíncronos SÍ deben llamar continue_execution() para no bloquear
-		context.continue_execution()
-		return
-
-	# Buscar el actor (NPC o Player)
-	var actor = _find_actor(context, target_name)
-	if not actor:
-		push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
-		context.continue_execution()
-		return
+		if context is EventController and context.current_page:
+			var source_event = context.current_page.source_event
+			if source_event:
+				actor = source_event as Node2D
+				print("MoveNPCCommand: Usando evento actual '%s' (no se especificó nombre)" % source_event.name)
+			else:
+				push_warning("MoveNPCCommand: No se pudo obtener el evento actual (source_event es nulo)")
+				context.continue_execution()
+				return
+		else:
+			push_warning("MoveNPCCommand: No se especificó target_name y no se pudo obtener el evento actual")
+			context.continue_execution()
+			return
+	else:
+		print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
+		# Buscar el actor (NPC o Player) por nombre
+		actor = _find_actor(context, target_name)
+		if not actor:
+			push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
+			context.continue_execution()
+			return
 
 	# Verificar que tiene GridMotion
 	var motion: GridMotion = actor.get_node_or_null("GridMotion")
 	if not motion:
-		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % target_name)
+		var actor_name: String
+		if not target_name.is_empty():
+			actor_name = target_name
+		elif actor:
+			actor_name = actor.name
+		else:
+			actor_name = "desconocido"
+		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % actor_name)
 		context.continue_execution()
 		return
 

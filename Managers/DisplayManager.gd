@@ -24,9 +24,11 @@ signal input_up
 signal input_down
 signal player_control_blocked
 signal player_control_unblocked
+signal portrait_box_closed
 
 # === CONSTANTES ===
 const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
+const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
 
 # === VARIABLES ===
 var fading: bool = false
@@ -35,6 +37,7 @@ var input_locked := false
 var pressed_actions := {}
 var choices_options = null
 var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
+var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -162,6 +165,46 @@ static func reveal_battle(duration: float = 0.4) -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance.fade_layer.reveal_battle(duration)
+
+## Cierra el portrait box actual si está visible
+static func close_portrait_box() -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	instance._close_portrait_box()
+
+## Muestra un portrait box con una imagen (Pokémon o Texture2D)
+## @param image_source: ShowPortraitCommand.ImageSource (POKEMON o TEXTURE)
+## @param image_data: Texture2D o AtlasTexture con la imagen a mostrar
+## @param frame_style: Estilo de marco del MessageBox
+## @param position: Posición de la caja (LEFT, RIGHT, CENTER)
+## @param close_mode: Modo de cierre (WAIT_INPUT, AUTO_TIME, NO_CLOSE)
+## @param auto_close_time: Tiempo de cierre automático (solo si close_mode es AUTO_TIME)
+## @param scale_mode: Modo de escala (PIXEL_PERFECT, FIT_BOX)
+## @param z_index_offset: Offset de z_index
+static func show_portrait_box(
+	image_source: int,
+	image_data: Texture2D,
+	frame_style: int,
+	position: int,
+	close_mode: int,
+	auto_close_time: float = 0.0,
+	scale_mode: int = 0,
+	z_index_offset: int = 0
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._show_portrait_box(
+		image_source,
+		image_data,
+		frame_style,
+		position,
+		close_mode,
+		auto_close_time,
+		scale_mode,
+		z_index_offset
+	)
 
 ## ========================
 ## OVERLAY API
@@ -450,6 +493,78 @@ func _play_mo_overlay(pokemon_visual: Variant) -> void:
 
 	input_locked = previous_input_locked
 
+## Método privado para mostrar el portrait box
+func _show_portrait_box(
+	_image_source: int,  # No se usa directamente, pero se mantiene para compatibilidad con la firma
+	image_data: Texture2D,
+	frame_style: int,
+	position: int,
+	close_mode: int,
+	auto_close_time: float,
+	scale_mode: int,
+	z_index_offset: int
+) -> void:
+	if PORTRAIT_BOX_SCENE == null:
+		push_error("DisplayManager: Escena de PortraitBox no disponible")
+		return
+
+	# Si ya hay un portrait box visible, cerrarlo primero
+	if _current_portrait_box and is_instance_valid(_current_portrait_box):
+		_current_portrait_box.close()
+		await _current_portrait_box.closed
+
+	# Instanciar el portrait box
+	var portrait_box = PORTRAIT_BOX_SCENE.instantiate()
+	if portrait_box == null:
+		push_error("DisplayManager: No se pudo instanciar PortraitBox")
+		return
+
+	add_child(portrait_box)
+	_current_portrait_box = portrait_box
+
+	# Configurar el portrait box
+	portrait_box.setup(
+		image_data,
+		frame_style as MessageBoxFrameStyle.Values,
+		position as PortraitBox.Position,
+		close_mode as PortraitBox.CloseMode,
+		auto_close_time,
+		scale_mode as PortraitBox.ScaleMode,
+		z_index_offset,
+		Vector2.ZERO  # Tamaño personalizado (Vector2.ZERO = usar tamaño por defecto)
+	)
+
+	# Conectar señal de cierre
+	portrait_box.closed.connect(_on_portrait_box_closed)
+
+	# Conectar señal de visibilidad para el sistema de pausa
+	if portrait_box.has_signal("visibility_changed"):
+		portrait_box.visibility_changed.connect(_on_ui_visibility_changed)
+
+	# Solo esperar cierre si no es modo NO_CLOSE
+	var portrait_close_mode = close_mode as PortraitBox.CloseMode
+	if portrait_close_mode != PortraitBox.CloseMode.NO_CLOSE:
+		# Esperar a que se cierre
+		await portrait_box.closed
+	else:
+		# En modo NO_CLOSE, no esperar - el portrait box permanece visible
+		# hasta que se llame a close_portrait_box()
+		pass
+
+## Callback cuando se cierra el portrait box
+func _on_portrait_box_closed() -> void:
+	portrait_box_closed.emit()
+
+	# Limpiar referencia si existe
+	if is_instance_valid(_current_portrait_box):
+		_current_portrait_box.queue_free()
+	_current_portrait_box = null
+
+## Método privado para cerrar el portrait box actual
+func _close_portrait_box() -> void:
+	if _current_portrait_box and is_instance_valid(_current_portrait_box):
+		_current_portrait_box.close()
+
 # === INPUT ===
 func _input(event: InputEvent) -> void:
 	# Registrar liberaciones SIEMPRE
@@ -499,7 +614,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible):
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_current_portrait_box != null && _current_portrait_box.visible):
 		return
 
 	# Evitar repeticiones automáticas
@@ -578,7 +693,8 @@ func _update_game_pause_state() -> void:
 		msg.visible or
 		choice_box.visible or
 		(pause_menu != null && pause_menu.visible) or
-		BattleNew.visible
+		BattleNew.visible or
+		(_current_portrait_box != null && _current_portrait_box.visible)
 	)
 
 	# Verificar si hay animaciones MO activas (Player, saltos de ledge, etc.)

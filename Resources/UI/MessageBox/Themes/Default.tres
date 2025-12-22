@@ -8,4 +8,3 @@
 script = ExtResource("1_kfipv")
 frame_stylebox = ExtResource("1_oguby")
 wait_indicator_texture = ExtResource("3_athm7")
-wait_indicator_blink = false

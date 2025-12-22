@@ -107,8 +107,12 @@ func _activate_self_switch(target: Node, switch_letter: String) -> void:
 		push_warning("UseMOCommand: Self-switch '%s' inválido. Usa A, B, C o D" % switch_letter)
 		return
 
-	# Obtener el ID del evento
-	var event_id = target.name
+	# Obtener el ID del evento (incluyendo map_id para evitar colisiones)
+	var event_id: String
+	if target.has_method("_get_event_id"):
+		event_id = target._get_event_id()
+	else:
+		event_id = target.name  # Fallback si no tiene el método
 
 	# Activar el self-switch en GameStateService
 	GameStateService.set_self_switch(event_id, switch_letter, true)
