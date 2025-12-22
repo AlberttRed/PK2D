@@ -1,10 +1,10 @@
 [gd_scene load_steps=13 format=3 uid="uid://brvsn2vfev6ng"]
 
-[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/HGSS_MessageBox_Style.tres" id="1_1g85p"]
+[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_1g85p"]
 [ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_re8jy"]
 [ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_15orl"]
 [ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="4_icamg"]
-[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/MessageBox/next.png" id="5_ugtco"]
+[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_ugtco"]
 [ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_thy6l"]
 
 [sub_resource type="FontVariation" id="FontVariation_djhwc"]

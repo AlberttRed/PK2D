@@ -1,6 +1,6 @@
 [gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://08dr8fiwcu28"]
 
-[ext_resource type="Texture2D" uid="uid://dcuxe3kpy0tj0" path="res://Sprites/UI/MessageBox/speech hgss 1.png" id="1_xhta3"]
+[ext_resource type="Texture2D" uid="uid://dcuxe3kpy0tj0" path="res://Sprites/UI/Message Skins/speech hgss 1.png" id="1_xhta3"]
 
 [resource]
 texture = ExtResource("1_xhta3")

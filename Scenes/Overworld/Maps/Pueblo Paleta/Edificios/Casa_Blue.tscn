@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=4 uid="uid://dx5ysjvdkng4b"]
+[gd_scene load_steps=42 format=4 uid="uid://dx5ysjvdkng4b"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_2apf5"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_fthu1"]
@@ -53,6 +53,27 @@ trigger_type = 2
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_y6llx"]
+script = ExtResource("12_1ikpg")
+message = "DALIA: ¡Hola, PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_a54gb"]
+script = ExtResource("12_1ikpg")
+message = "¡RIVAL está en el laboratorio del abuelo!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_nyssf"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_y6llx"), SubResource("Resource_a54gb")])
+required_flag = "start_completed"
+required_flag_value = false
+sprite_texture = ExtResource("13_8focb")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_3rt2b"]
 script = ExtResource("12_1ikpg")
 message = "¡La tecnología es increíble!"
@@ -67,8 +88,60 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="Resource" id="Resource_xuw3p"]
 script = ExtResource("5_qaen7")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_3rt2b"), SubResource("Resource_0pviq")])
+required_flag = "start_completed"
 sprite_texture = ExtResource("13_8focb")
 is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_c2xhc"]
+script = ExtResource("12_1ikpg")
+message = "¡Mmm, huele que alimenta!
+Aquí han debido de cocinar algo..."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_e3ll6"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_c2xhc")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_51mej"]
+script = ExtResource("12_1ikpg")
+message = "Hay un montón de platos y bandejas muy bien colocados."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_mlqt2"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_51mej")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_13w3q"]
+script = ExtResource("12_1ikpg")
+message = "¡Totalmente lleno de libros sobre los POKéMON!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_i0xma"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_13w3q")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_p8nvd"]
+script = ExtResource("12_1ikpg")
+message = "¡Está saliendo un POKéMON por la tele! Se le ve encantado..."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_1ikpg"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_p8nvd")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_8focb"]
+script = ExtResource("12_1ikpg")
+message = "El cariñoso y dulce CLEFAIRY."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_4icn6"]
+script = ExtResource("5_qaen7")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_8focb")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
@@ -124,10 +197,64 @@ metadata/_edit_lock_ = true
 position = Vector2(144, 240)
 pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_qaen7")])
 
-[node name="Mom_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_p8nvd")]
+[node name="Daisy_NPC1" parent="OverworldGrid/Events" instance=ExtResource("11_p8nvd")]
+position = Vector2(176, 80)
+orientation_behavior = 2
+initial_direction = 3
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_nyssf")])
+
+[node name="Daisy_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_p8nvd")]
 position = Vector2(336, 144)
 movement_type = 1
 pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_xuw3p")])
+
+[node name="Encimera1" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(16, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_e3ll6")])
+current_page_index = 1
+
+[node name="Encimera2" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(48, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_e3ll6")])
+current_page_index = 1
+
+[node name="Armario2" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(80, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_mlqt2")])
+current_page_index = 1
+
+[node name="Armario3" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(112, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_mlqt2")])
+current_page_index = 1
+
+[node name="Estanteria1" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(368, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_i0xma")])
+current_page_index = 1
+
+[node name="Estanteria2" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(400, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_i0xma")])
+current_page_index = 1
+
+[node name="TV" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(176, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_1ikpg")])
+current_page_index = 1
+
+[node name="Cuadro" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
+z_index = 1
+position = Vector2(304, -16)
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_4icn6")])
+current_page_index = 1
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

@@ -26,7 +26,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 y_sort_enabled = true
 script = ExtResource("1_6iru3")
 world_position = Vector2(-64, -448)
-neighbors = Array[String](["Pueblo_Paleta"])
+neighbors = Array[String](["Pueblo_Paleta", "Ciudad_Verde"])
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

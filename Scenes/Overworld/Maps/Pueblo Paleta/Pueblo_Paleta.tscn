@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=4 uid="uid://ckeno4wg1vrv8"]
+[gd_scene load_steps=82 format=4 uid="uid://ckeno4wg1vrv8"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
@@ -409,14 +409,68 @@ sprite_texture = SubResource("CompressedTexture2D_0876j")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_w67m6"]
+[sub_resource type="Resource" id="Resource_ey1f0"]
 script = ExtResource("17_dr37c")
-message = "¡Cuidado! Teleport a la izquierda."
+message = "PUEBLO PALETA
+¡Un lienzo en blanco de tu viaje!"
+frame_style = 1
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_8gxhw"]
+[sub_resource type="Resource" id="Resource_rwrw8"]
 script = ExtResource("5_u1wff")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_w67m6")])
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_ey1f0")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_bndxg"]
+script = ExtResource("17_dr37c")
+message = "Casa de PLAYER"
+frame_style = 1
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_vkojk"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_bndxg")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_lmtl6"]
+script = ExtResource("17_dr37c")
+message = "Casa de RIVAL"
+frame_style = 1
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_nbshg"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_lmtl6")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_snt5p"]
+script = ExtResource("17_dr37c")
+message = "PISTAS ENTRENADOR"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_coi6h"]
+script = ExtResource("17_dr37c")
+message = "¡Pulsa START para abrir el MENÚ!"
+frame_style = 1
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_tesob"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_snt5p"), SubResource("Resource_coi6h")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_xuiob"]
+script = ExtResource("17_dr37c")
+message = "LABORATORIO DE INVESTIGACIÓN DE POKéMON DEL PROFESOR OAK"
+frame_style = 1
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_glook"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_xuiob")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
@@ -495,15 +549,23 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c")])
 
 [node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(240, 304)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_rwrw8")])
+
+[node name="Cartel_Red" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(80, 176)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_vkojk")])
+
+[node name="Cartel_Blue" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(368, 176)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_nbshg")])
 
 [node name="Cartel_Madera" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(112, 400)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_tesob")])
 
 [node name="Cartel_Blanco2" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(464, 464)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_8gxhw")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_glook")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

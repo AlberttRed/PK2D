@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://chb8xvfn0k7ml"]
 
-[ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/ChoicesBox_Style.tres" id="1_tcuqx"]
+[ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/Choice Styles/ChoicesBox_Style.tres" id="1_tcuqx"]
 [ext_resource type="Script" uid="uid://d4bs0nutlam1h" path="res://Scripts/UI/MessageBox/ChoiceBox.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://d100gf0i5byxn" path="res://Sprites/Pictures/arrowSpriteOK2.png" id="4_arrow"]
 
