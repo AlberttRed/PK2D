@@ -439,12 +439,16 @@ func showMessage(message = null):
 	label.nextLineStop = 2
 
 	label.text = getNextMessage()
+	# CRÍTICO: Establecer visible_characters a 0 inmediatamente para evitar que se vea el texto completo durante un frame
+	label.visible_characters = 0
 	$AnimationPlayer2.stop()
 	$next.hide()
 	self.show()
 
 	# Esperar frame para que el layout se calcule y podamos obtener el número de líneas
 	await get_tree().process_frame
+	# Asegurar que visible_characters sigue en 0 después del frame (por si algo lo cambió)
+	label.visible_characters = 0
 
 	# Calcular y ajustar el tamaño del Container y los RichTextLabel según el número de líneas
 	_adjust_container_size()
