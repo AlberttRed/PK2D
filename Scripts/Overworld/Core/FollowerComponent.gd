@@ -19,8 +19,8 @@ var is_following: bool = false
 ## Si debe copiar el estado de correr del líder
 @export var copy_run_state: bool = true
 
-## Política de recuperación cuando queda bloqueado (0 = SNAP, 1 = WAIT, 2 = TELEPORT_IF_FAR)
-@export var catchup_policy: int = 0
+## Política de recuperación cuando queda bloqueado
+@export var catchup_policy: CatchupPolicy.Type = CatchupPolicy.Type.SNAP
 
 ## Referencias a componentes
 var follower_motion: GridMotion = null
@@ -274,11 +274,13 @@ func _on_leader_warped(_map_id: String, _spawn_id: String) -> void:
 	await get_tree().process_frame
 
 	match catchup_policy:
-		0:  # SNAP
+		CatchupPolicy.Type.SNAP:
 			_snap_to_leader()
-		2:  # TELEPORT_IF_FAR
+		CatchupPolicy.Type.TELEPORT_IF_FAR:
 			if _calculate_tile_distance() > distance_tiles * 2:
 				_snap_to_leader()
+		_:  # WAIT o cualquier otro
+			pass
 
 	# Reinicializar historial
 	if leader_motion:

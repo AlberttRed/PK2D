@@ -1,4 +1,4 @@
-[gd_scene load_steps=87 format=4 uid="uid://ckeno4wg1vrv8"]
+[gd_scene load_steps=95 format=4 uid="uid://ckeno4wg1vrv8"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
@@ -22,6 +22,8 @@
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="17_dr37c"]
 [ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="18_dr37c"]
 [ext_resource type="Script" uid="uid://dmcq3yagkvlqy" path="res://Scripts/Events/Commands/FollowActorCommand.gd" id="18_tsofr"]
+[ext_resource type="Texture2D" uid="uid://drdsledmb3gke" path="res://Sprites/Overworlds/Characters/phone001.png" id="19_7u2qs"]
+[ext_resource type="Script" uid="uid://bgcnb3pt4dxi7" path="res://Scripts/Events/Commands/SetSelfSwitchCommand.gd" id="20_qv1ht"]
 
 [sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("7_0876j")
@@ -412,6 +414,10 @@ sprite_texture = SubResource("CompressedTexture2D_0876j")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_3i3x5"]
+script = ExtResource("5_u1wff")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_rmtse"]
 script = ExtResource("17_dr37c")
 message = "Te sigo o me sigues?"
@@ -432,9 +438,10 @@ metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 [sub_resource type="Resource" id="Resource_vusqy"]
 script = ExtResource("5_u1wff")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_rmtse"), SubResource("Resource_odi7m"), SubResource("Resource_pijpc")])
+required_self_switch = 1
 movement_type = 1
 movement_speed = 0
-sprite_texture = SubResource("CompressedTexture2D_0876j")
+sprite_texture = ExtResource("19_7u2qs")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -500,6 +507,38 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="Resource" id="Resource_glook"]
 script = ExtResource("5_u1wff")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_xuiob")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_hm2mc"]
+script = ExtResource("17_dr37c")
+message = "OAK: !Eh! ¡Alto!
+¡No te vayas!"
+wait_input = false
+wait_time = 1.0
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_4grk7"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([5])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_pwx7d"]
+script = ExtResource("20_qv1ht")
+target_event_name = "Oak"
+metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
+
+[sub_resource type="Resource" id="Resource_noqo3"]
+script = ExtResource("12_0pviq")
+target_spawn = "Oak_Start"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_ugsdx"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_hm2mc"), SubResource("Resource_4grk7"), SubResource("Resource_pwx7d"), SubResource("Resource_noqo3")])
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
@@ -574,10 +613,10 @@ position = Vector2(48, 272)
 random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c")])
 
-[node name="Follower" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
-position = Vector2(304, 112)
+[node name="Oak" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
+position = Vector2(-112, 16)
 random_move_interval_min = 5.0
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_vusqy")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_3i3x5"), SubResource("Resource_vusqy")])
 
 [node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(240, 304)
@@ -599,6 +638,10 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_tesob")])
 position = Vector2(464, 464)
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_glook")])
 
+[node name="Start1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(336, -16)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ugsdx")])
+
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="Spawn_CasaRed" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
@@ -612,6 +655,9 @@ position = Vector2(432, 176)
 [node name="Spawn_Lab" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
 visible = false
 position = Vector2(464, 368)
+
+[node name="Oak_Start" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+position = Vector2(272, 208)
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_1slxk")]
 

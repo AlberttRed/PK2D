@@ -26,8 +26,7 @@ class_name FollowActorCommand
 @export var copy_run_state: bool = true
 
 ## Política de recuperación cuando queda bloqueado
-## 0 = SNAP, 1 = WAIT, 2 = TELEPORT_IF_FAR
-@export var catchup_policy: int = 0
+@export var catchup_policy: CatchupPolicy.Type = CatchupPolicy.Type.SNAP
 
 func execute(context: Node) -> void:
 	match action:
