@@ -420,6 +420,12 @@ func _activate_chunk_events(chunk_id: String) -> void:
 		if event.has_method("connect_external_signals"):
 			event.connect_external_signals()
 
+		# Activar eventos AUTORUN cuando el chunk se activa
+		if event is Event and event.current_page:
+			if event.current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
+				# Usar call_deferred para asegurar que todo esté listo (context, EventSystem, etc.)
+				event.call_deferred("trigger")
+
 
 ## Activa eventos de un mapa específico en un chunk
 ## @param map_id: ID del mapa
@@ -454,6 +460,12 @@ func _activate_map_events_in_chunk(map_id: String, chunk_id: String) -> void:
 			event.set_active(true)
 		if event.has_method("connect_external_signals"):
 			event.connect_external_signals()
+
+		# Activar eventos AUTORUN cuando el chunk se activa
+		if event is Event and event.current_page:
+			if event.current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
+				# Usar call_deferred para asegurar que todo esté listo (context, EventSystem, etc.)
+				event.call_deferred("trigger")
 
 
 ## Desactiva eventos de un chunk

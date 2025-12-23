@@ -71,10 +71,15 @@ func execute(context: Node) -> void:
 		var selected_branch = branches[_selected_index]
 		print("ShowChoicesCommand: Ejecutando branch '%s' con %d comandos" % [selected_branch.label, selected_branch.commands.size()])
 
+		# Activar el flag de branch para prevenir que continue_execution() avance el EventController
+		if context is EventController:
+			context.executing_branch = true
+
 		# Ejecutar cada comando del branch secuencialmente
-		for command in selected_branch.commands:
+		for i in range(selected_branch.commands.size()):
+			var command = selected_branch.commands[i]
 			if command == null:
-				push_warning("ShowChoicesCommand: Comando null en branch '%s'" % selected_branch.label)
+				push_warning("ShowChoicesCommand: Comando null en branch '%s' (índice %d)" % [selected_branch.label, i])
 				continue
 
 			print("ShowChoicesCommand: Ejecutando comando: %s" % command.get_command_name())
@@ -82,6 +87,10 @@ func execute(context: Node) -> void:
 
 			# Esperar un frame entre comandos para evitar bloqueos
 			await context.get_tree().process_frame
+
+		# Desactivar el flag de branch
+		if context is EventController:
+			context.executing_branch = false
 
 		# Cerrar el MessageBox si el branch lo indica
 		if selected_branch.close_previous_message:

@@ -287,6 +287,15 @@ func can_jump_ledge(actor: Node, ledge_tile: Vector2i, direction: Vector2) -> bo
 	return true
 
 func register_event(tile: Vector2i, event: Event) -> void:
+	# No sobrescribir eventos existentes a menos que sea el mismo evento
+	# Esto previene que eventos estáticos se pierdan cuando otros actores pasan por encima
+	if events.has(tile):
+		var existing_ref = events[tile].get_ref()
+		if existing_ref and existing_ref != event:
+			# Ya hay otro evento en este tile, no sobrescribir
+			# Solo sobrescribir si el evento existente ya no es válido
+			if is_instance_valid(existing_ref):
+				return  # Mantener el evento existente
 	events[tile] = weakref(event)
 
 func unregister_event(tile: Vector2i, event: Event) -> void:
@@ -380,7 +389,30 @@ func reserve(_from: Vector2i, to: Vector2i, actor: Node) -> void:
 func commit(from: Vector2i, to: Vector2i, actor: Node) -> void:
 	if occ.get(from) and occ[from].get_ref() == actor:
 		occ.erase(from)
-	occ[to] = weakref(actor)
+
+	# Solo ocupar el tile destino si el actor NO tiene through activado
+	var is_through = false
+	if actor is Event and actor.current_page:
+		is_through = actor.current_page.through
+
+	if not is_through:
+		# Verificar si hay un evento en el tile destino que no sea through
+		# Si hay un evento through, podemos ocupar el tile
+		# Si hay un evento no-through, el evento mantiene la ocupación
+		var existing_event = event_at(to)
+		if existing_event and existing_event != actor:
+			# Hay un evento en el tile destino
+			if existing_event.current_page and not existing_event.current_page.through:
+				# El evento no es through, mantener su ocupación
+				# No ocupar el tile con el actor
+				pass
+			else:
+				# El evento es through, podemos ocupar el tile
+				occ[to] = weakref(actor)
+		else:
+			# No hay evento en el tile destino, ocupar normalmente
+			occ[to] = weakref(actor)
+
 	if res.get(to) and res[to].get_ref() == actor:
 		res.erase(to)
 
@@ -395,6 +427,12 @@ func vacate(tile: Vector2i, actor: Node) -> void:
 # --- Triggers / Interact ---
 func on_enter_tile(actor: Node, t: Vector2i) -> void:
 	if actor.is_in_group("Player"):  # o instanceof Player
+		# Ignorar eventos TOUCH cuando el movimiento es controlado por comando
+		# Esto evita que los eventos se activen durante movimientos automáticos (MoveNPCCommand, etc.)
+		var player_motion = actor.get_node_or_null("GridMotion")
+		if player_motion and player_motion.is_command_controlled:
+			return  # No activar eventos TOUCH durante movimiento controlado
+
 		var e = event_at(t)
 		if e:
 			e.on_player_touch()

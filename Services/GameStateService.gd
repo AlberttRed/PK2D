@@ -15,7 +15,8 @@ var current_position: Vector2i = Vector2i.ZERO
 var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags de eventos (Dictionary para flexibilidad)
-var event_flags: Dictionary = {	"CHOOSING_STARTER": true,
+var event_flags: Dictionary = {	"CHOOSING_STARTER": false,
+								"HAS_STARTER": false,
 								"HAS_POKEDEX": false}
 
 # Variables globales del juego (Dictionary: nombre -> valor)

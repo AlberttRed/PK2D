@@ -43,9 +43,9 @@ func _ready() -> void:
 	# Conectar a señales de cambio de estado para reevaluación automática
 	_connect_to_state_signals()
 
-	# Autorun inmediato
-	if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
-		trigger()
+	# NOTA: Los eventos AUTORUN ahora se activan cuando el chunk se activa
+	# (ver WorldChunkController._activate_chunk_events())
+	# Esto asegura que el contexto y EventSystem estén listos antes de ejecutar
 
 ## Configura current_page basado en current_page_index y pages
 ## Evalúa condiciones de todas las páginas para encontrar la activa
@@ -60,7 +60,8 @@ func setup_current_page() -> void:
 
 	# Obtener ID único del evento para self-switches
 	var event_id = _get_event_id()
-
+	if name == "Stop1":
+		pass
 	# Buscar todas las páginas que cumplen condiciones, separadas por si tienen condiciones o no
 	var best_page_with_conditions: EventPage = null
 	var best_index_with_conditions: int = -1
