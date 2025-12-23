@@ -22,7 +22,13 @@ enum Type {
 	LOOK_PLAYER, ## Solo mirar hacia el jugador (sin moverse)
 	WAIT_025,    ## Espera de 0.25 segundos
 	WAIT_050,    ## Espera de 0.5 segundos
-	WAIT_100     ## Espera de 1.0 segundo
+	WAIT_100,    ## Espera de 1.0 segundo
+	SPEED_SLOWEST, ## Cambiar velocidad a Slowest (0.5x)
+	SPEED_SLOWER,  ## Cambiar velocidad a Slower (0.75x)
+	SPEED_NORMAL, ## Cambiar velocidad a Normal (1.0x)
+	SPEED_FASTER, ## Cambiar velocidad a Faster (1.5x)
+	SPEED_FASTEST, ## Cambiar velocidad a Fastest (2.0x)
+	EXCLAMATION_ANIM ## Mostrar animación de exclamación (trainer_exclamation)
 }
 
 ## Convierte el enum a Vector2
@@ -44,7 +50,10 @@ static func is_movement(direction: int) -> bool:
 	match direction:
 		Type.UP, Type.DOWN, Type.LEFT, Type.RIGHT:
 			return true
-		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT, Type.LOOK_PLAYER, Type.WAIT_025, Type.WAIT_050, Type.WAIT_100:
+		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT, Type.LOOK_PLAYER, \
+		Type.WAIT_025, Type.WAIT_050, Type.WAIT_100, \
+		Type.SPEED_SLOWEST, Type.SPEED_SLOWER, Type.SPEED_NORMAL, Type.SPEED_FASTER, Type.SPEED_FASTEST, \
+		Type.EXCLAMATION_ANIM:
 			return false
 		_:
 			return false
@@ -56,6 +65,32 @@ static func is_wait(direction: int) -> bool:
 			return true
 		_:
 			return false
+
+## Verifica si es un comando de cambio de velocidad
+static func is_speed_change(direction: int) -> bool:
+	match direction:
+		Type.SPEED_SLOWEST, Type.SPEED_SLOWER, Type.SPEED_NORMAL, Type.SPEED_FASTER, Type.SPEED_FASTEST:
+			return true
+		_:
+			return false
+
+## Verifica si es un comando de animación (exclamación, etc.)
+static func is_animation(direction: int) -> bool:
+	match direction:
+		Type.EXCLAMATION_ANIM:
+			return true
+		_:
+			return false
+
+## Convierte un comando de velocidad a MoveSpeedEnum.Type
+static func to_speed_enum(direction: int) -> int:
+	match direction:
+		Type.SPEED_SLOWEST: return MoveSpeedEnum.Type.SLOWEST
+		Type.SPEED_SLOWER: return MoveSpeedEnum.Type.SLOWER
+		Type.SPEED_NORMAL: return MoveSpeedEnum.Type.NORMAL
+		Type.SPEED_FASTER: return MoveSpeedEnum.Type.FASTER
+		Type.SPEED_FASTEST: return MoveSpeedEnum.Type.FASTEST
+		_: return MoveSpeedEnum.Type.NORMAL
 
 ## Obtiene la duración del wait en segundos
 static func get_wait_duration(direction: int) -> float:

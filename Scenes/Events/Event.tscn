@@ -21,6 +21,7 @@ animations = [{
 script = ExtResource("1_s1pap")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 5
 sprite_frames = SubResource("SpriteFrames_x7w3d")
 
 [node name="ActorAnimator" type="Node2D" parent="."]

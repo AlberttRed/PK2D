@@ -287,6 +287,15 @@ func can_jump_ledge(actor: Node, ledge_tile: Vector2i, direction: Vector2) -> bo
 	return true
 
 func register_event(tile: Vector2i, event: Event) -> void:
+	# No sobrescribir eventos existentes a menos que sea el mismo evento
+	# Esto previene que eventos estáticos se pierdan cuando otros actores pasan por encima
+	if events.has(tile):
+		var existing_ref = events[tile].get_ref()
+		if existing_ref and existing_ref != event:
+			# Ya hay otro evento en este tile, no sobrescribir
+			# Solo sobrescribir si el evento existente ya no es válido
+			if is_instance_valid(existing_ref):
+				return  # Mantener el evento existente
 	events[tile] = weakref(event)
 
 func unregister_event(tile: Vector2i, event: Event) -> void:
@@ -321,15 +330,42 @@ func is_blocked(actor: Node, t: Vector2i) -> bool:
 func has_actor(t: Vector2i) -> bool:
 	return occ.has(t) and occ[t].get_ref() != null
 
+## Verifica si dos actores están en una relación leader-follower
+func _are_actors_following(actor1: Node, actor2: Node) -> bool:
+	if not actor1 or not actor2:
+		return false
+
+	# Verificar si actor1 tiene FollowerComponent que sigue a actor2
+	var follower_comp1 = actor1.get_node_or_null("FollowerComponent")
+	if follower_comp1 and follower_comp1.is_active() and follower_comp1.leader == actor2:
+		return true
+
+	# Verificar si actor2 tiene FollowerComponent que sigue a actor1
+	var follower_comp2 = actor2.get_node_or_null("FollowerComponent")
+	if follower_comp2 and follower_comp2.is_active() and follower_comp2.leader == actor1:
+		return true
+
+	return false
+
 func can_step_to(actor: Node, from: Vector2i, to: Vector2i) -> bool:
 	# Verificaciones clásicas de bloqueo
 	if is_blocked(actor, to):
 		return false
 	if has_actor(to):
-		print("IS ACTOR " + str(occ[to].get_ref()))
-		return false
+		var occupying_actor = occ[to].get_ref()
+		# Si el actor ocupante está en relación leader-follower con el actor que intenta moverse,
+		# ignorar la ocupación para permitir el movimiento simultáneo
+		if occupying_actor and _are_actors_following(actor, occupying_actor):
+			# Permitir el movimiento, ignorando la ocupación
+			pass
+		else:
+			print("IS ACTOR " + str(occupying_actor))
+			return false
 	if res.has(to) and res[to].get_ref() != actor:
-		return false
+		var reserving_actor = res[to].get_ref()
+		# También ignorar reservas si están en relación leader-follower
+		if not reserving_actor or not _are_actors_following(actor, reserving_actor):
+			return false
 	# Verificar restricciones direccionales (PBI 454)
 	var direction = Vector2(to - from)
 
@@ -353,7 +389,30 @@ func reserve(_from: Vector2i, to: Vector2i, actor: Node) -> void:
 func commit(from: Vector2i, to: Vector2i, actor: Node) -> void:
 	if occ.get(from) and occ[from].get_ref() == actor:
 		occ.erase(from)
-	occ[to] = weakref(actor)
+
+	# Solo ocupar el tile destino si el actor NO tiene through activado
+	var is_through = false
+	if actor is Event and actor.current_page:
+		is_through = actor.current_page.through
+
+	if not is_through:
+		# Verificar si hay un evento en el tile destino que no sea through
+		# Si hay un evento through, podemos ocupar el tile
+		# Si hay un evento no-through, el evento mantiene la ocupación
+		var existing_event = event_at(to)
+		if existing_event and existing_event != actor:
+			# Hay un evento en el tile destino
+			if existing_event.current_page and not existing_event.current_page.through:
+				# El evento no es through, mantener su ocupación
+				# No ocupar el tile con el actor
+				pass
+			else:
+				# El evento es through, podemos ocupar el tile
+				occ[to] = weakref(actor)
+		else:
+			# No hay evento en el tile destino, ocupar normalmente
+			occ[to] = weakref(actor)
+
 	if res.get(to) and res[to].get_ref() == actor:
 		res.erase(to)
 
@@ -368,6 +427,12 @@ func vacate(tile: Vector2i, actor: Node) -> void:
 # --- Triggers / Interact ---
 func on_enter_tile(actor: Node, t: Vector2i) -> void:
 	if actor.is_in_group("Player"):  # o instanceof Player
+		# Ignorar eventos TOUCH cuando el movimiento es controlado por comando
+		# Esto evita que los eventos se activen durante movimientos automáticos (MoveNPCCommand, etc.)
+		var player_motion = actor.get_node_or_null("GridMotion")
+		if player_motion and player_motion.is_command_controlled:
+			return  # No activar eventos TOUCH durante movimiento controlado
+
 		var e = event_at(t)
 		if e:
 			e.on_player_touch()

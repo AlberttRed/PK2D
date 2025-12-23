@@ -1,4 +1,4 @@
-[gd_scene load_steps=82 format=4 uid="uid://ckeno4wg1vrv8"]
+[gd_scene load_steps=118 format=4 uid="uid://ckeno4wg1vrv8"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
@@ -21,6 +21,9 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="16_0876j"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="17_dr37c"]
 [ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="18_dr37c"]
+[ext_resource type="Script" uid="uid://dmcq3yagkvlqy" path="res://Scripts/Events/Commands/FollowActorCommand.gd" id="18_tsofr"]
+[ext_resource type="Texture2D" uid="uid://drdsledmb3gke" path="res://Sprites/Overworlds/Characters/phone001.png" id="19_7u2qs"]
+[ext_resource type="Script" uid="uid://bgcnb3pt4dxi7" path="res://Scripts/Events/Commands/SetSelfSwitchCommand.gd" id="20_qv1ht"]
 
 [sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("7_0876j")
@@ -400,14 +403,50 @@ script = ExtResource("17_dr37c")
 message = "¡Cuando se hagan fuertes me protegerán!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_xn6g0"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([17])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0876j"]
 load_path = "res://.godot/imported/trchar042.png-ac648df27b7631f8f4fdda8d741f26f8.ctex"
 
 [sub_resource type="Resource" id="Resource_dr37c"]
 script = ExtResource("5_u1wff")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_cvpjy"), SubResource("Resource_0876j")])
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_cvpjy"), SubResource("Resource_0876j"), SubResource("Resource_xn6g0")])
 movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_0876j")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_3i3x5"]
+script = ExtResource("5_u1wff")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_rmtse"]
+script = ExtResource("17_dr37c")
+message = "Te sigo o me sigues?"
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_odi7m"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Follower"
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_pijpc"]
+script = ExtResource("9_tsofr")
+path = Array[int]([1, 1, 1, 3, 0, 0, 1, 6, 7, 1, 1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_vusqy"]
+script = ExtResource("5_u1wff")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_rmtse"), SubResource("Resource_odi7m"), SubResource("Resource_pijpc")])
+required_self_switch = 1
+movement_speed = 1
+sprite_texture = ExtResource("19_7u2qs")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -475,6 +514,172 @@ script = ExtResource("5_u1wff")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_xuiob")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_hm2mc"]
+script = ExtResource("17_dr37c")
+message = "OAK: ¡Eh! ¡Alto!
+¡No te vayas!"
+wait_input = false
+wait_time = 1.0
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_4grk7"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([5, 17])
+wait_until_finished = false
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_pwx7d"]
+script = ExtResource("20_qv1ht")
+target_event_name = "Oak"
+metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
+
+[sub_resource type="Resource" id="Resource_noqo3"]
+script = ExtResource("12_0pviq")
+actor_name = "Oak"
+target_spawn = "Oak_Start1"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_mqd5d"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([10, 0, 0, 3, 0, 0, 3, 0, 0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_afi3b"]
+script = ExtResource("17_dr37c")
+message = "OAK: ¡Cuidado! ¡En la hierba viven POKéMON salvajes!"
+close_at_end = false
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_1x25a"]
+script = ExtResource("17_dr37c")
+message = "¡Necesitas a tu propio POKéMON como protección!"
+close_at_end = false
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_8dhr3"]
+script = ExtResource("17_dr37c")
+message = "¡Vente conmigo, anda!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_cjoya"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Oak"
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_0ucpo"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_wfrhm"]
+script = ExtResource("7_0876j")
+target_name = "Puerta_Lab"
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_8yycp"]
+script = ExtResource("8_dr37c")
+target_event_name = "Puerta_Lab"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_hs1n1"]
+script = ExtResource("8_dr37c")
+target_event_name = "Oak"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_un3pw"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_ymm04"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Oak"
+action = 1
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_bcf1a"]
+script = ExtResource("10_7u2qs")
+target_event_name = "Oak"
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_ctefp"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_oqqgs"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_bq58e"]
+script = ExtResource("7_0876j")
+target_name = "Puerta_Lab"
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_tgc4j"]
+script = ExtResource("13_ey1f0")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_ugsdx"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_hm2mc"), SubResource("Resource_4grk7"), SubResource("Resource_pwx7d"), SubResource("Resource_noqo3"), SubResource("Resource_mqd5d"), SubResource("Resource_afi3b"), SubResource("Resource_1x25a"), SubResource("Resource_8dhr3"), SubResource("Resource_cjoya"), SubResource("Resource_0ucpo"), SubResource("Resource_wfrhm"), SubResource("Resource_8yycp"), SubResource("Resource_hs1n1"), SubResource("Resource_un3pw"), SubResource("Resource_ymm04"), SubResource("Resource_bcf1a"), SubResource("Resource_ctefp"), SubResource("Resource_oqqgs"), SubResource("Resource_bq58e"), SubResource("Resource_yteb7"), SubResource("Resource_qv1ht"), SubResource("Resource_eglkp"), SubResource("Resource_tgc4j"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+through = true
+required_flag = "HAS_STARTER"
+required_flag_value = false
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_et8ko"]
+script = ExtResource("5_u1wff")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_smht1"]
+script = ExtResource("12_0pviq")
+actor_name = "Oak"
+target_spawn = "Oak_Start2"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_s8stc"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_cd0mo"]
+script = ExtResource("13_ey1f0")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_bpwes"]
+script = ExtResource("5_u1wff")
+trigger_type = 1
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_hm2mc"), SubResource("Resource_4grk7"), SubResource("Resource_pwx7d"), SubResource("Resource_smht1"), SubResource("Resource_mqd5d"), SubResource("Resource_afi3b"), SubResource("Resource_1x25a"), SubResource("Resource_8dhr3"), SubResource("Resource_cjoya"), SubResource("Resource_s8stc"), SubResource("Resource_wfrhm"), SubResource("Resource_8yycp"), SubResource("Resource_hs1n1"), SubResource("Resource_un3pw"), SubResource("Resource_ymm04"), SubResource("Resource_bcf1a"), SubResource("Resource_ctefp"), SubResource("Resource_oqqgs"), SubResource("Resource_bq58e"), SubResource("Resource_yteb7"), SubResource("Resource_qv1ht"), SubResource("Resource_eglkp"), SubResource("Resource_cd0mo"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+through = true
+required_flag = "HAS_STARTER"
+required_flag_value = false
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_vdvqs"]
+script = ExtResource("5_u1wff")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_n4566")
 pokemon_id = 16
@@ -540,14 +745,17 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_guue8"), SubResourc
 
 [node name="Fat_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(368, 496)
-movement_type = 1
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_7u2qs")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(48, 272)
-movement_type = 1
 random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c")])
+
+[node name="Oak" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
+position = Vector2(-112, 16)
+random_move_interval_min = 5.0
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_3i3x5"), SubResource("Resource_vusqy")])
 
 [node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(240, 304)
@@ -569,6 +777,14 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_tesob")])
 position = Vector2(464, 464)
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_glook")])
 
+[node name="Start1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(336, -16)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ugsdx"), SubResource("Resource_et8ko")])
+
+[node name="Start2" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
+position = Vector2(368, -16)
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_bpwes"), SubResource("Resource_vdvqs")])
+
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
 [node name="Spawn_CasaRed" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
@@ -582,6 +798,14 @@ position = Vector2(432, 176)
 [node name="Spawn_Lab" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
 visible = false
 position = Vector2(464, 368)
+
+[node name="Oak_Start1" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+visible = false
+position = Vector2(272, 208)
+
+[node name="Oak_Start2" parent="OverworldGrid/SpawnPoints" instance=ExtResource("18_dr37c")]
+visible = false
+position = Vector2(304, 208)
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_1slxk")]
 

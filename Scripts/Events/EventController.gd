@@ -19,6 +19,7 @@ var current_command_index: int = 0
 var is_parallel: bool = false
 var waiting_async: bool = false
 var blocked_by_page: bool = false
+var executing_branch: bool = false  # Flag para indicar que estamos ejecutando comandos dentro de un branch
 
 func is_busy() -> bool:
 	return current_state == State.RUNNING
@@ -97,6 +98,10 @@ func execute_next_command() -> void:
 
 func continue_execution() -> void:
 	if current_state != State.RUNNING:
+		return
+	# Si estamos ejecutando comandos dentro de un branch, no avanzar el EventController
+	# El branch se encarga de ejecutar los comandos secuencialmente
+	if executing_branch:
 		return
 	if is_parallel:
 		waiting_async = false

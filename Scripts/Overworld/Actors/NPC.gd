@@ -242,11 +242,11 @@ func _update_movement_from_current_page() -> void:
 	# Actualizar velocidad desde la página actual
 	motion.base_speed = MoveSpeedEnum.to_multiplier(get_movement_speed())
 
-	# Si la dirección actual es cero, aplicar la dirección inicial de la página
-	if motion.dir == Vector2.ZERO:
-		motion.dir = DirectionEnum.to_vector2(get_initial_direction())
-		if animator:
-			animator.idle(motion.dir)
+	# Aplicar la dirección inicial de la página cuando cambia la página activa
+	# Esto asegura que el NPC respete el initial_direction configurado en la nueva página
+	motion.dir = DirectionEnum.to_vector2(get_initial_direction())
+	if animator:
+		animator.idle(motion.dir)
 
 	# Si cambió el tipo de movimiento, reconfigurear timers
 	# Primero eliminar timers existentes
