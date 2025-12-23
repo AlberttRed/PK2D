@@ -20,30 +20,20 @@ enum ExecutionMode { QUEUED, PARALLEL }
 @export_range(1, 10) var detection_range: int = 5
 
 @export_group("Conditions")
-## Nombre del flag global requerido para activar esta página
-## Ejemplo: "route_1_trainer_defeated"
-@export var required_flag: String = ""
+## Condición raíz del árbol de condiciones (opcional)
+## Si está definida, se usa en lugar del sistema legacy (conditions array)
+## Permite expresiones lógicas anidadas complejas (AND/OR/NOT)
+@export var root_condition: EventCondition = null
 
-## Valor que debe tener el flag (true/false)
-@export var required_flag_value: bool = true
+## [LEGACY] Array de condiciones basadas en Resources (EventCondition)
+## Se usa solo si root_condition es null
+## Cada condición se evalúa en tiempo de ejecución para determinar si la página está activa
+@export var conditions: Array[EventCondition] = []
 
-## Nombre de variable global requerida (futuro)
-@export var required_variable: String = ""
-
-## Operador de comparación para la variable (futuro)
-@export_enum("==", "!=", ">", "<", ">=", "<=") var variable_operator: int = 0
-
-## Valor que debe tener la variable (futuro)
-@export var variable_value: int = 0
-
-## Self-switch requerido (A, B, C, D)
-@export_enum("NONE", "A", "B", "C", "D") var required_self_switch: int = 0
-
-## Valor que debe tener el self-switch
-@export var required_self_switch_value: bool = true
-
-## Si true, invierte todas las condiciones (NOT)
-@export var invert_conditions: bool = false
+## [LEGACY] Modo de evaluación de condiciones: ALL (todas deben cumplirse) o ANY (al menos una)
+## Se usa solo si root_condition es null
+enum ConditionMode { ALL, ANY }
+@export var condition_mode: ConditionMode = ConditionMode.ALL
 
 @export_group("Movement (NPC)")
 ## Tipo de movimiento del NPC (solo para NPCs)
@@ -121,57 +111,43 @@ func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
 ## Evalúa si las condiciones de esta página se cumplen
 ## Retorna true si la página puede activarse
 func evaluate_conditions(event_id: String = "") -> bool:
-	var result = true
+	# Crear el contexto de evaluación
+	var context = EventConditionContext.new(event_id, GameStateService)
 
-	# Evaluar flag global
-	if not required_flag.is_empty():
-		var flag_value = GameStateService.get_event_flag(required_flag)
-		if flag_value != required_flag_value:
-			result = false
+	# Prioridad: usar root_condition si está definido
+	if root_condition:
+		return root_condition.evaluate(context)
 
-	# Evaluar variable global (futuro)
-	if not required_variable.is_empty():
-		var var_value = GameStateService.get_variable(required_variable)
-		var comparison_result = _compare_values(var_value, variable_value, variable_operator)
-		if not comparison_result:
-			result = false
+	# Fallback: usar sistema legacy (conditions array)
+	if conditions.size() == 0:
+		return true
 
-	# Evaluar self-switch
-	if required_self_switch > 0:  # 0 = NONE
-		var switch_letter = ["A", "B", "C", "D"][required_self_switch - 1]
-		var switch_value = GameStateService.get_self_switch(event_id, switch_letter)
-		if switch_value != required_self_switch_value:
-			result = false
-
-	# Invertir resultado si se configuró
-	if invert_conditions:
-		result = not result
-
-	return result
+	# Evaluar según el modo (ALL o ANY)
+	match condition_mode:
+		ConditionMode.ALL:
+			# Todas las condiciones deben cumplirse
+			for condition in conditions:
+				if not condition or not condition.evaluate(context):
+					return false
+			return true
+		ConditionMode.ANY:
+			# Al menos una condición debe cumplirse
+			for condition in conditions:
+				if condition and condition.evaluate(context):
+					return true
+			return false
+		_:
+			return true
 
 
 ## Retorna true si esta página tiene alguna condición configurada
 func has_conditions() -> bool:
-	return not required_flag.is_empty() or not required_variable.is_empty() or required_self_switch > 0
+	# Verificar si tiene root_condition
+	if root_condition:
+		return true
 
-
-## Compara dos valores según el operador
-func _compare_values(a: int, b: int, operator: int) -> bool:
-	match operator:
-		0:  # ==
-			return a == b
-		1:  # !=
-			return a != b
-		2:  # >
-			return a > b
-		3:  # <
-			return a < b
-		4:  # >=
-			return a >= b
-		5:  # <=
-			return a <= b
-		_:
-			return false
+	# Verificar sistema legacy
+	return conditions.size() > 0
 
 
 ## Busca el primer comando de un tipo específico en esta página
