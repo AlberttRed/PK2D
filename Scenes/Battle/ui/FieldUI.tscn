@@ -14,8 +14,8 @@
 [ext_resource type="Texture2D" uid="uid://unhc837nw13f" path="res://Sprites/Pictures/trback000.png" id="38_3nbt5"]
 [ext_resource type="Texture2D" uid="uid://c4puegakcpko3" path="res://Sprites/Pictures/trback001.png" id="39_xa6db"]
 [ext_resource type="Texture2D" uid="uid://dxj30833a3l3h" path="res://Sprites/Pictures/battleFoeBoxS.png" id="43_b6gim"]
-[ext_resource type="Texture2D" uid="uid://djf81m7hm70ah" path="res://Sprites/Pictures/trainer005.png" id="44_fx3em"]
-[ext_resource type="Texture2D" uid="uid://dpvsyjsowf5c4" path="res://Sprites/Pictures/trainer006.png" id="45_3vgjn"]
+[ext_resource type="Texture2D" uid="uid://djf81m7hm70ah" path="res://Sprites/Batalla/Trainers/trainer005.png" id="44_fx3em"]
+[ext_resource type="Texture2D" uid="uid://dpvsyjsowf5c4" path="res://Sprites/Batalla/Trainers/trainer006.png" id="45_3vgjn"]
 
 [node name="FieldUI" type="Control"]
 z_as_relative = false

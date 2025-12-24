@@ -44,3 +44,19 @@ func evaluate(context: EventConditionContext) -> bool:
 		_:
 			return true
 
+## Verifica si este grupo de condiciones depende de una variable global específica
+## Recorre recursivamente todas las condiciones hijas
+func depends_on_variable(variable_name: String) -> bool:
+	for child in children:
+		if child and child.depends_on_variable(variable_name):
+			return true
+	return false
+
+## Verifica si este grupo de condiciones depende de un flag global específico
+## Recorre recursivamente todas las condiciones hijas
+func depends_on_flag(flag_name: String) -> bool:
+	for child in children:
+		if child and child.depends_on_flag(flag_name):
+			return true
+	return false
+

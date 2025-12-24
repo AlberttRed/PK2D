@@ -27,7 +27,8 @@ class_name UseMOCommand
 
 ## Self-Switch a activar tras éxito (opcional)
 ## Si no está vacío, activa este self-switch cuando la MO se complete con éxito
-## Valores: "A", "B", "C", "D", o vacío para no activar ninguno
+## Puede ser cualquier string (no limitado a A, B, C, D)
+## Ejemplos: "A", "B", "cut", "talked", "opened", etc.
 @export var activate_self_switch_on_success: String = "A"
 
 func execute(context: Node) -> void:
@@ -97,14 +98,14 @@ func _get_target(context: Node) -> Node:
 	return null
 
 ## Activa un self-switch en el target
-func _activate_self_switch(target: Node, switch_letter: String) -> void:
+func _activate_self_switch(target: Node, switch_name: String) -> void:
 	if not target:
 		push_warning("UseMOCommand: Target nulo, no se puede activar self-switch")
 		return
 
-	# Validar que es una letra válida
-	if not switch_letter in ["A", "B", "C", "D"]:
-		push_warning("UseMOCommand: Self-switch '%s' inválido. Usa A, B, C o D" % switch_letter)
+	# Validar que el nombre del switch no esté vacío
+	if switch_name.is_empty():
+		push_warning("UseMOCommand: El nombre del self-switch está vacío")
 		return
 
 	# Obtener el ID del evento (incluyendo map_id para evitar colisiones)
@@ -115,8 +116,8 @@ func _activate_self_switch(target: Node, switch_letter: String) -> void:
 		event_id = target.name  # Fallback si no tiene el método
 
 	# Activar el self-switch en GameStateService
-	GameStateService.set_self_switch(event_id, switch_letter, true)
-	print("UseMOCommand: Self-switch '%s:%s' activado" % [event_id, switch_letter])
+	GameStateService.set_self_switch(event_id, switch_name, true)
+	print("UseMOCommand: Self-switch '%s:%s' activado" % [event_id, switch_name])
 
 ## Indica que este comando es asíncrono
 func is_async() -> bool:

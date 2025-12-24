@@ -12,3 +12,17 @@ func evaluate(context: EventConditionContext) -> bool:
 
 	return not child.evaluate(context)
 
+## Verifica si esta condición depende de una variable global específica
+## Verifica recursivamente la condición hija
+func depends_on_variable(variable_name: String) -> bool:
+	if child:
+		return child.depends_on_variable(variable_name)
+	return false
+
+## Verifica si esta condición depende de un flag global específico
+## Verifica recursivamente la condición hija
+func depends_on_flag(flag_name: String) -> bool:
+	if child:
+		return child.depends_on_flag(flag_name)
+	return false
+

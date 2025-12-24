@@ -6,7 +6,7 @@ extends Node
 
 # === SEÑALES ===
 signal flag_changed(flag_name: String, new_value: bool)
-signal variable_changed(variable_name: String, new_value: int)
+signal variable_changed(variable_name: String, new_value: Variant)
 signal self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
 
 # === DATOS DEL ESTADO DEL JUEGO ===
@@ -67,8 +67,13 @@ func get_all_event_flags() -> Dictionary:
 	return global_flags.duplicate()
 
 ## Retorna el valor de una variable global
-func get_variable(var_name: String, default_value: int = 0) -> int:
+## Puede ser de cualquier tipo: int, bool, String, float, etc.
+func get_variable(var_name: String, default_value: Variant = 0) -> Variant:
 	return game_variables.get(var_name, default_value)
+
+## Verifica si una variable global existe en el diccionario
+func has_variable(var_name: String) -> bool:
+	return game_variables.has(var_name)
 
 ## Retorna el valor de un self-switch (event_self_flag)
 ## event_id: ID único del evento (ej: "map_route1_trainer01")
@@ -108,10 +113,11 @@ func clear_event_flag(flag_name: String) -> void:
 		flag_changed.emit(flag_name, false)
 
 ## Establece el valor de una variable global
-func set_variable(var_name: String, value: int) -> void:
+## El valor puede ser de cualquier tipo: int, bool, String, float, etc.
+func set_variable(var_name: String, value: Variant) -> void:
 	var old_value = game_variables.get(var_name, null)
 	game_variables[var_name] = value
-	print("GameStateService: Variable '%s' establecida a: %d" % [var_name, value])
+	print("GameStateService: Variable '%s' establecida a: %s (tipo: %s)" % [var_name, value, typeof(value)])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:

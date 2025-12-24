@@ -260,13 +260,33 @@ func _connect_to_state_signals() -> void:
 
 
 ## Callback cuando cambia un flag global
-func _on_state_changed(_flag_name: String, _new_value: bool) -> void:
-	refresh_active_page()
+func _on_state_changed(flag_name: String, _new_value: bool) -> void:
+	# Reevaluar solo si la página actual o alguna página inactiva depende de este flag
+	var should_refresh = false
+	if current_page and current_page.depends_on_flag(flag_name):
+		should_refresh = true
+	else:
+		for page in pages:
+			if page and page.depends_on_flag(flag_name):
+				should_refresh = true
+				break
+	if should_refresh:
+		refresh_active_page()
 
 
 ## Callback cuando cambia una variable global
-func _on_state_changed_var(_variable_name: String, _new_value: int) -> void:
-	refresh_active_page()
+func _on_state_changed_var(variable_name: String, _new_value: Variant) -> void:
+	# Reevaluar solo si la página actual o alguna página inactiva depende de esta variable
+	var should_refresh = false
+	if current_page and current_page.depends_on_variable(variable_name):
+		should_refresh = true
+	else:
+		for page in pages:
+			if page and page.depends_on_variable(variable_name):
+				should_refresh = true
+				break
+	if should_refresh:
+		refresh_active_page()
 
 
 ## Callback cuando cambia un self-switch

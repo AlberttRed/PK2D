@@ -9,7 +9,7 @@ class_name ShowChoicesCommand
 ## Uso:
 ## 1. Añadir este comando a la lista de comandos de una EventPage
 ## 2. Configurar el mensaje que aparecerá antes de las opciones
-## 3. Crear EventBranch para cada opción disponible
+## 3. Crear ChoiceBranch para cada opción disponible
 ## 4. En cada branch, añadir los comandos que se ejecutarán si esa opción es seleccionada
 ##
 ## Ejemplo:
@@ -29,7 +29,7 @@ class_name ShowChoicesCommand
 
 ## Lista de branches (ramas) disponibles para el jugador
 ## Cada branch contiene un label (texto de la opción) y comandos a ejecutar
-@export var branches: Array[EventBranch] = []
+@export var branches: Array[ChoiceBranch] = []
 
 @export_group("Optional")
 
@@ -61,14 +61,26 @@ func execute(context: Node) -> void:
 
 	print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
 
-	# Guardar resultado en variable global si está configurado
-	if not store_result_in.is_empty():
-		GameStateService.set_event_variable(store_result_in, _selected_index)
-		print("ShowChoicesCommand: Resultado guardado en variable '%s' = %d" % [store_result_in, _selected_index])
-
 	# Ejecutar los comandos del branch seleccionado
 	if _selected_index >= 0 and _selected_index < branches.size():
 		var selected_branch = branches[_selected_index]
+
+		# Guardar resultado en variable global si está configurado
+		if not store_result_in.is_empty():
+			# Si el branch tiene value_stored informado, usar ese valor
+			# Si no, guardar null
+			var value_to_store: Variant
+			if selected_branch.value_stored != null:
+				# Verificar si es string vacío (también se considera "no informado")
+				if typeof(selected_branch.value_stored) == TYPE_STRING and selected_branch.value_stored == "":
+					value_to_store = null
+				else:
+					value_to_store = selected_branch.value_stored
+			else:
+				value_to_store = null
+
+			GameStateService.set_variable(store_result_in, value_to_store)
+			print("ShowChoicesCommand: Resultado guardado en variable '%s' = %s (tipo: %s)" % [store_result_in, value_to_store, typeof(value_to_store)])
 		print("ShowChoicesCommand: Ejecutando branch '%s' con %d comandos" % [selected_branch.label, selected_branch.commands.size()])
 
 		# Activar el flag de branch para prevenir que continue_execution() avance el EventController

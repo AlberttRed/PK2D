@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="TrainerData" load_steps=6 format=3 uid="uid://bh30akwr2lc3o"]
+
+[ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_0retp"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_56uki"]
+[ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="2_0retp"]
+
+[sub_resource type="Resource" id="Resource_sgijj"]
+script = ExtResource("1_0retp")
+metadata/_custom_type_script = "uid://c4x2p6dx540kg"
+
+[sub_resource type="Resource" id="Resource_56uki"]
+script = ExtResource("1_56uki")
+pokemon_id = 7
+metadata/_custom_type_script = "uid://d4mopscjx7rum"
+
+[resource]
+script = ExtResource("2_0retp")
+trainer_id = 3
+trainer_class_id = 200
+display_name = "Blue"
+ai_profile = SubResource("Resource_sgijj")
+intro_text = ""
+defeat_text = "¿QUÉ?
+¡Increíble!
+¡Tu POKéMON es mejor que el mío!"
+party_data = Array[ExtResource("1_56uki")]([SubResource("Resource_56uki")])
+metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TrainerClassData" load_steps=3 format=3 uid="uid://dqqceh4q3awis"]
+
+[ext_resource type="Texture2D" uid="uid://denswccpqsu42" path="res://Sprites/Batalla/Trainers/trainer004.png" id="1_8gmk2"]
+[ext_resource type="Script" uid="uid://rtl6lttslxe3" path="res://Scripts/Resources/Classes/TrainerClassData.gd" id="1_ah3ek"]
+
+[resource]
+script = ExtResource("1_ah3ek")
+internal_name = "rival"
+display_name = "Rival"
+default_battle_front_sprite = ExtResource("1_8gmk2")
+metadata/_custom_type_script = "uid://rtl6lttslxe3"

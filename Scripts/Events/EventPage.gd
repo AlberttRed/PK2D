@@ -149,6 +149,34 @@ func has_conditions() -> bool:
 	# Verificar sistema legacy
 	return conditions.size() > 0
 
+## Verifica si esta página depende de una variable global específica
+## Retorna true si alguna condición de la página usa la variable
+func depends_on_variable(variable_name: String) -> bool:
+	# Prioridad: verificar root_condition si está definido
+	if root_condition:
+		return root_condition.depends_on_variable(variable_name)
+
+	# Fallback: verificar sistema legacy (conditions array)
+	for condition in conditions:
+		if condition and condition.depends_on_variable(variable_name):
+			return true
+
+	return false
+
+## Verifica si esta página depende de un flag global específico
+## Retorna true si alguna condición de la página usa el flag
+func depends_on_flag(flag_name: String) -> bool:
+	# Prioridad: verificar root_condition si está definido
+	if root_condition:
+		return root_condition.depends_on_flag(flag_name)
+
+	# Fallback: verificar sistema legacy (conditions array)
+	for condition in conditions:
+		if condition and condition.depends_on_flag(flag_name):
+			return true
+
+	return false
+
 
 ## Busca el primer comando de un tipo específico en esta página
 ## Retorna el comando o null si no se encuentra
