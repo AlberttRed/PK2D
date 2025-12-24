@@ -2,7 +2,7 @@ extends EventCommand
 class_name SetVariableCommand
 
 ## Comando para establecer o modificar variables globales del juego
-## Las variables se guardan en GameStateService y persisten durante la sesión
+## Las variables se guardan en game_variables (GameStateService) y persisten durante la sesión
 
 @export_group("Variable")
 ## Nombre de la variable a modificar
@@ -46,6 +46,7 @@ func execute(_context: Node) -> void:
 				new_value = current_value
 
 	print("SetVariableCommand: '%s' %s %d = %d" % [variable_name, _get_operation_name(), value, new_value])
+	# Establecer variable en GameStateService (usa game_variables internamente)
 	GameStateService.set_variable(variable_name, new_value)
 
 func _get_operation_name() -> String:

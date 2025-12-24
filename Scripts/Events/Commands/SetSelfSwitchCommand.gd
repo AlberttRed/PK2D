@@ -1,8 +1,9 @@
 extends EventCommand
 class_name SetSelfSwitchCommand
 
-## Comando para establecer self-switches locales del evento
-## Los self-switches son específicos de cada evento y se usan para trackear su estado interno
+## Comando para establecer self-switches (event_self_flags) locales del evento
+## Los self-switches se guardan en event_self_flags con formato "event_uid:switch_letter"
+## Son específicos de cada evento y se usan para trackear su estado interno
 ## Si no se especifica target_event_name, se usará el evento actual donde se ejecuta el comando
 
 @export_group("Target Event")
@@ -40,6 +41,7 @@ func execute(context: Node) -> void:
 	var letter = ["A", "B", "C", "D"][switch_letter]
 
 	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, letter, switch_value])
+	# Establecer self-switch en GameStateService (usa event_self_flags internamente)
 	GameStateService.set_self_switch(event_id, letter, switch_value)
 
 ## Obtiene el ID del evento que está ejecutando este comando
