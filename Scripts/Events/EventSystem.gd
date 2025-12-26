@@ -61,7 +61,10 @@ func request_event(event: Event) -> void:
 		# No emitir event_started para paralelas (no bloquean); quienes lo necesiten pueden escuchar page_finished
 		return
 
-	var is_autorun := page_copy.trigger_type == EventTriggers.TriggerType.AUTORUN
+	# Verificar si es autorun usando el nuevo sistema de triggers
+	var page_trigger = page_copy.get_effective_trigger()
+	var is_autorun = page_trigger is AutorunTrigger
+
 	enqueue_page(page_copy, is_autorun)
 
 ## Encola una EventPage (copiada). Autorun va al frente con prioridad.

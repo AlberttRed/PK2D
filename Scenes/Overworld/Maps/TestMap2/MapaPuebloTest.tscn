@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="12_hok4v"]
 [ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="13_4hhom"]
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="14_eyjmi"]
-[ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="15_7vpoe"]
+[ext_resource type="Script" uid="uid://bishot1cjlcrk" path="res://Scripts/Resources/ChoiceBranch.gd" id="15_7vpoe"]
 [ext_resource type="Texture2D" uid="uid://bfcane6ehs7ny" path="res://Sprites/Overworlds/Characters/NPC 06.png" id="15_lub8c"]
 [ext_resource type="PackedScene" uid="uid://c8a7yxm1qw8kb" path="res://Scenes/Overworld/Actors/Trainer.tscn" id="16_3rt2b"]
 [ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="16_4hhom"]
@@ -175,7 +175,7 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 script = ExtResource("15_7vpoe")
 label = "PSOE"
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_0patm")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://bishot1cjlcrk"
 
 [sub_resource type="Resource" id="Resource_1taa3"]
 script = ExtResource("6_fih2l")
@@ -186,7 +186,7 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 script = ExtResource("15_7vpoe")
 label = "PP"
 commands = Array[ExtResource("5_3rt2b")]([SubResource("Resource_1taa3")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://bishot1cjlcrk"
 
 [sub_resource type="Resource" id="Resource_lelka"]
 script = ExtResource("16_ujg4f")

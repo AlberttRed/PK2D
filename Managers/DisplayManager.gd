@@ -154,11 +154,11 @@ static func is_fading() -> bool:
 	return instance._is_fading()
 
 ## Inicia una batalla y devuelve el ganador
-static func start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
+static func start_battle(participants: Array[BattleParticipant], rules: BattleRules, from_event: bool = false) -> String:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return ""
-	return await instance._start_battle(participants, rules)
+	return await instance._start_battle(participants, rules, from_event)
 
 ## Ejecuta la transición de entrada a batalla con efecto de máscara
 static func play_battle_transition(texture_path: String, duration: float = 1.5) -> void:
@@ -334,8 +334,12 @@ func _is_visible() -> bool:
 	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible)
 
 ## Método privado para iniciar batalla
-func _start_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
-	print("DisplayManager: Iniciando batalla...")
+## from_event: true si el combate fue iniciado desde un evento (no desbloquear control al terminar)
+func _start_battle(participants: Array[BattleParticipant], rules: BattleRules, from_event: bool = false) -> String:
+	print("DisplayManager: Iniciando batalla... (from_event: %s)" % from_event)
+
+	# Guardar si el combate fue iniciado desde un evento
+	_battle_from_event = from_event
 
 	# Bloquear control del jugador al iniciar batalla
 	player_control_blocked.emit()
@@ -369,6 +373,7 @@ func _start_battle(participants: Array[BattleParticipant], rules: BattleRules) -
 ## Espera a que termine el cleanup de batalla y devuelve el ganador
 var _battle_winner: String = ""
 var _battle_cleanup_done: bool = false
+var _battle_from_event: bool = false  # Indica si el combate fue iniciado desde un evento
 
 func _wait_for_battle_cleanup() -> String:
 	# Esperar a que _on_battle_finished termine
@@ -473,8 +478,13 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Emitir señal de batalla terminada (señal de DisplayManager)
 	battle_finished.emit(_winner_side)
 
-	# Desbloquear control del jugador
-	player_control_unblocked.emit()
+	# Solo desbloquear control del jugador si el combate NO fue iniciado desde un evento
+	# Si fue desde un evento, el EventController se encargará de desbloquear cuando termine
+	if not _battle_from_event:
+		player_control_unblocked.emit()
+		print("DisplayManager: Combate no iniciado desde evento, desbloqueando control del jugador")
+	else:
+		print("DisplayManager: Combate iniciado desde evento, NO desbloqueando control (EventController lo manejará)")
 
 	# Marcar cleanup como completado
 	_battle_cleanup_done = true
@@ -626,9 +636,18 @@ func _input(event: InputEvent) -> void:
 
 	var input_consumed = false
 
+	# Verificar si el MessageBox de batalla está visible
+	var battle_message_box_visible = false
+	if BattleNew.visible:
+		var battle_ui = BattleNew.get_node_or_null("BattleUI")
+		if battle_ui and battle_ui.has_node("MessageBox"):
+			var battle_msg = battle_ui.get_node("MessageBox")
+			if battle_msg and battle_msg.visible:
+				battle_message_box_visible = true
+
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_current_portrait_box != null && _current_portrait_box.visible):
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -672,7 +691,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible)):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or battle_message_box_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===

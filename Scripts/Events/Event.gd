@@ -147,6 +147,25 @@ func update_sprite_from_current_page() -> void:
 	# Actualizar ocupación en el grid (through, blocks_player)
 	_refresh_occupancy()
 
+## Intenta activar el evento con la señal dada
+## Retorna true si el evento se activó, false en caso contrario
+func try_fire(signal_type: EventTriggerSignal.SignalType, instigator: Node) -> bool:
+	if not current_page:
+		return false
+
+	# Obtener el trigger efectivo de la página
+	var page_trigger = current_page.get_effective_trigger()
+	if not page_trigger:
+		return false
+
+	# Verificar si el trigger puede activarse
+	if not page_trigger.can_fire(signal_type, overworld_context, self, instigator):
+		return false
+
+	# Activar el evento
+	page_trigger.fire(signal_type, overworld_context, self, instigator)
+	return true
+
 func trigger() -> void:
 	if current_page:
 		print("Event '%s' triggered!" % name)
@@ -160,21 +179,20 @@ func trigger() -> void:
 
 func on_player_action() -> void:
 	# Si el jugador pulsa "A" frente al evento
-	if current_page and current_page.trigger_type == EventTriggers.TriggerType.ACTION:
-		print("Interact!")
-		trigger()
+	if current_page:
+		try_fire(EventTriggerSignal.SignalType.ACTION, get_tree().get_first_node_in_group("Player"))
 
 func on_player_touch() -> void:
 	# Si el jugador entra en la misma celda
-	if current_page and current_page.trigger_type == EventTriggers.TriggerType.TOUCH:
-		print("Touched!")
-		trigger()
+	if current_page:
+		var player = get_tree().get_first_node_in_group("Player")
+		try_fire(EventTriggerSignal.SignalType.TOUCH, player)
 
 func on_player_collision() -> void:
 	# Si el jugador colisiona contra el evento (intenta entrar pero no puede)
-	if current_page and current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
-		print("Player collided!")
-		trigger()
+	if current_page:
+		var player = get_tree().get_first_node_in_group("Player")
+		try_fire(EventTriggerSignal.SignalType.COLLISION, player)
 
 ## Oculta el sprite placeholder (solo se usa en el editor)
 func hide_placeholder_sprite() -> void:
@@ -234,9 +252,17 @@ func refresh_active_page() -> void:
 
 	# Si cambió de página, puede haber nuevo trigger type
 	if old_page_index != current_page_index:
-		# Si la nueva página es AUTORUN, trigger inmediato
-		if current_page and current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
-			call_deferred("trigger")
+		# Si la nueva página tiene un AutorunTrigger, trigger inmediato
+		if current_page:
+			var page_trigger = current_page.get_effective_trigger()
+			if page_trigger is AutorunTrigger:
+				# Disparar con PAGE_ACTIVATED
+				call_deferred("_fire_autorun")
+
+## Dispara el autorun cuando la página se activa
+func _fire_autorun() -> void:
+	if current_page and overworld_context:
+		try_fire(EventTriggerSignal.SignalType.PAGE_ACTIVATED, self)
 
 ## Duplica todas las páginas para evitar modificar los Resources originales
 ## Esto permite que cada instancia del evento tenga sus propias copias que pueden modificarse
@@ -260,13 +286,33 @@ func _connect_to_state_signals() -> void:
 
 
 ## Callback cuando cambia un flag global
-func _on_state_changed(_flag_name: String, _new_value: bool) -> void:
-	refresh_active_page()
+func _on_state_changed(flag_name: String, _new_value: bool) -> void:
+	# Reevaluar solo si la página actual o alguna página inactiva depende de este flag
+	var should_refresh = false
+	if current_page and current_page.depends_on_flag(flag_name):
+		should_refresh = true
+	else:
+		for page in pages:
+			if page and page.depends_on_flag(flag_name):
+				should_refresh = true
+				break
+	if should_refresh:
+		refresh_active_page()
 
 
 ## Callback cuando cambia una variable global
-func _on_state_changed_var(_variable_name: String, _new_value: int) -> void:
-	refresh_active_page()
+func _on_state_changed_var(variable_name: String, _new_value: Variant) -> void:
+	# Reevaluar solo si la página actual o alguna página inactiva depende de esta variable
+	var should_refresh = false
+	if current_page and current_page.depends_on_variable(variable_name):
+		should_refresh = true
+	else:
+		for page in pages:
+			if page and page.depends_on_variable(variable_name):
+				should_refresh = true
+				break
+	if should_refresh:
+		refresh_active_page()
 
 
 ## Callback cuando cambia un self-switch
@@ -287,3 +333,7 @@ func _get_event_id() -> String:
 
 func set_overworld_context(context: OverworldContext) -> void:
 	overworld_context = context
+	# Re-evaluar la página activa después de recibir el contexto
+	# Esto asegura que el event_id se calcula con el map_id correcto
+	# (importante cuando se carga un mapa después de un teleport)
+	refresh_active_page()

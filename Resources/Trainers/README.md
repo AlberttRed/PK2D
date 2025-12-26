@@ -120,8 +120,8 @@ Resources/Trainers/
 │   ├── rival_cerulean.tres
 │   └── ...
 └── trainers/
-    ├── youngster_joey.tres
-    └── ...
+	├── youngster_joey.tres
+	└── ...
 ```
 
 ## ✨ Ventajas del sistema
@@ -149,7 +149,7 @@ var reward = trainer.calculate_reward()
 
 # Verificar estado
 if trainer.has_valid_party():
-    print("Equipo válido")
+	print("Equipo válido")
 
 # Debug
 trainer.print_trainer_info()
@@ -162,4 +162,3 @@ El sistema TrainerData es **retrocompatible**:
 - Si un Battler SÍ tiene `trainer_data`, se carga automáticamente desde ahí
 
 Ambos modos pueden coexistir en el mismo proyecto.
-

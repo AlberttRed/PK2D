@@ -15,10 +15,14 @@ enum Type {
 	DOWN,        ## Movimiento: abajo
 	LEFT,        ## Movimiento: izquierda
 	RIGHT,       ## Movimiento: derecha
-	LOOK_UP,     ## Solo mirar arriba (sin moverse)
-	LOOK_DOWN,   ## Solo mirar abajo (sin moverse)
-	LOOK_LEFT,   ## Solo mirar izquierda (sin moverse)
-	LOOK_RIGHT,  ## Solo mirar derecha (sin moverse)
+	LOOK_UP,     ## Solo mirar arriba (sin moverse, sin animación)
+	LOOK_DOWN,   ## Solo mirar abajo (sin moverse, sin animación)
+	LOOK_LEFT,   ## Solo mirar izquierda (sin moverse, sin animación)
+	LOOK_RIGHT,  ## Solo mirar derecha (sin moverse, sin animación)
+	TURN_UP,     ## Girar arriba con animación de caminar (sin moverse)
+	TURN_DOWN,   ## Girar abajo con animación de caminar (sin moverse)
+	TURN_LEFT,   ## Girar izquierda con animación de caminar (sin moverse)
+	TURN_RIGHT,  ## Girar derecha con animación de caminar (sin moverse)
 	LOOK_PLAYER, ## Solo mirar hacia el jugador (sin moverse)
 	WAIT_025,    ## Espera de 0.25 segundos
 	WAIT_050,    ## Espera de 0.5 segundos
@@ -42,6 +46,10 @@ static func to_vector2(direction: int) -> Vector2:
 		Type.LOOK_DOWN: return Vector2.DOWN
 		Type.LOOK_LEFT: return Vector2.LEFT
 		Type.LOOK_RIGHT: return Vector2.RIGHT
+		Type.TURN_UP: return Vector2.UP
+		Type.TURN_DOWN: return Vector2.DOWN
+		Type.TURN_LEFT: return Vector2.LEFT
+		Type.TURN_RIGHT: return Vector2.RIGHT
 		Type.LOOK_PLAYER: return Vector2.ZERO  # Se calculará dinámicamente
 		_: return Vector2.ZERO
 
@@ -50,11 +58,21 @@ static func is_movement(direction: int) -> bool:
 	match direction:
 		Type.UP, Type.DOWN, Type.LEFT, Type.RIGHT:
 			return true
-		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT, Type.LOOK_PLAYER, \
+		Type.LOOK_UP, Type.LOOK_DOWN, Type.LOOK_LEFT, Type.LOOK_RIGHT, \
+		Type.TURN_UP, Type.TURN_DOWN, Type.TURN_LEFT, Type.TURN_RIGHT, \
+		Type.LOOK_PLAYER, \
 		Type.WAIT_025, Type.WAIT_050, Type.WAIT_100, \
 		Type.SPEED_SLOWEST, Type.SPEED_SLOWER, Type.SPEED_NORMAL, Type.SPEED_FASTER, Type.SPEED_FASTEST, \
 		Type.EXCLAMATION_ANIM:
 			return false
+		_:
+			return false
+
+## Verifica si es un comando TURN (giro con animación sin movimiento)
+static func is_turn(direction: int) -> bool:
+	match direction:
+		Type.TURN_UP, Type.TURN_DOWN, Type.TURN_LEFT, Type.TURN_RIGHT:
+			return true
 		_:
 			return false
 

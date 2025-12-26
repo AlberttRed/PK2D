@@ -174,6 +174,57 @@ func face(d: Vector2) -> void:
 		if self.previous_dir != d:
 			direction_changed.emit(d)
 
+## Ejecuta un giro con animación de caminar sin moverse (para comandos TURN)
+## Similar a initial_step pero siempre ejecuta la animación, incluso si ya está mirando en esa dirección
+func try_turn(d: Vector2) -> bool:
+	if d == Vector2.ZERO:
+		return false
+
+	# Revalidar grid antes de cualquier acceso
+	if not grid or not is_instance_valid(grid):
+		_refresh_grid()
+		if not grid or not is_instance_valid(grid):
+			return false
+
+	if moving:
+		return false
+
+	# Cambiar la dirección
+	face(d)
+
+	# Obtener el tile actual (no nos movemos)
+	var from = current_tile()
+	var to = from
+
+	# Configurar como initial_step para usar turn_duration y no ejecutar lógica especial
+	self.initial_step = true
+	speed_multiplier = get_speed_multiplier(d, false, self.initial_step)
+
+	# Emitir step_started para activar la animación de caminar
+	step_started.emit()
+
+	# Reservar el tile (aunque no nos movamos)
+	moving = true
+	grid.reserve(from, to, actor)
+
+	# Esperar la duración del giro (mismo tiempo que initial_step)
+	step_timer.wait_time = turn_duration
+	step_timer.start()
+	await step_timer.timeout
+
+	# Finalizar el movimiento
+	grid.commit(from, to, actor)
+	moving = false
+	self.initial_step = false
+
+	# Emitir step_finished para que el actor vuelva a idle
+	step_finished.emit(to)
+
+	# Alternar la zancada para la próxima vez
+	stride_is_left = not stride_is_left
+
+	return true
+
 func try_step(d: Vector2) -> bool:
 	# Revalidar grid antes de cualquier acceso (evita crash si se mantiene input durante warp)
 	if not grid or not is_instance_valid(grid):
@@ -358,8 +409,8 @@ func _check_player_collision(_from_tile: Vector2i, target_tile: Vector2i, direct
 	if not event:
 		return false
 
-	if event.current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
-		event.on_player_collision()
+	# Usar el nuevo sistema de triggers
+	if event.try_fire(EventTriggerSignal.SignalType.COLLISION, actor):
 		return true
 
 	return false

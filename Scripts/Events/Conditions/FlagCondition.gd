@@ -33,3 +33,10 @@ func evaluate(context: EventConditionContext) -> bool:
 	# Retornar true si el valor coincide con el esperado
 	return flag_value == expected_value
 
+## Verifica si esta condición depende de un flag global específico
+func depends_on_flag(flag_name: String) -> bool:
+	# Solo verificar si es un flag global (no self-switches)
+	if scope == Scope.GLOBAL:
+		return flag_name == self.flag_name
+	return false
+

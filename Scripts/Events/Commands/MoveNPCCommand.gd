@@ -158,8 +158,20 @@ func _execute_path(motion: GridMotion, context: Node) -> void:
 		var is_wait = DirectionEnum.is_wait(dir_enum)
 		var is_speed = DirectionEnum.is_speed_change(dir_enum)
 		var is_animation = DirectionEnum.is_animation(dir_enum)
+		var is_turn = DirectionEnum.is_turn(dir_enum)
 
-		if is_animation:
+		if is_turn:
+			# Comando TURN: girar con animación de caminar sin moverse
+			var direction = DirectionEnum.to_vector2(dir_enum)
+			print("MoveNPCCommand: Girando hacia %s con animación (sin moverse)" % direction)
+
+			# Ejecutar el giro con animación y esperar a que termine
+			await motion.try_turn(direction)
+
+			# Esperar un momento adicional para separar los giros
+			await motion.get_tree().create_timer(0.25).timeout
+			continue
+		elif is_animation:
 			# Comando de animación (exclamación, etc.)
 			if dir_enum == DirectionEnum.Type.EXCLAMATION_ANIM:
 				await _show_exclamation_animation(motion.actor)
@@ -247,7 +259,7 @@ func _execute_path(motion: GridMotion, context: Node) -> void:
 							Vector2.RIGHT: sprite.frame = 2
 
 			# Esperar un breve delay para que se vea el giro
-			await motion.get_tree().create_timer(0.5).timeout
+			await motion.get_tree().create_timer(0.25).timeout
 
 	# Restaurar el control normal (el Player volverá a controlar is_running con input)
 	motion.is_command_controlled = false

@@ -2,17 +2,19 @@ extends EventCommand
 class_name SetSelfSwitchCommand
 
 ## Comando para establecer self-switches (event_self_flags) locales del evento
-## Los self-switches se guardan en event_self_flags con formato "event_uid:switch_letter"
+## Los self-switches se guardan en event_self_flags con formato "event_uid:switch_name"
 ## Son específicos de cada evento y se usan para trackear su estado interno
 ## Si no se especifica target_event_name, se usará el evento actual donde se ejecuta el comando
+## El switch_name puede ser cualquier string (no limitado a A, B, C, D)
 
 @export_group("Target Event")
 ## Nombre del evento objetivo. Si está vacío, usa el evento actual
 @export var target_event_name: String = ""
 
 @export_group("Self Switch")
-## Letra del self-switch (A, B, C o D)
-@export_enum("A", "B", "C", "D") var switch_letter: int = 0
+## Nombre del self-switch (puede ser cualquier string, no limitado a A, B, C, D)
+## Ejemplos: "A", "B", "cut", "talked", "opened", etc.
+@export var switch_name: String = "A"
 
 ## Valor a establecer (true/false)
 @export var switch_value: bool = true
@@ -38,11 +40,14 @@ func execute(context: Node) -> void:
 		else:
 			event_id = target_event.name  # Fallback si no tiene el método
 
-	var letter = ["A", "B", "C", "D"][switch_letter]
+	# Validar que el nombre del switch no esté vacío
+	if switch_name.is_empty():
+		push_error("SetSelfSwitchCommand: El nombre del self-switch está vacío")
+		return
 
-	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, letter, switch_value])
+	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, switch_name, switch_value])
 	# Establecer self-switch en GameStateService (usa event_self_flags internamente)
-	GameStateService.set_self_switch(event_id, letter, switch_value)
+	GameStateService.set_self_switch(event_id, switch_name, switch_value)
 
 ## Obtiene el ID del evento que está ejecutando este comando
 func _get_current_event_id(context: Node) -> String:

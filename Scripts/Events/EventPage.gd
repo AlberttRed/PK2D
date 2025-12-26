@@ -6,7 +6,11 @@ enum ExecutionMode { QUEUED, PARALLEL }
 
 @export var execution_mode: ExecutionMode = ExecutionMode.QUEUED
 
-@export var trigger_type: EventTriggers.TriggerType = EventTriggers.TriggerType.ACTION
+@export_group("Trigger Configuration")
+## Trigger que define cuándo se activa esta página
+## Si es null, se usa un ActionTrigger por defecto
+@export var trigger: EventTrigger = null
+
 @export var commands: Array[EventCommand] = []
 @export var blocks_player: bool = true
 @export var through: bool = false
@@ -149,6 +153,34 @@ func has_conditions() -> bool:
 	# Verificar sistema legacy
 	return conditions.size() > 0
 
+## Verifica si esta página depende de una variable global específica
+## Retorna true si alguna condición de la página usa la variable
+func depends_on_variable(variable_name: String) -> bool:
+	# Prioridad: verificar root_condition si está definido
+	if root_condition:
+		return root_condition.depends_on_variable(variable_name)
+
+	# Fallback: verificar sistema legacy (conditions array)
+	for condition in conditions:
+		if condition and condition.depends_on_variable(variable_name):
+			return true
+
+	return false
+
+## Verifica si esta página depende de un flag global específico
+## Retorna true si alguna condición de la página usa el flag
+func depends_on_flag(flag_name: String) -> bool:
+	# Prioridad: verificar root_condition si está definido
+	if root_condition:
+		return root_condition.depends_on_flag(flag_name)
+
+	# Fallback: verificar sistema legacy (conditions array)
+	for condition in conditions:
+		if condition and condition.depends_on_flag(flag_name):
+			return true
+
+	return false
+
 
 ## Busca el primer comando de un tipo específico en esta página
 ## Retorna el comando o null si no se encuentra
@@ -162,3 +194,15 @@ func find_command_of_type(command_type) -> EventCommand:
 ## Busca el primer StartBattleEventCommand en esta página
 func get_battle_command() -> StartBattleEventCommand:
 	return find_command_of_type(StartBattleEventCommand) as StartBattleEventCommand
+
+
+## Obtiene el trigger efectivo de esta página
+## Si trigger es null, retorna un ActionTrigger por defecto
+func get_effective_trigger() -> EventTrigger:
+	if trigger != null:
+		return trigger
+
+	# Si no hay trigger asignado, usar ActionTrigger por defecto
+	# Crear una instancia temporal (no se guarda en el Resource)
+	var default_trigger = ActionTrigger.new()
+	return default_trigger

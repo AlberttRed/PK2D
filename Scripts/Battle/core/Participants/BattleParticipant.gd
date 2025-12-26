@@ -3,6 +3,7 @@ extends RefCounted
 class_name BattleParticipant
 
 var trainer_id: int = -1  # -1 o algún valor especial para salvajes
+var trainer_resource_id: String = ""  # Identificador único del trainer (nombre del .res sin extensión)
 var is_player: bool = false
 var name: String = "":
 	get:

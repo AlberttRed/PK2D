@@ -29,7 +29,7 @@ metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [resource]
 script = ExtResource("2_jck04")
-trainer_id = 1
+trainer_id = 4
 trainer_class_id = 2
 display_name = "Jano"
 ai_profile = SubResource("Resource_n0ay5")

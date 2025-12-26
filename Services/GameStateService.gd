@@ -6,7 +6,7 @@ extends Node
 
 # === SEÑALES ===
 signal flag_changed(flag_name: String, new_value: bool)
-signal variable_changed(variable_name: String, new_value: int)
+signal variable_changed(variable_name: String, new_value: Variant)
 signal self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
 
 # === DATOS DEL ESTADO DEL JUEGO ===
@@ -25,6 +25,11 @@ var game_variables: Dictionary = {}
 # Self flags por evento (Dictionary: "event_uid:flag" -> bool)
 # Ejemplo: "map_route1_trainer01:A" -> true
 var event_self_flags: Dictionary = {}
+
+# Resultados de combates contra entrenadores (Dictionary: trainer_id -> "V" o "D")
+# trainer_id: identificador único del trainer (nombre del .res sin extensión)
+# Valor: "V" si se ganó, "D" si se perdió
+var defeated_trainers: Dictionary = {}
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -67,8 +72,13 @@ func get_all_event_flags() -> Dictionary:
 	return global_flags.duplicate()
 
 ## Retorna el valor de una variable global
-func get_variable(var_name: String, default_value: int = 0) -> int:
+## Puede ser de cualquier tipo: int, bool, String, float, etc.
+func get_variable(var_name: String, default_value: Variant = 0) -> Variant:
 	return game_variables.get(var_name, default_value)
+
+## Verifica si una variable global existe en el diccionario
+func has_variable(var_name: String) -> bool:
+	return game_variables.has(var_name)
 
 ## Retorna el valor de un self-switch (event_self_flag)
 ## event_id: ID único del evento (ej: "map_route1_trainer01")
@@ -76,6 +86,12 @@ func get_variable(var_name: String, default_value: int = 0) -> int:
 func get_self_switch(event_id: String, switch_letter: String) -> bool:
 	var key = "%s:%s" % [event_id, switch_letter]
 	return event_self_flags.get(key, false)
+
+## Retorna el resultado de un combate contra un entrenador
+## trainer_id: Identificador único del trainer (nombre del .res sin extensión)
+## Retorna: "V" si se ganó, "D" si se perdió, o "" si no hay registro
+func get_trainer_battle_result(trainer_id: String) -> String:
+	return defeated_trainers.get(trainer_id, "")
 
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
@@ -108,10 +124,11 @@ func clear_event_flag(flag_name: String) -> void:
 		flag_changed.emit(flag_name, false)
 
 ## Establece el valor de una variable global
-func set_variable(var_name: String, value: int) -> void:
+## El valor puede ser de cualquier tipo: int, bool, String, float, etc.
+func set_variable(var_name: String, value: Variant) -> void:
 	var old_value = game_variables.get(var_name, null)
 	game_variables[var_name] = value
-	print("GameStateService: Variable '%s' establecida a: %d" % [var_name, value])
+	print("GameStateService: Variable '%s' establecida a: %s (tipo: %s)" % [var_name, value, typeof(value)])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -129,6 +146,26 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
 		self_switch_changed.emit(event_id, switch_letter, value)
+
+## Registra el resultado de un combate contra un entrenador
+## trainer_id: Identificador único del trainer (nombre del .res sin extensión)
+## result: "V" si se ganó, "D" si se perdió
+func register_trainer_battle_result(trainer_id: String, result: String) -> void:
+	if trainer_id.is_empty():
+		push_warning("GameStateService: No se puede registrar resultado de combate con trainer_id vacío")
+		return
+
+	if result != "V" and result != "D":
+		push_error("GameStateService: Resultado de combate inválido '%s'. Debe ser 'V' o 'D'" % result)
+		return
+
+	var old_result = defeated_trainers.get(trainer_id, "")
+	defeated_trainers[trainer_id] = result
+	print("GameStateService: Resultado de combate contra '%s' registrado: %s" % [trainer_id, result])
+
+	# Solo imprimir si cambió (para evitar spam en rematches)
+	if old_result != result:
+		print("GameStateService: Resultado actualizado de '%s' a '%s' para trainer '%s'" % [old_result, result, trainer_id])
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición
