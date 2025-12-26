@@ -575,7 +575,7 @@ func _inject_context_to_events() -> void:
 func _build_reflection_mask_layer() -> void:
 	var reflection_mask_layer := get_node_or_null("ReflectionMaskLayer") as TileMapLayer
 	if not reflection_mask_layer:
-		push_warning("OverworldGrid: No se encontró ReflectionMaskLayer, no se generará máscara")
+		# No todos los mapas tienen ReflectionMaskLayer, esto es normal
 		return
 
 	# Limpiar la máscara existente

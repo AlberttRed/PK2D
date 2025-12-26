@@ -19,6 +19,10 @@ class_name SetSelfSwitchCommand
 ## Valor a establecer (true/false)
 @export var switch_value: bool = true
 
+@export_group("Defer Options")
+## Si es true, el cambio se aplicará en el próximo warp en lugar de inmediatamente
+@export var defer_until_warp: bool = false
+
 func execute(context: Node) -> void:
 	var event_id: String = ""
 
@@ -45,8 +49,18 @@ func execute(context: Node) -> void:
 		push_error("SetSelfSwitchCommand: El nombre del self-switch está vacío")
 		return
 
+	# Si debe diferirse hasta el próximo warp
+	if defer_until_warp:
+		GameStateService.defer_change("self_switch", {
+			"event_id": event_id,
+			"switch_letter": switch_name,
+			"value": switch_value
+		})
+		print("SetSelfSwitchCommand: Self-switch '%s:%s' diferido hasta el próximo warp (valor: %s)" % [event_id, switch_name, switch_value])
+		return
+
+	# Establecer self-switch en GameStateService inmediatamente
 	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, switch_name, switch_value])
-	# Establecer self-switch en GameStateService (usa event_self_flags internamente)
 	GameStateService.set_self_switch(event_id, switch_name, switch_value)
 
 ## Obtiene el ID del evento que está ejecutando este comando

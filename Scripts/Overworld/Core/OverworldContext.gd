@@ -227,6 +227,9 @@ func _on_warp_started(map_id, spawn_id) -> void:
 	warp_started.emit(map_id, spawn_id)
 
 func _on_warp_finished(map_id, spawn_id) -> void:
+	# Aplicar todos los cambios diferidos cuando se complete un warp
+	GameStateService.apply_deferred_changes()
+
 	warp_finished.emit(map_id, spawn_id)
 
 func _on_mo_requested(mo_type, target) -> void:

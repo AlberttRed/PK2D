@@ -31,6 +31,10 @@ var event_self_flags: Dictionary = {}
 # Valor: "V" si se ganó, "D" si se perdió
 var defeated_trainers: Dictionary = {}
 
+# Cola de cambios diferidos que se aplicarán en el próximo warp
+# Cada cambio es un Dictionary con "type" y "params"
+var deferred_changes: Array[Dictionary] = []
+
 # === INICIALIZACIÓN ===
 func _ready() -> void:
 	pass  # No inicializar automáticamente - se hará cuando sea necesario
@@ -166,6 +170,46 @@ func register_trainer_battle_result(trainer_id: String, result: String) -> void:
 	# Solo imprimir si cambió (para evitar spam en rematches)
 	if old_result != result:
 		print("GameStateService: Resultado actualizado de '%s' a '%s' para trainer '%s'" % [old_result, result, trainer_id])
+
+# === SISTEMA DE CAMBIOS DIFERIDOS ===
+## Registra un cambio diferido que se aplicará en el próximo warp
+## change_type: "variable", "flag", o "self_switch"
+## params: Dictionary con los parámetros específicos del tipo de cambio
+func defer_change(change_type: String, params: Dictionary) -> void:
+	deferred_changes.append({
+		"type": change_type,
+		"params": params
+	})
+	print("GameStateService: Cambio diferido registrado (tipo: %s). Total pendientes: %d" % [change_type, deferred_changes.size()])
+
+## Aplica todos los cambios diferidos pendientes
+## Se llama automáticamente cuando se completa un warp
+func apply_deferred_changes() -> void:
+	if deferred_changes.is_empty():
+		return
+
+	print("GameStateService: Aplicando %d cambio(s) diferido(s)" % deferred_changes.size())
+
+	for change in deferred_changes:
+		match change.type:
+			"variable":
+				set_variable(change.params.name, change.params.value)
+			"flag":
+				set_event_flag(change.params.name, change.params.value)
+			"self_switch":
+				set_self_switch(change.params.event_id, change.params.switch_letter, change.params.value)
+			_:
+				push_warning("GameStateService: Tipo de cambio diferido desconocido: %s" % change.type)
+
+	deferred_changes.clear()
+	print("GameStateService: Todos los cambios diferidos aplicados")
+
+## Limpia todos los cambios diferidos sin aplicarlos
+func clear_deferred_changes() -> void:
+	var count = deferred_changes.size()
+	deferred_changes.clear()
+	if count > 0:
+		print("GameStateService: %d cambio(s) diferido(s) eliminado(s) sin aplicar" % count)
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición

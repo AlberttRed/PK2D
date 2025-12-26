@@ -23,6 +23,10 @@ enum VariableType {
 ## Valor a establecer (debe coincidir con el tipo seleccionado)
 @export var value: Variant = 0
 
+@export_group("Defer Options")
+## Si es true, el cambio se aplicará en el próximo warp en lugar de inmediatamente
+@export var defer_until_warp: bool = false
+
 func execute(_context: Node) -> void:
 	if variable_name.is_empty():
 		push_warning("SetVariableCommand: variable_name está vacío")
@@ -33,7 +37,16 @@ func execute(_context: Node) -> void:
 		push_error("SetVariableCommand: El valor '%s' (tipo: %s) no es compatible con el tipo seleccionado '%s'" % [value, _get_type_name_from_value(value), _get_type_name(variable_type)])
 		return
 
-	# Establecer variable en GameStateService
+	# Si debe diferirse hasta el próximo warp
+	if defer_until_warp:
+		GameStateService.defer_change("variable", {
+			"name": variable_name,
+			"value": value
+		})
+		print("SetVariableCommand: Variable '%s' diferida hasta el próximo warp (valor: %s)" % [variable_name, value])
+		return
+
+	# Establecer variable en GameStateService inmediatamente
 	GameStateService.set_variable(variable_name, value)
 	print("SetVariableCommand: Variable '%s' establecida a: %s (tipo: %s)" % [variable_name, value, _get_type_name(variable_type)])
 
