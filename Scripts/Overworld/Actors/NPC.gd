@@ -59,45 +59,71 @@ func get_movement_speed() -> int:
 	# Fallback por si no hay página actual (no debería pasar en uso normal)
 	return 2  # Normal
 
-@export_group("Random Movement")
-## Tiempo mínimo entre movimientos aleatorios (en segundos)
-@export var random_move_interval_min: float = 2.0
-## Tiempo máximo entre movimientos aleatorios (en segundos)
-@export var random_move_interval_max: float = 5.0
+## Obtiene random_move_interval_min desde current_page
+func get_random_move_interval_min() -> float:
+	if current_page:
+		return current_page.random_move_interval_min
+	return 2.0
 
-@export_group("Path Movement")
-## Array de direcciones a seguir en bucle (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
-@export var path_directions: Array[DirectionEnum.Type] = []
+## Obtiene random_move_interval_max desde current_page
+func get_random_move_interval_max() -> float:
+	if current_page:
+		return current_page.random_move_interval_max
+	return 5.0
 
-@export_group("")  # Cerrar el grupo
+## Obtiene path_directions desde current_page
+func get_path_directions() -> Array[DirectionEnum.Type]:
+	if current_page:
+		return current_page.path_directions
+	return []
 
-@export_group("Look Pattern")
-## Array de direcciones de mirada a seguir en bucle (LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
-@export var look_pattern_directions: Array[DirectionEnum.Type] = []
-## Tiempo en segundos que el NPC mira en cada dirección antes de cambiar
-@export var look_pattern_delay: float = 2.0
+## Obtiene look_pattern_directions desde current_page
+func get_look_pattern_directions() -> Array[DirectionEnum.Type]:
+	if current_page:
+		return current_page.look_pattern_directions
+	return []
 
-@export_group("")  # Cerrar el grupo
+## Obtiene look_pattern_delay desde current_page
+func get_look_pattern_delay() -> float:
+	if current_page:
+		return current_page.look_pattern_delay
+	return 2.0
 
-# === PROPIEDADES PARA RANDOM TURNING ===
-@export_group("Random Turning", "random_turning_")
-## Intervalo mínimo entre giros aleatorios
-@export var random_turning_interval_min: float = 2.0
-## Intervalo máximo entre giros aleatorios
-@export var random_turning_interval_max: float = 5.0
+## Obtiene random_turning_interval_min desde current_page
+func get_random_turning_interval_min() -> float:
+	if current_page:
+		return current_page.random_turning_interval_min
+	return 2.0
 
-# === PROPIEDADES PARA AWARENESS (DETECCIÓN DE JUGADOR) ===
-@export_group("Player Awareness", "awareness_")
-## Si está activo, el NPC puede detectar y girar hacia el jugador
-@export var awareness_enabled: bool = false
-## Probabilidad base de girar hacia el jugador (0.0 a 1.0)
-var awareness_chance: float = 0.3
-## Multiplicador de probabilidad cuando el jugador corre
-var awareness_running_multiplier: float = 2.0
-## Distancia máxima para detectar al jugador (en tiles)
-@export var awareness_detection_distance: float = 3.0
+## Obtiene random_turning_interval_max desde current_page
+func get_random_turning_interval_max() -> float:
+	if current_page:
+		return current_page.random_turning_interval_max
+	return 5.0
 
-@export_group("")  # Cerrar el grupo
+## Obtiene awareness_enabled desde current_page
+func get_awareness_enabled() -> bool:
+	if current_page:
+		return current_page.awareness_enabled
+	return false
+
+## Obtiene awareness_chance desde current_page
+func get_awareness_chance() -> float:
+	if current_page:
+		return current_page.awareness_chance
+	return 0.3
+
+## Obtiene awareness_running_multiplier desde current_page
+func get_awareness_running_multiplier() -> float:
+	if current_page:
+		return current_page.awareness_running_multiplier
+	return 2.0
+
+## Obtiene awareness_detection_distance desde current_page
+func get_awareness_detection_distance() -> float:
+	if current_page:
+		return current_page.awareness_detection_distance
+	return 3.0
 
 ## Ruta convertida a Vector2 (uso interno)
 var _path_directions_vector2: Array[Vector2] = []
@@ -153,6 +179,9 @@ func _ready() -> void:
 	# Convertir el path de enum a Vector2 (2 = PATH)
 	if get_movement_type() == 2:
 		_convert_path_to_vector2()
+
+	# Inicializar look_pattern_index
+	_look_pattern_index = 0
 
 	# Reemplazar el sprite del Event con el ActorAnimator
 	# Si el evento tiene sprite_frames configurados en su página, aplicarlos al animator
@@ -293,6 +322,14 @@ func _update_movement_from_current_page() -> void:
 		_convert_path_to_vector2()
 		path_index = 0  # Reiniciar índice del path
 
+	# Reiniciar look_pattern_index cuando cambia la página
+	_look_pattern_index = 0
+
+	# Actualizar conexiones de awareness si es necesario
+	_disconnect_from_player_movement()
+	if get_awareness_enabled() and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+		_connect_to_player_movement()
+
 	# Reconfigurear timers según el nuevo tipo de movimiento
 	_setup_timers()
 
@@ -332,21 +369,21 @@ func _setup_timers() -> void:
 		_random_timer = Timer.new()
 		add_child(_random_timer)
 		_random_timer.timeout.connect(_on_random_timer_timeout)
-		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 	# Timer para giro aleatorio (solo para RandomTurning)
 	elif get_movement_type() == 3:  # RANDOM_TURNING
 		_random_turning_timer = Timer.new()
 		add_child(_random_turning_timer)
 		_random_turning_timer.timeout.connect(_on_random_turning_timer_timeout)
-		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 
 	# Timer para patrón de mirada (solo para LookPattern)
 	elif get_movement_type() == 4:  # LOOK_PATTERN
 		_look_pattern_timer = Timer.new()
 		add_child(_look_pattern_timer)
 		_look_pattern_timer.timeout.connect(_on_look_pattern_timer_timeout)
-		if not look_pattern_directions.is_empty():
+		if not get_look_pattern_directions().is_empty():
 			# Ejecutar primera mirada inmediatamente, luego el timer
 			_execute_next_look_pattern()
 
@@ -355,14 +392,14 @@ func _setup_timers() -> void:
 		_random_vertical_timer = Timer.new()
 		add_child(_random_vertical_timer)
 		_random_vertical_timer.timeout.connect(_on_random_vertical_timer_timeout)
-		_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_vertical_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 	# Timer para movimiento horizontal aleatorio (solo para RandomHorizontal)
 	elif get_movement_type() == 6:  # RANDOM_HORIZONTAL
 		_random_horizontal_timer = Timer.new()
 		add_child(_random_horizontal_timer)
 		_random_horizontal_timer.timeout.connect(_on_random_horizontal_timer_timeout)
-		_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 ## Conecta a la señal step_finished del Player para awareness
 func _connect_to_player_movement() -> void:
@@ -391,19 +428,19 @@ func _disconnect_from_player_movement() -> void:
 func connect_external_signals() -> void:
 	super.connect_external_signals()
 	# Conectar awareness si está habilitado
-	if awareness_enabled and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if get_awareness_enabled() and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
 		_connect_to_player_movement()
 
 	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
 	if get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
 		_random_turning_timer.stop()  # Detener si estaba corriendo
-		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 	elif get_movement_type() == 5 and _random_vertical_timer:  # RANDOM_VERTICAL
 		_random_vertical_timer.stop()
-		_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_vertical_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 	elif get_movement_type() == 6 and _random_horizontal_timer:  # RANDOM_HORIZONTAL
 		_random_horizontal_timer.stop()
-		_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 ## Sobrescribe el método virtual de Event para desconectar señales externas
 ## Se llama cuando el NPC se desactiva en un chunk
@@ -440,7 +477,7 @@ func _on_random_timer_timeout() -> void:
 		motion.try_step(direction)
 
 	# Reiniciar timer con intervalo aleatorio
-	_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 ## Callback del timer de giro aleatorio (RandomTurning)
 func _on_random_turning_timer_timeout() -> void:
@@ -464,7 +501,7 @@ func _on_random_turning_timer_timeout() -> void:
 
 
 	# Reiniciar timer con intervalo aleatorio
-	_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+	_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 
 ## Callback del timer de Look Pattern
 func _on_look_pattern_timer_timeout() -> void:
@@ -493,7 +530,7 @@ func _on_random_vertical_timer_timeout() -> void:
 	motion.try_step(direction)
 
 	# Reiniciar timer con intervalo aleatorio
-	_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	_random_vertical_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 ## Callback del timer de movimiento horizontal aleatorio (RandomHorizontal)
 func _on_random_horizontal_timer_timeout() -> void:
@@ -515,15 +552,16 @@ func _on_random_horizontal_timer_timeout() -> void:
 	motion.try_step(direction)
 
 	# Reiniciar timer con intervalo aleatorio
-	_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
 ## Ejecuta la siguiente dirección del patrón de mirada
 func _execute_next_look_pattern() -> void:
-	if look_pattern_directions.is_empty():
+	var look_pattern_dirs = get_look_pattern_directions()
+	if look_pattern_dirs.is_empty():
 		return
 
 	# Obtener la dirección actual del patrón
-	var look_direction_enum = look_pattern_directions[_look_pattern_index]
+	var look_direction_enum = look_pattern_dirs[_look_pattern_index]
 	var look_direction = DirectionEnum.to_vector2(look_direction_enum)
 
 	# Validar que sea un comando LOOK
@@ -536,14 +574,14 @@ func _execute_next_look_pattern() -> void:
 		push_warning("NPC: Look Pattern contiene comandos de movimiento. Solo debe contener LOOK_UP/DOWN/LEFT/RIGHT")
 
 	# Avanzar al siguiente índice (bucle infinito)
-	_look_pattern_index = (_look_pattern_index + 1) % look_pattern_directions.size()
+	_look_pattern_index = (_look_pattern_index + 1) % look_pattern_dirs.size()
 
 	# Iniciar timer para la siguiente mirada
-	_look_pattern_timer.start(look_pattern_delay)
+	_look_pattern_timer.start(get_look_pattern_delay())
 
 ## Callback cuando el jugador se mueve (para awareness)
 func _on_player_moved(_tile_pos: Vector2) -> void:
-	if not movement_enabled or _movement_paused or not awareness_enabled:
+	if not movement_enabled or _movement_paused or not get_awareness_enabled():
 		return
 
 	# Solo activar en tipos sin movimiento
@@ -555,7 +593,7 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 	var distance_tiles = npc_tile.distance_to(_tile_pos)
 
 	# Early return si está muy lejos (evita búsquedas costosas)
-	if distance_tiles > awareness_detection_distance:
+	if distance_tiles > get_awareness_detection_distance():
 		return
 
 	# Solo si está cerca, buscar el player
@@ -566,19 +604,19 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 
 	# Calcular distancia exacta en píxeles para mayor precisión
 	var distance_in_pixels = global_position.distance_to(player.global_position)
-	var detection_distance_pixels = awareness_detection_distance * 32
+	var detection_distance_pixels = get_awareness_detection_distance() * 32
 
 	if distance_in_pixels > detection_distance_pixels:
 		return
 
 	# Calcular probabilidad de giro
-	var chance = awareness_chance
+	var chance = get_awareness_chance()
 
 	# Aumentar probabilidad si el jugador está corriendo
 	if player.has_node("GridMotion"):
 		var player_motion = player.get_node("GridMotion")
 		if player_motion and player_motion.is_running:
-			chance *= awareness_running_multiplier
+			chance *= get_awareness_running_multiplier()
 
 	# Verificar si debe girar
 	if randf() < chance:
@@ -608,7 +646,7 @@ func _get_closest_direction(direction: Vector2) -> Vector2:
 ## Convierte el array de enum a Vector2
 func _convert_path_to_vector2() -> void:
 	_path_directions_vector2.clear()
-	for dir_enum in path_directions:
+	for dir_enum in get_path_directions():
 		match dir_enum:
 			DirectionEnum.Type.UP: _path_directions_vector2.append(Vector2.UP)
 			DirectionEnum.Type.DOWN: _path_directions_vector2.append(Vector2.DOWN)
@@ -644,7 +682,8 @@ func _try_execute_next_path_action() -> void:
 		return
 
 	# Obtener el comando actual de la ruta (enum y vector)
-	var dir_enum = path_directions[path_index]
+	var path_dirs = get_path_directions()
+	var dir_enum = path_dirs[path_index]
 	var direction = _path_directions_vector2[path_index]
 
 	# Verificar el tipo de comando
@@ -829,14 +868,14 @@ func _resume_movement() -> void:
 
 	# Reiniciar timers según el tipo de movimiento
 	if get_movement_type() == 1 and _random_timer:  # RANDOM
-		_random_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+		_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 	elif get_movement_type() == 2:  # PATH
 		# Reanudar path movement
 		call_deferred("_try_execute_next_path_action")
 	elif get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
-		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
-		_look_pattern_timer.start(look_pattern_delay)
+		_look_pattern_timer.start(get_look_pattern_delay())
 
 
 ## Callback cuando termina un evento (para reanudar movimiento)

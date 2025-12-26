@@ -26,6 +26,10 @@ DatabaseService="*res://Services/DatabaseService.gd"
 window/size/viewport_width=512
 window/size/viewport_height=384
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/event_tools/plugin.cfg")
+
 [global_group]
 
 OverworldGrid="Group of active OverworldGrids"
