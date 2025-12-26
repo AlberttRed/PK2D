@@ -190,6 +190,10 @@ func to_battle_participant() -> BattleParticipant:
 
 	# Configurar datos del participante
 	participant.trainer_id = trainer_id
+	# Obtener identificador del resource si hay TrainerData
+	if trainer_data:
+		participant.trainer_resource_id = trainer_data.get_resource_id()
+		print("Battler.to_battle_participant: trainer_resource_id='%s' (desde resource_path='%s')" % [participant.trainer_resource_id, trainer_data.resource_path])
 	# Usar get_full_name() para incluir la clase del trainer (ej: "Cazabichos Jano")
 	var effective_name: String = get_full_name() if trainer_data else (trainer_name if not trainer_name.is_empty() else str(name))
 	participant.name = effective_name

@@ -20,6 +20,10 @@ class_name TrainerData
 ## Nombre para mostrar en combate y diálogos
 @export var display_name: String = "Entrenador"
 
+## Identificador único del trainer para tracking de combates (opcional, se usa como fallback si resource_path está vacío)
+## Si no se especifica, se intentará obtener desde resource_path
+@export var resource_id: String = ""
+
 # Propiedades calculadas (se cargan automáticamente)
 var trainer_class: TrainerClassData  # Se carga desde trainer_class_id
 
@@ -157,10 +161,32 @@ func calculate_reward() -> int:
 func has_valid_party() -> bool:
 	return not party_data.is_empty() and party_data[0] != null
 
+## Obtiene el identificador único del trainer desde el resource_path
+## Retorna el nombre del archivo .res sin extensión (ej: "brock" de "res://Resources/Trainers/brock.tres")
+## Si no hay resource_path, usa el campo resource_id como fallback
+## Si ambos están vacíos, lanza un error
+func get_resource_id() -> String:
+	# Prioridad 1: Si hay resource_id configurado manualmente, usarlo
+	if not resource_id.is_empty():
+		return resource_id
+
+	# Prioridad 2: Intentar obtener desde resource_path
+	if not resource_path.is_empty():
+		# Extraer el nombre del archivo sin extensión
+		var file_name = resource_path.get_file()
+		if file_name.ends_with(".tres"):
+			return file_name.substr(0, file_name.length() - 5)  # Quitar ".tres"
+		return file_name
+
+	# Si ambos están vacíos, lanzar error
+	push_error("TrainerData: No se pudo obtener resource_id - resource_path y resource_id están vacíos. Configura resource_id manualmente o guarda el TrainerData como archivo .tres")
+	return ""
+
 ## Debug: imprime información del entrenador
 func print_trainer_info() -> void:
 	print("=== Entrenador: %s ===" % get_full_name())
 	print("ID: %d" % trainer_id)
+	print("Resource ID: %s" % get_resource_id())
 	print("Equipo: %d Pokémon" % party_data.size())
 	print("Dinero: $%d" % reward_money)
 	print("Combate doble: %s" % ("Sí" if double_battle else "No"))

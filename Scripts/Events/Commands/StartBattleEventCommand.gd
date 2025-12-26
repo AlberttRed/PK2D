@@ -107,9 +107,9 @@ func execute(context: Node) -> void:
 	# Preparar array de participantes
 	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]
 
-	# Iniciar batalla usando DisplayManager
+	# Iniciar batalla usando DisplayManager (indicar que es desde un evento)
 	print("StartBattleCommand: Iniciando batalla (%s vs %s)" % [player_participant.name, enemy_participant.name])
-	_battle_winner = await DisplayManager.start_battle(participants, rules)
+	_battle_winner = await DisplayManager.start_battle(participants, rules, true)  # from_event = true
 	print("StartBattleCommand: Batalla terminada. Ganador: %s" % _battle_winner)
 
 	# Guardar estado si es un entrenador derrotado

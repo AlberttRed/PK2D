@@ -307,3 +307,7 @@ func _get_event_id() -> String:
 
 func set_overworld_context(context: OverworldContext) -> void:
 	overworld_context = context
+	# Re-evaluar la página activa después de recibir el contexto
+	# Esto asegura que el event_id se calcula con el map_id correcto
+	# (importante cuando se carga un mapa después de un teleport)
+	refresh_active_page()

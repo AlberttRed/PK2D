@@ -1053,6 +1053,12 @@ func set_active_map(map_scene: Node) -> void:
 		push_error("WorldSystem: El mapa debe ser un nodo hijo de WorldSystem")
 		return
 
+	# CRÍTICO: Actualizar el map_id en GameStateService INMEDIATAMENTE
+	# antes de que los eventos se inicialicen (en _ready())
+	# Esto asegura que los eventos calculen el event_id correcto desde el inicio
+	if GameStateService and active_map:
+		GameStateService.set_current_map_id(active_map.name)
+
 	# Obtener el grid una sola vez
 	var grid = get_active_grid()
 

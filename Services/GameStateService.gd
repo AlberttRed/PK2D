@@ -26,6 +26,11 @@ var game_variables: Dictionary = {}
 # Ejemplo: "map_route1_trainer01:A" -> true
 var event_self_flags: Dictionary = {}
 
+# Resultados de combates contra entrenadores (Dictionary: trainer_id -> "V" o "D")
+# trainer_id: identificador único del trainer (nombre del .res sin extensión)
+# Valor: "V" si se ganó, "D" si se perdió
+var defeated_trainers: Dictionary = {}
+
 # === INICIALIZACIÓN ===
 func _ready() -> void:
 	pass  # No inicializar automáticamente - se hará cuando sea necesario
@@ -82,6 +87,12 @@ func get_self_switch(event_id: String, switch_letter: String) -> bool:
 	var key = "%s:%s" % [event_id, switch_letter]
 	return event_self_flags.get(key, false)
 
+## Retorna el resultado de un combate contra un entrenador
+## trainer_id: Identificador único del trainer (nombre del .res sin extensión)
+## Retorna: "V" si se ganó, "D" si se perdió, o "" si no hay registro
+func get_trainer_battle_result(trainer_id: String) -> String:
+	return defeated_trainers.get(trainer_id, "")
+
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
 func set_current_map_id(map_id: String) -> void:
@@ -135,6 +146,26 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
 		self_switch_changed.emit(event_id, switch_letter, value)
+
+## Registra el resultado de un combate contra un entrenador
+## trainer_id: Identificador único del trainer (nombre del .res sin extensión)
+## result: "V" si se ganó, "D" si se perdió
+func register_trainer_battle_result(trainer_id: String, result: String) -> void:
+	if trainer_id.is_empty():
+		push_warning("GameStateService: No se puede registrar resultado de combate con trainer_id vacío")
+		return
+
+	if result != "V" and result != "D":
+		push_error("GameStateService: Resultado de combate inválido '%s'. Debe ser 'V' o 'D'" % result)
+		return
+
+	var old_result = defeated_trainers.get(trainer_id, "")
+	defeated_trainers[trainer_id] = result
+	print("GameStateService: Resultado de combate contra '%s' registrado: %s" % [trainer_id, result])
+
+	# Solo imprimir si cambió (para evitar spam en rematches)
+	if old_result != result:
+		print("GameStateService: Resultado actualizado de '%s' a '%s' para trainer '%s'" % [old_result, result, trainer_id])
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición

@@ -157,6 +157,10 @@ func end_battle() -> void:
 	# Guardar el ganador antes de limpiar el estado
 	var battle_winner = winner_side
 
+	# Registrar resultado del combate en GameStateService (solo para combates contra entrenadores)
+	if rules.type == BattleRules.BattleTypes.TRAINER and not winner_side.is_empty() and winner_side != "draw":
+		_register_battle_result(winner_side)
+
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 
@@ -169,6 +173,22 @@ func end_battle() -> void:
 	# Emitir en DisplayManager en su lugar
 	if DisplayManager.instance:
 		DisplayManager.instance._on_battle_finished(battle_winner)
+
+## Registra el resultado del combate en GameStateService
+## winner_side: "player" o "enemy"
+func _register_battle_result(winner_side: String) -> void:
+	# Determinar el resultado para cada entrenador enemigo
+	var result: String = "V" if winner_side == "player" else "D"
+
+	# Registrar resultado para cada participante enemigo que sea entrenador
+	for participant in enemy_side.participants:
+		if participant is BattleParticipant and participant.is_trainer and not participant.is_player:
+			var trainer_id = participant.trainer_resource_id
+			print("BattleController: Registrando resultado para trainer_resource_id='%s', result='%s'" % [trainer_id, result])
+			if not trainer_id.is_empty():
+				GameStateService.register_trainer_battle_result(trainer_id, result)
+			else:
+				push_warning("BattleController: No se pudo registrar resultado - trainer_resource_id vacío para participante '%s'" % participant.name)
 
 func _cleanup_battle_state():
 	# Resetear flags de control

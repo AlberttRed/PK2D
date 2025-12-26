@@ -557,7 +557,7 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="Resource" id="Resource_4grk7"]
 script = ExtResource("9_tsofr")
 target_name = "Player"
-path = Array[int]([5, 17])
+path = Array[int]([5, 21])
 wait_until_finished = false
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
@@ -684,6 +684,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_et8ko"]
 script = ExtResource("5_u1wff")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_smht1"]
@@ -720,6 +721,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_vdvqs"]
 script = ExtResource("5_u1wff")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]

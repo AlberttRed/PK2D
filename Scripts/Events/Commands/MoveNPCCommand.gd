@@ -259,7 +259,7 @@ func _execute_path(motion: GridMotion, context: Node) -> void:
 							Vector2.RIGHT: sprite.frame = 2
 
 			# Esperar un breve delay para que se vea el giro
-			await motion.get_tree().create_timer(0.5).timeout
+			await motion.get_tree().create_timer(0.25).timeout
 
 	# Restaurar el control normal (el Player volverá a controlar is_running con input)
 	motion.is_command_controlled = false
