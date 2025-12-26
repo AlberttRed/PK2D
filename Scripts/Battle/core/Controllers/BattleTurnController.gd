@@ -14,7 +14,7 @@ func _ready():
 	randomize()
 
 func start_turn_loop():
-	for pokemon in battle_controller.get_all_active_pokemon():	
+	for pokemon in battle_controller.get_all_active_pokemon():
 		await BattleEffectController.process_phase(pokemon, BattleEffect.Phases.ON_ENTRY)
 	while not battle_controller.battle_finished():
 		await new_turn()
@@ -33,63 +33,63 @@ func select_actions():
 	collected_choices.clear()
 	print_stat_stages_log()
 	print_active_effects_log()
-	
+
 	# Inicializar turnos en ambos sides (resetea flags y prepara el turno)
 	if battle_controller.player_side:
 		battle_controller.player_side.init_turn()
 	if battle_controller.enemy_side:
 		battle_controller.enemy_side.init_turn()
-	
+
 	# Recorremos todos los BattleSpots activos en ambos lados del combate
 	for spot:BattleSpot in battle_controller.get_active_battle_spots():
 		var selectedChoice:BattleChoice = null
 		var p:BattlePokemon = spot.get_active_pokemon()
 		p.init_turn()
-		
+
 		# Verificar si el side de este Pokémon ya tiene una acción bloqueante
 		if p.side.has_blocking_action_this_turn:
 			# Saltar selección, asignar acción de "pasar turno"
 			selectedChoice = BattlePassChoice.new()
 		elif p.controllable:
 			selectedChoice = await battle_controller.ui.show_action_selection(p)
-			
+
 			if selectedChoice.canceled:
 				await select_actions()
 				return
-			
+
 			# Si es bloqueante, marcar el side
 			if selectedChoice.is_blocking_action():
 				p.side.has_blocking_action_this_turn = true
-				
+
 		elif !p.controllable:
 			selectedChoice = await p.participant.decide_action_for(p)
-			
+
 			# También marcar si la IA elige una acción bloqueante
 			if selectedChoice and selectedChoice.is_blocking_action():
 				p.side.has_blocking_action_this_turn = true
-		
+
 		# Garantizar que cada Pokémon declara una acción
 		if selectedChoice == null:
 			selectedChoice = BattlePassChoice.new()
-		
+
 		# Asignar el choice al pokemon (el setter se encarga de asignar el pokemon al choice)
 		p.selectedBattleChoice = selectedChoice
-		
+
 		collected_choices.append(selectedChoice)
-			
+
 func execute_turn():
 	var ordered_choices:Array[BattleChoice] = order_choices(collected_choices)
 	last_ordered_choices = ordered_choices
 	var results: Dictionary = {} # key: BattleChoice, value: Array[BattleHandler]
-	
+
 	#Calculamos y resolvemos las acciones seleccionadas por cada pokémon activo
 	for choice:BattleChoice in ordered_choices:
 		if choice.pokemon.is_fainted():
 			continue
 		results[choice] = choice.resolve()
-	
+
 	print_turn_debug_log(ordered_choices, results)
-	
+
 	# Mostrar animaciones y efectos tras resolver todo
 	for choice in ordered_choices:
 		if results.has(choice):
@@ -97,19 +97,19 @@ func execute_turn():
 			# Esto previene que un Pokémon debilitado ejecute su movimiento
 			if not choice.pokemon.is_fainted():
 				await handle_result(choice, results[choice])
-			
+
 			# Verificar y mostrar mensajes de debilitamiento después de cada acción
 			# Pasamos el pokemon que ejecutó la acción para mostrar primero los del rival
 			await check_and_show_fainted_pokemon(choice.pokemon)
-			
+
 			# Verificar si el combate ha terminado después de cada acción
 			if battle_controller.battle_finished():
 				break
-	
+
 	# Aplicar efectos de fin de turno solo si el combate no ha terminado
 	if not battle_controller.finished:
 		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
-	
+
 func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	battle_choices.sort_custom(_sort_choices)
 	print(">>> Orden de ejecución:")
@@ -131,7 +131,7 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 			action_desc = "realizará otra acción"
 		print("- %s %s (velocidad: %d)" % [pkmn_name, action_desc, speed])
 	return battle_choices
-	
+
 
 
 func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
@@ -146,8 +146,13 @@ func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 	if speed_a != speed_b:
 		return speed_a > speed_b
 
-	# 3. Desempate aleatorio
-	return randi() % 2 == 0
+	# 3. Desempate aleatorio determinista (como en los juegos originales)
+	# Usamos un hash determinista que combina el turno actual con el hash del objeto del Pokémon
+	# Esto simula aleatoriedad cada turno pero mantiene la transitividad durante la ordenación
+	# El hash del objeto es único y determinista durante la ejecución
+	var hash_a = hash(str(current_turn) + str(hash(a.pokemon)))
+	var hash_b = hash(str(current_turn) + str(hash(b.pokemon)))
+	return hash_a < hash_b
 
 func handle_result(choice: BattleChoice, handlers: Array[BattleHandler]) -> void:
 	if choice is BattleMoveChoice:
@@ -160,7 +165,7 @@ func handle_result(choice: BattleChoice, handlers: Array[BattleHandler]) -> void
 		await handle_run_result(choice, handlers)
 	else:
 		push_warning("handle_result: tipo de choice no reconocido o aún no implementado.")
-		
+
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_END_POKEMON_TURN)
 
 #
@@ -190,7 +195,7 @@ func handle_switch_result(_choice: BattleSwitchChoice, handlers: Array[BattleHan
 	# Aplicar todos los handlers
 	for handler in handlers:
 		handler.apply()
-	
+
 	# Visualizar todos los handlers
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
@@ -199,7 +204,7 @@ func handle_bag_result(_choice: BattleBagChoice, handlers: Array[BattleHandler])
 	# Aplicar todos los handlers
 	for handler in handlers:
 		handler.apply()
-	
+
 	# Visualizar todos los handlers
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
@@ -208,7 +213,7 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 	# Aplicar todos los handlers
 	for handler in handlers:
 		handler.apply()
-	
+
 	# Visualizar todos los handlers
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
@@ -226,14 +231,14 @@ func reset():
 
 func get_execution_order() -> Array[BattleChoice]:
 	return last_ordered_choices.duplicate()
-	
+
 func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> void:
 	for choice in choices:
 		if results.has(choice):
 			var handlers: Array[BattleHandler] = results[choice]
 			var user: String = choice.pokemon.get_name()
 			var action_desc := ""
-			
+
 			if choice is BattleMoveChoice and choice.get_move() != null:
 				action_desc = "usará %s" % choice.get_move().get_name()
 			elif choice is BattleSwitchChoice:
@@ -246,7 +251,7 @@ func print_turn_debug_log(choices: Array[BattleChoice], results: Dictionary) -> 
 				action_desc = "pasará"
 			else:
 				action_desc = "realizará otra acción"
-			
+
 			if handlers.is_empty():
 				continue
 			print("%s resolverá %d handler(s) para %s" % [user, handlers.size(), action_desc])
@@ -314,14 +319,14 @@ func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
 	# Luego los del lado del ejecutor (tu Pokémon)
 	var executor_side = action_executor.side
 	var opponent_side = action_executor.get_opponent_side()
-	
+
 	# 1. Primero los del lado contrario
 	for spot in opponent_side.battle_spots:
 		if spot.pokemon and spot.pokemon.is_fainted():
 			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)
 			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
-	
+
 	# 2. Luego los del lado del ejecutor
 	for spot in executor_side.battle_spots:
 		if spot.pokemon and spot.pokemon.is_fainted():
