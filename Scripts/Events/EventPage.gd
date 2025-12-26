@@ -6,12 +6,14 @@ enum ExecutionMode { QUEUED, PARALLEL }
 
 @export var execution_mode: ExecutionMode = ExecutionMode.QUEUED
 
-@export_group("Trigger Configuration")
 ## Trigger que define cuándo se activa esta página
 ## Si es null, se usa un ActionTrigger por defecto
 @export var trigger: EventTrigger = null
 
 @export var commands: Array[EventCommand] = []
+## Condición raíz del árbol de condiciones
+## Permite expresiones lógicas anidadas complejas (AND/OR/NOT)
+@export var root_condition: EventCondition = null
 @export var blocks_player: bool = true
 @export var through: bool = false
 
@@ -23,21 +25,7 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Rango de detección en tiles (solo si enable_trainer_detection = true)
 @export_range(1, 10) var detection_range: int = 5
 
-@export_group("Conditions")
-## Condición raíz del árbol de condiciones (opcional)
-## Si está definida, se usa en lugar del sistema legacy (conditions array)
-## Permite expresiones lógicas anidadas complejas (AND/OR/NOT)
-@export var root_condition: EventCondition = null
 
-## [LEGACY] Array de condiciones basadas en Resources (EventCondition)
-## Se usa solo si root_condition es null
-## Cada condición se evalúa en tiempo de ejecución para determinar si la página está activa
-@export var conditions: Array[EventCondition] = []
-
-## [LEGACY] Modo de evaluación de condiciones: ALL (todas deben cumplirse) o ANY (al menos una)
-## Se usa solo si root_condition es null
-enum ConditionMode { ALL, ANY }
-@export var condition_mode: ConditionMode = ConditionMode.ALL
 
 @export_group("Movement (NPC)")
 ## Tipo de movimiento del NPC (solo para NPCs)
@@ -55,6 +43,38 @@ enum ConditionMode { ALL, ANY }
 ## Si true, preserva la dirección actual cuando cambia de página y no hay cambio de sprite
 ## Útil para mantener la dirección después de interactuar (ej: NPC mirando hacia el jugador)
 @export var preserve_direction_on_sprite_match: bool = false
+
+@export_group("Random Movement (NPC)")
+## Tiempo mínimo entre movimientos aleatorios (en segundos)
+@export var random_move_interval_min: float = 2.0
+## Tiempo máximo entre movimientos aleatorios (en segundos)
+@export var random_move_interval_max: float = 5.0
+
+@export_group("Path Movement (NPC)")
+## Array de direcciones a seguir en bucle (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
+@export var path_directions: Array[DirectionEnum.Type] = []
+
+@export_group("Look Pattern (NPC)")
+## Array de direcciones de mirada a seguir en bucle (LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)
+@export var look_pattern_directions: Array[DirectionEnum.Type] = []
+## Tiempo en segundos que el NPC mira en cada dirección antes de cambiar
+@export var look_pattern_delay: float = 2.0
+
+@export_group("Random Turning (NPC)")
+## Intervalo mínimo entre giros aleatorios
+@export var random_turning_interval_min: float = 2.0
+## Intervalo máximo entre giros aleatorios
+@export var random_turning_interval_max: float = 5.0
+
+@export_group("Player Awareness (NPC)")
+## Si está activo, el NPC puede detectar y girar hacia el jugador
+@export var awareness_enabled: bool = false
+## Probabilidad base de girar hacia el jugador (0.0 a 1.0)
+@export var awareness_chance: float = 0.3
+## Multiplicador de probabilidad cuando el jugador corre
+@export var awareness_running_multiplier: float = 2.0
+## Distancia máxima para detectar al jugador (en tiles)
+@export var awareness_detection_distance: float = 3.0
 
 ## Referencia al Event de origen (no exportada, solo runtime)
 ## Se asigna cuando se duplica la página desde un Event
@@ -122,68 +142,30 @@ func evaluate_conditions(event_id: String = "") -> bool:
 	# Crear el contexto de evaluación
 	var context = EventConditionContext.new(event_id, GameStateService)
 
-	# Prioridad: usar root_condition si está definido
-	if root_condition:
-		return root_condition.evaluate(context)
-
-	# Fallback: usar sistema legacy (conditions array)
-	if conditions.size() == 0:
+	# Si no hay root_condition, la página siempre se puede activar
+	if not root_condition:
 		return true
 
-	# Evaluar según el modo (ALL o ANY)
-	match condition_mode:
-		ConditionMode.ALL:
-			# Todas las condiciones deben cumplirse
-			for condition in conditions:
-				if not condition or not condition.evaluate(context):
-					return false
-			return true
-		ConditionMode.ANY:
-			# Al menos una condición debe cumplirse
-			for condition in conditions:
-				if condition and condition.evaluate(context):
-					return true
-			return false
-		_:
-			return true
+	return root_condition.evaluate(context)
 
 
 ## Retorna true si esta página tiene alguna condición configurada
 func has_conditions() -> bool:
-	# Verificar si tiene root_condition
-	if root_condition:
-		return true
-
-	# Verificar sistema legacy
-	return conditions.size() > 0
+	return root_condition != null
 
 ## Verifica si esta página depende de una variable global específica
 ## Retorna true si alguna condición de la página usa la variable
 func depends_on_variable(variable_name: String) -> bool:
-	# Prioridad: verificar root_condition si está definido
-	if root_condition:
-		return root_condition.depends_on_variable(variable_name)
-
-	# Fallback: verificar sistema legacy (conditions array)
-	for condition in conditions:
-		if condition and condition.depends_on_variable(variable_name):
-			return true
-
-	return false
+	if not root_condition:
+		return false
+	return root_condition.depends_on_variable(variable_name)
 
 ## Verifica si esta página depende de un flag global específico
 ## Retorna true si alguna condición de la página usa el flag
 func depends_on_flag(flag_name: String) -> bool:
-	# Prioridad: verificar root_condition si está definido
-	if root_condition:
-		return root_condition.depends_on_flag(flag_name)
-
-	# Fallback: verificar sistema legacy (conditions array)
-	for condition in conditions:
-		if condition and condition.depends_on_flag(flag_name):
-			return true
-
-	return false
+	if not root_condition:
+		return false
+	return root_condition.depends_on_flag(flag_name)
 
 
 ## Busca el primer comando de un tipo específico en esta página
