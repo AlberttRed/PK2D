@@ -6,10 +6,20 @@ class_name SetFlagCommand
 @export var flag_name: String = "test_flag"
 @export var flag_value: bool = true
 
-func execute(_context: Node) -> void:
-	print("SetFlag: Estableciendo flag global '%s' a %s" % [flag_name, flag_value])
+@export_group("Defer Options")
+## Si es true, el cambio se aplicará en el próximo warp en lugar de inmediatamente
+@export var defer_until_warp: bool = false
 
-	# Establecer flag global en el GameStateService (usa global_flags internamente)
+func execute(_context: Node) -> void:
+	# Si debe diferirse hasta el próximo warp
+	if defer_until_warp:
+		GameStateService.defer_change("flag", {
+			"name": flag_name,
+			"value": flag_value
+		})
+		return
+
+	# Establecer flag global en el GameStateService inmediatamente
 	GameStateService.set_event_flag(flag_name, flag_value)
 
 	# No llamar continue_execution() - el EventController lo maneja automáticamente para comandos síncronos

@@ -31,6 +31,10 @@ var event_self_flags: Dictionary = {}
 # Valor: "V" si se ganó, "D" si se perdió
 var defeated_trainers: Dictionary = {}
 
+# Cola de cambios diferidos que se aplicarán en el próximo warp
+# Cada cambio es un Dictionary con "type" y "params"
+var deferred_changes: Array[Dictionary] = []
+
 # === INICIALIZACIÓN ===
 func _ready() -> void:
 	pass  # No inicializar automáticamente - se hará cuando sea necesario
@@ -110,7 +114,6 @@ func set_facing_direction(direction: Vector2) -> void:
 func set_event_flag(flag_name: String, value: bool) -> void:
 	var old_value = global_flags.get(flag_name, null)
 	global_flags[flag_name] = value
-	print("GameStateService: Flag '%s' establecido a: %s" % [flag_name, value])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -120,7 +123,6 @@ func set_event_flag(flag_name: String, value: bool) -> void:
 func clear_event_flag(flag_name: String) -> void:
 	if global_flags.has(flag_name):
 		global_flags.erase(flag_name)
-		print("GameStateService: Flag '%s' eliminado" % flag_name)
 		flag_changed.emit(flag_name, false)
 
 ## Establece el valor de una variable global
@@ -128,7 +130,6 @@ func clear_event_flag(flag_name: String) -> void:
 func set_variable(var_name: String, value: Variant) -> void:
 	var old_value = game_variables.get(var_name, null)
 	game_variables[var_name] = value
-	print("GameStateService: Variable '%s' establecida a: %s (tipo: %s)" % [var_name, value, typeof(value)])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -141,7 +142,6 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 	var key = "%s:%s" % [event_id, switch_letter]
 	var old_value = event_self_flags.get(key, null)
 	event_self_flags[key] = value
-	print("GameStateService: Self-switch '%s' establecido a: %s" % [key, value])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -159,20 +159,46 @@ func register_trainer_battle_result(trainer_id: String, result: String) -> void:
 		push_error("GameStateService: Resultado de combate inválido '%s'. Debe ser 'V' o 'D'" % result)
 		return
 
-	var old_result = defeated_trainers.get(trainer_id, "")
 	defeated_trainers[trainer_id] = result
-	print("GameStateService: Resultado de combate contra '%s' registrado: %s" % [trainer_id, result])
 
-	# Solo imprimir si cambió (para evitar spam en rematches)
-	if old_result != result:
-		print("GameStateService: Resultado actualizado de '%s' a '%s' para trainer '%s'" % [old_result, result, trainer_id])
+# === SISTEMA DE CAMBIOS DIFERIDOS ===
+## Registra un cambio diferido que se aplicará en el próximo warp
+## change_type: "variable", "flag", o "self_switch"
+## params: Dictionary con los parámetros específicos del tipo de cambio
+func defer_change(change_type: String, params: Dictionary) -> void:
+	deferred_changes.append({
+		"type": change_type,
+		"params": params
+	})
+
+## Aplica todos los cambios diferidos pendientes
+## Se llama automáticamente cuando se completa un warp
+func apply_deferred_changes() -> void:
+	if deferred_changes.is_empty():
+		return
+
+	for change in deferred_changes:
+		match change.type:
+			"variable":
+				set_variable(change.params.name, change.params.value)
+			"flag":
+				set_event_flag(change.params.name, change.params.value)
+			"self_switch":
+				set_self_switch(change.params.event_id, change.params.switch_letter, change.params.value)
+			_:
+				push_warning("GameStateService: Tipo de cambio diferido desconocido: %s" % change.type)
+
+	deferred_changes.clear()
+
+## Limpia todos los cambios diferidos sin aplicarlos
+func clear_deferred_changes() -> void:
+	deferred_changes.clear()
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición
 func change_map(map_id: String, position: Vector2i) -> void:
 	set_current_map_id(map_id)
 	set_current_position(position)
-	print("GameStateService: Transición a mapa '%s' en posición '%s'" % [map_id, position])
 
 ## Actualiza la posición después de una transición de mapa
 func update_position_after_transition(position: Vector2i) -> void:

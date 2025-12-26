@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=4 uid="uid://dx5ysjvdkng4b"]
+[gd_scene load_steps=95 format=4 uid="uid://dx5ysjvdkng4b"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_2apf5"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_fthu1"]
@@ -23,6 +23,7 @@
 [ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="13_nyssf"]
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="14_1ikpg"]
 [ext_resource type="Texture2D" uid="uid://c724qjjspjh50" path="res://Sprites/Overworlds/Misc/map_sprite.png" id="16_xuw3p"]
+[ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="17_0j1te"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="18_0j1te"]
 
 [sub_resource type="Resource" id="Resource_jv80v"]
@@ -61,7 +62,6 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_qaen7"]
 script = ExtResource("5_qaen7")
 trigger = SubResource("Resource_tdyby")
-trigger_type = 2
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -93,7 +93,6 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_3a7uo"]
 script = ExtResource("5_qaen7")
 trigger = SubResource("Resource_5ohmd")
-trigger_type = 2
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_n3847"), SubResource("Resource_mhgtt"), SubResource("Resource_s5nyf"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
 root_condition = SubResource("Resource_4y3yt")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -111,9 +110,9 @@ message = "¡RIVAL está en el laboratorio del abuelo!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_ojpi0"]
-script = ExtResource("13_nyssf")
-flag_name = "CHOOSING_STARTER"
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+script = ExtResource("17_0j1te")
+variable_name = "STARTER"
+metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
 
 [sub_resource type="Resource" id="Resource_ldkl0"]
 script = ExtResource("18_0j1te")

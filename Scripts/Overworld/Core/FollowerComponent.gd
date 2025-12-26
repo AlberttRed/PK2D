@@ -34,6 +34,10 @@ var pending_movement: bool = false
 var pending_target_tile: Vector2i = Vector2i.ZERO
 var follower_start_tile: Vector2i = Vector2i.ZERO
 
+## Valores originales del follower (para restaurar al detener seguimiento)
+var original_is_running: bool = false
+var original_base_speed: float = 1.0
+
 ## Historial de tiles del leader
 var step_history: Array[Vector2i] = []
 var max_history_size: int = 16
@@ -66,6 +70,11 @@ func start_follow(p_leader: Node2D, config: Dictionary = {}) -> void:
 	if not leader_motion:
 		push_error("FollowerComponent: El líder debe tener un componente GridMotion")
 		return
+
+	# Guardar valores originales del follower antes de modificarlos
+	if follower_motion:
+		original_is_running = follower_motion.is_running
+		original_base_speed = follower_motion.base_speed
 
 	# Conectar señales
 	if not leader_motion.step_started.is_connected(_on_leader_step_started):
@@ -113,6 +122,9 @@ func stop_follow() -> void:
 
 	if follower_motion:
 		follower_motion.is_command_controlled = false
+		# Restaurar valores originales del follower
+		follower_motion.is_running = original_is_running
+		follower_motion.base_speed = original_base_speed
 
 ## Verifica si el componente está activo
 func is_active() -> bool:

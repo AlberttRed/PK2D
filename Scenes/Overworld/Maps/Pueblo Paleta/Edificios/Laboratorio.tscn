@@ -81,7 +81,6 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_gc3x0"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_2h6y0")
-trigger_type = 2
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_k1guk"), SubResource("Resource_ardic")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -118,7 +117,7 @@ metadata/_custom_type_script = "uid://cgcgdh5botek0"
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_bhq2p")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_077yi"), SubResource("Resource_eibtc"), SubResource("Resource_to1bf"), SubResource("Resource_vfmvs")])
-movement_type = 1
+movement_type = 3
 sprite_texture = SubResource("CompressedTexture2D_oqqnf")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -142,7 +141,7 @@ metadata/_custom_type_script = "uid://cgcgdh5botek0"
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_apq0a")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_8cj4d"), SubResource("Resource_yeqrt")])
-movement_type = 1
+movement_type = 5
 sprite_texture = ExtResource("14_8cj4d")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -169,7 +168,7 @@ metadata/_custom_type_script = "uid://cgcgdh5botek0"
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_wv6ig")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6wtby"), SubResource("Resource_afg6e")])
-movement_type = 1
+movement_type = 3
 sprite_texture = SubResource("CompressedTexture2D_to1bf")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -210,6 +209,7 @@ script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_eg4wl")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_fvsvc"), SubResource("Resource_i68pn")])
 root_condition = SubResource("Resource_ng6sp")
+preserve_direction_on_sprite_match = true
 sprite_texture = ExtResource("14_5lwew")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -526,7 +526,7 @@ metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
 [sub_resource type="Resource" id="Resource_pxkaa"]
 script = ExtResource("12_8cj4d")
-message = "VERTE: ¡Pues este para mí!"
+message = "RIVAL: ¡Pues este para mí!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
 [sub_resource type="Resource" id="Resource_5fwq4"]
@@ -869,7 +869,6 @@ metadata/_custom_type_script = "uid://bo2o8u1n57ga5"
 [sub_resource type="Resource" id="Resource_f1fhn"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_3f7e3")
-trigger_type = 3
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_w8gfq"), SubResource("Resource_1wrd2"), SubResource("Resource_rbl5v"), SubResource("Resource_1v77v"), SubResource("Resource_3ej8n"), SubResource("Resource_mltvc"), SubResource("Resource_11ir3"), SubResource("Resource_4wxix"), SubResource("Resource_3usvp"), SubResource("Resource_jk8xa"), SubResource("Resource_fp4hf"), SubResource("Resource_ee6t4"), SubResource("Resource_u7ywe"), SubResource("Resource_bcirq"), SubResource("Resource_xyfq1"), SubResource("Resource_ao7v1"), SubResource("Resource_ex3x8"), SubResource("Resource_37hst")])
 root_condition = SubResource("Resource_4oiji")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -908,7 +907,6 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_8146w"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_p84c8")
-trigger_type = 1
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_si0hn"), SubResource("Resource_5mk5g")])
 through = true
 root_condition = SubResource("Resource_bat5i")
@@ -1056,7 +1054,6 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_hc06h"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_n1i4s")
-trigger_type = 1
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_nwn00"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_sillk"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
@@ -1117,7 +1114,6 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_i6a1h"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_301wh")
-trigger_type = 1
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_7lbrx"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_1fw45"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
@@ -1178,7 +1174,6 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_h5471"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_owxgh")
-trigger_type = 1
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_24v1m"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_r10os"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
@@ -1238,7 +1233,7 @@ position = Vector2(208, 240)
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_gc3x0")])
 
 [node name="Scientist_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
-position = Vector2(336, 144)
+position = Vector2(368, 144)
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_esu18")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
@@ -1246,7 +1241,7 @@ position = Vector2(80, 112)
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5lwew")])
 
 [node name="Scientist_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
-position = Vector2(144, 144)
+position = Vector2(112, 176)
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_kngbo")])
 
 [node name="Oak_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]

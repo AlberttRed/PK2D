@@ -41,7 +41,7 @@ enum ConditionMode { ALL, ANY }
 
 @export_group("Movement (NPC)")
 ## Tipo de movimiento del NPC (solo para NPCs)
-@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern") var movement_type: int = 0
+@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern", "RandomVertical", "RandomHorizontal") var movement_type: int = 0
 
 ## Comportamiento de orientación al interactuar (solo para NPCs)
 @export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
@@ -51,6 +51,10 @@ enum ConditionMode { ALL, ANY }
 
 ## Velocidad de movimiento del NPC (solo para NPCs)
 @export_enum("Slowest", "Slower", "Normal", "Faster", "Fastest") var movement_speed: int = 2  # 2 = Normal
+
+## Si true, preserva la dirección actual cuando cambia de página y no hay cambio de sprite
+## Útil para mantener la dirección después de interactuar (ej: NPC mirando hacia el jugador)
+@export var preserve_direction_on_sprite_match: bool = false
 
 ## Referencia al Event de origen (no exportada, solo runtime)
 ## Se asigna cuando se duplica la página desde un Event
