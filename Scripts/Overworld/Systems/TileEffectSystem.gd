@@ -247,6 +247,11 @@ func _connect_to_actor(actor: Node2D) -> void:
 	grid_motion.step_finished.connect(_on_actor_step_finished.bind(actor))
 	grid_motion.step_started.connect(_on_actor_step_started.bind(actor))
 
+	# Verificar reflejo inicial si el actor ya está posicionado
+	var reflection_handler: ReflectionEffectHandler = effect_handlers.get("water_reflection", null)
+	if reflection_handler:
+		reflection_handler.check_initial_reflection(actor)
+
 ## Conecta a todos los NPCs/Events activos en el grid activo
 func _connect_to_active_actors() -> void:
 	if not world_system:

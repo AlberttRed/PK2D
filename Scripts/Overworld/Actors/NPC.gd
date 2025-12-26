@@ -105,6 +105,9 @@ var _path_directions_vector2: Array[Vector2] = []
 ## Patrón de mirada (uso interno)
 var _look_pattern_index: int = 0
 
+## Datos del sprite de la página anterior (para comparar si hay cambio de sprite)
+var _previous_page_sprite_data: Dictionary = {}
+
 ## Componentes del NPC
 var motion: GridMotion
 var animator: ActorAnimator  # Heredado de Event
@@ -120,6 +123,8 @@ var _random_timer: Timer
 var _look_delay_timer: Timer
 var _random_turning_timer: Timer
 var _look_pattern_timer: Timer
+var _random_vertical_timer: Timer
+var _random_horizontal_timer: Timer
 
 func _ready() -> void:
 	super._ready()
@@ -230,6 +235,11 @@ func _update_animator_from_current_page() -> void:
 
 ## Override del método de Event para actualizar también el animator y el movimiento
 func update_sprite_from_current_page() -> void:
+	# Guardar datos del sprite de la página actual antes de cambiar
+	# (esto se usará como "página anterior" en la próxima comparación)
+	if current_page:
+		_previous_page_sprite_data = _get_sprite_data_from_page(current_page)
+
 	super.update_sprite_from_current_page()
 	_update_animator_from_current_page()
 	_update_movement_from_current_page()
@@ -242,11 +252,23 @@ func _update_movement_from_current_page() -> void:
 	# Actualizar velocidad desde la página actual
 	motion.base_speed = MoveSpeedEnum.to_multiplier(get_movement_speed())
 
-	# Aplicar la dirección inicial de la página cuando cambia la página activa
-	# Esto asegura que el NPC respete el initial_direction configurado en la nueva página
-	motion.dir = DirectionEnum.to_vector2(get_initial_direction())
-	if animator:
-		animator.idle(motion.dir)
+	# Verificar si debemos preservar la dirección
+	var should_preserve_direction = false
+	if current_page.preserve_direction_on_sprite_match:
+		# Comparar sprites entre la página anterior y la nueva
+		should_preserve_direction = _has_same_sprite_as_previous_page()
+
+	# Aplicar dirección: preservar actual o usar initial_direction
+	if should_preserve_direction:
+		# Mantener la dirección actual (no cambiar)
+		# Solo actualizar el animator con la dirección actual
+		if animator:
+			animator.idle(motion.dir)
+	else:
+		# Aplicar la dirección inicial de la nueva página
+		motion.dir = DirectionEnum.to_vector2(get_initial_direction())
+		if animator:
+			animator.idle(motion.dir)
 
 	# Si cambió el tipo de movimiento, reconfigurear timers
 	# Primero eliminar timers existentes
@@ -259,6 +281,12 @@ func _update_movement_from_current_page() -> void:
 	if _look_pattern_timer:
 		_look_pattern_timer.queue_free()
 		_look_pattern_timer = null
+	if _random_vertical_timer:
+		_random_vertical_timer.queue_free()
+		_random_vertical_timer = null
+	if _random_horizontal_timer:
+		_random_horizontal_timer.queue_free()
+		_random_horizontal_timer = null
 
 	# Convertir path si es necesario
 	if get_movement_type() == 2:
@@ -271,6 +299,31 @@ func _update_movement_from_current_page() -> void:
 	# Si es path movement, iniciarlo
 	if get_movement_type() == 2:
 		call_deferred("_deferred_start_path_movement")
+
+## Verifica si la página actual tiene el mismo sprite que la página anterior
+## Retorna true si los sprites son iguales (mismo actor_style, sprite_frames, o sprite_texture)
+func _has_same_sprite_as_previous_page() -> bool:
+	# Si no hay datos de página anterior, no hay coincidencia
+	if _previous_page_sprite_data.is_empty():
+		return false
+
+	# Obtener datos del sprite de la página actual
+	var current_data = _get_sprite_data_from_page(current_page)
+
+	# Comparar datos de sprite
+	return _previous_page_sprite_data == current_data
+
+## Obtiene un identificador único del sprite de una página para comparación
+func _get_sprite_data_from_page(page: EventPage) -> Dictionary:
+	if not page:
+		return {}
+
+	return {
+		"actor_style": page.actor_style,
+		"sprite_frames": page.sprite_frames,
+		"sprite_texture": page.sprite_texture,
+		"is_spritesheet": page.is_spritesheet
+	}
 
 ## Configura los timers según el tipo de movimiento
 func _setup_timers() -> void:
@@ -296,6 +349,20 @@ func _setup_timers() -> void:
 		if not look_pattern_directions.is_empty():
 			# Ejecutar primera mirada inmediatamente, luego el timer
 			_execute_next_look_pattern()
+
+	# Timer para movimiento vertical aleatorio (solo para RandomVertical)
+	elif get_movement_type() == 5:  # RANDOM_VERTICAL
+		_random_vertical_timer = Timer.new()
+		add_child(_random_vertical_timer)
+		_random_vertical_timer.timeout.connect(_on_random_vertical_timer_timeout)
+		_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+
+	# Timer para movimiento horizontal aleatorio (solo para RandomHorizontal)
+	elif get_movement_type() == 6:  # RANDOM_HORIZONTAL
+		_random_horizontal_timer = Timer.new()
+		add_child(_random_horizontal_timer)
+		_random_horizontal_timer.timeout.connect(_on_random_horizontal_timer_timeout)
+		_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
 
 ## Conecta a la señal step_finished del Player para awareness
 func _connect_to_player_movement() -> void:
@@ -331,6 +398,12 @@ func connect_external_signals() -> void:
 	if get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
 		_random_turning_timer.stop()  # Detener si estaba corriendo
 		_random_turning_timer.start(randf_range(random_turning_interval_min, random_turning_interval_max))
+	elif get_movement_type() == 5 and _random_vertical_timer:  # RANDOM_VERTICAL
+		_random_vertical_timer.stop()
+		_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+	elif get_movement_type() == 6 and _random_horizontal_timer:  # RANDOM_HORIZONTAL
+		_random_horizontal_timer.stop()
+		_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
 
 ## Sobrescribe el método virtual de Event para desconectar señales externas
 ## Se llama cuando el NPC se desactiva en un chunk
@@ -388,7 +461,6 @@ func _on_random_turning_timer_timeout() -> void:
 	motion.face(direction)
 	animator.idle(direction)
 
-	print("NPC '%s': Cambio de dirección (RandomTurning) → %s" % [name, DirectionEnum.Type.keys()[random_look]])
 
 
 	# Reiniciar timer con intervalo aleatorio
@@ -400,6 +472,50 @@ func _on_look_pattern_timer_timeout() -> void:
 		return
 
 	_execute_next_look_pattern()
+
+## Callback del timer de movimiento vertical aleatorio (RandomVertical)
+func _on_random_vertical_timer_timeout() -> void:
+	if not movement_enabled or motion.moving or _movement_paused:
+		return
+
+	# Solo movimientos verticales (UP y DOWN)
+	var vertical_actions = [
+		DirectionEnum.Type.UP,
+		DirectionEnum.Type.DOWN
+	]
+
+	# Elegir una dirección vertical aleatoria
+	var random_action = vertical_actions[randi() % vertical_actions.size()]
+	var direction = DirectionEnum.to_vector2(random_action)
+
+	# Ejecutar movimiento
+	motion.hold_time = motion.initial_delay
+	motion.try_step(direction)
+
+	# Reiniciar timer con intervalo aleatorio
+	_random_vertical_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
+
+## Callback del timer de movimiento horizontal aleatorio (RandomHorizontal)
+func _on_random_horizontal_timer_timeout() -> void:
+	if not movement_enabled or motion.moving or _movement_paused:
+		return
+
+	# Solo movimientos horizontales (LEFT y RIGHT)
+	var horizontal_actions = [
+		DirectionEnum.Type.LEFT,
+		DirectionEnum.Type.RIGHT
+	]
+
+	# Elegir una dirección horizontal aleatoria
+	var random_action = horizontal_actions[randi() % horizontal_actions.size()]
+	var direction = DirectionEnum.to_vector2(random_action)
+
+	# Ejecutar movimiento
+	motion.hold_time = motion.initial_delay
+	motion.try_step(direction)
+
+	# Reiniciar timer con intervalo aleatorio
+	_random_horizontal_timer.start(randf_range(random_move_interval_min, random_move_interval_max))
 
 ## Ejecuta la siguiente dirección del patrón de mirada
 func _execute_next_look_pattern() -> void:
@@ -706,7 +822,6 @@ func _pause_movement() -> void:
 	if _look_pattern_timer and _look_pattern_timer.time_left > 0:
 		_look_pattern_timer.stop()
 
-	print("NPC: Movimiento pausado para ejecutar comandos")
 
 ## Reanuda el movimiento del NPC cuando terminan los comandos
 func _resume_movement() -> void:
@@ -723,7 +838,6 @@ func _resume_movement() -> void:
 	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
 		_look_pattern_timer.start(look_pattern_delay)
 
-	print("NPC: Movimiento reanudado")
 
 ## Callback cuando termina un evento (para reanudar movimiento)
 func _on_event_finished(_event) -> void:

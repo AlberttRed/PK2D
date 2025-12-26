@@ -43,12 +43,10 @@ func execute(_context: Node) -> void:
 			"name": variable_name,
 			"value": value
 		})
-		print("SetVariableCommand: Variable '%s' diferida hasta el próximo warp (valor: %s)" % [variable_name, value])
 		return
 
 	# Establecer variable en GameStateService inmediatamente
 	GameStateService.set_variable(variable_name, value)
-	print("SetVariableCommand: Variable '%s' establecida a: %s (tipo: %s)" % [variable_name, value, _get_type_name(variable_type)])
 
 ## Valida que el tipo del valor coincida con el tipo seleccionado
 func _validate_type(value: Variant, expected_type: VariableType) -> bool:

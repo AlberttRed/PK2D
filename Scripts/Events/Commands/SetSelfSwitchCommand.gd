@@ -56,11 +56,9 @@ func execute(context: Node) -> void:
 			"switch_letter": switch_name,
 			"value": switch_value
 		})
-		print("SetSelfSwitchCommand: Self-switch '%s:%s' diferido hasta el próximo warp (valor: %s)" % [event_id, switch_name, switch_value])
 		return
 
 	# Establecer self-switch en GameStateService inmediatamente
-	print("SetSelfSwitchCommand: Event '%s' - Switch %s = %s" % [event_id, switch_name, switch_value])
 	GameStateService.set_self_switch(event_id, switch_name, switch_value)
 
 ## Obtiene el ID del evento que está ejecutando este comando

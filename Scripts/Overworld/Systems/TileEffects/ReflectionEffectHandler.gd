@@ -38,7 +38,7 @@ func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, _actor: Node2D) 
 ## Verifica si hay agua en los tiles relevantes y actualiza la visibilidad del reflejo
 func _check_water_reflection(grid: OverworldGrid, current_tile: Vector2i, actor: Node2D) -> void:
 	var reflection_sprite := actor.get_node_or_null("ReflectionSprite")
-	if not reflection_sprite or reflection_sprite.visible:
+	if not reflection_sprite:
 		return
 
 	# Para Events: verificar si el EventPage actual permite reflejo
@@ -94,3 +94,28 @@ func deactivate_actor(actor: Node2D) -> void:
 	var reflection_sprite := actor.get_node_or_null("ReflectionSprite")
 	if reflection_sprite:
 		reflection_sprite.visible = false
+
+## Verifica el reflejo inicial cuando un actor se conecta al sistema
+## Se llama cuando el actor se posiciona por primera vez o se conecta al sistema
+func check_initial_reflection(actor: Node2D) -> void:
+	var grid_motion = actor.get_node_or_null("GridMotion")
+	if not grid_motion:
+		return
+
+	var grid = grid_motion.grid
+	if not grid:
+		# Si el grid aún no está disponible, intentar de nuevo en el siguiente frame
+		if grid_motion.get_tree():
+			await grid_motion.get_tree().process_frame
+			check_initial_reflection(actor)
+		return
+
+	var current_tile = grid_motion.current_tile()
+	if current_tile == Vector2i(-9999, -9999):
+		# Si el tile aún no está inicializado, intentar de nuevo en el siguiente frame
+		if grid_motion.get_tree():
+			await grid_motion.get_tree().process_frame
+			check_initial_reflection(actor)
+		return
+
+	_check_water_reflection(grid, current_tile, actor)

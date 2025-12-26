@@ -219,12 +219,12 @@ func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
 
 	# Verificar si el jugador está en el campo de visión
 	if _is_player_in_sight(player_tile):
-		print("Trainer '%s': ¡Jugador detectado en tile %s!" % [name, player_tile])
 		_player_detected = true
 		_start_battle_sequence()
 
 
 ## Verifica si el jugador está en la línea de visión del trainer
+## Retorna false si hay obstáculos (eventos no traspasables o tiles bloqueados) entre el trainer y el jugador
 func _is_player_in_sight(player_tile: Vector2i) -> bool:
 	if not motion or not motion.grid or not current_page:
 		return false
@@ -236,38 +236,118 @@ func _is_player_in_sight(player_tile: Vector2i) -> bool:
 
 	var trainer_tile = motion.current_tile()
 	var direction = motion.dir
+	var grid = motion.grid
+
+	# Primero verificar si el trainer puede salir del tile actual en la dirección que mira
+	# Si no puede salir, no puede ver en esa dirección
+	if not grid.can_exit_tile(trainer_tile, direction):
+		return false
 
 	# Verificar solo en la dirección que mira el trainer
+	# Recorrer cada tile en la línea de visión y verificar obstáculos
 	var offset = Vector2i.ZERO
+	var previous_tile = trainer_tile
 
-	# Determinar el eje de detección según la dirección
+	# Determinar el eje de detección según la dirección y verificar línea de visión
 	if direction == Vector2.UP:
 		# Mirar hacia arriba (Y negativo)
 		for i in range(1, detect_range + 1):
 			offset = Vector2i(0, -i)
-			if trainer_tile + offset == player_tile:
+			var check_tile = trainer_tile + offset
+
+			# Verificar si puede continuar desde el tile anterior hacia este
+			# (verificar exit_mask del tile anterior en la dirección del movimiento)
+			if not grid.can_exit_tile(previous_tile, direction):
+				return false  # No puede continuar desde el tile anterior
+
+			# Verificar obstáculos en el tile actual
+			if _is_tile_blocking_vision(check_tile, grid):
+				return false
+
+			# Si llegamos aquí, no hay obstáculo. Verificar si el jugador está en este tile
+			if check_tile == player_tile:
 				return true
+
+			# Actualizar previous_tile para la siguiente iteración
+			previous_tile = check_tile
 
 	elif direction == Vector2.DOWN:
 		# Mirar hacia abajo (Y positivo)
 		for i in range(1, detect_range + 1):
 			offset = Vector2i(0, i)
-			if trainer_tile + offset == player_tile:
+			var check_tile = trainer_tile + offset
+
+			# Verificar si puede continuar desde el tile anterior
+			if not grid.can_exit_tile(previous_tile, direction):
+				return false
+
+			# Verificar obstáculos en el tile actual
+			if _is_tile_blocking_vision(check_tile, grid):
+				return false
+
+			# Verificar si el jugador está en este tile
+			if check_tile == player_tile:
 				return true
+
+			previous_tile = check_tile
 
 	elif direction == Vector2.LEFT:
 		# Mirar hacia la izquierda (X negativo)
 		for i in range(1, detect_range + 1):
 			offset = Vector2i(-i, 0)
-			if trainer_tile + offset == player_tile:
+			var check_tile = trainer_tile + offset
+
+			# Verificar si puede continuar desde el tile anterior
+			if not grid.can_exit_tile(previous_tile, direction):
+				return false
+
+			# Verificar obstáculos en el tile actual
+			if _is_tile_blocking_vision(check_tile, grid):
+				return false
+
+			# Verificar si el jugador está en este tile
+			if check_tile == player_tile:
 				return true
+
+			previous_tile = check_tile
 
 	elif direction == Vector2.RIGHT:
 		# Mirar hacia la derecha (X positivo)
 		for i in range(1, detect_range + 1):
 			offset = Vector2i(i, 0)
-			if trainer_tile + offset == player_tile:
+			var check_tile = trainer_tile + offset
+
+			# Verificar si puede continuar desde el tile anterior
+			if not grid.can_exit_tile(previous_tile, direction):
+				return false
+
+			# Verificar obstáculos en el tile actual
+			if _is_tile_blocking_vision(check_tile, grid):
+				return false
+
+			# Verificar si el jugador está en este tile
+			if check_tile == player_tile:
 				return true
+
+			previous_tile = check_tile
+
+	return false
+
+## Verifica si un tile bloquea la visión (evento no traspasable o tile bloqueado)
+func _is_tile_blocking_vision(tile: Vector2i, grid: OverworldGrid) -> bool:
+	if not grid:
+		return true
+
+	# Verificar si el tile está bloqueado (por custom_data["blocked"] o terrain)
+	if grid.is_blocked(self, tile):
+		return true
+
+	# Verificar si hay un evento no traspasable en el tile
+	var event = grid.event_at(tile)
+	if event and event != self:  # No contar el propio trainer
+		# Si el evento tiene una página activa y no es through, bloquea la visión
+		if event.current_page and not event.current_page.through:
+			return true
 
 	return false
 

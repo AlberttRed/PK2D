@@ -17,11 +17,9 @@ func execute(_context: Node) -> void:
 			"name": flag_name,
 			"value": flag_value
 		})
-		print("SetFlag: Flag '%s' diferido hasta el próximo warp (valor: %s)" % [flag_name, flag_value])
 		return
 
 	# Establecer flag global en el GameStateService inmediatamente
-	print("SetFlag: Estableciendo flag global '%s' a %s" % [flag_name, flag_value])
 	GameStateService.set_event_flag(flag_name, flag_value)
 
 	# No llamar continue_execution() - el EventController lo maneja automáticamente para comandos síncronos

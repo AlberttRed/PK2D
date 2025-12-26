@@ -114,7 +114,6 @@ func set_facing_direction(direction: Vector2) -> void:
 func set_event_flag(flag_name: String, value: bool) -> void:
 	var old_value = global_flags.get(flag_name, null)
 	global_flags[flag_name] = value
-	print("GameStateService: Flag '%s' establecido a: %s" % [flag_name, value])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -124,7 +123,6 @@ func set_event_flag(flag_name: String, value: bool) -> void:
 func clear_event_flag(flag_name: String) -> void:
 	if global_flags.has(flag_name):
 		global_flags.erase(flag_name)
-		print("GameStateService: Flag '%s' eliminado" % flag_name)
 		flag_changed.emit(flag_name, false)
 
 ## Establece el valor de una variable global
@@ -132,7 +130,6 @@ func clear_event_flag(flag_name: String) -> void:
 func set_variable(var_name: String, value: Variant) -> void:
 	var old_value = game_variables.get(var_name, null)
 	game_variables[var_name] = value
-	print("GameStateService: Variable '%s' establecida a: %s (tipo: %s)" % [var_name, value, typeof(value)])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -145,7 +142,6 @@ func set_self_switch(event_id: String, switch_letter: String, value: bool) -> vo
 	var key = "%s:%s" % [event_id, switch_letter]
 	var old_value = event_self_flags.get(key, null)
 	event_self_flags[key] = value
-	print("GameStateService: Self-switch '%s' establecido a: %s" % [key, value])
 
 	# Emitir señal solo si el valor cambió
 	if old_value != value:
@@ -163,13 +159,7 @@ func register_trainer_battle_result(trainer_id: String, result: String) -> void:
 		push_error("GameStateService: Resultado de combate inválido '%s'. Debe ser 'V' o 'D'" % result)
 		return
 
-	var old_result = defeated_trainers.get(trainer_id, "")
 	defeated_trainers[trainer_id] = result
-	print("GameStateService: Resultado de combate contra '%s' registrado: %s" % [trainer_id, result])
-
-	# Solo imprimir si cambió (para evitar spam en rematches)
-	if old_result != result:
-		print("GameStateService: Resultado actualizado de '%s' a '%s' para trainer '%s'" % [old_result, result, trainer_id])
 
 # === SISTEMA DE CAMBIOS DIFERIDOS ===
 ## Registra un cambio diferido que se aplicará en el próximo warp
@@ -180,15 +170,12 @@ func defer_change(change_type: String, params: Dictionary) -> void:
 		"type": change_type,
 		"params": params
 	})
-	print("GameStateService: Cambio diferido registrado (tipo: %s). Total pendientes: %d" % [change_type, deferred_changes.size()])
 
 ## Aplica todos los cambios diferidos pendientes
 ## Se llama automáticamente cuando se completa un warp
 func apply_deferred_changes() -> void:
 	if deferred_changes.is_empty():
 		return
-
-	print("GameStateService: Aplicando %d cambio(s) diferido(s)" % deferred_changes.size())
 
 	for change in deferred_changes:
 		match change.type:
@@ -202,21 +189,16 @@ func apply_deferred_changes() -> void:
 				push_warning("GameStateService: Tipo de cambio diferido desconocido: %s" % change.type)
 
 	deferred_changes.clear()
-	print("GameStateService: Todos los cambios diferidos aplicados")
 
 ## Limpia todos los cambios diferidos sin aplicarlos
 func clear_deferred_changes() -> void:
-	var count = deferred_changes.size()
 	deferred_changes.clear()
-	if count > 0:
-		print("GameStateService: %d cambio(s) diferido(s) eliminado(s) sin aplicar" % count)
 
 # === MÉTODOS DE TRANSICIÓN ===
 ## Cambia de mapa y actualiza la posición
 func change_map(map_id: String, position: Vector2i) -> void:
 	set_current_map_id(map_id)
 	set_current_position(position)
-	print("GameStateService: Transición a mapa '%s' en posición '%s'" % [map_id, position])
 
 ## Actualiza la posición después de una transición de mapa
 func update_position_after_transition(position: Vector2i) -> void:
