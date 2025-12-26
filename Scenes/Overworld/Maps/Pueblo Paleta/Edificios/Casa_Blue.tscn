@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=4 uid="uid://dx5ysjvdkng4b"]
+[gd_scene load_steps=94 format=4 uid="uid://dx5ysjvdkng4b"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_2apf5"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_fthu1"]
@@ -18,10 +18,12 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="11_p8nvd"]
 [ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="11_y6llx"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="12_1ikpg"]
+[ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="12_a54gb"]
 [ext_resource type="Texture2D" uid="uid://sd1f3k5g60c8" path="res://Sprites/Overworlds/Characters/NPC 26.png" id="13_8focb"]
 [ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="13_nyssf"]
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="14_1ikpg"]
 [ext_resource type="Texture2D" uid="uid://c724qjjspjh50" path="res://Sprites/Overworlds/Misc/map_sprite.png" id="16_xuw3p"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="18_0j1te"]
 
 [sub_resource type="Resource" id="Resource_jv80v"]
 script = ExtResource("7_p8nvd")
@@ -52,8 +54,13 @@ script = ExtResource("7_p8nvd")
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
+[sub_resource type="Resource" id="Resource_tdyby"]
+script = ExtResource("12_a54gb")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
 [sub_resource type="Resource" id="Resource_qaen7"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_tdyby")
 trigger_type = 2
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -66,7 +73,6 @@ metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 [sub_resource type="Resource" id="Resource_mhgtt"]
 script = ExtResource("11_8focb")
 target_event_name = "Daisy_NPC1"
-switch_letter = 1
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
 [sub_resource type="Resource" id="Resource_s5nyf"]
@@ -80,8 +86,13 @@ flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_5ohmd"]
+script = ExtResource("12_a54gb")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
 [sub_resource type="Resource" id="Resource_3a7uo"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_5ohmd")
 trigger_type = 2
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_n3847"), SubResource("Resource_mhgtt"), SubResource("Resource_s5nyf"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
 root_condition = SubResource("Resource_4y3yt")
@@ -104,8 +115,13 @@ script = ExtResource("13_nyssf")
 flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_ldkl0"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_nyssf"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_ldkl0")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_y6llx"), SubResource("Resource_a54gb")])
 root_condition = SubResource("Resource_ojpi0")
 orientation_behavior = 2
@@ -126,8 +142,13 @@ script = ExtResource("12_1ikpg")
 message = "¡Me hubiera encantado estar ahí!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_rqmx8"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_80pa8"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_rqmx8")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_axd61"), SubResource("Resource_xeld1")])
 initial_direction = 3
 sprite_texture = ExtResource("13_8focb")
@@ -176,8 +197,13 @@ script = ExtResource("13_nyssf")
 flag_name = "HAS_POKEDEX"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_wsrqt"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_28js1"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_wsrqt")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_i15ib"), SubResource("Resource_lruxf"), SubResource("Resource_x126n"), SubResource("Resource_m4840"), SubResource("Resource_x2lw2"), SubResource("Resource_0sud8"), SubResource("Resource_w805f")])
 root_condition = SubResource("Resource_471gs")
 initial_direction = 3
@@ -196,8 +222,13 @@ flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_o1qai"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_2l2e8"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_o1qai")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_iitrc")])
 root_condition = SubResource("Resource_4jw1v")
 initial_direction = 3
@@ -211,14 +242,24 @@ flag_name = "B"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_5i0ay"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_42pqx"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_5i0ay")
 through = true
 root_condition = SubResource("Resource_1xdw3")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_wlktl"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_0j1te"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_wlktl")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -240,8 +281,13 @@ flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_4litp"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_ckg2e"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_4litp")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_xuw3p"), SubResource("Resource_cfv67")])
 root_condition = SubResource("Resource_q8326")
 movement_type = 1
@@ -255,8 +301,13 @@ message = "¡Mmm, huele que alimenta!
 Aquí han debido de cocinar algo..."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_hq2mp"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_e3ll6"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_hq2mp")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_c2xhc")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -265,8 +316,13 @@ script = ExtResource("12_1ikpg")
 message = "Hay un montón de platos y bandejas muy bien colocados."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_ymsbb"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_mlqt2"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_ymsbb")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_51mej")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -275,8 +331,13 @@ script = ExtResource("12_1ikpg")
 message = "¡Totalmente lleno de libros sobre los POKéMON!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_au3pf"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_i0xma"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_au3pf")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_13w3q")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -285,8 +346,13 @@ script = ExtResource("12_1ikpg")
 message = "¡Está saliendo un POKéMON por la tele! Se le ve encantado..."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_6offt"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_1ikpg"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_6offt")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_p8nvd")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -295,8 +361,13 @@ script = ExtResource("12_1ikpg")
 message = "El cariñoso y dulce CLEFAIRY."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_txl34"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_4icn6"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_txl34")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_8focb")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -306,8 +377,13 @@ message = "¡Es un gran mapa de KANTO!
 ¡Qué útil!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_qewy2"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_0yvl2"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_qewy2")
 commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_kkqr7")])
 sprite_texture = ExtResource("16_xuw3p")
 frame_size = Vector2(32, 32)
@@ -319,8 +395,13 @@ flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_s5nee"]
+script = ExtResource("18_0j1te")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_ml20h"]
 script = ExtResource("5_qaen7")
+trigger = SubResource("Resource_s5nee")
 root_condition = SubResource("Resource_p1e6b")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 

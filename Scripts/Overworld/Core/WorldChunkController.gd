@@ -422,9 +422,10 @@ func _activate_chunk_events(chunk_id: String) -> void:
 
 		# Activar eventos AUTORUN cuando el chunk se activa
 		if event is Event and event.current_page:
-			if event.current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
+			var page_trigger = event.current_page.get_effective_trigger()
+			if page_trigger is AutorunTrigger:
 				# Usar call_deferred para asegurar que todo esté listo (context, EventSystem, etc.)
-				event.call_deferred("trigger")
+				event.call_deferred("try_fire", EventTriggerSignal.SignalType.PAGE_ACTIVATED, event)
 
 
 ## Activa eventos de un mapa específico en un chunk
@@ -463,9 +464,10 @@ func _activate_map_events_in_chunk(map_id: String, chunk_id: String) -> void:
 
 		# Activar eventos AUTORUN cuando el chunk se activa
 		if event is Event and event.current_page:
-			if event.current_page.trigger_type == EventTriggers.TriggerType.AUTORUN:
+			var page_trigger = event.current_page.get_effective_trigger()
+			if page_trigger is AutorunTrigger:
 				# Usar call_deferred para asegurar que todo esté listo (context, EventSystem, etc.)
-				event.call_deferred("trigger")
+				event.call_deferred("try_fire", EventTriggerSignal.SignalType.PAGE_ACTIVATED, event)
 
 
 ## Desactiva eventos de un chunk

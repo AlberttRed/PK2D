@@ -426,16 +426,20 @@ func vacate(tile: Vector2i, actor: Node) -> void:
 
 # --- Triggers / Interact ---
 func on_enter_tile(actor: Node, t: Vector2i) -> void:
-	if actor.is_in_group("Player"):  # o instanceof Player
-		# Ignorar eventos TOUCH cuando el movimiento es controlado por comando
-		# Esto evita que los eventos se activen durante movimientos automáticos (MoveNPCCommand, etc.)
+	# Ignorar eventos TOUCH cuando el movimiento es controlado por comando (solo para Player)
+	# Esto evita que los eventos se activen durante movimientos automáticos (MoveNPCCommand, etc.)
+	if actor.is_in_group("Player"):
 		var player_motion = actor.get_node_or_null("GridMotion")
 		if player_motion and player_motion.is_command_controlled:
 			return  # No activar eventos TOUCH durante movimiento controlado
 
-		var e = event_at(t)
-		if e:
-			e.on_player_touch()
+	# Buscar evento en el tile destino
+	var e = event_at(t)
+	if not e:
+		return
+
+	# Usar el nuevo sistema de triggers
+	e.try_fire(EventTriggerSignal.SignalType.TOUCH, actor)
 
 
 func interactable_at(t: Vector2i) -> Node:

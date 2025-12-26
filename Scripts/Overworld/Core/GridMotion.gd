@@ -409,8 +409,8 @@ func _check_player_collision(_from_tile: Vector2i, target_tile: Vector2i, direct
 	if not event:
 		return false
 
-	if event.current_page.trigger_type == EventTriggers.TriggerType.PLAYER_COLLISION:
-		event.on_player_collision()
+	# Usar el nuevo sistema de triggers
+	if event.try_fire(EventTriggerSignal.SignalType.COLLISION, actor):
 		return true
 
 	return false

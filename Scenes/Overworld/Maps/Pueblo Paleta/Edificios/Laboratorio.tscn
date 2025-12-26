@@ -1,4 +1,4 @@
-[gd_scene load_steps=216 format=4 uid="uid://c1amvh7rkmkou"]
+[gd_scene load_steps=239 format=4 uid="uid://c1amvh7rkmkou"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_q1be6"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gbfid"]
@@ -17,10 +17,12 @@
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="11_077yi"]
 [ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="11_esu18"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="12_8cj4d"]
+[ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="12_ekydi"]
 [ext_resource type="Texture2D" uid="uid://drdsledmb3gke" path="res://Sprites/Overworlds/Characters/phone001.png" id="14_5lwew"]
 [ext_resource type="Texture2D" uid="uid://bfd58d1hvsuji" path="res://Sprites/Overworlds/Characters/NPC 08.png" id="14_8cj4d"]
 [ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="15_0nu6r"]
 [ext_resource type="Texture2D" uid="uid://dg3jiyopb1enp" path="res://Sprites/Overworlds/Characters/Blue/trchar004.png" id="15_kngbo"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="15_qicpj"]
 [ext_resource type="Script" uid="uid://3wvstn8m5q1k" path="res://Scripts/Events/Commands/ShowPortraitCommand.gd" id="15_qligy"]
 [ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="16_6wtby"]
 [ext_resource type="Script" uid="uid://bywrdnse71xj2" path="res://Scripts/Events/Commands/ClosePortraitCommand.gd" id="17_yeqrt"]
@@ -31,15 +33,17 @@
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="21_afg6e"]
 [ext_resource type="Script" uid="uid://dt7lapm5n8qrt" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="22_to1bf"]
 [ext_resource type="Script" uid="uid://dy36hc326kn7v" path="res://Scripts/Events/Commands/WaitCommand.gd" id="24_vfmvs"]
-[ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="28_bvtm4"]
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="29_rok3h"]
-[ext_resource type="Script" uid="uid://desogu22oifhh" path="res://Scripts/Events/Commands/ConditionalCommand.gd" id="30_6mp8h"]
 [ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="30_yo4pe"]
 [ext_resource type="Script" uid="uid://f4hilmgida04" path="res://Scripts/Events/Conditions/NotCondition.gd" id="31_rok3h"]
 [ext_resource type="Resource" uid="uid://cuiev7vjw3d6y" path="res://Resources/Trainers/RIVAL_INICIO_C.tres" id="31_uw0p3"]
+[ext_resource type="Script" uid="uid://bo2o8u1n57ga5" path="res://Scripts/Events/Triggers/AutorunTrigger.gd" id="31_x1gl8"]
+[ext_resource type="Script" uid="uid://d3rkctbb4gj2y" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="32_qicpj"]
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="32_vuiic"]
 [ext_resource type="Resource" uid="uid://cp4vsoken5pug" path="res://Resources/Trainers/RIVAL_INICIO_B.tres" id="33_ekydi"]
 [ext_resource type="Resource" uid="uid://bh30akwr2lc3o" path="res://Resources/Trainers/RIVAL_INICIO_S.tres" id="34_qicpj"]
+[ext_resource type="Script" uid="uid://cndauysvy7s3h" path="res://Scripts/Resources/SwitchCase.gd" id="37_vuiic"]
+[ext_resource type="Script" uid="uid://bnkrdjikt6sl3" path="res://Scripts/Events/Commands/SwitchCommand.gd" id="38_ekydi"]
 
 [sub_resource type="Resource" id="Resource_jv80v"]
 script = ExtResource("7_j1fmg")
@@ -70,8 +74,13 @@ script = ExtResource("7_j1fmg")
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
+[sub_resource type="Resource" id="Resource_2h6y0"]
+script = ExtResource("12_ekydi")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
 [sub_resource type="Resource" id="Resource_gc3x0"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_2h6y0")
 trigger_type = 2
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_k1guk"), SubResource("Resource_ardic")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -101,8 +110,13 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_oqqnf"]
 load_path = "res://.godot/imported/trchar029.png-46215f8c62b9fcffcd0f8830d91e5334.ctex"
 
+[sub_resource type="Resource" id="Resource_bhq2p"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_esu18"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_bhq2p")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_077yi"), SubResource("Resource_eibtc"), SubResource("Resource_to1bf"), SubResource("Resource_vfmvs")])
 movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_oqqnf")
@@ -120,8 +134,13 @@ script = ExtResource("12_8cj4d")
 message = "¡Es admirado por muchos de los ENTRENADORES POKéMON!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_apq0a"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_5lwew"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_apq0a")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_8cj4d"), SubResource("Resource_yeqrt")])
 movement_type = 1
 sprite_texture = ExtResource("14_8cj4d")
@@ -142,8 +161,13 @@ metadata/_custom_type_script = "uid://badx4bswihslg"
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_to1bf"]
 load_path = "res://.godot/imported/trchar029.png-46215f8c62b9fcffcd0f8830d91e5334.ctex"
 
+[sub_resource type="Resource" id="Resource_wv6ig"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_kngbo"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_wv6ig")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6wtby"), SubResource("Resource_afg6e")])
 movement_type = 1
 sprite_texture = SubResource("CompressedTexture2D_to1bf")
@@ -177,8 +201,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_o2om8")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_eg4wl"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_x1gl8"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_eg4wl")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_fvsvc"), SubResource("Resource_i68pn")])
 root_condition = SubResource("Resource_ng6sp")
 sprite_texture = ExtResource("14_5lwew")
@@ -208,8 +237,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_iok2r"), SubResource("Resource_0aasi"), SubResource("Resource_apqql")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_r8o7e"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_qicpj"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_r8o7e")
 through = true
 root_condition = SubResource("Resource_o8s4d")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -244,8 +278,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_c6yq0")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_p4mir"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_c6h0r"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_p4mir")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_kpepb"), SubResource("Resource_4p7ta"), SubResource("Resource_5hcbi")])
 root_condition = SubResource("Resource_5fp7m")
 sprite_texture = ExtResource("14_5lwew")
@@ -279,8 +318,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_lii17"), SubResource("Resource_gxvop"), SubResource("Resource_x3f2g")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_ywfpd"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_7h4kx"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_ywfpd")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jjjk7")])
 root_condition = SubResource("Resource_4tff0")
 sprite_texture = ExtResource("14_5lwew")
@@ -299,8 +343,13 @@ flag_name = "HAS_STARTER"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_2ulbb"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_cf5ma"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_2ulbb")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_41qt1")])
 root_condition = SubResource("Resource_c804u")
 sprite_texture = ExtResource("15_kngbo")
@@ -317,8 +366,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_o2om8")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_yg2i5"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_qv8bm"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_yg2i5")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_afn3s")])
 root_condition = SubResource("Resource_17ysd")
 initial_direction = 0
@@ -339,8 +393,13 @@ script = ExtResource("12_8cj4d")
 message = "¡Venga, elige uno, PLAYER!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_768g5"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_qe4s6"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_768g5")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_oqqvx"), SubResource("Resource_sodac")])
 root_condition = SubResource("Resource_5fp7m")
 initial_direction = 0
@@ -365,8 +424,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_58we6"), SubResource("Resource_uc5ea")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_w5ti7"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_ng2nx"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_w5ti7")
 through = true
 root_condition = SubResource("Resource_8vilv")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -376,8 +440,13 @@ script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_hl00g"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_fk05p"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_hl00g")
 root_condition = SubResource("Resource_v8rdu")
 orientation_behavior = 1
 initial_direction = 0
@@ -385,8 +454,13 @@ sprite_texture = ExtResource("14_5lwew")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_g0kgr"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_ou7ik"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_g0kgr")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -395,8 +469,13 @@ script = ExtResource("12_8cj4d")
 message = "¡Ése es el último POKéMON del PROF. OAK!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
+[sub_resource type="Resource" id="Resource_6c64e"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_qch3f"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_6c64e")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_0nu6r")])
 sprite_texture = ExtResource("19_6wtby")
 frame_size = Vector2(32, 32)
@@ -480,8 +559,13 @@ branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_f50xn"), SubRes
 store_result_in = "STARTER"
 metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 
+[sub_resource type="Resource" id="Resource_ckfry"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_44lcn"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_ckfry")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_oyhmp"), SubResource("Resource_c6nd2"), SubResource("Resource_xa5ve")])
 root_condition = SubResource("Resource_5fp7m")
 sprite_texture = ExtResource("19_6wtby")
@@ -494,8 +578,13 @@ flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_wowhx"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_85anj"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_wowhx")
 root_condition = SubResource("Resource_wsl02")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -522,8 +611,13 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_ht6pi"), SubResource("Resource_olbao")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_v2ktj"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_8ogwv"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_v2ktj")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jm72m")])
 root_condition = SubResource("Resource_f73kv")
 sprite_texture = ExtResource("19_6wtby")
@@ -577,8 +671,13 @@ metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5aqlk"]
 load_path = "res://.godot/imported/item_sprite.png-f92be66c71cdf4e4c8bb42e4cd12734f.ctex"
 
+[sub_resource type="Resource" id="Resource_8b63r"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_yo4pe"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_8b63r")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6mp8h"), SubResource("Resource_oqqnf"), SubResource("Resource_ju7ti")])
 root_condition = SubResource("Resource_5fp7m")
 sprite_texture = SubResource("CompressedTexture2D_5aqlk")
@@ -630,8 +729,13 @@ branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_h5ueq"), SubRes
 store_result_in = "STARTER"
 metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 
+[sub_resource type="Resource" id="Resource_fbwho"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_uw0p3"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_fbwho")
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_vuiic"), SubResource("Resource_5aqlk"), SubResource("Resource_ekydi")])
 root_condition = SubResource("Resource_5fp7m")
 sprite_texture = SubResource("CompressedTexture2D_5aqlk")
@@ -758,8 +862,13 @@ script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
+[sub_resource type="Resource" id="Resource_3f7e3"]
+script = ExtResource("31_x1gl8")
+metadata/_custom_type_script = "uid://bo2o8u1n57ga5"
+
 [sub_resource type="Resource" id="Resource_f1fhn"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_3f7e3")
 trigger_type = 3
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_w8gfq"), SubResource("Resource_1wrd2"), SubResource("Resource_rbl5v"), SubResource("Resource_1v77v"), SubResource("Resource_3ej8n"), SubResource("Resource_mltvc"), SubResource("Resource_11ir3"), SubResource("Resource_4wxix"), SubResource("Resource_3usvp"), SubResource("Resource_jk8xa"), SubResource("Resource_fp4hf"), SubResource("Resource_ee6t4"), SubResource("Resource_u7ywe"), SubResource("Resource_bcirq"), SubResource("Resource_xyfq1"), SubResource("Resource_ao7v1"), SubResource("Resource_ex3x8"), SubResource("Resource_37hst")])
 root_condition = SubResource("Resource_4oiji")
@@ -792,16 +901,26 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_4o1ij"), SubResource("Resource_dc00p")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_p84c8"]
+script = ExtResource("32_qicpj")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
 [sub_resource type="Resource" id="Resource_8146w"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_p84c8")
 trigger_type = 1
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_si0hn"), SubResource("Resource_5mk5g")])
 through = true
 root_condition = SubResource("Resource_bat5i")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_8lhrq"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
 [sub_resource type="Resource" id="Resource_ciggr"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_8lhrq")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -844,17 +963,11 @@ battle_type = 1
 trainer_data = ExtResource("31_uw0p3")
 metadata/_custom_type_script = "uid://qm4ouivf82wo"
 
-[sub_resource type="Resource" id="Resource_bhq2p"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Bulbasaur"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_apq0a"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_bhq2p")
+[sub_resource type="Resource" id="Resource_wrefv"]
+script = ExtResource("37_vuiic")
+values = ["Bulbasaur"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ylor7"), SubResource("Resource_vomsi")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_bm8pi"]
 script = ExtResource("21_afg6e")
@@ -868,17 +981,11 @@ battle_type = 1
 trainer_data = ExtResource("33_ekydi")
 metadata/_custom_type_script = "uid://qm4ouivf82wo"
 
-[sub_resource type="Resource" id="Resource_wv6ig"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Squirtle"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_eg4wl"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_wv6ig")
+[sub_resource type="Resource" id="Resource_l6u12"]
+script = ExtResource("37_vuiic")
+values = ["Squirtle"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_bm8pi"), SubResource("Resource_e1wuw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_5dmp5"]
 script = ExtResource("21_afg6e")
@@ -892,22 +999,17 @@ battle_type = 1
 trainer_data = ExtResource("34_qicpj")
 metadata/_custom_type_script = "uid://qm4ouivf82wo"
 
-[sub_resource type="Resource" id="Resource_ywfpd"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Charmander"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_2ulbb"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_ywfpd")
+[sub_resource type="Resource" id="Resource_qdqdu"]
+script = ExtResource("37_vuiic")
+values = ["Charmander"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_5dmp5"), SubResource("Resource_1bprw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
-[sub_resource type="Resource" id="Resource_2h6y0"]
-script = ExtResource("30_6mp8h")
-branches = Array[ExtResource("28_bvtm4")]([SubResource("Resource_apq0a"), SubResource("Resource_eg4wl"), SubResource("Resource_2ulbb")])
-metadata/_custom_type_script = "uid://desogu22oifhh"
+[sub_resource type="Resource" id="Resource_nwn00"]
+script = ExtResource("38_ekydi")
+variable_name = "STARTER"
+cases = Array[ExtResource("37_vuiic")]([SubResource("Resource_wrefv"), SubResource("Resource_l6u12"), SubResource("Resource_qdqdu")])
+metadata/_custom_type_script = "uid://bnkrdjikt6sl3"
 
 [sub_resource type="Resource" id="Resource_axkni"]
 script = ExtResource("12_8cj4d")
@@ -920,10 +1022,10 @@ message = "¡PLAYER! ¡Abuelo!
 ¡Hasta luego!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_1fw45"]
+[sub_resource type="Resource" id="Resource_sillk"]
 script = ExtResource("21_afg6e")
 target_name = "Blue"
-path = Array[int]([3, 1, 1, 1, 2, 1, 1])
+path = Array[int]([3, 1, 1, 1, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
 [sub_resource type="Resource" id="Resource_6mmc0"]
@@ -947,10 +1049,15 @@ script = ExtResource("18_0nu6r")
 children = Array[ExtResource("11_esu18")]([SubResource("Resource_hhw7v"), SubResource("Resource_4b1fi")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
+[sub_resource type="Resource" id="Resource_n1i4s"]
+script = ExtResource("32_qicpj")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
 [sub_resource type="Resource" id="Resource_hc06h"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_n1i4s")
 trigger_type = 1
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_2h6y0"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_1fw45"), SubResource("Resource_6mmc0")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_nwn00"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_sillk"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -962,16 +1069,10 @@ path = Array[int]([2, 2, 2, 2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
 [sub_resource type="Resource" id="Resource_rpxgn"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Bulbasaur"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_v6mj4"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_rpxgn")
+script = ExtResource("37_vuiic")
+values = ["Bulbasaur"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ekhan"), SubResource("Resource_vomsi")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_kpmqo"]
 script = ExtResource("21_afg6e")
@@ -979,17 +1080,11 @@ target_name = "Blue"
 path = Array[int]([2, 2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_ialaq"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Squirtle"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_7lbrx"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_ialaq")
+[sub_resource type="Resource" id="Resource_v6mj4"]
+script = ExtResource("37_vuiic")
+values = ["Squirtle"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_kpmqo"), SubResource("Resource_e1wuw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_hbcyj"]
 script = ExtResource("21_afg6e")
@@ -997,27 +1092,33 @@ target_name = "Blue"
 path = Array[int]([2, 2, 2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_wrefv"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Charmander"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_l6u12"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_wrefv")
+[sub_resource type="Resource" id="Resource_ialaq"]
+script = ExtResource("37_vuiic")
+values = ["Charmander"]
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_hbcyj"), SubResource("Resource_1bprw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
-[sub_resource type="Resource" id="Resource_qdqdu"]
-script = ExtResource("30_6mp8h")
-branches = Array[ExtResource("28_bvtm4")]([SubResource("Resource_v6mj4"), SubResource("Resource_7lbrx"), SubResource("Resource_l6u12")])
-metadata/_custom_type_script = "uid://desogu22oifhh"
+[sub_resource type="Resource" id="Resource_7lbrx"]
+script = ExtResource("38_ekydi")
+variable_name = "STARTER"
+cases = Array[ExtResource("37_vuiic")]([SubResource("Resource_rpxgn"), SubResource("Resource_v6mj4"), SubResource("Resource_ialaq")])
+metadata/_custom_type_script = "uid://bnkrdjikt6sl3"
+
+[sub_resource type="Resource" id="Resource_1fw45"]
+script = ExtResource("21_afg6e")
+target_name = "Blue"
+path = Array[int]([3, 1, 1, 1, 2, 1, 1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_301wh"]
+script = ExtResource("32_qicpj")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 
 [sub_resource type="Resource" id="Resource_i6a1h"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_301wh")
 trigger_type = 1
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_qdqdu"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_1fw45"), SubResource("Resource_6mmc0")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_7lbrx"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_1fw45"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -1028,17 +1129,11 @@ target_name = "Blue"
 path = Array[int]([2, 2, 2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_dskie"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Charmander"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_p330t"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_dskie")
+[sub_resource type="Resource" id="Resource_ow1hb"]
+script = ExtResource("37_vuiic")
+values = Array[String](["Bulbasaur"])
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ffosq"), SubResource("Resource_1bprw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_ajojg"]
 script = ExtResource("21_afg6e")
@@ -1046,17 +1141,11 @@ target_name = "Blue"
 path = Array[int]([2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_sillk"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Squirtle"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_nwn00"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_sillk")
+[sub_resource type="Resource" id="Resource_dskie"]
+script = ExtResource("37_vuiic")
+values = Array[String](["Squirtle"])
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ajojg"), SubResource("Resource_e1wuw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
 
 [sub_resource type="Resource" id="Resource_c2gg2"]
 script = ExtResource("21_afg6e")
@@ -1064,27 +1153,33 @@ target_name = "Blue"
 path = Array[int]([2, 2, 1, 1])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_r8o7e"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-compare_value = "Charmander"
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_p4mir"]
-script = ExtResource("28_bvtm4")
-condition = SubResource("Resource_r8o7e")
+[sub_resource type="Resource" id="Resource_p330t"]
+script = ExtResource("37_vuiic")
+values = Array[String](["Charmander"])
 commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_c2gg2"), SubResource("Resource_1bprw")])
-metadata/_custom_type_script = "uid://bhk1tuersl1iy"
+metadata/_custom_type_script = "uid://cndauysvy7s3h"
+
+[sub_resource type="Resource" id="Resource_24v1m"]
+script = ExtResource("38_ekydi")
+variable_name = "STARTER"
+cases = Array[ExtResource("37_vuiic")]([SubResource("Resource_ow1hb"), SubResource("Resource_dskie"), SubResource("Resource_p330t")])
+metadata/_custom_type_script = "uid://bnkrdjikt6sl3"
 
 [sub_resource type="Resource" id="Resource_r10os"]
-script = ExtResource("30_6mp8h")
-branches = Array[ExtResource("28_bvtm4")]([SubResource("Resource_p330t"), SubResource("Resource_nwn00"), SubResource("Resource_p4mir")])
-metadata/_custom_type_script = "uid://desogu22oifhh"
+script = ExtResource("21_afg6e")
+target_name = "Blue"
+path = Array[int]([2, 1, 1, 1, 1, 1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_owxgh"]
+script = ExtResource("32_qicpj")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 
 [sub_resource type="Resource" id="Resource_h5471"]
 script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_owxgh")
 trigger_type = 1
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_r10os"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_1fw45"), SubResource("Resource_6mmc0")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2388g"), SubResource("Resource_irf2h"), SubResource("Resource_jjkim"), SubResource("Resource_jw0m2"), SubResource("Resource_24v1m"), SubResource("Resource_axkni"), SubResource("Resource_bwty3"), SubResource("Resource_r10os"), SubResource("Resource_6mmc0")])
 through = true
 root_condition = SubResource("Resource_7o3in")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
