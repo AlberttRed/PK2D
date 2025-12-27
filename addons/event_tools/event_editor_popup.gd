@@ -1729,6 +1729,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_set_event_through_editor(command, page_index, false, -1)
 	elif command is SetActorVisibilityCommand:
 		_open_set_actor_visibility_editor(command, page_index, false, -1)
+	elif command is ShowPortraitCommand:
+		_open_show_portrait_editor(command, page_index, false, -1)
+	elif command is FollowActorCommand:
+		_open_follow_actor_editor(command, page_index, false, -1)
+	elif command is UseMOCommand:
+		_open_use_mo_editor(command, page_index, false, -1)
 	else:
 		print("Event Editor: Editor no implementado para ", command.get_script().get_global_name() if command.get_script() else "Unknown")
 
@@ -2918,6 +2924,12 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 		_open_set_event_through_editor(new_command, page_index, true, command_index)
 	elif new_command is SetActorVisibilityCommand:
 		_open_set_actor_visibility_editor(new_command, page_index, true, command_index)
+	elif new_command is ShowPortraitCommand:
+		_open_show_portrait_editor(new_command, page_index, true, command_index)
+	elif new_command is FollowActorCommand:
+		_open_follow_actor_editor(new_command, page_index, true, command_index)
+	elif new_command is UseMOCommand:
+		_open_use_mo_editor(new_command, page_index, true, command_index)
 
 # === FUNCIONES AUXILIARES ===
 ## Encuentra el índice de un TreeItem dentro de su padre, contando solo items del tipo especificado
@@ -3991,6 +4003,170 @@ func _open_set_actor_visibility_editor(command: SetActorVisibilityCommand, page_
 	editor_window.popup_centered()
 
 func _on_set_actor_visibility_command_edited(command: SetActorVisibilityCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para ShowPortraitCommand
+func _open_show_portrait_editor(command: ShowPortraitCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un ShowPortraitCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/show_portrait_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de ShowPortraitCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: ShowPortraitCommand): _on_show_portrait_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_show_portrait_command_edited(command: ShowPortraitCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para FollowActorCommand
+func _open_follow_actor_editor(command: FollowActorCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un FollowActorCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/follow_actor_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de FollowActorCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.set_event_node(event_node)
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: FollowActorCommand): _on_follow_actor_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_follow_actor_command_edited(command: FollowActorCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para UseMOCommand
+func _open_use_mo_editor(command: UseMOCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un UseMOCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/use_mo_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de UseMOCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.set_event_node(event_node)
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: UseMOCommand): _on_use_mo_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_use_mo_command_edited(command: UseMOCommand, page_index: int) -> void:
 	if not command:
 		return
 	_mark_as_changed()
