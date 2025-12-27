@@ -9,6 +9,7 @@ var tab_container: TabContainer = null
 var page_buttons: Dictionary = {}  # page_index -> {add: Button, edit: Button, delete: Button}
 var page_controls: Dictionary = {}  # page_index -> {execution_option: OptionButton, trigger_option: OptionButton, blocks_player_check: CheckBox, through_check: CheckBox, conditions_button: Button}
 var editor_interface: EditorInterface = null
+var current_command_editor: Window = null  # Referencia a la ventana de edición actual
 
 # Estado del modo mover
 var move_mode_active: Dictionary = {}  # page_index -> bool
@@ -1665,8 +1666,34 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		print("Event Editor: Item seleccionado no es un comando")
 		return
 
-	print("Event Editor: Editar ", metadata.type)
-	# TODO: Abrir editor de item
+	var item_type = metadata.type
+	if item_type not in ["command", "nested_command"]:
+		print("Event Editor: El item seleccionado no es un comando editable")
+		return
+
+	# Obtener el comando desde el metadata
+	var command = null
+	if item_type == "command":
+		command = metadata.get("command")
+	elif item_type == "nested_command":
+		command = metadata.get("command")
+
+	if not command:
+		print("Event Editor: No se pudo obtener el comando desde el metadata")
+		return
+
+	# Abrir editor específico según el tipo de comando
+	# Al editar, no es un comando nuevo
+	if command is ShowMessageCommand:
+		_open_show_message_editor(command, page_index, false, -1)
+	elif command is SetFlagCommand:
+		_open_set_flag_editor(command, page_index, false, -1)
+	elif command is SetVariableCommand:
+		_open_set_variable_editor(command, page_index, false, -1)
+	elif command is SetSelfSwitchCommand:
+		_open_set_self_switch_editor(command, page_index, false, -1)
+	else:
+		print("Event Editor: Editor no implementado para ", command.get_script().get_global_name() if command.get_script() else "Unknown")
 
 func _on_delete_command_pressed(page_index: int) -> void:
 	_show_delete_confirmation_dialog(page_index)
@@ -2752,14 +2779,18 @@ func _show_add_command_dialog(page_index: int) -> void:
 	add_button.pressed.connect(func():
 		var selected_items = command_list.get_selected_items()
 		if selected_items.size() > 0:
-			_create_command_of_type(page_index, command_types[selected_items[0]] + "Command")
+			var command_type = command_types[selected_items[0]] + "Command"
 			dialog.queue_free()
+			# Esperar a que el diálogo se cierre antes de crear el comando
+			call_deferred("_create_command_of_type", page_index, command_type)
 	)
 
 	command_list.item_selected.connect(func(idx): add_button.disabled = false)
 	command_list.item_activated.connect(func(idx):
-		_create_command_of_type(page_index, command_types[idx] + "Command")
+		var command_type = command_types[idx] + "Command"
 		dialog.queue_free()
+		# Esperar a que el diálogo se cierre antes de crear el comando
+		call_deferred("_create_command_of_type", page_index, command_type)
 	)
 
 	buttons_container.add_child(add_button)
@@ -2812,6 +2843,20 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 				commands_tree.set_selected(children[-1], 0)
 
 	print("Event Editor: Comando ", command_type_name, " añadido")
+
+	# Obtener el índice del comando recién añadido (es el último)
+	var command_index = editable_page.commands.size() - 1
+
+	# Si es un comando con editor, abrir el editor automáticamente
+	# Pasar true para indicar que es un comando nuevo y el índice
+	if new_command is ShowMessageCommand:
+		_open_show_message_editor(new_command, page_index, true, command_index)
+	elif new_command is SetFlagCommand:
+		_open_set_flag_editor(new_command, page_index, true, command_index)
+	elif new_command is SetVariableCommand:
+		_open_set_variable_editor(new_command, page_index, true, command_index)
+	elif new_command is SetSelfSwitchCommand:
+		_open_set_self_switch_editor(new_command, page_index, true, command_index)
 
 # === FUNCIONES AUXILIARES ===
 ## Encuentra el índice de un TreeItem dentro de su padre, contando solo items del tipo especificado
@@ -3042,6 +3087,321 @@ func _refresh_inspector() -> void:
 	var selection = editor_interface.get_selection()
 	if selection and event_node in selection.get_selected_nodes():
 		call_deferred("_reselect_node_for_refresh", event_node)
+
+# === EDITORES DE COMANDOS ESPECÍFICOS ===
+## Abre el editor para ShowMessageCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_show_message_editor(command: ShowMessageCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un ShowMessageCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/show_message_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de ShowMessageCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: ShowMessageCommand): _on_show_message_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un ShowMessageCommand
+func _on_show_message_command_edited(command: ShowMessageCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+	_refresh_inspector()
+
+## Abre el editor para SetFlagCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_set_flag_editor(command: SetFlagCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un SetFlagCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/set_flag_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de SetFlagCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: SetFlagCommand): _on_set_flag_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un SetFlagCommand
+func _on_set_flag_command_edited(command: SetFlagCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+	_refresh_inspector()
+
+## Abre el editor para SetVariableCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_set_variable_editor(command: SetVariableCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un SetVariableCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/set_variable_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de SetVariableCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: SetVariableCommand): _on_set_variable_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un SetVariableCommand
+func _on_set_variable_command_edited(command: SetVariableCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+	_refresh_inspector()
+
+## Abre el editor para SetSelfSwitchCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_set_self_switch_editor(command: SetSelfSwitchCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un SetSelfSwitchCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/set_self_switch_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de SetSelfSwitchCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: SetSelfSwitchCommand): _on_set_self_switch_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un SetSelfSwitchCommand
+func _on_set_self_switch_command_edited(command: SetSelfSwitchCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+	_refresh_inspector()
+
+## Callback cuando se cancela la edición de un comando nuevo
+## Elimina el comando de la página
+func _on_new_command_cancelled(page_index: int, command_index: int) -> void:
+	if command_index < 0:
+		return
+
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Crear una copia editable de la página
+	var editable_page = page.duplicate(true) as EventPage
+	if not editable_page:
+		push_error("Event Editor: No se pudo duplicar la página")
+		return
+
+	# Verificar que el índice es válido
+	if command_index >= editable_page.commands.size():
+		return
+
+	# Eliminar el comando en el índice especificado
+	var new_commands: Array[EventCommand] = []
+	for i in range(editable_page.commands.size()):
+		if i != command_index:
+			new_commands.append(editable_page.commands[i])
+
+	editable_page.set("commands", new_commands)
+	event_node.pages[page_index] = editable_page
+
+	# Actualizar el árbol
+	var commands_tree = _get_commands_tree_for_page(page_index)
+	if commands_tree:
+		_update_commands_tree(commands_tree, editable_page, page_index)
+		# Deseleccionar cualquier comando seleccionado
+		commands_tree.deselect_all()
+
+	# Actualizar el estado de los botones (desactivarlos)
+	_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+	print("Event Editor: Comando nuevo cancelado y eliminado")
 
 func _reselect_node_for_refresh(node: Node) -> void:
 	if not node or not is_instance_valid(node) or not editor_interface:
