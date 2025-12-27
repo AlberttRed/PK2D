@@ -9,6 +9,12 @@ signal cancelled
 
 var command: SetSelfSwitchCommand = null
 
+# Valores originales para poder cancelar
+var original_target_event_name: String = ""
+var original_switch_name: String = "A"
+var original_switch_value: bool = true
+var original_defer_until_warp: bool = false
+
 # Referencias a los controles
 var target_event_name_line_edit: LineEdit = null
 var switch_name_line_edit: LineEdit = null
@@ -124,6 +130,12 @@ func load_command(cmd: SetSelfSwitchCommand) -> void:
 
 	command = cmd
 
+	# Guardar valores originales para poder cancelar
+	original_target_event_name = cmd.target_event_name
+	original_switch_name = cmd.switch_name
+	original_switch_value = cmd.switch_value
+	original_defer_until_warp = cmd.defer_until_warp
+
 	# Cargar valores en los controles
 	if target_event_name_line_edit:
 		target_event_name_line_edit.text = cmd.target_event_name
@@ -152,11 +164,25 @@ func _on_accept_pressed() -> void:
 	command_edited.emit(command)
 	hide()
 
+## Restaura los valores originales del comando
+func _restore_original_values() -> void:
+	if not command:
+		return
+
+	command.target_event_name = original_target_event_name
+	command.switch_name = original_switch_name
+	command.switch_value = original_switch_value
+	command.defer_until_warp = original_defer_until_warp
+
 func _on_cancel_pressed() -> void:
+	# Restaurar valores originales antes de cancelar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 
 func _on_close_requested() -> void:
+	# Restaurar valores originales antes de cerrar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 

@@ -9,6 +9,11 @@ signal cancelled
 
 var command: SetFlagCommand = null
 
+# Valores originales para poder cancelar
+var original_flag_name: String = ""
+var original_flag_value: bool = true
+var original_defer_until_warp: bool = false
+
 # Referencias a los controles
 var flag_name_line_edit: LineEdit = null
 var flag_value_check: CheckBox = null
@@ -96,6 +101,11 @@ func load_command(cmd: SetFlagCommand) -> void:
 
 	command = cmd
 
+	# Guardar valores originales para poder cancelar
+	original_flag_name = cmd.flag_name
+	original_flag_value = cmd.flag_value
+	original_defer_until_warp = cmd.defer_until_warp
+
 	# Cargar valores en los controles
 	if flag_name_line_edit:
 		flag_name_line_edit.text = cmd.flag_name
@@ -120,11 +130,24 @@ func _on_accept_pressed() -> void:
 	command_edited.emit(command)
 	hide()
 
+## Restaura los valores originales del comando
+func _restore_original_values() -> void:
+	if not command:
+		return
+
+	command.flag_name = original_flag_name
+	command.flag_value = original_flag_value
+	command.defer_until_warp = original_defer_until_warp
+
 func _on_cancel_pressed() -> void:
+	# Restaurar valores originales antes de cancelar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 
 func _on_close_requested() -> void:
+	# Restaurar valores originales antes de cerrar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 

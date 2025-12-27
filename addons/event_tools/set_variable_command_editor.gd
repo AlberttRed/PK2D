@@ -9,6 +9,12 @@ signal cancelled
 
 var command: SetVariableCommand = null
 
+# Valores originales para poder cancelar
+var original_variable_name: String = ""
+var original_variable_type: int = 0
+var original_value: Variant = 0
+var original_defer_until_warp: bool = false
+
 # Referencias a los controles
 var variable_name_line_edit: LineEdit = null
 var variable_type_option: OptionButton = null
@@ -163,6 +169,12 @@ func load_command(cmd: SetVariableCommand) -> void:
 
 	command = cmd
 
+	# Guardar valores originales para poder cancelar
+	original_variable_name = cmd.variable_name
+	original_variable_type = cmd.variable_type
+	original_value = cmd.value
+	original_defer_until_warp = cmd.defer_until_warp
+
 	# Cargar valores en los controles
 	if variable_name_line_edit:
 		variable_name_line_edit.text = cmd.variable_name
@@ -215,11 +227,25 @@ func _on_accept_pressed() -> void:
 	command_edited.emit(command)
 	hide()
 
+## Restaura los valores originales del comando
+func _restore_original_values() -> void:
+	if not command:
+		return
+
+	command.variable_name = original_variable_name
+	command.variable_type = original_variable_type
+	command.value = original_value
+	command.defer_until_warp = original_defer_until_warp
+
 func _on_cancel_pressed() -> void:
+	# Restaurar valores originales antes de cancelar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 
 func _on_close_requested() -> void:
+	# Restaurar valores originales antes de cerrar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 

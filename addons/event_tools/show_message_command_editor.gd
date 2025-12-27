@@ -9,6 +9,14 @@ signal cancelled
 
 var command: ShowMessageCommand = null
 
+# Valores originales para poder cancelar
+var original_message: String = ""
+var original_wait_input: bool = true
+var original_close_at_end: bool = true
+var original_wait_time: float = 0.0
+var original_show_icon_at_end: bool = false
+var original_frame_style: int = 0
+
 # Referencias a los controles
 var message_text_edit: TextEdit = null
 var wait_input_check: CheckBox = null
@@ -130,6 +138,14 @@ func load_command(cmd: ShowMessageCommand) -> void:
 
 	command = cmd
 
+	# Guardar valores originales para poder cancelar
+	original_message = cmd.message
+	original_wait_input = cmd.wait_input
+	original_close_at_end = cmd.close_at_end
+	original_wait_time = cmd.wait_time
+	original_show_icon_at_end = cmd.show_icon_at_end
+	original_frame_style = cmd.frame_style
+
 	# Cargar valores en los controles
 	if message_text_edit:
 		message_text_edit.text = cmd.message
@@ -166,11 +182,27 @@ func _on_accept_pressed() -> void:
 	command_edited.emit(command)
 	hide()
 
+## Restaura los valores originales del comando
+func _restore_original_values() -> void:
+	if not command:
+		return
+
+	command.message = original_message
+	command.wait_input = original_wait_input
+	command.close_at_end = original_close_at_end
+	command.wait_time = original_wait_time
+	command.show_icon_at_end = original_show_icon_at_end
+	command.frame_style = original_frame_style
+
 func _on_cancel_pressed() -> void:
+	# Restaurar valores originales antes de cancelar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 
 func _on_close_requested() -> void:
+	# Restaurar valores originales antes de cerrar
+	_restore_original_values()
 	cancelled.emit()
 	hide()
 

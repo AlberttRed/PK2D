@@ -11,6 +11,10 @@ var page_controls: Dictionary = {}  # page_index -> {execution_option: OptionBut
 var editor_interface: EditorInterface = null
 var current_command_editor: Window = null  # Referencia a la ventana de edición actual
 
+# Copia de seguridad del evento original para poder cancelar
+var original_event_backup: Array[EventPage] = []
+var has_unsaved_changes: bool = false  # Bandera para detectar si hay cambios sin guardar
+
 # Estado del modo mover
 var move_mode_active: Dictionary = {}  # page_index -> bool
 var command_to_move: Dictionary = {}  # page_index -> {type: String, metadata: Dictionary, item: TreeItem, nested_command_index: int}
@@ -61,7 +65,14 @@ func _setup_for_event() -> void:
 
 	title = "Event Editor - " + event_node.name
 	_clear_tabs()
+
+	# Guardar copia de seguridad de todas las páginas antes de editar
+	_save_event_backup()
+	has_unsaved_changes = false  # Inicializar bandera de cambios
+
 	_create_page_tabs()
+	# Añadir botón Guardar en la interfaz
+	_add_save_button()
 	popup_centered()
 
 func _clear_tabs() -> void:
@@ -372,6 +383,7 @@ func _apply_trigger_change(page_index: int, trigger_class: String) -> void:
 
 	editable_page.trigger = new_trigger
 	event_node.pages[page_index] = editable_page
+	_mark_as_changed()
 	print("Event Editor: Trigger cambiado a ", _get_trigger_display_name(trigger_class))
 
 func _restore_trigger_selection(page_index: int) -> void:
@@ -1198,6 +1210,7 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 
 	if success:
 		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
 		var commands_tree = _get_commands_tree_for_page(page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, editable_page, page_index)
@@ -1357,6 +1370,7 @@ func _move_nested_to_root(dest_page_index: int, source_page_index: int = -1) -> 
 		new_commands.append(nested_command)
 		editable_page.set("commands", new_commands)
 		event_node.pages[dest_page_index] = editable_page
+		_mark_as_changed()
 		var commands_tree = _get_commands_tree_for_page(dest_page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, editable_page, dest_page_index)
@@ -1374,6 +1388,7 @@ func _move_nested_to_root(dest_page_index: int, source_page_index: int = -1) -> 
 
 		# Remover de origen
 		event_node.pages[source_page_index] = editable_page
+		_mark_as_changed()
 
 		# Añadir a destino usando set para evitar problemas con arrays read-only
 		var new_dest_commands: Array[EventCommand] = []
@@ -1468,6 +1483,7 @@ func _move_command_to_root(dest_page_index: int, source_page_index: int) -> bool
 	# Guardar cambios
 	event_node.pages[source_page_index] = editable_source_page
 	event_node.pages[dest_page_index] = editable_dest_page
+	_mark_as_changed()
 
 	# Actualizar árboles
 	var source_tree = _get_commands_tree_for_page(source_page_index)
@@ -1485,16 +1501,19 @@ func _on_execution_mode_changed(page_index: int, selected_index: int) -> void:
 	var page = _get_page(page_index)
 	if page:
 		page.execution_mode = selected_index
+		_mark_as_changed()
 
 func _on_blocks_player_changed(page_index: int, pressed: bool) -> void:
 	var page = _get_page(page_index)
 	if page:
 		page.blocks_player = pressed
+		_mark_as_changed()
 
 func _on_through_changed(page_index: int, pressed: bool) -> void:
 	var page = _get_page(page_index)
 	if page:
 		page.through = pressed
+		_mark_as_changed()
 
 func _on_conditions_button_pressed(page_index: int) -> void:
 	print("Event Editor: Gestionar condiciones para página ", page_index + 1)
@@ -1692,6 +1711,8 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_set_variable_editor(command, page_index, false, -1)
 	elif command is SetSelfSwitchCommand:
 		_open_set_self_switch_editor(command, page_index, false, -1)
+	elif command is StartBattleEventCommand:
+		_open_start_battle_event_editor(command, page_index, false, -1)
 	else:
 		print("Event Editor: Editor no implementado para ", command.get_script().get_global_name() if command.get_script() else "Unknown")
 
@@ -1744,6 +1765,7 @@ func _duplicate_command(page_index: int) -> void:
 
 			editable_page.set("commands", new_commands)
 			event_node.pages[page_index] = editable_page
+			_mark_as_changed()
 			new_item_index = command_index + 1
 			success = true
 
@@ -1789,6 +1811,8 @@ func _duplicate_command(page_index: int) -> void:
 			new_item_index = nested_command_index + 1
 
 	if success:
+		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
 		# Actualizar árbol y seleccionar el comando duplicado
 		if commands_tree:
 			_update_commands_tree(commands_tree, editable_page, page_index)
@@ -2110,6 +2134,7 @@ func _do_delete_item(page_index: int) -> void:
 
 	if success:
 		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
 		_update_commands_tree(commands_tree, editable_page, page_index)
 		_update_buttons_state(page_index, false, false, false)
 
@@ -2410,6 +2435,7 @@ func _move_command(page_index: int, direction: int) -> void:
 									reselect_info["parent_branch_type"] = branch_parent_meta.type
 
 		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
 		_update_commands_tree(commands_tree, editable_page, page_index)
 
 		# Reseleccionar el item movido
@@ -2832,6 +2858,7 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 
 	editable_page.set("commands", new_commands_array)
 	event_node.pages[page_index] = editable_page
+	_mark_as_changed()
 
 	var commands_tree = _get_commands_tree_for_page(page_index)
 	if commands_tree:
@@ -2857,6 +2884,8 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 		_open_set_variable_editor(new_command, page_index, true, command_index)
 	elif new_command is SetSelfSwitchCommand:
 		_open_set_self_switch_editor(new_command, page_index, true, command_index)
+	elif new_command is StartBattleEventCommand:
+		_open_start_battle_event_editor(new_command, page_index, true, command_index)
 
 # === FUNCIONES AUXILIARES ===
 ## Encuentra el índice de un TreeItem dentro de su padre, contando solo items del tipo especificado
@@ -3069,9 +3098,8 @@ func _on_tab_changed(tab_index: int) -> void:
 				buttons.accept_move.disabled = true  # Sin selección, no se puede aceptar
 
 func _on_close_requested() -> void:
-	_refresh_inspector()
-	await get_tree().process_frame
-	queue_free()
+	# Mostrar diálogo de confirmación antes de cancelar
+	_show_cancel_confirmation_dialog()
 
 func _refresh_inspector() -> void:
 	if not editor_interface or not event_node:
@@ -3149,11 +3177,15 @@ func _on_show_message_command_edited(command: ShowMessageCommand, page_index: in
 
 	# El comando ya está modificado (se modifica por referencia)
 	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
 	var page = _get_page(page_index)
 	if page:
 		var commands_tree = _get_commands_tree_for_page(page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
 
 	_refresh_inspector()
 
@@ -3217,11 +3249,15 @@ func _on_set_flag_command_edited(command: SetFlagCommand, page_index: int) -> vo
 
 	# El comando ya está modificado (se modifica por referencia)
 	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
 	var page = _get_page(page_index)
 	if page:
 		var commands_tree = _get_commands_tree_for_page(page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
 
 	_refresh_inspector()
 
@@ -3285,11 +3321,15 @@ func _on_set_variable_command_edited(command: SetVariableCommand, page_index: in
 
 	# El comando ya está modificado (se modifica por referencia)
 	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
 	var page = _get_page(page_index)
 	if page:
 		var commands_tree = _get_commands_tree_for_page(page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
 
 	_refresh_inspector()
 
@@ -3353,11 +3393,87 @@ func _on_set_self_switch_command_edited(command: SetSelfSwitchCommand, page_inde
 
 	# El comando ya está modificado (se modifica por referencia)
 	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
 	var page = _get_page(page_index)
 	if page:
 		var commands_tree = _get_commands_tree_for_page(page_index)
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+
+## Abre el editor para StartBattleEventCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_start_battle_event_editor(command: StartBattleEventCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un StartBattleEventCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/start_battle_event_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de StartBattleEventCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: StartBattleEventCommand): _on_start_battle_event_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un StartBattleEventCommand
+func _on_start_battle_event_command_edited(command: StartBattleEventCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
 
 	_refresh_inspector()
 
@@ -3415,3 +3531,152 @@ func _reselect_node_for_refresh(node: Node) -> void:
 		selection.remove_node(node)
 		await get_tree().process_frame
 		selection.add_node(node)
+
+## Guarda una copia de seguridad del evento original
+func _save_event_backup() -> void:
+	if not event_node:
+		return
+
+	# Verificar que el evento tiene la propiedad pages
+	if not "pages" in event_node:
+		return
+
+	original_event_backup.clear()
+
+	# Hacer una copia profunda de todas las páginas
+	for page in event_node.pages:
+		if page:
+			# Duplicar la página con todos sus recursos anidados
+			var page_copy = page.duplicate(true) as EventPage
+			original_event_backup.append(page_copy)
+		else:
+			original_event_backup.append(null)
+
+## Restaura el evento desde la copia de seguridad
+func _restore_event_from_backup() -> void:
+	if not event_node:
+		return
+
+	# Verificar que el evento tiene la propiedad pages
+	if not "pages" in event_node:
+		return
+
+	if original_event_backup.is_empty():
+		return
+
+	# Restaurar todas las páginas desde la copia
+	var restored_pages: Array[EventPage] = []
+	for page_copy in original_event_backup:
+		if page_copy:
+			# Duplicar la copia para evitar referencias compartidas
+			var restored_page = page_copy.duplicate(true) as EventPage
+			restored_pages.append(restored_page)
+		else:
+			restored_pages.append(null)
+
+	# Aplicar las páginas restauradas
+	event_node.pages = restored_pages
+
+	# Actualizar el árbol de comandos en todas las pestañas
+	for i in range(restored_pages.size()):
+		var commands_tree = _get_commands_tree_for_page(i)
+		if commands_tree:
+			_update_commands_tree(commands_tree, restored_pages[i], i)
+
+	_refresh_inspector()
+	print("Event Editor: Evento restaurado desde la copia de seguridad")
+
+## Marca que ha habido cambios en el evento
+func _mark_as_changed() -> void:
+	has_unsaved_changes = true
+
+## Verifica si hay cambios sin guardar
+func _has_changes() -> bool:
+	return has_unsaved_changes
+
+## Muestra un diálogo de confirmación antes de cancelar
+func _show_cancel_confirmation_dialog() -> void:
+	# Solo mostrar el diálogo si hay cambios
+	if not _has_changes():
+		queue_free()
+		return
+
+	var dialog = AcceptDialog.new()
+	dialog.title = "Cerrar Editor"
+	dialog.dialog_text = "¿Qué deseas hacer con los cambios realizados?"
+
+	# Ocultar el botón OK por defecto
+	dialog.get_ok_button().visible = false
+
+	# Añadir botones personalizados
+	var save_button = dialog.add_button("Guardar cambios", true, "save")
+	var discard_button = dialog.add_button("Descartar cambios", false, "discard")
+	var cancel_button = dialog.add_button("Cancelar", false, "cancel")
+
+	add_child(dialog)
+
+	# Conectar señales
+	dialog.confirmed.connect(func():
+		# Si se presiona el botón por defecto (no debería pasar)
+		dialog.queue_free()
+	)
+
+	dialog.custom_action.connect(func(action: String):
+		match action:
+			"save":
+				_on_save_and_close()
+			"discard":
+				_on_discard_confirmed()
+			"cancel":
+				# No hacer nada, mantener el editor abierto
+				pass
+		dialog.queue_free()
+	)
+
+	dialog.close_requested.connect(func():
+		# Si se cierra el diálogo sin elegir, no hacer nada (mantener el editor abierto)
+		dialog.queue_free()
+	)
+
+	dialog.popup_centered()
+
+func _on_discard_confirmed() -> void:
+	# Restaurar el evento desde la copia de seguridad
+	_restore_event_from_backup()
+	has_unsaved_changes = false  # Resetear bandera después de descartar
+	_refresh_inspector()
+	await get_tree().process_frame
+	queue_free()
+
+func _on_save_and_close() -> void:
+	# Guardar cambios y cerrar (igual que el botón Guardar)
+	_refresh_inspector()
+	has_unsaved_changes = false  # Resetear bandera después de guardar
+	await get_tree().process_frame
+	queue_free()
+
+## Añade un botón "Guardar" en la interfaz
+func _add_save_button() -> void:
+	# Buscar el VBoxContainer principal
+	var vbox = $VBoxContainer
+	if not vbox:
+		return
+
+	# Crear un HBoxContainer para los botones en la parte inferior
+	var buttons_container = HBoxContainer.new()
+	buttons_container.alignment = BoxContainer.ALIGNMENT_END
+	buttons_container.add_theme_constant_override("separation", 10)
+	buttons_container.add_theme_constant_override("margin_top", 10)
+
+	var save_button = Button.new()
+	save_button.text = "Guardar y Cerrar"
+	save_button.pressed.connect(_on_save_button_pressed)
+	buttons_container.add_child(save_button)
+
+	vbox.add_child(buttons_container)
+
+func _on_save_button_pressed() -> void:
+	_refresh_inspector()
+	has_unsaved_changes = false  # Resetear bandera después de guardar
+	await get_tree().process_frame
+	queue_free()
