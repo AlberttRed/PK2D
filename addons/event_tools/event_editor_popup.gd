@@ -1713,6 +1713,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_set_self_switch_editor(command, page_index, false, -1)
 	elif command is StartBattleEventCommand:
 		_open_start_battle_event_editor(command, page_index, false, -1)
+	elif command is WarpCommand:
+		_open_warp_editor(command, page_index, false, -1)
+	elif command is WaitCommand:
+		_open_wait_editor(command, page_index, false, -1)
+	elif command is FadeCommand:
+		_open_fade_editor(command, page_index, false, -1)
 	else:
 		print("Event Editor: Editor no implementado para ", command.get_script().get_global_name() if command.get_script() else "Unknown")
 
@@ -2886,6 +2892,12 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 		_open_set_self_switch_editor(new_command, page_index, true, command_index)
 	elif new_command is StartBattleEventCommand:
 		_open_start_battle_event_editor(new_command, page_index, true, command_index)
+	elif new_command is WarpCommand:
+		_open_warp_editor(new_command, page_index, true, command_index)
+	elif new_command is WaitCommand:
+		_open_wait_editor(new_command, page_index, true, command_index)
+	elif new_command is FadeCommand:
+		_open_fade_editor(new_command, page_index, true, command_index)
 
 # === FUNCIONES AUXILIARES ===
 ## Encuentra el índice de un TreeItem dentro de su padre, contando solo items del tipo especificado
@@ -3476,6 +3488,228 @@ func _on_start_battle_event_command_edited(command: StartBattleEventCommand, pag
 			_update_buttons_state(page_index, false, false, false, false, false)
 
 	_refresh_inspector()
+
+## Abre el editor para WarpCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_warp_editor(command: WarpCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un WarpCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/warp_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de WarpCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Pasar la referencia al event_node para que pueda obtener los eventos del mapa
+	editor_window.event_node = event_node
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: WarpCommand): _on_warp_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un WarpCommand
+func _on_warp_command_edited(command: WarpCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para WaitCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_wait_editor(command: WaitCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un WaitCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/wait_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de WaitCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: WaitCommand): _on_wait_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un WaitCommand
+func _on_wait_command_edited(command: WaitCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para FadeCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_fade_editor(command: FadeCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un FadeCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	# Cargar el script del editor
+	var editor_script = load("res://addons/event_tools/fade_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de FadeCommand")
+		return
+
+	# Crear instancia de la ventana usando el script
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	# Cargar el comando en el editor
+	editor_window.load_command(command)
+
+	# Conectar señales
+	editor_window.command_edited.connect(func(cmd: FadeCommand): _on_fade_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	# Mostrar la ventana
+	editor_window.popup_centered()
+
+## Callback cuando se edita un FadeCommand
+func _on_fade_command_edited(command: FadeCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	# El comando ya está modificado (se modifica por referencia)
+	# Solo necesitamos actualizar el árbol y refrescar el inspector
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+	current_command_editor = null
 
 ## Callback cuando se cancela la edición de un comando nuevo
 ## Elimina el comando de la página
