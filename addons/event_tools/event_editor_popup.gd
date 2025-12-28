@@ -482,6 +482,60 @@ func _get_command_name_safe(command: EventCommand) -> String:
 		command_name = command_name.replace("Command", "")
 	return command_name
 
+## Obtiene el texto descriptivo de una condición
+func _get_condition_display_text(cond: EventCondition) -> String:
+	if not cond:
+		return "(null)"
+
+	if cond is FlagCondition:
+		var flag_cond = cond as FlagCondition
+		var scope_str = "Global" if flag_cond.scope == FlagCondition.Scope.GLOBAL else "Self"
+		var value_str = "true" if flag_cond.expected_value else "false"
+		return "Flag (%s): '%s' = %s" % [scope_str, flag_cond.flag_name, value_str]
+
+	if cond is VariableCondition:
+		var var_cond = cond as VariableCondition
+		var op_str = _get_operator_string(var_cond.operator)
+		var value_str = _value_to_string(var_cond.compare_value)
+		return "Variable: '%s' %s %s" % [var_cond.variable_name, op_str, value_str]
+
+	if cond is GroupCondition:
+		var group_cond = cond as GroupCondition
+		var mode_str = "AND" if group_cond.mode == GroupCondition.Mode.ALL else "OR"
+		var child_texts: Array[String] = []
+		for child_cond in group_cond.children:
+			if child_cond:
+				child_texts.append(_get_condition_display_text(child_cond))
+		if child_texts.is_empty():
+			return "%s (vacío)" % mode_str
+		return "%s (%s)" % [mode_str, ", ".join(child_texts)]
+
+	if cond is NotCondition:
+		return "NOT (...)"
+
+	return "Condición desconocida"
+
+## Convierte un operador a string
+func _get_operator_string(op: int) -> String:
+	match op:
+		VariableCondition.Operator.EQUAL: return "=="
+		VariableCondition.Operator.NOT_EQUAL: return "!="
+		VariableCondition.Operator.GREATER: return ">"
+		VariableCondition.Operator.GREATER_EQUAL: return ">="
+		VariableCondition.Operator.LESS: return "<"
+		VariableCondition.Operator.LESS_EQUAL: return "<="
+		_: return "?"
+
+## Convierte un valor a string
+func _value_to_string(value: Variant) -> String:
+	if value == null:
+		return "null"
+	if value is String:
+		return '"%s"' % value
+	if value is bool:
+		return "true" if value else "false"
+	return str(value)
+
 func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, page_index: int = -1, move_info: Dictionary = {}, in_move_mode: bool = false) -> void:
 	if command is ConditionalCommand:
 		var cond_cmd = command as ConditionalCommand
@@ -490,9 +544,9 @@ func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, 
 			var branch_item = parent_item.get_tree().create_item(parent_item)
 			var condition_text = "ELSE"
 			if branch.condition:
-				condition_text = _get_command_name_safe(branch.condition)
+				condition_text = _get_condition_display_text(branch.condition)
 			branch_item.set_text(0, "  └─ Branch " + str(branch_idx) + " (" + condition_text + ")")
-			branch_item.set_metadata(0, {"type": "branch", "branch": branch, "parent_command": command})
+			branch_item.set_metadata(0, {"type": "branch", "branch": branch, "parent_command": command, "branch_index": branch_idx})
 
 			if in_move_mode:
 				_apply_move_mode_style(branch_item, move_info, page_index)
@@ -505,7 +559,7 @@ func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, 
 			var branch = choices_cmd.branches[branch_idx]
 			var branch_item = parent_item.get_tree().create_item(parent_item)
 			branch_item.set_text(0, "  └─ Choice: \"" + branch.label + "\"")
-			branch_item.set_metadata(0, {"type": "choice_branch", "branch": branch, "parent_command": command})
+			branch_item.set_metadata(0, {"type": "choice_branch", "branch": branch, "parent_command": command, "branch_index": branch_idx})
 
 			if in_move_mode:
 				_apply_move_mode_style(branch_item, move_info, page_index)
@@ -518,7 +572,7 @@ func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, 
 			var case = switch_cmd.cases[case_idx]
 			var case_item = parent_item.get_tree().create_item(parent_item)
 			case_item.set_text(0, "  └─ Case: " + str(case.values))
-			case_item.set_metadata(0, {"type": "switch_case", "case": case, "parent_command": command})
+			case_item.set_metadata(0, {"type": "switch_case", "case": case, "parent_command": command, "case_index": case_idx})
 
 			if in_move_mode:
 				_apply_move_mode_style(case_item, move_info, page_index)
@@ -729,7 +783,7 @@ func _move_command_to_destination(source_page_index: int, dest_page_index: int, 
 									branch_index = i
 									break
 							if branch_index >= 0 and branch_index < cond_cmd.branches.size():
-								cond_cmd.branches[branch_index].commands.append(command_to_move_obj)
+								_add_command_to_branch_case(cmd, "branch", branch_index, -1, command_to_move_obj)
 					elif destination_type == "choice_branch" and cmd is ShowChoicesCommand:
 						var choices_cmd = cmd as ShowChoicesCommand
 						var original_branch = destination_metadata.get("branch")
@@ -741,7 +795,7 @@ func _move_command_to_destination(source_page_index: int, dest_page_index: int, 
 									branch_index = i
 									break
 							if branch_index >= 0 and branch_index < choices_cmd.branches.size():
-								choices_cmd.branches[branch_index].commands.append(command_to_move_obj)
+								_add_command_to_branch_case(cmd, "choice_branch", branch_index, -1, command_to_move_obj)
 					elif destination_type == "switch_case" and cmd is SwitchCommand:
 						var switch_cmd = cmd as SwitchCommand
 						var original_case = destination_metadata.get("case")
@@ -753,10 +807,10 @@ func _move_command_to_destination(source_page_index: int, dest_page_index: int, 
 									case_index = i
 									break
 							if case_index >= 0 and case_index < switch_cmd.cases.size():
-								switch_cmd.cases[case_index].commands.append(command_to_move_obj)
+								_add_command_to_branch_case(cmd, "switch_case", -1, case_index, command_to_move_obj)
 					elif destination_type == "default_commands" and cmd is SwitchCommand:
 						var switch_cmd = cmd as SwitchCommand
-						switch_cmd.default_commands.append(command_to_move_obj)
+						_add_command_to_branch_case(cmd, "default_commands", -1, -1, command_to_move_obj)
 
 		# Guardar cambios
 		event_node.pages[source_page_index] = editable_source_page
@@ -864,8 +918,8 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 									break
 							# Usar el branch correspondiente en el comando duplicado
 							if branch_index >= 0 and branch_index < cond_cmd.branches.size():
-								cond_cmd.branches[branch_index].commands.append(command_to_move_obj)
-								success = true
+								if _add_command_to_branch_case(cmd, "branch", branch_index, -1, command_to_move_obj):
+									success = true
 					else:
 						push_error("Event Editor: No se encontró branch en destination_metadata")
 				else:
@@ -895,8 +949,8 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 							print("Event Editor: branch_index encontrado: ", branch_index, " (branches size: ", choices_cmd.branches.size(), ")")
 							# Usar el branch correspondiente en el comando duplicado
 							if branch_index >= 0 and branch_index < choices_cmd.branches.size():
-								choices_cmd.branches[branch_index].commands.append(command_to_move_obj)
-								success = true
+								if _add_command_to_branch_case(cmd, "choice_branch", branch_index, -1, command_to_move_obj):
+									success = true
 								print("Event Editor: Comando añadido exitosamente al choice_branch")
 							else:
 								push_error("Event Editor: branch_index inválido o fuera de rango")
@@ -928,16 +982,16 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 									break
 							# Usar el case correspondiente en el comando duplicado
 							if case_index >= 0 and case_index < switch_cmd.cases.size():
-								switch_cmd.cases[case_index].commands.append(command_to_move_obj)
-								success = true
+								if _add_command_to_branch_case(cmd, "switch_case", -1, case_index, command_to_move_obj):
+									success = true
 		elif destination_type == "default_commands":
 			# parent_cmd_index ya fue calculado arriba
 			if parent_cmd_index >= 0 and parent_cmd_index < editable_page.commands.size():
 				var cmd = editable_page.commands[parent_cmd_index]
 				if cmd is SwitchCommand:
 					var switch_cmd = cmd as SwitchCommand
-					switch_cmd.default_commands.append(command_to_move_obj)
-					success = true
+					if _add_command_to_branch_case(cmd, "default_commands", -1, -1, command_to_move_obj):
+						success = true
 		elif destination_type == "command":
 			# Mover como hijo del comando (al primer branch/case)
 			var dest_index = destination_metadata.get("index", -1)
@@ -947,22 +1001,22 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 					var cond_cmd = parent_cmd as ConditionalCommand
 					if cond_cmd.branches.is_empty():
 						cond_cmd.branches.append(EventBranch.new())
-					cond_cmd.branches[0].commands.append(command_to_move_obj)
-					success = true
+					if _add_command_to_branch_case(parent_cmd, "branch", 0, -1, command_to_move_obj):
+						success = true
 				elif parent_cmd is ShowChoicesCommand:
 					var choices_cmd = parent_cmd as ShowChoicesCommand
 					if choices_cmd.branches.is_empty():
 						var new_branch = ChoiceBranch.new()
 						new_branch.label = "Opción"
 						choices_cmd.branches.append(new_branch)
-					choices_cmd.branches[0].commands.append(command_to_move_obj)
-					success = true
+					if _add_command_to_branch_case(parent_cmd, "choice_branch", 0, -1, command_to_move_obj):
+						success = true
 				elif parent_cmd is SwitchCommand:
 					var switch_cmd = parent_cmd as SwitchCommand
 					if switch_cmd.cases.is_empty():
 						switch_cmd.cases.append(SwitchCase.new())
-					switch_cmd.cases[0].commands.append(command_to_move_obj)
-					success = true
+					if _add_command_to_branch_case(parent_cmd, "switch_case", -1, 0, command_to_move_obj):
+						success = true
 
 	elif move_type == "nested_command":
 		# Mover nested_command
@@ -1094,8 +1148,8 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 									break
 							# Usar el branch correspondiente en el comando duplicado
 							if dest_branch_index >= 0 and dest_branch_index < cond_cmd.branches.size():
-								cond_cmd.branches[dest_branch_index].commands.append(nested_command)
-								success = true
+								if _add_command_to_branch_case(cmd, "branch", dest_branch_index, -1, nested_command):
+									success = true
 		elif destination_type == "choice_branch":
 			var parent_command = destination_metadata.get("parent_command")
 			print("Event Editor: parent_command encontrado: ", parent_command != null)
@@ -1128,9 +1182,9 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 							print("Event Editor: dest_branch_index encontrado: ", dest_branch_index, " (branches size: ", choices_cmd.branches.size(), ")")
 							# Usar el branch correspondiente en el comando duplicado
 							if dest_branch_index >= 0 and dest_branch_index < choices_cmd.branches.size():
-								choices_cmd.branches[dest_branch_index].commands.append(nested_command)
-								success = true
-								print("Event Editor: nested_command añadido exitosamente al choice_branch[", dest_branch_index, "]")
+								if _add_command_to_branch_case(cmd, "choice_branch", dest_branch_index, -1, nested_command):
+									success = true
+									print("Event Editor: nested_command añadido exitosamente al choice_branch[", dest_branch_index, "]")
 							else:
 								push_error("Event Editor: dest_branch_index inválido o fuera de rango: ", dest_branch_index, " (branches size: ", choices_cmd.branches.size(), ")")
 						else:
@@ -1169,8 +1223,8 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 									break
 							# Usar el case correspondiente en el comando duplicado
 							if dest_case_index >= 0 and dest_case_index < switch_cmd.cases.size():
-								switch_cmd.cases[dest_case_index].commands.append(nested_command)
-								success = true
+								if _add_command_to_branch_case(cmd, "switch_case", -1, dest_case_index, nested_command):
+									success = true
 					else:
 						push_error("Event Editor: El comando en el índice no es SwitchCommand")
 				else:
@@ -1193,8 +1247,8 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 					var cmd = editable_page.commands[dest_parent_cmd_index]
 					if cmd is SwitchCommand:
 						var switch_cmd = cmd as SwitchCommand
-						switch_cmd.default_commands.append(nested_command)
-						success = true
+						if _add_command_to_branch_case(cmd, "default_commands", -1, -1, nested_command):
+							success = true
 					else:
 						push_error("Event Editor: El comando en el índice no es SwitchCommand")
 				else:
@@ -1575,6 +1629,7 @@ func _on_command_selected(page_index: int) -> void:
 	var can_move_down = false
 	var can_move = false
 	var can_duplicate = false
+	var can_add = false
 
 	if selected_item:
 		var metadata = selected_item.get_metadata(0)
@@ -1582,13 +1637,28 @@ func _on_command_selected(page_index: int) -> void:
 			var item_type = metadata.type
 			can_edit_delete = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
 			can_move = item_type in ["command", "nested_command"]
-			can_duplicate = item_type in ["command", "nested_command"]
+			can_duplicate = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case"]
+			# Permitir añadir comandos a branches/cases, o añadir branches/cases a ConditionalCommand/SwitchCommand/ShowChoicesCommand
+			can_add = item_type in ["branch", "choice_branch", "switch_case", "default_commands"]
+			# También permitir añadir si es un ConditionalCommand, SwitchCommand o ShowChoicesCommand
+			if item_type == "command" and metadata.has("index"):
+				var page = _get_page(page_index)
+				if page:
+					var cmd = page.commands[metadata.index]
+					if cmd is ConditionalCommand or cmd is SwitchCommand or cmd is ShowChoicesCommand:
+						can_add = true
 
 			# Determinar si se puede mover
 			can_move_up = _can_move_item_up(selected_item, page_index)
 			can_move_down = _can_move_item_down(selected_item, page_index)
+		else:
+			# Si no tiene metadata o no tiene type, puede ser la raíz
+			can_add = true
+	else:
+		# Si no hay selección, se puede añadir al nivel raíz
+		can_add = true
 
-	_update_buttons_state(page_index, can_edit_delete, can_move_up, can_move_down, can_move, can_duplicate)
+	_update_buttons_state(page_index, can_edit_delete, can_move_up, can_move_down, can_move, can_duplicate, can_add)
 
 func _on_command_deselected(page_index: int) -> void:
 	if not move_mode_active.get(page_index, false):
@@ -1633,15 +1703,33 @@ func _show_commands_context_menu(page_index: int, global_position: Vector2) -> v
 	var metadata = selected_item.get_metadata(0) if selected_item else null
 	var item_type = metadata.type if metadata and metadata.has("type") else ""
 
-	var can_add = item_type in ["", "page_root"]
+	# Permitir añadir comandos a la raíz, page_root, o a branches/cases
+	var can_add = item_type in ["", "page_root", "branch", "choice_branch", "switch_case", "default_commands"]
+	# También permitir añadir si es un ConditionalCommand, SwitchCommand o ShowChoicesCommand
+	if item_type == "command" and metadata and metadata.has("index"):
+		if metadata.index >= 0 and metadata.index < page.commands.size():
+			var cmd = page.commands[metadata.index]
+			if cmd is ConditionalCommand or cmd is SwitchCommand or cmd is ShowChoicesCommand:
+				can_add = true
 	var can_edit = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
 	var can_delete = can_edit
 	var can_move = item_type in ["command", "nested_command"]
-	var can_duplicate = item_type in ["command", "nested_command"]
+	var can_duplicate = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case"]
 
 	var context_menu = PopupMenu.new()
 	if can_add:
-		context_menu.add_item("Añadir Comando", 0)
+		# Determinar el texto según el tipo de item seleccionado
+		var add_text = "Añadir Comando"
+		if item_type == "command" and metadata and metadata.has("index"):
+			if metadata.index >= 0 and metadata.index < page.commands.size():
+				var cmd = page.commands[metadata.index]
+				if cmd is ConditionalCommand:
+					add_text = "Añadir Branch"
+				elif cmd is SwitchCommand:
+					add_text = "Añadir Case"
+				elif cmd is ShowChoicesCommand:
+					add_text = "Añadir Opción"
+		context_menu.add_item(add_text, 0)
 	if can_edit:
 		context_menu.add_item("Editar", 1)
 	if can_delete:
@@ -1667,7 +1755,33 @@ func _on_context_menu_item_selected(page_index: int, menu_id: int, selected_item
 func _on_add_command_pressed(page_index: int) -> void:
 	if not _get_page(page_index):
 		return
-	_show_add_command_dialog(page_index)
+
+	# Obtener el item seleccionado para saber si hay que añadir a un branch/case
+	var commands_tree = _get_commands_tree_for_page(page_index)
+	var selected_item = commands_tree.get_selected() if commands_tree else null
+	var destination_metadata = {}
+
+	if selected_item:
+		var metadata = selected_item.get_metadata(0)
+		if metadata:
+			destination_metadata = metadata
+
+			# Si se selecciona un ConditionalCommand, SwitchCommand o ShowChoicesCommand, añadir directamente el branch/case/choice
+			if metadata.type == "command" and metadata.has("index"):
+				var page = _get_page(page_index)
+				if page and metadata.index >= 0 and metadata.index < page.commands.size():
+					var cmd = page.commands[metadata.index]
+					if cmd is ConditionalCommand:
+						_add_branch_to_conditional(page_index, cmd, metadata.index)
+						return
+					elif cmd is SwitchCommand:
+						_add_case_to_switch(page_index, cmd, metadata.index)
+						return
+					elif cmd is ShowChoicesCommand:
+						_add_choice_to_show_choices(page_index, cmd, metadata.index)
+						return
+
+	_show_add_command_dialog(page_index, destination_metadata)
 
 func _on_edit_command_pressed(page_index: int) -> void:
 	var page = _get_page(page_index)
@@ -1686,6 +1800,32 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		return
 
 	var item_type = metadata.type
+
+	# Si es una rama (branch), abrir directamente el editor de condiciones
+	if item_type == "branch":
+		var branch = metadata.get("branch")
+		var parent_command = metadata.get("parent_command")
+		if branch and parent_command is ConditionalCommand:
+			_open_condition_editor_for_branch(branch, parent_command, page_index)
+		return
+
+	# Si es una opción (choice_branch), abrir directamente el editor de opciones
+	if item_type == "choice_branch":
+		var branch = metadata.get("branch")
+		var parent_command = metadata.get("parent_command")
+		if branch and parent_command is ShowChoicesCommand:
+			_open_choice_branch_editor(branch, parent_command, page_index)
+		return
+
+	# Si es un switch_case, abrir directamente el editor de valores
+	if item_type == "switch_case":
+		var switch_case = metadata.get("case")
+		var parent_command = metadata.get("parent_command")
+		if switch_case and parent_command is SwitchCommand:
+			_open_switch_case_values_editor(switch_case, parent_command, page_index)
+		return
+
+	# Si no es un comando normal, no se puede editar desde aquí
 	if item_type not in ["command", "nested_command"]:
 		print("Event Editor: El item seleccionado no es un comando editable")
 		return
@@ -1739,6 +1879,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_play_animation_editor(command, page_index, false, -1)
 	elif command is MoveNPCCommand:
 		_open_move_npc_editor(command, page_index, false, -1)
+	elif command is ConditionalCommand:
+		_open_conditional_editor(command, page_index, false, -1)
+	elif command is SwitchCommand:
+		_open_switch_editor(command, page_index, false, -1)
+	elif command is ShowChoicesCommand:
+		_open_show_choices_editor(command, page_index, false, -1)
 	else:
 		print("Event Editor: Editor no implementado para ", command.get_script().get_global_name() if command.get_script() else "Unknown")
 
@@ -1763,7 +1909,7 @@ func _duplicate_command(page_index: int) -> void:
 		return
 
 	var item_type = metadata.type
-	if item_type not in ["command", "nested_command"]:
+	if item_type not in ["command", "nested_command", "branch", "choice_branch", "switch_case"]:
 		return
 
 	var editable_page = page.duplicate(true) as EventPage
@@ -1836,6 +1982,109 @@ func _duplicate_command(page_index: int) -> void:
 			success = true
 			new_item_index = nested_command_index + 1
 
+	elif item_type in ["branch", "choice_branch", "switch_case"]:
+		# Duplicar branch/case
+		parent_item = selected_item.get_parent()
+		if not parent_item:
+			return
+
+		var main_command_item = _get_main_command_item_from_tree(parent_item, commands_tree)
+		if not main_command_item:
+			return
+
+		var cmd_meta = main_command_item.get_metadata(0)
+		var main_command = editable_page.commands[cmd_meta.index]
+
+		if item_type == "branch" and main_command is ConditionalCommand:
+			# Duplicar EventBranch
+			var cond_cmd = main_command as ConditionalCommand
+			var branch_index = metadata.get("branch_index", -1)
+			if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+				var branch_to_duplicate = cond_cmd.branches[branch_index]
+				var duplicated_branch = branch_to_duplicate.duplicate(true) as EventBranch
+				if not duplicated_branch:
+					push_error("Event Editor: No se pudo duplicar el EventBranch")
+					return
+
+				# Asegurarse de que el array de comandos esté correctamente duplicado
+				var new_commands_array: Array[EventCommand] = []
+				for cmd in duplicated_branch.commands:
+					if cmd is EventCommand:
+						new_commands_array.append(cmd as EventCommand)
+				duplicated_branch.commands = new_commands_array
+
+				# Crear un nuevo array con el branch duplicado insertado después del original
+				var new_branches: Array[EventBranch] = []
+				for i in range(cond_cmd.branches.size()):
+					new_branches.append(cond_cmd.branches[i])
+					if i == branch_index:
+						new_branches.append(duplicated_branch)
+
+				cond_cmd.branches = new_branches
+				success = true
+				new_item_index = branch_index + 1
+
+		elif item_type == "choice_branch" and main_command is ShowChoicesCommand:
+			# Duplicar ChoiceBranch
+			var choices_cmd = main_command as ShowChoicesCommand
+			var branch_index = metadata.get("branch_index", -1)
+			if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+				var branch_to_duplicate = choices_cmd.branches[branch_index]
+				var duplicated_branch = branch_to_duplicate.duplicate(true) as ChoiceBranch
+				if not duplicated_branch:
+					push_error("Event Editor: No se pudo duplicar el ChoiceBranch")
+					return
+
+				# Asegurarse de que el array de comandos esté correctamente duplicado
+				var new_commands_array: Array[EventCommand] = []
+				for cmd in duplicated_branch.commands:
+					if cmd is EventCommand:
+						new_commands_array.append(cmd as EventCommand)
+				duplicated_branch.commands = new_commands_array
+
+				# Crear un nuevo array con el branch duplicado insertado después del original
+				var new_branches: Array[ChoiceBranch] = []
+				for i in range(choices_cmd.branches.size()):
+					new_branches.append(choices_cmd.branches[i])
+					if i == branch_index:
+						new_branches.append(duplicated_branch)
+
+				choices_cmd.branches = new_branches
+				success = true
+				new_item_index = branch_index + 1
+
+		elif item_type == "switch_case" and main_command is SwitchCommand:
+			# Duplicar SwitchCase
+			var switch_cmd = main_command as SwitchCommand
+			var case_index = metadata.get("case_index", -1)
+			if case_index >= 0 and case_index < switch_cmd.cases.size():
+				var case_to_duplicate = switch_cmd.cases[case_index]
+
+				# Duplicar el case con deep copy
+				var duplicated_case = case_to_duplicate.duplicate(true) as SwitchCase
+				if not duplicated_case:
+					push_error("Event Editor: No se pudo duplicar el SwitchCase")
+					return
+
+				# Asegurarse de que el array de comandos esté correctamente duplicado
+				# Crear un nuevo array tipado para los comandos
+				var new_commands_array: Array[EventCommand] = []
+				for cmd in duplicated_case.commands:
+					if cmd is EventCommand:
+						new_commands_array.append(cmd as EventCommand)
+				duplicated_case.commands = new_commands_array
+
+				# Crear un nuevo array con el case duplicado insertado después del original
+				var new_cases: Array[SwitchCase] = []
+				for i in range(switch_cmd.cases.size()):
+					new_cases.append(switch_cmd.cases[i])
+					if i == case_index:
+						new_cases.append(duplicated_case)
+
+				switch_cmd.cases = new_cases
+				success = true
+				new_item_index = case_index + 1
+
 	if success:
 		event_node.pages[page_index] = editable_page
 		_mark_as_changed()
@@ -1864,6 +2113,10 @@ func _duplicate_command(page_index: int) -> void:
 						if current_meta and current_meta.type == "nested_command":
 							count += 1
 						current = current.get_next()
+			elif item_type in ["branch", "choice_branch", "switch_case"]:
+				# Buscar el branch/case duplicado en el árbol
+				# Usar call_deferred para evitar problemas de referencias
+				call_deferred("_select_duplicated_branch_case", commands_tree, item_type, new_item_index)
 
 		_refresh_inspector()
 	else:
@@ -2223,22 +2476,31 @@ func _delete_branch(page: EventPage, metadata: Dictionary, commands_tree: Tree) 
 		return false
 
 	var main_command = page.commands[parent_metadata.index]
-	var branch_to_remove = metadata.branch
+	var branch_index = metadata.get("branch_index", -1)
+
+	if branch_index < 0:
+		return false
 
 	if metadata.type == "branch" and main_command is ConditionalCommand:
-		var new_branches: Array[EventBranch] = []
-		for b in main_command.branches:
-			if b != branch_to_remove:
-				new_branches.append(b)
-		main_command.branches = new_branches
-		return true
+		var cond_cmd = main_command as ConditionalCommand
+		if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+			# Crear un nuevo array sin el branch a eliminar
+			var new_branches: Array[EventBranch] = []
+			for i in range(cond_cmd.branches.size()):
+				if i != branch_index:
+					new_branches.append(cond_cmd.branches[i])
+			cond_cmd.branches = new_branches
+			return true
 	elif metadata.type == "choice_branch" and main_command is ShowChoicesCommand:
-		var new_branches: Array[ChoiceBranch] = []
-		for b in main_command.branches:
-			if b != branch_to_remove:
-				new_branches.append(b)
-		main_command.branches = new_branches
-		return true
+		var choices_cmd = main_command as ShowChoicesCommand
+		if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+			# Crear un nuevo array sin el branch a eliminar
+			var new_branches: Array[ChoiceBranch] = []
+			for i in range(choices_cmd.branches.size()):
+				if i != branch_index:
+					new_branches.append(choices_cmd.branches[i])
+			choices_cmd.branches = new_branches
+			return true
 
 	return false
 
@@ -2256,13 +2518,19 @@ func _delete_switch_case(page: EventPage, metadata: Dictionary, commands_tree: T
 		return false
 
 	if metadata.type == "switch_case":
-		var case_to_remove = metadata.case
-		var new_cases: Array[SwitchCase] = []
-		for c in main_command.cases:
-			if c != case_to_remove:
-				new_cases.append(c)
-		main_command.cases = new_cases
-		return true
+		var case_index = metadata.get("case_index", -1)
+		if case_index < 0:
+			return false
+
+		var switch_cmd = main_command as SwitchCommand
+		if case_index >= 0 and case_index < switch_cmd.cases.size():
+			# Crear un nuevo array sin el case a eliminar
+			var new_cases: Array[SwitchCase] = []
+			for i in range(switch_cmd.cases.size()):
+				if i != case_index:
+					new_cases.append(switch_cmd.cases[i])
+			switch_cmd.cases = new_cases
+			return true
 
 	return false
 
@@ -2508,7 +2776,7 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 	var main_command = page.commands[cmd_meta.index]
 
 	# Obtener el array de comandos donde está el item
-	var commands_array = null
+	var commands_array: Array = []
 	var item_index = -1
 
 	if item_type == "nested_command":
@@ -2520,19 +2788,28 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 		# IMPORTANTE: Necesitamos obtener el branch/case del comando duplicado, no del metadata
 		# porque el metadata apunta al branch original
 
-		if branch_meta.type == "branch" and branch_meta.has("branch") and main_command is ConditionalCommand:
+		if branch_meta.type == "branch" and main_command is ConditionalCommand:
 			# Es un branch de ConditionalCommand
-			var original_branch = branch_meta.branch
+			# IMPORTANTE: Usar el índice del branch guardado en el metadata
 			var cond_cmd = main_command as ConditionalCommand
-			# Encontrar el branch correspondiente en el comando duplicado
-			var branch_index = -1
-			for i in range(cond_cmd.branches.size()):
-				# Comparar por referencia (deberían ser el mismo objeto después de duplicate)
-				if cond_cmd.branches[i] == original_branch:
-					branch_index = i
-					break
+			var branch_index = branch_meta.get("branch_index", -1)
 
-			if branch_index >= 0:
+			# Si no hay branch_index en el metadata, intentar encontrarlo contando en el árbol
+			if branch_index < 0:
+				var command_item = parent_item.get_parent()
+				if command_item:
+					var current = command_item.get_first_child()
+					var count = 0
+					while current:
+						if current == parent_item:
+							branch_index = count
+							break
+						var current_meta = current.get_metadata(0)
+						if current_meta and current_meta.type == "branch":
+							count += 1
+						current = current.get_next()
+
+			if branch_index >= 0 and branch_index < cond_cmd.branches.size():
 				commands_array = cond_cmd.branches[branch_index].commands
 			else:
 				return false
@@ -2591,7 +2868,7 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 		else:
 			return false
 
-		if commands_array:
+		if not commands_array.is_empty():
 			# Encontrar el índice del comando por su posición en el árbol
 			# en lugar de por referencia, porque después de duplicate() son nuevas instancias
 			var selected_item = commands_tree.get_selected()
@@ -2631,8 +2908,15 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 				current = current.get_next()
 
 		if branch_index >= 0 and branch_index < main_command.branches.size():
-			commands_array = main_command.branches
-			item_index = branch_index
+			var new_index = branch_index + direction
+			if new_index < 0 or new_index >= main_command.branches.size():
+				return false
+			# Intercambiar branches directamente
+			var cond_cmd = main_command as ConditionalCommand
+			var temp_branch = cond_cmd.branches[branch_index]
+			cond_cmd.branches[branch_index] = cond_cmd.branches[new_index]
+			cond_cmd.branches[new_index] = temp_branch
+			return true
 		else:
 			return false
 
@@ -2653,8 +2937,15 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 				current = current.get_next()
 
 		if branch_index >= 0 and branch_index < main_command.branches.size():
-			commands_array = main_command.branches
-			item_index = branch_index
+			var new_index = branch_index + direction
+			if new_index < 0 or new_index >= main_command.branches.size():
+				return false
+			# Intercambiar branches directamente
+			var choices_cmd = main_command as ShowChoicesCommand
+			var temp_branch = choices_cmd.branches[branch_index]
+			choices_cmd.branches[branch_index] = choices_cmd.branches[new_index]
+			choices_cmd.branches[new_index] = temp_branch
+			return true
 		else:
 			return false
 
@@ -2675,24 +2966,67 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 				current = current.get_next()
 
 		if case_index >= 0 and case_index < main_command.cases.size():
-			commands_array = main_command.cases
-			item_index = case_index
+			var new_index = case_index + direction
+			if new_index < 0 or new_index >= main_command.cases.size():
+				return false
+			# Intercambiar cases directamente
+			var switch_cmd = main_command as SwitchCommand
+			var temp_case = switch_cmd.cases[case_index]
+			switch_cmd.cases[case_index] = switch_cmd.cases[new_index]
+			switch_cmd.cases[new_index] = temp_case
+			return true
 		else:
 			return false
 
-	if not commands_array or item_index < 0:
+	# Para nested_commands, continuar con la lógica existente
+	if commands_array.is_empty() or item_index < 0:
 		return false
 
 	var new_index = item_index + direction
 	if new_index < 0 or new_index >= commands_array.size():
 		return false
 
-	# Intercambiar los items
-	var temp = commands_array[item_index]
-	commands_array[item_index] = commands_array[new_index]
-	commands_array[new_index] = temp
+	# Para nested_commands, crear un nuevo array para evitar el error de "read-only"
+	var new_commands_array: Array[EventCommand] = []
+	for i in range(commands_array.size()):
+		var cmd_raw: Variant = null
+		if i == item_index:
+			cmd_raw = commands_array[new_index]
+		elif i == new_index:
+			cmd_raw = commands_array[item_index]
+		else:
+			cmd_raw = commands_array[i]
 
-	return true
+		# Verificar que sea un EventCommand válido antes de añadirlo
+		if cmd_raw != null and cmd_raw is EventCommand:
+			var cmd = cmd_raw as EventCommand
+			if cmd:
+				new_commands_array.append(cmd)
+			else:
+				push_error("Event Editor: No se pudo hacer cast a EventCommand en posición %d" % i)
+				return false
+		else:
+			if cmd_raw == null:
+				push_error("Event Editor: Comando null encontrado en posición %d" % i)
+			else:
+				push_error("Event Editor: Comando no es EventCommand en posición %d: %s" % [i, str(cmd_raw)])
+			return false
+
+	# Verificar que el nuevo array tenga el mismo tamaño que el original
+	if new_commands_array.size() != commands_array.size():
+		push_error("Event Editor: El nuevo array no tiene el mismo tamaño que el original (%d vs %d)" % [new_commands_array.size(), commands_array.size()])
+		return false
+
+	# Asignar el nuevo array de vuelta al branch/case
+	var branch_meta = parent_item.get_metadata(0)
+	if not branch_meta:
+		return false
+
+	var parent_type = branch_meta.get("type", "")
+	var branch_index = branch_meta.get("branch_index", -1)
+	var case_index = branch_meta.get("case_index", -1)
+
+	return _set_commands_array_to_branch_case(main_command, parent_type, branch_index, case_index, new_commands_array)
 
 func _reselect_moved_item(page_index: int, reselect_info: Dictionary) -> void:
 	var commands_tree = _get_commands_tree_for_page(page_index)
@@ -2782,7 +3116,7 @@ func _reselect_moved_item(page_index: int, reselect_info: Dictionary) -> void:
 				commands_tree.set_selected(siblings[new_sibling_index], 0)
 
 # === DIÁLOGO DE AÑADIR COMANDO ===
-func _show_add_command_dialog(page_index: int) -> void:
+func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary = {}) -> void:
 	var command_types = [
 		"ShowMessage", "SetFlag", "SetVariable", "SetSelfSwitch",
 		"StartBattleEvent", "Warp", "ShowChoices", "Conditional",
@@ -2834,15 +3168,15 @@ func _show_add_command_dialog(page_index: int) -> void:
 			var command_type = command_types[selected_items[0]] + "Command"
 			dialog.queue_free()
 			# Esperar a que el diálogo se cierre antes de crear el comando
-			call_deferred("_create_command_of_type", page_index, command_type)
-	)
+			call_deferred("_create_command_of_type", page_index, command_type, destination_metadata)
+		)
 
 	command_list.item_selected.connect(func(idx): add_button.disabled = false)
 	command_list.item_activated.connect(func(idx):
 		var command_type = command_types[idx] + "Command"
 		dialog.queue_free()
 		# Esperar a que el diálogo se cierre antes de crear el comando
-		call_deferred("_create_command_of_type", page_index, command_type)
+		call_deferred("_create_command_of_type", page_index, command_type, destination_metadata)
 	)
 
 	buttons_container.add_child(add_button)
@@ -2858,7 +3192,7 @@ func _show_add_command_dialog(page_index: int) -> void:
 	dialog.exclusive = true
 	dialog.popup_centered()
 
-func _create_command_of_type(page_index: int, command_type_name: String) -> void:
+func _create_command_of_type(page_index: int, command_type_name: String, destination_metadata: Dictionary = {}) -> void:
 	var page = _get_page(page_index)
 	if not page:
 		return
@@ -2877,6 +3211,126 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 	var new_command = Resource.new()
 	new_command.set_script(script)
 
+	# Si hay un destino (branch/case), añadir el comando ahí
+	if destination_metadata and destination_metadata.has("type"):
+		var dest_type = destination_metadata.get("type")
+
+		if dest_type == "branch":
+			var branch_index = destination_metadata.get("branch_index", -1)
+			var parent_command = destination_metadata.get("parent_command")
+			if branch_index >= 0 and parent_command is ConditionalCommand:
+				# Encontrar el comando en la página duplicada por su índice
+				var cmd_index = -1
+				var original_page = _get_page(page_index)
+				if original_page:
+					for i in range(original_page.commands.size()):
+						if original_page.commands[i] == parent_command:
+							cmd_index = i
+							break
+
+				if cmd_index >= 0 and cmd_index < editable_page.commands.size():
+					var cmd = editable_page.commands[cmd_index]
+					if cmd is ConditionalCommand:
+						var cond_cmd = cmd as ConditionalCommand
+						if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+							var branch = cond_cmd.branches[branch_index]
+							# Crear un nuevo array para evitar el error de "read-only"
+							var new_commands_array: Array[EventCommand] = []
+							for existing_cmd in branch.commands:
+								new_commands_array.append(existing_cmd)
+							new_commands_array.append(new_command)
+							branch.commands = new_commands_array
+							event_node.pages[page_index] = editable_page
+							_mark_as_changed()
+							_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
+							return
+
+		elif dest_type == "choice_branch":
+			var branch_index = destination_metadata.get("branch_index", -1)
+			var parent_command = destination_metadata.get("parent_command")
+			if branch_index >= 0 and parent_command is ShowChoicesCommand:
+				# Encontrar el comando en la página duplicada por su índice
+				var cmd_index = -1
+				var original_page = _get_page(page_index)
+				if original_page:
+					for i in range(original_page.commands.size()):
+						if original_page.commands[i] == parent_command:
+							cmd_index = i
+							break
+
+				if cmd_index >= 0 and cmd_index < editable_page.commands.size():
+					var cmd = editable_page.commands[cmd_index]
+					if cmd is ShowChoicesCommand:
+						var choices_cmd = cmd as ShowChoicesCommand
+						if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+							var branch = choices_cmd.branches[branch_index]
+							# Crear un nuevo array para evitar el error de "read-only"
+							var new_commands_array: Array[EventCommand] = []
+							for existing_cmd in branch.commands:
+								new_commands_array.append(existing_cmd)
+							new_commands_array.append(new_command)
+							branch.commands = new_commands_array
+							event_node.pages[page_index] = editable_page
+							_mark_as_changed()
+							_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
+							return
+
+		elif dest_type == "switch_case":
+			var case_index = destination_metadata.get("case_index", -1)
+			var parent_command = destination_metadata.get("parent_command")
+			if case_index >= 0 and parent_command is SwitchCommand:
+				# Encontrar el comando en la página duplicada por su índice
+				var cmd_index = -1
+				var original_page = _get_page(page_index)
+				if original_page:
+					for i in range(original_page.commands.size()):
+						if original_page.commands[i] == parent_command:
+							cmd_index = i
+							break
+
+				if cmd_index >= 0 and cmd_index < editable_page.commands.size():
+					var cmd = editable_page.commands[cmd_index]
+					if cmd is SwitchCommand:
+						var switch_cmd = cmd as SwitchCommand
+						if case_index >= 0 and case_index < switch_cmd.cases.size():
+							var switch_case = switch_cmd.cases[case_index]
+							# Crear un nuevo array para evitar el error de "read-only"
+							var new_commands_array: Array[EventCommand] = []
+							for existing_cmd in switch_case.commands:
+								new_commands_array.append(existing_cmd)
+							new_commands_array.append(new_command)
+							switch_case.commands = new_commands_array
+							event_node.pages[page_index] = editable_page
+							_mark_as_changed()
+							_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
+							return
+
+		elif dest_type == "default_commands":
+			var parent_command = destination_metadata.get("parent_command")
+			if parent_command is SwitchCommand:
+				# Encontrar el comando en la página duplicada
+				var cmd_index = -1
+				for i in range(editable_page.commands.size()):
+					if editable_page.commands[i] == parent_command:
+						cmd_index = i
+						break
+
+				if cmd_index >= 0 and cmd_index < editable_page.commands.size():
+					var cmd = editable_page.commands[cmd_index]
+					if cmd is SwitchCommand:
+						var switch_cmd = cmd as SwitchCommand
+						# Crear un nuevo array para evitar el error de "read-only"
+						var new_commands_array: Array[EventCommand] = []
+						for existing_cmd in switch_cmd.default_commands:
+							new_commands_array.append(existing_cmd)
+						new_commands_array.append(new_command)
+						switch_cmd.default_commands = new_commands_array
+						event_node.pages[page_index] = editable_page
+						_mark_as_changed()
+						_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
+						return
+
+	# Si no hay destino o no se pudo añadir al destino, añadir al nivel raíz
 	var new_commands_array: Array[EventCommand] = []
 	for cmd in editable_page.commands:
 		new_commands_array.append(cmd)
@@ -2885,59 +3339,173 @@ func _create_command_of_type(page_index: int, command_type_name: String) -> void
 	editable_page.set("commands", new_commands_array)
 	event_node.pages[page_index] = editable_page
 	_mark_as_changed()
-
-	var commands_tree = _get_commands_tree_for_page(page_index)
-	if commands_tree:
-		_update_commands_tree(commands_tree, editable_page, page_index)
-		var root = commands_tree.get_root()
-		if root:
-			var children = root.get_children()
-			if children:
-				commands_tree.set_selected(children[-1], 0)
+	_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
 
 	print("Event Editor: Comando ", command_type_name, " añadido")
 
-	# Obtener el índice del comando recién añadido (es el último)
-	var command_index = editable_page.commands.size() - 1
+## Refresca el árbol de comandos y selecciona el nuevo comando añadido
+func _refresh_commands_tree_and_select_new(page_index: int, page: EventPage, new_command: EventCommand) -> void:
+	var commands_tree = _get_commands_tree_for_page(page_index)
+	if not commands_tree:
+		return
 
-	# Si es un comando con editor, abrir el editor automáticamente
-	# Pasar true para indicar que es un comando nuevo y el índice
-	if new_command is ShowMessageCommand:
-		_open_show_message_editor(new_command, page_index, true, command_index)
-	elif new_command is SetFlagCommand:
-		_open_set_flag_editor(new_command, page_index, true, command_index)
-	elif new_command is SetVariableCommand:
-		_open_set_variable_editor(new_command, page_index, true, command_index)
-	elif new_command is SetSelfSwitchCommand:
-		_open_set_self_switch_editor(new_command, page_index, true, command_index)
-	elif new_command is StartBattleEventCommand:
-		_open_start_battle_event_editor(new_command, page_index, true, command_index)
-	elif new_command is WarpCommand:
-		_open_warp_editor(new_command, page_index, true, command_index)
-	elif new_command is WaitCommand:
-		_open_wait_editor(new_command, page_index, true, command_index)
-	elif new_command is FadeCommand:
-		_open_fade_editor(new_command, page_index, true, command_index)
-	elif new_command is SetWeatherCommand:
-		_open_set_weather_editor(new_command, page_index, true, command_index)
-	elif new_command is SetDarknessCommand:
-		_open_set_darkness_editor(new_command, page_index, true, command_index)
-	elif new_command is SetFlashlightCommand:
-		_open_set_flashlight_editor(new_command, page_index, true, command_index)
-	elif new_command is SetEventThroughCommand:
-		_open_set_event_through_editor(new_command, page_index, true, command_index)
-	elif new_command is SetActorVisibilityCommand:
-		_open_set_actor_visibility_editor(new_command, page_index, true, command_index)
-	elif new_command is ShowPortraitCommand:
-		_open_show_portrait_editor(new_command, page_index, true, command_index)
-	elif new_command is FollowActorCommand:
-		_open_follow_actor_editor(new_command, page_index, true, command_index)
-	elif new_command is UseMOCommand:
-		_open_use_mo_editor(new_command, page_index, true, command_index)
-	elif new_command is PlayAnimationCommand:
-		_open_play_animation_editor(new_command, page_index, true, command_index)
-	elif new_command is MoveNPCCommand:
-		_open_move_npc_editor(new_command, page_index, true, command_index)
+	_update_commands_tree(commands_tree, page, page_index)
+
+	# Buscar y seleccionar el nuevo comando en el árbol, y abrir el editor
+	call_deferred("_select_and_open_command_editor", commands_tree, new_command, page_index)
+
+## Selecciona un comando en el árbol recursivamente
+func _select_command_in_tree(tree: Tree, target_command: EventCommand) -> void:
+	if not tree or not target_command:
+		return
+
+	var root = tree.get_root()
+	if not root:
+		return
+
+	_select_command_recursive(tree, root, target_command)
+
+## Selecciona un comando en el árbol y abre su editor
+func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, page_index: int) -> void:
+	if not tree or not target_command:
+		return
+
+	var root = tree.get_root()
+	if not root:
+		return
+
+	var selected_item = _find_command_item_recursive(tree, root, target_command)
+	if selected_item:
+		tree.set_selected(selected_item, 0)
+		# Abrir el editor del comando
+		_on_edit_command_pressed(page_index)
+
+## Busca recursivamente un comando en el árbol y devuelve el TreeItem
+func _find_command_item_recursive(tree: Tree, item: TreeItem, target_command: EventCommand) -> TreeItem:
+	if not item or not tree:
+		return null
+
+	var metadata = item.get_metadata(0)
+	if metadata and metadata.has("command"):
+		if metadata.get("command") == target_command:
+			return item
+
+	# Buscar en los hijos
+	var child = item.get_first_child()
+	while child:
+		var found = _find_command_item_recursive(tree, child, target_command)
+		if found:
+			return found
+		child = child.get_next()
+
+	return null
+
+## Busca recursivamente un comando en el árbol y lo selecciona
+func _select_command_recursive(tree: Tree, item: TreeItem, target_command: EventCommand) -> bool:
+	if not item or not tree:
+		return false
+
+	var metadata = item.get_metadata(0)
+	if metadata and metadata.has("command"):
+		if metadata.get("command") == target_command:
+			tree.set_selected(item, 0)
+			return true
+
+	# Buscar en los hijos
+	var child = item.get_first_child()
+	while child:
+		if _select_command_recursive(tree, child, target_command):
+			return true
+		child = child.get_next()
+
+	return false
+
+## Selecciona el último branch y abre el editor de condiciones
+func _select_and_open_branch_editor(commands_tree: Tree, cmd_index: int, item_type: String, branch: EventBranch, conditional_cmd: ConditionalCommand, page_index: int) -> void:
+	if not commands_tree:
+		return
+
+	var main_command_item = commands_tree.get_root()
+	if not main_command_item:
+		return
+
+	var current = main_command_item.get_first_child()
+	while current:
+		var cmd_meta = current.get_metadata(0)
+		if cmd_meta and cmd_meta.type == "command" and cmd_meta.index == cmd_index:
+			# Encontrar el último branch
+			var last_item = null
+			var child = current.get_first_child()
+			while child:
+				var child_meta = child.get_metadata(0)
+				if child_meta and child_meta.type == item_type:
+					last_item = child
+				child = child.get_next()
+
+			if last_item:
+				commands_tree.set_selected(last_item, 0)
+				# Abrir el editor de condiciones
+				_open_condition_editor_for_branch(branch, conditional_cmd, page_index)
+			break
+		current = current.get_next()
+
+## Selecciona el último case y abre el editor de valores
+func _select_and_open_case_editor(commands_tree: Tree, cmd_index: int, item_type: String, switch_case: SwitchCase, switch_cmd: SwitchCommand, page_index: int) -> void:
+	if not commands_tree:
+		return
+
+	var main_command_item = commands_tree.get_root()
+	if not main_command_item:
+		return
+
+	var current = main_command_item.get_first_child()
+	while current:
+		var cmd_meta = current.get_metadata(0)
+		if cmd_meta and cmd_meta.type == "command" and cmd_meta.index == cmd_index:
+			# Encontrar el último case
+			var last_item = null
+			var child = current.get_first_child()
+			while child:
+				var child_meta = child.get_metadata(0)
+				if child_meta and child_meta.type == item_type:
+					last_item = child
+				child = child.get_next()
+
+			if last_item:
+				commands_tree.set_selected(last_item, 0)
+				# Abrir el editor de valores
+				_open_switch_case_values_editor(switch_case, switch_cmd, page_index)
+			break
+		current = current.get_next()
+
+## Selecciona el último choice branch y abre el editor
+func _select_and_open_choice_editor(commands_tree: Tree, cmd_index: int, item_type: String, branch: ChoiceBranch, show_choices_cmd: ShowChoicesCommand, page_index: int) -> void:
+	if not commands_tree:
+		return
+
+	var main_command_item = commands_tree.get_root()
+	if not main_command_item:
+		return
+
+	var current = main_command_item.get_first_child()
+	while current:
+		var cmd_meta = current.get_metadata(0)
+		if cmd_meta and cmd_meta.type == "command" and cmd_meta.index == cmd_index:
+			# Encontrar el último choice branch
+			var last_item = null
+			var child = current.get_first_child()
+			while child:
+				var child_meta = child.get_metadata(0)
+				if child_meta and child_meta.type == item_type:
+					last_item = child
+				child = child.get_next()
+
+			if last_item:
+				commands_tree.set_selected(last_item, 0)
+				# Abrir el editor de choice branch
+				_open_choice_branch_editor(branch, show_choices_cmd, page_index)
+			break
+		current = current.get_next()
 
 # === FUNCIONES AUXILIARES ===
 ## Encuentra el índice de un TreeItem dentro de su padre, contando solo items del tipo especificado
@@ -3015,6 +3583,60 @@ func _get_commands_array_from_branch_case(main_command: EventCommand, parent_typ
 		return switch_cmd.default_commands
 	return []
 
+## Añade un comando a un branch/case de forma segura (crea nuevo array si es necesario)
+func _add_command_to_branch_case(main_command: EventCommand, parent_type: String, branch_index: int, case_index: int, command: EventCommand) -> bool:
+	if not command:
+		return false
+
+	var commands_array: Array[EventCommand] = []
+	if parent_type == "branch" and main_command is ConditionalCommand:
+		var cond_cmd = main_command as ConditionalCommand
+		if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+			var branch = cond_cmd.branches[branch_index]
+			# Crear un nuevo array para evitar el error de "read-only"
+			for existing_cmd in branch.commands:
+				if existing_cmd is EventCommand:
+					commands_array.append(existing_cmd as EventCommand)
+			if command is EventCommand:
+				commands_array.append(command as EventCommand)
+			branch.commands = commands_array
+			return true
+	elif parent_type == "choice_branch" and main_command is ShowChoicesCommand:
+		var choices_cmd = main_command as ShowChoicesCommand
+		if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+			var branch = choices_cmd.branches[branch_index]
+			# Crear un nuevo array para evitar el error de "read-only"
+			for existing_cmd in branch.commands:
+				if existing_cmd is EventCommand:
+					commands_array.append(existing_cmd as EventCommand)
+			if command is EventCommand:
+				commands_array.append(command as EventCommand)
+			branch.commands = commands_array
+			return true
+	elif parent_type == "switch_case" and main_command is SwitchCommand:
+		var switch_cmd = main_command as SwitchCommand
+		if case_index >= 0 and case_index < switch_cmd.cases.size():
+			var switch_case = switch_cmd.cases[case_index]
+			# Crear un nuevo array para evitar el error de "read-only"
+			for existing_cmd in switch_case.commands:
+				if existing_cmd is EventCommand:
+					commands_array.append(existing_cmd as EventCommand)
+			if command is EventCommand:
+				commands_array.append(command as EventCommand)
+			switch_case.commands = commands_array
+			return true
+	elif parent_type == "default_commands" and main_command is SwitchCommand:
+		var switch_cmd = main_command as SwitchCommand
+		# Crear un nuevo array para evitar el error de "read-only"
+		for existing_cmd in switch_cmd.default_commands:
+			if existing_cmd is EventCommand:
+				commands_array.append(existing_cmd as EventCommand)
+		if command is EventCommand:
+			commands_array.append(command as EventCommand)
+		switch_cmd.default_commands = commands_array
+		return true
+	return false
+
 ## Modifica el array de comandos de un branch/case según el tipo y los índices
 func _set_commands_array_to_branch_case(main_command: EventCommand, parent_type: String, branch_index: int, case_index: int, commands: Array) -> bool:
 	if parent_type == "branch" and main_command is ConditionalCommand:
@@ -3038,8 +3660,169 @@ func _set_commands_array_to_branch_case(main_command: EventCommand, parent_type:
 		return true
 	return false
 
+## Selecciona un branch/case duplicado en el árbol
+func _select_duplicated_branch_case(commands_tree: Tree, item_type: String, item_index: int) -> void:
+	if not commands_tree:
+		return
+
+	var selected_item = commands_tree.get_selected()
+	if not selected_item:
+		return
+
+	var parent_item = selected_item.get_parent()
+	if not parent_item:
+		return
+
+	var main_command_item = _get_main_command_item_from_tree(parent_item, commands_tree)
+	if not main_command_item:
+		return
+
+	var current = main_command_item.get_first_child()
+	var count = 0
+	while current:
+		var current_meta = current.get_metadata(0)
+		if current_meta and current_meta.type == item_type:
+			if count == item_index:
+				commands_tree.set_selected(current, 0)
+				break
+			count += 1
+		current = current.get_next()
+
+## Añade un EventBranch a un ConditionalCommand
+func _add_branch_to_conditional(page_index: int, conditional_cmd: ConditionalCommand, cmd_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	var editable_page = page.duplicate(true) as EventPage
+	if not editable_page:
+		push_error("Event Editor: No se pudo duplicar la página")
+		return
+
+	var cmd = editable_page.commands[cmd_index]
+	if cmd is ConditionalCommand:
+		var cond_cmd = cmd as ConditionalCommand
+		var new_branch = EventBranch.new()
+
+		# Crear un nuevo array con el branch añadido
+		var new_branches: Array[EventBranch] = []
+		for existing_branch in cond_cmd.branches:
+			new_branches.append(existing_branch)
+		new_branches.append(new_branch)
+		cond_cmd.branches = new_branches
+
+		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
+
+		# Actualizar árbol y seleccionar el nuevo branch
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, editable_page, page_index)
+			# Seleccionar el nuevo branch y abrir el editor de condiciones
+			call_deferred("_select_and_open_branch_editor", commands_tree, cmd_index, "branch", new_branch, cond_cmd, page_index)
+
+		_refresh_inspector()
+
+## Añade un SwitchCase a un SwitchCommand
+func _add_case_to_switch(page_index: int, switch_cmd: SwitchCommand, cmd_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	var editable_page = page.duplicate(true) as EventPage
+	if not editable_page:
+		push_error("Event Editor: No se pudo duplicar la página")
+		return
+
+	var cmd = editable_page.commands[cmd_index]
+	if cmd is SwitchCommand:
+		var switch_command = cmd as SwitchCommand
+		var new_case = SwitchCase.new()
+
+		# Crear un nuevo array con el case añadido
+		var new_cases: Array[SwitchCase] = []
+		for existing_case in switch_command.cases:
+			new_cases.append(existing_case)
+		new_cases.append(new_case)
+		switch_command.cases = new_cases
+
+		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
+
+		# Actualizar árbol y seleccionar el nuevo case
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, editable_page, page_index)
+			# Seleccionar el nuevo case y abrir el editor de valores
+			call_deferred("_select_and_open_case_editor", commands_tree, cmd_index, "switch_case", new_case, switch_command, page_index)
+
+		_refresh_inspector()
+
+## Añade un ChoiceBranch a un ShowChoicesCommand
+func _add_choice_to_show_choices(page_index: int, choices_cmd: ShowChoicesCommand, cmd_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	var editable_page = page.duplicate(true) as EventPage
+	if not editable_page:
+		push_error("Event Editor: No se pudo duplicar la página")
+		return
+
+	var cmd = editable_page.commands[cmd_index]
+	if cmd is ShowChoicesCommand:
+		var show_choices_cmd = cmd as ShowChoicesCommand
+		var new_branch = ChoiceBranch.new()
+		new_branch.label = "Opción " + str(show_choices_cmd.branches.size() + 1)
+
+		# Crear un nuevo array con el branch añadido
+		var new_branches: Array[ChoiceBranch] = []
+		for existing_branch in show_choices_cmd.branches:
+			new_branches.append(existing_branch)
+		new_branches.append(new_branch)
+		show_choices_cmd.branches = new_branches
+
+		event_node.pages[page_index] = editable_page
+		_mark_as_changed()
+
+		# Actualizar árbol y seleccionar el nuevo branch
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, editable_page, page_index)
+			# Seleccionar el nuevo branch y abrir el editor de choice branch
+			call_deferred("_select_and_open_choice_editor", commands_tree, cmd_index, "choice_branch", new_branch, show_choices_cmd, page_index)
+
+		_refresh_inspector()
+
+## Selecciona el último branch/case de un comando
+func _select_last_branch_case(commands_tree: Tree, cmd_index: int, item_type: String) -> void:
+	if not commands_tree:
+		return
+
+	var main_command_item = commands_tree.get_root()
+	if not main_command_item:
+		return
+
+	var current = main_command_item.get_first_child()
+	while current:
+		var cmd_meta = current.get_metadata(0)
+		if cmd_meta and cmd_meta.type == "command" and cmd_meta.index == cmd_index:
+			# Encontrar el último item del tipo especificado
+			var last_item = null
+			var child = current.get_first_child()
+			while child:
+				var child_meta = child.get_metadata(0)
+				if child_meta and child_meta.type == item_type:
+					last_item = child
+				child = child.get_next()
+
+			if last_item:
+				commands_tree.set_selected(last_item, 0)
+			break
+		current = current.get_next()
+
 # === UTILIDADES ===
-func _update_buttons_state(page_index: int, has_selection: bool, can_move_up: bool = false, can_move_down: bool = false, can_move: bool = false, can_duplicate: bool = false) -> void:
+func _update_buttons_state(page_index: int, has_selection: bool, can_move_up: bool = false, can_move_down: bool = false, can_move: bool = false, can_duplicate: bool = false, can_add: bool = false) -> void:
 	if not page_index in page_buttons:
 		return
 
@@ -3104,7 +3887,7 @@ func _update_buttons_state(page_index: int, has_selection: bool, can_move_up: bo
 		buttons.accept_move.visible = false
 		buttons.cancel_move.visible = false
 
-		buttons.add.disabled = has_selection
+		buttons.add.disabled = not can_add
 		buttons.edit.disabled = not has_selection
 		buttons.delete.disabled = not has_selection
 		if buttons.has("duplicate"):
@@ -4295,6 +5078,343 @@ func _on_move_npc_command_edited(command: MoveNPCCommand, page_index: int) -> vo
 			_update_commands_tree(commands_tree, page, page_index)
 			commands_tree.deselect_all()
 			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para ConditionalCommand
+func _open_conditional_editor(command: ConditionalCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un ConditionalCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/conditional_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de ConditionalCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.set_event_node(event_node)
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: ConditionalCommand): _on_conditional_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_conditional_command_edited(command: ConditionalCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para SwitchCommand
+func _open_switch_editor(command: SwitchCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un SwitchCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/switch_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de SwitchCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.set_event_node(event_node)
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: SwitchCommand): _on_switch_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_switch_command_edited(command: SwitchCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para ShowChoicesCommand
+func _open_show_choices_editor(command: ShowChoicesCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un ShowChoicesCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/show_choices_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de ShowChoicesCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.set_event_node(event_node)
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: ShowChoicesCommand): _on_show_choices_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_show_choices_command_edited(command: ShowChoicesCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor de valores de un SwitchCase directamente desde el editor principal
+func _open_switch_case_values_editor(switch_case: SwitchCase, switch_command: SwitchCommand, page_index: int) -> void:
+	if not switch_case or not switch_command:
+		push_error("Event Editor: No se proporcionó un SwitchCase o SwitchCommand válido")
+		return
+
+	# Encontrar el índice del caso en el comando
+	var case_index = -1
+	for i in range(switch_command.cases.size()):
+		if switch_command.cases[i] == switch_case:
+			case_index = i
+			break
+
+	if case_index < 0:
+		push_error("Event Editor: No se pudo encontrar el caso en el comando")
+		return
+
+	# Abrir ventana de edición de valores
+	var editor_script = load("res://addons/event_tools/switch_case_values_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de valores")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.load_case(switch_case)
+	editor_window.values_edited.connect(func(values: Array): _on_switch_case_values_edited(switch_command, case_index, values, page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
+## Abre el editor de opciones para una rama del ShowChoicesCommand
+func _open_choice_branch_editor(branch: ChoiceBranch, show_choices_command: ShowChoicesCommand, page_index: int) -> void:
+	if not branch or not show_choices_command:
+		push_error("Event Editor: No se proporcionó un ChoiceBranch o ShowChoicesCommand válido")
+		return
+
+	# Encontrar el índice de la opción en el comando
+	var branch_index = -1
+	for i in range(show_choices_command.branches.size()):
+		if show_choices_command.branches[i] == branch:
+			branch_index = i
+			break
+
+	if branch_index < 0:
+		push_error("Event Editor: No se pudo encontrar la opción en el comando")
+		return
+
+	# Abrir ventana de edición de opciones
+	var editor_script = load("res://addons/event_tools/choice_branch_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de opciones")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.load_branch(branch)
+	editor_window.branch_edited.connect(func(edited_branch: ChoiceBranch): _on_choice_branch_edited(show_choices_command, branch_index, edited_branch, page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
+## Se llama cuando se edita una opción desde el editor principal
+func _on_choice_branch_edited(show_choices_command: ShowChoicesCommand, branch_index: int, edited_branch: ChoiceBranch, page_index: int) -> void:
+	if not show_choices_command or branch_index < 0 or branch_index >= show_choices_command.branches.size():
+		return
+
+	var branch = show_choices_command.branches[branch_index]
+	if not branch:
+		return
+
+	# Actualizar la opción
+	branch.label = edited_branch.label
+	branch.close_previous_message = edited_branch.close_previous_message
+	branch.value_stored = edited_branch.value_stored
+
+	# Marcar como cambiado y refrescar
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+## Abre el editor de condiciones para una rama del ConditionalCommand
+func _open_condition_editor_for_branch(branch: EventBranch, conditional_command: ConditionalCommand, page_index: int) -> void:
+	if not branch or not conditional_command:
+		push_error("Event Editor: No se proporcionó un EventBranch o ConditionalCommand válido")
+		return
+
+	# Encontrar el índice de la rama en el comando
+	var branch_index = -1
+	for i in range(conditional_command.branches.size()):
+		if conditional_command.branches[i] == branch:
+			branch_index = i
+			break
+
+	if branch_index < 0:
+		push_error("Event Editor: No se pudo encontrar la rama en el comando")
+		return
+
+	# Abrir ventana de edición de condiciones
+	var editor_script = load("res://addons/event_tools/condition_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de condiciones")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.set_event_node(event_node)
+	editor_window.load_condition(branch.condition)
+	editor_window.condition_edited.connect(func(cond: EventCondition): _on_branch_condition_edited(conditional_command, branch_index, cond, page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
+## Se llama cuando se edita la condición de una rama desde el editor principal
+func _on_branch_condition_edited(conditional_command: ConditionalCommand, branch_index: int, new_condition: EventCondition, page_index: int) -> void:
+	if not conditional_command or branch_index < 0 or branch_index >= conditional_command.branches.size():
+		return
+
+	var branch = conditional_command.branches[branch_index]
+	if not branch:
+		return
+
+	# Actualizar la condición de la rama
+	if new_condition:
+		branch.condition = new_condition.duplicate(true)
+	else:
+		branch.condition = null
+
+	# Marcar como cambiado y refrescar
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+
+## Se llama cuando se editan los valores de un SwitchCase desde el editor principal
+func _on_switch_case_values_edited(switch_command: SwitchCommand, case_index: int, values: Array, page_index: int) -> void:
+	if not switch_command or case_index < 0 or case_index >= switch_command.cases.size():
+		return
+
+	var switch_case = switch_command.cases[case_index]
+	if not switch_case:
+		return
+
+	# Actualizar los valores del caso
+	switch_case.values = values.duplicate()
+
+	# Marcar como cambiado y refrescar
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
 	_refresh_inspector()
 
 ## Callback cuando se cancela la edición de un comando nuevo
