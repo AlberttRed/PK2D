@@ -1,4 +1,4 @@
-[gd_scene load_steps=190 format=4 uid="uid://ckeno4wg1vrv8"]
+[gd_scene load_steps=284 format=4 uid="uid://ckeno4wg1vrv8"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_wr4o0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_on1ha"]
@@ -31,6 +31,239 @@
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="22_05x7i"]
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="26_05x7i"]
 [ext_resource type="Script" uid="uid://bprbbdhn4jhfb" path="res://Scripts/Events/Conditions/GroupCondition.gd" id="27_guue8"]
+[ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="28_snt5p"]
+[ext_resource type="Script" uid="uid://desogu22oifhh" path="res://Scripts/Events/Commands/ConditionalCommand.gd" id="29_tesob"]
+[ext_resource type="Script" uid="uid://cndauysvy7s3h" path="res://Scripts/Resources/SwitchCase.gd" id="30_coi6h"]
+[ext_resource type="Script" uid="uid://bnkrdjikt6sl3" path="res://Scripts/Events/Commands/SwitchCommand.gd" id="31_bndxg"]
+[ext_resource type="Script" uid="uid://3wvstn8m5q1k" path="res://Scripts/Events/Commands/ShowPortraitCommand.gd" id="32_nbshg"]
+[ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="32_vkojk"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="33_lmtl6"]
+[ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="34_nbshg"]
+[ext_resource type="Script" uid="uid://c1hr8s5cdrs4o" path="res://Scripts/Events/Commands/ShowChoicesCommand.gd" id="35_rmtse"]
+[ext_resource type="Script" uid="uid://ollu1kd3po24" path="res://Scripts/Events/Commands/SetVariableCommand.gd" id="36_lmtl6"]
+
+[sub_resource type="Resource" id="Resource_ugsdx"]
+script = ExtResource("7_0876j")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_noqo3"]
+script = ExtResource("8_dr37c")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_0ucpo"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_bcf1a"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_xn6g0"]
+script = ExtResource("7_0876j")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_et8ko"]
+script = ExtResource("11_qv1ht")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_tgc4j"]
+script = ExtResource("12_0pviq")
+target_scene = "Casa_Red"
+target_spawn = "SpawnEntrada"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_32uey"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_lat2g"]
+script = ExtResource("13_ey1f0")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_pj5kn"]
+script = ExtResource("11_qv1ht")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_3piu0"]
+script = ExtResource("15_rwrw8")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yknjt"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fto61"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xlgkr"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogvcp"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5l8t1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yknjt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fto61")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xlgkr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogvcp")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogvcp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xlgkr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fto61")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yknjt")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_b5y17"]
+script = ExtResource("17_ihud3")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_xgom6"]
+script = ExtResource("5_u1wff")
+trigger = SubResource("Resource_b5y17")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_ugsdx"), SubResource("Resource_noqo3"), SubResource("Resource_0ucpo"), SubResource("Resource_bcf1a"), SubResource("Resource_xn6g0"), SubResource("Resource_et8ko"), SubResource("Resource_tgc4j"), SubResource("Resource_32uey"), SubResource("Resource_lat2g"), SubResource("Resource_pj5kn")])
+root_condition = SubResource("Resource_3piu0")
+sprite_frames = SubResource("SpriteFrames_5l8t1")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_xdpa0"]
+script = ExtResource("7_0876j")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_ses7h"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_pi6ww"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_udvcf"]
+script = ExtResource("13_ey1f0")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_ykp07"]
+script = ExtResource("7_0876j")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_6epyp"]
+script = ExtResource("15_rwrw8")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2p2gx"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5dhk"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_odi6a"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bfvxj"]
+atlas = ExtResource("14_rwrw8")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ye56r"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2p2gx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p5dhk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_odi6a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bfvxj")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bfvxj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_odi6a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p5dhk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2p2gx")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_hsxjn"]
+script = ExtResource("18_a1jip")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_fv5vg"]
+script = ExtResource("5_u1wff")
+trigger = SubResource("Resource_hsxjn")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_xdpa0"), SubResource("Resource_ses7h"), SubResource("Resource_pi6ww"), SubResource("Resource_udvcf"), SubResource("Resource_ykp07")])
+root_condition = SubResource("Resource_6epyp")
+through = true
+sprite_frames = SubResource("SpriteFrames_ye56r")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("7_0876j")
@@ -64,9 +297,9 @@ mode = 0
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
-[sub_resource type="Resource" id="Resource_b1xv2"]
+[sub_resource type="Resource" id="Resource_tsofr"]
 script = ExtResource("12_0pviq")
-target_scene = "Casa_Red"
+target_scene = "Casa_Blue"
 target_spawn = "SpawnEntrada"
 facing_direction = 0
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
@@ -86,7 +319,7 @@ script = ExtResource("11_qv1ht")
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
-[sub_resource type="Resource" id="Resource_32uey"]
+[sub_resource type="Resource" id="Resource_0bxn8"]
 script = ExtResource("15_rwrw8")
 flag_name = "indoor"
 expected_value = false
@@ -145,15 +378,15 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Resource" id="Resource_xn6g0"]
+[sub_resource type="Resource" id="Resource_yknjt"]
 script = ExtResource("17_ihud3")
 metadata/_custom_type_script = "uid://cenpvman6ylsr"
 
-[sub_resource type="Resource" id="Resource_rjs0j"]
+[sub_resource type="Resource" id="Resource_a1jip"]
 script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_xn6g0")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_b1xv2"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
-root_condition = SubResource("Resource_32uey")
+trigger = SubResource("Resource_yknjt")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_tsofr"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+root_condition = SubResource("Resource_0bxn8")
 sprite_frames = SubResource("SpriteFrames_7vpoe")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -184,7 +417,7 @@ script = ExtResource("7_0876j")
 animation_name = "default_back"
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
-[sub_resource type="Resource" id="Resource_lat2g"]
+[sub_resource type="Resource" id="Resource_log63"]
 script = ExtResource("15_rwrw8")
 flag_name = "indoor"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
@@ -226,49 +459,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Resource" id="Resource_3piu0"]
-script = ExtResource("18_a1jip")
-metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
-
-[sub_resource type="Resource" id="Resource_ihud3"]
-script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_3piu0")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
-through = true
-root_condition = SubResource("Resource_lat2g")
-sprite_frames = SubResource("SpriteFrames_oem2p")
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_tsofr"]
-script = ExtResource("12_0pviq")
-target_scene = "Casa_Blue"
-target_spawn = "SpawnEntrada"
-facing_direction = 0
-metadata/_custom_type_script = "uid://c5vehg44neoyq"
-
-[sub_resource type="Resource" id="Resource_0bxn8"]
-script = ExtResource("15_rwrw8")
-flag_name = "indoor"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
-
-[sub_resource type="Resource" id="Resource_yknjt"]
-script = ExtResource("17_ihud3")
-metadata/_custom_type_script = "uid://cenpvman6ylsr"
-
-[sub_resource type="Resource" id="Resource_a1jip"]
-script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_yknjt")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_emybb"), SubResource("Resource_qxcq6"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_tsofr"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
-root_condition = SubResource("Resource_0bxn8")
-sprite_frames = SubResource("SpriteFrames_7vpoe")
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_log63"]
-script = ExtResource("15_rwrw8")
-flag_name = "indoor"
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
-
 [sub_resource type="Resource" id="Resource_fto61"]
 script = ExtResource("18_a1jip")
 metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
@@ -277,8 +467,8 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 script = ExtResource("5_u1wff")
 trigger = SubResource("Resource_fto61")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
-through = true
 root_condition = SubResource("Resource_log63")
+through = true
 sprite_frames = SubResource("SpriteFrames_oem2p")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -426,8 +616,8 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 script = ExtResource("5_u1wff")
 trigger = SubResource("Resource_ogvcp")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
-through = true
 root_condition = SubResource("Resource_er7af")
+through = true
 sprite_frames = SubResource("SpriteFrames_u1wff")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -506,8 +696,8 @@ metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
 [sub_resource type="Resource" id="Resource_55qh6"]
 script = ExtResource("5_u1wff")
-through = true
 root_condition = SubResource("Resource_5b1l3")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_kayfl"]
@@ -646,6 +836,326 @@ trigger = SubResource("Resource_lud7e")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_xuiob")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_2p2gx"]
+script = ExtResource("17_dr37c")
+message = "OAK: ¡Eh! ¡Alto!
+¡No te vayas!"
+wait_input = false
+wait_time = 1.0
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_p5dhk"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([5, 21])
+wait_until_finished = false
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_odi6a"]
+script = ExtResource("20_qv1ht")
+target_event_name = "Oak"
+metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
+
+[sub_resource type="Resource" id="Resource_bfvxj"]
+script = ExtResource("12_0pviq")
+actor_name = "Oak"
+target_spawn = "Oak_Start1"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_ye56r"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([10, 0, 0, 3, 0, 0, 3, 0, 0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_j47e8"]
+script = ExtResource("17_dr37c")
+message = "OAK: ¡Cuidado! ¡En la hierba viven POKéMON salvajes!"
+close_at_end = false
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_solln"]
+script = ExtResource("17_dr37c")
+message = "¡Necesitas a tu propio POKéMON como protección!"
+close_at_end = false
+show_icon_at_end = true
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_voblc"]
+script = ExtResource("17_dr37c")
+message = "¡Vente conmigo, anda!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_s2tqv"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Oak"
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_hbx8n"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_wgpx6"]
+script = ExtResource("7_0876j")
+target_name = "Puerta_Lab"
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_6ucc4"]
+script = ExtResource("8_dr37c")
+target_event_name = "Puerta_Lab"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_v5doc"]
+script = ExtResource("8_dr37c")
+target_event_name = "Oak"
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_ejaxi"]
+script = ExtResource("9_tsofr")
+target_name = "Oak"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_s0x6y"]
+script = ExtResource("18_tsofr")
+follower_actor_name = "Player"
+leader_actor_name = "Oak"
+action = 1
+metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
+
+[sub_resource type="Resource" id="Resource_m4i8v"]
+script = ExtResource("20_qv1ht")
+target_event_name = "Oak"
+switch_value = false
+metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
+
+[sub_resource type="Resource" id="Resource_ts0wq"]
+script = ExtResource("9_tsofr")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_2bwlw"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_piis2"]
+script = ExtResource("7_0876j")
+target_name = "Puerta_Lab"
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_lqh0d"]
+script = ExtResource("11_qv1ht")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_51bw5"]
+script = ExtResource("12_0pviq")
+target_scene = "Laboratorio"
+target_spawn = "SpawnEntrada"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_3t8es"]
+script = ExtResource("10_7u2qs")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_kr84y"]
+script = ExtResource("13_ey1f0")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_exu5g"]
+script = ExtResource("13_ey1f0")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_tg5l3"]
+script = ExtResource("11_qv1ht")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_5wf8u"]
+script = ExtResource("15_rwrw8")
+flag_name = "HAS_STARTER"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_pwkoo"]
+script = ExtResource("18_a1jip")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_ayx0j"]
+script = ExtResource("5_u1wff")
+trigger = SubResource("Resource_pwkoo")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_2p2gx"), SubResource("Resource_p5dhk"), SubResource("Resource_odi6a"), SubResource("Resource_bfvxj"), SubResource("Resource_ye56r"), SubResource("Resource_j47e8"), SubResource("Resource_solln"), SubResource("Resource_voblc"), SubResource("Resource_s2tqv"), SubResource("Resource_hbx8n"), SubResource("Resource_wgpx6"), SubResource("Resource_6ucc4"), SubResource("Resource_v5doc"), SubResource("Resource_ejaxi"), SubResource("Resource_s0x6y"), SubResource("Resource_m4i8v"), SubResource("Resource_ts0wq"), SubResource("Resource_2bwlw"), SubResource("Resource_piis2"), SubResource("Resource_lqh0d"), SubResource("Resource_51bw5"), SubResource("Resource_3t8es"), SubResource("Resource_kr84y"), SubResource("Resource_exu5g"), SubResource("Resource_tg5l3")])
+root_condition = SubResource("Resource_5wf8u")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n38f7"]
+script = ExtResource("31_bndxg")
+
+[sub_resource type="Resource" id="Resource_0khs8"]
+script = ExtResource("13_ey1f0")
+
+[sub_resource type="Resource" id="Resource_6yeix"]
+script = ExtResource("29_tesob")
+
+[sub_resource type="Resource" id="Resource_6ykkx"]
+script = ExtResource("17_dr37c")
+message = "¡Hola mundo!vvv"
+
+[sub_resource type="Resource" id="Resource_yalm4"]
+script = ExtResource("32_nbshg")
+
+[sub_resource type="Resource" id="Resource_at26s"]
+script = ExtResource("15_rwrw8")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_si6m0"]
+script = ExtResource("28_snt5p")
+condition = SubResource("Resource_at26s")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_n38f7"), SubResource("Resource_0khs8"), SubResource("Resource_6yeix"), SubResource("Resource_6ykkx"), SubResource("Resource_yalm4")])
+
+[sub_resource type="Resource" id="Resource_bgekh"]
+script = ExtResource("32_vkojk")
+
+[sub_resource type="Resource" id="Resource_qg1mu"]
+script = ExtResource("15_rwrw8")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_0ax1f"]
+script = ExtResource("26_05x7i")
+variable_name = "STARTER"
+compare_value = "Squirtle"
+
+[sub_resource type="Resource" id="Resource_m1tle"]
+script = ExtResource("27_guue8")
+children = Array[ExtResource("14_ey1f0")]([SubResource("Resource_qg1mu"), SubResource("Resource_0ax1f")])
+
+[sub_resource type="Resource" id="Resource_qry11"]
+script = ExtResource("28_snt5p")
+condition = SubResource("Resource_m1tle")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_bgekh")])
+
+[sub_resource type="Resource" id="Resource_30ii5"]
+script = ExtResource("28_snt5p")
+
+[sub_resource type="Resource" id="Resource_4n8fl"]
+script = ExtResource("15_rwrw8")
+flag_name = "hhhh"
+
+[sub_resource type="Resource" id="Resource_unq0q"]
+script = ExtResource("28_snt5p")
+condition = SubResource("Resource_4n8fl")
+
+[sub_resource type="Resource" id="Resource_ov10t"]
+script = ExtResource("29_tesob")
+branches = Array[ExtResource("28_snt5p")]([SubResource("Resource_si6m0"), SubResource("Resource_qry11"), SubResource("Resource_30ii5"), SubResource("Resource_unq0q")])
+
+[sub_resource type="Resource" id="Resource_msldn"]
+script = ExtResource("29_tesob")
+
+[sub_resource type="Resource" id="Resource_lngtc"]
+script = ExtResource("32_vkojk")
+
+[sub_resource type="Resource" id="Resource_lpgjh"]
+script = ExtResource("29_tesob")
+
+[sub_resource type="Resource" id="Resource_6hx0x"]
+script = ExtResource("35_rmtse")
+
+[sub_resource type="Resource" id="Resource_6u1yy"]
+script = ExtResource("30_coi6h")
+values = ["Squirtle"]
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_msldn"), SubResource("Resource_lngtc"), SubResource("Resource_lpgjh"), SubResource("Resource_6hx0x")])
+
+[sub_resource type="Resource" id="Resource_cu6vs"]
+script = ExtResource("13_ey1f0")
+
+[sub_resource type="Resource" id="Resource_vuel0"]
+script = ExtResource("30_coi6h")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_cu6vs")])
+
+[sub_resource type="Resource" id="Resource_wdk6o"]
+script = ExtResource("32_vkojk")
+
+[sub_resource type="Resource" id="Resource_lursu"]
+script = ExtResource("30_coi6h")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_wdk6o")])
+
+[sub_resource type="Resource" id="Resource_74guh"]
+script = ExtResource("30_coi6h")
+
+[sub_resource type="Resource" id="Resource_nsyxq"]
+script = ExtResource("30_coi6h")
+
+[sub_resource type="Resource" id="Resource_1dvoo"]
+script = ExtResource("31_bndxg")
+variable_name = "STARTER"
+cases = Array[ExtResource("30_coi6h")]([SubResource("Resource_6u1yy"), SubResource("Resource_vuel0"), SubResource("Resource_lursu"), SubResource("Resource_74guh"), SubResource("Resource_nsyxq")])
+
+[sub_resource type="Resource" id="Resource_bcqpl"]
+script = ExtResource("36_lmtl6")
+
+[sub_resource type="Resource" id="Resource_jbmqy"]
+script = ExtResource("34_nbshg")
+label = "Sí"
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_bcqpl")])
+
+[sub_resource type="Resource" id="Resource_njwr3"]
+script = ExtResource("34_nbshg")
+label = "Nueva opción"
+
+[sub_resource type="Resource" id="Resource_ratp6"]
+script = ExtResource("20_qv1ht")
+
+[sub_resource type="Resource" id="Resource_io6u3"]
+script = ExtResource("34_nbshg")
+label = "Opción 3"
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_ratp6")])
+
+[sub_resource type="Resource" id="Resource_b06br"]
+script = ExtResource("34_nbshg")
+label = "Opción 4"
+
+[sub_resource type="Resource" id="Resource_3x7wf"]
+script = ExtResource("35_rmtse")
+message = "Entonces, ¿Quieres a éste POKéMON o no?"
+branches = Array[ExtResource("34_nbshg")]([SubResource("Resource_jbmqy"), SubResource("Resource_njwr3"), SubResource("Resource_io6u3"), SubResource("Resource_b06br")])
+
+[sub_resource type="Resource" id="Resource_l1yru"]
+script = ExtResource("20_qv1ht")
+
+[sub_resource type="Resource" id="Resource_ehxoc"]
+script = ExtResource("17_dr37c")
+
+[sub_resource type="Resource" id="Resource_np43g"]
+script = ExtResource("17_dr37c")
+
+[sub_resource type="Resource" id="Resource_o6awv"]
+script = ExtResource("22_05x7i")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_23gos"]
+script = ExtResource("5_u1wff")
+trigger = SubResource("Resource_o6awv")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_ov10t"), SubResource("Resource_1dvoo"), SubResource("Resource_3x7wf"), SubResource("Resource_l1yru"), SubResource("Resource_ehxoc"), SubResource("Resource_np43g")])
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_hm2mc"]
 script = ExtResource("17_dr37c")
 message = "OAK: ¡Eh! ¡Alto!
@@ -666,10 +1176,10 @@ script = ExtResource("20_qv1ht")
 target_event_name = "Oak"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_noqo3"]
+[sub_resource type="Resource" id="Resource_smht1"]
 script = ExtResource("12_0pviq")
 actor_name = "Oak"
-target_spawn = "Oak_Start1"
+target_spawn = "Oak_Start2"
 facing_direction = 0
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
@@ -704,10 +1214,10 @@ follower_actor_name = "Player"
 leader_actor_name = "Oak"
 metadata/_custom_type_script = "uid://dmcq3yagkvlqy"
 
-[sub_resource type="Resource" id="Resource_0ucpo"]
+[sub_resource type="Resource" id="Resource_s8stc"]
 script = ExtResource("9_tsofr")
 target_name = "Oak"
-path = Array[int]([1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
+path = Array[int]([1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
 [sub_resource type="Resource" id="Resource_wfrhm"]
@@ -763,52 +1273,6 @@ target_name = "Puerta_Lab"
 animation_name = "default_back"
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
-[sub_resource type="Resource" id="Resource_tgc4j"]
-script = ExtResource("13_ey1f0")
-flag_name = "CHOOSING_STARTER"
-metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
-
-[sub_resource type="Resource" id="Resource_pj5kn"]
-script = ExtResource("15_rwrw8")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
-
-[sub_resource type="Resource" id="Resource_b5y17"]
-script = ExtResource("18_a1jip")
-metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
-
-[sub_resource type="Resource" id="Resource_ugsdx"]
-script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_b5y17")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_hm2mc"), SubResource("Resource_4grk7"), SubResource("Resource_pwx7d"), SubResource("Resource_noqo3"), SubResource("Resource_mqd5d"), SubResource("Resource_afi3b"), SubResource("Resource_1x25a"), SubResource("Resource_8dhr3"), SubResource("Resource_cjoya"), SubResource("Resource_0ucpo"), SubResource("Resource_wfrhm"), SubResource("Resource_8yycp"), SubResource("Resource_hs1n1"), SubResource("Resource_un3pw"), SubResource("Resource_ymm04"), SubResource("Resource_n84x4"), SubResource("Resource_ctefp"), SubResource("Resource_oqqgs"), SubResource("Resource_bq58e"), SubResource("Resource_yteb7"), SubResource("Resource_qv1ht"), SubResource("Resource_eglkp"), SubResource("Resource_tgc4j"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
-through = true
-root_condition = SubResource("Resource_pj5kn")
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_xgom6"]
-script = ExtResource("22_05x7i")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_et8ko"]
-script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_xgom6")
-through = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_smht1"]
-script = ExtResource("12_0pviq")
-actor_name = "Oak"
-target_spawn = "Oak_Start2"
-facing_direction = 0
-metadata/_custom_type_script = "uid://c5vehg44neoyq"
-
-[sub_resource type="Resource" id="Resource_s8stc"]
-script = ExtResource("9_tsofr")
-target_name = "Oak"
-path = Array[int]([1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4])
-metadata/_custom_type_script = "uid://yevlmfdmhfhn"
-
 [sub_resource type="Resource" id="Resource_cd0mo"]
 script = ExtResource("13_ey1f0")
 flag_name = "CHOOSING_STARTER"
@@ -828,8 +1292,8 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 script = ExtResource("5_u1wff")
 trigger = SubResource("Resource_54wko")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_hm2mc"), SubResource("Resource_4grk7"), SubResource("Resource_pwx7d"), SubResource("Resource_smht1"), SubResource("Resource_mqd5d"), SubResource("Resource_afi3b"), SubResource("Resource_1x25a"), SubResource("Resource_8dhr3"), SubResource("Resource_cjoya"), SubResource("Resource_s8stc"), SubResource("Resource_wfrhm"), SubResource("Resource_8yycp"), SubResource("Resource_hs1n1"), SubResource("Resource_un3pw"), SubResource("Resource_ymm04"), SubResource("Resource_n84x4"), SubResource("Resource_ctefp"), SubResource("Resource_oqqgs"), SubResource("Resource_bq58e"), SubResource("Resource_yteb7"), SubResource("Resource_qv1ht"), SubResource("Resource_eglkp"), SubResource("Resource_cd0mo"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
-through = true
 root_condition = SubResource("Resource_d0hjj")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_ycj1f"]
@@ -863,8 +1327,8 @@ metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
 [sub_resource type="Resource" id="Resource_ln16y"]
 script = ExtResource("5_u1wff")
-through = true
 root_condition = SubResource("Resource_bfg32")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_ahe6w"]
@@ -934,8 +1398,8 @@ metadata/_custom_type_script = "uid://cgcgdh5botek0"
 script = ExtResource("5_u1wff")
 trigger = SubResource("Resource_5x60x")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_ahe6w"), SubResource("Resource_upd1y"), SubResource("Resource_snt5p"), SubResource("Resource_coi6h"), SubResource("Resource_jeas5"), SubResource("Resource_580kq"), SubResource("Resource_2syl1"), SubResource("Resource_e6bu4")])
-blocks_player = false
 root_condition = SubResource("Resource_dxff4")
+blocks_player = false
 sprite_texture = SubResource("CompressedTexture2D_0876j")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -991,8 +1455,8 @@ metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
 [sub_resource type="Resource" id="Resource_in1o3"]
 script = ExtResource("5_u1wff")
-through = true
 root_condition = SubResource("Resource_mrvku")
+through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_0uqqa"]
@@ -1040,8 +1504,8 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 script = ExtResource("5_u1wff")
 trigger = SubResource("Resource_14u05")
 commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_0uqqa"), SubResource("Resource_ahe6w"), SubResource("Resource_upd1y"), SubResource("Resource_snt5p"), SubResource("Resource_coi6h"), SubResource("Resource_4wdvn"), SubResource("Resource_sr8ql"), SubResource("Resource_vvx62"), SubResource("Resource_65mvm")])
-through = true
 root_condition = SubResource("Resource_vtyl2")
+through = true
 sprite_texture = SubResource("CompressedTexture2D_71iyq")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -1098,7 +1562,7 @@ metadata/_edit_lock_ = true
 
 [node name="Puerta_Red" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(144, 176)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_rjs0j"), SubResource("Resource_ihud3")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_xgom6"), SubResource("Resource_fv5vg")])
 
 [node name="Puerta_Blue" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(432, 176)
@@ -1114,12 +1578,10 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_7u2qs")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(48, 272)
-random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_dr37c"), SubResource("Resource_55qh6")])
 
 [node name="Oak" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(-112, 16)
-random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_3i3x5"), SubResource("Resource_vusqy")])
 
 [node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
@@ -1144,7 +1606,7 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_glook")])
 
 [node name="Start1" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(336, -16)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ugsdx"), SubResource("Resource_et8ko")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ayx0j"), SubResource("Resource_23gos")])
 
 [node name="Start2" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
 position = Vector2(368, -16)
@@ -1152,7 +1614,6 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_bpwes"), SubResourc
 
 [node name="Girl_Aviso1" parent="OverworldGrid/Events" instance=ExtResource("16_0876j")]
 position = Vector2(336, 16)
-random_move_interval_min = 5.0
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ln16y"), SubResource("Resource_adc73"), SubResource("Resource_po3gy")])
 
 [node name="Girl_Aviso2" parent="OverworldGrid/Events" instance=ExtResource("4_nocjb")]
