@@ -74,7 +74,6 @@ func _on_popup_menu_about_to_show(popup_menu: PopupMenu) -> void:
 			popup_menu.set_item_metadata(i, node)
 			return
 
-	print("Event Tools: Event detectado: '", node.name, "' (ruta: ", node.get_path(), ")")
 	_add_edit_event_to_menu(popup_menu, node)
 
 ## Verifica si un PopupMenu es un menú contextual del SceneTree
