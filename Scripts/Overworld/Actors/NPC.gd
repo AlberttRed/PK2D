@@ -235,9 +235,15 @@ func _update_animator_from_current_page() -> void:
 
 	if current_page:
 		var style: ActorStyle = current_page.actor_style
+		# Para NPCs, usar offset por defecto de (0, -8) solo si no ha sido configurado explícitamente
+		var offset = current_page.sprite_offset
+		# Si el offset es (0, 0) y no ha sido configurado explícitamente, usar (0, -8) por defecto
+		if offset == Vector2(0, 0) and not current_page.sprite_offset_configured:
+			offset = Vector2(0, -8)
+
 		if style:
 			animator.apply_style(style)
-			animator.set_sprite_offset(Vector2(0, -8))
+			animator.set_sprite_offset(offset)
 			animator.show_sprite()
 
 			if motion:
@@ -246,10 +252,11 @@ func _update_animator_from_current_page() -> void:
 		else:
 			animator.apply_style(null)
 			# Usar el método get_sprite_frames() que soporta generación automática
-			var frames = current_page.get_sprite_frames()
+			# Pasar el nodo NPC para que pueda detectar si es NPC y generar animaciones apropiadas
+			var frames = current_page.get_sprite_frames(self)
 			if frames:
 				animator.set_sprite_frames(frames)
-				animator.set_sprite_offset(Vector2(0, -8))
+				animator.set_sprite_offset(offset)
 				animator.show_sprite()
 
 				# Configurar la dirección inicial después de asignar los frames
@@ -366,6 +373,11 @@ func _get_sprite_data_from_page(page: EventPage) -> Dictionary:
 func _setup_timers() -> void:
 	# Timer para movimiento aleatorio (solo para Random)
 	if get_movement_type() == 1:  # RANDOM
+		# Eliminar timer anterior si existe
+		if _random_timer:
+			_random_timer.queue_free()
+			_random_timer = null
+
 		_random_timer = Timer.new()
 		add_child(_random_timer)
 		_random_timer.timeout.connect(_on_random_timer_timeout)
@@ -432,9 +444,15 @@ func connect_external_signals() -> void:
 		_connect_to_player_movement()
 
 	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
-	if get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
+	if get_movement_type() == 1 and _random_timer:  # RANDOM
+		_random_timer.stop()  # Detener si estaba corriendo
+		_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
+	elif get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
 		_random_turning_timer.stop()  # Detener si estaba corriendo
 		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
+	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
+		_look_pattern_timer.stop()
+		_look_pattern_timer.start(get_look_pattern_delay())
 	elif get_movement_type() == 5 and _random_vertical_timer:  # RANDOM_VERTICAL
 		_random_vertical_timer.stop()
 		_random_vertical_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))

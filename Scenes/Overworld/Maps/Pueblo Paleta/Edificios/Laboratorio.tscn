@@ -1,4 +1,4 @@
-[gd_scene load_steps=262 format=4 uid="uid://c1amvh7rkmkou"]
+[gd_scene load_steps=293 format=4 uid="uid://c1amvh7rkmkou"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_q1be6"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gbfid"]
@@ -146,147 +146,148 @@ sprite_texture = ExtResource("14_8cj4d")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_6wtby"]
+[sub_resource type="Resource" id="Resource_qicpj"]
 script = ExtResource("12_8cj4d")
 message = "EL PROF. OAK va a tener pronto su propio programa de radio."
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_afg6e"]
+[sub_resource type="Resource" id="Resource_x1gl8"]
 script = ExtResource("12_8cj4d")
 message = "Será el SEMINARIO sobre POKéMON del PROF. OAK."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_to1bf"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_w8gfq"]
 load_path = "res://.godot/imported/trchar029.png-46215f8c62b9fcffcd0f8830d91e5334.ctex"
 
-[sub_resource type="Resource" id="Resource_wv6ig"]
+[sub_resource type="Resource" id="Resource_ou7ik"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_kngbo"]
+[sub_resource type="Resource" id="Resource_cf5ma"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_wv6ig")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6wtby"), SubResource("Resource_afg6e")])
+trigger = SubResource("Resource_ou7ik")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_qicpj"), SubResource("Resource_x1gl8")])
 movement_type = 3
-sprite_texture = SubResource("CompressedTexture2D_to1bf")
+sprite_texture = SubResource("CompressedTexture2D_w8gfq")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_fvsvc"]
+[sub_resource type="Resource" id="Resource_41qt1"]
 script = ExtResource("12_8cj4d")
 message = "OAK: ¡Si aparece un POKéMON salvaje, tu POKéMON podrá luchar contra él!"
 close_at_end = false
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_i68pn"]
+[sub_resource type="Resource" id="Resource_c6h0r"]
 script = ExtResource("12_8cj4d")
 message = "Junto a él no te será difícil llegar a la siguiente ciudad."
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_1j644"]
+[sub_resource type="Resource" id="Resource_qe4s6"]
 script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_o2om8"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+[sub_resource type="Resource" id="Resource_kpepb"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+operator = 1
 
-[sub_resource type="Resource" id="Resource_ng6sp"]
+[sub_resource type="Resource" id="Resource_4p7ta"]
 script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_o2om8")])
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_qe4s6"), SubResource("Resource_kpepb")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
-[sub_resource type="Resource" id="Resource_eg4wl"]
+[sub_resource type="Resource" id="Resource_5hcbi"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_x1gl8"]
+[sub_resource type="Resource" id="Resource_oqqvx"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_eg4wl")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_fvsvc"), SubResource("Resource_i68pn")])
-root_condition = SubResource("Resource_ng6sp")
+trigger = SubResource("Resource_5hcbi")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_41qt1"), SubResource("Resource_c6h0r")])
+root_condition = SubResource("Resource_4p7ta")
 preserve_direction_on_sprite_match = true
 sprite_texture = ExtResource("14_5lwew")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_iok2r"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+[sub_resource type="Resource" id="Resource_sodac"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
 
-[sub_resource type="Resource" id="Resource_0aasi"]
+[sub_resource type="Resource" id="Resource_fvsvc"]
 script = ExtResource("15_0nu6r")
 flag_name = "HAS_POKEDEX"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_apqql"]
+[sub_resource type="Resource" id="Resource_i68pn"]
 script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_o8s4d"]
+[sub_resource type="Resource" id="Resource_afn3s"]
 script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_iok2r"), SubResource("Resource_0aasi"), SubResource("Resource_apqql")])
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_sodac"), SubResource("Resource_fvsvc"), SubResource("Resource_i68pn")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
-[sub_resource type="Resource" id="Resource_r8o7e"]
+[sub_resource type="Resource" id="Resource_qv8bm"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_qicpj"]
+[sub_resource type="Resource" id="Resource_fk05p"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_r8o7e")
-root_condition = SubResource("Resource_o8s4d")
+trigger = SubResource("Resource_qv8bm")
+root_condition = SubResource("Resource_afn3s")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_kpepb"]
+[sub_resource type="Resource" id="Resource_ng6sp"]
 script = ExtResource("12_8cj4d")
 message = "OAK: A ver, PLAYER."
 close_at_end = false
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_4p7ta"]
+[sub_resource type="Resource" id="Resource_17ysd"]
 script = ExtResource("12_8cj4d")
 message = "Esas tres POKé BALLS contienen un POKéMON cada una."
 close_at_end = false
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_5hcbi"]
+[sub_resource type="Resource" id="Resource_v8rdu"]
 script = ExtResource("12_8cj4d")
 message = "¿Cuál quieres para tí?"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_c6yq0"]
+[sub_resource type="Resource" id="Resource_c804u"]
 script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
+flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_5fp7m"]
+[sub_resource type="Resource" id="Resource_ng2nx"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_iok2r"]
 script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_c6yq0")])
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_c804u"), SubResource("Resource_ng2nx")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
-[sub_resource type="Resource" id="Resource_p4mir"]
+[sub_resource type="Resource" id="Resource_0aasi"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_c6h0r"]
+[sub_resource type="Resource" id="Resource_o8s4d"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_p4mir")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_kpepb"), SubResource("Resource_4p7ta"), SubResource("Resource_5hcbi")])
-root_condition = SubResource("Resource_5fp7m")
+trigger = SubResource("Resource_0aasi")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ng6sp"), SubResource("Resource_17ysd"), SubResource("Resource_v8rdu")])
+root_condition = SubResource("Resource_iok2r")
 sprite_texture = ExtResource("14_5lwew")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -296,91 +297,99 @@ script = ExtResource("12_8cj4d")
 message = "OAK: ¡PLAYER, entrena a tu joven POKéMON luchando!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_lii17"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+[sub_resource type="Resource" id="Resource_7h4kx"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+operator = 1
 
-[sub_resource type="Resource" id="Resource_gxvop"]
+[sub_resource type="Resource" id="Resource_apqql"]
 script = ExtResource("15_0nu6r")
 flag_name = "HAS_POKEDEX"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_x3f2g"]
+[sub_resource type="Resource" id="Resource_lii17"]
 script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_4tff0"]
+[sub_resource type="Resource" id="Resource_gxvop"]
 script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_lii17"), SubResource("Resource_gxvop"), SubResource("Resource_x3f2g")])
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_7h4kx"), SubResource("Resource_apqql"), SubResource("Resource_lii17")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="Resource" id="Resource_4tff0"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_x3f2g"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_4tff0")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jjjk7")])
+root_condition = SubResource("Resource_gxvop")
+sprite_texture = ExtResource("14_5lwew")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_o2om8"]
+script = ExtResource("12_8cj4d")
+message = "RIVAL: ¡Hola, PLAYER!
+¡El abuelo no está!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_58we6"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_uc5ea"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_8vilv"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_uc5ea")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_o2om8")])
+root_condition = SubResource("Resource_58we6")
+sprite_texture = ExtResource("15_kngbo")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_wv6ig"]
+script = ExtResource("12_8cj4d")
+message = "RIVAL: Mi POKéMON parece mucho más fuerte."
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_eg4wl"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_r8o7e"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+operator = 1
+
+[sub_resource type="Resource" id="Resource_p4mir"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_eg4wl"), SubResource("Resource_r8o7e")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
 [sub_resource type="Resource" id="Resource_ywfpd"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_7h4kx"]
+[sub_resource type="Resource" id="Resource_2ulbb"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_ywfpd")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jjjk7")])
-root_condition = SubResource("Resource_4tff0")
-sprite_texture = ExtResource("14_5lwew")
-is_spritesheet = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_41qt1"]
-script = ExtResource("12_8cj4d")
-message = "RIVAL: ¡Hola, PLAYER!
-¡El abuelo no está!"
-metadata/_custom_type_script = "uid://badx4bswihslg"
-
-[sub_resource type="Resource" id="Resource_c804u"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
-
-[sub_resource type="Resource" id="Resource_2ulbb"]
-script = ExtResource("15_qicpj")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_cf5ma"]
-script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_2ulbb")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_41qt1")])
-root_condition = SubResource("Resource_c804u")
-sprite_texture = ExtResource("15_kngbo")
-is_spritesheet = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_afn3s"]
-script = ExtResource("12_8cj4d")
-message = "RIVAL: Mi POKéMON parece mucho más fuerte."
-metadata/_custom_type_script = "uid://badx4bswihslg"
-
-[sub_resource type="Resource" id="Resource_17ysd"]
-script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_1j644"), SubResource("Resource_o2om8")])
-metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
-
-[sub_resource type="Resource" id="Resource_yg2i5"]
-script = ExtResource("15_qicpj")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_qv8bm"]
-script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_yg2i5")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_afn3s")])
-root_condition = SubResource("Resource_17ysd")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_wv6ig")])
+root_condition = SubResource("Resource_p4mir")
 initial_direction = 0
 sprite_texture = ExtResource("15_kngbo")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_oqqvx"]
+[sub_resource type="Resource" id="Resource_yg2i5"]
 script = ExtResource("12_8cj4d")
 message = "RIVAL: ¡Yo no soy tan egoísta como tú!"
 close_at_end = false
@@ -388,106 +397,120 @@ show_icon_at_end = true
 safe_for_parallel = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_sodac"]
+[sub_resource type="Resource" id="Resource_768g5"]
 script = ExtResource("12_8cj4d")
 message = "¡Venga, elige uno, PLAYER!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_768g5"]
-script = ExtResource("15_qicpj")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_qe4s6"]
-script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_768g5")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_oqqvx"), SubResource("Resource_sodac")])
-root_condition = SubResource("Resource_5fp7m")
-initial_direction = 0
-sprite_texture = ExtResource("15_kngbo")
-is_spritesheet = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_58we6"]
-script = ExtResource("29_rok3h")
-variable_name = "STARTER"
-operator = 1
-metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
-
-[sub_resource type="Resource" id="Resource_uc5ea"]
-script = ExtResource("15_0nu6r")
-flag_name = "CHOOSING_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
-
-[sub_resource type="Resource" id="Resource_8vilv"]
-script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_58we6"), SubResource("Resource_uc5ea")])
-metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
-
 [sub_resource type="Resource" id="Resource_w5ti7"]
-script = ExtResource("15_qicpj")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_ng2nx"]
-script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_w5ti7")
-root_condition = SubResource("Resource_8vilv")
-through = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_v8rdu"]
 script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
 [sub_resource type="Resource" id="Resource_hl00g"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_g0kgr"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_w5ti7"), SubResource("Resource_hl00g")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="Resource" id="Resource_ra65p"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_fk05p"]
+[sub_resource type="Resource" id="Resource_yi1f2"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_hl00g")
-root_condition = SubResource("Resource_v8rdu")
+trigger = SubResource("Resource_ra65p")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_yg2i5"), SubResource("Resource_768g5")])
+root_condition = SubResource("Resource_g0kgr")
+initial_direction = 0
+sprite_texture = ExtResource("15_kngbo")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_d8k76"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+operator = 1
+metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
+
+[sub_resource type="Resource" id="Resource_ess6j"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_frkb4"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_d8k76"), SubResource("Resource_ess6j")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="Resource" id="Resource_8fow2"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_cxwnl"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_8fow2")
+root_condition = SubResource("Resource_frkb4")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_q8n23"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_a7hqj"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_rysey"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_a7hqj")
+root_condition = SubResource("Resource_q8n23")
 orientation_behavior = 1
 initial_direction = 0
 sprite_texture = ExtResource("14_5lwew")
 is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_g0kgr"]
+[sub_resource type="Resource" id="Resource_w68rj"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_ou7ik"]
+[sub_resource type="Resource" id="Resource_pjhkp"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_g0kgr")
+trigger = SubResource("Resource_w68rj")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_0nu6r"]
+[sub_resource type="Resource" id="Resource_rewfr"]
 script = ExtResource("12_8cj4d")
 message = "¡Ése es el último POKéMON del PROF. OAK!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_6c64e"]
+[sub_resource type="Resource" id="Resource_5fwq4"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_qch3f"]
+[sub_resource type="Resource" id="Resource_vaxvs"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_6c64e")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_0nu6r")])
+trigger = SubResource("Resource_5fwq4")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_rewfr")])
 sprite_texture = ExtResource("19_6wtby")
 frame_size = Vector2(32, 32)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_oyhmp"]
+[sub_resource type="Resource" id="Resource_ckfry"]
 script = ExtResource("15_qligy")
 frame_style = 2
 close_mode = 2
 metadata/_custom_type_script = "uid://3wvstn8m5q1k"
 
-[sub_resource type="Resource" id="Resource_c6nd2"]
+[sub_resource type="Resource" id="Resource_5aji0"]
 script = ExtResource("12_8cj4d")
 message = "¡Así que BULBASAUR!
 Resulta muy fácil criarlo."
@@ -495,131 +518,143 @@ close_at_end = false
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_4qtb2"]
+[sub_resource type="Resource" id="Resource_sgyy6"]
 script = ExtResource("17_yeqrt")
 metadata/_custom_type_script = "uid://bywrdnse71xj2"
 
-[sub_resource type="Resource" id="Resource_vaxvs"]
+[sub_resource type="Resource" id="Resource_qjkmx"]
 script = ExtResource("19_yeqrt")
 target_event_name = "Oak_NPC"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_bvtm4"]
+[sub_resource type="Resource" id="Resource_yymdr"]
 script = ExtResource("9_8cj4d")
 flag_name = "HAS_STARTER"
 metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 
-[sub_resource type="Resource" id="Resource_rok3h"]
+[sub_resource type="Resource" id="Resource_frje1"]
 script = ExtResource("19_yeqrt")
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_52bmq"]
+[sub_resource type="Resource" id="Resource_wbu40"]
 script = ExtResource("12_8cj4d")
 message = "¡Ese POKéMON tiene mucha energía!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_rewfr"]
+[sub_resource type="Resource" id="Resource_l5rsf"]
 script = ExtResource("21_afg6e")
 target_name = "Blue"
 path = Array[int]([1, 1, 3, 3, 3, 3, 3, 0])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_pxkaa"]
+[sub_resource type="Resource" id="Resource_y8ige"]
 script = ExtResource("12_8cj4d")
 message = "RIVAL: ¡Pues este para mí!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_5fwq4"]
+[sub_resource type="Resource" id="Resource_sxvus"]
 script = ExtResource("19_yeqrt")
 target_event_name = "Charmander"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_f50xn"]
+[sub_resource type="Resource" id="Resource_p508g"]
 script = ExtResource("16_6wtby")
 label = "Sí"
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_4qtb2"), SubResource("Resource_vaxvs"), SubResource("Resource_bvtm4"), SubResource("Resource_rok3h"), SubResource("Resource_52bmq"), SubResource("Resource_rewfr"), SubResource("Resource_pxkaa"), SubResource("Resource_5fwq4")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_sgyy6"), SubResource("Resource_qjkmx"), SubResource("Resource_yymdr"), SubResource("Resource_frje1"), SubResource("Resource_wbu40"), SubResource("Resource_l5rsf"), SubResource("Resource_y8ige"), SubResource("Resource_sxvus")])
 close_previous_message = false
 value_stored = "Bulbasaur"
 metadata/_custom_type_script = "uid://bishot1cjlcrk"
 
-[sub_resource type="Resource" id="Resource_n2obv"]
+[sub_resource type="Resource" id="Resource_6q14g"]
 script = ExtResource("17_yeqrt")
 metadata/_custom_type_script = "uid://bywrdnse71xj2"
 
-[sub_resource type="Resource" id="Resource_6uovn"]
+[sub_resource type="Resource" id="Resource_mkyku"]
 script = ExtResource("16_6wtby")
 label = "No"
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_n2obv")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6q14g")])
 metadata/_custom_type_script = "uid://bishot1cjlcrk"
 
-[sub_resource type="Resource" id="Resource_xa5ve"]
+[sub_resource type="Resource" id="Resource_ij4vt"]
 script = ExtResource("18_afg6e")
 message = "Bueno, PLAYER, entonces ¿quieres el POKéMON tipo PLANTA BULBASAUR?"
-branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_f50xn"), SubResource("Resource_6uovn")])
+branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_p508g"), SubResource("Resource_mkyku")])
 store_result_in = "STARTER"
 metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 
-[sub_resource type="Resource" id="Resource_ckfry"]
+[sub_resource type="Resource" id="Resource_n5ryk"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_cljnl"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_8gkb7"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_n5ryk"), SubResource("Resource_cljnl")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="Resource" id="Resource_67oin"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_44lcn"]
+[sub_resource type="Resource" id="Resource_tepus"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_ckfry")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_oyhmp"), SubResource("Resource_c6nd2"), SubResource("Resource_xa5ve")])
-root_condition = SubResource("Resource_5fp7m")
+trigger = SubResource("Resource_67oin")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ckfry"), SubResource("Resource_5aji0"), SubResource("Resource_ij4vt")])
+root_condition = SubResource("Resource_8gkb7")
 sprite_texture = ExtResource("19_6wtby")
 frame_size = Vector2(32, 32)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_wsl02"]
+[sub_resource type="Resource" id="Resource_ap1in"]
 script = ExtResource("15_0nu6r")
 flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_wowhx"]
+[sub_resource type="Resource" id="Resource_gu035"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_85anj"]
+[sub_resource type="Resource" id="Resource_jej28"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_wowhx")
-root_condition = SubResource("Resource_wsl02")
+trigger = SubResource("Resource_gu035")
+root_condition = SubResource("Resource_ap1in")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_jm72m"]
+[sub_resource type="Resource" id="Resource_pnqg4"]
 script = ExtResource("12_8cj4d")
 message = "¡Eso de ahí son las POKé BALLS!
 ¡Dentro de ellas hay POKéMON!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_ht6pi"]
+[sub_resource type="Resource" id="Resource_njvln"]
 script = ExtResource("15_0nu6r")
 flag_name = "CHOOSING_STARTER"
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_olbao"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+[sub_resource type="Resource" id="Resource_5xgij"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
 
-[sub_resource type="Resource" id="Resource_f73kv"]
+[sub_resource type="Resource" id="Resource_620mj"]
 script = ExtResource("18_0nu6r")
-children = Array[ExtResource("11_esu18")]([SubResource("Resource_ht6pi"), SubResource("Resource_olbao")])
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_njvln"), SubResource("Resource_5xgij")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
-[sub_resource type="Resource" id="Resource_v2ktj"]
+[sub_resource type="Resource" id="Resource_640wv"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_8ogwv"]
+[sub_resource type="Resource" id="Resource_wdryj"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_v2ktj")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_jm72m")])
-root_condition = SubResource("Resource_f73kv")
+trigger = SubResource("Resource_640wv")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_pnqg4")])
+root_condition = SubResource("Resource_620mj")
 sprite_texture = ExtResource("19_6wtby")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -724,10 +759,8 @@ flag_name = "CHOOSING_STARTER"
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
 [sub_resource type="Resource" id="Resource_enbmf"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
 
 [sub_resource type="Resource" id="Resource_q14pd"]
 script = ExtResource("18_0nu6r")
@@ -779,10 +812,8 @@ expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
 [sub_resource type="Resource" id="Resource_dqiy6"]
-script = ExtResource("15_0nu6r")
-flag_name = "HAS_STARTER"
-expected_value = false
-metadata/_custom_type_script = "uid://cehl8pp7efus8"
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
 
 [sub_resource type="Resource" id="Resource_qcth1"]
 script = ExtResource("18_0nu6r")
@@ -801,14 +832,31 @@ root_condition = SubResource("Resource_qcth1")
 sprite_texture = ExtResource("19_6wtby")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_vuiic"]
+[sub_resource type="Resource" id="Resource_pxkaa"]
+script = ExtResource("12_8cj4d")
+message = "¡Ése es el último POKéMON del PROF. OAK!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_jhrak"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_kwq2f"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_jhrak")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_pxkaa")])
+sprite_texture = ExtResource("19_6wtby")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_h5ueq"]
 script = ExtResource("15_qligy")
 pokemon_species = 4
 frame_style = 2
 close_mode = 2
 metadata/_custom_type_script = "uid://3wvstn8m5q1k"
 
-[sub_resource type="Resource" id="Resource_5aqlk"]
+[sub_resource type="Resource" id="Resource_qn1be"]
 script = ExtResource("12_8cj4d")
 message = "¡Así que CHARMANDER!
 Pues ten paciencia con él."
@@ -816,50 +864,146 @@ close_at_end = false
 show_icon_at_end = true
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_qn1be"]
+[sub_resource type="Resource" id="Resource_c6yq0"]
+script = ExtResource("17_yeqrt")
+metadata/_custom_type_script = "uid://bywrdnse71xj2"
+
+[sub_resource type="Resource" id="Resource_1j644"]
 script = ExtResource("19_yeqrt")
 target_event_name = "Oak_NPC"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_jhrak"]
+[sub_resource type="Resource" id="Resource_wsl02"]
+script = ExtResource("9_8cj4d")
+flag_name = "HAS_STARTER"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_jm72m"]
+script = ExtResource("19_yeqrt")
+metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
+
+[sub_resource type="Resource" id="Resource_8ogwv"]
+script = ExtResource("12_8cj4d")
+message = "¡Ese POKéMON tiene mucha energía!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_5fp7m"]
 script = ExtResource("21_afg6e")
 target_name = "Blue"
 path = Array[int]([1, 1, 3, 3, 3, 3, 0])
 metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_kwq2f"]
+[sub_resource type="Resource" id="Resource_ht6pi"]
+script = ExtResource("12_8cj4d")
+message = "RIVAL: ¡Pues este para mí!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_olbao"]
 script = ExtResource("19_yeqrt")
 target_event_name = "Squirtle"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_h5ueq"]
+[sub_resource type="Resource" id="Resource_f73kv"]
 script = ExtResource("16_6wtby")
 label = "Sí"
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_4qtb2"), SubResource("Resource_qn1be"), SubResource("Resource_bvtm4"), SubResource("Resource_rok3h"), SubResource("Resource_52bmq"), SubResource("Resource_jhrak"), SubResource("Resource_pxkaa"), SubResource("Resource_kwq2f")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_c6yq0"), SubResource("Resource_1j644"), SubResource("Resource_wsl02"), SubResource("Resource_jm72m"), SubResource("Resource_8ogwv"), SubResource("Resource_5fp7m"), SubResource("Resource_ht6pi"), SubResource("Resource_olbao")])
 value_stored = "Charmander"
 metadata/_custom_type_script = "uid://bishot1cjlcrk"
 
-[sub_resource type="Resource" id="Resource_ekydi"]
+[sub_resource type="Resource" id="Resource_6c64e"]
+script = ExtResource("17_yeqrt")
+metadata/_custom_type_script = "uid://bywrdnse71xj2"
+
+[sub_resource type="Resource" id="Resource_wowhx"]
+script = ExtResource("16_6wtby")
+label = "No"
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_6c64e")])
+metadata/_custom_type_script = "uid://bishot1cjlcrk"
+
+[sub_resource type="Resource" id="Resource_v2ktj"]
 script = ExtResource("18_afg6e")
 message = "Bueno, PLAYER, entonces ¿quieres el POKéMON tipo FUEGO CHARMANDER?"
-branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_h5ueq"), SubResource("Resource_6uovn")])
+branches = Array[ExtResource("16_6wtby")]([SubResource("Resource_f73kv"), SubResource("Resource_wowhx")])
 store_result_in = "STARTER"
 metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5aqlk"]
+[sub_resource type="Resource" id="Resource_fbwho"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_cpne8"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_ruj1n"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_fbwho"), SubResource("Resource_cpne8")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wm8o3"]
 load_path = "res://.godot/imported/item_sprite.png-f92be66c71cdf4e4c8bb42e4cd12734f.ctex"
 
-[sub_resource type="Resource" id="Resource_fbwho"]
+[sub_resource type="Resource" id="Resource_vsgdl"]
 script = ExtResource("15_qicpj")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_uw0p3"]
+[sub_resource type="Resource" id="Resource_f43ga"]
 script = ExtResource("5_qy02h")
-trigger = SubResource("Resource_fbwho")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_vuiic"), SubResource("Resource_5aqlk"), SubResource("Resource_ekydi")])
-root_condition = SubResource("Resource_5fp7m")
-sprite_texture = SubResource("CompressedTexture2D_5aqlk")
+trigger = SubResource("Resource_vsgdl")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_h5ueq"), SubResource("Resource_qn1be"), SubResource("Resource_v2ktj")])
+root_condition = SubResource("Resource_ruj1n")
+sprite_texture = SubResource("CompressedTexture2D_wm8o3")
 frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n2k4v"]
+script = ExtResource("15_0nu6r")
+flag_name = "A"
+scope = 1
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_8agom"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_oximp"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_8agom")
+root_condition = SubResource("Resource_n2k4v")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_ekwyg"]
+script = ExtResource("12_8cj4d")
+message = "¡Eso de ahí son las POKé BALLS!
+¡Dentro de ellas hay POKéMON!"
+metadata/_custom_type_script = "uid://badx4bswihslg"
+
+[sub_resource type="Resource" id="Resource_my6x3"]
+script = ExtResource("15_0nu6r")
+flag_name = "CHOOSING_STARTER"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_4xc4m"]
+script = ExtResource("29_rok3h")
+variable_name = "STARTER"
+
+[sub_resource type="Resource" id="Resource_pcxhr"]
+script = ExtResource("18_0nu6r")
+children = Array[ExtResource("11_esu18")]([SubResource("Resource_my6x3"), SubResource("Resource_4xc4m")])
+metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
+
+[sub_resource type="Resource" id="Resource_m8pfo"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_pfuui"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_m8pfo")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ekwyg")])
+root_condition = SubResource("Resource_pcxhr")
+sprite_texture = ExtResource("19_6wtby")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_w8gfq"]
@@ -1362,24 +1506,24 @@ pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5lwew")])
 
 [node name="Scientist_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(112, 176)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_kngbo")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_cf5ma")])
 
 [node name="Oak_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(208, -80)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_x1gl8"), SubResource("Resource_qicpj"), SubResource("Resource_c6h0r"), SubResource("Resource_7h4kx")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_oqqvx"), SubResource("Resource_fk05p"), SubResource("Resource_o8s4d"), SubResource("Resource_x3f2g")])
 
 [node name="Blue" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(176, -48)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_cf5ma"), SubResource("Resource_qv8bm"), SubResource("Resource_qe4s6"), SubResource("Resource_ng2nx")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_8vilv"), SubResource("Resource_2ulbb"), SubResource("Resource_yi1f2"), SubResource("Resource_cxwnl")])
 
 [node name="Oak_Start" parent="OverworldGrid/Events" instance=ExtResource("11_077yi")]
 position = Vector2(208, 176)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_fk05p"), SubResource("Resource_ou7ik")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_rysey"), SubResource("Resource_pjhkp")])
 
 [node name="Bulbasaur" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
 z_index = 1
 position = Vector2(272, -48)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_qch3f"), SubResource("Resource_44lcn"), SubResource("Resource_85anj"), SubResource("Resource_8ogwv")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_vaxvs"), SubResource("Resource_tepus"), SubResource("Resource_jej28"), SubResource("Resource_wdryj")])
 
 [node name="Squirtle" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
 z_index = 1
@@ -1389,7 +1533,7 @@ pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_smbps"), SubResourc
 [node name="Charmander" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
 z_index = 1
 position = Vector2(336, -48)
-pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_qch3f"), SubResource("Resource_uw0p3"), SubResource("Resource_85anj"), SubResource("Resource_8ogwv")])
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_kwq2f"), SubResource("Resource_f43ga"), SubResource("Resource_oximp"), SubResource("Resource_pfuui")])
 
 [node name="Choose_Starters" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
 position = Vector2(464, 272)
