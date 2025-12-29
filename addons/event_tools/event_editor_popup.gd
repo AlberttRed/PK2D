@@ -59,6 +59,24 @@ func _ready() -> void:
 	if event_node:
 		_setup_for_event()
 
+func _unhandled_input(event: InputEvent) -> void:
+	# Manejar ESC para cerrar la ventana
+	if not is_node_ready() or not is_inside_tree():
+		return
+
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_ESCAPE:
+			# Verificar que no hay un diálogo abierto que deba manejar el ESC primero
+			var has_open_dialog = false
+			for child in get_children():
+				if child is AcceptDialog and child.visible:
+					has_open_dialog = true
+					break
+
+			if not has_open_dialog:
+				_on_close_requested()
+				get_viewport().set_input_as_handled()
+
 func _setup_for_event() -> void:
 	if not _validate_event_node():
 		return
@@ -361,6 +379,7 @@ func _create_right_panel(page_index: int, page: EventPage) -> VBoxContainer:
 	var commands_tree = Tree.new()
 	commands_tree.name = "CommandsTree"
 	commands_tree.select_mode = Tree.SELECT_SINGLE
+	commands_tree.columns = 1  # Una sola columna con nombre y detalle
 	commands_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	commands_tree.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	commands_tree.item_selected.connect(func(): _on_command_selected(page_index))
@@ -535,6 +554,8 @@ func _update_commands_tree(commands_tree: Tree, page: EventPage, page_index: int
 	var page_text = "Página"
 	if page.page_name and not page.page_name.is_empty():
 		page_text += " '" + page.page_name + "'"
+	if page.commands.is_empty():
+		page_text += " - (Sin comandos)"
 
 	# Añadir condiciones
 	if page.root_condition:
@@ -542,9 +563,6 @@ func _update_commands_tree(commands_tree: Tree, page: EventPage, page_index: int
 		page_text += " - " + condition_text
 	else:
 		page_text += " - (Sin condiciones)"
-
-	if page.commands.is_empty():
-		page_text += " - (Sin comandos)"
 
 	root.set_text(0, page_text)
 	# Si hay override_move_info, usar ese (para modo mover entre páginas)
@@ -571,7 +589,33 @@ func _update_commands_tree(commands_tree: Tree, page: EventPage, page_index: int
 
 		var command_name = _get_command_name_safe(command)
 		var item = commands_tree.create_item(root)
-		item.set_text(0, str(i + 1) + ". " + command_name)
+
+		# Construir el texto con nombre y detalle con separador claro
+		var item_text = str(i + 1) + ". " + command_name
+		var detail_text = _get_command_detail_text(command)
+		if detail_text != "":
+			item_text += "  ▸  " + detail_text  # Separador más distintivo
+
+		item.set_text(0, item_text)
+
+		# Añadir tooltip para ShowMessageCommand con el mensaje completo
+		if command is ShowMessageCommand:
+			var msg_cmd = command as ShowMessageCommand
+			if not msg_cmd.message.is_empty():
+				item.set_tooltip_text(0, msg_cmd.message)
+
+		# Añadir tooltip para MoveNPCCommand con todas las acciones
+		if command is MoveNPCCommand:
+			var move_cmd = command as MoveNPCCommand
+			if not move_cmd.path.is_empty():
+				var all_actions: Array[String] = []
+				for dir_enum in move_cmd.path:
+					var action_str = _direction_enum_to_string(dir_enum)
+					if action_str != "":
+						all_actions.append(action_str)
+				if not all_actions.is_empty():
+					item.set_tooltip_text(0, ", ".join(all_actions))
+
 		item.set_metadata(0, {"type": "command", "index": i, "command": command})
 
 		# Aplicar estilo de modo mover (usar page_index actual, no el origen)
@@ -594,6 +638,182 @@ func _get_command_name_safe(command: EventCommand) -> String:
 	if command_name.ends_with("Command"):
 		command_name = command_name.replace("Command", "")
 	return command_name
+
+## Obtiene el texto de detalle para mostrar en la segunda columna del árbol
+func _get_command_detail_text(command: EventCommand) -> String:
+	if not command:
+		return ""
+
+	# ShowMessageCommand: mostrar solo la primera línea del mensaje
+	if command is ShowMessageCommand:
+		var msg_cmd = command as ShowMessageCommand
+		var message_text = msg_cmd.message
+		if message_text.is_empty():
+			return ""
+		# Obtener solo la primera línea (hasta el primer salto de línea)
+		var first_line_end = message_text.find("\n")
+		if first_line_end >= 0:
+			return message_text.substr(0, first_line_end)
+		return message_text
+
+	# SetFlagCommand: mostrar flag y valor
+	if command is SetFlagCommand:
+		var flag_cmd = command as SetFlagCommand
+		var value_str = "true" if flag_cmd.flag_value else "false"
+		return "'%s' = %s" % [flag_cmd.flag_name, value_str]
+
+	# SetVariableCommand: mostrar variable y valor
+	if command is SetVariableCommand:
+		var var_cmd = command as SetVariableCommand
+		var value_str = _value_to_string(var_cmd.value)
+		return "'%s' = %s" % [var_cmd.variable_name, value_str]
+
+	# SetSelfSwitchCommand: mostrar switch y valor
+	if command is SetSelfSwitchCommand:
+		var switch_cmd = command as SetSelfSwitchCommand
+		var value_str = "true" if switch_cmd.switch_value else "false"
+		return "Switch '%s' = %s" % [switch_cmd.switch_name, value_str]
+
+	# ShowChoicesCommand: mostrar el mensaje (primera línea)
+	if command is ShowChoicesCommand:
+		var choices_cmd = command as ShowChoicesCommand
+		var message_text = choices_cmd.message
+		if message_text.is_empty():
+			return ""
+		# Obtener solo la primera línea (hasta el primer salto de línea)
+		var first_line_end = message_text.find("\n")
+		if first_line_end >= 0:
+			return message_text.substr(0, first_line_end)
+		return message_text
+
+	# MoveNPCCommand: mostrar target y las acciones del path
+	if command is MoveNPCCommand:
+		var move_cmd = command as MoveNPCCommand
+
+		# Añadir el nombre del target
+		var target_str = move_cmd.target_name
+		if target_str.is_empty():
+			target_str = "(self)"
+
+		var result = target_str
+
+		if move_cmd.path.is_empty():
+			return result + " - (Sin acciones)"
+
+		# Convertir las direcciones a texto abreviado
+		var actions: Array[String] = []
+		for dir_enum in move_cmd.path:
+			var action_str = _direction_enum_to_string(dir_enum)
+			if action_str != "":
+				actions.append(action_str)
+
+		if actions.is_empty():
+			return result + " - (Sin acciones)"
+
+		# Limitar a 10 acciones para no hacer el texto muy largo
+		var display_actions = actions.slice(0, 10)
+		result += " - " + ", ".join(display_actions)
+		if actions.size() > 10:
+			result += " ... (+%d más)" % (actions.size() - 10)
+
+		return result
+
+	# SetEventThroughCommand: mostrar target y through
+	if command is SetEventThroughCommand:
+		var through_cmd = command as SetEventThroughCommand
+		var target_str = through_cmd.target_event_name
+		if target_str.is_empty():
+			target_str = "(self)"
+		var through_str = "true" if through_cmd.through else "false"
+		return "%s: %s" % [target_str, through_str]
+
+	# SetActorVisibilityCommand: mostrar target y visible
+	if command is SetActorVisibilityCommand:
+		var vis_cmd = command as SetActorVisibilityCommand
+		var target_str = ""
+		if vis_cmd.target_type == 0:  # Event
+			target_str = vis_cmd.target_event_name
+			if target_str.is_empty():
+				target_str = "(self)"
+		else:  # Player
+			target_str = "Player"
+		var visible_str = "true" if vis_cmd.visible else "false"
+		return "%s: %s" % [target_str, visible_str]
+
+	# WaitCommand: mostrar tiempo de espera
+	if command is WaitCommand:
+		var wait_cmd = command as WaitCommand
+		return "%.2fs" % wait_cmd.duration
+
+	# WarpCommand: mostrar actor y mapa destino
+	if command is WarpCommand:
+		var warp_cmd = command as WarpCommand
+		var actor_str = warp_cmd.actor_name
+		if actor_str.is_empty():
+			actor_str = "(self)"
+		var map_str = warp_cmd.target_scene
+		if map_str.is_empty():
+			map_str = "(mismo mapa)"
+		return "%s → %s" % [actor_str, map_str]
+
+	# FollowActorCommand: mostrar follower, leader y start/stop
+	if command is FollowActorCommand:
+		var follow_cmd = command as FollowActorCommand
+		var follower_str = follow_cmd.follower_actor_name
+		if follower_str.is_empty():
+			follower_str = "(self)"
+		var leader_str = follow_cmd.leader_actor_name
+		if leader_str.is_empty():
+			leader_str = "(sin leader)"
+		var action_str = "START" if follow_cmd.action == 0 else "STOP"
+		return "%s → %s (%s)" % [follower_str, leader_str, action_str]
+
+	# FadeCommand: mostrar IN/OUT y tiempo
+	if command is FadeCommand:
+		var fade_cmd = command as FadeCommand
+		var fade_type_str = "IN" if fade_cmd.mode == FadeCommand.FadeMode.IN else "OUT"
+		return "%s (%.2fs)" % [fade_type_str, fade_cmd.duration]
+
+	# PlayAnimationCommand: mostrar target y nombre de animación
+	if command is PlayAnimationCommand:
+		var anim_cmd = command as PlayAnimationCommand
+		var target_str = anim_cmd.target_name
+		if target_str.is_empty():
+			target_str = "(self)"
+		var anim_str = anim_cmd.animation_name
+		if anim_str.is_empty():
+			anim_str = "(sin animación)"
+		return "%s: %s" % [target_str, anim_str]
+
+	# ShowPortraitCommand: mostrar tipo (Pokémon/Textura) y nombre
+	if command is ShowPortraitCommand:
+		var portrait_cmd = command as ShowPortraitCommand
+		var type_str = ""
+		var name_str = ""
+
+		if portrait_cmd.image_source == ShowPortraitCommand.ImageSource.POKEMON:
+			type_str = "Pokémon"
+			# Obtener el nombre del Pokémon desde PokemonsEnum
+			name_str = PokemonsEnum.get_display_name(portrait_cmd.pokemon_species)
+			if name_str.is_empty():
+				name_str = "Especie %d" % portrait_cmd.pokemon_species
+		elif portrait_cmd.image_source == ShowPortraitCommand.ImageSource.TEXTURE:
+			type_str = "Textura"
+			if portrait_cmd.texture:
+				# Obtener el nombre del archivo desde la ruta del recurso
+				var resource_path = portrait_cmd.texture.resource_path
+				if resource_path:
+					name_str = resource_path.get_file()
+				else:
+					name_str = "(textura sin ruta)"
+			else:
+				name_str = "(sin textura)"
+		else:
+			return "(sin configuración)"
+
+		return "%s: %s" % [type_str, name_str]
+
+	return ""
 
 ## Obtiene el texto descriptivo de una condición
 func _get_condition_display_text(cond: EventCondition) -> String:
@@ -648,6 +868,33 @@ func _value_to_string(value: Variant) -> String:
 	if value is bool:
 		return "true" if value else "false"
 	return str(value)
+
+## Convierte un DirectionEnum.Type a string abreviado
+func _direction_enum_to_string(dir_enum: int) -> String:
+	match dir_enum:
+		DirectionEnum.Type.UP: return "↑"
+		DirectionEnum.Type.DOWN: return "↓"
+		DirectionEnum.Type.LEFT: return "←"
+		DirectionEnum.Type.RIGHT: return "→"
+		DirectionEnum.Type.WAIT_025: return "W0.25"
+		DirectionEnum.Type.WAIT_050: return "W0.5"
+		DirectionEnum.Type.WAIT_100: return "W1.0"
+		DirectionEnum.Type.LOOK_UP: return "L↑"
+		DirectionEnum.Type.LOOK_DOWN: return "L↓"
+		DirectionEnum.Type.LOOK_LEFT: return "L←"
+		DirectionEnum.Type.LOOK_RIGHT: return "L→"
+		DirectionEnum.Type.LOOK_PLAYER: return "LPlayer"
+		DirectionEnum.Type.TURN_UP: return "T↑"
+		DirectionEnum.Type.TURN_DOWN: return "T↓"
+		DirectionEnum.Type.TURN_LEFT: return "T←"
+		DirectionEnum.Type.TURN_RIGHT: return "T→"
+		DirectionEnum.Type.SPEED_NORMAL: return "SN"
+		DirectionEnum.Type.SPEED_FASTER: return "SF"
+		DirectionEnum.Type.SPEED_FASTEST: return "SF+"
+		DirectionEnum.Type.SPEED_SLOWER: return "SS"
+		DirectionEnum.Type.SPEED_SLOWEST: return "SS-"
+		DirectionEnum.Type.EXCLAMATION_ANIM: return "!"
+		_: return "?"
 
 func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, page_index: int = -1, move_info: Dictionary = {}, in_move_mode: bool = false) -> void:
 	if command is ConditionalCommand:
@@ -707,7 +954,33 @@ func _add_nested_commands_from_array(parent_item: TreeItem, commands: Array, pag
 		var nested_cmd = commands[cmd_idx]
 		if nested_cmd:
 			var cmd_item = parent_item.get_tree().create_item(parent_item)
-			cmd_item.set_text(0, "    └─ " + _get_command_name_safe(nested_cmd))
+
+			# Construir el texto con nombre y detalle con separador claro
+			var nested_text = "    └─ " + _get_command_name_safe(nested_cmd)
+			var detail_text = _get_command_detail_text(nested_cmd)
+			if detail_text != "":
+				nested_text += "  ▸  " + detail_text  # Separador más distintivo
+
+			cmd_item.set_text(0, nested_text)
+
+			# Añadir tooltip para ShowMessageCommand con el mensaje completo
+			if nested_cmd is ShowMessageCommand:
+				var msg_cmd = nested_cmd as ShowMessageCommand
+				if not msg_cmd.message.is_empty():
+					cmd_item.set_tooltip_text(0, msg_cmd.message)
+
+			# Añadir tooltip para MoveNPCCommand con todas las acciones
+			if nested_cmd is MoveNPCCommand:
+				var move_cmd = nested_cmd as MoveNPCCommand
+				if not move_cmd.path.is_empty():
+					var all_actions: Array[String] = []
+					for dir_enum in move_cmd.path:
+						var action_str = _direction_enum_to_string(dir_enum)
+						if action_str != "":
+							all_actions.append(action_str)
+					if not all_actions.is_empty():
+						cmd_item.set_tooltip_text(0, ", ".join(all_actions))
+
 			cmd_item.set_metadata(0, {"type": "nested_command", "command": nested_cmd, "parent_branch": parent_item.get_metadata(0)})
 
 			if in_move_mode:
@@ -1907,28 +2180,37 @@ func _on_command_selected(page_index: int) -> void:
 	var can_add = false
 
 	if selected_item:
-		var metadata = selected_item.get_metadata(0)
-		if metadata and metadata.has("type"):
-			var item_type = metadata.type
-			can_edit_delete = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
-			can_move = item_type in ["command", "nested_command"]
-			can_duplicate = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case"]
-			# Permitir añadir comandos a branches/cases, o añadir branches/cases a ConditionalCommand/SwitchCommand/ShowChoicesCommand
-			can_add = item_type in ["branch", "choice_branch", "switch_case", "default_commands"]
-			# También permitir añadir si es un ConditionalCommand, SwitchCommand o ShowChoicesCommand
-			if item_type == "command" and metadata.has("index"):
-				var page = _get_page(page_index)
-				if page:
-					var cmd = page.commands[metadata.index]
-					if cmd is ConditionalCommand or cmd is SwitchCommand or cmd is ShowChoicesCommand:
-						can_add = true
+		# Verificar si es la raíz del árbol
+		var root = commands_tree.get_root()
+		var is_root = (root == selected_item)
 
-			# Determinar si se puede mover
-			can_move_up = _can_move_item_up(selected_item, page_index)
-			can_move_down = _can_move_item_down(selected_item, page_index)
-		else:
-			# Si no tiene metadata o no tiene type, puede ser la raíz
+		if is_root:
+			# Si es la raíz (página), se puede editar (abrir editor de condiciones)
+			can_edit_delete = true
 			can_add = true
+		else:
+			var metadata = selected_item.get_metadata(0)
+			if metadata and metadata.has("type"):
+				var item_type = metadata.type
+				can_edit_delete = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
+				can_move = item_type in ["command", "nested_command"]
+				can_duplicate = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case"]
+				# Permitir añadir comandos a branches/cases, o añadir branches/cases a ConditionalCommand/SwitchCommand/ShowChoicesCommand
+				can_add = item_type in ["branch", "choice_branch", "switch_case", "default_commands"]
+				# También permitir añadir si es un ConditionalCommand, SwitchCommand o ShowChoicesCommand
+				if item_type == "command" and metadata.has("index"):
+					var page = _get_page(page_index)
+					if page:
+						var cmd = page.commands[metadata.index]
+						if cmd is ConditionalCommand or cmd is SwitchCommand or cmd is ShowChoicesCommand:
+							can_add = true
+
+				# Determinar si se puede mover
+				can_move_up = _can_move_item_up(selected_item, page_index)
+				can_move_down = _can_move_item_down(selected_item, page_index)
+			else:
+				# Si no tiene metadata o no tiene type, puede ser la raíz
+				can_add = true
 	else:
 		# Si no hay selección, se puede añadir al nivel raíz
 		can_add = true
@@ -1937,7 +2219,8 @@ func _on_command_selected(page_index: int) -> void:
 
 func _on_command_deselected(page_index: int) -> void:
 	if not move_mode_active.get(page_index, false):
-		_update_buttons_state(page_index, false, false, false, false)
+		# Cuando no hay selección, se puede añadir al nivel raíz
+		_update_buttons_state(page_index, false, false, false, false, false, true)
 
 func _on_commands_tree_gui_input(page_index: int, event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -1957,7 +2240,8 @@ func _handle_right_click_on_tree(page_index: int, local_position: Vector2) -> vo
 		commands_tree.set_selected(clicked_item, 0)
 	else:
 		commands_tree.deselect_all()
-		_update_buttons_state(page_index, false, false, false)
+		# Cuando se hace click en zona vacía, se puede añadir al nivel raíz
+		_update_buttons_state(page_index, false, false, false, false, false, true)
 
 	_show_commands_context_menu(page_index, global_pos)
 
@@ -1975,6 +2259,11 @@ func _show_commands_context_menu(page_index: int, global_position: Vector2) -> v
 		return
 
 	var selected_item = commands_tree.get_selected()
+
+	# Verificar si es la raíz del árbol
+	var root = commands_tree.get_root()
+	var is_root = (selected_item == root)
+
 	var metadata = selected_item.get_metadata(0) if selected_item else null
 	var item_type = metadata.type if metadata and metadata.has("type") else ""
 
@@ -1986,8 +2275,15 @@ func _show_commands_context_menu(page_index: int, global_position: Vector2) -> v
 			var cmd = page.commands[metadata.index]
 			if cmd is ConditionalCommand or cmd is SwitchCommand or cmd is ShowChoicesCommand:
 				can_add = true
-	var can_edit = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
-	var can_delete = can_edit
+
+	# Si es la raíz, se puede editar (abrir editor de condiciones)
+	var can_edit = false
+	if is_root:
+		can_edit = true
+	else:
+		can_edit = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case", "default_commands"]
+
+	var can_delete = can_edit and not is_root  # No se puede eliminar la raíz
 	var can_move = item_type in ["command", "nested_command"]
 	var can_duplicate = item_type in ["command", "nested_command", "branch", "choice_branch", "switch_case"]
 
@@ -2067,6 +2363,15 @@ func _on_edit_command_pressed(page_index: int) -> void:
 	var selected_item = commands_tree.get_selected() if commands_tree else null
 	if not selected_item:
 		print("Event Editor: No hay comando seleccionado para editar")
+		return
+
+	# Verificar si es la raíz del árbol (página)
+	var root = commands_tree.get_root()
+	var is_root = (root == selected_item)
+
+	if is_root:
+		# Si es la raíz, abrir el editor de condiciones (igual que el botón "Gestionar Condiciones")
+		_on_conditions_button_pressed(page_index)
 		return
 
 	var metadata = selected_item.get_metadata(0)
@@ -3627,7 +3932,8 @@ func _refresh_commands_tree_and_select_new(page_index: int, page: EventPage, new
 	_update_commands_tree(commands_tree, page, page_index)
 
 	# Buscar y seleccionar el nuevo comando en el árbol, y abrir el editor
-	call_deferred("_select_and_open_command_editor", commands_tree, new_command, page_index)
+	# Pasar is_new_command = true para que se pueda cancelar
+	call_deferred("_select_and_open_command_editor", commands_tree, new_command, page_index, true)
 
 ## Selecciona un comando en el árbol recursivamente
 func _select_command_in_tree(tree: Tree, target_command: EventCommand) -> void:
@@ -3641,7 +3947,8 @@ func _select_command_in_tree(tree: Tree, target_command: EventCommand) -> void:
 	_select_command_recursive(tree, root, target_command)
 
 ## Selecciona un comando en el árbol y abre su editor
-func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, page_index: int) -> void:
+## Si is_new_command es true, se pasa como comando nuevo para que se pueda cancelar
+func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, page_index: int, is_new_command: bool = false) -> void:
 	if not tree or not target_command:
 		return
 
@@ -3652,8 +3959,64 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 	var selected_item = _find_command_item_recursive(tree, root, target_command)
 	if selected_item:
 		tree.set_selected(selected_item, 0)
-		# Abrir el editor del comando
-		_on_edit_command_pressed(page_index)
+
+		# Si es un comando nuevo, abrir el editor directamente con is_new_command = true
+		if is_new_command:
+			var page = _get_page(page_index)
+			if page:
+				# Buscar el índice del comando en la página
+				var command_index = -1
+				for i in range(page.commands.size()):
+					if page.commands[i] == target_command:
+						command_index = i
+						break
+
+				# Abrir el editor específico según el tipo de comando
+				if target_command is ShowMessageCommand:
+					_open_show_message_editor(target_command, page_index, true, command_index)
+				elif target_command is SetFlagCommand:
+					_open_set_flag_editor(target_command, page_index, true, command_index)
+				elif target_command is SetVariableCommand:
+					_open_set_variable_editor(target_command, page_index, true, command_index)
+				elif target_command is SetSelfSwitchCommand:
+					_open_set_self_switch_editor(target_command, page_index, true, command_index)
+				elif target_command is StartBattleEventCommand:
+					_open_start_battle_event_editor(target_command, page_index, true, command_index)
+				elif target_command is WarpCommand:
+					_open_warp_editor(target_command, page_index, true, command_index)
+				elif target_command is WaitCommand:
+					_open_wait_editor(target_command, page_index, true, command_index)
+				elif target_command is FadeCommand:
+					_open_fade_editor(target_command, page_index, true, command_index)
+				elif target_command is SetWeatherCommand:
+					_open_set_weather_editor(target_command, page_index, true, command_index)
+				elif target_command is SetDarknessCommand:
+					_open_set_darkness_editor(target_command, page_index, true, command_index)
+				elif target_command is SetFlashlightCommand:
+					_open_set_flashlight_editor(target_command, page_index, true, command_index)
+				elif target_command is SetEventThroughCommand:
+					_open_set_event_through_editor(target_command, page_index, true, command_index)
+				elif target_command is SetActorVisibilityCommand:
+					_open_set_actor_visibility_editor(target_command, page_index, true, command_index)
+				elif target_command is ShowPortraitCommand:
+					_open_show_portrait_editor(target_command, page_index, true, command_index)
+				elif target_command is FollowActorCommand:
+					_open_follow_actor_editor(target_command, page_index, true, command_index)
+				elif target_command is UseMOCommand:
+					_open_use_mo_editor(target_command, page_index, true, command_index)
+				elif target_command is PlayAnimationCommand:
+					_open_play_animation_editor(target_command, page_index, true, command_index)
+				elif target_command is MoveNPCCommand:
+					_open_move_npc_editor(target_command, page_index, true, command_index)
+				elif target_command is ConditionalCommand:
+					_open_conditional_editor(target_command, page_index, true, command_index)
+				elif target_command is SwitchCommand:
+					_open_switch_editor(target_command, page_index, true, command_index)
+				elif target_command is ShowChoicesCommand:
+					_open_show_choices_editor(target_command, page_index, true, command_index)
+		else:
+			# Abrir el editor del comando (modo edición normal)
+			_on_edit_command_pressed(page_index)
 
 ## Busca recursivamente un comando en el árbol y devuelve el TreeItem
 func _find_command_item_recursive(tree: Tree, item: TreeItem, target_command: EventCommand) -> TreeItem:
@@ -5983,6 +6346,15 @@ func _add_new_page_button() -> void:
 	buttons_container.add_theme_constant_override("separation", 10)
 	buttons_container.add_theme_constant_override("margin_bottom", 5)
 
+	# Botón para cambiar el nombre del nodo Event
+	var change_name_button = Button.new()
+	change_name_button.text = "Cambiar Nombre"
+	change_name_button.pressed.connect(_on_change_event_name_button_pressed)
+	buttons_container.add_child(change_name_button)
+
+	# Separador
+	buttons_container.add_child(HSeparator.new())
+
 	var add_page_button = Button.new()
 	add_page_button.text = "+ Añadir Página"
 	add_page_button.pressed.connect(_on_add_page_button_pressed)
@@ -6054,6 +6426,133 @@ func _add_save_button() -> void:
 	buttons_container.add_child(save_button)
 
 	vbox.add_child(buttons_container)
+
+## Se llama cuando se presiona el botón "Cambiar Nombre"
+func _on_change_event_name_button_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	# Crear un diálogo para cambiar el nombre
+	var dialog = AcceptDialog.new()
+	dialog.title = "Cambiar Nombre del Evento"
+	dialog.dialog_text = "Introduce el nuevo nombre:"
+
+	# Crear un LineEdit para el nombre
+	var name_input = LineEdit.new()
+	name_input.text = event_node.name
+	name_input.placeholder_text = "Nombre del evento"
+	name_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_input.custom_minimum_size = Vector2(300, 0)
+
+	# Crear un Label de error (inicialmente oculto)
+	var error_label = Label.new()
+	error_label.name = "ErrorLabel"
+	error_label.text = ""
+	error_label.add_theme_color_override("font_color", Color.RED)
+	error_label.visible = false
+	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	error_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	error_label.custom_minimum_size = Vector2(0, 0)
+	error_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Limitar el ancho máximo para evitar que el diálogo se expanda demasiado
+	error_label.max_lines_visible = 3
+
+	# Crear un VBoxContainer para el contenido
+	var content = VBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.custom_minimum_size = Vector2(350, 0)
+	content.add_child(Label.new())
+	content.get_child(0).text = "Nombre del evento:"
+	content.add_child(name_input)
+	content.add_child(error_label)
+
+	# Añadir el contenido al diálogo
+	dialog.add_child(content)
+	add_child(dialog)
+
+	# Conectar señales
+	dialog.confirmed.connect(func(): _on_name_dialog_confirmed(dialog, name_input, error_label))
+	dialog.canceled.connect(func(): dialog.queue_free())
+
+	# Mostrar el diálogo
+	dialog.popup_centered(Vector2(400, 150))
+
+	# Enfocar el LineEdit cuando se muestre el diálogo
+	await get_tree().process_frame
+	name_input.grab_focus()
+	name_input.select_all()
+
+## Muestra un diálogo de error (usado con call_deferred para evitar conflictos con ventanas modales)
+func _show_error_dialog(message: String) -> void:
+	var error_dialog = AcceptDialog.new()
+	error_dialog.title = "Error"
+	error_dialog.dialog_text = message
+	add_child(error_dialog)
+	error_dialog.popup_centered(Vector2(400, 100))
+	error_dialog.confirmed.connect(func(): error_dialog.queue_free())
+
+## Verifica si ya existe un evento/NPC/Trainer con el nombre especificado en el mapa
+func _event_name_exists_in_map(name: String, exclude_node: Node = null) -> bool:
+	if not event_node:
+		return false
+
+	# Buscar el nodo padre "Events"
+	var events_node = event_node.get_parent()
+	if not events_node or events_node.name != "Events":
+		return false
+
+	# Buscar todos los hijos del nodo Events
+	for child in events_node.get_children():
+		# Excluir el nodo que estamos modificando
+		if exclude_node and child == exclude_node:
+			continue
+
+		# Verificar si el nombre coincide
+		if child.name == name:
+			return true
+
+	return false
+
+## Se llama cuando se confirma el diálogo de cambiar nombre
+func _on_name_dialog_confirmed(dialog: AcceptDialog, name_input: LineEdit, error_label: Label) -> void:
+	var new_name = name_input.text.strip_edges()
+
+	# Ocultar el error anterior
+	error_label.visible = false
+	error_label.text = ""
+
+	if new_name.is_empty():
+		# Mostrar error si el nombre está vacío (sin cerrar el diálogo de nombre)
+		error_label.text = "El nombre no puede estar vacío."
+		error_label.visible = true
+		# No cerrar el diálogo de nombre, dejar que el usuario corrija
+		return
+
+	if new_name == event_node.name:
+		# Si el nombre no cambió, solo cerrar el diálogo
+		dialog.queue_free()
+		return
+
+	# Verificar si ya existe un evento con ese nombre
+	if _event_name_exists_in_map(new_name, event_node):
+		# Mostrar el error (sin cerrar el diálogo de nombre)
+		error_label.text = "Ya existe un evento/NPC/Trainer con el nombre '" + new_name + "' en el mapa."
+		error_label.visible = true
+		# No cerrar el diálogo de nombre, dejar que el usuario corrija
+		return
+
+	# Cambiar el nombre del nodo
+	event_node.name = new_name
+
+	# Actualizar el título de la ventana
+	title = "Event Editor - " + event_node.name
+
+	# Marcar la escena como modificada
+	if editor_interface:
+		editor_interface.mark_scene_as_unsaved()
+
+	# Cerrar el diálogo
+	dialog.queue_free()
 
 ## Se llama cuando se presiona el botón "Añadir Página"
 func _on_add_page_button_pressed() -> void:
