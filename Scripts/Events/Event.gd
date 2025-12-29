@@ -126,16 +126,50 @@ func update_sprite_from_current_page() -> void:
 		var style: ActorStyle = current_page.actor_style
 		if style:
 			actor_animator.apply_style(style)
-			actor_animator.set_sprite_offset(Vector2(0, 0))
+			actor_animator.set_sprite_offset(current_page.sprite_offset)
 			actor_animator.show_sprite()
 		else:
 			actor_animator.apply_style(null)
 			# Usar el método get_sprite_frames() que soporta generación automática
-			var frames = current_page.get_sprite_frames()
+			# Pasar el nodo Event para que pueda detectar si es NPC
+			var frames = current_page.get_sprite_frames(self)
+
 			if frames:
 				actor_animator.set_sprite_frames(frames)
-				actor_animator.set_sprite_offset(Vector2(0, 0))
+				actor_animator.set_sprite_offset(current_page.sprite_offset)
 				actor_animator.show_sprite()
+
+				# Para eventos normales (no NPCs), mostrar el frame inicial configurado
+				# Los NPCs manejan sus propias animaciones (look, idle, etc.)
+				if not self.has_method("get_movement_type"):
+					# Determinar qué animación y frame mostrar
+					var anim_to_show = current_page.initial_animation
+					var frame_to_show = max(0, current_page.initial_frame)  # Asegurar que sea >= 0
+
+					# Si no hay animación configurada o no existe, usar "idle" por defecto, o la primera disponible
+					if anim_to_show.is_empty() or not frames.has_animation(anim_to_show):
+						if frames.has_animation("idle"):
+							anim_to_show = "idle"
+							frame_to_show = 0
+						else:
+							var anim_names = frames.get_animation_names()
+							if anim_names.size() > 0:
+								anim_to_show = anim_names[0]
+								frame_to_show = 0
+
+					# Mostrar el frame específico sin reproducir la animación
+					if frames.has_animation(anim_to_show):
+						var frame_count = frames.get_frame_count(anim_to_show)
+						if frame_count > 0:
+							frame_to_show = clamp(frame_to_show, 0, frame_count - 1)
+							# Establecer la animación primero, luego detener, y finalmente el frame
+							# El orden es importante: primero stop(), luego animation, luego frame
+							actor_animator.sprite.stop()
+							actor_animator.sprite.animation = anim_to_show
+							# Establecer el frame inmediatamente
+							actor_animator.sprite.frame = frame_to_show
+							# También establecerlo de forma diferida como respaldo, por si AnimatedSprite2D lo resetea
+							_set_initial_frame_deferred(actor_animator.sprite, frame_to_show)
 			else:
 				actor_animator.sprite.sprite_frames = null
 				actor_animator.hide_sprite()
@@ -146,6 +180,13 @@ func update_sprite_from_current_page() -> void:
 
 	# Actualizar ocupación en el grid (through, blocks_player)
 	_refresh_occupancy()
+
+## Establece el frame inicial de forma diferida para evitar que AnimatedSprite2D lo resetee
+func _set_initial_frame_deferred(sprite: AnimatedSprite2D, frame_index: int) -> void:
+	if not sprite:
+		return
+	# Usar call_deferred para establecer el frame después de que la animación esté completamente configurada
+	sprite.call_deferred("set", "frame", frame_index)
 
 ## Intenta activar el evento con la señal dada
 ## Retorna true si el evento se activó, false en caso contrario
@@ -271,7 +312,16 @@ func _duplicate_all_pages() -> void:
 	var duplicated_pages: Array[EventPage] = []
 	for page in pages:
 		if page:
-			duplicated_pages.append(page.duplicate(true))
+			# Solo duplicar si la página es un Resource compartido (tiene resource_path)
+			# Si ya es local a la escena, no necesita duplicarse
+			if page.resource_path != "":
+				var duplicated_page = page.duplicate(true) as EventPage
+				# Marcar como local a la escena para que no se guarde como archivo separado
+				duplicated_page.take_over_path("")
+				duplicated_pages.append(duplicated_page)
+			else:
+				# Ya es local, usar directamente
+				duplicated_pages.append(page)
 	pages = duplicated_pages
 
 ## Conecta el evento a las señales globales de cambio de estado

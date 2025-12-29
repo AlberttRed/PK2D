@@ -81,16 +81,38 @@ func idle(dir: Vector2 = Vector2.ZERO) -> void:
 	if not sprite or not sprite.sprite_frames:
 		return
 
-	sprite.animation = "idle"
-	sprite.stop()
-	_last_animation_name = "idle"
+	# Verificar si existe la animación "idle", si no, usar "default" como fallback
+	var anim_to_use = "idle"
+	if not sprite.sprite_frames.has_animation("idle"):
+		# Si no hay "idle", intentar usar "default"
+		if sprite.sprite_frames.has_animation("default"):
+			anim_to_use = "default"
+		else:
+			# Si no hay ninguna animación válida, obtener la primera disponible
+			var anim_names = sprite.sprite_frames.get_animation_names()
+			if anim_names.size() > 0:
+				anim_to_use = anim_names[0]
+			else:
+				# No hay animaciones disponibles, salir
+				return
 
-	# Establecer el frame correcto según la dirección
-	match current_direction:
-		Vector2.UP: sprite.frame = 3
-		Vector2.DOWN: sprite.frame = 0
-		Vector2.LEFT: sprite.frame = 1
-		Vector2.RIGHT: sprite.frame = 2
+	sprite.animation = anim_to_use
+	sprite.stop()
+	_last_animation_name = anim_to_use
+
+	# Establecer el frame correcto según la dirección (solo si es "idle" o tiene suficientes frames)
+	# Si es "default" u otra animación, usar el frame 0
+	if anim_to_use == "idle":
+		match current_direction:
+			Vector2.UP: sprite.frame = 3
+			Vector2.DOWN: sprite.frame = 0
+			Vector2.LEFT: sprite.frame = 1
+			Vector2.RIGHT: sprite.frame = 2
+	else:
+		# Para otras animaciones, usar el frame 0
+		var frame_count = sprite.sprite_frames.get_frame_count(anim_to_use)
+		if frame_count > 0:
+			sprite.frame = 0
 
 ## Detiene la animación actual
 func stop() -> void:
@@ -142,6 +164,13 @@ func hide_sprite() -> void:
 func set_sprite_offset(offset: Vector2) -> void:
 	if sprite:
 		sprite.offset = offset
+
+## Obtiene el offset actual del sprite
+## @return: Vector2 con el offset actual, o Vector2.ZERO si no hay sprite
+func get_sprite_offset() -> Vector2:
+	if sprite:
+		return sprite.offset
+	return Vector2.ZERO
 
 func play_mo_sequence() -> void:
 	await _play_mo_animation("mo_start")

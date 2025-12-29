@@ -71,34 +71,60 @@ func _on_popup_menu_about_to_show(popup_menu: PopupMenu) -> void:
 	print("Event Tools: Event detectado: '", node.name, "' (ruta: ", node.get_path(), ")")
 	_add_edit_event_to_menu(popup_menu, node)
 
-## Verifica si un PopupMenu es un menú contextual
+## Verifica si un PopupMenu es un menú contextual del SceneTree
 func _is_context_menu(popup_menu: PopupMenu) -> bool:
+	# Solo añadir al menú del SceneTree, no a otros menús
+	# Verificar jerarquía del menú para asegurar que es del SceneTree
+	var parent = popup_menu.get_parent()
+	var depth = 0
+	var found_scenetree = false
+
+	while parent and depth < 6:  # Buscar hasta 6 niveles arriba
+		var name_lower = parent.name.to_lower()
+		var class_lower = parent.get_class().to_lower()
+
+		# Verificar si es el SceneTree
+		if "scenetree" in name_lower or "scene_tree" in name_lower or "SceneTree" in parent.get_class():
+			found_scenetree = true
+			break
+
+		# Excluir explícitamente otros docks/paneles
+		if "project" in name_lower and "dock" in name_lower:
+			return false
+		if "filesystem" in name_lower or "file_system" in name_lower:
+			return false
+		if "inspector" in name_lower:
+			return false
+		if "import" in name_lower and "dock" in name_lower:
+			return false
+		if "output" in name_lower and "dock" in name_lower:
+			return false
+		if "debugger" in name_lower:
+			return false
+		if "remote" in name_lower and "dock" in name_lower:
+			return false
+
+		parent = parent.get_parent()
+		depth += 1
+
+	# Solo proceder si encontramos el SceneTree en la jerarquía
+	if not found_scenetree:
+		return false
+
+	# Verificar que tiene items de menú contextual típicos del SceneTree
 	var item_count = popup_menu.get_item_count()
 	if item_count < 2:
 		return false
 
-	# Excluir menús principales del editor
+	# Verificar que tiene al menos uno de los items típicos del menú contextual del SceneTree
 	for i in range(min(item_count, 15)):
 		var text = popup_menu.get_item_text(i)
-		if text in MAIN_MENU_ITEMS:
-			return false
 		for context_item in CONTEXT_MENU_ITEMS:
 			if text.contains(context_item):
 				return true
 
-	# Verificar jerarquía del menú (parent y grandparent)
-	var parent = popup_menu.get_parent()
-	for depth in range(2):
-		if not parent:
-			break
-		var name_lower = parent.name.to_lower()
-		var class_lower = parent.get_class().to_lower()
-		for keyword in CONTEXT_KEYWORDS:
-			if keyword in name_lower or keyword in class_lower:
-				return true
-		parent = parent.get_parent()
-
-	return item_count >= 3 and item_count <= 30
+	# Si no tiene items típicos, no es el menú del SceneTree
+	return false
 
 ## Añade "Edit Event" al principio del menú
 func _add_edit_event_to_menu(popup_menu: PopupMenu, node: Node) -> void:
@@ -206,8 +232,8 @@ func _open_event_editor_deferred(event_node: Node) -> void:
 
 	EditorInterface.get_base_control().add_child(window)
 
-	# Pasar referencia al EditorInterface para refrescar el Inspector
-	window.editor_interface = EditorInterface
+	# Pasar referencia al EditorInterface para refrescar el Inspector usando metadata
+	window.set_meta("editor_interface", EditorInterface)
 
 	# Esperar varios frames para que el nodo esté completamente inicializado
 	await get_tree().process_frame
@@ -241,3 +267,4 @@ func _is_event_node(node: Node) -> bool:
 			return true
 
 	return node.has_method("trigger") and node.has_method("setup_current_page")
+

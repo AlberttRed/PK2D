@@ -347,6 +347,9 @@ func load_page(p: EventPage) -> void:
 	_update_controls()
 
 func _on_accept_pressed() -> void:
+	# Forzar notificación de cambios en el Resource para que se guarde correctamente
+	if page and page.has_method("property_list_changed_notify"):
+		page.property_list_changed_notify()
 	movement_edited.emit()
 	queue_free()
 

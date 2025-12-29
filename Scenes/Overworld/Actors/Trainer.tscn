@@ -6,10 +6,7 @@
 
 [node name="Trainer" instance=ExtResource("1_base")]
 script = ExtResource("2_trainer")
-trainer_data = null
-detection_range = 5
-transition_type = 0
-allow_rematch = false
+defeated_flag = ""
 
 [node name="Battler" type="Node" parent="." index="4"]
 script = ExtResource("3_battler")

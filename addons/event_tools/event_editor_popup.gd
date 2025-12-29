@@ -66,6 +66,12 @@ func _setup_for_event() -> void:
 	title = "Event Editor - " + event_node.name
 	_clear_tabs()
 
+	# Limpiar páginas null al abrir el editor
+	_clean_null_pages_on_open()
+
+	# Duplicar páginas si son Resources compartidos para evitar modificar la escena original
+	_duplicate_event_pages()
+
 	# Guardar copia de seguridad de todas las páginas antes de editar
 	_save_event_backup()
 	has_unsaved_changes = false  # Inicializar bandera de cambios
@@ -105,25 +111,44 @@ func _create_page_tabs() -> void:
 		return
 
 	for i in range(pages.size()):
-		_create_page_tab(i, pages[i])
+		var page = pages[i]
+		if page:  # Solo crear pestaña si la página no es null
+			_create_page_tab(i, page)
+		else:
+			push_warning("Event Editor: La página %d es null, se omitirá" % i)
 
 	# Actualizar estado de los botones después de crear las pestañas
 	_update_page_management_buttons_state()
 
 func _create_page_tab(page_index: int, page: EventPage) -> void:
+	# Validar que la página no sea null
+	if not page:
+		push_warning("Event Editor: La página %d es null, no se puede crear la pestaña" % page_index)
+		return
+
 	var main_split = HSplitContainer.new()
 	main_split.name = "Page" + str(page_index)
 
 	var left_panel = _create_left_panel(page_index, page)
 	var right_panel = _create_right_panel(page_index, page)
 
-	main_split.add_child(left_panel)
-	main_split.add_child(right_panel)
+	if left_panel:
+		main_split.add_child(left_panel)
+	if right_panel:
+		main_split.add_child(right_panel)
 	tab_container.add_child(main_split)
 	tab_container.set_tab_title(page_index, "Página " + str(page_index + 1))
 
 func _create_left_panel(page_index: int, page: EventPage) -> VBoxContainer:
 	var left_panel = VBoxContainer.new()
+
+	# Validar que la página no sea null
+	if not page:
+		var error_label = Label.new()
+		error_label.text = "Error: La página es null"
+		error_label.add_theme_color_override("font_color", Color.RED)
+		left_panel.add_child(error_label)
+		return left_panel
 
 	var title_label = Label.new()
 	title_label.text = "Configuración de Página"
@@ -193,6 +218,12 @@ func _create_left_panel(page_index: int, page: EventPage) -> VBoxContainer:
 	conditions_button.pressed.connect(func(): _on_conditions_button_pressed(page_index))
 	left_panel.add_child(conditions_button)
 
+	# Botón de sprite
+	var sprite_button = Button.new()
+	sprite_button.text = "Gestionar Sprite"
+	sprite_button.pressed.connect(func(): _on_sprite_button_pressed(page_index))
+	left_panel.add_child(sprite_button)
+
 	# Botón de movimiento (solo para NPCs y Trainers)
 	if _is_npc_or_trainer():
 		var movement_button = Button.new()
@@ -215,6 +246,7 @@ func _create_left_panel(page_index: int, page: EventPage) -> VBoxContainer:
 			"through_check": through_check,
 			"conditions_button": conditions_button,
 			"change_name_button": change_name_button,
+			"sprite_button": sprite_button,
 			"movement_button": movement_button,
 			"trainer_button": trainer_button
 		}
@@ -226,13 +258,22 @@ func _create_left_panel(page_index: int, page: EventPage) -> VBoxContainer:
 			"blocks_player_check": blocks_player_check,
 			"through_check": through_check,
 			"conditions_button": conditions_button,
-			"change_name_button": change_name_button
+			"change_name_button": change_name_button,
+			"sprite_button": sprite_button
 		}
 
 	return left_panel
 
 func _create_right_panel(page_index: int, page: EventPage) -> VBoxContainer:
 	var right_panel = VBoxContainer.new()
+
+	# Validar que la página no sea null
+	if not page:
+		var error_label = Label.new()
+		error_label.text = "Error: La página es null"
+		error_label.add_theme_color_override("font_color", Color.RED)
+		right_panel.add_child(error_label)
+		return right_panel
 
 	var commands_title = Label.new()
 	commands_title.text = "Comandos"
@@ -1730,6 +1771,30 @@ func _on_movement_button_pressed(page_index: int) -> void:
 	add_child(editor_window)
 	editor_window.load_page(page)
 	editor_window.movement_edited.connect(func(): _on_page_movement_edited(page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
+func _on_sprite_button_pressed(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
+		return
+
+	# Abrir ventana de edición de sprite
+	var editor_script = load("res://addons/event_tools/sprite_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de sprite")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.load_page(page, event_node)
+	editor_window.sprite_edited.connect(func(): _on_page_sprite_edited(page_index))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
 
 	editor_window.popup_centered()
@@ -5636,7 +5701,21 @@ func _on_page_movement_edited(page_index: int) -> void:
 	# Marcar como cambiado (el editor ya actualizó la página directamente)
 	_mark_as_changed()
 
-## Se llama cuando se edita el trainer de una página desde el editor principal
+	# Refrescar el inspector para que muestre los cambios
+	_refresh_inspector()
+
+## Se llama cuando se edita el sprite de una página desde el editor principal
+func _on_page_sprite_edited(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Marcar como cambiado (el editor ya actualizó la página directamente)
+	_mark_as_changed()
+
+	# Refrescar el inspector para que muestre los cambios
+	_refresh_inspector()
+
 func _on_page_trainer_edited(page_index: int) -> void:
 	var page = _get_page(page_index)
 	if not page:
@@ -5720,6 +5799,32 @@ func _reselect_node_for_refresh(node: Node) -> void:
 		selection.remove_node(node)
 		await get_tree().process_frame
 		selection.add_node(node)
+
+## Duplica las páginas del evento para que cada instancia tenga sus propias copias
+## Esto evita que los cambios se propaguen a la escena origen
+## Solo duplica si las páginas son Resources compartidos (tienen resource_path)
+func _duplicate_event_pages() -> void:
+	if not event_node or not "pages" in event_node:
+		return
+
+	var duplicated_pages: Array[EventPage] = []
+	for page in event_node.pages:
+		if page:
+			# Solo duplicar si la página es un Resource compartido (tiene resource_path)
+			# Si ya es local a la escena, no necesita duplicarse
+			if page.resource_path != "":
+				var duplicated_page = page.duplicate(true) as EventPage
+				# Marcar como local a la escena para que no se guarde como archivo separado
+				duplicated_page.take_over_path("")
+				duplicated_pages.append(duplicated_page)
+			else:
+				# Ya es local, usar directamente
+				duplicated_pages.append(page)
+		else:
+			duplicated_pages.append(null)
+
+	# Actualizar el array de páginas con las duplicadas
+	event_node.pages = duplicated_pages
 
 ## Guarda una copia de seguridad del evento original
 func _save_event_backup() -> void:
@@ -5840,7 +5945,15 @@ func _on_discard_confirmed() -> void:
 func _on_save_and_close() -> void:
 	# Guardar cambios y cerrar (igual que el botón Guardar)
 	_refresh_inspector()
+
+	# Limpiar páginas null del array antes de guardar
+	_clean_null_pages()
+
 	has_unsaved_changes = false  # Resetear bandera después de guardar
+
+	# Registrar la escena en la lista de escenas modificadas
+	_register_modified_scene()
+
 	await get_tree().process_frame
 	queue_free()
 
@@ -6187,6 +6300,58 @@ func _show_message_dialog(message: String) -> void:
 
 func _on_save_button_pressed() -> void:
 	_refresh_inspector()
+
+	# Limpiar páginas null del array antes de guardar
+	_clean_null_pages()
+
 	has_unsaved_changes = false  # Resetear bandera después de guardar
+
+	# Registrar la escena en la lista de escenas modificadas
+	_register_modified_scene()
+
 	await get_tree().process_frame
 	queue_free()
+
+## Limpia las páginas null del array al abrir el editor (sin await)
+func _clean_null_pages_on_open() -> void:
+	if not event_node or not "pages" in event_node:
+		return
+
+	var cleaned_pages: Array[EventPage] = []
+	for page in event_node.pages:
+		if page:  # Solo añadir páginas que no sean null
+			cleaned_pages.append(page)
+
+	# Si se eliminaron páginas null, actualizar el array
+	if cleaned_pages.size() != event_node.pages.size():
+		event_node.pages = cleaned_pages
+		_mark_as_changed()
+
+## Limpia las páginas null del array antes de guardar
+func _clean_null_pages() -> void:
+	if not event_node or not "pages" in event_node:
+		return
+
+	var cleaned_pages: Array[EventPage] = []
+	for page in event_node.pages:
+		if page:  # Solo añadir páginas que no sean null
+			cleaned_pages.append(page)
+
+	# Si se eliminaron páginas null, actualizar el array
+	if cleaned_pages.size() != event_node.pages.size():
+		event_node.pages = cleaned_pages
+		_mark_as_changed()
+
+## Marca la escena actual como pendiente de guardar
+func _register_modified_scene() -> void:
+	# EditorInterface es un singleton, accesible directamente
+	var edited_scene_root = EditorInterface.get_edited_scene_root()
+	if not edited_scene_root or edited_scene_root.scene_file_path == "":
+		return
+
+	# Marcar la escena como no guardada usando EditorInterface
+	# Esto mostrará el asterisco (*) en la pestaña de la escena
+	# El método no toma argumentos, marca la escena actualmente abierta
+	EditorInterface.mark_scene_as_unsaved()
+	print("Event Tools: Escena marcada como no guardada: %s" % edited_scene_root.scene_file_path)
+

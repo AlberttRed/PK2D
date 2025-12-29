@@ -97,8 +97,22 @@ var source_event: Event = null
 ## Si está desactivado, la textura se usa como imagen simple estática
 @export var is_spritesheet: bool = false
 
-## Tamaño de cada frame en el spritesheet (solo si is_spritesheet = true)
+## Tamaño de cada frame del sprite (usado para spritesheets y para indicar el tamaño del sprite)
 @export var frame_size := Vector2(32, 48)
+
+## Offset del sprite (ajuste de posición, útil para centrar sprites en el tile)
+## Para NPCs, el valor por defecto visual es (0, -8), pero se guarda como (0, 0) si no se modifica
+@export var sprite_offset := Vector2(0, 0)
+## Indica si el offset ha sido configurado explícitamente por el usuario
+## Si es false y sprite_offset es (0, 0), los NPCs aplicarán (0, -8) por defecto
+@export var sprite_offset_configured: bool = false
+
+## Animación inicial a mostrar (solo para eventos normales, no NPCs)
+## Si está vacío, se usa "idle" por defecto, o la primera animación disponible
+@export var initial_animation: String = "idle"
+## Frame inicial a mostrar dentro de la animación (solo para eventos normales, no NPCs)
+## Por defecto es 0 (primer frame)
+@export var initial_frame: int = 0
 
 ## SpriteFrames manual para casos personalizados
 @export var sprite_frames: SpriteFrames = null
@@ -107,7 +121,8 @@ var source_event: Event = null
 @export var has_water_reflection: bool = false
 
 ## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
-func get_sprite_frames() -> SpriteFrames:
+## event_node: Nodo Event opcional para detectar si es NPC y generar animaciones apropiadas
+func get_sprite_frames(event_node: Node = null) -> SpriteFrames:
 	if actor_style:
 		return null
 	if sprite_texture and is_spritesheet:
@@ -115,11 +130,20 @@ func get_sprite_frames() -> SpriteFrames:
 	if sprite_frames:
 		return sprite_frames
 	if sprite_texture:
-		return _generate_simple_sprite_frames(sprite_texture)
+		# Si es un NPC y no es spritesheet, generar frames con animaciones de NPC
+		if event_node:
+			var script = event_node.get_script()
+			if script and script.resource_path.ends_with("NPC.gd"):
+				return _generate_npc_sprite_frames(sprite_texture, frame_size)
+			elif event_node.has_method("get_movement_type"):
+				return _generate_npc_sprite_frames(sprite_texture, frame_size)
+		# Para eventos normales, generar frames simples
+		return _generate_simple_sprite_frames(sprite_texture, frame_size)
 	return null
 
 ## Genera un SpriteFrames simple con una sola animación "default" y un frame
-func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
+## frame_size: Tamaño del frame (puede usarse para información o ajustes)
+func _generate_simple_sprite_frames(texture: Texture2D, frame_size: Vector2 = Vector2(32, 48)) -> SpriteFrames:
 	if not texture:
 		return null
 
@@ -136,6 +160,45 @@ func _generate_simple_sprite_frames(texture: Texture2D) -> SpriteFrames:
 	# Limpiar frames existentes si los hay y añadir el nuestro
 	frames.clear("default")
 	frames.add_frame("default", texture)
+
+	return frames
+
+## Genera SpriteFrames para NPCs con todas las animaciones necesarias
+## usando la misma textura para todos los frames
+## frame_size: Tamaño del frame (puede usarse para información o ajustes)
+func _generate_npc_sprite_frames(texture: Texture2D, frame_size: Vector2 = Vector2(32, 48)) -> SpriteFrames:
+	if not texture:
+		return null
+
+	var frames = SpriteFrames.new()
+
+	# Animación "idle" con 4 frames (uno para cada dirección)
+	# ActorAnimator.idle() espera: frame 0=down, 1=left, 2=right, 3=up
+	frames.add_animation("idle")
+	frames.set_animation_loop("idle", true)
+	frames.set_animation_speed("idle", 5.0)
+	for i in range(4):
+		frames.add_frame("idle", texture)
+
+	# Animaciones walk y run para cada dirección
+	var directions = ["down", "left", "right", "up"]
+	for dir in directions:
+		for stride in ["left", "right"]:
+			# walk
+			var walk_anim = "walk_%s_%s" % [dir, stride]
+			frames.add_animation(walk_anim)
+			frames.set_animation_loop(walk_anim, false)
+			frames.set_animation_speed(walk_anim, 7.5)
+			frames.add_frame(walk_anim, texture)
+			frames.add_frame(walk_anim, texture)
+
+			# run (mismos frames, más rápido)
+			var run_anim = "run_%s_%s" % [dir, stride]
+			frames.add_animation(run_anim)
+			frames.set_animation_loop(run_anim, false)
+			frames.set_animation_speed(run_anim, 10.0)
+			frames.add_frame(run_anim, texture)
+			frames.add_frame(run_anim, texture)
 
 	return frames
 
