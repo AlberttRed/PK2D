@@ -4,6 +4,10 @@ class_name EventPage
 ## Modo de ejecución de la página: en cola (QUEUED) o paralelo (PARALLEL)
 enum ExecutionMode { QUEUED, PARALLEL }
 
+## Nombre personalizado de la página (opcional)
+## Si está vacío, se usa "Página" por defecto
+@export var page_name: String = ""
+
 @export var execution_mode: ExecutionMode = ExecutionMode.QUEUED
 
 ## Trigger que define cuándo se activa esta página

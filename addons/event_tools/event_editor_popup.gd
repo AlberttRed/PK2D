@@ -71,6 +71,8 @@ func _setup_for_event() -> void:
 	has_unsaved_changes = false  # Inicializar bandera de cambios
 
 	_create_page_tabs()
+	# Añadir botón para crear nuevas páginas
+	_add_new_page_button()
 	# Añadir botón Guardar en la interfaz
 	_add_save_button()
 	popup_centered()
@@ -78,7 +80,10 @@ func _setup_for_event() -> void:
 func _clear_tabs() -> void:
 	if not tab_container:
 		return
-	for child in tab_container.get_children():
+	# Eliminar los hijos de forma inmediata para evitar problemas con los índices
+	var children = tab_container.get_children()
+	for child in children:
+		tab_container.remove_child(child)
 		child.queue_free()
 	page_buttons.clear()
 	page_controls.clear()
@@ -101,6 +106,9 @@ func _create_page_tabs() -> void:
 
 	for i in range(pages.size()):
 		_create_page_tab(i, pages[i])
+
+	# Actualizar estado de los botones después de crear las pestañas
+	_update_page_management_buttons_state()
 
 func _create_page_tab(page_index: int, page: EventPage) -> void:
 	var main_split = HSplitContainer.new()
@@ -173,20 +181,53 @@ func _create_left_panel(page_index: int, page: EventPage) -> VBoxContainer:
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	left_panel.add_child(spacer)
 
+	# Botón de cambiar nombre
+	var change_name_button = Button.new()
+	change_name_button.text = "Cambiar Nombre"
+	change_name_button.pressed.connect(func(): _on_change_name_button_pressed(page_index))
+	left_panel.add_child(change_name_button)
+
 	# Botón de condiciones
 	var conditions_button = Button.new()
 	conditions_button.text = "Gestionar Condiciones"
 	conditions_button.pressed.connect(func(): _on_conditions_button_pressed(page_index))
 	left_panel.add_child(conditions_button)
 
-	# Guardar referencias a los controles
-	page_controls[page_index] = {
-		"execution_option": execution_option,
-		"trigger_option": trigger_option,
-		"blocks_player_check": blocks_player_check,
-		"through_check": through_check,
-		"conditions_button": conditions_button
-	}
+	# Botón de movimiento (solo para NPCs y Trainers)
+	if _is_npc_or_trainer():
+		var movement_button = Button.new()
+		movement_button.text = "Gestionar Movimiento"
+		movement_button.pressed.connect(func(): _on_movement_button_pressed(page_index))
+		left_panel.add_child(movement_button)
+
+		# Botón de trainer (solo para Trainers, pero como Trainer hereda de NPC, aparece para ambos)
+		# Aunque técnicamente solo funciona para Trainers
+		var trainer_button = Button.new()
+		trainer_button.text = "Gestionar Trainer"
+		trainer_button.pressed.connect(func(): _on_trainer_button_pressed(page_index))
+		left_panel.add_child(trainer_button)
+
+		# Guardar referencias a los controles
+		page_controls[page_index] = {
+			"execution_option": execution_option,
+			"trigger_option": trigger_option,
+			"blocks_player_check": blocks_player_check,
+			"through_check": through_check,
+			"conditions_button": conditions_button,
+			"change_name_button": change_name_button,
+			"movement_button": movement_button,
+			"trainer_button": trainer_button
+		}
+	else:
+		# Guardar referencias a los controles
+		page_controls[page_index] = {
+			"execution_option": execution_option,
+			"trigger_option": trigger_option,
+			"blocks_player_check": blocks_player_check,
+			"through_check": through_check,
+			"conditions_button": conditions_button,
+			"change_name_button": change_name_button
+		}
 
 	return left_panel
 
@@ -297,6 +338,26 @@ func _create_spacer(height: int) -> Control:
 	return spacer
 
 # === HELPERS DE VALIDACIÓN ===
+func _is_npc_or_trainer() -> bool:
+	if not event_node:
+		return false
+	# Verificar si es NPC o Trainer usando el script
+	var script = event_node.get_script()
+	if script:
+		var script_class = script.get_global_name()
+		if script_class == "NPC" or script_class == "Trainer":
+			return true
+		# También verificar por nombre de archivo del script
+		var script_path = script.resource_path
+		if script_path:
+			if "NPC.gd" in script_path or "Trainer.gd" in script_path:
+				return true
+	# Verificar usando is_instance_of (más robusto, pero puede fallar si las clases no están cargadas)
+	if event_node.has_method("get_movement_type"):
+		# NPC tiene este método, así que es una forma indirecta de verificar
+		return true
+	return false
+
 func _validate_event_node() -> bool:
 	return event_node != null and tab_container != null
 
@@ -429,11 +490,22 @@ func _update_commands_tree(commands_tree: Tree, page: EventPage, page_index: int
 		root.set_text(0, "Página - (Sin página)")
 		return
 
-	if page.commands.is_empty():
-		root.set_text(0, "Página - (Sin comandos)")
-		return
+	# Construir el texto de la página con nombre y condiciones
+	var page_text = "Página"
+	if page.page_name and not page.page_name.is_empty():
+		page_text += " '" + page.page_name + "'"
 
-	root.set_text(0, "Página")
+	# Añadir condiciones
+	if page.root_condition:
+		var condition_text = _get_condition_display_text(page.root_condition)
+		page_text += " - " + condition_text
+	else:
+		page_text += " - (Sin condiciones)"
+
+	if page.commands.is_empty():
+		page_text += " - (Sin comandos)"
+
+	root.set_text(0, page_text)
 	# Si hay override_move_info, usar ese (para modo mover entre páginas)
 	# Si no, usar el move_info de la página actual
 	var in_move_mode = false
@@ -1569,9 +1641,147 @@ func _on_through_changed(page_index: int, pressed: bool) -> void:
 		page.through = pressed
 		_mark_as_changed()
 
+func _on_page_name_changed(page_index: int, new_name: String) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Actualizar el nombre de la página
+	page.page_name = new_name
+
+	# Marcar como cambiado y refrescar el árbol
+	_mark_as_changed()
+	var commands_tree = _get_commands_tree_for_page(page_index)
+	if commands_tree:
+		_update_commands_tree(commands_tree, page, page_index)
+
+func _on_change_name_button_pressed(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
+		return
+
+	# Crear diálogo para cambiar el nombre
+	var dialog = AcceptDialog.new()
+	dialog.title = "Cambiar Nombre de Página"
+	dialog.size = Vector2(400, 150)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	vbox.add_theme_constant_override("margin_left", 10)
+	vbox.add_theme_constant_override("margin_top", 10)
+	vbox.add_theme_constant_override("margin_right", 10)
+	vbox.add_theme_constant_override("margin_bottom", 10)
+
+	var label = Label.new()
+	label.text = "Nombre de la página:"
+	vbox.add_child(label)
+
+	var name_edit = LineEdit.new()
+	name_edit.text = page.page_name if page.page_name else ""
+	name_edit.placeholder_text = "Página"
+	name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(name_edit)
+
+	var info_label = Label.new()
+	info_label.text = "(Dejar vacío para usar 'Página' por defecto)"
+	info_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	vbox.add_child(info_label)
+
+	dialog.add_child(vbox)
+
+	# Botones
+	var ok_button = dialog.get_ok_button()
+	ok_button.text = "Aceptar"
+	ok_button.pressed.connect(func():
+		var new_name = name_edit.text.strip_edges()
+		_on_page_name_changed(page_index, new_name)
+		dialog.queue_free()
+	)
+
+	var cancel_button = dialog.add_button("Cancelar", true, "cancel")
+	cancel_button.pressed.connect(func(): dialog.queue_free())
+
+	add_child(dialog)
+	dialog.exclusive = true
+	dialog.popup_centered()
+
+	# Hacer foco en el LineEdit
+	name_edit.grab_focus()
+	name_edit.select_all()
+
+func _on_movement_button_pressed(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
+		return
+
+	# Abrir ventana de edición de movimiento
+	var editor_script = load("res://addons/event_tools/movement_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de movimiento")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.load_page(page)
+	editor_window.movement_edited.connect(func(): _on_page_movement_edited(page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
+func _on_trainer_button_pressed(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
+		return
+
+	# Abrir ventana de edición de trainer
+	var editor_script = load("res://addons/event_tools/trainer_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de trainer")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.load_page(page)
+	editor_window.trainer_edited.connect(func(): _on_page_trainer_edited(page_index))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
+
 func _on_conditions_button_pressed(page_index: int) -> void:
-	print("Event Editor: Gestionar condiciones para página ", page_index + 1)
-	# TODO: Abrir editor de condiciones
+	var page = _get_page(page_index)
+	if not page:
+		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
+		return
+
+	# Abrir ventana de edición de condiciones
+	var editor_script = load("res://addons/event_tools/condition_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de condiciones")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	editor_window.set_event_node(event_node)
+	editor_window.load_condition(page.root_condition)
+	editor_window.condition_edited.connect(func(cond: EventCondition): _on_page_condition_edited(page_index, cond))
+	editor_window.cancelled.connect(func(): editor_window.queue_free())
+
+	editor_window.popup_centered()
 
 # === GESTIÓN DE COMANDOS ===
 func _on_command_selected(page_index: int) -> void:
@@ -3902,6 +4112,9 @@ func _get_commands_tree_for_page(page_index: int) -> Tree:
 	return _find_child_by_name(tab_container.get_child(page_index), "CommandsTree", Tree)
 
 func _on_tab_changed(tab_index: int) -> void:
+	# Actualizar el estado de los botones de gestión de páginas cuando se cambia de tab
+	_update_page_management_buttons_state()
+
 	# Cuando se cambia de tab, actualizar el estado del modo mover si está activo
 	if move_source_page_index >= 0:
 		# Estamos en modo mover, actualizar la página actual
@@ -5396,6 +5609,42 @@ func _on_branch_condition_edited(conditional_command: ConditionalCommand, branch
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
 
+## Se llama cuando se edita la condición de una página desde el editor principal
+func _on_page_condition_edited(page_index: int, new_condition: EventCondition) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Actualizar la condición de la página
+	if new_condition:
+		page.root_condition = new_condition.duplicate(true)
+	else:
+		page.root_condition = null
+
+	# Marcar como cambiado y refrescar el árbol
+	_mark_as_changed()
+	var commands_tree = _get_commands_tree_for_page(page_index)
+	if commands_tree:
+		_update_commands_tree(commands_tree, page, page_index)
+
+## Se llama cuando se edita el movimiento de una página desde el editor principal
+func _on_page_movement_edited(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Marcar como cambiado (el editor ya actualizó la página directamente)
+	_mark_as_changed()
+
+## Se llama cuando se edita el trainer de una página desde el editor principal
+func _on_page_trainer_edited(page_index: int) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Marcar como cambiado (el editor ya actualizó la página directamente)
+	_mark_as_changed()
+
 ## Se llama cuando se editan los valores de un SwitchCase desde el editor principal
 func _on_switch_case_values_edited(switch_command: SwitchCommand, case_index: int, values: Array, page_index: int) -> void:
 	if not switch_command or case_index < 0 or case_index >= switch_command.cases.size():
@@ -5595,6 +5844,84 @@ func _on_save_and_close() -> void:
 	await get_tree().process_frame
 	queue_free()
 
+## Añade un botón "Añadir Página" justo antes del TabContainer
+func _add_new_page_button() -> void:
+	# Buscar el VBoxContainer principal
+	var vbox = $VBoxContainer
+	if not vbox:
+		return
+
+	# Verificar si el botón ya existe (para evitar duplicados)
+	for child in vbox.get_children():
+		if child is HBoxContainer:
+			# Verificar si contiene el botón "Añadir Página"
+			for button in child.get_children():
+				if button is Button and button.text == "+ Añadir Página":
+					return  # Ya existe, no crear otro
+
+	# Buscar el TabContainer
+	var tab_container_node = vbox.get_node_or_null("TabContainer")
+	if not tab_container_node:
+		return
+
+	# Crear un HBoxContainer para el botón en la parte superior
+	var buttons_container = HBoxContainer.new()
+	buttons_container.name = "AddPageButtonContainer"
+	buttons_container.add_theme_constant_override("separation", 10)
+	buttons_container.add_theme_constant_override("margin_bottom", 5)
+
+	var add_page_button = Button.new()
+	add_page_button.text = "+ Añadir Página"
+	add_page_button.pressed.connect(_on_add_page_button_pressed)
+	buttons_container.add_child(add_page_button)
+
+	var duplicate_page_button = Button.new()
+	duplicate_page_button.text = "Duplicar Página"
+	duplicate_page_button.pressed.connect(_on_duplicate_page_button_pressed)
+	buttons_container.add_child(duplicate_page_button)
+
+	var delete_page_button = Button.new()
+	delete_page_button.text = "Eliminar Página"
+	delete_page_button.pressed.connect(_on_delete_page_button_pressed)
+	buttons_container.add_child(delete_page_button)
+
+	# Separador
+	buttons_container.add_child(HSeparator.new())
+
+	# Botones para mover páginas
+	var move_left_button = Button.new()
+	move_left_button.text = "← Mover Izquierda"
+	move_left_button.pressed.connect(_on_move_page_left_pressed)
+	buttons_container.add_child(move_left_button)
+
+	var move_right_button = Button.new()
+	move_right_button.text = "Mover Derecha →"
+	move_right_button.pressed.connect(_on_move_page_right_pressed)
+	buttons_container.add_child(move_right_button)
+
+	# Guardar referencias a los botones para poder habilitarlos/deshabilitarlos
+	if not has_meta("page_management_buttons"):
+		set_meta("page_management_buttons", {
+			"add": add_page_button,
+			"duplicate": duplicate_page_button,
+			"delete": delete_page_button,
+			"move_left": move_left_button,
+			"move_right": move_right_button
+		})
+
+	# Añadir un spacer para empujar los botones a la izquierda
+	var spacer = Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	buttons_container.add_child(spacer)
+
+	# Actualizar estado inicial de los botones
+	_update_page_management_buttons_state()
+
+	# Insertar el contenedor de botones justo antes del TabContainer
+	var tab_index = tab_container_node.get_index()
+	vbox.add_child(buttons_container)
+	vbox.move_child(buttons_container, tab_index)
+
 ## Añade un botón "Guardar" en la interfaz
 func _add_save_button() -> void:
 	# Buscar el VBoxContainer principal
@@ -5614,6 +5941,249 @@ func _add_save_button() -> void:
 	buttons_container.add_child(save_button)
 
 	vbox.add_child(buttons_container)
+
+## Se llama cuando se presiona el botón "Añadir Página"
+func _on_add_page_button_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	# Crear una nueva página con valores por defecto
+	var new_page = EventPage.new()
+	new_page.execution_mode = EventPage.ExecutionMode.QUEUED
+	new_page.blocks_player = true
+	new_page.through = false
+	# commands ya está inicializado como Array[EventCommand]() por defecto
+	new_page.root_condition = null
+	new_page.trigger = null
+
+	# Añadir la nueva página al array de páginas del evento
+	event_node.pages.append(new_page)
+
+	# Marcar como cambiado
+	_mark_as_changed()
+
+	# Refrescar las pestañas
+	_clear_tabs()
+	# Esperar un frame para asegurar que los nodos se eliminen completamente
+	await get_tree().process_frame
+	_create_page_tabs()
+
+	# Cambiar a la nueva pestaña (la última)
+	var new_page_index = event_node.pages.size() - 1
+	if tab_container:
+		tab_container.current_tab = new_page_index
+
+	# Actualizar estado de los botones
+	_update_page_management_buttons_state()
+
+## Se llama cuando se presiona el botón "Duplicar Página"
+func _on_duplicate_page_button_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	var current_tab = tab_container.current_tab if tab_container else -1
+	if current_tab < 0 or current_tab >= event_node.pages.size():
+		return
+
+	# Obtener la página actual
+	var page_to_duplicate = event_node.pages[current_tab]
+	if not page_to_duplicate:
+		return
+
+	# Duplicar la página
+	var duplicated_page = page_to_duplicate.duplicate(true) as EventPage
+	if not duplicated_page:
+		push_error("Event Editor: No se pudo duplicar la página")
+		return
+
+	# Añadir la página duplicada después de la página actual
+	event_node.pages.insert(current_tab + 1, duplicated_page)
+
+	# Marcar como cambiado
+	_mark_as_changed()
+
+	# Refrescar las pestañas
+	_clear_tabs()
+	# Esperar un frame para asegurar que los nodos se eliminen completamente
+	await get_tree().process_frame
+	_create_page_tabs()
+
+	# Cambiar a la nueva pestaña duplicada
+	if tab_container:
+		tab_container.current_tab = current_tab + 1
+
+	# Actualizar estado de los botones
+	_update_page_management_buttons_state()
+
+## Se llama cuando se presiona el botón "Eliminar Página"
+func _on_delete_page_button_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	var current_tab = tab_container.current_tab if tab_container else -1
+	if current_tab < 0 or current_tab >= event_node.pages.size():
+		return
+
+	# Verificar que no sea la última página (debe quedar al menos una)
+	if event_node.pages.size() <= 1:
+		_show_message_dialog("No se puede eliminar la última página. El evento debe tener al menos una página.")
+		return
+
+	# Mostrar diálogo de confirmación
+	var page_number = current_tab + 1
+	_show_delete_page_confirmation_dialog(page_number, current_tab)
+
+## Muestra un diálogo de confirmación para eliminar una página
+func _show_delete_page_confirmation_dialog(page_number: int, page_index: int) -> void:
+	var dialog = AcceptDialog.new()
+	dialog.title = "Confirmar Eliminación"
+	dialog.dialog_text = "¿Estás seguro de que quieres eliminar la página %d?" % page_number
+
+	var ok_button = dialog.get_ok_button()
+	ok_button.hide()
+
+	var delete_button = dialog.add_button("Eliminar", false, "ok")
+	var cancel_button = dialog.add_button("Cancelar", true, "cancel")
+
+	dialog.custom_action.connect(func(action: String):
+		if action == "ok":
+			_perform_delete_page(page_index)
+		dialog.queue_free()
+	)
+
+	add_child(dialog)
+	dialog.exclusive = true
+	dialog.popup_centered()
+
+## Realiza la eliminación de la página
+func _perform_delete_page(page_index: int) -> void:
+	if page_index < 0 or page_index >= event_node.pages.size():
+		return
+
+	# Eliminar la página
+	event_node.pages.remove_at(page_index)
+
+	# Marcar como cambiado
+	_mark_as_changed()
+
+	# Refrescar las pestañas
+	_clear_tabs()
+	# Esperar un frame para asegurar que los nodos se eliminen completamente
+	await get_tree().process_frame
+	_create_page_tabs()
+
+	# Ajustar el tab actual si es necesario
+	if tab_container:
+		if tab_container.get_tab_count() > 0:
+			# Si eliminamos la última página, cambiar a la anterior
+			if page_index >= tab_container.get_tab_count():
+				tab_container.current_tab = tab_container.get_tab_count() - 1
+			else:
+				tab_container.current_tab = page_index
+		else:
+			tab_container.current_tab = 0
+
+	# Actualizar estado de los botones
+	_update_page_management_buttons_state()
+
+## Actualiza el estado de los botones de gestión de páginas
+func _update_page_management_buttons_state() -> void:
+	if not has_meta("page_management_buttons"):
+		return
+
+	var buttons = get_meta("page_management_buttons")
+	var has_pages = event_node and event_node.pages.size() > 0
+	var current_tab = tab_container.current_tab if tab_container else -1
+	var total_pages = event_node.pages.size() if event_node else 0
+
+	# El botón de añadir siempre está habilitado
+	if buttons.has("add"):
+		buttons.add.disabled = false
+
+	# Los botones de duplicar y eliminar solo están habilitados si hay páginas
+	if buttons.has("duplicate"):
+		buttons.duplicate.disabled = not has_pages
+	if buttons.has("delete"):
+		buttons.delete.disabled = not has_pages
+
+	# Los botones de mover: izquierda deshabilitado si es la primera, derecha si es la última
+	if buttons.has("move_left"):
+		buttons.move_left.disabled = not has_pages or current_tab <= 0
+	if buttons.has("move_right"):
+		buttons.move_right.disabled = not has_pages or current_tab < 0 or current_tab >= total_pages - 1
+
+## Se llama cuando se presiona el botón "Mover Izquierda"
+func _on_move_page_left_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	var current_tab = tab_container.current_tab if tab_container else -1
+	if current_tab <= 0 or current_tab >= event_node.pages.size():
+		return
+
+	# Intercambiar la página actual con la anterior
+	var temp_page = event_node.pages[current_tab]
+	event_node.pages[current_tab] = event_node.pages[current_tab - 1]
+	event_node.pages[current_tab - 1] = temp_page
+
+	# Marcar como cambiado
+	_mark_as_changed()
+
+	# Refrescar las pestañas
+	_clear_tabs()
+	# Esperar un frame para asegurar que los nodos se eliminen completamente
+	await get_tree().process_frame
+	_create_page_tabs()
+
+	# Cambiar a la nueva posición (una posición a la izquierda)
+	if tab_container:
+		tab_container.current_tab = current_tab - 1
+
+	# Actualizar estado de los botones
+	_update_page_management_buttons_state()
+
+## Se llama cuando se presiona el botón "Mover Derecha"
+func _on_move_page_right_pressed() -> void:
+	if not _validate_event_node():
+		return
+
+	var current_tab = tab_container.current_tab if tab_container else -1
+	if current_tab < 0 or current_tab >= event_node.pages.size() - 1:
+		return
+
+	# Intercambiar la página actual con la siguiente
+	var temp_page = event_node.pages[current_tab]
+	event_node.pages[current_tab] = event_node.pages[current_tab + 1]
+	event_node.pages[current_tab + 1] = temp_page
+
+	# Marcar como cambiado
+	_mark_as_changed()
+
+	# Refrescar las pestañas
+	_clear_tabs()
+	# Esperar un frame para asegurar que los nodos se eliminen completamente
+	await get_tree().process_frame
+	_create_page_tabs()
+
+	# Cambiar a la nueva posición (una posición a la derecha)
+	if tab_container:
+		tab_container.current_tab = current_tab + 1
+
+	# Actualizar estado de los botones
+	_update_page_management_buttons_state()
+
+## Muestra un mensaje de diálogo simple
+func _show_message_dialog(message: String) -> void:
+	var dialog = AcceptDialog.new()
+	dialog.title = "Información"
+	dialog.dialog_text = message
+	dialog.ok_button_text = "Aceptar"
+	dialog.confirmed.connect(func(): dialog.queue_free())
+	dialog.canceled.connect(func(): dialog.queue_free())
+
+	add_child(dialog)
+	dialog.exclusive = true
+	dialog.popup_centered()
 
 func _on_save_button_pressed() -> void:
 	_refresh_inspector()
