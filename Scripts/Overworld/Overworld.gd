@@ -19,7 +19,6 @@ class_name OverworldCoordinator
 @onready var tile_effect_system: TileEffectSystem = $TileEffectSystem
 @onready var tile_motion_system: TileMotionSystem = $TileMotionSystem
 @onready var wild_encounter_system: WildEncounterSystem = $WildEncounterSystem
-@onready var effects_layer: Node2D = $OverworldEffectsLayer
 
 # Contexto compartido entre sistemas del Overworld
 var context: OverworldContext = null
@@ -72,6 +71,8 @@ func _register_systems_in_context() -> void:
 	if overlay_layer:
 		context.register_system("Overlay", overlay_layer)
 
+	# Obtener la capa de efectos desde WorldSystem
+	var effects_layer = world_system.get_effects_layer() if world_system else null
 	if effects_layer:
 		context.register_system("EffectsLayer", effects_layer)
 

@@ -42,6 +42,13 @@ func current_tile() -> Vector2i:
 ## Registra la ocupación del evento después de que se haya configurado current_page
 func register_event_occupancy(tile: Vector2i) -> void:
 	if actor is Event:
+		# Verificar que el evento aún está en la misma celda (puede haberse movido por page_position)
+		var current_tile = grid.world_to_tile(actor.global_position)
+		if current_tile != tile:
+			# El evento se movió, no registrar ocupación en la celda antigua
+			print("Occupancy: Evento '%s' se movió de (%d, %d) a (%d, %d), no registrando ocupación en celda antigua" % [actor.name, tile.x, tile.y, current_tile.x, current_tile.y])
+			return
+
 		# Registrar en occ solo si NO es through (bloquea el paso)
 		if not actor.current_page or not actor.current_page.through:
 			grid.occupy(tile, actor)

@@ -93,9 +93,18 @@ func execute(_player: Node, target: Node, context: Node) -> Dictionary:
 	# 3. Reproducir animación
 	await _play_animation(target)
 
-	# 4. Retornar éxito
+	# 4. Aplicar efectos de CUT: through=true y trigger=null
+	_apply_cut_effects_to_event(target)
+
+	# 5. Retornar éxito
 	if overworld_context:
 		overworld_context.unblock_player_control()
+
+	# Debug: verificar estado de pausa
+	var tree = overworld_context.get_tree() if overworld_context else null
+	if tree:
+		print("CutAction: Juego pausado al finalizar: %s" % tree.paused)
+
 	return {"success": true, "cancelled": false}
 
 ## Reproduce la animación de corte en el target
@@ -135,6 +144,45 @@ func _find_actor_animator(node: Node) -> ActorAnimator:
 			return found
 
 	return null
+
+## Aplica los efectos de CUT al evento target
+## Establece through=true y trigger=null en la página actual
+func _apply_cut_effects_to_event(target: Node) -> void:
+	if not target or not target is Event:
+		push_warning("CutAction: Target no es un Event válido")
+		return
+
+	var target_event = target as Event
+	if not target_event.current_page:
+		push_warning("CutAction: El evento '%s' no tiene página activa" % target_event.name)
+		return
+
+	# Obtener el índice de la página actual
+	var current_page_index = target_event.current_page_index
+	if current_page_index < 0 or current_page_index >= target_event.pages.size():
+		push_warning("CutAction: Índice de página inválido para evento '%s'" % target_event.name)
+		return
+
+	# Duplicar la página para poder modificarla (evitar modificar el Resource original)
+	var editable_page = target_event.current_page.duplicate(true) as EventPage
+	if not editable_page:
+		push_warning("CutAction: No se pudo duplicar la página del evento '%s'" % target_event.name)
+		return
+
+	# Aplicar los cambios: through=true y trigger=null
+	editable_page.through = true
+	editable_page.trigger = null
+
+	# Reemplazar la página en el array
+	target_event.pages[current_page_index] = editable_page
+
+	# Refrescar la página activa para aplicar los cambios
+	target_event.refresh_active_page()
+
+	# Ocultar el sprite del evento (igual que SetActorVisibilityCommand)
+	target_event.hide_sprite()
+
+	print("CutAction: Efectos aplicados a evento '%s' (through=true, trigger=null, visible=false)" % target_event.name)
 
 func _extract_overworld_context(context: Node) -> OverworldContext:
 	if context is EventController:

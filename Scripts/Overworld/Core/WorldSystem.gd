@@ -211,10 +211,16 @@ var previous_map: Node = null
 ## Referencia al WorldChunkController (hijo de WorldSystem)
 var chunk_controller: Node = null  # WorldChunkController (usamos Node para evitar problemas de orden de carga)
 
+## Capa de efectos visuales (OverworldEffectsLayer)
+var effects_layer: Node2D = null
+
 
 func _ready() -> void:
 	# Crear e inicializar WorldChunkController
 	_setup_chunk_controller()
+
+	# Crear la capa de efectos visuales
+	_setup_effects_layer()
 
 	# Indexar todas las escenas de mapa
 	_build_scene_index()
@@ -241,6 +247,22 @@ func _setup_chunk_controller() -> void:
 
 	# Inicializar con referencia a WorldSystem y configuración de chunks
 	chunk_controller.initialize(self, chunk_size, chunk_activation_radius)
+
+
+## Configura la capa de efectos visuales (OverworldEffectsLayer)
+func _setup_effects_layer() -> void:
+	# Crear la capa de efectos visuales
+	effects_layer = Node2D.new()
+	effects_layer.name = "OverworldEffectsLayer"
+	effects_layer.y_sort_enabled = true
+	add_child(effects_layer)
+	# Conectar señal para mantener effects_layer siempre al final
+	child_entered_tree.connect(_on_child_entered_tree)
+
+
+## Obtiene la capa de efectos visuales (OverworldEffectsLayer)
+func get_effects_layer() -> Node2D:
+	return effects_layer
 
 
 ## Construye un índice de escenas para búsqueda rápida
@@ -568,6 +590,13 @@ func _load_neighbor_map(neighbor_id: String) -> void:
 			_disable_map_processing(neighbor_instance)
 
 		neighbor_data.is_rendered = true
+
+		# CRÍTICO: Inyectar contexto al grid del mapa vecino para que los NPCs tengan contexto
+		# Esto es necesario para que los NPCs en mapas vecinos puedan moverse correctamente
+		if context:
+			var neighbor_grid = neighbor_instance.get_node_or_null("OverworldGrid") as OverworldGrid
+			if neighbor_grid and neighbor_grid.has_method("set_context"):
+				neighbor_grid.set_context(context)
 
 		# Registrar el mapa en chunks globales (cuando se carga por primera vez)
 		if chunk_controller:
@@ -1217,3 +1246,29 @@ func get_active_map_id() -> String:
 	if not active_map:
 		return ""
 	return active_map.name
+
+
+## Callback cuando se añade un hijo al WorldSystem
+## Asegura que OverworldEffectsLayer siempre sea el último hijo
+func _on_child_entered_tree(node: Node) -> void:
+	# Si el nodo añadido no es effects_layer y effects_layer existe, moverlo al final
+	if node != effects_layer and effects_layer and is_instance_valid(effects_layer):
+		# Usar call_deferred para evitar problemas durante la adición del nodo
+		call_deferred("_move_effects_layer_to_end")
+
+
+## Mueve OverworldEffectsLayer al final de la lista de hijos
+func _move_effects_layer_to_end() -> void:
+	if not effects_layer or not is_instance_valid(effects_layer):
+		return
+
+	# Obtener el índice actual y el último índice
+	var current_index = get_child_count() - 1
+	var effects_index = effects_layer.get_index()
+
+	# Si ya está al final, no hacer nada
+	if effects_index == current_index:
+		return
+
+	# Mover al final
+	move_child(effects_layer, current_index)

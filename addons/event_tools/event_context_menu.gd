@@ -73,16 +73,18 @@ func _is_event_node(node: Node) -> bool:
 	if not node:
 		return false
 
-	# Verificar si el nodo tiene el script Event.gd
+	# Verificar si el nodo tiene el script Event.gd, NPC.gd o Trainer.gd
 	var script = node.get_script()
 	if script:
 		var script_path = script.resource_path
-		if script_path.ends_with("Event.gd"):
+		var script_class = script.get_global_name()
+
+		# Verificar si es de clase Event, NPC o Trainer usando class_name
+		if script_class == "Event" or script_class == "NPC" or script_class == "Trainer":
 			return true
 
-		# Verificar si es de clase Event usando class_name
-		var script_class = script.get_global_name()
-		if script_class == "Event":
+		# Verificar por ruta del script
+		if script_path.ends_with("Event.gd") or script_path.ends_with("NPC.gd") or script_path.ends_with("Trainer.gd"):
 			return true
 
 	# Verificar si el nodo tiene métodos característicos de Event

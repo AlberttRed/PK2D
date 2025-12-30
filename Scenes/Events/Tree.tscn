@@ -1,49 +1,50 @@
-[gd_scene load_steps=19 format=3 uid="uid://b5fhgiixlauaq"]
+[gd_scene load_steps=21 format=3 uid="uid://b5fhgiixlauaq"]
 
 [ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="1_rklyq"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="2_4usol"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="3_uw4pk"]
 [ext_resource type="Script" uid="uid://dhtm8wpq4l7x2" path="res://Scripts/Events/Commands/UseMOCommand.gd" id="4_cta61"]
 [ext_resource type="Texture2D" uid="uid://cvsjona53tch5" path="res://Sprites/Eventos/MOs/Object tree 1.png" id="5_febl7"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="6_4usol"]
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="6_lkp8o"]
 [ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="7_7nw6y"]
 [ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="8_6775b"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="9_f71kk"]
 
-[sub_resource type="Resource" id="Resource_wkhxn"]
+[sub_resource type="Resource" id="Resource_uw4pk"]
 script = ExtResource("4_cta61")
 metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ph5q8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_cta61"]
 atlas = ExtResource("5_febl7")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yteb7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_febl7"]
 atlas = ExtResource("5_febl7")
 region = Rect2(0, 32, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_b1xv2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_lkp8o"]
 atlas = ExtResource("5_febl7")
 region = Rect2(0, 64, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_v7ptp"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nw6y"]
 atlas = ExtResource("5_febl7")
 region = Rect2(0, 96, 32, 32)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_v7ptp"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_6775b"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ph5q8")
+"texture": SubResource("AtlasTexture_cta61")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yteb7")
+"texture": SubResource("AtlasTexture_febl7")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_b1xv2")
+"texture": SubResource("AtlasTexture_lkp8o")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_v7ptp")
+"texture": SubResource("AtlasTexture_7nw6y")
 }, {
 "duration": 1.0,
 "texture": null
@@ -53,17 +54,22 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Resource" id="Resource_xbqjt"]
+[sub_resource type="Resource" id="Resource_f71kk"]
 script = ExtResource("2_4usol")
-commands = Array[ExtResource("3_uw4pk")]([SubResource("Resource_wkhxn")])
+commands = Array[ExtResource("3_uw4pk")]([SubResource("Resource_uw4pk")])
 frame_size = Vector2(32, 32)
-sprite_frames = SubResource("SpriteFrames_v7ptp")
+sprite_frames = SubResource("SpriteFrames_6775b")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_alami"]
+[sub_resource type="Resource" id="Resource_qa3tg"]
+script = ExtResource("6_4usol")
+flag_name = "A"
+scope = 1
+
+[sub_resource type="Resource" id="Resource_h6xha"]
 script = ExtResource("2_4usol")
+root_condition = SubResource("Resource_qa3tg")
 through = true
-required_self_switch = 1
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x7w3d"]
@@ -79,7 +85,7 @@ animations = [{
 
 [node name="Tree" type="Node2D"]
 script = ExtResource("1_rklyq")
-pages = Array[ExtResource("2_4usol")]([SubResource("Resource_xbqjt"), SubResource("Resource_alami")])
+pages = Array[ExtResource("2_4usol")]([SubResource("Resource_f71kk"), SubResource("Resource_h6xha")])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_x7w3d")

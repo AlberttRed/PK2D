@@ -543,8 +543,11 @@ func play_mo_end() -> void:
 	await _play_mo_segment(_get_mo_end_frames(), false)
 	_mo_sequence_active = false
 	_restore_mo_state()
-	# NO notificar que terminó aquí - puede haber más animaciones MO después (como start_surf)
-	# La notificación se hará cuando termine toda la secuencia (en start_surf, end_surf, etc.)
+	# Notificar que terminó la secuencia MO completa
+	# Esto es necesario para que DisplayManager pueda reanudar el juego correctamente
+	var dm := DisplayManager.instance
+	if dm:
+		dm.notify_mo_animation_finished()
 
 func _get_mo_start_frames() -> SpriteFrames:
 	if actor_style and actor_style.mo_start_frames:

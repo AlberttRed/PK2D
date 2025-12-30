@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://da2qg21ij71cs"]
+[gd_scene load_steps=12 format=3 uid="uid://da2qg21ij71cs"]
 
 [ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="1_s1pap"]
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="2_na5sx"]
@@ -6,10 +6,16 @@
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="3_d3vcq"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="3_x7w3d"]
 [ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="4_animator"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="4_d3vcq"]
 [ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="5_reflection"]
+
+[sub_resource type="Resource" id="Resource_yvho7"]
+script = ExtResource("4_d3vcq")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
 [sub_resource type="Resource" id="Resource_1p8h3"]
 script = ExtResource("2_puqj1")
+trigger = SubResource("Resource_yvho7")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x7w3d"]
@@ -24,6 +30,7 @@ animations = [{
 }]
 
 [node name="Event" type="Node2D"]
+z_index = 1
 script = ExtResource("1_s1pap")
 pages = Array[ExtResource("2_puqj1")]([SubResource("Resource_1p8h3")])
 

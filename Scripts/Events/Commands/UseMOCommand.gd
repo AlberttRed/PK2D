@@ -65,7 +65,9 @@ func execute(context: Node) -> void:
 	# Solicitar la ejecución de la MO a través del contexto
 	var result: Dictionary = await overworld_context.request_mo(mo_type_str, target)
 
-	# Si fue exitoso, activar self-switch
+	# Si fue exitoso, activar self-switch (si está configurado)
+	# Nota: CUT ya aplica sus efectos (through=true, trigger=null) en CutAction.execute()
+	# pero también puede activar un self-switch si se necesita
 	if result.get("success", false) and not activate_self_switch_on_success.is_empty():
 		_activate_self_switch(target, activate_self_switch_on_success)
 
