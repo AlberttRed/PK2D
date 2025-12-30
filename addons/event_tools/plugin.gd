@@ -268,9 +268,18 @@ func _is_event_node(node: Node) -> bool:
 
 	var script = node.get_script()
 	if script:
-		if script.resource_path.ends_with("Event.gd") or script.get_global_name() == "Event":
+		var script_path = script.resource_path
+		var script_class = script.get_global_name()
+
+		# Verificar si es Event, NPC o Trainer directamente
+		if script_class == "Event" or script_class == "NPC" or script_class == "Trainer":
 			return true
 
+		# Verificar por ruta del script
+		if script_path.ends_with("Event.gd") or script_path.ends_with("NPC.gd") or script_path.ends_with("Trainer.gd"):
+			return true
+
+	# Fallback: verificar si tiene métodos característicos de Event
 	return node.has_method("trigger") and node.has_method("setup_current_page")
 
 ## Verifica si un PopupMenu es un menú contextual del viewport

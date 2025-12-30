@@ -255,27 +255,27 @@ func _get_current_grid() -> Node:
 			return grid
 	return null
 
-## Pobla el dropdown con los eventos del mapa
+## Pobla el dropdown con Player y los NPCs/Trainers del mapa
 func _populate_target_names() -> void:
 	if not target_option:
 		return
 
 	target_option.clear()
 
-	# Si tenemos el event_node, obtener los eventos del mapa
+	# Primero añadir "Player" como primera opción
+	target_option.add_item("Player")
+
+	# Si tenemos el event_node, obtener los NPCs/Trainers del mapa
 	if _event_node:
 		var grid = _get_current_grid()
 		if grid:
 			var events_container = grid.get_node_or_null("Events")
 			if events_container:
 				for child in events_container.get_children():
-					if child is Event or (child.has_method("trigger") and child.has_method("setup_current_page")):
+					# Solo incluir NPCs y Trainers (no eventos normales)
+					if child is NPC or child is Trainer:
 						if child.name != "":
 							target_option.add_item(child.name)
-
-	# Si no hay eventos, añadir un placeholder
-	if target_option.get_item_count() == 0:
-		target_option.add_item("(sin eventos)")
 
 ## Obtiene el nombre descriptivo de una acción
 func _get_action_display_name(action: int) -> String:
@@ -442,23 +442,21 @@ func _set_target_selection(target_name: String) -> void:
 	if not target_option:
 		return
 
-	# Si está vacío, seleccionar el evento actual si está en la lista
+	# Si está vacío, seleccionar "Player" (primera opción) por defecto
 	if target_name.is_empty():
-		if target_option.get_item_count() > 0 and _event_node and _event_node.name != "":
-			for i in range(target_option.get_item_count()):
-				if target_option.get_item_text(i) == _event_node.name:
-					target_option.selected = i
-					return
-		# Si no se encuentra el evento actual, seleccionar el primero disponible
 		if target_option.get_item_count() > 0:
-			target_option.selected = 0
+			target_option.selected = 0  # "Player" es la primera opción
 		return
 
-	# Buscar el evento en el dropdown
+	# Buscar el target en el dropdown (puede ser "Player" o un NPC/Trainer)
 	for i in range(target_option.get_item_count()):
 		if target_option.get_item_text(i) == target_name:
 			target_option.selected = i
 			return
+
+	# Si no se encuentra, seleccionar "Player" por defecto
+	if target_option.get_item_count() > 0:
+		target_option.selected = 0
 
 ## Aplica los valores editados al comando
 func _apply_values_to_command() -> void:
@@ -471,12 +469,9 @@ func _apply_values_to_command() -> void:
 		var selected_index = target_option.selected
 		if selected_index >= 0 and selected_index < target_option.get_item_count():
 			var selected_text = target_option.get_item_text(selected_index)
-			if selected_text != "(sin eventos)":
-				# Si el evento seleccionado es el evento actual, dejar target_name vacío
-				if _event_node and _event_node.name != "" and selected_text == _event_node.name:
-					target_name = ""
-				else:
-					target_name = selected_text
+			# "Player" se guarda como "Player", no como vacío
+			# Los NPCs/Trainers se guardan con su nombre
+			target_name = selected_text
 
 	command.target_name = target_name
 

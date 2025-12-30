@@ -6,6 +6,8 @@ signal event_triggered(page)
 ##Lista de páginas de evento (EventPage) que puede ejecutar el vento, cada una con su lista de comandos (EventCommand) definida.
 @export var pages: Array[EventPage] = []
 @export var current_page_index: int = 0
+## Si está deshabilitado, el evento no se disparará (útil para debug)
+@export var disabled: bool = false
 
 var current_page: Resource = null
 
@@ -105,10 +107,14 @@ func setup_current_page() -> void:
 			current_page_index = selected_index
 			current_page = selected_page
 			update_sprite_from_current_page()
+			# Actualizar ocupación cuando cambia la página (puede cambiar through)
+			_refresh_occupancy()
 			print("Event '%s': Página activa cambiada a índice %d" % [name, selected_index])
 		else:
 			current_page = selected_page
 			update_sprite_from_current_page()
+			# Actualizar ocupación cuando cambia la página (puede cambiar through)
+			_refresh_occupancy()
 		return
 
 	# Si todas tienen condiciones y ninguna cumple, no ejecutar ninguna página
@@ -123,6 +129,10 @@ func update_sprite_from_current_page() -> void:
 		return
 
 	if current_page:
+		# Aplicar posición de la página si está definida
+		if current_page.page_position.x >= 0 and current_page.page_position.y >= 0:
+			_apply_page_position(current_page.page_position)
+
 		var style: ActorStyle = current_page.actor_style
 		if style:
 			actor_animator.apply_style(style)
@@ -168,18 +178,93 @@ func update_sprite_from_current_page() -> void:
 							actor_animator.sprite.animation = anim_to_show
 							# Establecer el frame inmediatamente
 							actor_animator.sprite.frame = frame_to_show
-							# También establecerlo de forma diferida como respaldo, por si AnimatedSprite2D lo resetea
-							_set_initial_frame_deferred(actor_animator.sprite, frame_to_show)
+				else:
+					# Para NPCs, simplemente mostrar el sprite (ya manejan sus propias animaciones)
+					pass
 			else:
-				actor_animator.sprite.sprite_frames = null
+				# No hay frames, ocultar el sprite (como en NPC.gd)
 				actor_animator.hide_sprite()
 	else:
-		actor_animator.apply_style(null)
-		actor_animator.sprite.sprite_frames = null
+		# No hay página activa, ocultar sprite
 		actor_animator.hide_sprite()
 
-	# Actualizar ocupación en el grid (through, blocks_player)
-	_refresh_occupancy()
+## Aplica la posición de la página al evento
+## Convierte coordenadas de celda a posición del mundo usando el OverworldGrid
+## cell_pos está en coordenadas ajustadas (0,0 es la esquina superior izquierda del mapa visible)
+## Necesitamos convertirlo a coordenadas reales del TileMapLayer antes de aplicar
+func _apply_page_position(cell_pos: Vector2i) -> void:
+	# Buscar el OverworldGrid en la jerarquía
+	var grid = _get_grid()
+	if not grid:
+		push_warning("Event '%s': No se encontró OverworldGrid para aplicar posición de página" % name)
+		return
+
+	# Obtener la capa de referencia para acceder al used_rect
+	var ref_layer = grid.reference_layer()
+	if not ref_layer:
+		push_warning("Event '%s': No se encontró capa de referencia para aplicar posición de página" % name)
+		return
+
+	# Obtener la celda actual antes de mover para liberar la ocupación
+	# Usar global_position para obtener la celda actual (antes de mover)
+	var old_tile = grid.world_to_tile(global_position)
+	print("Event '%s': Liberando ocupación de celda original: (%d, %d), posición global: (%.1f, %.1f)" % [name, old_tile.x, old_tile.y, global_position.x, global_position.y])
+
+	# Liberar ocupación de la celda anterior (siempre, independientemente de through)
+	# Esto es importante porque el evento se registró inicialmente en esta posición
+	grid.unregister_event(old_tile, self)
+	grid.vacate(old_tile, self)
+
+	# Convertir coordenadas ajustadas a coordenadas reales del TileMapLayer
+	# Las coordenadas guardadas están ajustadas (0,0 es esquina superior izquierda visible)
+	# Necesitamos sumar el offset negativo del used_rect para obtener las coordenadas reales
+	var used_rect = ref_layer.get_used_rect()
+	var real_cell_pos = cell_pos
+	if used_rect.position.x < 0 or used_rect.position.y < 0:
+		# Ajustar de vuelta a coordenadas reales sumando el offset negativo
+		real_cell_pos = cell_pos + used_rect.position
+
+	# Convertir coordenadas de celda reales a posición del mundo
+	var world_pos = grid.tile_to_world_center(real_cell_pos)
+
+	# Aplicar la posición al evento usando global_position
+	global_position = world_pos
+
+	# Registrar en la nueva celda (usar global_position después de mover)
+	var new_tile = grid.world_to_tile(global_position)
+	grid.register_event(new_tile, self)
+	if not current_page or not current_page.through:
+		grid.occupy(new_tile, self)
+
+	# Actualizar el Occupancy para que use la nueva posición
+	# Esto es importante porque register_event_occupancy puede ejecutarse después con call_deferred
+	var occupancy_node = get_node_or_null("Occupancy")
+	if occupancy_node and occupancy_node.grid:
+		# Forzar actualización de la ocupación en la nueva posición
+		occupancy_node.refresh_occupancy()
+
+	print("Event '%s': Posición aplicada desde página: celda ajustada (%d, %d) -> celda real (%d, %d) -> mundo (%.1f, %.1f), tile anterior: (%d, %d), tile nuevo: (%d, %d)" % [name, cell_pos.x, cell_pos.y, real_cell_pos.x, real_cell_pos.y, world_pos.x, world_pos.y, old_tile.x, old_tile.y, new_tile.x, new_tile.y])
+
+## Obtiene el OverworldGrid desde la jerarquía del evento
+func _get_grid() -> OverworldGrid:
+	# Buscar en los padres
+	var parent = get_parent()
+	while parent:
+		if parent is OverworldGrid:
+			return parent as OverworldGrid
+		# También buscar en los hijos del parent (puede estar en un contenedor)
+		if parent.has_method("get_node"):
+			var grid = parent.get_node_or_null("OverworldGrid")
+			if grid and grid is OverworldGrid:
+				return grid as OverworldGrid
+		parent = parent.get_parent()
+
+	# Buscar en el grupo
+	var grids = get_tree().get_nodes_in_group("OverworldGrid")
+	if not grids.is_empty():
+		return grids[0] as OverworldGrid
+
+	return null
 
 ## Establece el frame inicial de forma diferida para evitar que AnimatedSprite2D lo resetee
 func _set_initial_frame_deferred(sprite: AnimatedSprite2D, frame_index: int) -> void:
@@ -191,6 +276,10 @@ func _set_initial_frame_deferred(sprite: AnimatedSprite2D, frame_index: int) -> 
 ## Intenta activar el evento con la señal dada
 ## Retorna true si el evento se activó, false en caso contrario
 func try_fire(signal_type: EventTriggerSignal.SignalType, instigator: Node) -> bool:
+	# Si el evento está deshabilitado, no se dispara
+	if disabled:
+		return false
+
 	if not current_page:
 		return false
 
@@ -208,6 +297,10 @@ func try_fire(signal_type: EventTriggerSignal.SignalType, instigator: Node) -> b
 	return true
 
 func trigger() -> void:
+	# Si el evento está deshabilitado, no se dispara
+	if disabled:
+		return
+
 	if current_page:
 		print("Event '%s' triggered!" % name)
 		event_triggered.emit(current_page)
@@ -302,6 +395,10 @@ func refresh_active_page() -> void:
 
 ## Dispara el autorun cuando la página se activa
 func _fire_autorun() -> void:
+	# Si el evento está deshabilitado, no se dispara
+	if disabled:
+		return
+
 	if current_page and overworld_context:
 		try_fire(EventTriggerSignal.SignalType.PAGE_ACTIVATED, self)
 

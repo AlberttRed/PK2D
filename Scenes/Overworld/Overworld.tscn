@@ -52,5 +52,3 @@ script = ExtResource("8_wild_encounter")
 
 [node name="TileMotionSystem" type="Node" parent="."]
 script = ExtResource("9_tile_motion")
-
-[node name="OverworldEffectsLayer" type="Node2D" parent="."]

@@ -16,14 +16,10 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5yaag"]
 shader = ExtResource("6_x884u")
-shader_parameter/hFrames = 4
-shader_parameter/vFrames = 4
-shader_parameter/enableMovement = true
-shader_parameter/displacementPixels = 1
-shader_parameter/timeGap = 0.4
-shader_parameter/speed = 1.25
-shader_parameter/leftSideRelationTime = 0.3
-shader_parameter/rightSideRelationTime = 0.3
+shader_parameter/enableWave = true
+shader_parameter/waveAmplitude = 1.0
+shader_parameter/waveFrequency = 4.0
+shader_parameter/waveSpeed = 1.0
 shader_parameter/color = Color(1, 1, 1, 1)
 shader_parameter/colorMix = 0.249999994412
 shader_parameter/alpha = 1.0
@@ -32,7 +28,7 @@ shader_parameter/alpha = 1.0
 script = ExtResource("12_x884u")
 pokemon_id = 7
 gender = 1
-custom_move_ids = Array[int]([148, 70, 57])
+custom_move_ids = Array[int]([148, 70, 57, 15])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [sub_resource type="Resource" id="Resource_p0ptx"]
@@ -62,7 +58,6 @@ metadata/_edit_lock_ = true
 
 [node name="ReflectionSprite" parent="." instance=ExtResource("15_reflection")]
 material = SubResource("ShaderMaterial_5yaag")
-flip_v = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("5_0hlcb")

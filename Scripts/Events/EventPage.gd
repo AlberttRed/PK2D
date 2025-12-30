@@ -48,6 +48,11 @@ enum ExecutionMode { QUEUED, PARALLEL }
 ## Útil para mantener la dirección después de interactuar (ej: NPC mirando hacia el jugador)
 @export var preserve_direction_on_sprite_match: bool = false
 
+## Posición específica de esta página (en coordenadas de celda del mapa)
+## Si está definida (x >= 0, y >= 0), el evento se posicionará aquí cuando esta página esté activa
+## Si no está definida (x < 0 o y < 0), se usa la posición del nodo Event
+@export var page_position: Vector2i = Vector2i(-1, -1)
+
 @export_group("Random Movement (NPC)")
 ## Tiempo mínimo entre movimientos aleatorios (en segundos)
 @export var random_move_interval_min: float = 2.0
@@ -250,12 +255,6 @@ func get_battle_command() -> StartBattleEventCommand:
 
 
 ## Obtiene el trigger efectivo de esta página
-## Si trigger es null, retorna un ActionTrigger por defecto
+## Si trigger es null, retorna null (el evento no se activará)
 func get_effective_trigger() -> EventTrigger:
-	if trigger != null:
-		return trigger
-
-	# Si no hay trigger asignado, usar ActionTrigger por defecto
-	# Crear una instancia temporal (no se guarda en el Resource)
-	var default_trigger = ActionTrigger.new()
-	return default_trigger
+	return trigger

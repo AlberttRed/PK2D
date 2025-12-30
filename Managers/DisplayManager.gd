@@ -738,12 +738,16 @@ func _update_game_pause_state() -> void:
 	if should_pause and not get_tree().paused:
 		get_tree().paused = true
 		if has_mo_animation:
-			print("DisplayManager: Juego pausado (animación MO activa)")
+			print("DisplayManager: Juego pausado (animación MO activa, count: %d)" % _mo_animation_count)
 		else:
 			print("DisplayManager: Juego pausado (UI visible)")
 	elif not should_pause and get_tree().paused:
 		get_tree().paused = false
-		print("DisplayManager: Juego reanudado (sin UI visible ni animaciones MO)")
+		print("DisplayManager: Juego reanudado (sin UI visible ni animaciones MO, count: %d)" % _mo_animation_count)
+	else:
+		# Debug: mostrar estado actual
+		if get_tree().paused:
+			print("DisplayManager: Juego sigue pausado (UI visible: %s, MO anim: %s, count: %d)" % [has_ui_visible, has_mo_animation, _mo_animation_count])
 
 ## Callback cuando cambia la visibilidad de cualquier elemento de UI
 func _on_ui_visibility_changed() -> void:

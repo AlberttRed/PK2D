@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://cf05ppc8ofttk"]
+[gd_scene load_steps=94 format=4 uid="uid://cf05ppc8ofttk"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_5d54t"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_4p6pp"]
@@ -7,6 +7,410 @@
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_a4jtd"]
 [ext_resource type="PackedScene" uid="uid://b5fhgiixlauaq" path="res://Scenes/Events/Tree.tscn" id="4_xvnub"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_01hf3"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="5_3rges"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="7_8h5rh"]
+[ext_resource type="Script" uid="uid://dhtm8wpq4l7x2" path="res://Scripts/Events/Commands/UseMOCommand.gd" id="7_327e4"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="8_lp6sc"]
+[ext_resource type="Texture2D" uid="uid://cvsjona53tch5" path="res://Sprites/Eventos/MOs/Object tree 1.png" id="8_pyuu8"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="9_6dcor"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="10_i1iq1"]
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="11_6dcor"]
+[ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="13_xv5o3"]
+[ext_resource type="Script" uid="uid://c1hr8s5cdrs4o" path="res://Scripts/Events/Commands/ShowChoicesCommand.gd" id="14_14w7i"]
+[ext_resource type="Texture2D" uid="uid://coqylrlf7wps" path="res://Sprites/Overworlds/Characters/trchar037.png" id="15_i1iq1"]
+[ext_resource type="Texture2D" uid="uid://c7oaek6l7eslq" path="res://Sprites/Overworlds/Characters/NPC 05.png" id="16_xv5o3"]
+[ext_resource type="Texture2D" uid="uid://bfcane6ehs7ny" path="res://Sprites/Overworlds/Characters/NPC 06.png" id="17_14w7i"]
+[ext_resource type="Texture2D" uid="uid://bcujy2w1kpn1s" path="res://Sprites/Overworlds/Characters/NPC 04.png" id="18_327e4"]
+[ext_resource type="Texture2D" uid="uid://blmpusc0kpprs" path="res://Sprites/Overworlds/Characters/trchar016.png" id="18_btaog"]
+[ext_resource type="Texture2D" uid="uid://dunsy3sy7nig" path="res://Sprites/Overworlds/Characters/NPC 29.png" id="19_b2r7a"]
+[ext_resource type="Script" uid="uid://d3rkctbb4gj2y" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="22_327e4"]
+[ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="22_pyuu8"]
+
+[sub_resource type="Resource" id="Resource_b2r7a"]
+script = ExtResource("7_327e4")
+activate_self_switch_on_success = ""
+metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hvkqg"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_327e4"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pyuu8"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eptu1"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4ex1d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hvkqg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_327e4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pyuu8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eptu1")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_eirno"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_23k8v"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_eirno")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_b2r7a")])
+frame_size = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_4ex1d")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_hvkqg"]
+script = ExtResource("7_327e4")
+activate_self_switch_on_success = ""
+metadata/_custom_type_script = "uid://dhtm8wpq4l7x2"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ex1d"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eirno"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_23k8v"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ig67b"]
+atlas = ExtResource("8_pyuu8")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xvexo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ex1d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eirno")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_23k8v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ig67b")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_i2qpx"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_m3sto"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_i2qpx")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_hvkqg")])
+frame_size = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_xvexo")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_ig67b"]
+script = ExtResource("9_6dcor")
+message = "PISTAS ENTRENADOR"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_xvexo"]
+script = ExtResource("9_6dcor")
+message = "Los ataques de los POKéMON dependen de sus PUNTOS de PODER o PP."
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_s0txd"]
+script = ExtResource("9_6dcor")
+message = "¡Para rellenar tus PP, deja que tus cansados POKéMON descansen en un CENTRO POKéMON!"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_fqta6"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_nn4co"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_fqta6")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_ig67b"), SubResource("Resource_xvexo"), SubResource("Resource_s0txd")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_tin7k"]
+script = ExtResource("9_6dcor")
+message = "¡CATERPIE no tiene veneno; pero WEEDLE, sí!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_5ttma"]
+script = ExtResource("9_6dcor")
+message = "¡Cuidado con su PICOTAZO VENENOSO!"
+
+[sub_resource type="Resource" id="Resource_la7uh"]
+script = ExtResource("13_xv5o3")
+label = "Sí"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_tin7k"), SubResource("Resource_5ttma")])
+
+[sub_resource type="Resource" id="Resource_h1rwo"]
+script = ExtResource("9_6dcor")
+message = "Vale, pues nada."
+
+[sub_resource type="Resource" id="Resource_jpogs"]
+script = ExtResource("13_xv5o3")
+label = "No"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_h1rwo")])
+
+[sub_resource type="Resource" id="Resource_56tst"]
+script = ExtResource("14_14w7i")
+message = "¿Quieres saber algo sobre los dos tipos de orugas POKéMON?"
+branches = Array[ExtResource("13_xv5o3")]([SubResource("Resource_la7uh"), SubResource("Resource_jpogs")])
+
+[sub_resource type="Resource" id="Resource_cj17r"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_5lcln"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_cj17r")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_56tst")])
+movement_type = 5
+initial_direction = 0
+sprite_texture = ExtResource("15_i1iq1")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_kqppf"]
+script = ExtResource("9_6dcor")
+message = "¿Llevas POKé BALLS?
+¡Entonces tú tienes POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_b5s8x"]
+script = ExtResource("9_6dcor")
+message = "¡Es genial poder llevar y usar los POKéMON en cualquier momento y lugar!"
+
+[sub_resource type="Resource" id="Resource_scebk"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_kudfp"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_scebk")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_kqppf"), SubResource("Resource_b5s8x")])
+movement_type = 1
+sprite_texture = ExtResource("16_xv5o3")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_dp67c"]
+script = ExtResource("9_6dcor")
+message = "¡Uaaaahuuh...!
+Debo de haberme dormido al sol..."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_x6ujv"]
+script = ExtResource("9_6dcor")
+message = "He soñado que un DROWZEE se comía mi sueño."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_j1cem"]
+script = ExtResource("9_6dcor")
+message = "¡¡Y he aprendido a comer sueños!!
+¡¡¡Qué miedo!!!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_d3lrq"]
+script = ExtResource("9_6dcor")
+message = "¿A qué POKéMON quieres que le enseñe COME SUEÑOS?"
+
+[sub_resource type="Resource" id="Resource_sdwel"]
+script = ExtResource("13_xv5o3")
+label = "Sí"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_d3lrq")])
+
+[sub_resource type="Resource" id="Resource_iwcu3"]
+script = ExtResource("9_6dcor")
+message = "Pues vaya... Zz... Zzzzzz..."
+
+[sub_resource type="Resource" id="Resource_0eeq6"]
+script = ExtResource("13_xv5o3")
+label = "No"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_iwcu3")])
+
+[sub_resource type="Resource" id="Resource_nior7"]
+script = ExtResource("14_14w7i")
+message = "Este movimiento sólo se puede aprender una vez, ¿vale?"
+branches = Array[ExtResource("13_xv5o3")]([SubResource("Resource_sdwel"), SubResource("Resource_0eeq6")])
+
+[sub_resource type="Resource" id="Resource_ntiha"]
+script = ExtResource("13_xv5o3")
+label = "Sí"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_nior7")])
+
+[sub_resource type="Resource" id="Resource_b161o"]
+script = ExtResource("9_6dcor")
+message = "Pues vaya... Zz... Zzzzzz..."
+
+[sub_resource type="Resource" id="Resource_hbsay"]
+script = ExtResource("13_xv5o3")
+label = "No"
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_b161o")])
+
+[sub_resource type="Resource" id="Resource_k6gsb"]
+script = ExtResource("14_14w7i")
+message = "¿Quieres que se lo enseñe a un POKéMON?"
+branches = Array[ExtResource("13_xv5o3")]([SubResource("Resource_ntiha"), SubResource("Resource_hbsay")])
+
+[sub_resource type="Resource" id="Resource_tncsb"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_ug36q"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_tncsb")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_dp67c"), SubResource("Resource_x6ujv"), SubResource("Resource_j1cem"), SubResource("Resource_k6gsb")])
+sprite_texture = ExtResource("17_14w7i")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_uw4fc"]
+script = ExtResource("9_6dcor")
+message = "CIUDAD VERDE
+EL paraíso del eterno verdor."
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_d57u2"]
+script = ExtResource("10_i1iq1")
+
+[sub_resource type="Resource" id="Resource_08qta"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_d57u2")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_uw4fc")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_327e4"]
+script = ExtResource("9_6dcor")
+message = "¡Oh, abuelo!
+¡No seas tan malo!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_pyuu8"]
+script = ExtResource("9_6dcor")
+message = "Lo siento, todavía no se ha tomado un café..."
+
+[sub_resource type="Resource" id="Resource_eptu1"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_4ex1d"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_eptu1")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_327e4"), SubResource("Resource_pyuu8")])
+orientation_behavior = 2
+initial_direction = 0
+sprite_texture = ExtResource("18_327e4")
+is_spritesheet = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_jxroq"]
+script = ExtResource("9_6dcor")
+message = "¡No puedes pasar por aquí!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_8hxn4"]
+script = ExtResource("9_6dcor")
+message = "¡Es propiedad privada!"
+
+[sub_resource type="Resource" id="Resource_55u6y"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_aujwr"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_55u6y")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_jxroq"), SubResource("Resource_8hxn4")])
+sprite_texture = ExtResource("19_b2r7a")
+is_spritesheet = true
+frame_size = Vector2(48, 48)
+sprite_offset = Vector2(0, -8)
+sprite_offset_configured = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_catiq"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_hjd3g"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_catiq")
+initial_direction = 0
+sprite_texture = ExtResource("18_btaog")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_w7yed"]
+script = ExtResource("9_6dcor")
+message = "¡No puedes pasar por aquí!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_fav8r"]
+script = ExtResource("9_6dcor")
+message = "¡Es propiedad privada!"
+
+[sub_resource type="Resource" id="Resource_k23je"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([1])
+
+[sub_resource type="Resource" id="Resource_lxmti"]
+script = ExtResource("9_6dcor")
+
+[sub_resource type="Resource" id="Resource_dumr7"]
+script = ExtResource("22_327e4")
+
+[sub_resource type="Resource" id="Resource_4y6lq"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_dumr7")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_w7yed"), SubResource("Resource_fav8r"), SubResource("Resource_k23je"), SubResource("Resource_lxmti")])
+through = true
+frame_size = Vector2(48, 48)
+sprite_offset = Vector2(0, -8)
+sprite_offset_configured = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_01hf3")
@@ -65,11 +469,50 @@ y_sort_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="Tree" parent="OverworldGrid/Events" instance=ExtResource("4_xvnub")]
+z_index = 1
 position = Vector2(-272, 208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_23k8v")])
 
 [node name="Tree2" parent="OverworldGrid/Events" instance=ExtResource("4_xvnub")]
 z_index = 1
 position = Vector2(-48, -400)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_m3sto")])
+
+[node name="Cartel_Madera1" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(16, 432)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_nn4co")])
+
+[node name="Chico_NPC" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(432, 272)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_5lcln")])
+
+[node name="Chico_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(-112, 144)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_kudfp")])
+
+[node name="Chico_NPC3" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(-368, 272)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_ug36q")])
+
+[node name="Cartel_Blanco1" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(16, -48)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_08qta")])
+
+[node name="Mujer_NPC1" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(16, -176)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_4ex1d")])
+
+[node name="Abuelo" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(48, -208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_aujwr")])
+
+[node name="Abuelo_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(464, -208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_hjd3g")])
+
+[node name="Abuelo_1" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(80, -208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_4y6lq")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

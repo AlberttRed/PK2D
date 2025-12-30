@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://djy5tdk6yi3oa"]
+[gd_scene load_steps=46 format=4 uid="uid://djy5tdk6yi3oa"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_6iru3"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_hhdvd"]
@@ -11,9 +11,15 @@
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_4qtb2"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="7_52bmq"]
 [ext_resource type="Script" uid="uid://3wvstn8m5q1k" path="res://Scripts/Events/Commands/ShowPortraitCommand.gd" id="8_a7582"]
-[ext_resource type="Script" uid="uid://bishot1cjlcrk" path="res://Scripts/Resources/ChoiceBranch.gd" id="9_57xhp"]
+[ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="9_57xhp"]
 [ext_resource type="Script" uid="uid://bywrdnse71xj2" path="res://Scripts/Events/Commands/ClosePortraitCommand.gd" id="10_n2obv"]
 [ext_resource type="Script" uid="uid://c1hr8s5cdrs4o" path="res://Scripts/Events/Commands/ShowChoicesCommand.gd" id="10_ydbos"]
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="12_a7582"]
+[ext_resource type="Script" uid="uid://bgcnb3pt4dxi7" path="res://Scripts/Events/Commands/SetSelfSwitchCommand.gd" id="14_c6nd2"]
+[ext_resource type="Texture2D" uid="uid://cso14u5l1yhgj" path="res://Sprites/Overworlds/Characters/trchar030.png" id="14_ydbos"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="15_57xhp"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="17_oyhmp"]
+[ext_resource type="Texture2D" uid="uid://c7oaek6l7eslq" path="res://Sprites/Overworlds/Characters/NPC 05.png" id="18_oyhmp"]
 
 [sub_resource type="Resource" id="Resource_c6nd2"]
 script = ExtResource("7_52bmq")
@@ -60,6 +66,85 @@ metadata/_custom_type_script = "uid://c1hr8s5cdrs4o"
 [sub_resource type="Resource" id="Resource_44lcn"]
 script = ExtResource("5_n2obv")
 commands = Array[ExtResource("6_4qtb2")]([SubResource("Resource_c6nd2"), SubResource("Resource_oyhmp"), SubResource("Resource_xa5ve")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n84oc"]
+script = ExtResource("7_52bmq")
+message = "¡Hola!
+Trabajo en una tienda POKéMON."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_y1nf8"]
+script = ExtResource("7_52bmq")
+message = "Tenemos muchas cosas. Visítanos en CIUDAD VERDE."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_22b6i"]
+script = ExtResource("7_52bmq")
+message = "¡Mira, te daré una muestra!
+¡Aquí tienes!"
+
+[sub_resource type="Resource" id="Resource_ch4yx"]
+script = ExtResource("14_c6nd2")
+
+[sub_resource type="Resource" id="Resource_staup"]
+script = ExtResource("15_57xhp")
+
+[sub_resource type="Resource" id="Resource_eles3"]
+script = ExtResource("5_n2obv")
+trigger = SubResource("Resource_staup")
+commands = Array[ExtResource("6_4qtb2")]([SubResource("Resource_n84oc"), SubResource("Resource_y1nf8"), SubResource("Resource_22b6i"), SubResource("Resource_ch4yx")])
+movement_type = 1
+preserve_direction_on_sprite_match = true
+sprite_texture = ExtResource("14_ydbos")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_yawe0"]
+script = ExtResource("7_52bmq")
+message = "¡También tenemos POKé BALLS para capturar los POKéMON!"
+
+[sub_resource type="Resource" id="Resource_vjj8r"]
+script = ExtResource("17_oyhmp")
+flag_name = "A"
+scope = 1
+
+[sub_resource type="Resource" id="Resource_teq0i"]
+script = ExtResource("5_n2obv")
+commands = Array[ExtResource("6_4qtb2")]([SubResource("Resource_yawe0")])
+root_condition = SubResource("Resource_vjj8r")
+preserve_direction_on_sprite_match = true
+sprite_texture = ExtResource("14_ydbos")
+is_spritesheet = true
+
+[sub_resource type="Resource" id="Resource_h6xiq"]
+script = ExtResource("7_52bmq")
+message = "¿Ves esos bordes del camino?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ohtpu"]
+script = ExtResource("7_52bmq")
+message = "Dan miedo, pero puedes saltar por encima de ellos."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_6abin"]
+script = ExtResource("7_52bmq")
+message = "¡De esa forma podrás volver más rápido a PUEBLO PALETA!"
+
+[sub_resource type="Resource" id="Resource_c4tkb"]
+script = ExtResource("15_57xhp")
+
+[sub_resource type="Resource" id="Resource_vu41d"]
+script = ExtResource("5_n2obv")
+trigger = SubResource("Resource_c4tkb")
+commands = Array[ExtResource("6_4qtb2")]([SubResource("Resource_h6xiq"), SubResource("Resource_ohtpu"), SubResource("Resource_6abin")])
+movement_type = 6
+sprite_texture = ExtResource("18_oyhmp")
+is_spritesheet = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
@@ -115,6 +200,14 @@ metadata/_edit_lock_ = true
 [node name="Event" parent="OverworldGrid/Events" instance=ExtResource("4_vlj7b")]
 position = Vector2(304, 112)
 pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_44lcn")])
+
+[node name="NPC_Tienda" parent="OverworldGrid/Events" instance=ExtResource("12_a7582")]
+position = Vector2(208, -16)
+pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_eles3"), SubResource("Resource_teq0i")])
+
+[node name="NPC_Hombre" parent="OverworldGrid/Events" instance=ExtResource("12_a7582")]
+position = Vector2(624, -400)
+pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_vu41d")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 
