@@ -30,6 +30,10 @@ func setup_effects(grass_effect: PackedScene, overlay: PackedScene, stepped: Pac
 
 
 func on_step_started_to_tile(grid: OverworldGrid, destination_tile: Vector2i, actor: Node2D) -> void:
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		return
+
 	_hide_overlay_for_actor(actor)
 	_last_overlay_tiles[actor] = Vector2i(-9999, -9999)
 
@@ -40,6 +44,10 @@ func on_step_started_to_tile(grid: OverworldGrid, destination_tile: Vector2i, ac
 
 
 func on_step_finished_on_tile(grid: OverworldGrid, tile: Vector2i, actor: Node2D, had_collision: bool) -> void:
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		return
+
 	if had_collision:
 		_ensure_overlay_z_index_for_actor(actor, OVERLAY_Z_HIGH)
 		if not _get_overlay_for_actor(actor):
@@ -52,23 +60,55 @@ func on_step_finished_on_tile(grid: OverworldGrid, tile: Vector2i, actor: Node2D
 
 
 func on_step_exited_tile(_grid: OverworldGrid, _tile: Vector2i, actor: Node2D) -> void:
-	clear_state_for_actor(actor)
+	# Verificar que el actor sea válido antes de limpiar
+	if is_instance_valid(actor):
+		clear_state_for_actor(actor)
 
 
 func clear_state() -> void:
 	# Limpiar todos los overlays de todos los actores
+	# Primero, limpiar referencias a actores inválidos
+	var valid_actors: Array[Node2D] = []
 	for actor in _active_overlays.keys():
+		if is_instance_valid(actor):
+			valid_actors.append(actor)
+		else:
+			# Actor ya fue liberado, solo limpiar el overlay si existe
+			var overlay = _active_overlays.get(actor)
+			if overlay != null and is_instance_valid(overlay):
+				overlay.queue_free()
+			_active_overlays.erase(actor)
+			_last_overlay_tiles.erase(actor)
+
+	# Ahora limpiar overlays de actores válidos
+	for actor in valid_actors:
 		_hide_overlay_for_actor(actor)
+
 	_last_effect_tile = Vector2i(-9999, -9999)
+	_active_overlays.clear()
 	_last_overlay_tiles.clear()
 
 func clear_state_for_actor(actor: Node2D) -> void:
 	# Limpiar solo el overlay del actor específico
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		# Actor ya fue liberado, limpiar referencias directamente
+		var overlay = _active_overlays.get(actor)
+		if overlay != null and is_instance_valid(overlay):
+			overlay.queue_free()
+		_active_overlays.erase(actor)
+		_last_overlay_tiles.erase(actor)
+		return
+
 	_hide_overlay_for_actor(actor)
 	_last_overlay_tiles.erase(actor)
 
 
 func _ensure_overlay_at_position_for_actor(actor: Node2D, grid: OverworldGrid, tile: Vector2i, z_idx: int) -> void:
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		return
+
 	var target_pos = grid.tile_to_world_center(tile)
 	var overlay = _get_overlay_for_actor(actor)
 
@@ -85,6 +125,10 @@ func _ensure_overlay_at_position_for_actor(actor: Node2D, grid: OverworldGrid, t
 
 
 func _ensure_overlay_z_index_for_actor(actor: Node2D, z_idx: int) -> void:
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		return
+
 	var overlay = _get_overlay_for_actor(actor)
 	if overlay and is_instance_valid(overlay):
 		overlay.z_index = 1  # z_index fijo para overlays de hierba
@@ -107,6 +151,10 @@ func _show_grass_stepped_effect(grid: OverworldGrid, tile: Vector2i) -> void:
 
 
 func _show_overlay_at_position_for_actor(actor: Node2D, world_position: Vector2, z_idx: int) -> void:
+	# Verificar que el actor sea válido
+	if not is_instance_valid(actor):
+		return
+
 	# Verificar si el actor ya tiene un overlay
 	if _get_overlay_for_actor(actor) and is_instance_valid(_get_overlay_for_actor(actor)):
 		return
@@ -121,6 +169,16 @@ func _show_overlay_at_position_for_actor(actor: Node2D, world_position: Vector2,
 
 
 func _hide_overlay_for_actor(actor: Node2D) -> void:
+	# Verificar que el actor sea válido antes de usarlo
+	if not is_instance_valid(actor):
+		# Actor ya fue liberado, limpiar referencias directamente
+		var overlay = _active_overlays.get(actor)
+		if overlay != null and is_instance_valid(overlay):
+			overlay.queue_free()
+		_active_overlays.erase(actor)
+		_last_overlay_tiles.erase(actor)
+		return
+
 	var overlay = _get_overlay_for_actor(actor)
 	if overlay != null and is_instance_valid(overlay):
 		overlay.queue_free()

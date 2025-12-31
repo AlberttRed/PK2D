@@ -150,8 +150,25 @@ func _warp_actor_same_map(actor: Node, spawn_id: String, overworld_context: Over
 		push_warning("WarpCommand: No se encontró el spawn point '%s'" % spawn_id)
 		return
 
-	# Obtener la posición del spawn point
-	var spawn_tile = spawn_point.get_tile_position()
+	# Calcular la posición global del spawn point manualmente
+	# Buscar el MapScene padre para obtener su world_position
+	var map_scene = grid.get_parent()
+	var spawn_global_pos: Vector2
+
+	if map_scene and map_scene is MapScene:
+		# Obtener la posición mundial del mapa directamente
+		var map_world_pos = map_scene.world_position
+		# Obtener la posición local del spawn point
+		var spawn_local_pos = spawn_point.position
+		# Calcular posición global: MapScene.world_position + SpawnPoint.position
+		spawn_global_pos = map_world_pos + spawn_local_pos
+	else:
+		# Fallback: usar global_position si no podemos calcular manualmente
+		spawn_global_pos = spawn_point.global_position
+
+	# Convertir la posición global del spawn point a tile usando el grid activo
+	# Esto asegura que la posición sea relativa al mapa activo
+	var spawn_tile = grid.world_to_tile(spawn_global_pos)
 
 	# Teletransportar el actor
 	if actor.has_method("teleport_to_tile"):

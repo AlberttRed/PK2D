@@ -18,8 +18,15 @@ var main_vbox: VBoxContainer = null
 var reference_tile_layer: TileMapLayer = null  # Capa de referencia para conversión de coordenadas
 var assign_button: Button = null  # Botón para asignar la posición
 
+# Variables para arrastre del mapa
+var is_dragging: bool = false
+var drag_start_pos: Vector2 = Vector2.ZERO
+var camera_start_pos: Vector2 = Vector2.ZERO
+
 ## Señal emitida cuando se selecciona una celda
 signal cell_selected(cell_pos: Vector2i)
+## Señal emitida cuando se cancela la selección
+signal cancelled
 
 func _ready() -> void:
 	print("Event Tools: position_selector_window._ready() llamado")
@@ -27,6 +34,11 @@ func _ready() -> void:
 	size = Vector2i(800, 600)
 	min_size = Vector2i(400, 300)
 	unresizable = false
+	# Configurar la ventana para que sea modal (igual que sprite_editor)
+	always_on_top = false
+	exclusive = true
+	# Conectar la señal de cerrar (botón X) para que haga lo mismo que cancelar
+	close_requested.connect(_on_close_requested)
 
 	# Asegurar que la ventana pueda recibir eventos
 	# Esperar un frame para que la ventana esté completamente inicializada
@@ -147,10 +159,43 @@ func _ready() -> void:
 
 	hbox.add_child(Control.new())  # Spacer
 
+	# Botones de navegación (flechas)
+	var nav_label = Label.new()
+	nav_label.text = "Navegar:"
+	hbox.add_child(nav_label)
+
+	var up_btn = Button.new()
+	up_btn.text = "↑"
+	up_btn.custom_minimum_size = Vector2(30, 30)
+	up_btn.pressed.connect(func(): _move_camera(Vector2.UP))
+	hbox.add_child(up_btn)
+
+	var nav_vbox = VBoxContainer.new()
+	var left_btn = Button.new()
+	left_btn.text = "←"
+	left_btn.custom_minimum_size = Vector2(30, 30)
+	left_btn.pressed.connect(func(): _move_camera(Vector2.LEFT))
+	nav_vbox.add_child(left_btn)
+
+	var right_btn = Button.new()
+	right_btn.text = "→"
+	right_btn.custom_minimum_size = Vector2(30, 30)
+	right_btn.pressed.connect(func(): _move_camera(Vector2.RIGHT))
+	nav_vbox.add_child(right_btn)
+	hbox.add_child(nav_vbox)
+
+	var down_btn = Button.new()
+	down_btn.text = "↓"
+	down_btn.custom_minimum_size = Vector2(30, 30)
+	down_btn.pressed.connect(func(): _move_camera(Vector2.DOWN))
+	hbox.add_child(down_btn)
+
+	hbox.add_child(Control.new())  # Spacer
+
 	# Botón Cancelar
 	var cancel_btn = Button.new()
 	cancel_btn.text = "Cancelar"
-	cancel_btn.pressed.connect(func(): hide())
+	cancel_btn.pressed.connect(_on_cancel_pressed)
 	hbox.add_child(cancel_btn)
 
 	# Botón Asignar posición
@@ -309,8 +354,10 @@ func _on_assign_button_pressed() -> void:
 	# Emitir señal de celda seleccionada
 	cell_selected.emit(selected_cell)
 
-	# Cerrar la ventana
+	# Cerrar la ventana de forma segura
 	hide()
+	# Liberar la ventana después de un frame para evitar errores de X11
+	call_deferred("queue_free")
 
 func _reset_camera() -> void:
 	if not map_instance or not overworld_grid:
@@ -600,11 +647,36 @@ func _on_window_size_changed() -> void:
 func _on_grid_overlay_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event = event as InputEventMouseButton
+		# Click izquierdo: seleccionar celda
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
 			# mouse_event.position está en coordenadas locales del grid_overlay
 			# Como el grid_overlay tiene PRESET_FULL_RECT, sus coordenadas coinciden con el wrapper
 			var local_pos = mouse_event.position
 			_handle_click(local_pos)
+			get_viewport().set_input_as_handled()
+		# Click derecho o central: iniciar arrastre para mover el mapa
+		elif (mouse_event.button_index == MOUSE_BUTTON_RIGHT or mouse_event.button_index == MOUSE_BUTTON_MIDDLE) and mouse_event.pressed:
+			is_dragging = true
+			drag_start_pos = mouse_event.position
+			camera_start_pos = camera.position
+			get_viewport().set_input_as_handled()
+		# Soltar botón: terminar arrastre
+		elif (mouse_event.button_index == MOUSE_BUTTON_RIGHT or mouse_event.button_index == MOUSE_BUTTON_MIDDLE) and not mouse_event.pressed:
+			is_dragging = false
+			get_viewport().set_input_as_handled()
+	elif event is InputEventMouseMotion:
+		if is_dragging and camera:
+			var mouse_event = event as InputEventMouseMotion
+			var drag_delta = drag_start_pos - mouse_event.position
+			# Convertir el delta de píxeles de pantalla a píxeles del mundo según el zoom
+			var world_delta = drag_delta / camera.zoom
+			# Mover la cámara en la dirección opuesta al arrastre
+			camera.position = camera_start_pos + world_delta
+			# Redibujar el overlay
+			if grid_overlay:
+				grid_overlay.queue_redraw()
+			if selected_cell_rect:
+				_update_selected_cell_rect()
 			get_viewport().set_input_as_handled()
 
 func _screen_to_world_position(screen_pos: Vector2) -> Vector2:
@@ -807,4 +879,43 @@ func _draw_grid_overlay() -> void:
 				grid_color,
 				1.0
 			)
+
+## Maneja el cierre de la ventana (botón X o cancelar)
+func _on_close_requested() -> void:
+	# Emitir señal de cancelación
+	cancelled.emit()
+	# Cerrar la ventana de forma segura
+	hide()
+	# Liberar la ventana después de un frame para evitar errores de X11
+	call_deferred("queue_free")
+
+## Maneja el botón cancelar
+func _on_cancel_pressed() -> void:
+	# Emitir señal de cancelación
+	cancelled.emit()
+	# Cerrar la ventana de forma segura
+	hide()
+	# Liberar la ventana después de un frame para evitar errores de X11
+	call_deferred("queue_free")
+
+## Mueve la cámara en una dirección específica
+func _move_camera(direction: Vector2) -> void:
+	if not camera:
+		return
+
+	# Calcular el desplazamiento basado en el tamaño del viewport y el zoom
+	var viewport_size: Vector2
+	if map_viewport:
+		viewport_size = Vector2(map_viewport.size)
+	else:
+		viewport_size = Vector2(800, 600)
+	# Mover una fracción más pequeña del viewport (1/8 del tamaño visible para movimiento más preciso)
+	var move_distance = viewport_size / camera.zoom / 8.0
+	camera.position += direction * move_distance
+
+	# Redibujar el overlay
+	if grid_overlay:
+		grid_overlay.queue_redraw()
+	if selected_cell_rect:
+		_update_selected_cell_rect()
 

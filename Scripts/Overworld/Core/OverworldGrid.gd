@@ -519,11 +519,63 @@ func position_player_at_spawn(spawn_id: String, player: Node) -> bool:
 		push_warning("OverworldGrid: No se encontró el spawn point: " + spawn_id)
 		return false
 
-	# Obtener la posición del spawn point
-	var spawn_position = spawn_point.get_tile_position()
+	# Calcular la posición global del spawn point manualmente
+	# Buscar el MapScene padre para obtener su world_position
+	var map_scene = get_parent()
+	var spawn_global_pos: Vector2
 
-	# Usar el método de posicionamiento por tile
-	var success = position_player_at_tile(spawn_position, player)
+	if map_scene and map_scene is MapScene:
+		# Obtener la posición mundial del mapa directamente
+		var map_world_pos = map_scene.world_position
+		# Obtener la posición local del spawn point
+		var spawn_local_pos = spawn_point.position
+		# Calcular posición global: MapScene.world_position + SpawnPoint.position
+		spawn_global_pos = map_world_pos + spawn_local_pos
+		print("OverworldGrid: Posición global calculada para spawn '%s': %s (map: %s + spawn local: %s)" % [spawn_id, spawn_global_pos, map_world_pos, spawn_local_pos])
+	else:
+		# Fallback: usar global_position si no podemos calcular manualmente
+		spawn_global_pos = spawn_point.global_position
+		print("OverworldGrid: Usando global_position del spawn (no se pudo calcular manualmente): %s" % spawn_global_pos)
+
+	# Convertir la posición global a tile usando este grid (el activo)
+	# world_to_tile convierte correctamente considerando la posición del mapa
+	var spawn_tile = world_to_tile(spawn_global_pos)
+
+	# Verificar que el tile sea válido
+	if spawn_tile == Vector2i.ZERO and spawn_global_pos != Vector2.ZERO:
+		push_warning("OverworldGrid: No se pudo convertir la posición global del spawn a tile: " + str(spawn_global_pos))
+		return false
+
+	# Usar directamente la posición global del spawn point para posicionar al player
+	# Esto asegura que la posición sea correcta considerando la posición del mapa
+	# Luego actualizamos la ocupación con el tile correcto
+	var success = false
+	if player.has_node("Occupancy"):
+		var occupancy = player.get_node("Occupancy")
+		if occupancy:
+			# Limpiar ocupación previa
+			var cur_tile = world_to_tile(player.global_position)
+			if player is Event:
+				unregister_event(cur_tile, player)
+				vacate(cur_tile, player)
+			else:
+				vacate(cur_tile, player)
+
+			# Posicionar directamente en la posición global del spawn
+			player.global_position = spawn_global_pos
+
+			# Actualizar ocupación con el tile correcto
+			if player is Event:
+				register_event(spawn_tile, player)
+				if not player.current_page or not player.current_page.through:
+					occupy(spawn_tile, player)
+			else:
+				occupy(spawn_tile, player)
+
+			success = true
+	else:
+		# Fallback: usar el método normal si no hay Occupancy
+		success = position_player_at_tile(spawn_tile, player)
 
 	if success:
 		# Actualizar la dirección si el spawn point la especifica

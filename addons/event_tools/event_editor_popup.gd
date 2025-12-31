@@ -2182,13 +2182,19 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 		return
 
 	var selector_window = selector_script.new()
-	ed_interface.get_base_control().add_child(selector_window)
+	# Añadir como hijo del editor (igual que sprite_editor) para que sea modal
+	add_child(selector_window)
 
 	# Configurar la ventana
 	selector_window.setup(overworld_grid, edited_scene_root)
 
-	# Conectar señal para guardar la posición seleccionada
-	selector_window.cell_selected.connect(func(cell_pos: Vector2i): _on_position_selected(page_index, cell_pos))
+	# Conectar señal para guardar la posición seleccionada y liberar la ventana
+	selector_window.cell_selected.connect(func(cell_pos: Vector2i):
+		_on_position_selected(page_index, cell_pos)
+		selector_window.queue_free()
+	)
+	# Conectar señal de cancelación para liberar la ventana (igual que sprite_editor)
+	selector_window.cancelled.connect(func(): selector_window.queue_free())
 
 	# Si la página ya tiene una posición, mostrarla en el selector
 	var page = _get_page(page_index)
@@ -2210,6 +2216,7 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 				selector_window.selected_cell = pos
 			selector_window._update_selected_cell_rect()
 
+	# Mostrar la ventana de forma modal (igual que sprite_editor)
 	selector_window.popup_centered()
 
 func _get_position_text(page: EventPage) -> String:

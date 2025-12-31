@@ -261,6 +261,15 @@ func load_command(cmd: WarpCommand) -> void:
 		# Usar call_deferred para asegurar que los spawn points se hayan cargado
 		call_deferred("_set_spawn_selection_after_load", cmd.target_spawn)
 
+	# Establecer la dirección guardada en el OptionButton
+	if facing_direction_option:
+		# El enum FacingDirection coincide con el orden de los items del OptionButton
+		# ARRIBA=0, ABAJO=1, IZQUIERDA=2, DERECHA=3
+		var direction_index = cmd.facing_direction
+		# Asegurar que el índice esté dentro del rango válido
+		if direction_index >= 0 and direction_index < facing_direction_option.get_item_count():
+			facing_direction_option.selected = direction_index
+
 ## Establece la selección del actor después de que se hayan cargado los actores
 func _set_actor_selection_after_load(actor_name: String, target_scene: String = "") -> void:
 	if actor_name_option:
