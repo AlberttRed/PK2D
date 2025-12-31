@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=4 uid="uid://cf05ppc8ofttk"]
+[gd_scene load_steps=263 format=4 uid="uid://cf05ppc8ofttk"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_5d54t"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_4p6pp"]
@@ -23,8 +23,21 @@
 [ext_resource type="Texture2D" uid="uid://bcujy2w1kpn1s" path="res://Sprites/Overworlds/Characters/NPC 04.png" id="18_327e4"]
 [ext_resource type="Texture2D" uid="uid://blmpusc0kpprs" path="res://Sprites/Overworlds/Characters/trchar016.png" id="18_btaog"]
 [ext_resource type="Texture2D" uid="uid://dunsy3sy7nig" path="res://Sprites/Overworlds/Characters/NPC 29.png" id="19_b2r7a"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="19_pyuu8"]
 [ext_resource type="Script" uid="uid://d3rkctbb4gj2y" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="22_327e4"]
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="22_pyuu8"]
+[ext_resource type="PackedScene" uid="uid://gcn6vvnlesbu" path="res://Scenes/Events/Door.tscn" id="26_eirno"]
+[ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="27_5ttma"]
+[ext_resource type="Script" uid="uid://dt7lapm5n8qrt" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="28_la7uh"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="29_h1rwo"]
+[ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="30_jpogs"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="31_56tst"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="32_cj17r"]
+[ext_resource type="Texture2D" uid="uid://cgt3gjwjovn2f" path="res://Sprites/Eventos/Doors/doors3.png" id="33_5lcln"]
+[ext_resource type="Texture2D" uid="uid://bf25msuks6620" path="res://Sprites/Eventos/Doors/doors2.png" id="33_h1rwo"]
+[ext_resource type="Texture2D" uid="uid://dhr2rh2qwv4b7" path="res://Sprites/Eventos/Doors/doors6.png" id="33_la7uh"]
+[ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="34_h1rwo"]
+[ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="35_la7uh"]
 
 [sub_resource type="Resource" id="Resource_b2r7a"]
 script = ExtResource("7_327e4")
@@ -317,31 +330,114 @@ trigger = SubResource("Resource_d57u2")
 commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_uw4fc")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_327e4"]
+[sub_resource type="Resource" id="Resource_eptu1"]
 script = ExtResource("9_6dcor")
 message = "¡Oh, abuelo!
 ¡No seas tan malo!"
 close_at_end = false
 show_icon_at_end = true
 
-[sub_resource type="Resource" id="Resource_pyuu8"]
+[sub_resource type="Resource" id="Resource_4ex1d"]
 script = ExtResource("9_6dcor")
 message = "Lo siento, todavía no se ha tomado un café..."
 
-[sub_resource type="Resource" id="Resource_eptu1"]
+[sub_resource type="Resource" id="Resource_pqyha"]
 script = ExtResource("10_i1iq1")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_4ex1d"]
+[sub_resource type="Resource" id="Resource_80ktm"]
 script = ExtResource("7_8h5rh")
-trigger = SubResource("Resource_eptu1")
-commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_327e4"), SubResource("Resource_pyuu8")])
+trigger = SubResource("Resource_pqyha")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_eptu1"), SubResource("Resource_4ex1d")])
 orientation_behavior = 2
 initial_direction = 0
 sprite_texture = ExtResource("18_327e4")
 is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_g2nqd"]
+script = ExtResource("9_6dcor")
+message = "¡Cuando voy de compras a CIUDAD PLATEADA, tomo el sinuoso camino del BOSQUE VERDE!"
+
+[sub_resource type="Resource" id="Resource_qr2ka"]
+script = ExtResource("19_pyuu8")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_e0vp8"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_16ljf"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_e0vp8")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_g2nqd")])
+root_condition = SubResource("Resource_qr2ka")
+initial_direction = 0
+sprite_texture = ExtResource("18_327e4")
+is_spritesheet = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_catiq"]
+script = ExtResource("9_6dcor")
+message = "Este GIMNASIO está siempre cerrado."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_hjd3g"]
+script = ExtResource("9_6dcor")
+message = "Me pregunto quién será su LÍDER."
+
+[sub_resource type="Resource" id="Resource_cgc5n"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_sy07t"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_cgc5n")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_catiq"), SubResource("Resource_hjd3g")])
+orientation_behavior = 2
+initial_direction = 0
+sprite_texture = ExtResource("18_btaog")
+is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_w7yed"]
+script = ExtResource("9_6dcor")
+message = "¡No puedes pasar por aquí!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_fav8r"]
+script = ExtResource("9_6dcor")
+message = "¡Es propiedad privada!"
+
+[sub_resource type="Resource" id="Resource_k23je"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([1])
+
+[sub_resource type="Resource" id="Resource_lxmti"]
+script = ExtResource("22_327e4")
+
+[sub_resource type="Resource" id="Resource_dumr7"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_lxmti")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_w7yed"), SubResource("Resource_fav8r"), SubResource("Resource_k23je")])
+through = true
+frame_size = Vector2(48, 48)
+sprite_offset = Vector2(0, -8)
+sprite_offset_configured = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_4y6lq"]
+script = ExtResource("19_pyuu8")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_ebbjd"]
+script = ExtResource("7_8h5rh")
+root_condition = SubResource("Resource_4y6lq")
 
 [sub_resource type="Resource" id="Resource_jxroq"]
 script = ExtResource("9_6dcor")
@@ -369,47 +465,947 @@ sprite_offset_configured = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_catiq"]
-script = ExtResource("10_i1iq1")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_hjd3g"]
-script = ExtResource("7_8h5rh")
-trigger = SubResource("Resource_catiq")
-initial_direction = 0
-sprite_texture = ExtResource("18_btaog")
-is_spritesheet = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_w7yed"]
+[sub_resource type="Resource" id="Resource_htj3j"]
 script = ExtResource("9_6dcor")
 message = "¡No puedes pasar por aquí!"
 close_at_end = false
 show_icon_at_end = true
 
-[sub_resource type="Resource" id="Resource_fav8r"]
+[sub_resource type="Resource" id="Resource_f8kyi"]
 script = ExtResource("9_6dcor")
 message = "¡Es propiedad privada!"
 
-[sub_resource type="Resource" id="Resource_k23je"]
+[sub_resource type="Resource" id="Resource_ifrty"]
+script = ExtResource("19_pyuu8")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_o343r"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_yo004"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_o343r")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_htj3j"), SubResource("Resource_f8kyi")])
+root_condition = SubResource("Resource_ifrty")
+movement_type = 3
+page_position = Vector2i(21, 8)
+sprite_texture = ExtResource("18_btaog")
+is_spritesheet = true
+sprite_offset = Vector2(0, -8)
+sprite_offset_configured = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_opdk7"]
+script = ExtResource("9_6dcor")
+message = "PISTAS ENTRENADOR"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_f46wn"]
+script = ExtResource("9_6dcor")
+message = "¡Atrapa los POKéMON y amplía tu colección!"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_o7bxo"]
+script = ExtResource("9_6dcor")
+message = "¡Cuantos más tengas, más fácil te será luchar!"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_t6u8q"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_aw1u7"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_t6u8q")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_opdk7"), SubResource("Resource_f46wn"), SubResource("Resource_o7bxo")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_83adg"]
+script = ExtResource("9_6dcor")
+message = "GIMNASIO POKéMON DE CIUDAD VERDE"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_5nlyw"]
+script = ExtResource("10_i1iq1")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_wsvkb"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_5nlyw")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_83adg")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_dbrsq"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_yhwv1"]
+script = ExtResource("28_la7uh")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_ue2t0"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_rpd82"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_d4gmm"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_e4fhe"]
+script = ExtResource("30_jpogs")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_66yb3"]
+script = ExtResource("31_56tst")
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_qeowh"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_2qn07"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_05m7y"]
+script = ExtResource("30_jpogs")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_shkvr"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51wyo"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qtnhe"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_32udj"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tlu2d"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w405i"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c6yhr"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxelw"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tco2f"]
+atlas = ExtResource("33_h1rwo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_staef"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51wyo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qtnhe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_32udj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tlu2d")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w405i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c6yhr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lxelw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tco2f")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_51wyo"]
+script = ExtResource("34_h1rwo")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_yyyxh"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_51wyo")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_dbrsq"), SubResource("Resource_yhwv1"), SubResource("Resource_ue2t0"), SubResource("Resource_rpd82"), SubResource("Resource_d4gmm"), SubResource("Resource_e4fhe"), SubResource("Resource_66yb3"), SubResource("Resource_qeowh"), SubResource("Resource_2qn07"), SubResource("Resource_05m7y")])
+root_condition = SubResource("Resource_shkvr")
+sprite_frames = SubResource("SpriteFrames_staef")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_l08vm"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_fwfxl"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_ggru3"]
 script = ExtResource("22_pyuu8")
 target_name = "Player"
 path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
 
-[sub_resource type="Resource" id="Resource_lxmti"]
-script = ExtResource("9_6dcor")
+[sub_resource type="Resource" id="Resource_dr2xu"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 
-[sub_resource type="Resource" id="Resource_dumr7"]
+[sub_resource type="Resource" id="Resource_sednl"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_lxelw"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_qtnhe"]
 script = ExtResource("22_327e4")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 
-[sub_resource type="Resource" id="Resource_4y6lq"]
+[sub_resource type="Resource" id="Resource_vga13"]
 script = ExtResource("7_8h5rh")
-trigger = SubResource("Resource_dumr7")
-commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_w7yed"), SubResource("Resource_fav8r"), SubResource("Resource_k23je"), SubResource("Resource_lxmti")])
+trigger = SubResource("Resource_qtnhe")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_l08vm"), SubResource("Resource_fwfxl"), SubResource("Resource_ggru3"), SubResource("Resource_dr2xu"), SubResource("Resource_sednl")])
+root_condition = SubResource("Resource_lxelw")
 through = true
-frame_size = Vector2(48, 48)
-sprite_offset = Vector2(0, -8)
-sprite_offset_configured = true
+sprite_frames = SubResource("SpriteFrames_staef")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_emybb"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_wv2fv"]
+script = ExtResource("28_la7uh")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_7vpoe"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_x0mvh"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_ph5q8"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_yteb7"]
+script = ExtResource("30_jpogs")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_a22sq"]
+script = ExtResource("31_56tst")
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_eglkp"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_oem2p"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_v7ptp"]
+script = ExtResource("30_jpogs")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h1rwo"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpogs"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_56tst"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cj17r"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_la7uh"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5lcln"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kqppf"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwcu3"]
+atlas = ExtResource("33_la7uh")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5lcln"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h1rwo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpogs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_56tst")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cj17r")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_la7uh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5lcln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kqppf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iwcu3")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_32udj"]
+script = ExtResource("34_h1rwo")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_pp6ls"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_32udj")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_emybb"), SubResource("Resource_wv2fv"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_a22sq"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
+root_condition = SubResource("Resource_shkvr")
+sprite_frames = SubResource("SpriteFrames_5lcln")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_n84s5"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_ecx1p"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_2uahs"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_h1dnx"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_piq08"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_tlu2d"]
+script = ExtResource("22_327e4")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_3cm8d"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_tlu2d")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+root_condition = SubResource("Resource_lxelw")
+through = true
+sprite_frames = SubResource("SpriteFrames_5lcln")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_swc6x"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_uupig"]
+script = ExtResource("28_la7uh")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_w405i"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_c6yhr"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_tco2f"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_staef"]
+script = ExtResource("30_jpogs")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_7s1f6"]
+script = ExtResource("31_56tst")
+target_scene = "Centro_Pokemon"
+target_spawn = "SpawnPoint_CiudadVerde"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_o1ktd"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_u6g0m"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_oc7v5"]
+script = ExtResource("30_jpogs")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_cwspk"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vga13"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdc8r"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fejbu"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5yphx"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xda7v"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nn56a"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rhkrq"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpp4f"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o5pqe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vga13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdc8r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fejbu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5yphx")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xda7v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nn56a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rhkrq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kpp4f")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_5di8x"]
+script = ExtResource("34_h1rwo")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_gvqtx"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_5di8x")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_swc6x"), SubResource("Resource_uupig"), SubResource("Resource_w405i"), SubResource("Resource_c6yhr"), SubResource("Resource_tco2f"), SubResource("Resource_staef"), SubResource("Resource_7s1f6"), SubResource("Resource_o1ktd"), SubResource("Resource_u6g0m"), SubResource("Resource_oc7v5")])
+root_condition = SubResource("Resource_cwspk")
+sprite_frames = SubResource("SpriteFrames_o5pqe")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_d1qad"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_3dcfd"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_dx3uw"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_vcf5s"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_35ot8"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_u8ff6"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ofte"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mip0w"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mjhfm"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4j13q"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03la0"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wa6vq"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ejhv"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_57tvj"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pk3a5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ofte")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mip0w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mjhfm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4j13q")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03la0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wa6vq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ejhv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_57tvj")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_gqsps"]
+script = ExtResource("22_327e4")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_6e0y3"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_gqsps")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_d1qad"), SubResource("Resource_3dcfd"), SubResource("Resource_dx3uw"), SubResource("Resource_vcf5s"), SubResource("Resource_35ot8")])
+root_condition = SubResource("Resource_u8ff6")
+through = true
+sprite_frames = SubResource("SpriteFrames_pk3a5")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_6f2i2"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_j18x0"]
+script = ExtResource("28_la7uh")
+metadata/_custom_type_script = "uid://dt7lapm5n8qrt"
+
+[sub_resource type="Resource" id="Resource_7o3ya"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([0])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_cuaxq"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_c7uuq"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_xd2m2"]
+script = ExtResource("30_jpogs")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_4jgko"]
+script = ExtResource("31_56tst")
+target_scene = "Tienda_Pokemon"
+target_spawn = "SpawnPoint_CiudadVerde"
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_qqa5r"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_4668j"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_m3u0t"]
+script = ExtResource("30_jpogs")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_xer6n"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2o5su"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gblf"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cbv8i"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wu8ca"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_emm8y"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqr0a"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sht35"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ce6t"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_74jlv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2o5su")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7gblf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cbv8i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wu8ca")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emm8y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqr0a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sht35")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ce6t")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_qd1i3"]
+script = ExtResource("34_h1rwo")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_3ruqx"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_qd1i3")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_6f2i2"), SubResource("Resource_j18x0"), SubResource("Resource_7o3ya"), SubResource("Resource_cuaxq"), SubResource("Resource_c7uuq"), SubResource("Resource_xd2m2"), SubResource("Resource_4jgko"), SubResource("Resource_qqa5r"), SubResource("Resource_4668j"), SubResource("Resource_m3u0t")])
+root_condition = SubResource("Resource_xer6n")
+sprite_frames = SubResource("SpriteFrames_74jlv")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_2tlsr"]
+script = ExtResource("27_5ttma")
+animation_name = "default"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_nnavt"]
+script = ExtResource("29_h1rwo")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_4jsjn"]
+script = ExtResource("22_pyuu8")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_pay8l"]
+script = ExtResource("32_cj17r")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_0h32l"]
+script = ExtResource("27_5ttma")
+animation_name = "default_back"
+metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_2q7fu"]
+script = ExtResource("19_pyuu8")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gi03l"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e77w1"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_525et"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52tit"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g67hn"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o8p0r"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_70hwj"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0v1el"]
+atlas = ExtResource("33_5lcln")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ah1p7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gi03l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e77w1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_525et")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_52tit")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g67hn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o8p0r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_70hwj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0v1el")
+}],
+"loop": false,
+"name": &"default_back",
+"speed": 5.0
+}]
+
+[sub_resource type="Resource" id="Resource_ko75w"]
+script = ExtResource("22_327e4")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_fveos"]
+script = ExtResource("7_8h5rh")
+trigger = SubResource("Resource_ko75w")
+commands = Array[ExtResource("8_lp6sc")]([SubResource("Resource_2tlsr"), SubResource("Resource_nnavt"), SubResource("Resource_4jsjn"), SubResource("Resource_pay8l"), SubResource("Resource_0h32l")])
+root_condition = SubResource("Resource_2q7fu")
+through = true
+sprite_frames = SubResource("SpriteFrames_ah1p7")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
@@ -500,21 +1496,69 @@ pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_08qta")])
 
 [node name="Mujer_NPC1" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
 position = Vector2(16, -176)
-pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_4ex1d")])
-
-[node name="Abuelo" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
-position = Vector2(48, -208)
-pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_aujwr")])
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_80ktm"), SubResource("Resource_16ljf")])
 
 [node name="Abuelo_NPC2" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
 position = Vector2(464, -208)
-pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_hjd3g")])
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_sy07t")])
 
-[node name="Abuelo_1" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+[node name="No_Pass" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
 position = Vector2(80, -208)
-pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_4y6lq")])
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_dumr7"), SubResource("Resource_ebbjd")])
+
+[node name="Abuelo_NPC1" parent="OverworldGrid/Events" instance=ExtResource("11_6dcor")]
+position = Vector2(48, -208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_aujwr"), SubResource("Resource_yo004")])
+
+[node name="Cartel_Madera2" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(112, -528)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_aw1u7")])
+
+[node name="Cartel_GYM" parent="OverworldGrid/Events" instance=ExtResource("5_3rges")]
+position = Vector2(400, -240)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_wsvkb")])
+
+[node name="Door" parent="OverworldGrid/Events" instance=ExtResource("26_eirno")]
+position = Vector2(176, -208)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_yyyxh"), SubResource("Resource_vga13")])
+
+[node name="Door2" parent="OverworldGrid/Events" instance=ExtResource("26_eirno")]
+position = Vector2(176, 16)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_yyyxh"), SubResource("Resource_vga13")])
+
+[node name="Door3" parent="OverworldGrid/Events" instance=ExtResource("26_eirno")]
+position = Vector2(528, -240)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_pp6ls"), SubResource("Resource_3cm8d")])
+
+[node name="Door4" parent="OverworldGrid/Events" instance=ExtResource("26_eirno")]
+position = Vector2(208, 272)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_gvqtx"), SubResource("Resource_6e0y3")])
+
+[node name="Door5" parent="OverworldGrid/Events" instance=ExtResource("26_eirno")]
+position = Vector2(528, 48)
+pages = Array[ExtResource("7_8h5rh")]([SubResource("Resource_3ruqx"), SubResource("Resource_fveos")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
+
+[node name="Spawn_CP" parent="OverworldGrid/SpawnPoints" instance=ExtResource("35_la7uh")]
+visible = false
+position = Vector2(208, 272)
+
+[node name="Spawn_Tienda" parent="OverworldGrid/SpawnPoints" instance=ExtResource("35_la7uh")]
+visible = false
+position = Vector2(528, 48)
+
+[node name="Spawn_Casa1" parent="OverworldGrid/SpawnPoints" instance=ExtResource("35_la7uh")]
+visible = false
+position = Vector2(176, 16)
+
+[node name="Spawn_Casa2" parent="OverworldGrid/SpawnPoints" instance=ExtResource("35_la7uh")]
+visible = false
+position = Vector2(176, -208)
+
+[node name="Spawn_GYM" parent="OverworldGrid/SpawnPoints" instance=ExtResource("35_la7uh")]
+visible = false
+position = Vector2(528, -240)
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_eq6it")]
 
