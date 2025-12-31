@@ -2129,6 +2129,7 @@ func _on_movement_button_pressed(page_index: int) -> void:
 
 	add_child(editor_window)
 	editor_window.load_page(page)
+	editor_window.event_node = event_node  # Pasar el evento que se está editando
 	editor_window.movement_edited.connect(func(): _on_page_movement_edited(page_index))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
 
@@ -2185,8 +2186,8 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 	# Añadir como hijo del editor (igual que sprite_editor) para que sea modal
 	add_child(selector_window)
 
-	# Configurar la ventana
-	selector_window.setup(overworld_grid, edited_scene_root)
+	# Configurar la ventana, pasando el evento que se está editando
+	selector_window.setup(overworld_grid, edited_scene_root, event_node)
 
 	# Conectar señal para guardar la posición seleccionada y liberar la ventana
 	selector_window.cell_selected.connect(func(cell_pos: Vector2i):

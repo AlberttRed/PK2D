@@ -4,6 +4,8 @@ extends Window
 ## Ventana para mostrar el mapa de la escena actual
 var overworld_grid: OverworldGrid = null
 var edited_scene_root: Node2D = null
+var active_event: Event = null  # Evento que se está editando (solo este será visible)
+var hidden_events: Array[Event] = []  # Lista de eventos ocultos para restaurar después
 
 var viewport_wrapper: Control = null
 var viewport_container: SubViewportContainer = null
@@ -23,8 +25,15 @@ var is_dragging: bool = false
 var drag_start_pos: Vector2 = Vector2.ZERO
 var camera_start_pos: Vector2 = Vector2.ZERO
 
-## Señal emitida cuando se selecciona una celda
+# Modo de selección múltiple
+var multiple_selection_mode: bool = false
+var selected_tiles: Array[Vector2i] = []  # Array de celdas seleccionadas en modo múltiple
+var selected_tiles_rects: Dictionary = {}  # {Vector2i: ColorRect} para mostrar múltiples selecciones
+
+## Señal emitida cuando se selecciona una celda (modo simple)
 signal cell_selected(cell_pos: Vector2i)
+## Señal emitida cuando se seleccionan múltiples celdas (modo múltiple)
+signal tiles_selected(tiles: Array[Vector2i])
 ## Señal emitida cuando se cancela la selección
 signal cancelled
 
@@ -62,6 +71,13 @@ func _ready() -> void:
 	selected_label.name = "SelectedCellLabel"
 	selected_label.text = "Celda seleccionada: Ninguna"
 	main_vbox.add_child(selected_label)
+
+	# Label para mostrar celdas seleccionadas (modo múltiple)
+	var multiple_label = Label.new()
+	multiple_label.name = "MultipleSelectionLabel"
+	multiple_label.text = "Celdas seleccionadas: 0 (Click para añadir/quitar)"
+	multiple_label.visible = false
+	main_vbox.add_child(multiple_label)
 
 	# Contenedor del viewport (usar un Control normal para poder añadir el overlay encima)
 	viewport_wrapper = Control.new()
@@ -120,32 +136,19 @@ func _ready() -> void:
 	call_deferred("_force_grid_redraw")
 
 	# Redibujar cuando cambie el tamaño de la ventana
-	size_changed.connect(func():
-		if grid_overlay:
-			grid_overlay.queue_redraw()
-		if selected_cell_rect:
-			_update_selected_cell_rect()
-	)
+	size_changed.connect(_on_window_size_changed)
 
 	# Botones de control
 	var hbox = HBoxContainer.new()
 
 	var zoom_in_btn = Button.new()
 	zoom_in_btn.text = "+"
-	zoom_in_btn.pressed.connect(func():
-		camera.zoom *= 1.2
-		if grid_overlay:
-			grid_overlay.queue_redraw()
-	)
+	zoom_in_btn.pressed.connect(_on_zoom_in_pressed)
 	hbox.add_child(zoom_in_btn)
 
 	var zoom_out_btn = Button.new()
 	zoom_out_btn.text = "-"
-	zoom_out_btn.pressed.connect(func():
-		camera.zoom /= 1.2
-		if grid_overlay:
-			grid_overlay.queue_redraw()
-	)
+	zoom_out_btn.pressed.connect(_on_zoom_out_pressed)
 	hbox.add_child(zoom_out_btn)
 
 	var reset_btn = Button.new()
@@ -207,9 +210,6 @@ func _ready() -> void:
 
 	main_vbox.add_child(hbox)
 
-	# Conectar señal de redimensionamiento
-	size_changed.connect(_on_window_size_changed)
-
 	# Ajustar el tamaño del viewport después de que todo esté listo
 	call_deferred("_update_viewport_size")
 
@@ -238,11 +238,29 @@ func _move_overlay_to_top() -> void:
 		add_child(redraw_timer)
 
 func _update_selected_cell_rect() -> void:
-	if not selected_cell_rect or not camera or not map_viewport or not viewport_wrapper:
+	if not selected_cell_rect or not is_instance_valid(selected_cell_rect):
+		return
+
+	# En modo múltiple, no mostrar el rectángulo temporal
+	if multiple_selection_mode:
+		selected_cell_rect.visible = false
+		return
+
+	if not camera or not is_instance_valid(camera):
+		return
+
+	if not map_viewport or not is_instance_valid(map_viewport):
+		return
+
+	if not viewport_wrapper or not is_instance_valid(viewport_wrapper):
 		return
 
 	if selected_cell.x < 0 or selected_cell.y < 0:
 		selected_cell_rect.visible = false
+		return
+
+	# Verificar que las funciones auxiliares existan y que los nodos necesarios estén listos
+	if not reference_tile_layer or not is_instance_valid(reference_tile_layer):
 		return
 
 	# Calcular posición del centro de la celda en coordenadas del mundo
@@ -280,12 +298,7 @@ func _force_grid_redraw() -> void:
 		# Redibujar periódicamente para mantener la cuadrícula visible
 		var redraw_timer = Timer.new()
 		redraw_timer.wait_time = 0.1
-		redraw_timer.timeout.connect(func():
-			if grid_overlay and is_instance_valid(grid_overlay):
-				grid_overlay.queue_redraw()
-			if selected_cell_rect and is_instance_valid(selected_cell_rect):
-				_update_selected_cell_rect()
-		)
+		redraw_timer.timeout.connect(_on_redraw_timer_timeout)
 		redraw_timer.autostart = true
 		add_child(redraw_timer)
 
@@ -301,9 +314,13 @@ func _update_viewport_size() -> void:
 				grid_overlay.size = container_size
 				grid_overlay.queue_redraw()
 
-func setup(overworld_grid_node: OverworldGrid, scene_root: Node2D) -> void:
+func setup(overworld_grid_node: OverworldGrid, scene_root: Node2D, event_to_show: Event = null) -> void:
 	overworld_grid = overworld_grid_node
 	edited_scene_root = scene_root
+	active_event = event_to_show
+
+	# Ocultar todos los eventos excepto el activo
+	_hide_other_events()
 
 	# Esperar a que _ready() termine y el map_viewport esté inicializado
 	if not map_viewport:
@@ -347,12 +364,20 @@ func _get_reference_tile_layer() -> TileMapLayer:
 	return null
 
 func _on_assign_button_pressed() -> void:
-	# Verificar que hay una celda seleccionada
-	if selected_cell.x < 0 or selected_cell.y < 0:
-		return
+	# Restaurar visibilidad de eventos ocultos
+	_restore_events_visibility()
 
-	# Emitir señal de celda seleccionada
-	cell_selected.emit(selected_cell)
+	if multiple_selection_mode:
+		# Modo múltiple: emitir todas las celdas seleccionadas
+		if selected_tiles.is_empty():
+			return
+		tiles_selected.emit(selected_tiles.duplicate())
+	else:
+		# Modo simple: verificar que hay una celda seleccionada
+		if selected_cell.x < 0 or selected_cell.y < 0:
+			return
+		# Emitir señal de celda seleccionada
+		cell_selected.emit(selected_cell)
 
 	# Cerrar la ventana de forma segura
 	hide()
@@ -548,101 +573,77 @@ func _is_click_inside_viewport(local_pos: Vector2) -> bool:
 		   viewport_local_pos.y >= 0 and viewport_local_pos.y < viewport_size.y
 
 func _handle_click(screen_pos: Vector2) -> void:
-	# Convertir directamente de coordenadas de pantalla a coordenadas de celda usando el TileMapLayer
+	# screen_pos está en coordenadas del viewport_wrapper (o grid_overlay que tiene el mismo tamaño)
+	# Convertir a coordenadas del mundo usando el método que funciona
+	var world_pos = _screen_to_world_position(screen_pos)
+
+	# Convertir directamente usando el TileMapLayer
+	# NOTA: Se aplica +1 en Y para corregir el offset visual del click
 	var cell_pos: Vector2i
-
-	if reference_tile_layer and camera and map_viewport:
-		# Convertir coordenadas de pantalla a coordenadas del viewport
-		var container_offset = viewport_container.position
-		var adjusted_screen_pos = screen_pos - container_offset
-
-		var container_size = viewport_container.size
-		var viewport_size = Vector2(map_viewport.size)
-
-		# Calcular el offset del viewport dentro del container
-		var viewport_offset = Vector2.ZERO
-		if container_size.x > viewport_size.x:
-			viewport_offset.x = (container_size.x - viewport_size.x) / 2.0
-		if container_size.y > viewport_size.y:
-			viewport_offset.y = (container_size.y - viewport_size.y) / 2.0
-
-		# Convertir coordenadas del container a coordenadas del viewport
-		var viewport_local_pos = adjusted_screen_pos - viewport_offset
-
-		# Verificar que estamos dentro del viewport
-		if viewport_local_pos.x < 0 or viewport_local_pos.x >= viewport_size.x or \
-		   viewport_local_pos.y < 0 or viewport_local_pos.y >= viewport_size.y:
-			viewport_local_pos.x = clamp(viewport_local_pos.x, 0, viewport_size.x - 1)
-			viewport_local_pos.y = clamp(viewport_local_pos.y, 0, viewport_size.y - 1)
-
-		# Convertir posición de pantalla a posición relativa al centro del viewport
-		# El viewport tiene su origen en (0,0) en la esquina superior izquierda
-		# El centro del viewport está en (viewport_size.x/2, viewport_size.y/2)
-		var relative_pos = viewport_local_pos - viewport_size / 2.0
-
-		# Obtener la posición del centro de la pantalla en coordenadas del mundo
-		# camera.get_screen_center_position() devuelve la posición del centro de la pantalla
-		# en coordenadas relativas al map_instance (OverworldGrid)
-		var camera_center_world = camera.get_screen_center_position()
-
-		# Convertir a coordenadas del mundo usando el zoom de la cámara
-		# relative_pos está en píxeles de pantalla, necesitamos convertirlo a píxeles del mundo
-		var world_pos = camera_center_world + relative_pos / camera.zoom
-
-		# Convertir coordenadas del mundo a coordenadas locales del TileMapLayer
-		# world_pos está en coordenadas relativas al map_instance (OverworldGrid)
-		# El TileMapLayer está dentro del map_instance y tiene su origen en (0,0)
-		# to_local() convierte de coordenadas del map_instance a coordenadas locales del TileMapLayer
+	if reference_tile_layer and is_instance_valid(reference_tile_layer):
 		var local_pos = reference_tile_layer.to_local(world_pos)
-
-		# Convertir a coordenadas de tile
-		# local_to_map() convierte coordenadas locales del TileMapLayer a coordenadas de tile
-		# El TileMapLayer tiene su origen en (0,0) en la esquina superior izquierda
 		var tile_pos = reference_tile_layer.local_to_map(local_pos)
-
-		# Obtener el used_rect para ajustar el offset
-		# Si el TileMapLayer tiene tiles que empiezan en coordenadas negativas,
-		# necesitamos ajustar para que el 0,0 esté en la esquina superior izquierda del mapa visible
-		var used_rect = reference_tile_layer.get_used_rect()
-		if used_rect.position.x < 0 or used_rect.position.y < 0:
-			# Ajustar el tile_pos para que el 0,0 esté en la esquina superior izquierda del mapa visible
-			# Restamos el offset negativo para que el tile (0,0) del TileMapLayer se convierta en (0,0) del mapa visible
-			cell_pos = tile_pos - used_rect.position
-		else:
-			cell_pos = tile_pos
-
-		print("Event Tools: screen_pos: ", screen_pos, ", viewport_local_pos: ", viewport_local_pos, ", viewport_size: ", viewport_size, ", relative_pos: ", relative_pos, ", camera_center_world: ", camera_center_world, ", camera.position: ", camera.position, ", zoom: ", camera.zoom, ", world_pos: ", world_pos, ", local_pos: ", local_pos, ", tile_pos: ", tile_pos, ", used_rect: ", used_rect, ", cell_pos: ", cell_pos)
+		# Offset +1 en Y para que el click seleccione la celda correcta visualmente
+		tile_pos.y += 1
+		cell_pos = tile_pos
 	else:
-		# Fallback: usar el método anterior
-		var world_pos = _screen_to_world_position(screen_pos)
 		cell_pos = _world_to_cell(world_pos)
-		print("Event Tools: Click detectado - celda: ", cell_pos)
 
-	# Actualizar celda seleccionada
-	selected_cell = cell_pos
+	# Actualizar celda seleccionada según el modo
+	if multiple_selection_mode:
+		# Modo múltiple: añadir/quitar celda del array
+		print("Event Tools: Click en modo múltiple - celda: ", cell_pos, ", ya seleccionada: ", cell_pos in selected_tiles)
+		if cell_pos in selected_tiles:
+			# Ya está seleccionada, quitarla
+			selected_tiles.erase(cell_pos)
+			_remove_tile_rect(cell_pos)
+			print("Event Tools: Celda quitada. Total seleccionadas: ", selected_tiles.size())
+		else:
+			# Añadirla
+			selected_tiles.append(cell_pos)
+			_create_tile_rect(cell_pos)
+			print("Event Tools: Celda añadida. Total seleccionadas: ", selected_tiles.size())
 
-	# Actualizar label
-	if main_vbox:
-		var selected_label = main_vbox.get_node_or_null("SelectedCellLabel")
-		if selected_label:
-			selected_label.text = "Celda seleccionada: (%d, %d)" % [cell_pos.x, cell_pos.y]
+		_update_multiple_selection_label()
 
-	# Actualizar el rectángulo de la celda seleccionada
-	_update_selected_cell_rect()
+		# En modo múltiple, no mostrar el rectángulo temporal (solo los rectángulos de selección)
+		# Ocultar el rectángulo temporal para evitar confusión
+		if selected_cell_rect:
+			selected_cell_rect.visible = false
+
+		# Habilitar el botón si hay celdas seleccionadas
+		if assign_button:
+			assign_button.disabled = selected_tiles.is_empty()
+	else:
+		# Modo simple: seleccionar una sola celda
+		selected_cell = cell_pos
+
+		# Actualizar el label
+		if main_vbox:
+			var selected_label = main_vbox.get_node_or_null("SelectedCellLabel")
+			if selected_label:
+				selected_label.text = "Celda seleccionada: (%d, %d)" % [cell_pos.x, cell_pos.y]
+
+		# Actualizar el rectángulo de la celda seleccionada
+		_update_selected_cell_rect()
+
+		# Habilitar el botón de asignar posición
+		if assign_button:
+			assign_button.disabled = false
 
 	# Redibujar el overlay
 	if grid_overlay:
 		grid_overlay.queue_redraw()
-
-	# Habilitar el botón de asignar posición
-	if assign_button:
-		assign_button.disabled = false
 
 func _on_window_size_changed() -> void:
 	# Actualizar el tamaño del viewport cuando cambie el tamaño de la ventana
 	call_deferred("_update_viewport_size")
 	if grid_overlay:
 		grid_overlay.queue_redraw()
+	if selected_cell_rect:
+		_update_selected_cell_rect()
+	if multiple_selection_mode:
+		_update_all_tile_rects()
 
 func _on_grid_overlay_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -675,8 +676,9 @@ func _on_grid_overlay_input(event: InputEvent) -> void:
 			# Redibujar el overlay
 			if grid_overlay:
 				grid_overlay.queue_redraw()
-			if selected_cell_rect:
-				_update_selected_cell_rect()
+			call_deferred("_update_selected_cell_rect")
+			if multiple_selection_mode:
+				call_deferred("_update_all_tile_rects")
 			get_viewport().set_input_as_handled()
 
 func _screen_to_world_position(screen_pos: Vector2) -> Vector2:
@@ -718,6 +720,7 @@ func _screen_to_world_position(screen_pos: Vector2) -> Vector2:
 	# Convertir a coordenadas del mundo usando el zoom de la cámara
 	# La posición del mundo es relativa al map_instance (OverworldGrid), con origen en (0,0)
 	# El cálculo: posición de la cámara + offset relativo al centro del viewport
+	# Ajustar ligeramente para centrar mejor la detección del click
 	var world_pos = camera_world_pos + relative_pos / camera.zoom
 
 	return world_pos
@@ -733,43 +736,45 @@ func _world_to_cell(world_pos: Vector2) -> Vector2i:
 		# El TileMapLayer está dentro del map_instance, así que world_pos es relativo al map_instance
 		# Convertir a coordenadas locales del TileMapLayer
 		var local_pos = reference_tile_layer.to_local(world_pos)
+
 		# Convertir a coordenadas de tile
-		var tile_pos = reference_tile_layer.local_to_map(local_pos)
-		print("Event Tools: _world_to_cell - world_pos: ", world_pos, ", local_pos: ", local_pos, ", tile_pos: ", tile_pos)
+		# local_to_map() devuelve el tile basándose en la esquina superior izquierda
+		# Si al hacer click se selecciona la celda de arriba, necesitamos desplazar hacia abajo
+		# Para centrar la detección, desplazamos media celda hacia abajo y a la derecha
+		var half_cell = Vector2(cell_size, cell_size) / 2.0
+		var adjusted_local_pos = local_pos + half_cell
+		var tile_pos = reference_tile_layer.local_to_map(adjusted_local_pos)
+
+		print("Event Tools: _world_to_cell - world_pos: ", world_pos, ", local_pos: ", local_pos, ", adjusted_local_pos: ", adjusted_local_pos, ", tile_pos: ", tile_pos)
 		return tile_pos
 	else:
 		# Fallback: calcular directamente
 		# Las coordenadas del mundo ya están relativas al origen (0,0)
-		var cell_x = int(floor(world_pos.x / cell_size))
-		var cell_y = int(floor(world_pos.y / cell_size))
+		# Ajustar por la mitad de la celda para centrar la detección
+		var adjusted_world_pos = world_pos + Vector2(cell_size, cell_size) / 2.0
+		var cell_x = int(floor(adjusted_world_pos.x / cell_size))
+		var cell_y = int(floor(adjusted_world_pos.y / cell_size))
 		return Vector2i(cell_x, cell_y)
 
 func _cell_to_world(cell_pos: Vector2i) -> Vector2:
 	# Convertir coordenadas de celda a posición del mundo (centro de la celda)
-	# cell_pos está ajustado (0,0 es la esquina superior izquierda del mapa visible)
-	# Necesitamos convertirlo de vuelta a las coordenadas reales del TileMapLayer
-	var tile_pos: Vector2i
-	if reference_tile_layer:
-		var used_rect = reference_tile_layer.get_used_rect()
-		if used_rect.position.x < 0 or used_rect.position.y < 0:
-			# Ajustar de vuelta a las coordenadas reales del TileMapLayer
-			tile_pos = cell_pos + used_rect.position
-		else:
-			tile_pos = cell_pos
-
+	# cell_pos son coordenadas REALES del TileMapLayer
+	if reference_tile_layer and is_instance_valid(reference_tile_layer):
 		# Convertir coordenadas de tile a coordenadas locales del TileMapLayer
-		var local_pos = reference_tile_layer.map_to_local(tile_pos)
+		var local_pos = reference_tile_layer.map_to_local(cell_pos)
 		# Convertir a coordenadas globales del TileMapLayer (que es relativo al map_instance)
-		# Esto devuelve coordenadas relativas al map_instance con origen en (0,0)
 		return reference_tile_layer.to_global(local_pos)
 	else:
 		# Fallback: calcular directamente
-		# Las coordenadas del mundo son relativas al origen (0,0)
 		return Vector2(cell_pos.x * cell_size + cell_size / 2.0, cell_pos.y * cell_size + cell_size / 2.0)
 
 
 func _world_to_screen(world_pos: Vector2) -> Vector2:
-	if not camera or not map_viewport or not viewport_container:
+	if not camera or not is_instance_valid(camera):
+		return Vector2.ZERO
+	if not map_viewport or not is_instance_valid(map_viewport):
+		return Vector2.ZERO
+	if not viewport_container or not is_instance_valid(viewport_container):
 		return Vector2.ZERO
 
 	# Obtener la posición de la cámara en coordenadas del mundo
@@ -891,12 +896,172 @@ func _on_close_requested() -> void:
 
 ## Maneja el botón cancelar
 func _on_cancel_pressed() -> void:
+	# Restaurar visibilidad de eventos ocultos
+	_restore_events_visibility()
 	# Emitir señal de cancelación
 	cancelled.emit()
 	# Cerrar la ventana de forma segura
 	hide()
 	# Liberar la ventana después de un frame para evitar errores de X11
 	call_deferred("queue_free")
+
+## Configura el modo de selección múltiple
+func set_multiple_selection_mode(enabled: bool) -> void:
+	multiple_selection_mode = enabled
+	print("Event Tools: Modo múltiple ", "activado" if enabled else "desactivado")
+
+	# Actualizar UI según el modo
+	if main_vbox:
+		var selected_label = main_vbox.get_node_or_null("SelectedCellLabel")
+		var multiple_label = main_vbox.get_node_or_null("MultipleSelectionLabel")
+
+		if enabled:
+			# Modo múltiple: ocultar label simple, mostrar label múltiple
+			if selected_label:
+				selected_label.visible = false
+			if multiple_label:
+				multiple_label.visible = true
+				_update_multiple_selection_label()
+			if assign_button:
+				assign_button.text = "Asignar celdas"
+			# Ocultar el rectángulo temporal en modo múltiple
+			if selected_cell_rect:
+				selected_cell_rect.visible = false
+		else:
+			# Modo simple: mostrar label simple, ocultar label múltiple
+			if selected_label:
+				selected_label.visible = true
+			if multiple_label:
+				multiple_label.visible = false
+			if assign_button:
+				assign_button.text = "Asignar posición"
+
+## Establece las celdas seleccionadas (para cargar desde el editor)
+func set_selected_tiles(tiles: Array[Vector2i]) -> void:
+	# Limpiar selecciones anteriores
+	for tile in selected_tiles:
+		_remove_tile_rect(tile)
+	selected_tiles.clear()
+
+	# Añadir las nuevas celdas
+	for tile in tiles:
+		selected_tiles.append(tile)
+		_create_tile_rect(tile)
+
+	_update_multiple_selection_label()
+
+	# Habilitar el botón si hay celdas
+	if assign_button:
+		assign_button.disabled = selected_tiles.is_empty()
+
+## Crea un rectángulo visual para una celda seleccionada
+func _create_tile_rect(tile: Vector2i) -> void:
+	if tile in selected_tiles_rects:
+		return  # Ya existe
+
+	# Crear un ColorRect similar al selected_cell_rect
+	var rect = ColorRect.new()
+	rect.color = Color(1.0, 0.0, 0.0, 0.6)  # Rojo, mismo color que el rectángulo temporal
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Añadir al grid_overlay
+	if grid_overlay:
+		grid_overlay.add_child(rect)
+		selected_tiles_rects[tile] = rect
+		_update_tile_rect_position(tile)
+
+## Elimina el rectángulo visual de una celda
+func _remove_tile_rect(tile: Vector2i) -> void:
+	if tile in selected_tiles_rects:
+		var rect = selected_tiles_rects[tile]
+		if is_instance_valid(rect):
+			rect.queue_free()
+		selected_tiles_rects.erase(tile)
+
+## Actualiza la posición de un rectángulo de celda seleccionada
+func _update_tile_rect_position(tile: Vector2i) -> void:
+	if not (tile in selected_tiles_rects):
+		return
+
+	var rect = selected_tiles_rects[tile]
+	if not is_instance_valid(rect):
+		selected_tiles_rects.erase(tile)
+		return
+
+	# Usar las mismas funciones de conversión que _update_selected_cell_rect
+	var cell_world_center = _cell_to_world(tile)
+
+	# Calcular las esquinas de la celda en coordenadas del mundo
+	var half_cell_size = cell_size / 2.0
+	var cell_world_top_left = cell_world_center - Vector2(half_cell_size, half_cell_size)
+	var cell_world_bottom_right = cell_world_center + Vector2(half_cell_size, half_cell_size)
+
+	# Convertir las esquinas a coordenadas de pantalla
+	var cell_screen_top_left = _world_to_screen(cell_world_top_left)
+	var cell_screen_bottom_right = _world_to_screen(cell_world_bottom_right)
+
+	# Calcular tamaño y posición desde las esquinas
+	var cell_screen_size = cell_screen_bottom_right - cell_screen_top_left
+	var cell_screen_center = (cell_screen_top_left + cell_screen_bottom_right) / 2.0
+
+	# Asegurar que el tamaño mínimo sea visible
+	if cell_screen_size.x < 5:
+		cell_screen_size.x = 5
+	if cell_screen_size.y < 5:
+		cell_screen_size.y = 5
+
+	# Posicionar y dimensionar el ColorRect (coordenadas locales del wrapper)
+	var rect_pos = cell_screen_center - cell_screen_size / 2.0
+	rect.position = rect_pos
+	rect.size = cell_screen_size
+	rect.visible = true
+
+## Actualiza todas las posiciones de los rectángulos de celdas seleccionadas
+func _update_all_tile_rects() -> void:
+	for tile in selected_tiles:
+		_update_tile_rect_position(tile)
+
+## Actualiza el label de selección múltiple
+func _update_multiple_selection_label() -> void:
+	if not main_vbox:
+		return
+
+	var multiple_label = main_vbox.get_node_or_null("MultipleSelectionLabel")
+	if not multiple_label:
+		return
+
+	var count = selected_tiles.size()
+	if count == 0:
+		multiple_label.text = "Celdas seleccionadas: 0 (Click para añadir/quitar)"
+	else:
+		multiple_label.text = "Celdas seleccionadas: %d (Click para añadir/quitar)" % count
+
+## Callback para el botón de zoom in
+func _on_zoom_in_pressed() -> void:
+	if camera:
+		camera.zoom *= 1.2
+	if grid_overlay:
+		grid_overlay.queue_redraw()
+	call_deferred("_update_selected_cell_rect")
+	if multiple_selection_mode:
+		call_deferred("_update_all_tile_rects")
+
+## Callback para el botón de zoom out
+func _on_zoom_out_pressed() -> void:
+	if camera:
+		camera.zoom /= 1.2
+	if grid_overlay:
+		grid_overlay.queue_redraw()
+	call_deferred("_update_selected_cell_rect")
+	if multiple_selection_mode:
+		call_deferred("_update_all_tile_rects")
+
+## Callback para el timer de redibujado
+func _on_redraw_timer_timeout() -> void:
+	if grid_overlay and is_instance_valid(grid_overlay):
+		grid_overlay.queue_redraw()
+	if selected_cell_rect and is_instance_valid(selected_cell_rect):
+		call_deferred("_update_selected_cell_rect")
 
 ## Mueve la cámara en una dirección específica
 func _move_camera(direction: Vector2) -> void:
@@ -909,13 +1074,63 @@ func _move_camera(direction: Vector2) -> void:
 		viewport_size = Vector2(map_viewport.size)
 	else:
 		viewport_size = Vector2(800, 600)
-	# Mover una fracción más pequeña del viewport (1/8 del tamaño visible para movimiento más preciso)
-	var move_distance = viewport_size / camera.zoom / 8.0
+	# Mover una fracción más pequeña del viewport (1/12 del tamaño visible para movimiento más preciso)
+	var move_distance = viewport_size / camera.zoom / 12.0
 	camera.position += direction * move_distance
 
 	# Redibujar el overlay
 	if grid_overlay:
 		grid_overlay.queue_redraw()
-	if selected_cell_rect:
-		_update_selected_cell_rect()
+	call_deferred("_update_selected_cell_rect")
+	if multiple_selection_mode:
+		call_deferred("_update_all_tile_rects")
+
+## Oculta todos los eventos excepto el activo
+func _hide_other_events() -> void:
+	if not edited_scene_root or not active_event:
+		return
+
+	hidden_events.clear()
+
+	# Buscar todos los eventos en la escena
+	var all_events = _find_all_events(edited_scene_root)
+
+	for event in all_events:
+		if event != active_event and is_instance_valid(event):
+			# Guardar el estado de visibilidad actual
+			if event.visible:
+				hidden_events.append(event)
+				# Ocultar el evento
+				event.visible = false
+
+## Restaura la visibilidad de los eventos ocultos
+func _restore_events_visibility() -> void:
+	for event in hidden_events:
+		if is_instance_valid(event):
+			event.visible = true
+	hidden_events.clear()
+
+## Busca todos los eventos en la escena
+func _find_all_events(root: Node) -> Array[Event]:
+	var events: Array[Event] = []
+
+	# Buscar en el grupo de eventos
+	if root.get_tree():
+		var events_in_group = root.get_tree().get_nodes_in_group("events")
+		for node in events_in_group:
+			if node is Event and is_instance_valid(node):
+				events.append(node)
+
+	# También buscar recursivamente en la escena
+	_find_events_recursive(root, events)
+
+	return events
+
+## Busca eventos recursivamente en un nodo y sus hijos
+func _find_events_recursive(node: Node, events: Array[Event]) -> void:
+	if node is Event and is_instance_valid(node) and not node in events:
+		events.append(node)
+
+	for child in node.get_children():
+		_find_events_recursive(child, events)
 

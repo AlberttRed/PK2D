@@ -8,6 +8,7 @@ signal movement_edited
 signal cancelled
 
 var page: EventPage = null
+var event_node: Event = null  # Evento que se está editando
 
 # Referencias a los controles
 var scroll_container: ScrollContainer = null
@@ -29,6 +30,9 @@ var enabled_check_awareness: CheckBox = null
 var chance_spin: SpinBox = null
 var multiplier_spin: SpinBox = null
 var distance_spin: SpinBox = null
+var valid_tiles_label: Label = null
+var valid_tiles_button: Button = null
+var clear_tiles_button: Button = null
 
 func _ready() -> void:
 	title = "Gestionar Movimiento"
@@ -195,6 +199,35 @@ func _create_random_movement_section() -> void:
 	row.add_child(max_spin_random)
 
 	section.add_child(row)
+
+	# Celdas válidas para movimiento aleatorio
+	var tiles_row = HBoxContainer.new()
+	tiles_row.add_theme_constant_override("separation", 10)
+
+	var tiles_label = Label.new()
+	tiles_label.text = "Celdas Válidas:"
+	tiles_label.custom_minimum_size.x = 180
+	tiles_row.add_child(tiles_label)
+
+	valid_tiles_button = Button.new()
+	valid_tiles_button.text = "Seleccionar Celdas"
+	valid_tiles_button.pressed.connect(_on_select_valid_tiles_pressed)
+	valid_tiles_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tiles_row.add_child(valid_tiles_button)
+
+	clear_tiles_button = Button.new()
+	clear_tiles_button.text = "Limpiar"
+	clear_tiles_button.pressed.connect(_on_clear_valid_tiles_pressed)
+	tiles_row.add_child(clear_tiles_button)
+
+	section.add_child(tiles_row)
+
+	# Label para mostrar las celdas seleccionadas
+	valid_tiles_label = Label.new()
+	valid_tiles_label.text = "Ninguna celda seleccionada"
+	valid_tiles_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	valid_tiles_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.7))
+	section.add_child(valid_tiles_label)
 
 func _create_path_movement_section() -> void:
 	var section = _create_section("Path Movement (NPC)")
@@ -399,7 +432,84 @@ func _update_controls() -> void:
 	if distance_spin:
 		distance_spin.value = page.awareness_detection_distance
 
+	# Actualizar Celdas Válidas
+	_update_valid_tiles_label()
+
 func _on_close_requested() -> void:
 	cancelled.emit()
 	queue_free()
+
+func _on_select_valid_tiles_pressed() -> void:
+	if not page:
+		return
+
+	# Usar EditorInterface directamente (disponible como singleton en el editor)
+	var ed_interface = EditorInterface
+
+	# Obtener la escena editada
+	var edited_scene_root = ed_interface.get_edited_scene_root()
+	if not edited_scene_root:
+		push_error("Movement Editor: No hay escena editada")
+		return
+
+	# Buscar OverworldGrid en la escena
+	var overworld_grid = edited_scene_root.find_child("OverworldGrid", true, false)
+	if not overworld_grid or not overworld_grid is OverworldGrid:
+		push_error("Movement Editor: No se encontró OverworldGrid en la escena")
+		return
+
+	# Cargar y crear la ventana de vista del mapa (modo múltiple)
+	var selector_script = load("res://addons/event_tools/position_selector_window.gd")
+	if not selector_script:
+		push_error("Movement Editor: No se encontró el script de la ventana de vista del mapa")
+		return
+
+	var selector_window = selector_script.new()
+	# Añadir como hijo del editor para que sea modal
+	add_child(selector_window)
+
+	# Configurar la ventana en modo múltiple, pasando el evento que se está editando
+	await selector_window.setup(overworld_grid, edited_scene_root, event_node)
+	selector_window.set_multiple_selection_mode(true)
+
+	# Cargar celdas válidas existentes si las hay
+	if page.random_movement_valid_tiles.size() > 0:
+		selector_window.set_selected_tiles(page.random_movement_valid_tiles)
+
+	# Conectar señal para guardar las celdas seleccionadas
+	selector_window.tiles_selected.connect(func(tiles: Array[Vector2i]):
+		page.random_movement_valid_tiles = tiles
+		_update_valid_tiles_label()
+		selector_window.queue_free()
+	)
+	# Conectar señal de cancelación
+	selector_window.cancelled.connect(func(): selector_window.queue_free())
+
+	# Mostrar la ventana de forma modal
+	selector_window.popup_centered()
+
+func _on_clear_valid_tiles_pressed() -> void:
+	if not page:
+		return
+	page.random_movement_valid_tiles.clear()
+	_update_valid_tiles_label()
+
+func _update_valid_tiles_label() -> void:
+	if not valid_tiles_label or not page:
+		return
+
+	var tiles = page.random_movement_valid_tiles
+	if tiles.is_empty():
+		valid_tiles_label.text = "Ninguna celda seleccionada (el NPC puede moverse a cualquier celda válida)"
+		if clear_tiles_button:
+			clear_tiles_button.visible = false
+	else:
+		var tiles_text = "Celdas válidas (%d): " % tiles.size()
+		var tiles_list: Array[String] = []
+		for tile in tiles:
+			tiles_list.append("(%d, %d)" % [tile.x, tile.y])
+		tiles_text += ", ".join(tiles_list)
+		valid_tiles_label.text = tiles_text
+		if clear_tiles_button:
+			clear_tiles_button.visible = true
 

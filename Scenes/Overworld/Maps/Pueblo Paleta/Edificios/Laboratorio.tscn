@@ -1,4 +1,4 @@
-[gd_scene load_steps=288 format=4 uid="uid://c1amvh7rkmkou"]
+[gd_scene load_steps=329 format=4 uid="uid://c1amvh7rkmkou"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_q1be6"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gbfid"]
@@ -41,6 +41,8 @@
 [ext_resource type="Resource" uid="uid://bh30akwr2lc3o" path="res://Resources/Trainers/RIVAL_INICIO_S.tres" id="34_qicpj"]
 [ext_resource type="Script" uid="uid://cndauysvy7s3h" path="res://Scripts/Resources/SwitchCase.gd" id="37_vuiic"]
 [ext_resource type="Script" uid="uid://bnkrdjikt6sl3" path="res://Scripts/Events/Commands/SwitchCommand.gd" id="38_ekydi"]
+[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="41_ekydi"]
+[ext_resource type="Texture2D" uid="uid://smfk0yytw8ys" path="res://Sprites/Overworlds/Misc/Pokedex.png" id="42_qicpj"]
 
 [sub_resource type="Resource" id="Resource_jv80v"]
 script = ExtResource("7_j1fmg")
@@ -1440,6 +1442,200 @@ root_condition = SubResource("Resource_7o3in")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_ndjc0"]
+script = ExtResource("12_8cj4d")
+message = "¡Es como una enciclopedia, pero las páginas están en blanco!"
+
+[sub_resource type="Resource" id="Resource_f64w1"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_8dh08"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_f64w1")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ndjc0")])
+sprite_texture = ExtResource("42_qicpj")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_2so0d"]
+script = ExtResource("15_0nu6r")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_ljudf"]
+script = ExtResource("15_qicpj")
+
+[sub_resource type="Resource" id="Resource_ddriw"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_ljudf")
+root_condition = SubResource("Resource_2so0d")
+
+[sub_resource type="Resource" id="Resource_ekydi"]
+script = ExtResource("12_8cj4d")
+message = "¡Es como una enciclopedia, pero las páginas están en blanco!"
+
+[sub_resource type="Resource" id="Resource_wm8o3"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_eif01"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_wm8o3")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ekydi")])
+sprite_texture = ExtResource("42_qicpj")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_xsggb"]
+script = ExtResource("15_0nu6r")
+flag_name = "HAS_POKEDEX"
+
+[sub_resource type="Resource" id="Resource_nhd3s"]
+script = ExtResource("15_qicpj")
+
+[sub_resource type="Resource" id="Resource_xej6c"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_nhd3s")
+root_condition = SubResource("Resource_xsggb")
+
+[sub_resource type="Resource" id="Resource_lnn6g"]
+script = ExtResource("12_8cj4d")
+message = "¡Hay un correo electrónico!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_xygc7"]
+script = ExtResource("12_8cj4d")
+message = "..."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_04yfg"]
+script = ExtResource("12_8cj4d")
+message = "¡Aviso a todos los ENTRENADORES de POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ke1w1"]
+script = ExtResource("12_8cj4d")
+message = "¡Los ENTRENADORES de élite de la LIGA POKéMON están listos para desafiaros a todos!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_okdej"]
+script = ExtResource("12_8cj4d")
+message = "¡Traed a vuestros mejores POKéMON para ver lo buenos que sois!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_x1fl7"]
+script = ExtResource("12_8cj4d")
+message = "CG de la LIGA POKéMON, MESETA AÑIL"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_8kvsm"]
+script = ExtResource("12_8cj4d")
+message = "PD: ¡PROF. OAK, visítenos por favor!..."
+
+[sub_resource type="Resource" id="Resource_ltu1c"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_4umey"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_ltu1c")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_lnn6g"), SubResource("Resource_xygc7"), SubResource("Resource_04yfg"), SubResource("Resource_ke1w1"), SubResource("Resource_okdej"), SubResource("Resource_x1fl7"), SubResource("Resource_8kvsm")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_wjcn0"]
+script = ExtResource("12_8cj4d")
+message = "Cuántas lucecitas de colores que se encienden y se apagan..."
+
+[sub_resource type="Resource" id="Resource_pos28"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_sv3so"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_pos28")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_wjcn0")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_4viba"]
+script = ExtResource("12_8cj4d")
+message = "¿Para qué servirá?
+Prefiero no tocar, por si acaso..."
+
+[sub_resource type="Resource" id="Resource_214wf"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_16cpq"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_214wf")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_4viba")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_tyld7"]
+script = ExtResource("12_8cj4d")
+message = "¿Para qué servirá?
+Prefiero no tocar, por si acaso..."
+
+[sub_resource type="Resource" id="Resource_foyuf"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_il4io"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_foyuf")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_tyld7")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_70dek"]
+script = ExtResource("12_8cj4d")
+message = "¡Totalmente lleno de libros sobre los POKéMON!"
+
+[sub_resource type="Resource" id="Resource_co14d"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_5qydq"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_co14d")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_70dek")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_1ktds"]
+script = ExtResource("12_8cj4d")
+message = "¡Pulsa START para abrir el menú!"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_oqv28"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_qf4j4"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_oqv28")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_1ktds")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_aist4"]
+script = ExtResource("12_8cj4d")
+message = "En la pantalla del menú está la opción GUARDAR."
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_1v8su"]
+script = ExtResource("15_qicpj")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_r8hpe"]
+script = ExtResource("5_qy02h")
+trigger = SubResource("Resource_1v8su")
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_aist4")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [node name="Laboratorio" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_q1be6")
@@ -1529,6 +1725,120 @@ pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_8146w"), SubResourc
 [node name="Stop3" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
 position = Vector2(240, 80)
 pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_8146w"), SubResource("Resource_ciggr"), SubResource("Resource_h5471")])
+
+[node name="Pokedex1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+z_index = 1
+position = Vector2(144, -144)
+script = ExtResource("41_ekydi")
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_8dh08"), SubResource("Resource_ddriw")])
+
+[node name="Pokedex2" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(176, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_eif01"), SubResource("Resource_xej6c")])
+
+[node name="PC1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+z_index = 1
+position = Vector2(80, -144)
+script = ExtResource("41_ekydi")
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_4umey")])
+
+[node name="PC2" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(112, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_4umey")])
+
+[node name="Maquina1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+z_index = 1
+position = Vector2(16, -144)
+script = ExtResource("41_ekydi")
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_sv3so")])
+
+[node name="Maquina2" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(48, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_sv3so")])
+
+[node name="Maquina3" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(48, -48)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_16cpq")])
+
+[node name="Maquina4" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(80, -48)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_16cpq")])
+
+[node name="Maquina5" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(48, -16)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_16cpq")])
+
+[node name="Maquina6" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(80, -16)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_il4io")])
+
+[node name="Estanteria1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+z_index = 1
+position = Vector2(304, -144)
+script = ExtResource("41_ekydi")
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria2" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(336, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria3" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(368, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria4" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(400, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria5" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(16, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria6" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(48, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria7" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(80, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria8" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(112, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria9" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(144, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria10" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(272, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria11" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(304, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria12" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(336, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria13" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(368, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Estanteria14" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(400, 80)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_5qydq")])
+
+[node name="Cartel1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+z_index = 1
+position = Vector2(208, -144)
+script = ExtResource("41_ekydi")
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_qf4j4")])
+
+[node name="Cartel2" parent="OverworldGrid/Events" instance=ExtResource("4_k1guk")]
+position = Vector2(240, -144)
+pages = Array[ExtResource("5_qy02h")]([SubResource("Resource_r8hpe")])
 
 [node name="SpawnPoints" type="Node" parent="OverworldGrid"]
 

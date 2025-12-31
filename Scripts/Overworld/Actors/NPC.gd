@@ -473,14 +473,47 @@ func _on_random_timer_timeout() -> void:
 		return
 
 	# Todas las acciones disponibles (movimiento + LOOK)
-	var actions_to_use = [
+	var all_actions: Array[DirectionEnum.Type] = [
 		DirectionEnum.Type.UP, DirectionEnum.Type.DOWN,
 		DirectionEnum.Type.LEFT, DirectionEnum.Type.RIGHT,
 		DirectionEnum.Type.LOOK_UP, DirectionEnum.Type.LOOK_DOWN,
 		DirectionEnum.Type.LOOK_LEFT, DirectionEnum.Type.LOOK_RIGHT
 	]
 
-	# Elegir una acción aleatoria
+	# Filtrar acciones de movimiento según celdas válidas (si están definidas)
+	var actions_to_use: Array[DirectionEnum.Type] = []
+	var valid_tiles: Array[Vector2i] = []
+
+	# Obtener celdas válidas de la página actual (solo si movement_type = Random)
+	if current_page and get_movement_type() == 1:  # RANDOM
+		valid_tiles = current_page.random_movement_valid_tiles
+
+	# Si hay celdas válidas definidas, filtrar las acciones de movimiento
+	if valid_tiles.size() > 0:
+		var current_tile = motion.current_tile()
+
+		for action in all_actions:
+			if DirectionEnum.is_movement(action):
+				var action_direction = DirectionEnum.to_vector2(action)
+				var destination_tile = current_tile + Vector2i(action_direction)
+
+				# Solo incluir si la celda destino está en las celdas válidas
+				if destination_tile in valid_tiles:
+					actions_to_use.append(action)
+			else:
+				# Los comandos LOOK siempre están disponibles
+				actions_to_use.append(action)
+	else:
+		# No hay restricciones, usar todas las acciones
+		actions_to_use = all_actions
+
+	# Si no hay acciones disponibles (todas las direcciones están bloqueadas), no hacer nada
+	if actions_to_use.is_empty():
+		# Reiniciar timer con intervalo aleatorio
+		_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
+		return
+
+	# Elegir una acción aleatoria de las disponibles
 	var random_action = actions_to_use[randi() % actions_to_use.size()]
 	var direction = DirectionEnum.to_vector2(random_action)
 
@@ -491,8 +524,7 @@ func _on_random_timer_timeout() -> void:
 		motion.try_step(direction)
 	else:
 		# Comando LOOK: solo girar sin moverse
-		motion.hold_time = 0.0
-		motion.try_step(direction)
+		set_facing_direction(direction)
 
 	# Reiniciar timer con intervalo aleatorio
 	_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
