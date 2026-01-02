@@ -48,8 +48,6 @@ metadata/_edit_lock_ = true
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="SpawnPoints" type="Node" parent="OverworldGrid"]
-
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_mpvrs")]
 
 [node name="Land" parent="MapAreaEncounters" instance=ExtResource("4_n2uib")]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=26 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
@@ -20,7 +20,9 @@
 [ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="12_565oj"]
 [ext_resource type="PackedScene" uid="uid://cyx8eodebjaio" path="res://Scenes/Overworld/Maps/Común/Tienda_Pokemon.tscn" id="12_h18rh"]
 [ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="13_2m6j0"]
+[ext_resource type="PackedScene" uid="uid://kknly2sw8nn1" path="res://Scenes/Overworld/Maps/Ruta 22/Ruta_22.tscn" id="13_h18rh"]
 [ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="14_g3sn4"]
+[ext_resource type="PackedScene" uid="uid://bhe4u6i5drh73" path="res://Scenes/Overworld/Maps/Ruta 2/Ruta_2.tscn" id="14_yta3l"]
 [ext_resource type="PackedScene" uid="uid://b8k3m4n5p6q7r" path="res://Scenes/Overworld/Others/RippleEffect.tscn" id="15_2m6j0"]
 [ext_resource type="PackedScene" uid="uid://bq8k2m5n6p7r8" path="res://Scenes/Overworld/Effects/ExitArrowEffect.tscn" id="16_exit_arrow"]
 
@@ -30,7 +32,7 @@ script = ExtResource("1_overworld")
 [node name="WorldSystem" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("6_world_system")
-world_map_scenes = Array[PackedScene]([ExtResource("3_565oj"), ExtResource("4_2m6j0"), ExtResource("5_g3sn4"), ExtResource("6_1hg53"), ExtResource("7_2m6j0"), ExtResource("8_g3sn4"), ExtResource("9_efvnl"), ExtResource("10_2r3ww"), ExtResource("11_8unas"), ExtResource("12_h18rh")])
+world_map_scenes = Array[PackedScene]([ExtResource("3_565oj"), ExtResource("4_2m6j0"), ExtResource("5_g3sn4"), ExtResource("6_1hg53"), ExtResource("7_2m6j0"), ExtResource("8_g3sn4"), ExtResource("9_efvnl"), ExtResource("10_2r3ww"), ExtResource("11_8unas"), ExtResource("12_h18rh"), ExtResource("13_h18rh"), ExtResource("14_yta3l")])
 
 [node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")
