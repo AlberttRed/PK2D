@@ -58,6 +58,10 @@ enum ExecutionMode { QUEUED, PARALLEL }
 @export var random_move_interval_min: float = 2.0
 ## Tiempo máximo entre movimientos aleatorios (en segundos)
 @export var random_move_interval_max: float = 5.0
+## Celdas válidas para movimiento aleatorio (solo si movement_type = Random)
+## Si está vacío, el NPC puede moverse a cualquier celda válida
+## Si tiene celdas, el NPC solo se moverá a celdas que estén en este array
+@export var random_movement_valid_tiles: Array[Vector2i] = []
 
 @export_group("Path Movement (NPC)")
 ## Array de direcciones a seguir en bucle (UP, DOWN, LEFT, RIGHT, LOOK_UP, LOOK_DOWN, LOOK_LEFT, LOOK_RIGHT)

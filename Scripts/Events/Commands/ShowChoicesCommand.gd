@@ -31,6 +31,17 @@ class_name ShowChoicesCommand
 ## Cada branch contiene un label (texto de la opción) y comandos a ejecutar
 @export var branches: Array[ChoiceBranch] = []
 
+@export_group("Cancel & Loop")
+
+## Índice del branch que se ejecutará si el jugador pulsa cancelar (-1 = no hay opción de cancelar)
+## Si es >= 0, al pulsar cancelar se ejecutará automáticamente ese branch
+@export var cancel_branch_index: int = -1
+
+## Si es true, después de ejecutar cualquier branch que NO sea el de cancelar,
+## el comando se repite (muestra el mensaje y opciones de nuevo)
+## El bucle solo termina cuando se selecciona el branch de cancelar o se pulsa cancelar
+@export var loop_until_cancel: bool = false
+
 @export_group("Optional")
 
 ## (Opcional) Nombre de variable global donde guardar el resultado (índice seleccionado)
@@ -50,69 +61,88 @@ func execute(context: Node) -> void:
 		context.continue_execution()
 		return
 
-	# Extraer las opciones de texto de los branches
-	var options: Array[String] = []
-	for branch in branches:
-		options.append(branch.label)
+	# Bucle principal (se repite si loop_until_cancel está activo)
+	var should_loop: bool = true
+	while should_loop:
+		should_loop = false  # Por defecto, no repetir
 
-	# Mostrar mensaje con opciones usando DisplayManager
-	# Siempre pasar close_at_end=false para dejar que el branch decida
-	_selected_index = await DisplayManager.show_message_with_choices(message, options, false)
+		# Extraer las opciones de texto de los branches
+		var options: Array[String] = []
+		for branch in branches:
+			options.append(branch.label)
 
-	print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
+		# Mostrar mensaje con opciones usando DisplayManager
+		# Siempre pasar close_at_end=false para dejar que el branch decida
+		_selected_index = await DisplayManager.show_message_with_choices(message, options, false)
 
-	# Ejecutar los comandos del branch seleccionado
-	if _selected_index >= 0 and _selected_index < branches.size():
-		var selected_branch = branches[_selected_index]
+		# Si se pulsa cancelar y hay cancel_branch_index configurado, usar ese branch
+		if _selected_index == -1 and cancel_branch_index >= 0 and cancel_branch_index < branches.size():
+			print("ShowChoicesCommand: Cancelar pulsado, ejecutando branch de cancelar: %d" % cancel_branch_index)
+			_selected_index = cancel_branch_index
 
-		# Guardar resultado en variable global si está configurado
-		if not store_result_in.is_empty():
-			# Si el branch tiene value_stored informado, usar ese valor
-			# Si no, guardar null
-			var value_to_store: Variant
-			if selected_branch.value_stored != null:
-				# Verificar si es string vacío (también se considera "no informado")
-				if typeof(selected_branch.value_stored) == TYPE_STRING and selected_branch.value_stored == "":
-					value_to_store = null
+		print("ShowChoicesCommand: Opción seleccionada: %d (%s)" % [_selected_index, options[_selected_index] if _selected_index >= 0 else "Cancelado"])
+
+		# Ejecutar los comandos del branch seleccionado
+		if _selected_index >= 0 and _selected_index < branches.size():
+			var selected_branch = branches[_selected_index]
+
+			# Guardar resultado en variable global si está configurado
+			if not store_result_in.is_empty():
+				# Si el branch tiene value_stored informado, usar ese valor
+				# Si no, guardar null
+				var value_to_store: Variant
+				if selected_branch.value_stored != null:
+					# Verificar si es string vacío (también se considera "no informado")
+					if typeof(selected_branch.value_stored) == TYPE_STRING and selected_branch.value_stored == "":
+						value_to_store = null
+					else:
+						value_to_store = selected_branch.value_stored
 				else:
-					value_to_store = selected_branch.value_stored
-			else:
-				value_to_store = null
+					value_to_store = null
 
-			GameStateService.set_variable(store_result_in, value_to_store)
-			print("ShowChoicesCommand: Resultado guardado en variable '%s' = %s (tipo: %s)" % [store_result_in, value_to_store, typeof(value_to_store)])
-		print("ShowChoicesCommand: Ejecutando branch '%s' con %d comandos" % [selected_branch.label, selected_branch.commands.size()])
+				GameStateService.set_variable(store_result_in, value_to_store)
+				print("ShowChoicesCommand: Resultado guardado en variable '%s' = %s (tipo: %s)" % [store_result_in, value_to_store, typeof(value_to_store)])
+			print("ShowChoicesCommand: Ejecutando branch '%s' con %d comandos" % [selected_branch.label, selected_branch.commands.size()])
 
-		# Activar el flag de branch para prevenir que continue_execution() avance el EventController
-		if context is EventController:
-			context.executing_branch = true
+			# Activar el flag de branch para prevenir que continue_execution() avance el EventController
+			if context is EventController:
+				context.executing_branch = true
 
-		# Ejecutar cada comando del branch secuencialmente
-		for i in range(selected_branch.commands.size()):
-			var command = selected_branch.commands[i]
-			if command == null:
-				push_warning("ShowChoicesCommand: Comando null en branch '%s' (índice %d)" % [selected_branch.label, i])
-				continue
+			# Ejecutar cada comando del branch secuencialmente
+			for i in range(selected_branch.commands.size()):
+				var command = selected_branch.commands[i]
+				if command == null:
+					push_warning("ShowChoicesCommand: Comando null en branch '%s' (índice %d)" % [selected_branch.label, i])
+					continue
 
-			print("ShowChoicesCommand: Ejecutando comando: %s" % command.get_command_name())
-			await command.execute(context)
+				print("ShowChoicesCommand: Ejecutando comando: %s" % command.get_command_name())
+				await command.execute(context)
 
-			# Esperar un frame entre comandos para evitar bloqueos
-			await context.get_tree().process_frame
+				# Esperar un frame entre comandos para evitar bloqueos
+				await context.get_tree().process_frame
 
-		# Desactivar el flag de branch
-		if context is EventController:
-			context.executing_branch = false
+			# Desactivar el flag de branch
+			if context is EventController:
+				context.executing_branch = false
 
-		# Cerrar el MessageBox si el branch lo indica
-		if selected_branch.close_previous_message:
+			# Cerrar el MessageBox si el branch lo indica
+			if selected_branch.close_previous_message:
+				DisplayManager.close_message()
+
+			# Determinar si debemos repetir el bucle
+			# Solo repetir si loop_until_cancel está activo Y no se seleccionó el branch de cancelar
+			if loop_until_cancel and _selected_index != cancel_branch_index:
+				should_loop = true
+				print("ShowChoicesCommand: Loop activo, repitiendo opciones...")
+				# Pequeña pausa antes de mostrar de nuevo
+				await context.get_tree().process_frame
+
+		elif _selected_index == -1:
+			print("ShowChoicesCommand: El jugador canceló la selección")
+			# Si se cancela sin cancel_branch_index, cerrar el MessageBox y salir del bucle
 			DisplayManager.close_message()
-	elif _selected_index == -1:
-		print("ShowChoicesCommand: El jugador canceló la selección")
-		# Si se cancela, cerrar el MessageBox
-		DisplayManager.close_message()
-	else:
-		push_error("ShowChoicesCommand: Índice seleccionado fuera de rango: %d" % _selected_index)
+		else:
+			push_error("ShowChoicesCommand: Índice seleccionado fuera de rango: %d" % _selected_index)
 
 	# Continuar con el siguiente comando del evento principal
 	print("ShowChoicesCommand: Finalizando, continuando ejecución del evento")

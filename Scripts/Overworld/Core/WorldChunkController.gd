@@ -264,6 +264,10 @@ func register_map_to_global_chunks(map_id: String) -> void:
 			_initialize_map_events_in_chunk(map_id, chunk_id)
 			# Activar eventos del nuevo mapa
 			_activate_map_events_in_chunk(map_id, chunk_id)
+		elif chunk_data and chunk_data.events_initialized:
+			# El chunk no está activo pero ya fue inicializado previamente
+			# Resetear para que se reinicialice con los eventos del nuevo mapa
+			chunk_data.events_initialized = false
 
 
 ## Obtiene los chunks activos según la posición del jugador

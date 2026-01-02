@@ -14,6 +14,8 @@ var _event_node: Node = null
 var original_branches: Array = []
 var original_message: String = ""
 var original_store_result_in: String = ""
+var original_cancel_branch_index: int = -1
+var original_loop_until_cancel: bool = false
 
 # Referencias a los controles
 var message_edit: TextEdit = null
@@ -24,6 +26,8 @@ var move_up_button: Button = null
 var move_down_button: Button = null
 var edit_branch_button: Button = null
 var store_result_edit: LineEdit = null
+var cancel_branch_option: OptionButton = null
+var loop_check: CheckBox = null
 var accept_button: Button = null
 
 # Cache de branches (índice del ItemList -> ChoiceBranch)
@@ -116,6 +120,28 @@ func _ready() -> void:
 
 	vbox.add_child(list_controls)
 
+	# Opción de cancelar
+	var cancel_container = HBoxContainer.new()
+	var cancel_label = Label.new()
+	cancel_label.text = "Opción al cancelar:"
+	cancel_label.custom_minimum_size.x = 200
+	cancel_container.add_child(cancel_label)
+
+	cancel_branch_option = OptionButton.new()
+	cancel_branch_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel_branch_option.add_item("(Ninguna)", -1)
+	cancel_container.add_child(cancel_branch_option)
+
+	vbox.add_child(cancel_container)
+
+	# Checkbox de loop
+	loop_check = CheckBox.new()
+	loop_check.text = "Repetir hasta cancelar (loop)"
+	loop_check.tooltip_text = "Si está activo, después de ejecutar cualquier opción (excepto cancelar), el diálogo se repite"
+	vbox.add_child(loop_check)
+
+	vbox.add_child(HSeparator.new())
+
 	# Variable para guardar resultado
 	var store_result_container = HBoxContainer.new()
 	var store_result_label = Label.new()
@@ -164,6 +190,37 @@ func _refresh_branches_list() -> void:
 		var branch = _branches_cache[i]
 		var display_name = _get_branch_display_name(branch, i)
 		branches_list.add_item(display_name)
+
+	# Actualizar también el dropdown de cancelar
+	_refresh_cancel_branch_option()
+
+## Refresca el dropdown de opción de cancelar
+func _refresh_cancel_branch_option() -> void:
+	if not cancel_branch_option:
+		return
+
+	# Guardar la selección actual
+	var current_selection = cancel_branch_option.get_selected_id()
+
+	cancel_branch_option.clear()
+	cancel_branch_option.add_item("(Ninguna)", -1)
+
+	for i in range(_branches_cache.size()):
+		var branch = _branches_cache[i]
+		var label_text = branch.label if branch and branch.label != "" else "(sin texto)"
+		cancel_branch_option.add_item("Opción %d: %s" % [i + 1, label_text], i)
+
+	# Restaurar la selección si aún existe
+	var found = false
+	for i in range(cancel_branch_option.item_count):
+		if cancel_branch_option.get_item_id(i) == current_selection:
+			cancel_branch_option.select(i)
+			found = true
+			break
+
+	# Si no se encontró la selección anterior (ej: se eliminó esa opción), seleccionar "Ninguna"
+	if not found:
+		cancel_branch_option.select(0)
 
 ## Se llama cuando se selecciona una opción
 func _on_branch_selected(index: int) -> void:
@@ -307,6 +364,8 @@ func load_command(cmd: ShowChoicesCommand) -> void:
 	# Guardar valores originales para poder cancelar
 	original_message = cmd.message
 	original_store_result_in = cmd.store_result_in
+	original_cancel_branch_index = cmd.cancel_branch_index
+	original_loop_until_cancel = cmd.loop_until_cancel
 	original_branches = []
 	for branch in cmd.branches:
 		if branch:
@@ -327,6 +386,19 @@ func load_command(cmd: ShowChoicesCommand) -> void:
 			_branches_cache.append(null)
 
 	_refresh_branches_list()
+
+	# Cargar opción de cancelar
+	if cancel_branch_option:
+		# Buscar el item con el ID correcto
+		for i in range(cancel_branch_option.item_count):
+			if cancel_branch_option.get_item_id(i) == cmd.cancel_branch_index:
+				cancel_branch_option.select(i)
+				break
+
+	# Cargar loop
+	if loop_check:
+		loop_check.button_pressed = cmd.loop_until_cancel
+
 	_update_buttons_state()
 
 ## Aplica los valores editados al comando
@@ -336,6 +408,14 @@ func _apply_values_to_command() -> void:
 
 	command.message = message_edit.text
 	command.store_result_in = store_result_edit.text
+
+	# Aplicar opción de cancelar
+	if cancel_branch_option:
+		command.cancel_branch_index = cancel_branch_option.get_selected_id()
+
+	# Aplicar loop
+	if loop_check:
+		command.loop_until_cancel = loop_check.button_pressed
 
 	# Crear un nuevo array para evitar el error de "read-only"
 	var new_branches: Array[ChoiceBranch] = []
@@ -365,6 +445,18 @@ func _restore_original_values() -> void:
 			_branches_cache.append(null)
 
 	_refresh_branches_list()
+
+	# Restaurar opción de cancelar
+	if cancel_branch_option:
+		for i in range(cancel_branch_option.item_count):
+			if cancel_branch_option.get_item_id(i) == original_cancel_branch_index:
+				cancel_branch_option.select(i)
+				break
+
+	# Restaurar loop
+	if loop_check:
+		loop_check.button_pressed = original_loop_until_cancel
+
 	_update_buttons_state()
 
 ## Se llama cuando se presiona Aceptar

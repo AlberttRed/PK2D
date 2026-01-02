@@ -100,7 +100,7 @@ func _refresh_grid() -> void:
 	# Si no hay WorldSystem todavía, simplemente no hacer nada
 	# El grid se inicializará cuando se reciba el contexto
 
-func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
+func _on_warp_finished(_map_id: String, _tile_pos: Vector2i) -> void:
 	_refresh_grid()
 
 ## Intenta cruzar a un mapa vecino (seamless world)

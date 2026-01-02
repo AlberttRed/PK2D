@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=24 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
@@ -15,7 +15,10 @@
 [ext_resource type="Script" uid="uid://bn0u5uhjlhjda" path="res://Scripts/Overworld/Systems/WildEncounterSystem.gd" id="8_wild_encounter"]
 [ext_resource type="PackedScene" uid="uid://cf05ppc8ofttk" path="res://Scenes/Overworld/Maps/Ciudad Verde/Ciudad_Verde.tscn" id="9_efvnl"]
 [ext_resource type="Script" uid="uid://dodwbgc60bty1" path="res://Scripts/Overworld/Systems/TileMotion/TileMotionSystem.gd" id="9_tile_motion"]
+[ext_resource type="PackedScene" uid="uid://7t7p0x84jhsq" path="res://Scenes/Overworld/Maps/Ciudad Verde/Edificios/Casas_CV.tscn" id="10_2r3ww"]
+[ext_resource type="PackedScene" uid="uid://4s667ycn2n6t" path="res://Scenes/Overworld/Maps/Común/Centro_Pokemon.tscn" id="11_8unas"]
 [ext_resource type="PackedScene" uid="uid://c0njj2ydft1ai" path="res://Scenes/Overworld/Others/GrassEffect.tscn" id="12_565oj"]
+[ext_resource type="PackedScene" uid="uid://cyx8eodebjaio" path="res://Scenes/Overworld/Maps/Común/Tienda_Pokemon.tscn" id="12_h18rh"]
 [ext_resource type="PackedScene" uid="uid://c8njk3yeft2bi" path="res://Scenes/Overworld/Others/TallGrassOverlay.tscn" id="13_2m6j0"]
 [ext_resource type="PackedScene" uid="uid://crti0fd55enjf" path="res://Scenes/Overworld/Others/GrassSteppedEffect.tscn" id="14_g3sn4"]
 [ext_resource type="PackedScene" uid="uid://b8k3m4n5p6q7r" path="res://Scenes/Overworld/Others/RippleEffect.tscn" id="15_2m6j0"]
@@ -27,7 +30,7 @@ script = ExtResource("1_overworld")
 [node name="WorldSystem" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("6_world_system")
-world_map_scenes = Array[PackedScene]([ExtResource("3_565oj"), ExtResource("4_2m6j0"), ExtResource("5_g3sn4"), ExtResource("6_1hg53"), ExtResource("7_2m6j0"), ExtResource("8_g3sn4"), ExtResource("9_efvnl")])
+world_map_scenes = Array[PackedScene]([ExtResource("3_565oj"), ExtResource("4_2m6j0"), ExtResource("5_g3sn4"), ExtResource("6_1hg53"), ExtResource("7_2m6j0"), ExtResource("8_g3sn4"), ExtResource("9_efvnl"), ExtResource("10_2r3ww"), ExtResource("11_8unas"), ExtResource("12_h18rh")])
 
 [node name="EventSystem" type="Node" parent="."]
 script = ExtResource("1_fvdb5")

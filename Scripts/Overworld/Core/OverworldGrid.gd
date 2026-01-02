@@ -11,9 +11,6 @@ var occ: Dictionary = {}   # {Vector2i: weakref(actor)}
 # Eventos (bloqueantes o no)
 var events: Dictionary = {}   # {Vector2i: weakref(Event)}
 
-# SpawnPoints del mapa
-var spawn_points: Dictionary = {}   # {spawn_id: SpawnPoint}
-
 # Reservas de movimiento
 var res: Dictionary = {}   # {Vector2i: weakref(actor)}
 
@@ -34,9 +31,6 @@ func _enter_tree() -> void:
 			push_warning("El nodo en '%s' no es un TileMapLayer" % [path])
 
 func _ready() -> void:
-	# Registrar todos los SpawnPoints del mapa
-	_register_all_spawns()
-
 	# Generar ReflectionMaskLayer automáticamente
 	_build_reflection_mask_layer()
 
@@ -449,49 +443,6 @@ func interactable_at(t: Vector2i) -> Node:
 			return val
 	return null
 
-# --- SpawnPoints Management ---
-## Registra todos los SpawnPoints del mapa
-func _register_all_spawns() -> void:
-	# Buscar el nodo SpawnPoints
-	var spawn_container = get_node_or_null("SpawnPoints")
-	if spawn_container:
-		_register_spawns_recursive(spawn_container)
-	else:
-		# Si no hay nodo SpawnPoints, buscar en toda la escena
-		_register_spawns_recursive(self)
-
-## Registra SpawnPoints recursivamente
-func _register_spawns_recursive(node: Node) -> void:
-	for child in node.get_children():
-		if child is SpawnPoint:
-			register_spawn_point(child)
-		# Buscar recursivamente en los hijos
-		_register_spawns_recursive(child)
-
-## Registra un SpawnPoint individual
-func register_spawn_point(spawn: SpawnPoint) -> void:
-	if not spawn:
-		return
-
-	var spawn_id = spawn.get_spawn_id()
-	if spawn_id.is_empty():
-		push_warning("OverworldGrid: SpawnPoint sin ID válido: " + str(spawn))
-		return
-
-	spawn_points[spawn_id] = spawn
-
-## Obtiene un SpawnPoint por su ID
-func get_spawn_point(spawn_id: String) -> SpawnPoint:
-	return spawn_points.get(spawn_id, null)
-
-## Obtiene todos los SpawnPoints del mapa
-func get_all_spawn_points() -> Dictionary:
-	return spawn_points.duplicate()
-
-## Verifica si existe un SpawnPoint con el ID especificado
-func has_spawn_point(spawn_id: String) -> bool:
-	return spawn_points.has(spawn_id)
-
 # --- Player Positioning ---
 ## Posiciona al jugador en una posición específica (Vector2i)
 ## @param tile_position: Tile donde posicionar al jugador
@@ -505,32 +456,6 @@ func position_player_at_tile(tile_position: Vector2i, player: Node) -> bool:
 	player.teleport_to_tile(tile_position)
 
 	return true
-
-## Posiciona al jugador en un SpawnPoint específico
-## @param spawn_id: ID del spawn point
-## @param player: Nodo del jugador (REQUERIDO - debe pasarse explícitamente)
-func position_player_at_spawn(spawn_id: String, player: Node) -> bool:
-	if not player:
-		push_error("OverworldGrid.position_player_at_spawn(): Player es requerido como parámetro")
-		return false
-
-	var spawn_point = get_spawn_point(spawn_id)
-	if not spawn_point:
-		push_warning("OverworldGrid: No se encontró el spawn point: " + spawn_id)
-		return false
-
-	# Obtener la posición del spawn point
-	var spawn_position = spawn_point.get_tile_position()
-
-	# Usar el método de posicionamiento por tile
-	var success = position_player_at_tile(spawn_position, player)
-
-	if success:
-		# Actualizar la dirección si el spawn point la especifica
-		var direction = spawn_point.get_facing_direction()
-		set_player_facing_direction(direction, player)
-
-	return success
 
 ## Establece la dirección del jugador
 ## @param direction: Dirección a establecer

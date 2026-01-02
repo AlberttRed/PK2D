@@ -16,6 +16,8 @@ var original_close_at_end: bool = true
 var original_wait_time: float = 0.0
 var original_show_icon_at_end: bool = false
 var original_frame_style: int = 0
+var original_use_custom_color: bool = false
+var original_text_color: Color = Color.WHITE
 
 # Referencias a los controles
 var message_text_edit: TextEdit = null
@@ -24,6 +26,8 @@ var close_at_end_check: CheckBox = null
 var wait_time_spin: SpinBox = null
 var show_icon_at_end_check: CheckBox = null
 var frame_style_option: OptionButton = null
+var use_custom_color_check: CheckBox = null
+var text_color_picker: ColorPickerButton = null
 
 func _ready() -> void:
 	title = "Editar ShowMessageCommand"
@@ -113,6 +117,24 @@ func _setup_ui() -> void:
 	frame_style_container.add_child(frame_style_option)
 	vbox.add_child(frame_style_container)
 
+	vbox.add_child(HSeparator.new())
+
+	# Color de texto personalizado
+	var color_container = HBoxContainer.new()
+
+	use_custom_color_check = CheckBox.new()
+	use_custom_color_check.text = "Color de texto personalizado:"
+	use_custom_color_check.toggled.connect(_on_use_custom_color_toggled)
+	color_container.add_child(use_custom_color_check)
+
+	text_color_picker = ColorPickerButton.new()
+	text_color_picker.custom_minimum_size = Vector2(60, 30)
+	text_color_picker.color = Color.WHITE
+	text_color_picker.disabled = true
+	color_container.add_child(text_color_picker)
+
+	vbox.add_child(color_container)
+
 	# Botones
 	var buttons_container = HBoxContainer.new()
 	buttons_container.alignment = BoxContainer.ALIGNMENT_END
@@ -130,6 +152,11 @@ func _setup_ui() -> void:
 
 	vbox.add_child(buttons_container)
 
+## Se llama cuando cambia el checkbox de color personalizado
+func _on_use_custom_color_toggled(pressed: bool) -> void:
+	if text_color_picker:
+		text_color_picker.disabled = not pressed
+
 ## Carga un comando existente para editar
 func load_command(cmd: ShowMessageCommand) -> void:
 	if not cmd:
@@ -145,6 +172,8 @@ func load_command(cmd: ShowMessageCommand) -> void:
 	original_wait_time = cmd.wait_time
 	original_show_icon_at_end = cmd.show_icon_at_end
 	original_frame_style = cmd.frame_style
+	original_use_custom_color = cmd.use_custom_color
+	original_text_color = cmd.text_color
 
 	# Cargar valores en los controles
 	if message_text_edit:
@@ -165,6 +194,13 @@ func load_command(cmd: ShowMessageCommand) -> void:
 	if frame_style_option:
 		frame_style_option.selected = cmd.frame_style
 
+	if use_custom_color_check:
+		use_custom_color_check.button_pressed = cmd.use_custom_color
+
+	if text_color_picker:
+		text_color_picker.color = cmd.text_color
+		text_color_picker.disabled = not cmd.use_custom_color
+
 ## Aplica los valores editados al comando
 func _apply_values_to_command() -> void:
 	if not command:
@@ -176,6 +212,8 @@ func _apply_values_to_command() -> void:
 	command.wait_time = wait_time_spin.value if wait_time_spin else 0.0
 	command.show_icon_at_end = show_icon_at_end_check.button_pressed if show_icon_at_end_check else false
 	command.frame_style = frame_style_option.selected if frame_style_option else MessageBoxFrameStyle.Values.HGSS
+	command.use_custom_color = use_custom_color_check.button_pressed if use_custom_color_check else false
+	command.text_color = text_color_picker.color if text_color_picker else Color.WHITE
 
 func _on_accept_pressed() -> void:
 	_apply_values_to_command()
@@ -193,6 +231,8 @@ func _restore_original_values() -> void:
 	command.wait_time = original_wait_time
 	command.show_icon_at_end = original_show_icon_at_end
 	command.frame_style = original_frame_style
+	command.use_custom_color = original_use_custom_color
+	command.text_color = original_text_color
 
 func _on_cancel_pressed() -> void:
 	# Restaurar valores originales antes de cancelar

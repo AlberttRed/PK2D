@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://gcn6vvnlesbu"]
+[gd_scene load_steps=38 format=3 uid="uid://gcn6vvnlesbu"]
 
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="1_4n3h8"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="2_wad02"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="9_b5th6"]
 [ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="10_u8t44"]
 [ext_resource type="Texture2D" uid="uid://bxdcduvjp18mw" path="res://Sprites/Eventos/Doors/door2.png" id="11_pdse7"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="12_wad02"]
 
 [sub_resource type="Resource" id="Resource_emybb"]
 script = ExtResource("4_b1yju")
@@ -63,6 +64,12 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 script = ExtResource("8_oxplx")
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_wad02"]
+script = ExtResource("12_wad02")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_emybb"]
 atlas = ExtResource("11_pdse7")
@@ -119,10 +126,8 @@ animations = [{
 
 [sub_resource type="Resource" id="Resource_g8i1c"]
 script = ExtResource("2_wad02")
-trigger_type = 2
 commands = Array[ExtResource("3_8pe36")]([SubResource("Resource_emybb"), SubResource("Resource_wv2fv"), SubResource("Resource_7vpoe"), SubResource("Resource_x0mvh"), SubResource("Resource_ph5q8"), SubResource("Resource_yteb7"), SubResource("Resource_a22sq"), SubResource("Resource_eglkp"), SubResource("Resource_oem2p"), SubResource("Resource_v7ptp")])
-required_flag = "indoor"
-required_flag_value = false
+root_condition = SubResource("Resource_wad02")
 sprite_frames = SubResource("SpriteFrames_vaxet")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -152,6 +157,11 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 script = ExtResource("4_b1yju")
 animation_name = "default_back"
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
+
+[sub_resource type="Resource" id="Resource_8pe36"]
+script = ExtResource("12_wad02")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_oem2p"]
 animations = [{
@@ -192,10 +202,9 @@ animations = [{
 
 [sub_resource type="Resource" id="Resource_p8snc"]
 script = ExtResource("2_wad02")
-trigger_type = 1
 commands = Array[ExtResource("3_8pe36")]([SubResource("Resource_n84s5"), SubResource("Resource_ecx1p"), SubResource("Resource_2uahs"), SubResource("Resource_h1dnx"), SubResource("Resource_piq08")])
+root_condition = SubResource("Resource_8pe36")
 through = true
-required_flag = "indoor"
 sprite_frames = SubResource("SpriteFrames_oem2p")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 

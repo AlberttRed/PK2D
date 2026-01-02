@@ -418,6 +418,6 @@ func _connect_to_warp_signals() -> void:
 
 
 ## Callback cuando termina un warp
-func _on_warp_finished(_map_id: String, _spawn_id: String) -> void:
+func _on_warp_finished(_map_id: String, _tile_pos: Vector2i) -> void:
 	# Limpiar todos los efectos visuales cuando termina el warp (nuevo mapa cargado)
 	clear_all_effects()

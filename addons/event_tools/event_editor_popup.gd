@@ -1510,232 +1510,107 @@ func _move_command_to_destination_same_page(page_index: int, destination_metadat
 						success = true
 
 	elif move_type == "nested_command":
-		# Mover nested_command
-		# Necesitamos encontrar el comando por su posición en lugar de por referencia
-		# porque después de duplicate, las referencias no coinciden
+		# Mover nested_command usando navegación por ruta para soportar múltiples niveles de anidamiento
 		var nested_command = null
 		var removed = false
 
-		# Obtener información de posición del metadata
-		var parent_branch_meta = move_metadata.get("parent_branch")
-		if not parent_branch_meta:
-			push_error("Event Editor: No se encontró parent_branch en metadata")
-			return false
-
-		var parent_command_ref = parent_branch_meta.get("parent_command")
-		if not parent_command_ref:
-			push_error("Event Editor: No se encontró parent_command en parent_branch")
-			return false
-
-		# Buscar recursivamente el comando padre en la página original
-		var parent_location = _find_command_location_in_page(original_page, parent_command_ref)
-		if not parent_location.found:
-			push_error("Event Editor: No se encontró el comando padre en la página original")
-			return false
-
-		# Obtener el índice del nested_command (guardado cuando se presionó "Mover")
-		var nested_command_index = move_info.get("nested_command_index", -1)
-
-		if nested_command_index < 0:
-			push_error("Event Editor: No se encontró nested_command_index en move_info")
-			return false
-
-		# Obtener el comando padre en la página duplicada usando la ubicación
-		var parent_cmd_duplicated = _get_nested_command_from_location(editable_page, parent_location)
-		if not parent_cmd_duplicated:
-			push_error("Event Editor: No se pudo obtener el comando padre en la página duplicada")
-			return false
-		var branch_type = parent_branch_meta.get("type", "")
-
-		# Encontrar el branch/case correcto
-		var branch_index = -1
-		if branch_type == "branch" and parent_cmd_duplicated is ConditionalCommand:
-			var cond_cmd = parent_cmd_duplicated as ConditionalCommand
-			# Encontrar el índice del branch original
-			var original_branch = parent_branch_meta.get("branch")
-			if original_branch:
-				var original_cond_cmd = parent_command_ref as ConditionalCommand
-				for i in range(original_cond_cmd.branches.size()):
-					if original_cond_cmd.branches[i] == original_branch:
-						branch_index = i
-						break
-			if branch_index >= 0 and branch_index < cond_cmd.branches.size():
-				if nested_command_index < cond_cmd.branches[branch_index].commands.size():
-					nested_command = cond_cmd.branches[branch_index].commands[nested_command_index]
-					cond_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+		# Usar la ruta de navegación si está disponible (método nuevo y confiable)
+		var source_nav_path = move_info.get("source_nav_path", [])
+		if not source_nav_path.is_empty():
+			# Navegar usando la ruta para encontrar y remover el comando
+			var nav_result = _navigate_to_parent_commands_array(editable_page, source_nav_path)
+			if nav_result.success:
+				var commands_array = nav_result.commands_array
+				var cmd_index = nav_result.command_index
+				if cmd_index >= 0 and cmd_index < commands_array.size():
+					nested_command = commands_array[cmd_index]
+					commands_array.remove_at(cmd_index)
+					# Actualizar el array en la estructura
+					_set_commands_array_to_branch_case(nav_result.parent_command, nav_result.parent_type, nav_result.branch_index, nav_result.case_index, commands_array)
 					removed = true
-		elif branch_type == "choice_branch" and parent_cmd_duplicated is ShowChoicesCommand:
-			var choices_cmd = parent_cmd_duplicated as ShowChoicesCommand
-			# Encontrar el índice del branch original
-			var original_branch = parent_branch_meta.get("branch")
-			if original_branch:
-				var original_choices_cmd = parent_command_ref as ShowChoicesCommand
-				for i in range(original_choices_cmd.branches.size()):
-					if original_choices_cmd.branches[i] == original_branch:
-						branch_index = i
-						break
-			if branch_index >= 0 and branch_index < choices_cmd.branches.size():
-				if nested_command_index < choices_cmd.branches[branch_index].commands.size():
-					nested_command = choices_cmd.branches[branch_index].commands[nested_command_index]
-					choices_cmd.branches[branch_index].commands.remove_at(nested_command_index)
-					removed = true
-		elif branch_type == "switch_case" and parent_cmd_duplicated is SwitchCommand:
-			var switch_cmd = parent_cmd_duplicated as SwitchCommand
-			# Encontrar el índice del case original
-			var original_case = parent_branch_meta.get("case")
-			if original_case:
-				var original_switch_cmd = parent_command_ref as SwitchCommand
-				for i in range(original_switch_cmd.cases.size()):
-					if original_switch_cmd.cases[i] == original_case:
-						branch_index = i
-						break
-			if branch_index >= 0 and branch_index < switch_cmd.cases.size():
-				if nested_command_index < switch_cmd.cases[branch_index].commands.size():
-					nested_command = switch_cmd.cases[branch_index].commands[nested_command_index]
-					switch_cmd.cases[branch_index].commands.remove_at(nested_command_index)
-					removed = true
-		elif branch_type == "default_commands" and parent_cmd_duplicated is SwitchCommand:
-			var switch_cmd = parent_cmd_duplicated as SwitchCommand
-			if nested_command_index < switch_cmd.default_commands.size():
-				nested_command = switch_cmd.default_commands[nested_command_index]
-				switch_cmd.default_commands.remove_at(nested_command_index)
-				removed = true
+				else:
+					push_error("Event Editor: Índice de comando fuera de rango: ", cmd_index)
+			else:
+				push_error("Event Editor: No se pudo navegar a la ubicación del comando usando source_nav_path")
+		else:
+			# Fallback: usar el método antiguo basado en referencias (para compatibilidad)
+			var parent_branch_meta = move_metadata.get("parent_branch")
+			if parent_branch_meta:
+				var parent_command_ref = parent_branch_meta.get("parent_command")
+				if parent_command_ref:
+					var parent_location = _find_command_location_in_page(original_page, parent_command_ref)
+					if parent_location.found:
+						var nested_command_index = move_info.get("nested_command_index", -1)
+						if nested_command_index >= 0:
+							var parent_cmd_duplicated = _get_nested_command_from_location(editable_page, parent_location)
+							if parent_cmd_duplicated:
+								var branch_type = parent_branch_meta.get("type", "")
+								var branch_index = parent_branch_meta.get("branch_index", -1)
+
+								if branch_type == "choice_branch" and parent_cmd_duplicated is ShowChoicesCommand:
+									var choices_cmd = parent_cmd_duplicated as ShowChoicesCommand
+									if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+										if nested_command_index < choices_cmd.branches[branch_index].commands.size():
+											nested_command = choices_cmd.branches[branch_index].commands[nested_command_index]
+											choices_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+											removed = true
+								elif branch_type == "branch" and parent_cmd_duplicated is ConditionalCommand:
+									var cond_cmd = parent_cmd_duplicated as ConditionalCommand
+									if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+										if nested_command_index < cond_cmd.branches[branch_index].commands.size():
+											nested_command = cond_cmd.branches[branch_index].commands[nested_command_index]
+											cond_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+											removed = true
 
 		if not removed or not nested_command:
 			push_error("Event Editor: No se encontró el nested_command para remover")
 			return false
 
-		# Añadir al destino
-		# Necesitamos encontrar el branch/case correspondiente en la página duplicada
-		# Usamos el índice del comando padre para encontrar el comando correcto
-		if destination_type == "branch":
-			var parent_command = destination_metadata.get("parent_command")
-			if parent_command:
-				# Encontrar el índice del comando padre en la página original
-				var dest_parent_cmd_index = -1
-				if original_page:
-					for i in range(original_page.commands.size()):
-						if original_page.commands[i] == parent_command:
-							dest_parent_cmd_index = i
-							break
-
-				# Usar el mismo índice en la página duplicada
-				if dest_parent_cmd_index >= 0 and dest_parent_cmd_index < editable_page.commands.size():
-					var cmd = editable_page.commands[dest_parent_cmd_index]
-					if cmd is ConditionalCommand:
-						var cond_cmd = cmd as ConditionalCommand
-						# Encontrar el branch por su posición (índice)
-						var dest_branch_index = -1
-						var original_branch = destination_metadata.get("branch")
-						if original_branch:
-							# Buscar el índice del branch original en el comando original
-							var original_cond_cmd = parent_command as ConditionalCommand
-							for i in range(original_cond_cmd.branches.size()):
-								if original_cond_cmd.branches[i] == original_branch:
-									dest_branch_index = i
-									break
-							# Usar el branch correspondiente en el comando duplicado
-							if dest_branch_index >= 0 and dest_branch_index < cond_cmd.branches.size():
-								if _add_command_to_branch_case(cmd, "branch", dest_branch_index, -1, nested_command):
-									success = true
-		elif destination_type == "choice_branch":
-			var parent_command = destination_metadata.get("parent_command")
-			if parent_command:
-				# Buscar recursivamente el comando en la página original
-				if original_page:
-					var location = _find_command_location_in_page(original_page, parent_command)
-					if location.found:
-						# Obtener el comando ShowChoicesCommand en la página duplicada
-						var choices_cmd = _get_nested_command_from_location(editable_page, location)
-						if choices_cmd is ShowChoicesCommand:
-							# El branch_index viene del destination_metadata, no del location
-							var original_branch = destination_metadata.get("branch")
-							var dest_branch_index = -1
-							if original_branch:
-								# Buscar el índice del branch en el comando original
-								if parent_command is ShowChoicesCommand:
-									var original_choices_cmd = parent_command as ShowChoicesCommand
-									for i in range(original_choices_cmd.branches.size()):
-										if original_choices_cmd.branches[i] == original_branch:
-											dest_branch_index = i
-											break
-							if dest_branch_index >= 0 and dest_branch_index < choices_cmd.branches.size():
-								if _add_command_to_branch_case(choices_cmd, "choice_branch", dest_branch_index, -1, nested_command):
-									success = true
-							else:
-								push_error("Event Editor: dest_branch_index inválido o fuera de rango: ", dest_branch_index, " (branches size: ", choices_cmd.branches.size(), ")")
-						else:
-							push_error("Event Editor: No se encontró ShowChoicesCommand en la ubicación especificada")
-					else:
-						push_error("Event Editor: No se encontró parent_command en la página original")
-			else:
-				push_error("Event Editor: No se encontró parent_command en destination_metadata")
-		elif destination_type == "switch_case":
-			var parent_command = destination_metadata.get("parent_command")
-			if parent_command:
-				# Encontrar el índice del comando padre en la página original
-				var dest_parent_cmd_index = -1
-				if original_page:
-					for i in range(original_page.commands.size()):
-						if original_page.commands[i] == parent_command:
-							dest_parent_cmd_index = i
-							break
-
-				# Usar el mismo índice en la página duplicada
-				if dest_parent_cmd_index >= 0 and dest_parent_cmd_index < editable_page.commands.size():
-					var cmd = editable_page.commands[dest_parent_cmd_index]
-					if cmd is SwitchCommand:
-						var switch_cmd = cmd as SwitchCommand
-						# Encontrar el case por su posición (índice)
-						var dest_case_index = -1
-						var original_case = destination_metadata.get("case")
-						if original_case:
-							# Buscar el índice del case original en el comando original
-							var original_switch_cmd = parent_command as SwitchCommand
-							for i in range(original_switch_cmd.cases.size()):
-								if original_switch_cmd.cases[i] == original_case:
-									dest_case_index = i
-									break
-							# Usar el case correspondiente en el comando duplicado
-							if dest_case_index >= 0 and dest_case_index < switch_cmd.cases.size():
-								if _add_command_to_branch_case(cmd, "switch_case", -1, dest_case_index, nested_command):
-									success = true
-					else:
-						push_error("Event Editor: El comando en el índice no es SwitchCommand")
+		# Añadir al destino usando navegación por ruta si está disponible
+		if destination_metadata.has("nav_path"):
+			var dest_nav_path = destination_metadata.get("nav_path")
+			var dest_result = _navigate_to_destination_branch(editable_page, dest_nav_path)
+			if dest_result.success:
+				if dest_result.parent_type == "default_commands":
+					var switch_cmd = dest_result.parent_command as SwitchCommand
+					var new_commands: Array[EventCommand] = []
+					for cmd in switch_cmd.default_commands:
+						new_commands.append(cmd)
+					new_commands.append(nested_command)
+					switch_cmd.default_commands = new_commands
+					success = true
 				else:
-					push_error("Event Editor: dest_parent_cmd_index inválido o fuera de rango: ", dest_parent_cmd_index, " (array size: ", editable_page.commands.size(), ")")
+					var new_commands: Array[EventCommand] = []
+					for cmd in dest_result.branch.commands:
+						new_commands.append(cmd)
+					new_commands.append(nested_command)
+					dest_result.branch.commands = new_commands
+					success = true
 			else:
-				push_error("Event Editor: No se encontró parent_command en destination_metadata")
-		elif destination_type == "default_commands":
-			var parent_command = destination_metadata.get("parent_command")
-			if parent_command:
-				# Encontrar el índice del comando padre en la página original
-				var dest_parent_cmd_index = -1
-				if original_page:
-					for i in range(original_page.commands.size()):
-						if original_page.commands[i] == parent_command:
-							dest_parent_cmd_index = i
-							break
-
-				# Usar el mismo índice en la página duplicada
-				if dest_parent_cmd_index >= 0 and dest_parent_cmd_index < editable_page.commands.size():
-					var cmd = editable_page.commands[dest_parent_cmd_index]
-					if cmd is SwitchCommand:
-						var switch_cmd = cmd as SwitchCommand
-						if _add_command_to_branch_case(cmd, "default_commands", -1, -1, nested_command):
-							success = true
-					else:
-						push_error("Event Editor: El comando en el índice no es SwitchCommand")
-				else:
-					push_error("Event Editor: dest_parent_cmd_index inválido o fuera de rango: ", dest_parent_cmd_index, " (array size: ", editable_page.commands.size(), ")")
-			else:
-				push_error("Event Editor: No se encontró parent_command en destination_metadata")
+				push_error("Event Editor: No se pudo navegar al destino usando nav_path")
 		elif destination_type == "command":
-			# Mover al nivel principal (después del comando padre)
+			# Mover al nivel principal (después del comando seleccionado)
 			var dest_index = destination_metadata.get("index", -1)
 			if dest_index >= 0:
 				editable_page.commands.insert(dest_index + 1, nested_command)
 				success = true
+		elif destination_type == "root":
+			# Mover a la raíz (al final de los comandos de la página)
+			editable_page.commands.append(nested_command)
+			success = true
+		else:
+			# Fallback: usar el método antiguo para el destino
+			if destination_type == "choice_branch":
+				var dest_branch_index = destination_metadata.get("branch_index", -1)
+				var parent_command = destination_metadata.get("parent_command")
+				if parent_command and dest_branch_index >= 0:
+					var location = _find_command_location_in_page(original_page, parent_command)
+					if location.found:
+						var choices_cmd = _get_nested_command_from_location(editable_page, location)
+						if choices_cmd is ShowChoicesCommand:
+							if dest_branch_index < choices_cmd.branches.size():
+								if _add_command_to_branch_case(choices_cmd, "choice_branch", dest_branch_index, -1, nested_command):
+									success = true
 
 	if success:
 		event_node.pages[page_index] = editable_page
@@ -1794,93 +1669,70 @@ func _move_nested_to_root(dest_page_index: int, source_page_index: int = -1) -> 
 	var nested_command = null
 	var removed = false
 
-	# Obtener información de posición del metadata
-	var parent_branch_meta = move_metadata.get("parent_branch")
-	if not parent_branch_meta:
-		push_error("Event Editor: No se encontró parent_branch en metadata")
-		return false
-
-	var parent_command_ref = parent_branch_meta.get("parent_command")
-	if not parent_command_ref:
-		push_error("Event Editor: No se encontró parent_command en parent_branch")
-		return false
-
-	# Buscar recursivamente el comando padre en la página original
-	var parent_location = _find_command_location_in_page(source_page, parent_command_ref)
-	if not parent_location.found:
-		push_error("Event Editor: No se encontró el comando padre en la página original")
-		return false
-
-	# Obtener el índice del nested_command (guardado cuando se presionó "Mover")
-	var nested_command_index = move_info.get("nested_command_index", -1)
-
-	if nested_command_index < 0:
-		push_error("Event Editor: No se encontró nested_command_index en move_info")
-		return false
-
-	# Obtener el comando padre en la página duplicada usando la ubicación
-	var parent_cmd_duplicated = _get_nested_command_from_location(editable_page, parent_location)
-	if not parent_cmd_duplicated:
-		push_error("Event Editor: No se pudo obtener el comando padre en la página duplicada")
-		return false
-	var branch_type = parent_branch_meta.get("type", "")
-
-	# Encontrar el branch/case correcto y remover el comando
-	var branch_index = -1
-	if branch_type == "branch" and parent_cmd_duplicated is ConditionalCommand:
-		var cond_cmd = parent_cmd_duplicated as ConditionalCommand
-		# Encontrar el índice del branch original
-		var original_branch = parent_branch_meta.get("branch")
-		if original_branch:
-			var original_cond_cmd = parent_command_ref as ConditionalCommand
-			for i in range(original_cond_cmd.branches.size()):
-				if original_cond_cmd.branches[i] == original_branch:
-					branch_index = i
-					break
-		if branch_index >= 0 and branch_index < cond_cmd.branches.size():
-			if nested_command_index < cond_cmd.branches[branch_index].commands.size():
-				nested_command = cond_cmd.branches[branch_index].commands[nested_command_index]
-				cond_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+	# Usar la ruta de navegación si está disponible (método nuevo y confiable)
+	var source_nav_path = move_info.get("source_nav_path", [])
+	if not source_nav_path.is_empty():
+		# Navegar usando la ruta para encontrar y remover el comando
+		var nav_result = _navigate_to_parent_commands_array(editable_page, source_nav_path)
+		if nav_result.success:
+			var commands_array = nav_result.commands_array
+			var cmd_index = nav_result.command_index
+			if cmd_index >= 0 and cmd_index < commands_array.size():
+				nested_command = commands_array[cmd_index]
+				commands_array.remove_at(cmd_index)
+				# Actualizar el array en la estructura
+				_set_commands_array_to_branch_case(nav_result.parent_command, nav_result.parent_type, nav_result.branch_index, nav_result.case_index, commands_array)
 				removed = true
-	elif branch_type == "choice_branch" and parent_cmd_duplicated is ShowChoicesCommand:
-		var choices_cmd = parent_cmd_duplicated as ShowChoicesCommand
-		# Encontrar el índice del branch original
-		var original_branch = parent_branch_meta.get("branch")
-		if original_branch:
-			var original_choices_cmd = parent_command_ref as ShowChoicesCommand
-			for i in range(original_choices_cmd.branches.size()):
-				if original_choices_cmd.branches[i] == original_branch:
-					branch_index = i
-					break
-		if branch_index >= 0 and branch_index < choices_cmd.branches.size():
-			if nested_command_index < choices_cmd.branches[branch_index].commands.size():
-				nested_command = choices_cmd.branches[branch_index].commands[nested_command_index]
-				choices_cmd.branches[branch_index].commands.remove_at(nested_command_index)
-				removed = true
-	elif branch_type == "switch_case" and parent_cmd_duplicated is SwitchCommand:
-		var switch_cmd = parent_cmd_duplicated as SwitchCommand
-		# Encontrar el índice del case original
-		var original_case = parent_branch_meta.get("case")
-		if original_case:
-			var original_switch_cmd = parent_command_ref as SwitchCommand
-			for i in range(original_switch_cmd.cases.size()):
-				if original_switch_cmd.cases[i] == original_case:
-					branch_index = i
-					break
-		if branch_index >= 0 and branch_index < switch_cmd.cases.size():
-			if nested_command_index < switch_cmd.cases[branch_index].commands.size():
-				nested_command = switch_cmd.cases[branch_index].commands[nested_command_index]
-				switch_cmd.cases[branch_index].commands.remove_at(nested_command_index)
-				removed = true
-	elif branch_type == "default_commands" and parent_cmd_duplicated is SwitchCommand:
-		var switch_cmd = parent_cmd_duplicated as SwitchCommand
-		if nested_command_index < switch_cmd.default_commands.size():
-			nested_command = switch_cmd.default_commands[nested_command_index]
-			switch_cmd.default_commands.remove_at(nested_command_index)
-			removed = true
+			else:
+				push_error("Event Editor: Índice de comando fuera de rango: ", cmd_index)
+		else:
+			push_error("Event Editor: No se pudo navegar a la ubicación del comando usando source_nav_path")
+	else:
+		# Fallback: usar el método antiguo basado en referencias
+		var parent_branch_meta = move_metadata.get("parent_branch")
+		if not parent_branch_meta:
+			push_error("Event Editor: No se encontró parent_branch en metadata y no hay source_nav_path")
+			return false
+
+		var parent_command_ref = parent_branch_meta.get("parent_command")
+		if not parent_command_ref:
+			push_error("Event Editor: No se encontró parent_command en parent_branch")
+			return false
+
+		var parent_location = _find_command_location_in_page(source_page, parent_command_ref)
+		if not parent_location.found:
+			push_error("Event Editor: No se encontró el comando padre en la página original")
+			return false
+
+		var nested_command_index = move_info.get("nested_command_index", -1)
+		if nested_command_index < 0:
+			push_error("Event Editor: No se encontró nested_command_index en move_info")
+			return false
+
+		var parent_cmd_duplicated = _get_nested_command_from_location(editable_page, parent_location)
+		if not parent_cmd_duplicated:
+			push_error("Event Editor: No se pudo obtener el comando padre en la página duplicada")
+			return false
+		var branch_type = parent_branch_meta.get("type", "")
+		var branch_index = parent_branch_meta.get("branch_index", -1)
+
+		if branch_type == "choice_branch" and parent_cmd_duplicated is ShowChoicesCommand:
+			var choices_cmd = parent_cmd_duplicated as ShowChoicesCommand
+			if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+				if nested_command_index < choices_cmd.branches[branch_index].commands.size():
+					nested_command = choices_cmd.branches[branch_index].commands[nested_command_index]
+					choices_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+					removed = true
+		elif branch_type == "branch" and parent_cmd_duplicated is ConditionalCommand:
+			var cond_cmd = parent_cmd_duplicated as ConditionalCommand
+			if branch_index >= 0 and branch_index < cond_cmd.branches.size():
+				if nested_command_index < cond_cmd.branches[branch_index].commands.size():
+					nested_command = cond_cmd.branches[branch_index].commands[nested_command_index]
+					cond_cmd.branches[branch_index].commands.remove_at(nested_command_index)
+					removed = true
 
 	if not removed or not nested_command:
-		push_error("Event Editor: No se encontró el nested_command para remover (branch_index: ", branch_index, ", nested_command_index: ", nested_command_index, ")")
+		push_error("Event Editor: No se encontró el nested_command para remover")
 		if source_page_index == dest_page_index:
 			_restore_from_backup([source_page_index])
 		else:
@@ -2129,6 +1981,7 @@ func _on_movement_button_pressed(page_index: int) -> void:
 
 	add_child(editor_window)
 	editor_window.load_page(page)
+	editor_window.event_node = event_node  # Pasar el evento que se está editando
 	editor_window.movement_edited.connect(func(): _on_page_movement_edited(page_index))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
 
@@ -2182,13 +2035,19 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 		return
 
 	var selector_window = selector_script.new()
-	ed_interface.get_base_control().add_child(selector_window)
+	# Añadir como hijo del editor (igual que sprite_editor) para que sea modal
+	add_child(selector_window)
 
-	# Configurar la ventana
-	selector_window.setup(overworld_grid, edited_scene_root)
+	# Configurar la ventana, pasando el evento que se está editando
+	selector_window.setup(overworld_grid, edited_scene_root, event_node)
 
-	# Conectar señal para guardar la posición seleccionada
-	selector_window.cell_selected.connect(func(cell_pos: Vector2i): _on_position_selected(page_index, cell_pos))
+	# Conectar señal para guardar la posición seleccionada y liberar la ventana
+	selector_window.cell_selected.connect(func(cell_pos: Vector2i):
+		_on_position_selected(page_index, cell_pos)
+		selector_window.queue_free()
+	)
+	# Conectar señal de cancelación para liberar la ventana (igual que sprite_editor)
+	selector_window.cancelled.connect(func(): selector_window.queue_free())
 
 	# Si la página ya tiene una posición, mostrarla en el selector
 	var page = _get_page(page_index)
@@ -2198,18 +2057,12 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 			pos = Vector2i(-1, -1)
 
 		if pos.x >= 0 and pos.y >= 0:
-			# Convertir de coordenadas ajustadas a coordenadas reales del TileMapLayer
-			# La posición guardada está en coordenadas ajustadas (0,0 es esquina superior izquierda)
-			# Necesitamos convertirla a las coordenadas reales del TileMapLayer
-			var used_rect = selector_window.reference_tile_layer.get_used_rect() if selector_window.reference_tile_layer else null
-			if used_rect and (used_rect.position.x < 0 or used_rect.position.y < 0):
-				# Ajustar de vuelta a coordenadas reales
-				var real_cell_pos = pos + used_rect.position
-				selector_window.selected_cell = real_cell_pos
-			else:
-				selector_window.selected_cell = pos
+			# Las coordenadas guardadas ya son coordenadas reales del TileMapLayer
+			# No necesitamos ajustar, usar directamente
+			selector_window.selected_cell = pos
 			selector_window._update_selected_cell_rect()
 
+	# Mostrar la ventana de forma modal (igual que sprite_editor)
 	selector_window.popup_centered()
 
 func _get_position_text(page: EventPage) -> String:
@@ -2595,7 +2448,13 @@ func _on_add_command_pressed(page_index: int) -> void:
 	if selected_item:
 		var metadata = selected_item.get_metadata(0)
 		if metadata:
-			destination_metadata = metadata
+			destination_metadata = metadata.duplicate()
+
+			# Construir la ruta de navegación desde el árbol UI para comandos anidados
+			if metadata.type in ["choice_branch", "branch", "switch_case", "default_commands"]:
+				var nav_path = _build_navigation_path_from_branch_item(selected_item, commands_tree)
+				if not nav_path.is_empty():
+					destination_metadata["nav_path"] = nav_path
 
 			# Si se selecciona un ConditionalCommand, SwitchCommand o ShowChoicesCommand, añadir directamente el branch/case/choice
 			if metadata.type == "command" and metadata.has("index"):
@@ -2768,7 +2627,10 @@ func _duplicate_command(page_index: int) -> void:
 		var command_index = metadata.get("index", -1)
 		if command_index >= 0 and command_index < editable_page.commands.size():
 			var command_to_duplicate = editable_page.commands[command_index]
-			var duplicated_command = command_to_duplicate.duplicate(true) as EventCommand
+			var duplicated_command = _deep_duplicate_command(command_to_duplicate)
+			if not duplicated_command:
+				push_error("Event Editor: No se pudo duplicar el comando")
+				return
 
 			# Insertar justo después del comando original
 			var new_commands: Array[EventCommand] = []
@@ -2784,43 +2646,39 @@ func _duplicate_command(page_index: int) -> void:
 			success = true
 
 	elif item_type == "nested_command":
-		# Duplicar nested_command
+		# Duplicar nested_command - usar navegación por ruta para soportar múltiples niveles de anidamiento
 		parent_item = selected_item.get_parent()
 		if not parent_item:
 			return
 
-		var parent_metadata = parent_item.get_metadata(0)
-		if not parent_metadata or not parent_metadata.has("type"):
+		# Construir la ruta de navegación desde el árbol UI
+		var nav_path = _build_navigation_path_from_tree(selected_item, commands_tree)
+		if nav_path.is_empty():
+			push_error("Event Editor: No se pudo construir la ruta de navegación")
 			return
 
-		var main_command_item = _get_main_command_item_from_tree(parent_item, commands_tree)
-		if not main_command_item:
+		# Navegar por la página duplicada usando la ruta
+		var nav_result = _navigate_to_parent_commands_array(editable_page, nav_path)
+		if not nav_result.success:
+			push_error("Event Editor: No se pudo navegar a la ubicación del comando anidado")
 			return
 
-		var cmd_meta = main_command_item.get_metadata(0)
-		var main_command = editable_page.commands[cmd_meta.index]
-		var parent_type = parent_metadata.type
+		var commands_array = nav_result.commands_array
+		var nested_command_index = nav_result.command_index
 
-		# Encontrar el índice del nested_command en el árbol
-		var nested_command_index = _find_item_index_in_tree(selected_item, parent_item, "nested_command")
-		if nested_command_index < 0:
-			return
-
-		# Encontrar el índice del branch/case
-		var indices = _get_branch_or_case_index(parent_item, parent_type)
-		var branch_index = indices.branch_index
-		var case_index = indices.case_index
-
-		# Obtener el array de comandos y duplicar
-		var commands_array = _get_commands_array_from_branch_case(main_command, parent_type, branch_index, case_index)
-		if commands_array.is_empty() or nested_command_index >= commands_array.size():
+		if commands_array.is_empty() or nested_command_index < 0 or nested_command_index >= commands_array.size():
+			push_error("Event Editor: Índice de comando inválido")
 			return
 
 		var command_to_duplicate = commands_array[nested_command_index]
-		var duplicated_command = command_to_duplicate.duplicate(true) as EventCommand
+		var duplicated_command = _deep_duplicate_command(command_to_duplicate)
+		if not duplicated_command:
+			push_error("Event Editor: No se pudo duplicar el comando anidado")
+			return
 		commands_array.insert(nested_command_index + 1, duplicated_command)
 
-		if _set_commands_array_to_branch_case(main_command, parent_type, branch_index, case_index, commands_array):
+		# Actualizar el array de comandos en la estructura
+		if _set_commands_array_to_branch_case(nav_result.parent_command, nav_result.parent_type, nav_result.branch_index, nav_result.case_index, commands_array):
 			success = true
 			new_item_index = nested_command_index + 1
 
@@ -2867,22 +2725,15 @@ func _duplicate_command(page_index: int) -> void:
 				new_item_index = branch_index + 1
 
 		elif item_type == "choice_branch" and main_command is ShowChoicesCommand:
-			# Duplicar ChoiceBranch
+			# Duplicar ChoiceBranch usando duplicación profunda
 			var choices_cmd = main_command as ShowChoicesCommand
 			var branch_index = metadata.get("branch_index", -1)
 			if branch_index >= 0 and branch_index < choices_cmd.branches.size():
 				var branch_to_duplicate = choices_cmd.branches[branch_index]
-				var duplicated_branch = branch_to_duplicate.duplicate(true) as ChoiceBranch
+				var duplicated_branch = _deep_duplicate_choice_branch(branch_to_duplicate)
 				if not duplicated_branch:
 					push_error("Event Editor: No se pudo duplicar el ChoiceBranch")
 					return
-
-				# Asegurarse de que el array de comandos esté correctamente duplicado
-				var new_commands_array: Array[EventCommand] = []
-				for cmd in duplicated_branch.commands:
-					if cmd is EventCommand:
-						new_commands_array.append(cmd as EventCommand)
-				duplicated_branch.commands = new_commands_array
 
 				# Crear un nuevo array con el branch duplicado insertado después del original
 				var new_branches: Array[ChoiceBranch] = []
@@ -2991,7 +2842,7 @@ func _on_move_command_pressed(page_index: int) -> void:
 		"item": selected_item
 	}
 
-	# Si es un nested_command, calcular y guardar su índice dentro del branch/case
+	# Si es un nested_command, calcular y guardar su índice y ruta de navegación
 	if item_type == "nested_command":
 		var nested_command_index = -1
 		var parent_item = selected_item.get_parent()
@@ -3009,6 +2860,10 @@ func _on_move_command_pressed(page_index: int) -> void:
 
 		if nested_command_index >= 0:
 			move_data["nested_command_index"] = nested_command_index
+			# Guardar la ruta de navegación completa para soportar múltiples niveles de anidamiento
+			var nav_path = _build_navigation_path_from_tree(selected_item, commands_tree)
+			if not nav_path.is_empty():
+				move_data["source_nav_path"] = nav_path
 		else:
 			push_error("Event Editor: No se pudo determinar el índice del nested_command al guardar")
 			return
@@ -3072,7 +2927,16 @@ func _on_accept_move_pressed(page_index: int) -> void:
 		print("Event Editor: No se encontró metadata o type en el item seleccionado")
 		return
 
+	# Crear una copia del metadata y añadir la ruta de navegación si es un branch/case
+	destination_metadata = destination_metadata.duplicate()
 	var destination_type = destination_metadata.type
+
+	# Añadir ruta de navegación para destinos anidados
+	if destination_type in ["choice_branch", "branch", "switch_case", "default_commands"]:
+		var dest_nav_path = _build_navigation_path_from_branch_item(selected_item, commands_tree)
+		if not dest_nav_path.is_empty():
+			destination_metadata["nav_path"] = dest_nav_path
+
 	print("Event Editor: Destino tipo: ", destination_type, " en página ", dest_page_index + 1)
 
 	# Verificar que el destino es válido
@@ -3270,154 +3134,38 @@ func _delete_main_command(page: EventPage, command_index: int) -> bool:
 	return true
 
 func _delete_nested_command(page: EventPage, metadata: Dictionary, commands_tree: Tree) -> bool:
-	# Obtener el parent_branch del metadata del comando anidado
-	var parent_branch_meta = metadata.get("parent_branch")
-	if not parent_branch_meta:
-		push_error("Event Editor: No se encontró parent_branch en el metadata del comando anidado")
+	# Usar navegación por ruta desde el árbol UI para soportar múltiples niveles de anidamiento
+	if not commands_tree:
+		push_error("Event Editor: commands_tree no disponible para eliminar comando anidado")
 		return false
 
-	var parent_command_ref = parent_branch_meta.get("parent_command")
-	if not parent_command_ref:
-		push_error("Event Editor: No se encontró parent_command en parent_branch")
+	var selected_item = commands_tree.get_selected()
+	if not selected_item:
+		push_error("Event Editor: No hay item seleccionado en el árbol")
 		return false
 
-	# Buscar recursivamente el comando principal en la página
-	var location = _find_command_location_in_page(page, parent_command_ref)
-	if not location.found:
-		push_error("Event Editor: No se encontró el comando principal en la página (parent_command type: ", parent_command_ref.get_script(), ")")
+	# Construir la ruta de navegación desde el árbol UI
+	var nav_path = _build_navigation_path_from_tree(selected_item, commands_tree)
+	if nav_path.is_empty():
+		push_error("Event Editor: No se pudo construir la ruta de navegación para eliminar")
 		return false
 
-	# Obtener el comando principal usando la ubicación
-	var main_command = _get_nested_command_from_location(page, location)
-	if not main_command:
-		push_error("Event Editor: No se pudo obtener el comando principal desde la ubicación (is_root: ", location.is_root, ", root_index: ", location.root_index, ")")
+	# Navegar por la página usando la ruta
+	var nav_result = _navigate_to_parent_commands_array(page, nav_path)
+	if not nav_result.success:
+		push_error("Event Editor: No se pudo navegar a la ubicación del comando anidado para eliminar")
 		return false
 
-	var parent_type = parent_branch_meta.get("type", "")
-	var original_branch = parent_branch_meta.get("branch")
-	var original_case = parent_branch_meta.get("case")
+	var commands_array = nav_result.commands_array
+	var nested_command_index = nav_result.command_index
 
-	# Encontrar el índice del branch/case
-	var branch_index = -1
-	var case_index = -1
-
-	if parent_type == "choice_branch" and main_command is ShowChoicesCommand:
-		var choices_cmd = main_command as ShowChoicesCommand
-		# Primero intentar usar el branch_index del metadata si está disponible
-		var metadata_branch_index = parent_branch_meta.get("branch_index", -1)
-		if metadata_branch_index >= 0 and metadata_branch_index < choices_cmd.branches.size():
-			branch_index = metadata_branch_index
-		elif original_branch:
-			# Si no hay índice, comparar por label
-			for i in range(choices_cmd.branches.size()):
-				if choices_cmd.branches[i].label == original_branch.label:
-					branch_index = i
-					break
-
-		if branch_index < 0:
-			push_error("Event Editor: No se pudo encontrar el branch_index (metadata_branch_index: ", metadata_branch_index, ", branches size: ", choices_cmd.branches.size(), ")")
-			return false
-	elif parent_type == "branch" and main_command is ConditionalCommand:
-		var cond_cmd = main_command as ConditionalCommand
-		if original_branch:
-			# Comparar por condición en lugar de referencia
-			for i in range(cond_cmd.branches.size()):
-				var branch = cond_cmd.branches[i]
-				var orig_branch = original_branch
-				# Comparar condiciones si existen
-				if (branch.condition == null and orig_branch.condition == null) or \
-				   (branch.condition != null and orig_branch.condition != null and \
-				    branch.condition.type == orig_branch.condition.type):
-					branch_index = i
-					break
-	elif parent_type == "switch_case" and main_command is SwitchCommand:
-		var switch_cmd = main_command as SwitchCommand
-		if original_case:
-			for i in range(switch_cmd.cases.size()):
-				var switch_case = switch_cmd.cases[i]
-				var orig_case = original_case
-				# Comparar valores si existen
-				if switch_case.values.size() == orig_case.values.size():
-					var values_match = true
-					for j in range(switch_case.values.size()):
-						if switch_case.values[j] != orig_case.values[j]:
-							values_match = false
-							break
-					if values_match:
-						case_index = i
-						break
-
-	# Obtener el comando anidado del metadata
-	var nested_cmd = metadata.get("command")
-	if not nested_cmd:
-		push_error("Event Editor: No se encontró el comando anidado en el metadata")
+	if commands_array.is_empty() or nested_command_index < 0 or nested_command_index >= commands_array.size():
+		push_error("Event Editor: Índice de comando inválido para eliminar (index: %d, array size: %d)" % [nested_command_index, commands_array.size()])
 		return false
-
-	# Validar que tenemos un branch_index o case_index válido antes de continuar
-	if parent_type == "choice_branch" and branch_index < 0:
-		push_error("Event Editor: branch_index inválido para choice_branch (branch_index: ", branch_index, ")")
-		return false
-	elif parent_type == "branch" and branch_index < 0:
-		push_error("Event Editor: branch_index inválido para branch (branch_index: ", branch_index, ")")
-		return false
-	elif parent_type == "switch_case" and case_index < 0:
-		push_error("Event Editor: case_index inválido para switch_case (case_index: ", case_index, ")")
-		return false
-
-	# Obtener el array de comandos y encontrar el índice del comando
-	var commands_array = _get_commands_array_from_branch_case(main_command, parent_type, branch_index, case_index)
-	if commands_array.is_empty():
-		push_error("Event Editor: El array de comandos está vacío (branch_index: ", branch_index, ", case_index: ", case_index, ", parent_type: ", parent_type, ")")
-		return false
-
-	# Buscar el comando en el array
-	# Primero intentar comparar por referencia (funciona si no se duplicó)
-	var nested_command_index = -1
-	for i in range(commands_array.size()):
-		if commands_array[i] == nested_cmd:
-			nested_command_index = i
-			break
-
-	# Si no se encontró por referencia, buscar por propiedades (útil después de duplicar)
-	if nested_command_index < 0:
-		for i in range(commands_array.size()):
-			var array_cmd = commands_array[i]
-			if _commands_match_by_properties(array_cmd, nested_cmd):
-				nested_command_index = i
-				break
-
-	if nested_command_index < 0:
-		# Intentar una última vez usando el índice del comando en el metadata si está disponible
-		# Esto es útil cuando el comando está en una posición conocida
-		var cmd_index_in_parent = -1
-		# Buscar el índice contando en el árbol (fallback)
-		if commands_tree:
-			var selected_item = commands_tree.get_selected()
-			if selected_item:
-				var parent_item = selected_item.get_parent()
-				if parent_item:
-					var current = parent_item.get_first_child()
-					var count = 0
-					while current:
-						if current == selected_item:
-							cmd_index_in_parent = count
-							break
-						var current_meta = current.get_metadata(0)
-						if current_meta and current_meta.type == "nested_command":
-							count += 1
-						current = current.get_next()
-
-					if cmd_index_in_parent >= 0 and cmd_index_in_parent < commands_array.size():
-						nested_command_index = cmd_index_in_parent
-
-		if nested_command_index < 0:
-			push_error("Event Editor: No se encontró el comando anidado en el array (array size: ", commands_array.size(), ", cmd_index_in_parent: ", cmd_index_in_parent, ")")
-			push_error("Event Editor: nested_cmd type: ", nested_cmd.get_script(), ", array[0] type: ", commands_array[0].get_script() if commands_array.size() > 0 else "empty")
-			return false
 
 	# Eliminar el comando
 	commands_array.remove_at(nested_command_index)
-	return _set_commands_array_to_branch_case(main_command, parent_type, branch_index, case_index, commands_array)
+	return _set_commands_array_to_branch_case(nav_result.parent_command, nav_result.parent_type, nav_result.branch_index, nav_result.case_index, commands_array)
 
 func _delete_branch(page: EventPage, metadata: Dictionary, commands_tree: Tree) -> bool:
 	var parent_command_ref = metadata.get("parent_command")
@@ -4172,6 +3920,35 @@ func _create_command_of_type(page_index: int, command_type_name: String, destina
 	if destination_metadata and destination_metadata.has("type"):
 		var dest_type = destination_metadata.get("type")
 
+		# Usar la ruta de navegación si está disponible (para comandos anidados profundamente)
+		if destination_metadata.has("nav_path"):
+			var nav_path = destination_metadata.get("nav_path")
+			var nav_result = _navigate_to_destination_branch(editable_page, nav_path)
+			if nav_result.success:
+				var new_commands_array: Array[EventCommand] = []
+
+				if nav_result.parent_type == "default_commands":
+					# Para default_commands, el array está directamente en el SwitchCommand
+					var switch_cmd = nav_result.parent_command as SwitchCommand
+					for existing_cmd in switch_cmd.default_commands:
+						new_commands_array.append(existing_cmd)
+					new_commands_array.append(new_command)
+					switch_cmd.default_commands = new_commands_array
+				else:
+					# Para otros tipos (branch, choice_branch, switch_case), el branch tiene un array commands
+					for existing_cmd in nav_result.branch.commands:
+						new_commands_array.append(existing_cmd)
+					new_commands_array.append(new_command)
+					nav_result.branch.commands = new_commands_array
+
+				event_node.pages[page_index] = editable_page
+				_mark_as_changed()
+				_refresh_commands_tree_and_select_new(page_index, editable_page, new_command)
+				return
+			else:
+				push_error("Event Editor: No se pudo navegar a la rama de destino usando nav_path")
+				# Intentar con el método legacy como fallback
+
 		if dest_type == "branch":
 			var branch_index = destination_metadata.get("branch_index", -1)
 			var parent_command = destination_metadata.get("parent_command")
@@ -4566,6 +4343,356 @@ func _get_main_command_item_from_tree(item: TreeItem, commands_tree: Tree) -> Tr
 			return current
 		current = current.get_parent()
 	return null
+
+## Construye la ruta de navegación desde un TreeItem de tipo branch/choice_branch/switch_case hasta el comando raíz
+## Similar a _build_navigation_path_from_tree pero para items de rama (donde se añadirán comandos)
+func _build_navigation_path_from_branch_item(branch_item: TreeItem, commands_tree: Tree) -> Array:
+	var reverse_path = []
+	if not branch_item or not commands_tree:
+		return reverse_path
+
+	var current = branch_item
+	var root = commands_tree.get_root()
+
+	while current and current != root:
+		var meta = current.get_metadata(0)
+		if not meta or not meta.has("type"):
+			current = current.get_parent()
+			continue
+
+		var item_type = meta.type
+
+		if item_type == "nested_command":
+			# Este es un comando anidado intermedio (ej: ShowChoices dentro de otro ShowChoices)
+			var parent = current.get_parent()
+			if parent:
+				var index = _find_item_index_in_tree(current, parent, "nested_command")
+				reverse_path.append({"type": "nested_command", "index": index})
+		elif item_type == "choice_branch":
+			var indices = _get_branch_or_case_index(current, "choice_branch")
+			reverse_path.append({"type": "choice_branch", "index": indices.branch_index})
+		elif item_type == "branch":
+			var indices = _get_branch_or_case_index(current, "branch")
+			reverse_path.append({"type": "branch", "index": indices.branch_index})
+		elif item_type == "switch_case":
+			var indices = _get_branch_or_case_index(current, "switch_case")
+			reverse_path.append({"type": "switch_case", "index": indices.case_index})
+		elif item_type == "default_commands":
+			reverse_path.append({"type": "default_commands", "index": -1})
+		elif item_type == "command":
+			var index = meta.get("index", -1)
+			reverse_path.append({"type": "command", "index": index})
+			break
+
+		current = current.get_parent()
+
+	# Invertir para tener la ruta desde el comando raíz hacia el destino
+	reverse_path.reverse()
+	return reverse_path
+
+## Construye la ruta completa de navegación desde un TreeItem nested_command hasta el comando raíz
+## Retorna un array de diccionarios con información sobre cada nivel de anidamiento
+## La ruta se construye desde el comando raíz hacia el comando objetivo
+func _build_navigation_path_from_tree(nested_item: TreeItem, commands_tree: Tree) -> Array:
+	var reverse_path = []
+	if not nested_item or not commands_tree:
+		return reverse_path
+
+	var current = nested_item
+	var root = commands_tree.get_root()
+
+	while current and current != root:
+		var meta = current.get_metadata(0)
+		if not meta or not meta.has("type"):
+			current = current.get_parent()
+			continue
+
+		var item_type = meta.type
+
+		if item_type == "nested_command":
+			# Encontrar el índice del nested_command en su padre (solo comandos nested_command)
+			var parent = current.get_parent()
+			if parent:
+				var index = _find_item_index_in_tree(current, parent, "nested_command")
+				reverse_path.append({"type": "nested_command", "index": index})
+		elif item_type == "choice_branch":
+			var indices = _get_branch_or_case_index(current, "choice_branch")
+			reverse_path.append({"type": "choice_branch", "index": indices.branch_index})
+		elif item_type == "branch":
+			var indices = _get_branch_or_case_index(current, "branch")
+			reverse_path.append({"type": "branch", "index": indices.branch_index})
+		elif item_type == "switch_case":
+			var indices = _get_branch_or_case_index(current, "switch_case")
+			reverse_path.append({"type": "switch_case", "index": indices.case_index})
+		elif item_type == "default_commands":
+			reverse_path.append({"type": "default_commands", "index": -1})
+		elif item_type == "command":
+			var index = meta.get("index", -1)
+			reverse_path.append({"type": "command", "index": index})
+			break
+
+		current = current.get_parent()
+
+	# Invertir para tener la ruta desde el comando raíz hacia el objetivo
+	reverse_path.reverse()
+	return reverse_path
+
+## Navega por la estructura de datos usando una ruta y retorna el array de comandos padre
+## junto con el índice del comando objetivo para operaciones de duplicación/eliminación
+func _navigate_to_parent_commands_array(page: EventPage, path: Array) -> Dictionary:
+	var result = {
+		"success": false,
+		"commands_array": [],
+		"parent_command": null,
+		"parent_type": "",
+		"branch_index": -1,
+		"case_index": -1,
+		"command_index": -1
+	}
+
+	if not page or path.is_empty():
+		return result
+
+	# El primer elemento debe ser el comando raíz
+	if path[0].type != "command":
+		return result
+
+	var root_index = path[0].index
+	if root_index < 0 or root_index >= page.commands.size():
+		return result
+
+	var current_command = page.commands[root_index]
+	var current_array = page.commands
+
+	# Si solo hay un elemento en la ruta, es un comando de nivel raíz
+	if path.size() == 1:
+		result.success = true
+		result.commands_array = current_array
+		result.command_index = root_index
+		return result
+
+	# Navegar por la ruta nivel por nivel
+	var i = 1
+	while i < path.size():
+		var step = path[i]
+		var step_type = step.type
+		var step_index = step.index
+
+		# Verificar si este es el último paso (el comando objetivo)
+		var is_last_step = (i == path.size() - 1)
+
+		if step_type == "nested_command":
+			if is_last_step:
+				# Este es el comando objetivo
+				result.success = true
+				result.command_index = step_index
+				return result
+			else:
+				# Este es un comando anidado intermedio (ej: ShowChoices dentro de otro ShowChoices)
+				# Debemos obtener este comando y continuar navegando
+				if step_index < 0 or step_index >= current_array.size():
+					return result
+				current_command = current_array[step_index]
+		elif step_type == "choice_branch":
+			if not current_command is ShowChoicesCommand:
+				return result
+			var choices_cmd = current_command as ShowChoicesCommand
+			if step_index < 0 or step_index >= choices_cmd.branches.size():
+				return result
+			current_array = choices_cmd.branches[step_index].commands
+			result.commands_array = current_array
+			result.parent_command = current_command
+			result.parent_type = "choice_branch"
+			result.branch_index = step_index
+		elif step_type == "branch":
+			if not current_command is ConditionalCommand:
+				return result
+			var cond_cmd = current_command as ConditionalCommand
+			if step_index < 0 or step_index >= cond_cmd.branches.size():
+				return result
+			current_array = cond_cmd.branches[step_index].commands
+			result.commands_array = current_array
+			result.parent_command = current_command
+			result.parent_type = "branch"
+			result.branch_index = step_index
+		elif step_type == "switch_case":
+			if not current_command is SwitchCommand:
+				return result
+			var switch_cmd = current_command as SwitchCommand
+			if step_index < 0 or step_index >= switch_cmd.cases.size():
+				return result
+			current_array = switch_cmd.cases[step_index].commands
+			result.commands_array = current_array
+			result.parent_command = current_command
+			result.parent_type = "switch_case"
+			result.case_index = step_index
+		elif step_type == "default_commands":
+			if not current_command is SwitchCommand:
+				return result
+			var switch_cmd = current_command as SwitchCommand
+			current_array = switch_cmd.default_commands
+			result.commands_array = current_array
+			result.parent_command = current_command
+			result.parent_type = "default_commands"
+
+		i += 1
+
+	return result
+
+## Verifica si un comando coincide con un tipo de paso de la ruta
+func _command_type_matches_step(cmd: EventCommand, step_type: String) -> bool:
+	if step_type == "choice_branch" and cmd is ShowChoicesCommand:
+		return true
+	if step_type == "branch" and cmd is ConditionalCommand:
+		return true
+	if step_type in ["switch_case", "default_commands"] and cmd is SwitchCommand:
+		return true
+	return false
+
+## Navega por la estructura de datos usando una ruta y retorna la rama de destino
+## donde se añadirá un nuevo comando (para operaciones de añadir)
+func _navigate_to_destination_branch(page: EventPage, path: Array) -> Dictionary:
+	var result = {
+		"success": false,
+		"branch": null,
+		"parent_command": null,
+		"parent_type": "",
+		"branch_index": -1,
+		"case_index": -1
+	}
+
+	if not page or path.is_empty():
+		return result
+
+	# El primer elemento debe ser el comando raíz
+	if path[0].type != "command":
+		return result
+
+	var root_index = path[0].index
+	if root_index < 0 or root_index >= page.commands.size():
+		return result
+
+	var current_command = page.commands[root_index]
+
+	# Navegar por la ruta nivel por nivel
+	var i = 1
+	while i < path.size():
+		var step = path[i]
+		var step_type = step.type
+		var step_index = step.index
+
+		# Verificar si este es el último paso (la rama de destino)
+		var is_last_step = (i == path.size() - 1)
+
+		if step_type == "nested_command":
+			# Este es un comando anidado intermedio, navegamos a él
+			if current_command is ShowChoicesCommand:
+				var choices_cmd = current_command as ShowChoicesCommand
+				# El paso anterior debería haber sido un choice_branch que nos dio acceso al array
+				# Pero aquí necesitamos encontrar el comando en el array actual...
+				# Esto significa que falta información en la ruta
+				pass
+			elif current_command is ConditionalCommand:
+				var cond_cmd = current_command as ConditionalCommand
+				pass
+			# El nested_command intermedio requiere que tengamos el array de comandos del paso anterior
+			# Esta lógica se maneja mejor de otra forma...
+			pass
+		elif step_type == "choice_branch":
+			if not current_command is ShowChoicesCommand:
+				return result
+			var choices_cmd = current_command as ShowChoicesCommand
+			if step_index < 0 or step_index >= choices_cmd.branches.size():
+				return result
+
+			if is_last_step:
+				# Esta es la rama de destino
+				result.success = true
+				result.branch = choices_cmd.branches[step_index]
+				result.parent_command = current_command
+				result.parent_type = "choice_branch"
+				result.branch_index = step_index
+				return result
+			else:
+				# Hay más pasos, necesitamos encontrar el comando anidado en esta rama
+				var next_step = path[i + 1]
+				if next_step.type == "nested_command":
+					var nested_idx = next_step.index
+					if nested_idx >= 0 and nested_idx < choices_cmd.branches[step_index].commands.size():
+						current_command = choices_cmd.branches[step_index].commands[nested_idx]
+						i += 1  # Saltar el paso nested_command
+				else:
+					return result
+		elif step_type == "branch":
+			if not current_command is ConditionalCommand:
+				return result
+			var cond_cmd = current_command as ConditionalCommand
+			if step_index < 0 or step_index >= cond_cmd.branches.size():
+				return result
+
+			if is_last_step:
+				result.success = true
+				result.branch = cond_cmd.branches[step_index]
+				result.parent_command = current_command
+				result.parent_type = "branch"
+				result.branch_index = step_index
+				return result
+			else:
+				var next_step = path[i + 1]
+				if next_step.type == "nested_command":
+					var nested_idx = next_step.index
+					if nested_idx >= 0 and nested_idx < cond_cmd.branches[step_index].commands.size():
+						current_command = cond_cmd.branches[step_index].commands[nested_idx]
+						i += 1
+				else:
+					return result
+		elif step_type == "switch_case":
+			if not current_command is SwitchCommand:
+				return result
+			var switch_cmd = current_command as SwitchCommand
+			if step_index < 0 or step_index >= switch_cmd.cases.size():
+				return result
+
+			if is_last_step:
+				result.success = true
+				result.branch = switch_cmd.cases[step_index]
+				result.parent_command = current_command
+				result.parent_type = "switch_case"
+				result.case_index = step_index
+				return result
+			else:
+				var next_step = path[i + 1]
+				if next_step.type == "nested_command":
+					var nested_idx = next_step.index
+					if nested_idx >= 0 and nested_idx < switch_cmd.cases[step_index].commands.size():
+						current_command = switch_cmd.cases[step_index].commands[nested_idx]
+						i += 1
+				else:
+					return result
+		elif step_type == "default_commands":
+			if not current_command is SwitchCommand:
+				return result
+			var switch_cmd = current_command as SwitchCommand
+
+			if is_last_step:
+				result.success = true
+				result.branch = null  # default_commands no es un branch, es un array directo
+				result.parent_command = current_command
+				result.parent_type = "default_commands"
+				return result
+			else:
+				var next_step = path[i + 1]
+				if next_step.type == "nested_command":
+					var nested_idx = next_step.index
+					if nested_idx >= 0 and nested_idx < switch_cmd.default_commands.size():
+						current_command = switch_cmd.default_commands[nested_idx]
+						i += 1
+				else:
+					return result
+
+		i += 1
+
+	return result
 
 ## Obtiene el índice del branch/case desde un parent_item
 func _get_branch_or_case_index(parent_item: TreeItem, parent_type: String) -> Dictionary:
@@ -7128,19 +7255,16 @@ func _duplicate_event_pages() -> void:
 	if not event_node or not "pages" in event_node:
 		return
 
+	# Duplicar TODAS las páginas para evitar que eventos duplicados compartan referencias
+	# Esto es necesario porque al duplicar un nodo en Godot, los Resources locales
+	# (con resource_path == "") se copian por referencia, no por valor
 	var duplicated_pages: Array[EventPage] = []
 	for page in event_node.pages:
 		if page:
-			# Solo duplicar si la página es un Resource compartido (tiene resource_path)
-			# Si ya es local a la escena, no necesita duplicarse
-			if page.resource_path != "":
-				var duplicated_page = page.duplicate(true) as EventPage
-				# Marcar como local a la escena para que no se guarde como archivo separado
-				duplicated_page.take_over_path("")
-				duplicated_pages.append(duplicated_page)
-			else:
-				# Ya es local, usar directamente
-				duplicated_pages.append(page)
+			var duplicated_page = page.duplicate(true) as EventPage
+			# Marcar como local a la escena para que no se guarde como archivo separado
+			duplicated_page.take_over_path("")
+			duplicated_pages.append(duplicated_page)
 		else:
 			duplicated_pages.append(null)
 
@@ -7860,4 +7984,111 @@ func _register_modified_scene() -> void:
 	# El método no toma argumentos, marca la escena actualmente abierta
 	EditorInterface.mark_scene_as_unsaved()
 	print("Event Tools: Escena marcada como no guardada: %s" % edited_scene_root.scene_file_path)
+
+
+## Duplica un comando de forma profunda, incluyendo todos sus subestructuras
+## Esto es necesario porque duplicate(true) no siempre duplica correctamente los Resources en arrays
+func _deep_duplicate_command(command: EventCommand) -> EventCommand:
+	if not command:
+		return null
+
+	# Primero hacer la duplicación básica
+	var duplicated = command.duplicate(true) as EventCommand
+	if not duplicated:
+		return null
+
+	# Procesar específicamente comandos con estructuras anidadas
+	if duplicated is ShowChoicesCommand:
+		var choices_cmd = duplicated as ShowChoicesCommand
+		var new_branches: Array[ChoiceBranch] = []
+		for branch in choices_cmd.branches:
+			if branch:
+				var new_branch = _deep_duplicate_choice_branch(branch)
+				new_branches.append(new_branch)
+		choices_cmd.branches = new_branches
+
+	elif duplicated is ConditionalCommand:
+		var cond_cmd = duplicated as ConditionalCommand
+		var new_branches: Array[EventBranch] = []
+		for branch in cond_cmd.branches:
+			if branch:
+				var new_branch = _deep_duplicate_event_branch(branch)
+				new_branches.append(new_branch)
+		cond_cmd.branches = new_branches
+
+	elif duplicated is SwitchCommand:
+		var switch_cmd = duplicated as SwitchCommand
+		var new_cases: Array[SwitchCase] = []
+		for switch_case in switch_cmd.cases:
+			if switch_case:
+				var new_case = _deep_duplicate_switch_case(switch_case)
+				new_cases.append(new_case)
+		switch_cmd.cases = new_cases
+
+		# También duplicar default_commands
+		var new_default: Array[EventCommand] = []
+		for cmd in switch_cmd.default_commands:
+			if cmd:
+				new_default.append(_deep_duplicate_command(cmd))
+		switch_cmd.default_commands = new_default
+
+	return duplicated
+
+
+## Duplica un ChoiceBranch de forma profunda
+func _deep_duplicate_choice_branch(branch: ChoiceBranch) -> ChoiceBranch:
+	if not branch:
+		return null
+
+	var new_branch = ChoiceBranch.new()
+	new_branch.label = branch.label
+	new_branch.close_previous_message = branch.close_previous_message
+	new_branch.value_stored = branch.value_stored
+
+	# Duplicar cada comando de forma profunda
+	var new_commands: Array[EventCommand] = []
+	for cmd in branch.commands:
+		if cmd:
+			new_commands.append(_deep_duplicate_command(cmd))
+	new_branch.commands = new_commands
+
+	return new_branch
+
+
+## Duplica un EventBranch de forma profunda
+func _deep_duplicate_event_branch(branch: EventBranch) -> EventBranch:
+	if not branch:
+		return null
+
+	var new_branch = EventBranch.new()
+	new_branch.conditions = branch.conditions.duplicate(true) if branch.conditions else []
+	new_branch.label = branch.label if "label" in branch else ""
+
+	# Duplicar cada comando de forma profunda
+	var new_commands: Array[EventCommand] = []
+	for cmd in branch.commands:
+		if cmd:
+			new_commands.append(_deep_duplicate_command(cmd))
+	new_branch.commands = new_commands
+
+	return new_branch
+
+
+## Duplica un SwitchCase de forma profunda
+func _deep_duplicate_switch_case(switch_case: SwitchCase) -> SwitchCase:
+	if not switch_case:
+		return null
+
+	var new_case = SwitchCase.new()
+	new_case.value = switch_case.value
+	new_case.label = switch_case.label if "label" in switch_case else ""
+
+	# Duplicar cada comando de forma profunda
+	var new_commands: Array[EventCommand] = []
+	for cmd in switch_case.commands:
+		if cmd:
+			new_commands.append(_deep_duplicate_command(cmd))
+	new_case.commands = new_commands
+
+	return new_case
 

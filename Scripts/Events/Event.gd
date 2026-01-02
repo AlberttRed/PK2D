@@ -190,8 +190,7 @@ func update_sprite_from_current_page() -> void:
 
 ## Aplica la posición de la página al evento
 ## Convierte coordenadas de celda a posición del mundo usando el OverworldGrid
-## cell_pos está en coordenadas ajustadas (0,0 es la esquina superior izquierda del mapa visible)
-## Necesitamos convertirlo a coordenadas reales del TileMapLayer antes de aplicar
+## cell_pos son coordenadas reales del TileMapLayer (resultado de local_to_map)
 func _apply_page_position(cell_pos: Vector2i) -> void:
 	# Buscar el OverworldGrid en la jerarquía
 	var grid = _get_grid()
@@ -215,17 +214,12 @@ func _apply_page_position(cell_pos: Vector2i) -> void:
 	grid.unregister_event(old_tile, self)
 	grid.vacate(old_tile, self)
 
-	# Convertir coordenadas ajustadas a coordenadas reales del TileMapLayer
-	# Las coordenadas guardadas están ajustadas (0,0 es esquina superior izquierda visible)
-	# Necesitamos sumar el offset negativo del used_rect para obtener las coordenadas reales
-	var used_rect = ref_layer.get_used_rect()
-	var real_cell_pos = cell_pos
-	if used_rect.position.x < 0 or used_rect.position.y < 0:
-		# Ajustar de vuelta a coordenadas reales sumando el offset negativo
-		real_cell_pos = cell_pos + used_rect.position
+	# Las coordenadas cell_pos ya son coordenadas reales del TileMapLayer
+	# (resultado de local_to_map en la ventana de selección)
+	# No necesitamos ajustar, usar directamente
 
 	# Convertir coordenadas de celda reales a posición del mundo
-	var world_pos = grid.tile_to_world_center(real_cell_pos)
+	var world_pos = grid.tile_to_world_center(cell_pos)
 
 	# Aplicar la posición al evento usando global_position
 	global_position = world_pos
@@ -243,7 +237,7 @@ func _apply_page_position(cell_pos: Vector2i) -> void:
 		# Forzar actualización de la ocupación en la nueva posición
 		occupancy_node.refresh_occupancy()
 
-	print("Event '%s': Posición aplicada desde página: celda ajustada (%d, %d) -> celda real (%d, %d) -> mundo (%.1f, %.1f), tile anterior: (%d, %d), tile nuevo: (%d, %d)" % [name, cell_pos.x, cell_pos.y, real_cell_pos.x, real_cell_pos.y, world_pos.x, world_pos.y, old_tile.x, old_tile.y, new_tile.x, new_tile.y])
+	print("Event '%s': Posición aplicada desde página: celda (%d, %d) -> mundo (%.1f, %.1f), tile anterior: (%d, %d), tile nuevo: (%d, %d)" % [name, cell_pos.x, cell_pos.y, world_pos.x, world_pos.y, old_tile.x, old_tile.y, new_tile.x, new_tile.y])
 
 ## Obtiene el OverworldGrid desde la jerarquía del evento
 func _get_grid() -> OverworldGrid:
@@ -406,19 +400,18 @@ func _fire_autorun() -> void:
 ## Esto permite que cada instancia del evento tenga sus propias copias que pueden modificarse
 ## sin afectar el Resource original cacheado por Godot
 func _duplicate_all_pages() -> void:
+	# Duplicar TODAS las páginas para evitar que eventos duplicados compartan referencias
+	# Esto es necesario porque al duplicar un nodo en Godot, los Resources locales
+	# (con resource_path == "") se copian por referencia, no por valor
 	var duplicated_pages: Array[EventPage] = []
 	for page in pages:
 		if page:
-			# Solo duplicar si la página es un Resource compartido (tiene resource_path)
-			# Si ya es local a la escena, no necesita duplicarse
-			if page.resource_path != "":
-				var duplicated_page = page.duplicate(true) as EventPage
-				# Marcar como local a la escena para que no se guarde como archivo separado
-				duplicated_page.take_over_path("")
-				duplicated_pages.append(duplicated_page)
-			else:
-				# Ya es local, usar directamente
-				duplicated_pages.append(page)
+			var duplicated_page = page.duplicate(true) as EventPage
+			# Marcar como local a la escena para que no se guarde como archivo separado
+			duplicated_page.take_over_path("")
+			duplicated_pages.append(duplicated_page)
+		else:
+			duplicated_pages.append(null)
 	pages = duplicated_pages
 
 ## Conecta el evento a las señales globales de cambio de estado

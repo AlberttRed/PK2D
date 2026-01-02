@@ -34,8 +34,8 @@ signal event_requested(event)
 signal event_started(event)
 signal event_finished(event)
 
-signal warp_started(map_id, spawn_id)
-signal warp_finished(map_id, spawn_id)
+signal warp_started(map_id: String, tile_pos: Vector2i)
+signal warp_finished(map_id: String, tile_pos: Vector2i)
 
 signal seamless_map_crossed(from_map_id, to_map_id)
 signal active_grid_changed(grid)
@@ -179,12 +179,12 @@ func request_event(event: Event) -> void:
 	else:
 		push_error("OverworldContext: EventSystem no disponible para request_event()")
 
-## Wrapper público para solicitar un warp
-func request_warp(map_id: String, spawn_id: String) -> void:
+## Wrapper público para solicitar un warp a coordenadas de tile específicas
+func request_warp(map_id: String, tile_pos: Vector2i) -> void:
 	if not warp_system:
 		push_error("OverworldContext: WarpSystem no disponible para request_warp()")
 		return
-	await warp_system.request_warp(map_id, spawn_id)
+	await warp_system.request_warp(map_id, tile_pos)
 
 ## Wrapper público para solicitar uso de una MO
 func request_mo(mo_type: String, target: Node) -> Dictionary:
@@ -223,14 +223,14 @@ func _on_event_started(event) -> void:
 func _on_event_finished(event) -> void:
 	event_finished.emit(event)
 
-func _on_warp_started(map_id, spawn_id) -> void:
-	warp_started.emit(map_id, spawn_id)
+func _on_warp_started(map_id: String, tile_pos: Vector2i) -> void:
+	warp_started.emit(map_id, tile_pos)
 
-func _on_warp_finished(map_id, spawn_id) -> void:
+func _on_warp_finished(map_id: String, tile_pos: Vector2i) -> void:
 	# Aplicar todos los cambios diferidos cuando se complete un warp
 	GameStateService.apply_deferred_changes()
 
-	warp_finished.emit(map_id, spawn_id)
+	warp_finished.emit(map_id, tile_pos)
 
 func _on_mo_requested(mo_type, target) -> void:
 	mo_requested.emit(mo_type, target)

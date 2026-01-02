@@ -214,7 +214,7 @@ func _on_map_changed(from_map: String, _to_map: String) -> void:
 
 
 ## Callback cuando se hace warp
-func _on_map_changed_warp(_map_id: String, _spawn_id: String) -> void:
+func _on_map_changed_warp(_map_id: String, _tile_pos: Vector2i) -> void:
 	steps_since_last_encounter = 0
 	_update_encounters_cache()
 
