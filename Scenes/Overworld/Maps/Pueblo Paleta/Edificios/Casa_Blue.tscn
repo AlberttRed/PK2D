@@ -1,10 +1,9 @@
-[gd_scene load_steps=89 format=4 uid="uid://dx5ysjvdkng4b"]
+[gd_scene load_steps=93 format=4 uid="uid://dx5ysjvdkng4b"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_2apf5"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_fthu1"]
 [ext_resource type="TileSet" uid="uid://dr7bntiy6uqpb" path="res://Resources/Tilesets/Centro_Pokemon.tres" id="3_y6llx"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_4728y"]
-[ext_resource type="PackedScene" uid="uid://dd2nm1d1v7gfv" path="res://Scenes/Overworld/Core/SpawnPoint.tscn" id="4_fthu1"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="5_qaen7"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_bwyj2"]
 [ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="7_p8nvd"]
@@ -22,31 +21,31 @@
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="17_0j1te"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="18_0j1te"]
 
-[sub_resource type="Resource" id="Resource_jv80v"]
+[sub_resource type="Resource" id="Resource_3a7uo"]
 script = ExtResource("7_p8nvd")
 mode = 0
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
-[sub_resource type="Resource" id="Resource_tugbi"]
+[sub_resource type="Resource" id="Resource_n3847"]
 script = ExtResource("8_1ikpg")
 target_type = 1
 visible = false
 metadata/_custom_type_script = "uid://biam3qn6qasrt"
 
-[sub_resource type="Resource" id="Resource_6i0d0"]
+[sub_resource type="Resource" id="Resource_s5nyf"]
 script = ExtResource("9_8focb")
 flag_name = "flash_on"
 flag_value = false
 metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 
-[sub_resource type="Resource" id="Resource_4728y"]
+[sub_resource type="Resource" id="Resource_mhgtt"]
 script = ExtResource("10_xuw3p")
 target_scene = "Pueblo_Paleta"
-target_spawn = "Spawn_CasaBlue"
+target_tile = Vector2i(13, 5)
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
-[sub_resource type="Resource" id="Resource_ardic"]
+[sub_resource type="Resource" id="Resource_4y3yt"]
 script = ExtResource("7_p8nvd")
 duration = 0.3
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
@@ -55,42 +54,70 @@ metadata/_custom_type_script = "uid://k6r0axpkwn50"
 script = ExtResource("12_a54gb")
 metadata/_custom_type_script = "uid://cenpvman6ylsr"
 
-[sub_resource type="Resource" id="Resource_qaen7"]
+[sub_resource type="Resource" id="Resource_5ohmd"]
 script = ExtResource("5_qaen7")
 trigger = SubResource("Resource_tdyby")
-commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_3a7uo"), SubResource("Resource_n3847"), SubResource("Resource_s5nyf"), SubResource("Resource_mhgtt"), SubResource("Resource_4y3yt")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_n3847"]
+[sub_resource type="Resource" id="Resource_kfdk4"]
+script = ExtResource("7_p8nvd")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_mpkag"]
+script = ExtResource("8_1ikpg")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_vc0vv"]
+script = ExtResource("9_8focb")
+flag_name = "flash_on"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_1ywg8"]
 script = ExtResource("11_8focb")
 target_event_name = "Daisy_NPC2"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_mhgtt"]
+[sub_resource type="Resource" id="Resource_4tkn2"]
 script = ExtResource("11_8focb")
 target_event_name = "Daisy_NPC1"
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_s5nyf"]
+[sub_resource type="Resource" id="Resource_wyt3g"]
 script = ExtResource("11_8focb")
 switch_value = false
 metadata/_custom_type_script = "uid://bgcnb3pt4dxi7"
 
-[sub_resource type="Resource" id="Resource_4y3yt"]
+[sub_resource type="Resource" id="Resource_om278"]
+script = ExtResource("10_xuw3p")
+target_scene = "Pueblo_Paleta"
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_3qxiw"]
+script = ExtResource("7_p8nvd")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_83edp"]
 script = ExtResource("13_nyssf")
 flag_name = "A"
 scope = 1
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_5ohmd"]
+[sub_resource type="Resource" id="Resource_h7kqg"]
 script = ExtResource("12_a54gb")
 metadata/_custom_type_script = "uid://cenpvman6ylsr"
 
-[sub_resource type="Resource" id="Resource_3a7uo"]
+[sub_resource type="Resource" id="Resource_7me8r"]
 script = ExtResource("5_qaen7")
-trigger = SubResource("Resource_5ohmd")
-commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_jv80v"), SubResource("Resource_tugbi"), SubResource("Resource_6i0d0"), SubResource("Resource_n3847"), SubResource("Resource_mhgtt"), SubResource("Resource_s5nyf"), SubResource("Resource_4728y"), SubResource("Resource_ardic")])
-root_condition = SubResource("Resource_4y3yt")
+trigger = SubResource("Resource_h7kqg")
+commands = Array[ExtResource("6_bwyj2")]([SubResource("Resource_kfdk4"), SubResource("Resource_mpkag"), SubResource("Resource_vc0vv"), SubResource("Resource_1ywg8"), SubResource("Resource_4tkn2"), SubResource("Resource_wyt3g"), SubResource("Resource_om278"), SubResource("Resource_3qxiw")])
+root_condition = SubResource("Resource_83edp")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_y6llx"]
@@ -436,7 +463,7 @@ metadata/_edit_lock_ = true
 
 [node name="Sortida" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
 position = Vector2(144, 240)
-pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_qaen7"), SubResource("Resource_3a7uo")])
+pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_5ohmd"), SubResource("Resource_7me8r")])
 
 [node name="Daisy_NPC1" parent="OverworldGrid/Events" instance=ExtResource("11_p8nvd")]
 position = Vector2(176, 80)
@@ -489,8 +516,3 @@ current_page_index = 1
 [node name="Map" parent="OverworldGrid/Events" instance=ExtResource("4_4728y")]
 position = Vector2(208, 80)
 pages = Array[ExtResource("5_qaen7")]([SubResource("Resource_0yvl2"), SubResource("Resource_ml20h")])
-
-[node name="SpawnPoints" type="Node" parent="OverworldGrid"]
-
-[node name="SpawnEntrada" parent="OverworldGrid/SpawnPoints" instance=ExtResource("4_fthu1")]
-position = Vector2(144, 208)

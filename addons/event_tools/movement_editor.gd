@@ -104,7 +104,7 @@ func _create_movement_section() -> void:
 	movement_type_option.add_item("LookPattern", 4)
 	movement_type_option.add_item("RandomVertical", 5)
 	movement_type_option.add_item("RandomHorizontal", 6)
-	movement_type_option.item_selected.connect(func(idx): page.movement_type = idx if page else 0)
+	movement_type_option.item_selected.connect(_on_movement_type_changed)
 	movement_type_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row1.add_child(movement_type_option)
 
@@ -435,6 +435,56 @@ func _update_controls() -> void:
 	# Actualizar Celdas Válidas
 	_update_valid_tiles_label()
 
+## Variable para guardar el tipo de movimiento anterior (para revertir si se cancela)
+var _previous_movement_type: int = -1
+
+func _on_movement_type_changed(new_idx: int) -> void:
+	if not page:
+		return
+
+	var old_type = page.movement_type
+	var has_valid_tiles = page.random_movement_valid_tiles.size() > 0
+
+	# Tipos que usan celdas válidas: RANDOM (1), RANDOM_VERTICAL (5), RANDOM_HORIZONTAL (6)
+	var old_uses_tiles = old_type in [1, 5, 6]
+	var new_uses_tiles = new_idx in [1, 5, 6]
+
+	# Si cambiamos entre tipos que usan celdas y hay celdas seleccionadas, avisar
+	if has_valid_tiles and old_uses_tiles and (not new_uses_tiles or old_type != new_idx):
+		_previous_movement_type = old_type
+		_show_clear_tiles_confirmation(new_idx)
+	else:
+		# Cambio directo sin confirmación
+		page.movement_type = new_idx
+
+
+func _show_clear_tiles_confirmation(new_type: int) -> void:
+	var dialog = ConfirmationDialog.new()
+	dialog.title = "Cambio de tipo de movimiento"
+	dialog.dialog_text = "Hay celdas válidas seleccionadas.\nAl cambiar el tipo de movimiento se limpiarán las celdas."
+	dialog.ok_button_text = "Aceptar"
+	dialog.cancel_button_text = "Cancelar"
+
+	add_child(dialog)
+
+	dialog.confirmed.connect(func():
+		# Limpiar celdas y cambiar tipo
+		page.random_movement_valid_tiles.clear()
+		page.movement_type = new_type
+		_update_valid_tiles_label()
+		dialog.queue_free()
+	)
+
+	dialog.canceled.connect(func():
+		# Revertir el OptionButton al valor anterior
+		if movement_type_option and _previous_movement_type >= 0:
+			movement_type_option.selected = _previous_movement_type
+		dialog.queue_free()
+	)
+
+	dialog.popup_centered()
+
+
 func _on_close_requested() -> void:
 	cancelled.emit()
 	queue_free()
@@ -471,6 +521,23 @@ func _on_select_valid_tiles_pressed() -> void:
 	# Configurar la ventana en modo múltiple, pasando el evento que se está editando
 	await selector_window.setup(overworld_grid, edited_scene_root, event_node)
 	selector_window.set_multiple_selection_mode(true)
+
+	# Configurar restricción de celdas según el tipo de movimiento
+	# Obtener la posición del evento en coordenadas de tile
+	var event_tile_pos = Vector2i.ZERO
+	if event_node and overworld_grid:
+		# Buscar un TileMapLayer para convertir coordenadas
+		var tile_layer: TileMapLayer = null
+		for child in overworld_grid.get_children():
+			if child is TileMapLayer:
+				tile_layer = child
+				break
+
+		if tile_layer:
+			var local_pos = tile_layer.to_local(event_node.global_position)
+			event_tile_pos = tile_layer.local_to_map(local_pos)
+
+	selector_window.set_movement_restriction(page.movement_type, event_tile_pos)
 
 	# Cargar celdas válidas existentes si las hay
 	if page.random_movement_valid_tiles.size() > 0:

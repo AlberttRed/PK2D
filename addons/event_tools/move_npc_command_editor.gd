@@ -27,6 +27,9 @@ var move_down_button: Button = null
 # Cache de acciones añadidas (índice del ItemList -> DirectionEnum.Type)
 var _actions_cache: Array[int] = []
 
+# Target guardado para restaurar después de poblar la lista
+var _pending_target_selection: String = ""
+
 func _ready() -> void:
 	title = "Editar MoveNPCCommand"
 	size = Vector2(700, 600)
@@ -277,6 +280,10 @@ func _populate_target_names() -> void:
 						if child.name != "":
 							target_option.add_item(child.name)
 
+	# Restaurar selección pendiente si existe
+	if not _pending_target_selection.is_empty():
+		_set_target_selection(_pending_target_selection)
+
 ## Obtiene el nombre descriptivo de una acción
 func _get_action_display_name(action: int) -> String:
 	match action:
@@ -424,11 +431,15 @@ func load_command(cmd: MoveNPCCommand) -> void:
 	_actions_cache = cmd.path.duplicate()
 	_refresh_actions_list()
 
-	# Asegurar que los eventos estén poblados antes de seleccionar
+	# Guardar el target para restaurar después de poblar la lista
+	_pending_target_selection = cmd.target_name
+
+	# Asegurar que los eventos estén poblados y seleccionar el target
 	if target_option:
 		if target_option.get_item_count() == 0:
 			_populate_target_names()
-		_set_target_selection(cmd.target_name)
+		else:
+			_set_target_selection(cmd.target_name)
 
 	# Actualizar wait_check
 	if wait_check:
@@ -494,6 +505,7 @@ func _restore_original_values() -> void:
 	# Restaurar UI
 	_actions_cache = original_path.duplicate()
 	_refresh_actions_list()
+	_pending_target_selection = original_target_name
 	_set_target_selection(original_target_name)
 	if wait_check:
 		wait_check.button_pressed = original_wait_until_finished

@@ -98,14 +98,17 @@ func deactivate_actor(actor: Node2D) -> void:
 ## Verifica el reflejo inicial cuando un actor se conecta al sistema
 ## Se llama cuando el actor se posiciona por primera vez o se conecta al sistema
 func check_initial_reflection(actor: Node2D) -> void:
+	if not actor or not is_instance_valid(actor) or not actor.is_inside_tree():
+		return
+
 	var grid_motion = actor.get_node_or_null("GridMotion")
-	if not grid_motion:
+	if not grid_motion or not grid_motion.is_inside_tree():
 		return
 
 	var grid = grid_motion.grid
 	if not grid:
 		# Si el grid aún no está disponible, intentar de nuevo en el siguiente frame
-		if grid_motion.get_tree():
+		if grid_motion.is_inside_tree():
 			await grid_motion.get_tree().process_frame
 			check_initial_reflection(actor)
 		return
@@ -113,7 +116,7 @@ func check_initial_reflection(actor: Node2D) -> void:
 	var current_tile = grid_motion.current_tile()
 	if current_tile == Vector2i(-9999, -9999):
 		# Si el tile aún no está inicializado, intentar de nuevo en el siguiente frame
-		if grid_motion.get_tree():
+		if grid_motion.is_inside_tree():
 			await grid_motion.get_tree().process_frame
 			check_initial_reflection(actor)
 		return

@@ -243,7 +243,7 @@ func reset_effects() -> void:
 
 ## Callback cuando el jugador cambia de mapa
 ## Resetea los efectos de MO (STRENGTH y FLASH no persisten al cambiar de mapa)
-func _on_map_changed(_map_id: String, _spawn_id: String) -> void:
+func _on_map_changed(_map_id: String, _tile_pos: Vector2i) -> void:
 	reset_effects()
 	print("MOSystem: Efectos de MO reseteados al cambiar de mapa")
 

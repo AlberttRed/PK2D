@@ -1,12 +1,13 @@
 extends EventCommand
 class_name WarpCommand
 
-## Comando para teletransportar a un actor
+## Comando para teletransportar a un actor a una posición de tile específica
 ## Si actor_name está vacío, será el propio evento donde se ejecuta el comando
 ## Si target_scene está vacío, el warp es dentro de la misma escena
 @export var actor_name: String = "Player"
 @export var target_scene: String = ""
-@export var target_spawn: String = ""
+## Coordenadas de tile destino
+@export var target_tile: Vector2i = Vector2i.ZERO
 
 enum FacingDirection {
 	ARRIBA,
@@ -59,16 +60,16 @@ func execute(_context: Node) -> void:
 		_context.continue_execution()
 		return
 
-	# Si es el player, usar el sistema de warp normal
+	# Si es el player, usar el sistema de warp
 	if is_player:
-		print("Warp: Solicitando teletransporte del Player a escena '%s' en spawn '%s'" % [target_map_id, target_spawn])
-		await overworld_context.request_warp(target_map_id, target_spawn)
+		print("Warp: Solicitando teletransporte del Player a escena '%s' en tile %s" % [target_map_id, target_tile])
+		await overworld_context.request_warp(target_map_id, target_tile)
 		# Aplicar la dirección con el nuevo mapa ya activo
 		_apply_facing_direction(actor)
 	else:
 		# Para otros actores, solo warp dentro del mismo mapa
-		print("Warp: Teletransportando '%s' dentro del mismo mapa a spawn '%s'" % [actor.name, target_spawn])
-		_warp_actor_same_map(actor, target_spawn, overworld_context)
+		print("Warp: Teletransportando '%s' dentro del mismo mapa a tile %s" % [actor.name, target_tile])
+		_warp_actor_same_map(actor, target_tile, overworld_context)
 		# Aplicar la dirección
 		_apply_facing_direction(actor)
 
@@ -95,9 +96,9 @@ func _apply_facing_direction(actor: Node) -> void:
 	print("WarpCommand: Dirección aplicada correctamente a '%s'" % actor.name)
 
 ## Resuelve el actor a teletransportar
-func _resolve_actor(context: Node, name: String) -> Node2D:
+func _resolve_actor(context: Node, actor_name_to_resolve: String) -> Node2D:
 	# Si está vacío, usar el evento actual
-	if name.is_empty():
+	if actor_name_to_resolve.is_empty():
 		if context is EventController and context.current_page:
 			var source_event = context.current_page.source_event
 			if source_event:
@@ -106,7 +107,7 @@ func _resolve_actor(context: Node, name: String) -> Node2D:
 		return null
 
 	# Si es "Player", obtener del contexto
-	if name == "Player" or name.to_lower() == "player":
+	if actor_name_to_resolve == "Player" or actor_name_to_resolve.to_lower() == "player":
 		var overworld_context = _get_overworld_context(context)
 		if overworld_context:
 			return overworld_context.get_player()
@@ -115,25 +116,25 @@ func _resolve_actor(context: Node, name: String) -> Node2D:
 
 	# Buscar por nombre en la escena
 	var root = context.get_tree().root
-	var actor = _find_node_by_name_recursive(root, name)
+	var actor = _find_node_by_name_recursive(root, actor_name_to_resolve)
 	if not actor:
-		push_warning("WarpCommand: No se encontró el actor '%s'" % name)
+		push_warning("WarpCommand: No se encontró el actor '%s'" % actor_name_to_resolve)
 	return actor
 
 ## Búsqueda recursiva de nodo por nombre
-func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
-	if node.name == name and node is Node2D:
+func _find_node_by_name_recursive(node: Node, node_name: String) -> Node2D:
+	if node.name == node_name and node is Node2D:
 		return node as Node2D
 
 	for child in node.get_children():
-		var result = _find_node_by_name_recursive(child, name)
+		var result = _find_node_by_name_recursive(child, node_name)
 		if result:
 			return result
 
 	return null
 
-## Realiza el warp de un actor dentro del mismo mapa
-func _warp_actor_same_map(actor: Node, spawn_id: String, overworld_context: OverworldContext) -> void:
+## Realiza el warp de un actor dentro del mismo mapa a una coordenada de tile
+func _warp_actor_same_map(actor: Node, tile_pos: Vector2i, overworld_context: OverworldContext) -> void:
 	var world_system = overworld_context.get_world_system()
 	if not world_system:
 		push_error("WarpCommand: WorldSystem no disponible")
@@ -144,44 +145,13 @@ func _warp_actor_same_map(actor: Node, spawn_id: String, overworld_context: Over
 		push_error("WarpCommand: No se pudo obtener el OverworldGrid del mapa activo")
 		return
 
-	# Obtener el spawn point
-	var spawn_point = grid.get_spawn_point(spawn_id)
-	if not spawn_point:
-		push_warning("WarpCommand: No se encontró el spawn point '%s'" % spawn_id)
-		return
-
-	# Calcular la posición global del spawn point manualmente
-	# Buscar el MapScene padre para obtener su world_position
-	var map_scene = grid.get_parent()
-	var spawn_global_pos: Vector2
-
-	if map_scene and map_scene is MapScene:
-		# Obtener la posición mundial del mapa directamente
-		var map_world_pos = map_scene.world_position
-		# Obtener la posición local del spawn point
-		var spawn_local_pos = spawn_point.position
-		# Calcular posición global: MapScene.world_position + SpawnPoint.position
-		spawn_global_pos = map_world_pos + spawn_local_pos
-	else:
-		# Fallback: usar global_position si no podemos calcular manualmente
-		spawn_global_pos = spawn_point.global_position
-
-	# Convertir la posición global del spawn point a tile usando el grid activo
-	# Esto asegura que la posición sea relativa al mapa activo
-	var spawn_tile = grid.world_to_tile(spawn_global_pos)
-
-	# Teletransportar el actor
+	# Teletransportar el actor a la coordenada de tile
 	if actor.has_method("teleport_to_tile"):
-		actor.teleport_to_tile(spawn_tile)
+		actor.teleport_to_tile(tile_pos)
 	else:
 		# Fallback: teletransporte directo
-		actor.global_position = grid.tile_to_world_center(spawn_tile)
+		actor.global_position = grid.tile_to_world_center(tile_pos)
 
-	# Aplicar dirección del spawn point si está disponible
-	var spawn_direction = spawn_point.get_facing_direction()
-	if spawn_direction != Vector2.ZERO:
-		if actor.has_method("set_facing_direction"):
-			actor.set_facing_direction(spawn_direction)
 
 ## Obtiene el OverworldContext desde el EventController
 func _get_overworld_context(context: Node) -> OverworldContext:

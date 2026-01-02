@@ -444,11 +444,23 @@ func connect_external_signals() -> void:
 		_connect_to_player_movement()
 
 	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
+	# Usar call_deferred si el nodo no está en el árbol todavía
+	if is_inside_tree():
+		_start_movement_timers()
+	else:
+		call_deferred("_start_movement_timers")
+
+
+## Inicia los timers de movimiento según el tipo configurado
+func _start_movement_timers() -> void:
+	if not is_inside_tree():
+		return
+
 	if get_movement_type() == 1 and _random_timer:  # RANDOM
-		_random_timer.stop()  # Detener si estaba corriendo
+		_random_timer.stop()
 		_random_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 	elif get_movement_type() == 3 and _random_turning_timer:  # RANDOM_TURNING
-		_random_turning_timer.stop()  # Detener si estaba corriendo
+		_random_turning_timer.stop()
 		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
 		_look_pattern_timer.stop()
@@ -484,8 +496,9 @@ func _on_random_timer_timeout() -> void:
 	var actions_to_use: Array[DirectionEnum.Type] = []
 	var valid_tiles: Array[Vector2i] = []
 
-	# Obtener celdas válidas de la página actual (solo si movement_type = Random)
-	if current_page and get_movement_type() == 1:  # RANDOM
+	# Obtener celdas válidas de la página actual (para RANDOM, RANDOM_VERTICAL y RANDOM_HORIZONTAL)
+	var movement = get_movement_type()
+	if current_page and movement in [1, 5, 6]:  # RANDOM, RANDOM_VERTICAL, RANDOM_HORIZONTAL
 		valid_tiles = current_page.random_movement_valid_tiles
 
 	# Si hay celdas válidas definidas, filtrar las acciones de movimiento
@@ -566,13 +579,34 @@ func _on_random_vertical_timer_timeout() -> void:
 		return
 
 	# Solo movimientos verticales (UP y DOWN)
-	var vertical_actions = [
+	var vertical_actions: Array[DirectionEnum.Type] = [
 		DirectionEnum.Type.UP,
 		DirectionEnum.Type.DOWN
 	]
 
-	# Elegir una dirección vertical aleatoria
-	var random_action = vertical_actions[randi() % vertical_actions.size()]
+	# Filtrar según celdas válidas si están definidas
+	var valid_tiles: Array[Vector2i] = []
+	if current_page:
+		valid_tiles = current_page.random_movement_valid_tiles
+
+	var actions_to_use: Array[DirectionEnum.Type] = []
+	if valid_tiles.size() > 0:
+		var current_tile = motion.current_tile()
+		for action in vertical_actions:
+			var action_direction = DirectionEnum.to_vector2(action)
+			var destination_tile = current_tile + Vector2i(action_direction)
+			if destination_tile in valid_tiles:
+				actions_to_use.append(action)
+	else:
+		actions_to_use = vertical_actions
+
+	# Si no hay acciones válidas, no hacer nada
+	if actions_to_use.is_empty():
+		_random_vertical_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
+		return
+
+	# Elegir una dirección vertical aleatoria de las válidas
+	var random_action = actions_to_use[randi() % actions_to_use.size()]
 	var direction = DirectionEnum.to_vector2(random_action)
 
 	# Ejecutar movimiento
@@ -588,13 +622,34 @@ func _on_random_horizontal_timer_timeout() -> void:
 		return
 
 	# Solo movimientos horizontales (LEFT y RIGHT)
-	var horizontal_actions = [
+	var horizontal_actions: Array[DirectionEnum.Type] = [
 		DirectionEnum.Type.LEFT,
 		DirectionEnum.Type.RIGHT
 	]
 
-	# Elegir una dirección horizontal aleatoria
-	var random_action = horizontal_actions[randi() % horizontal_actions.size()]
+	# Filtrar según celdas válidas si están definidas
+	var valid_tiles: Array[Vector2i] = []
+	if current_page:
+		valid_tiles = current_page.random_movement_valid_tiles
+
+	var actions_to_use: Array[DirectionEnum.Type] = []
+	if valid_tiles.size() > 0:
+		var current_tile = motion.current_tile()
+		for action in horizontal_actions:
+			var action_direction = DirectionEnum.to_vector2(action)
+			var destination_tile = current_tile + Vector2i(action_direction)
+			if destination_tile in valid_tiles:
+				actions_to_use.append(action)
+	else:
+		actions_to_use = horizontal_actions
+
+	# Si no hay acciones válidas, no hacer nada
+	if actions_to_use.is_empty():
+		_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
+		return
+
+	# Elegir una dirección horizontal aleatoria de las válidas
+	var random_action = actions_to_use[randi() % actions_to_use.size()]
 	var direction = DirectionEnum.to_vector2(random_action)
 
 	# Ejecutar movimiento

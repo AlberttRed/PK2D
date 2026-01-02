@@ -4,8 +4,8 @@ class_name WarpSystem
 ## WarpSystem - Sistema global para gestionar cambios de mapa/posición
 ## Utiliza OverworldContext para acceder a otros sistemas sin acoplamiento
 
-signal warp_started(map_id: String, spawn_id: String)
-signal warp_finished(map_id: String, spawn_id: String)
+signal warp_started(map_id: String, tile_pos: Vector2i)
+signal warp_finished(map_id: String, tile_pos: Vector2i)
 
 # Referencia al OverworldContext (inyectada desde OverworldCoordinator)
 var context: OverworldContext = null
@@ -18,7 +18,7 @@ var world_system: WorldSystem = null
 # Variables del estado actual
 var is_warping: bool = false
 var current_map_id: String = ""
-var current_spawn_id: String = ""
+var current_tile_pos: Vector2i = Vector2i.ZERO
 
 func _ready() -> void:
 	pass  # NOTA: El contexto se inyecta desde OverworldCoordinator después de _ready()
@@ -37,9 +37,9 @@ func _update_references() -> void:
 		else:
 			push_error("WarpSystem: Contexto no disponible y no se puede obtener del coordinador")
 
-## Método público para solicitar un warp
-func request_warp(map_id: String, spawn_id: String) -> void:
-	print("WarpSystem: Solicitud de warp recibida - Mapa: ", map_id, ", Spawn: ", spawn_id)
+## Método público para solicitar un warp a coordenadas de tile específicas
+func request_warp(map_id: String, tile_pos: Vector2i) -> void:
+	print("WarpSystem: Solicitud de warp recibida - Mapa: ", map_id, ", Tile: ", tile_pos)
 
 	if is_warping:
 		push_warning("WarpSystem: Ya hay un warp en progreso, esperando a que finalice")
@@ -47,18 +47,19 @@ func request_warp(map_id: String, spawn_id: String) -> void:
 		return
 
 	# Emitir señal de inicio local
-	warp_started.emit(map_id, spawn_id)
+	warp_started.emit(map_id, tile_pos)
 
-	# Ejecutar el cambio de mapa/posición
-	await _execute_warp(map_id, spawn_id)
+	# Ejecutar el cambio de mapa/posición usando tile
+	await _execute_warp(map_id, tile_pos)
 
 	# Esperar a que la señal de finalización sea emitida
 	if is_warping:
 		await self.warp_finished
 
-## Ejecuta el cambio de mapa/posición
-func _execute_warp(map_id: String, spawn_id: String) -> void:
-	print("WarpSystem: Ejecutando warp - Mapa: ", map_id, ", Spawn: ", spawn_id)
+
+## Ejecuta el cambio de mapa/posición usando coordenadas de tile
+func _execute_warp(map_id: String, tile_pos: Vector2i) -> void:
+	print("WarpSystem: Ejecutando warp - Mapa: ", map_id, ", Tile: ", tile_pos)
 
 	is_warping = true
 
@@ -101,16 +102,16 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 		is_warping = false
 		return
 
-	# 1. Verificar si necesitamos cambiar de mapa
+	# 2. Verificar si necesitamos cambiar de mapa
 	var current_map = ws.get_active_map()
 	var needs_map_change = not current_map or current_map.name != map_id
 
 	if needs_map_change:
 		print("WarpSystem: Cambiando de mapa a través de WorldSystem: ", map_id)
 
-		# Usar gestión de estado avanzada para interiores (PBI 374)
+		# Usar warp_with_state_management
 		if ws.has_method("warp_with_state_management"):
-			var success = await ws.warp_with_state_management(map_id, spawn_id)
+			var success = await ws.warp_with_state_management(map_id, tile_pos)
 			if not success:
 				push_error("WarpSystem: No se pudo cambiar al mapa con gestión de estado: " + map_id)
 				is_warping = false
@@ -122,7 +123,7 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 				_check_touch_events_at_player_position(active_grid)
 
 			# Si el warp con gestión de estado se completó, salir temprano
-			_emit_warp_finished(map_id, spawn_id)
+			_emit_warp_finished(map_id, tile_pos)
 			return
 		else:
 			# Fallback al método tradicional
@@ -132,42 +133,49 @@ func _execute_warp(map_id: String, spawn_id: String) -> void:
 				is_warping = false
 				return
 
-
-	# 2. Posicionar al jugador en el spawn point correspondiente
-	print("WarpSystem: Posicionando jugador en spawn: ", spawn_id)
+	# 3. Posicionar al jugador en la coordenada de tile
+	print("WarpSystem: Posicionando jugador en tile: ", tile_pos)
 	var grid = ws.get_active_grid()
 	if not grid:
 		push_error("WarpSystem: No se pudo obtener el OverworldGrid del mapa activo")
 		is_warping = false
 		return
 
-	var spawn_success = grid.position_player_at_spawn(spawn_id, player)
-	if not spawn_success:
-		push_warning("WarpSystem: No se pudo posicionar al jugador en el spawn: " + spawn_id)
+	# Posicionar usando teleport_to_tile o fallback
+	if player.has_method("teleport_to_tile"):
+		player.teleport_to_tile(tile_pos)
+	else:
+		player.global_position = grid.tile_to_world_center(tile_pos)
 
-	# 3. Verificar si hay un evento TOUCH en la posición del jugador
+	# Inicializar chunks activos con la nueva posición del jugador
+	var chunk_controller = ws.chunk_controller if ws else null
+	if chunk_controller:
+		chunk_controller.initialize_active_chunks.call_deferred(player.global_position)
+
+	# 4. Verificar si hay un evento TOUCH en la posición del jugador
 	_check_touch_events_at_player_position(grid)
 
-	# 4. Actualizar estado interno
+	# 5. Actualizar estado interno
 	current_map_id = map_id
-	current_spawn_id = spawn_id
+	current_tile_pos = tile_pos
 
-	# Emitir warp_finished de forma diferida (siguiente frame) para que los comandos puedan await correctamente
-	call_deferred("_emit_warp_finished", map_id, spawn_id)
+	# Emitir warp_finished de forma diferida
+	call_deferred("_emit_warp_finished", map_id, tile_pos)
 	return
 
+
 ## Emisión diferida de warp_finished para evitar carreras con await en comandos
-func _emit_warp_finished(map_id: String, spawn_id: String) -> void:
+func _emit_warp_finished(map_id: String, tile_pos: Vector2i) -> void:
 	# Marcar que ya no estamos warpeando justo antes de emitir
 	is_warping = false
-	warp_finished.emit(map_id, spawn_id)
-	print("WarpSystem: Warp completado - Mapa: ", map_id, ", Spawn: ", spawn_id)
+	warp_finished.emit(map_id, tile_pos)
+	print("WarpSystem: Warp completado - Mapa: ", map_id, ", Tile: ", tile_pos)
 
 ## Obtiene información del estado actual
 func get_current_warp_info() -> Dictionary:
 	return {
 		"map_id": current_map_id,
-		"spawn_id": current_spawn_id,
+		"tile_pos": current_tile_pos,
 		"is_warping": is_warping
 	}
 

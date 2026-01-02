@@ -278,7 +278,7 @@ func _execute_follower_movement_async() -> void:
 	is_executing_step = false
 
 ## Se ejecuta cuando el líder hace warp/teleport
-func _on_leader_warped(_map_id: String, _spawn_id: String) -> void:
+func _on_leader_warped(_map_id: String, _tile_pos: Vector2i) -> void:
 	if not is_following:
 		return
 

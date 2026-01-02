@@ -112,12 +112,11 @@ class_name WorldSystem
 ##      → Aparece en (15, 23) mirando arriba (donde entró)
 ##
 ## Ventajas:
-##   ✓ No necesitas crear SpawnPoints de salida en cada interior
 ##   ✓ El jugador aparece exactamente donde entró
 ##   ✓ Historial de hasta 10 warps para navegación compleja
 ##
 ## Métodos principales:
-##   - warp_with_state_management() → Warp inteligente con guardado de estado
+##   - warp_with_state_management(map_id, tile_pos) → Warp inteligente con guardado de estado
 ##   - save_state_before_warp() → Guarda estado antes de cambiar
 ##   - restore_previous_overworld_state() → Restaura al salir de interior
 ##   - _is_overworld_map() → Detecta si un mapa es exterior o interior
@@ -140,7 +139,7 @@ class_name WorldSystem
 ##   - get_map_info(map_id) → Obtiene información del mapa
 ##
 ## Warps avanzados:
-##   - warp_with_state_management(map_id, spawn_id) → Warp con historial
+##   - warp_with_state_management(map_id, tile_pos) → Warp con historial
 ##   - clear_warp_history() → Limpia historial
 ##
 ## Sincronización:
@@ -948,8 +947,8 @@ func _is_overworld_map(map_id: String) -> bool:
 	return true
 
 
-## Método público para warps con restauración automática de estado
-func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
+## Método público para warps a coordenadas de tile con restauración automática de estado
+func warp_with_state_management(to_map_id: String, tile_pos: Vector2i) -> bool:
 	var player_grid_motion = _get_player_grid_motion()
 	if not player_grid_motion:
 		push_error("WorldSystem: No se pudo obtener GridMotion del jugador")
@@ -971,21 +970,26 @@ func warp_with_state_management(to_map_id: String, spawn_id: String) -> bool:
 	if not success:
 		return false
 
-	# NOTA: El movimiento ya fue detenido por WarpSystem._execute_warp()
-	# No es necesario volver a detenerlo aquí
-
 	# Si salimos de un interior, intentar restaurar posición previa
 	if is_leaving_interior:
 		print("WorldSystem: Saliendo de interior, restaurando estado previo...")
-		print_warp_history()  # Debug
-		# En lugar de usar spawn_id, restaurar la posición guardada
+		print_warp_history()
 		return await restore_previous_overworld_state()
 	else:
-		# Warp normal usando spawn_id
+		# Warp usando coordenadas de tile
 		await get_tree().process_frame
 		var grid = get_active_grid()
 		if grid and player:
-			return grid.position_player_at_spawn(spawn_id, player)
+			# Posicionar usando teleport_to_tile o fallback
+			if player.has_method("teleport_to_tile"):
+				player.teleport_to_tile(tile_pos)
+			else:
+				player.global_position = grid.tile_to_world_center(tile_pos)
+			print("WorldSystem: Jugador posicionado en tile %s" % tile_pos)
+			# Inicializar chunks activos con la nueva posición del jugador
+			if chunk_controller:
+				chunk_controller.initialize_active_chunks.call_deferred(player.global_position)
+			return true
 
 	return true
 
@@ -1138,12 +1142,12 @@ func _setup_player_for_map() -> void:
 				camera.map_layer_path = terrain_layer.get_path()
 
 ## Configura la visibilidad del nodo raíz (NO recursivo)
-## Los nodos hijos gestionan su propia visibilidad (respeta SpawnPoints, etc.)
+## Los nodos hijos gestionan su propia visibilidad
 func _set_subtree_visibility(node: Node, vis: bool) -> void:
 	if node is CanvasItem:
 		(node as CanvasItem).visible = vis
 	# NO hacer recursivo - respeta la visibilidad configurada de los hijos
-	# Ejemplo: SpawnPoints con sprite oculto, eventos con sprites personalizados, etc.
+	# Ejemplo: eventos con sprites personalizados, etc.
 
 ## Configura la capa de overlays según los metadatos del mapa activo
 func _apply_overlay_settings(map_scene: Node) -> void:

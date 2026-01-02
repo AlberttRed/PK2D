@@ -28,22 +28,26 @@ var event_node: Node:
 # Valores originales para poder cancelar
 var original_actor_name: String = ""
 var original_target_scene: String = ""
-var original_target_spawn: String = ""
 var original_facing_direction: int = 0
+var original_target_tile: Vector2i = Vector2i.ZERO
 
 # Referencias a los controles
 var actor_name_option: OptionButton = null
 var target_scene_option: OptionButton = null
-var target_spawn_option: OptionButton = null
 var facing_direction_option: OptionButton = null
 var accept_button: Button = null
+
+# Controles para posición por tile
+var tile_container: HBoxContainer = null
+var tile_label: Label = null
+var select_tile_button: Button = null
 
 # Cache para evitar cargar Overworld múltiples veces
 var _cached_overworld_scene: PackedScene = null
 
 func _ready() -> void:
 	title = "Editar WarpCommand"
-	size = Vector2(500, 300)
+	size = Vector2(500, 250)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -73,10 +77,21 @@ func _ready() -> void:
 	target_scene_option.item_selected.connect(_on_target_scene_selected)
 	_populate_map_names()
 
-	# Target Spawn (Dropdown)
-	target_spawn_option = _create_labeled_option("Spawn destino:", vbox)
-	target_spawn_option.item_selected.connect(_on_target_spawn_selected)
-	call_deferred("_load_spawn_points_for_selected_map")
+	# Container para selección de tile
+	tile_container = HBoxContainer.new()
+	var tile_pos_label = Label.new()
+	tile_pos_label.text = "Posición tile:"
+	tile_pos_label.custom_minimum_size.x = 150
+	tile_container.add_child(tile_pos_label)
+	tile_label = Label.new()
+	tile_label.text = "(no seleccionado)"
+	tile_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tile_container.add_child(tile_label)
+	select_tile_button = Button.new()
+	select_tile_button.text = "Seleccionar..."
+	select_tile_button.pressed.connect(_on_select_tile_pressed)
+	tile_container.add_child(select_tile_button)
+	vbox.add_child(tile_container)
 
 	# Facing Direction
 	facing_direction_option = _create_labeled_option("Dirección:", vbox)
@@ -243,49 +258,38 @@ func load_command(cmd: WarpCommand) -> void:
 	# Guardar valores originales para poder cancelar
 	original_actor_name = cmd.actor_name
 	original_target_scene = cmd.target_scene
-	original_target_spawn = cmd.target_spawn
 	original_facing_direction = cmd.facing_direction
+	original_target_tile = cmd.target_tile
+
+	# Actualizar el label del tile
+	if tile_label:
+		if cmd.target_tile != Vector2i.ZERO:
+			tile_label.text = "(%d, %d)" % [cmd.target_tile.x, cmd.target_tile.y]
+		else:
+			tile_label.text = "(no seleccionado)"
 
 	# Asegurar que los actores estén poblados antes de seleccionar
 	if actor_name_option:
 		_populate_actor_names()
-		# Usar call_deferred para asegurar que la población se complete antes de seleccionar
 		call_deferred("_set_actor_selection_after_load", cmd.actor_name, cmd.target_scene)
 	else:
-		# Si no hay actor_name_option, establecer el mapa directamente
 		_set_option_selection(target_scene_option, cmd.target_scene, 0)
-
-	if target_spawn_option:
-		# Cargar spawn points primero, luego seleccionar el valor
-		_load_spawn_points_for_selected_map()
-		# Usar call_deferred para asegurar que los spawn points se hayan cargado
-		call_deferred("_set_spawn_selection_after_load", cmd.target_spawn)
 
 	# Establecer la dirección guardada en el OptionButton
 	if facing_direction_option:
-		# El enum FacingDirection coincide con el orden de los items del OptionButton
-		# ARRIBA=0, ABAJO=1, IZQUIERDA=2, DERECHA=3
 		var direction_index = cmd.facing_direction
-		# Asegurar que el índice esté dentro del rango válido
 		if direction_index >= 0 and direction_index < facing_direction_option.get_item_count():
 			facing_direction_option.selected = direction_index
+
+	_update_accept_button_state()
 
 ## Establece la selección del actor después de que se hayan cargado los actores
 func _set_actor_selection_after_load(actor_name: String, target_scene: String = "") -> void:
 	if actor_name_option:
 		_set_option_selection(actor_name_option, actor_name, 0)
-		# Actualizar el estado del dropdown de mapa según el actor
 		_update_target_scene_for_actor()
-		# Si el actor es "Player" y hay un target_scene, establecerlo
-		# (si no es "Player", _update_target_scene_for_actor ya estableció "(mismo mapa)")
 		if actor_name == "Player" and target_scene_option and target_scene != "":
 			_set_option_selection(target_scene_option, target_scene, 0)
-
-## Establece la selección del spawn point después de que se hayan cargado los spawn points
-func _set_spawn_selection_after_load(spawn_name: String) -> void:
-	if target_spawn_option:
-		_set_option_selection(target_spawn_option, spawn_name, 0)
-		_update_accept_button_state()
 
 ## Actualiza la selección del actor en el dropdown basándose en el comando
 func _update_actor_selection() -> void:
@@ -304,9 +308,6 @@ func _apply_values_to_command() -> void:
 	var target_scene_text = _get_option_text(target_scene_option, "(mismo mapa)")
 	command.target_scene = "" if target_scene_text == "(mismo mapa)" else target_scene_text
 
-	var target_spawn_text = _get_option_text(target_spawn_option, "(ninguno)")
-	command.target_spawn = "" if target_spawn_text == "(ninguno)" else target_spawn_text
-
 	command.facing_direction = facing_direction_option.selected if facing_direction_option else 0
 
 ## Restaura los valores originales del comando
@@ -316,18 +317,20 @@ func _restore_original_values() -> void:
 
 	command.actor_name = original_actor_name
 	command.target_scene = original_target_scene
-	command.target_spawn = original_target_spawn
 	command.facing_direction = original_facing_direction
+	command.target_tile = original_target_tile
 
 	_update_actor_selection()
 	_set_option_selection(target_scene_option, original_target_scene, 0)
 
-	if target_spawn_option:
-		_load_spawn_points_for_selected_map()
-		call_deferred("_set_spawn_selection_after_load", original_target_spawn)
-
 	if facing_direction_option:
 		facing_direction_option.selected = original_facing_direction
+
+	if tile_label:
+		if original_target_tile != Vector2i.ZERO:
+			tile_label.text = "(%d, %d)" % [original_target_tile.x, original_target_tile.y]
+		else:
+			tile_label.text = "(no seleccionado)"
 
 func _on_accept_pressed() -> void:
 	_apply_values_to_command()
@@ -345,81 +348,28 @@ func _on_close_requested() -> void:
 	hide()
 
 ## Se llama cuando cambia la selección del mapa destino
-func _on_target_scene_selected(index: int) -> void:
-	_load_spawn_points_for_selected_map()
-
-## Carga los spawn points del mapa actualmente seleccionado
-func _load_spawn_points_for_selected_map() -> void:
-	if not target_scene_option or not target_spawn_option:
-		return
-
-	var selected_text = _get_option_text(target_scene_option, "(mismo mapa)")
-	var map_name = _get_current_map_name() if selected_text == "(mismo mapa)" else selected_text
-
-	if map_name == "":
-		target_spawn_option.clear()
-		target_spawn_option.add_item("(ninguno)")
-		_update_accept_button_state()
-		return
-
-	_load_spawn_points_for_map(map_name)
-
-## Carga los spawn points de un mapa específico
-func _load_spawn_points_for_map(map_name: String) -> void:
-	if not target_spawn_option or map_name == "":
-		return
-
-	target_spawn_option.clear()
-	target_spawn_option.add_item("(ninguno)")
-
-	var world_system = _get_world_system()
-	if not world_system:
-		_update_accept_button_state()
-		return
-
-	var world_map_scenes = world_system.get("world_map_scenes")
-	if world_map_scenes == null or not world_map_scenes is Array:
-		_update_accept_button_state()
-		return
-
-	# Buscar el mapa por nombre
-	for packed_scene in world_map_scenes:
-		if packed_scene is PackedScene:
-			var scene_path = packed_scene.resource_path
-			if scene_path:
-				var file_name = scene_path.get_file().get_basename()
-				if file_name == map_name:
-					var map_instance = packed_scene.instantiate()
-					if map_instance:
-						var grid = map_instance.get_node_or_null("OverworldGrid")
-						if grid:
-							var spawn_points_container = grid.get_node_or_null("SpawnPoints")
-							if spawn_points_container:
-								var added_spawns = []
-								for child in spawn_points_container.get_children():
-									var spawn_id = child.name
-									if spawn_id != "" and not spawn_id in added_spawns:
-										target_spawn_option.add_item(spawn_id)
-										added_spawns.append(spawn_id)
-						map_instance.queue_free()
-					break
-
+func _on_target_scene_selected(_index: int) -> void:
+	# Resetear la posición del tile al cambiar de mapa
+	if command:
+		command.target_tile = Vector2i.ZERO
+	if tile_label:
+		tile_label.text = "(no seleccionado)"
 	_update_accept_button_state()
 
-## Se llama cuando cambia la selección del spawn point
-func _on_target_spawn_selected(index: int) -> void:
-	_update_accept_button_state()
-
-## Actualiza el estado del botón de aceptar según la selección del spawn point
+## Actualiza el estado del botón de aceptar según la selección del tile
 func _update_accept_button_state() -> void:
-	if not accept_button or not target_spawn_option:
+	if not accept_button:
 		return
 
-	var selected_text = _get_option_text(target_spawn_option, "(ninguno)")
-	accept_button.disabled = (selected_text == "(ninguno)")
+	# Verificar que hay una coordenada válida
+	var has_valid_tile = command and command.target_tile != Vector2i.ZERO
+	# También aceptar si el label muestra una coordenada
+	if tile_label and tile_label.text != "(no seleccionado)":
+		has_valid_tile = true
+	accept_button.disabled = not has_valid_tile
 
 ## Se llama cuando cambia la selección del actor
-func _on_actor_selected(index: int) -> void:
+func _on_actor_selected(_index: int) -> void:
 	_update_target_scene_for_actor()
 
 ## Actualiza el estado del dropdown de mapa según el actor seleccionado
@@ -434,6 +384,89 @@ func _update_target_scene_for_actor() -> void:
 		_set_option_selection(target_scene_option, "(mismo mapa)", 0)
 		if command:
 			command.target_scene = ""
-		_load_spawn_points_for_selected_map()
 	else:
 		target_scene_option.disabled = false
+
+
+## Se llama cuando se presiona el botón de seleccionar tile
+func _on_select_tile_pressed() -> void:
+	# Obtener el mapa destino
+	var target_map_name = _get_option_text(target_scene_option, "(mismo mapa)")
+	if target_map_name == "(mismo mapa)":
+		target_map_name = _get_current_map_name()
+
+	if target_map_name == "":
+		push_error("WarpCommandEditor: No se pudo determinar el mapa destino")
+		return
+
+	# Cargar el mapa para obtener su OverworldGrid
+	var grid = _load_map_grid(target_map_name)
+	if not grid:
+		push_error("WarpCommandEditor: No se pudo cargar el OverworldGrid del mapa: " + target_map_name)
+		return
+
+	# Cargar y crear la ventana de vista del mapa
+	var selector_script = load("res://addons/event_tools/position_selector_window.gd")
+	if not selector_script:
+		push_error("WarpCommandEditor: No se encontró el script de la ventana de vista del mapa")
+		return
+
+	var selector_window = selector_script.new()
+	add_child(selector_window)
+
+	# Configurar la ventana (modo simple, una sola celda)
+	await selector_window.setup(grid, grid.get_parent(), null)
+	selector_window.set_multiple_selection_mode(false)
+
+	# Si ya hay una celda seleccionada, mostrarla
+	if command and command.target_tile != Vector2i.ZERO:
+		selector_window.selected_cell = command.target_tile
+
+	# Conectar señal para recibir la celda seleccionada
+	selector_window.cell_selected.connect(func(cell_pos: Vector2i):
+		if command:
+			command.target_tile = cell_pos
+		if tile_label:
+			tile_label.text = "(%d, %d)" % [cell_pos.x, cell_pos.y]
+		_update_accept_button_state()
+		selector_window.queue_free()
+	)
+
+	# Conectar señal de cancelación
+	selector_window.cancelled.connect(func():
+		selector_window.queue_free()
+	)
+
+	# Mostrar la ventana
+	selector_window.popup_centered()
+
+
+## Carga el OverworldGrid de un mapa específico
+func _load_map_grid(map_name: String) -> Node:
+	var world_system = _get_world_system()
+	if not world_system:
+		return null
+
+	var world_map_scenes = world_system.get("world_map_scenes")
+	if world_map_scenes == null or not world_map_scenes is Array:
+		return null
+
+	# Buscar el mapa por nombre
+	for packed_scene in world_map_scenes:
+		if packed_scene is PackedScene:
+			var scene_path = packed_scene.resource_path
+			if scene_path:
+				var file_name = scene_path.get_file().get_basename()
+				if file_name == map_name:
+					var map_instance = packed_scene.instantiate()
+					if map_instance:
+						var grid = map_instance.get_node_or_null("OverworldGrid")
+						if grid:
+							# Desanclar el grid del mapa para poder usarlo en la ventana
+							map_instance.remove_child(grid)
+							map_instance.queue_free()
+							return grid
+						map_instance.queue_free()
+					break
+
+	return null

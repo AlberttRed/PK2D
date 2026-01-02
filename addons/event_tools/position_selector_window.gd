@@ -7,6 +7,10 @@ var edited_scene_root: Node2D = null
 var active_event: Event = null  # Evento que se está editando (solo este será visible)
 var hidden_events: Array[Event] = []  # Lista de eventos ocultos para restaurar después
 
+# Restricción de celdas según tipo de movimiento
+var movement_type: int = 1  # 1=RANDOM (por defecto), 5=RANDOM_VERTICAL, 6=RANDOM_HORIZONTAL
+var event_tile_position: Vector2i = Vector2i.ZERO  # Posición del evento en coordenadas de tile
+
 var viewport_wrapper: Control = null
 var viewport_container: SubViewportContainer = null
 var map_viewport: SubViewport = null
@@ -14,7 +18,9 @@ var map_instance: Node2D = null
 var camera: Camera2D = null
 var grid_overlay: Control = null
 var selected_cell_rect: ColorRect = null
-var selected_cell: Vector2i = Vector2i(-1, -1)
+## Valor centinela para indicar "sin selección" (usa valor muy negativo para no conflictuar con coords reales)
+const UNSELECTED_CELL = Vector2i(-9999, -9999)
+var selected_cell: Vector2i = UNSELECTED_CELL
 var cell_size: int = 32
 var main_vbox: VBoxContainer = null
 var reference_tile_layer: TileMapLayer = null  # Capa de referencia para conversión de coordenadas
@@ -255,7 +261,7 @@ func _update_selected_cell_rect() -> void:
 	if not viewport_wrapper or not is_instance_valid(viewport_wrapper):
 		return
 
-	if selected_cell.x < 0 or selected_cell.y < 0:
+	if selected_cell == UNSELECTED_CELL:
 		selected_cell_rect.visible = false
 		return
 
@@ -374,7 +380,7 @@ func _on_assign_button_pressed() -> void:
 		tiles_selected.emit(selected_tiles.duplicate())
 	else:
 		# Modo simple: verificar que hay una celda seleccionada
-		if selected_cell.x < 0 or selected_cell.y < 0:
+		if selected_cell == UNSELECTED_CELL:
 			return
 		# Emitir señal de celda seleccionada
 		cell_selected.emit(selected_cell)
@@ -588,6 +594,11 @@ func _handle_click(screen_pos: Vector2) -> void:
 		cell_pos = tile_pos
 	else:
 		cell_pos = _world_to_cell(world_pos)
+
+	# Verificar si la celda es válida según el tipo de movimiento
+	if not _is_cell_valid_for_movement(cell_pos):
+		print("Event Tools: Celda %s no válida para tipo de movimiento %d (evento en %s)" % [cell_pos, movement_type, event_tile_position])
+		return
 
 	# Actualizar celda seleccionada según el modo
 	if multiple_selection_mode:
@@ -818,7 +829,7 @@ func _draw_grid_overlay() -> void:
 		return
 
 	# Dibujar celda seleccionada (más visible)
-	if selected_cell.x >= 0 and selected_cell.y >= 0:
+	if selected_cell != UNSELECTED_CELL:
 		var cell_world_pos = _cell_to_world(selected_cell)
 		var cell_screen_pos = _world_to_screen(cell_world_pos)
 		var cell_screen_size = Vector2(cell_size, cell_size) / camera.zoom
@@ -904,6 +915,39 @@ func _on_cancel_pressed() -> void:
 	hide()
 	# Liberar la ventana después de un frame para evitar errores de X11
 	call_deferred("queue_free")
+
+## Configura el tipo de movimiento para filtrar celdas válidas
+## @param type: 1=RANDOM (cualquier celda), 5=RANDOM_VERTICAL (mismo X), 6=RANDOM_HORIZONTAL (mismo Y)
+## @param event_pos: Posición del evento en coordenadas de tile
+func set_movement_restriction(type: int, event_pos: Vector2i) -> void:
+	movement_type = type
+	event_tile_position = event_pos
+
+	# Actualizar el label de instrucciones según el tipo
+	if main_vbox:
+		var label = main_vbox.get_child(0) as Label
+		if label:
+			match type:
+				5:  # RANDOM_VERTICAL
+					label.text = "Modo VERTICAL: Solo puedes seleccionar celdas en la misma columna (X=%d)" % event_pos.x
+				6:  # RANDOM_HORIZONTAL
+					label.text = "Modo HORIZONTAL: Solo puedes seleccionar celdas en la misma fila (Y=%d)" % event_pos.y
+				_:  # RANDOM u otros
+					label.text = "Vista del mapa - Haz click en una celda para seleccionarla"
+
+	print("Event Tools: Restricción de movimiento configurada - tipo: %d, pos evento: %s" % [type, event_pos])
+
+
+## Verifica si una celda es válida según el tipo de movimiento
+func _is_cell_valid_for_movement(cell_pos: Vector2i) -> bool:
+	match movement_type:
+		5:  # RANDOM_VERTICAL - mismo X
+			return cell_pos.x == event_tile_position.x
+		6:  # RANDOM_HORIZONTAL - mismo Y
+			return cell_pos.y == event_tile_position.y
+		_:  # RANDOM u otros - cualquier celda
+			return true
+
 
 ## Configura el modo de selección múltiple
 func set_multiple_selection_mode(enabled: bool) -> void:
