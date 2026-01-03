@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=4 uid="uid://bhe4u6i5drh73"]
+[gd_scene load_steps=103 format=4 uid="uid://bhe4u6i5drh73"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_0c1im"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_x4fbf"]
@@ -280,6 +280,181 @@ trigger = SubResource("Resource_devml")
 commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_50tgp"), SubResource("Resource_gwqtt"), SubResource("Resource_fnihh"), SubResource("Resource_hypd7"), SubResource("Resource_tl6gr")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_frx6x"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_albri"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(21, 36)
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_t7osb"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_vjyou"]
+script = ExtResource("16_lp72u")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_tksgn"]
+script = ExtResource("14_5f4or")
+
+[sub_resource type="Resource" id="Resource_aq7rp"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_tksgn")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_frx6x"), SubResource("Resource_albri"), SubResource("Resource_t7osb")])
+root_condition = SubResource("Resource_vjyou")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_srwqg"]
+script = ExtResource("15_mndd2")
+duration = 0.3
+
+[sub_resource type="Resource" id="Resource_qmnr6"]
+script = ExtResource("11_eeyjy")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_evxvq"]
+script = ExtResource("17_071ua")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_gjagf"]
+script = ExtResource("12_fvt2x")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_sjmjk"]
+script = ExtResource("16_lp72u")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_qgudb"]
+script = ExtResource("14_5f4or")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_st42x"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_qgudb")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_srwqg"), SubResource("Resource_qmnr6"), SubResource("Resource_evxvq"), SubResource("Resource_gjagf")])
+root_condition = SubResource("Resource_sjmjk")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_3ke71"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_am460"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(21, 36)
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_bc120"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_ooupw"]
+script = ExtResource("14_5f4or")
+
+[sub_resource type="Resource" id="Resource_vrjxn"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_ooupw")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_3ke71"), SubResource("Resource_am460"), SubResource("Resource_bc120")])
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_xi2vx"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_wodli"]
+script = ExtResource("11_eeyjy")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_nc6oc"]
+script = ExtResource("12_fvt2x")
+flag_name = "indoor"
+
+[sub_resource type="Resource" id="Resource_wlo78"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(21, 27)
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_tq2jf"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_kswaf"]
+script = ExtResource("17_ew733")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_1kitu"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_kswaf")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_xi2vx"), SubResource("Resource_wodli"), SubResource("Resource_nc6oc"), SubResource("Resource_wlo78"), SubResource("Resource_tq2jf")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_j5c4g"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_m8myi"]
+script = ExtResource("11_eeyjy")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_uu0vg"]
+script = ExtResource("12_fvt2x")
+flag_name = "indoor"
+
+[sub_resource type="Resource" id="Resource_1kvkb"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(21, 27)
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_2s766"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_wyorp"]
+script = ExtResource("17_ew733")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_xep2h"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_wyorp")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_j5c4g"), SubResource("Resource_m8myi"), SubResource("Resource_uu0vg"), SubResource("Resource_1kvkb"), SubResource("Resource_2s766")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_8twkq")
 pokemon_id = 16
@@ -299,7 +474,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 y_sort_enabled = true
 script = ExtResource("1_0c1im")
 world_position = Vector2(96, -3808)
-neighbors = Array[String](["Ciudad_Verde"])
+neighbors = Array[String](["Ciudad_Verde", "Ciudad_Plateada"])
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
@@ -362,6 +537,22 @@ pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_i012q")])
 [node name="Entrada4" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
 position = Vector2(48, -912)
 pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_tjm74")])
+
+[node name="Entrada5" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(432, 112)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_aq7rp"), SubResource("Resource_st42x")])
+
+[node name="Entrada6" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(464, 112)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_vrjxn")])
+
+[node name="Entrada7" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(432, -16)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_1kitu")])
+
+[node name="Entrada8" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(464, -16)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_xep2h")])
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_08eh4")]
 
