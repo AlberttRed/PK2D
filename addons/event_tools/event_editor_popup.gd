@@ -899,7 +899,12 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 	if cond is VariableCondition:
 		var var_cond = cond as VariableCondition
 		var op_str = _get_operator_string(var_cond.operator)
-		var value_str = _value_to_string(var_cond.compare_value)
+		# Usar compare_value_serialized si compare_value está vacío (para números que se perdieron en serialización)
+		var actual_value = var_cond.compare_value
+		if (actual_value == null or (typeof(actual_value) == TYPE_STRING and actual_value == "")) and not var_cond.compare_value_serialized.is_empty():
+			# Restaurar desde compare_value_serialized para mostrar
+			actual_value = _parse_serialized_value_for_display(var_cond.compare_value_serialized)
+		var value_str = _value_to_string(actual_value)
 		return "Variable: '%s' %s %s" % [var_cond.variable_name, op_str, value_str]
 
 	if cond is GroupCondition:
@@ -938,6 +943,29 @@ func _value_to_string(value: Variant) -> String:
 	if value is bool:
 		return "true" if value else "false"
 	return str(value)
+
+## Parsea un valor desde compare_value_serialized para mostrar
+func _parse_serialized_value_for_display(text: String) -> Variant:
+	var trimmed = text.strip_edges()
+	if trimmed.is_empty():
+		return ""
+
+	# Intentar como bool
+	if trimmed.to_lower() == "true":
+		return true
+	if trimmed.to_lower() == "false":
+		return false
+
+	# Intentar como int
+	if trimmed.is_valid_int():
+		return trimmed.to_int()
+
+	# Intentar como float
+	if trimmed.is_valid_float():
+		return trimmed.to_float()
+
+	# Si no se puede parsear, devolver como String
+	return trimmed
 
 ## Convierte un DirectionEnum.Type a string abreviado
 func _direction_enum_to_string(dir_enum: int) -> String:
@@ -1000,6 +1028,8 @@ func _add_nested_commands_to_tree(parent_item: TreeItem, command: EventCommand, 
 		var switch_cmd = command as SwitchCommand
 		for case_idx in range(switch_cmd.cases.size()):
 			var case = switch_cmd.cases[case_idx]
+			if not case:
+				continue
 			var case_item = parent_item.get_tree().create_item(parent_item)
 			case_item.set_text(0, "  └─ Case: " + str(case.values))
 			case_item.set_metadata(0, {"type": "switch_case", "case": case, "parent_command": command, "case_index": case_idx})
@@ -2221,9 +2251,20 @@ func _on_conditions_button_pressed(page_index: int) -> void:
 		push_error("Event Editor: No se encontró el script del editor de condiciones")
 		return
 
-	var editor_window = editor_script.new()
+	# Verificar que el script sea un GDScript válido
+	if not (editor_script is GDScript):
+		push_error("Event Editor: El script del editor de condiciones no es un GDScript válido (tipo: %s)" % typeof(editor_script))
+		return
+
+	# Crear la instancia del editor
+	var editor_window = (editor_script as GDScript).new()
 	if not editor_window:
 		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	# Verificar que sea una Window
+	if not (editor_window is Window):
+		push_error("Event Editor: El editor de condiciones no es una Window válida")
 		return
 
 	add_child(editor_window)
@@ -7130,7 +7171,12 @@ func _on_page_condition_edited(page_index: int, new_condition: EventCondition) -
 
 	# Actualizar la condición de la página
 	if new_condition:
-		page.root_condition = new_condition.duplicate(true)
+		var duplicated = new_condition.duplicate(true)
+		# Debug: verificar el valor después de duplicar
+		if duplicated is VariableCondition:
+			var var_cond = duplicated as VariableCondition
+			print("EventEditor: Guardando condición - compare_value: %s (tipo: %s)" % [var_cond.compare_value, typeof(var_cond.compare_value)])
+		page.root_condition = duplicated
 	else:
 		page.root_condition = null
 
@@ -8080,8 +8126,8 @@ func _deep_duplicate_switch_case(switch_case: SwitchCase) -> SwitchCase:
 		return null
 
 	var new_case = SwitchCase.new()
-	new_case.value = switch_case.value
-	new_case.label = switch_case.label if "label" in switch_case else ""
+	# Duplicar el array de values
+	new_case.values = switch_case.values.duplicate()
 
 	# Duplicar cada comando de forma profunda
 	var new_commands: Array[EventCommand] = []

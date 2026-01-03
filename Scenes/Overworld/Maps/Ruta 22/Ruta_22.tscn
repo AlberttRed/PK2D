@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://kknly2sw8nn1"]
+[gd_scene load_steps=186 format=4 uid="uid://kknly2sw8nn1"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vvr7d"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_kdrk2"]
@@ -7,11 +7,26 @@
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_276m4"]
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_hcfew"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_44ryq"]
-[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="5_xot3l"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="6_xpy1a"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="7_fv17f"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_uo0nb"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="9_jy8le"]
+[ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="10_h5ebw"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="10_uo0nb"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="10_v6344"]
+[ext_resource type="Script" uid="uid://d3rkctbb4gj2y" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="11_jy8le"]
+[ext_resource type="Script" uid="uid://cndauysvy7s3h" path="res://Scripts/Resources/SwitchCase.gd" id="11_ov105"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="11_ydbyh"]
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="12_h5ebw"]
+[ext_resource type="Resource" uid="uid://cuiev7vjw3d6y" path="res://Resources/Trainers/RIVAL_INICIO_C.tres" id="13_0kepi"]
+[ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="13_mp3jo"]
+[ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="15_fdqhp"]
+[ext_resource type="Resource" uid="uid://cp4vsoken5pug" path="res://Resources/Trainers/RIVAL_INICIO_B.tres" id="15_yvxss"]
+[ext_resource type="Resource" uid="uid://bh30akwr2lc3o" path="res://Resources/Trainers/RIVAL_INICIO_S.tres" id="16_uhqyd"]
+[ext_resource type="Script" uid="uid://bnkrdjikt6sl3" path="res://Scripts/Events/Commands/SwitchCommand.gd" id="17_s6gaf"]
+[ext_resource type="Script" uid="uid://bprbbdhn4jhfb" path="res://Scripts/Events/Conditions/GroupCondition.gd" id="17_vmimk"]
+[ext_resource type="Texture2D" uid="uid://dg3jiyopb1enp" path="res://Sprites/Overworlds/Characters/Blue/trchar004.png" id="18_mp3jo"]
+[ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="19_vmimk"]
 
 [sub_resource type="Resource" id="Resource_h5ebw"]
 script = ExtResource("8_uo0nb")
@@ -28,6 +43,823 @@ script = ExtResource("6_xpy1a")
 trigger = SubResource("Resource_ydbyh")
 commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_h5ebw")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_ov105"]
+script = ExtResource("6_xpy1a")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_yvxss"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_uhqyd"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4])
+
+[sub_resource type="Resource" id="Resource_s6gaf"]
+script = ExtResource("13_mp3jo")
+target_name = "Player"
+path = Array[int]([5])
+wait_until_finished = false
+
+[sub_resource type="Resource" id="Resource_p6xnw"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_dmgxs"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_r3ug3"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_vnjv1"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_1q2uh"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_qg5bt"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_gp5q6"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_qg5bt")])
+
+[sub_resource type="Resource" id="Resource_7bctv"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_jfvkb"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_7bctv")])
+
+[sub_resource type="Resource" id="Resource_q4rkk"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_7x15i"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_q4rkk")])
+
+[sub_resource type="Resource" id="Resource_n6lom"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_gp5q6"), SubResource("Resource_jfvkb"), SubResource("Resource_7x15i")])
+
+[sub_resource type="Resource" id="Resource_jhq2y"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_rodqh"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_5u4je"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_7o8ud"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 5, 5])
+
+[sub_resource type="Resource" id="Resource_51c5k"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_vlirj"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_INITIAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_1alu3"]
+script = ExtResource("10_uo0nb")
+flag_name = "CERULEAN_RIVAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_3vfrw"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_vlirj"), SubResource("Resource_1alu3")])
+
+[sub_resource type="Resource" id="Resource_q81qs"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_2m4yo"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_q81qs")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_yvxss"), SubResource("Resource_uhqyd"), SubResource("Resource_s6gaf"), SubResource("Resource_p6xnw"), SubResource("Resource_dmgxs"), SubResource("Resource_r3ug3"), SubResource("Resource_vnjv1"), SubResource("Resource_1q2uh"), SubResource("Resource_n6lom"), SubResource("Resource_jhq2y"), SubResource("Resource_rodqh"), SubResource("Resource_5u4je"), SubResource("Resource_7o8ud"), SubResource("Resource_51c5k")])
+root_condition = SubResource("Resource_3vfrw")
+through = true
+
+[sub_resource type="Resource" id="Resource_8q1v8"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_rjpis"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4])
+
+[sub_resource type="Resource" id="Resource_0bbr8"]
+script = ExtResource("13_mp3jo")
+target_name = "Player"
+path = Array[int]([5])
+wait_until_finished = false
+
+[sub_resource type="Resource" id="Resource_gb7eb"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_htehn"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_387hx"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_aus8v"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_sx5yt"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_s5xvx"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_6nc8k"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_s5xvx")])
+
+[sub_resource type="Resource" id="Resource_adsvi"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_cjnpk"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_adsvi")])
+
+[sub_resource type="Resource" id="Resource_jrj6c"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_70nro"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_jrj6c")])
+
+[sub_resource type="Resource" id="Resource_nhg8d"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_6nc8k"), SubResource("Resource_cjnpk"), SubResource("Resource_70nro")])
+
+[sub_resource type="Resource" id="Resource_jty7n"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_xcuks"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_oa3pp"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_ajkj5"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1])
+
+[sub_resource type="Resource" id="Resource_1rq7g"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_n4h0h"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_FINAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_hycgo"]
+script = ExtResource("19_vmimk")
+variable_name = "BADGES_COUNT"
+compare_value_serialized = "8"
+
+[sub_resource type="Resource" id="Resource_x6ufm"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_n4h0h"), SubResource("Resource_hycgo")])
+
+[sub_resource type="Resource" id="Resource_ccr1p"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_3bk17"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_ccr1p")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_8q1v8"), SubResource("Resource_rjpis"), SubResource("Resource_0bbr8"), SubResource("Resource_gb7eb"), SubResource("Resource_htehn"), SubResource("Resource_387hx"), SubResource("Resource_aus8v"), SubResource("Resource_sx5yt"), SubResource("Resource_nhg8d"), SubResource("Resource_jty7n"), SubResource("Resource_xcuks"), SubResource("Resource_oa3pp"), SubResource("Resource_ajkj5"), SubResource("Resource_1rq7g")])
+root_condition = SubResource("Resource_x6ufm")
+through = true
+
+[sub_resource type="Resource" id="Resource_vhw12"]
+script = ExtResource("6_xpy1a")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_gelji"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_gvdsg"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3])
+
+[sub_resource type="Resource" id="Resource_0p2g0"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_rb2rs"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_dsf63"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_c6p2h"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_nqy6a"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_ncgup"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_jjwwy"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_ncgup")])
+
+[sub_resource type="Resource" id="Resource_blkbk"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_qr7bb"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_blkbk")])
+
+[sub_resource type="Resource" id="Resource_5en4u"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_xjqnf"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_5en4u")])
+
+[sub_resource type="Resource" id="Resource_l11ox"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_jjwwy"), SubResource("Resource_qr7bb"), SubResource("Resource_xjqnf")])
+
+[sub_resource type="Resource" id="Resource_ckl65"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ucfmd"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_gesdl"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_6snqv"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1])
+
+[sub_resource type="Resource" id="Resource_b5aks"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_ou5c4"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_INITIAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_nrawc"]
+script = ExtResource("10_uo0nb")
+flag_name = "CERULEAN_RIVAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_hu2jv"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_ou5c4"), SubResource("Resource_nrawc")])
+
+[sub_resource type="Resource" id="Resource_la5bk"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_wg3w3"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_la5bk")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_gelji"), SubResource("Resource_gvdsg"), SubResource("Resource_0p2g0"), SubResource("Resource_rb2rs"), SubResource("Resource_dsf63"), SubResource("Resource_c6p2h"), SubResource("Resource_nqy6a"), SubResource("Resource_l11ox"), SubResource("Resource_ckl65"), SubResource("Resource_ucfmd"), SubResource("Resource_gesdl"), SubResource("Resource_6snqv"), SubResource("Resource_b5aks")])
+root_condition = SubResource("Resource_hu2jv")
+through = true
+
+[sub_resource type="Resource" id="Resource_pio1f"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_j8ro3"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3])
+
+[sub_resource type="Resource" id="Resource_7c3a8"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_07r8l"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_8o6ta"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_qko1l"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ccw7q"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_8eq0q"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_o51fq"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_8eq0q")])
+
+[sub_resource type="Resource" id="Resource_p5nwg"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_aqjv1"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_p5nwg")])
+
+[sub_resource type="Resource" id="Resource_ewod5"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_3d0vy"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_ewod5")])
+
+[sub_resource type="Resource" id="Resource_w2hi5"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_o51fq"), SubResource("Resource_aqjv1"), SubResource("Resource_3d0vy")])
+
+[sub_resource type="Resource" id="Resource_kue70"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_4vtoi"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_udnf3"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_rl1b4"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1])
+
+[sub_resource type="Resource" id="Resource_bu1gu"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_v528o"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_FINAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_rytbx"]
+script = ExtResource("19_vmimk")
+variable_name = "BADGES_COUNT"
+compare_value_serialized = "8"
+
+[sub_resource type="Resource" id="Resource_s2ysy"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_v528o"), SubResource("Resource_rytbx")])
+
+[sub_resource type="Resource" id="Resource_h46xa"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_bnjah"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_h46xa")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_pio1f"), SubResource("Resource_j8ro3"), SubResource("Resource_7c3a8"), SubResource("Resource_07r8l"), SubResource("Resource_8o6ta"), SubResource("Resource_qko1l"), SubResource("Resource_ccw7q"), SubResource("Resource_w2hi5"), SubResource("Resource_kue70"), SubResource("Resource_4vtoi"), SubResource("Resource_udnf3"), SubResource("Resource_rl1b4"), SubResource("Resource_bu1gu")])
+root_condition = SubResource("Resource_s2ysy")
+through = true
+
+[sub_resource type="Resource" id="Resource_i1ybc"]
+script = ExtResource("6_xpy1a")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_j0lim"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_ll2qp"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5])
+
+[sub_resource type="Resource" id="Resource_684nn"]
+script = ExtResource("13_mp3jo")
+target_name = "Player"
+path = Array[int]([4])
+wait_until_finished = false
+
+[sub_resource type="Resource" id="Resource_02dki"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ep2gh"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_owq5w"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_88sco"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_sa2rw"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_njv0b"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_i67xq"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_njv0b")])
+
+[sub_resource type="Resource" id="Resource_dlmap"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_gaw5b"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_dlmap")])
+
+[sub_resource type="Resource" id="Resource_1rasm"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_INITIAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_l68rh"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_1rasm")])
+
+[sub_resource type="Resource" id="Resource_5x0ua"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_i67xq"), SubResource("Resource_gaw5b"), SubResource("Resource_l68rh")])
+
+[sub_resource type="Resource" id="Resource_0tir8"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_iy4g1"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_oh0r2"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_xv7o5"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1])
+
+[sub_resource type="Resource" id="Resource_ljt72"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_wtkin"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_INITIAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_8nwfr"]
+script = ExtResource("10_uo0nb")
+flag_name = "CERULEAN_RIVAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_n3d5l"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_wtkin"), SubResource("Resource_8nwfr")])
+
+[sub_resource type="Resource" id="Resource_f5opm"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_gb71q"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_f5opm")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_j0lim"), SubResource("Resource_ll2qp"), SubResource("Resource_684nn"), SubResource("Resource_02dki"), SubResource("Resource_ep2gh"), SubResource("Resource_owq5w"), SubResource("Resource_88sco"), SubResource("Resource_sa2rw"), SubResource("Resource_5x0ua"), SubResource("Resource_0tir8"), SubResource("Resource_iy4g1"), SubResource("Resource_oh0r2"), SubResource("Resource_xv7o5"), SubResource("Resource_ljt72")])
+root_condition = SubResource("Resource_n3d5l")
+through = true
+
+[sub_resource type="Resource" id="Resource_otxh7"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(17, 9)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_yre87"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5])
+
+[sub_resource type="Resource" id="Resource_a2y48"]
+script = ExtResource("13_mp3jo")
+target_name = "Player"
+path = Array[int]([4])
+wait_until_finished = false
+
+[sub_resource type="Resource" id="Resource_v0ihw"]
+script = ExtResource("8_uo0nb")
+message = "RIVAL: ¡Eh! ¡PLAYER!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_hotgg"]
+script = ExtResource("8_uo0nb")
+message = "¿Vas a la LIGA POKéMON?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_l1uaw"]
+script = ExtResource("8_uo0nb")
+message = "¡Olvídalo! ¡Seguro que no tienes ninguna MEDALLA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_junby"]
+script = ExtResource("8_uo0nb")
+message = "¡El guardia no te dejará pasar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_n3ba8"]
+script = ExtResource("8_uo0nb")
+message = "Dime, ¿ya son más fuertes tus POKéMON?"
+
+[sub_resource type="Resource" id="Resource_x85cs"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("13_0kepi")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_opqcp"]
+script = ExtResource("11_ov105")
+values = ["Bulbasaur"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_x85cs")])
+
+[sub_resource type="Resource" id="Resource_lirg8"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("15_yvxss")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_ahax6"]
+script = ExtResource("11_ov105")
+values = ["Squirtle"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_lirg8")])
+
+[sub_resource type="Resource" id="Resource_wmgkq"]
+script = ExtResource("10_h5ebw")
+battle_type = 1
+trainer_data = ExtResource("16_uhqyd")
+defeated_flag = "ROUTE22_FINAL_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_x1jw2"]
+script = ExtResource("11_ov105")
+values = ["Charmander"]
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_wmgkq")])
+
+[sub_resource type="Resource" id="Resource_064nu"]
+script = ExtResource("17_s6gaf")
+variable_name = "STARTER"
+cases = Array[ExtResource("11_ov105")]([SubResource("Resource_opqcp"), SubResource("Resource_ahax6"), SubResource("Resource_x1jw2")])
+
+[sub_resource type="Resource" id="Resource_6y3g4"]
+script = ExtResource("8_uo0nb")
+message = "¡Dicen que los ENTRENADORES de la LIGA POKéMON son muy fuertes!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_k73j7"]
+script = ExtResource("8_uo0nb")
+message = "¡Tengo que buscar una forma de vencerles!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_mayw6"]
+script = ExtResource("8_uo0nb")
+message = "¡Deja de perder el tiempo y muévete!"
+
+[sub_resource type="Resource" id="Resource_e1jxh"]
+script = ExtResource("13_mp3jo")
+target_name = "Blue"
+path = Array[int]([3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1])
+
+[sub_resource type="Resource" id="Resource_jumtk"]
+script = ExtResource("10_v6344")
+actor_name = "Blue"
+target_tile = Vector2i(24, -1)
+facing_direction = 3
+
+[sub_resource type="Resource" id="Resource_3g1s5"]
+script = ExtResource("10_uo0nb")
+flag_name = "ROUTE22_FINAL_DEFEATED"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_fyrtg"]
+script = ExtResource("19_vmimk")
+variable_name = "BADGES_COUNT"
+compare_value_serialized = "8"
+
+[sub_resource type="Resource" id="Resource_prp52"]
+script = ExtResource("17_vmimk")
+children = Array[ExtResource("15_fdqhp")]([SubResource("Resource_3g1s5"), SubResource("Resource_fyrtg")])
+
+[sub_resource type="Resource" id="Resource_76mjr"]
+script = ExtResource("11_jy8le")
+
+[sub_resource type="Resource" id="Resource_bpskm"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_76mjr")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_otxh7"), SubResource("Resource_yre87"), SubResource("Resource_a2y48"), SubResource("Resource_v0ihw"), SubResource("Resource_hotgg"), SubResource("Resource_l1uaw"), SubResource("Resource_junby"), SubResource("Resource_n3ba8"), SubResource("Resource_064nu"), SubResource("Resource_6y3g4"), SubResource("Resource_k73j7"), SubResource("Resource_mayw6"), SubResource("Resource_e1jxh"), SubResource("Resource_jumtk")])
+root_condition = SubResource("Resource_prp52")
+through = true
+
+[sub_resource type="Resource" id="Resource_vmimk"]
+script = ExtResource("9_jy8le")
+
+[sub_resource type="Resource" id="Resource_e6vhn"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_vmimk")
+sprite_texture = ExtResource("18_mp3jo")
+is_spritesheet = true
+initial_animation = "down_left"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_44ryq")
@@ -79,11 +911,25 @@ metadata/_edit_lock_ = true
 y_sort_enabled = true
 metadata/_edit_lock_ = true
 
-[node name="Cartel" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
-z_index = 1
+[node name="Cartel" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
 position = Vector2(48, 528)
-script = ExtResource("5_xot3l")
 pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_v6344")])
+
+[node name="BlueBattle1" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
+position = Vector2(880, 272)
+pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_ov105"), SubResource("Resource_2m4yo"), SubResource("Resource_3bk17")])
+
+[node name="BlueBattle4" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
+position = Vector2(880, 304)
+pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_vhw12"), SubResource("Resource_wg3w3"), SubResource("Resource_bnjah")])
+
+[node name="BlueBattle3" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
+position = Vector2(880, 336)
+pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_i1ybc"), SubResource("Resource_gb71q"), SubResource("Resource_bpskm")])
+
+[node name="Blue" parent="OverworldGrid/Events" instance=ExtResource("12_h5ebw")]
+position = Vector2(784, -16)
+pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_e6vhn")])
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_b4mmo")]
 
