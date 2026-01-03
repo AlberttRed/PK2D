@@ -1,11 +1,142 @@
-[gd_scene load_steps=9 format=4 uid="uid://bhe4u6i5drh73"]
+[gd_scene load_steps=44 format=4 uid="uid://bhe4u6i5drh73"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_0c1im"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_x4fbf"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_08eh4"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_peyf1"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_ocvs0"]
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_wgrd5"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_8twkq"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="5_fqiy1"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_1o4tr"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="7_hq5ro"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="8_7rr3c"]
+[ext_resource type="PackedScene" uid="uid://b5fhgiixlauaq" path="res://Scenes/Events/Tree.tscn" id="9_fqiy1"]
+[ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="10_mndd2"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="11_eeyjy"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="12_fvt2x"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="13_071ua"]
+[ext_resource type="Script" uid="uid://d3rkctbb4gj2y" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="14_5f4or"]
+[ext_resource type="Script" uid="uid://dy36hc326kn7v" path="res://Scripts/Events/Commands/WaitCommand.gd" id="15_mndd2"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="16_lp72u"]
+[ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="17_071ua"]
+
+[sub_resource type="Resource" id="Resource_15cp0"]
+script = ExtResource("7_hq5ro")
+message = "RUTA 2:
+CIUDAD VERDE - CIUDAD PLATEADA"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_fasfc"]
+script = ExtResource("8_7rr3c")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_8f1s1"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_fasfc")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_15cp0")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_mndd2"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_eeyjy"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(7, 11)
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_fvt2x"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_071ua"]
+script = ExtResource("16_lp72u")
+flag_name = "indoor"
+expected_value = false
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_5f4or"]
+script = ExtResource("14_5f4or")
+
+[sub_resource type="Resource" id="Resource_w6hsf"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_5f4or")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_mndd2"), SubResource("Resource_eeyjy"), SubResource("Resource_fvt2x")])
+root_condition = SubResource("Resource_071ua")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_lp72u"]
+script = ExtResource("15_mndd2")
+duration = 0.3
+
+[sub_resource type="Resource" id="Resource_ew733"]
+script = ExtResource("11_eeyjy")
+target_type = 1
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_51004"]
+script = ExtResource("17_071ua")
+target_name = "Player"
+path = Array[int]([1])
+metadata/_custom_type_script = "uid://yevlmfdmhfhn"
+
+[sub_resource type="Resource" id="Resource_oyuol"]
+script = ExtResource("12_fvt2x")
+flag_name = "indoor"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_j3vcc"]
+script = ExtResource("16_lp72u")
+flag_name = "indoor"
+metadata/_custom_type_script = "uid://cehl8pp7efus8"
+
+[sub_resource type="Resource" id="Resource_l5nif"]
+script = ExtResource("14_5f4or")
+metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
+
+[sub_resource type="Resource" id="Resource_7vvdv"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_l5nif")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_lp72u"), SubResource("Resource_ew733"), SubResource("Resource_51004"), SubResource("Resource_oyuol")])
+root_condition = SubResource("Resource_j3vcc")
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_3ojb4"]
+script = ExtResource("10_mndd2")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_ddl5u"]
+script = ExtResource("13_071ua")
+target_scene = "Entrada_Bosque"
+target_tile = Vector2i(7, 11)
+facing_direction = 0
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_xavpm"]
+script = ExtResource("10_mndd2")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_08vjp"]
+script = ExtResource("14_5f4or")
+
+[sub_resource type="Resource" id="Resource_kshml"]
+script = ExtResource("5_fqiy1")
+trigger = SubResource("Resource_08vjp")
+commands = Array[ExtResource("6_1o4tr")]([SubResource("Resource_3ojb4"), SubResource("Resource_ddl5u"), SubResource("Resource_xavpm")])
+through = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_8twkq")
@@ -56,6 +187,30 @@ metadata/_edit_lock_ = true
 [node name="Events" type="Node2D" parent="OverworldGrid"]
 y_sort_enabled = true
 metadata/_edit_lock_ = true
+
+[node name="Cartel" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(80, 976)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_8f1s1")])
+
+[node name="Tree1" parent="OverworldGrid/Events" instance=ExtResource("9_fqiy1")]
+position = Vector2(336, 848)
+
+[node name="Tree2" parent="OverworldGrid/Events" instance=ExtResource("9_fqiy1")]
+position = Vector2(368, 624)
+
+[node name="Tree3" parent="OverworldGrid/Events" instance=ExtResource("9_fqiy1")]
+position = Vector2(432, -528)
+
+[node name="Tree4" parent="OverworldGrid/Events" instance=ExtResource("9_fqiy1")]
+position = Vector2(208, -944)
+
+[node name="Puerta_Red" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(16, 272)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_w6hsf"), SubResource("Resource_7vvdv")])
+
+[node name="Entrada2" parent="OverworldGrid/Events" instance=ExtResource("4_ocvs0")]
+position = Vector2(48, 272)
+pages = Array[ExtResource("5_fqiy1")]([SubResource("Resource_kshml")])
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_08eh4")]
 

@@ -84,6 +84,7 @@ animations = [{
 }]
 
 [node name="Tree" type="Node2D"]
+z_index = 1
 script = ExtResource("1_rklyq")
 pages = Array[ExtResource("2_4usol")]([SubResource("Resource_f71kk"), SubResource("Resource_h6xha")])
 

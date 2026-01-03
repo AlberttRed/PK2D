@@ -1,11 +1,33 @@
-[gd_scene load_steps=9 format=4 uid="uid://kknly2sw8nn1"]
+[gd_scene load_steps=18 format=4 uid="uid://kknly2sw8nn1"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vvr7d"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_kdrk2"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_6tpau"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_b4mmo"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_276m4"]
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_hcfew"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_44ryq"]
+[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="5_xot3l"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="6_xpy1a"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="7_fv17f"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_uo0nb"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="9_jy8le"]
+
+[sub_resource type="Resource" id="Resource_h5ebw"]
+script = ExtResource("8_uo0nb")
+message = "LIGA POKÉMON
+Puerta delantera"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_ydbyh"]
+script = ExtResource("9_jy8le")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_v6344"]
+script = ExtResource("6_xpy1a")
+trigger = SubResource("Resource_ydbyh")
+commands = Array[ExtResource("7_fv17f")]([SubResource("Resource_h5ebw")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_44ryq")
@@ -56,6 +78,12 @@ metadata/_edit_lock_ = true
 [node name="Events" type="Node2D" parent="OverworldGrid"]
 y_sort_enabled = true
 metadata/_edit_lock_ = true
+
+[node name="Cartel" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_276m4")]
+z_index = 1
+position = Vector2(48, 528)
+script = ExtResource("5_xot3l")
+pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_v6344")])
 
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_b4mmo")]
 
