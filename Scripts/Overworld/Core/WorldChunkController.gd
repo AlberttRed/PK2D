@@ -297,12 +297,10 @@ func get_active_chunks(player_position: Vector2) -> Array[String]:
 			var chunk_id = "chunk_%d_%d" % [chunk_coord.x, chunk_coord.y]
 
 			# Solo añadir si el chunk existe en el registro
+			# Nota: Es normal que algunos chunks no existan (áreas sin mapas)
 			if chunk_registry.has(chunk_id):
 				active_chunks.append(chunk_id)
-			else:
-				# Si el chunk no existe, es un error de generación de chunks
-				# Mostrar aviso pero no crear el chunk automáticamente
-				push_warning("WorldChunkController: Chunk '%s' no existe en el registro. Posición jugador: %s. Esto indica un error en la generación de chunks." % [chunk_id, str(player_position)])
+			# Si el chunk no existe, simplemente lo ignoramos (comportamiento esperado)
 
 	return active_chunks
 

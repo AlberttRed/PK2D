@@ -820,7 +820,7 @@ metadata/_edit_lock_ = true
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
 script = ExtResource("2_e2j4m")
-layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects"), NodePath("")])
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
 metadata/_edit_lock_ = true
 
 [node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
