@@ -20,7 +20,7 @@ var global_flags: Dictionary = {	"CHOOSING_STARTER": false,
 									"HAS_POKEDEX": false}
 
 # Variables globales del juego (Dictionary: nombre -> valor)
-var game_variables: Dictionary = {}
+var game_variables: Dictionary = {"BADGE_COUNT": 0}
 
 # Self flags por evento (Dictionary: "event_uid:flag" -> bool)
 # Ejemplo: "map_route1_trainer01:A" -> true

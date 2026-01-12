@@ -297,6 +297,14 @@ func _disconnect_from_actor(actor: Node2D) -> void:
 	if not grid_motion:
 		return
 
+	# Verificar si el actor está siendo controlado por un comando
+	# Si es así, no desconectar las señales para evitar interrumpir el movimiento
+	if grid_motion.is_command_controlled:
+		# El actor está siendo controlado por un comando, no desconectar
+		# Las señales se desconectarán cuando termine el comando
+		# y el chunk se desactive nuevamente
+		return
+
 	# Desconectar señales si están conectadas
 	if grid_motion.step_finished.is_connected(_on_actor_step_finished):
 		grid_motion.step_finished.disconnect(_on_actor_step_finished)

@@ -8,6 +8,10 @@ var event_uid: String
 ## Referencia al GameStateService para acceder a flags, variables y self-switches
 var game_state: GameStateService
 
+## Referencia opcional al Event que está evaluando la condición
+## Útil para condiciones que necesitan acceder a la posición o propiedades del evento
+var source_event: Event = null
+
 func _init(p_event_uid: String = "", p_game_state: GameStateService = null):
 	event_uid = p_event_uid
 	game_state = p_game_state if p_game_state else GameStateService

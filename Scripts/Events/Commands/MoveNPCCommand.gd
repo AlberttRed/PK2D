@@ -149,9 +149,19 @@ func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
 func _execute_path(motion: GridMotion, context: Node) -> void:
 	# Marcar que el movimiento está siendo controlado por comando
 	# Esto evita que el input del jugador modifique is_running
+	# y también evita que el evento se desactive cuando su chunk se desactiva
 	motion.is_command_controlled = true
 	motion.is_running = false
 
+	# Ejecutar el path con protección para limpiar el flag incluso si hay errores
+	await _execute_path_internal(motion, context)
+
+	# Asegurar que el flag siempre se limpie al finalizar
+	motion.is_command_controlled = false
+	print("MoveNPCCommand: Path completado")
+
+## Ejecuta el path internamente (separado para facilitar manejo de errores)
+func _execute_path_internal(motion: GridMotion, context: Node) -> void:
 	for dir_enum in path:
 		# Determinar el tipo de comando primero
 		var is_movement = DirectionEnum.is_movement(dir_enum)
@@ -260,11 +270,6 @@ func _execute_path(motion: GridMotion, context: Node) -> void:
 
 			# Esperar un breve delay para que se vea el giro
 			await motion.get_tree().create_timer(0.25).timeout
-
-	# Restaurar el control normal (el Player volverá a controlar is_running con input)
-	motion.is_command_controlled = false
-
-	print("MoveNPCCommand: Path completado")
 
 ## Ejecuta el path en background (sin bloquear el EventController)
 func _execute_path_background(motion: GridMotion, context: Node) -> void:

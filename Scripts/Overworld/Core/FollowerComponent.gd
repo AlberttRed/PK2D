@@ -76,15 +76,20 @@ func start_follow(p_leader: Node2D, config: Dictionary = {}) -> void:
 		original_is_running = follower_motion.is_running
 		original_base_speed = follower_motion.base_speed
 
-	# Conectar señales
-	if not leader_motion.step_started.is_connected(_on_leader_step_started):
-		leader_motion.step_started.connect(_on_leader_step_started)
-	if not leader_motion.step_finished.is_connected(_on_leader_step_finished):
-		leader_motion.step_finished.connect(_on_leader_step_finished)
+	# Desconectar señales primero si ya estaban conectadas (para evitar duplicados)
+	if leader_motion.step_started.is_connected(_on_leader_step_started):
+		leader_motion.step_started.disconnect(_on_leader_step_started)
+	if leader_motion.step_finished.is_connected(_on_leader_step_finished):
+		leader_motion.step_finished.disconnect(_on_leader_step_finished)
+
+	# Conectar las señales
+	leader_motion.step_started.connect(_on_leader_step_started)
+	leader_motion.step_finished.connect(_on_leader_step_finished)
 
 	if leader.is_in_group("Player") and context:
-		if not context.warp_finished.is_connected(_on_leader_warped):
-			context.warp_finished.connect(_on_leader_warped)
+		if context.warp_finished.is_connected(_on_leader_warped):
+			context.warp_finished.disconnect(_on_leader_warped)
+		context.warp_finished.connect(_on_leader_warped)
 
 	# Inicializar historial
 	step_history.clear()
@@ -92,6 +97,15 @@ func start_follow(p_leader: Node2D, config: Dictionary = {}) -> void:
 	step_history.append(leader_previous_tile)
 
 	is_following = true
+
+	# Debug: verificar que las señales se conectaron correctamente
+	print("FollowerComponent: Seguimiento iniciado - follower: %s, leader: %s, step_started conectada: %s, step_finished conectada: %s, leader.is_command_controlled: %s" % [
+		follower_actor.name,
+		leader.name,
+		leader_motion.step_started.is_connected(_on_leader_step_started),
+		leader_motion.step_finished.is_connected(_on_leader_step_finished),
+		leader_motion.is_command_controlled
+	])
 
 ## Detiene el seguimiento
 func stop_follow() -> void:
@@ -132,7 +146,10 @@ func is_active() -> bool:
 
 ## Se ejecuta cuando el líder EMPIEZA un paso (movimiento simultáneo)
 func _on_leader_step_started() -> void:
-	if not is_following or not leader_motion or is_executing_step or follower_motion.moving:
+	if not is_following or not leader_motion or not follower_motion:
+		return
+
+	if is_executing_step or follower_motion.moving:
 		return
 
 	if leader_motion.initial_step or leader_motion.dir == Vector2.ZERO:

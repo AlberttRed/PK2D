@@ -3474,6 +3474,54 @@ func _move_command(page_index: int, direction: int) -> void:
 									reselect_info["parent_branch_index"] = branch_index
 									reselect_info["parent_branch_type"] = branch_parent_meta.type
 
+									# Si el parent es un choice_branch y el comando principal es ConditionalCommand,
+									# necesitamos también guardar información sobre el ShowChoicesCommand anidado
+									if branch_parent_meta.type == "choice_branch" and main_command_item:
+										var main_cmd_meta = main_command_item.get_metadata(0)
+										if main_cmd_meta and main_cmd_meta.type == "command":
+											var main_cmd = editable_page.commands[main_cmd_meta.index]
+											if main_cmd is ConditionalCommand:
+												# El ShowChoicesCommand está dentro de un EventBranch
+												# Encontrar el índice del nested_command (ShowChoicesCommand) dentro del EventBranch
+												var show_choices_item = command_item  # El parent del choice_branch es el ShowChoicesCommand
+												var event_branch_item = show_choices_item.get_parent()
+												if event_branch_item:
+													var event_branch_meta = event_branch_item.get_metadata(0)
+													if event_branch_meta and event_branch_meta.type == "branch":
+														# Encontrar el índice del EventBranch
+														var event_branch_index = event_branch_meta.get("branch_index", -1)
+														if event_branch_index < 0:
+															var cond_cmd_item = event_branch_item.get_parent()
+															if cond_cmd_item:
+																var branch_search = cond_cmd_item.get_first_child()
+																var count = 0
+																while branch_search:
+																	if branch_search == event_branch_item:
+																		event_branch_index = count
+																		break
+																	var branch_search_meta = branch_search.get_metadata(0)
+																	if branch_search_meta and branch_search_meta.type == "branch":
+																		count += 1
+																	branch_search = branch_search.get_next()
+
+														if event_branch_index >= 0:
+															# Encontrar el índice del ShowChoicesCommand dentro del EventBranch
+															var nested_cmd_index = -1
+															var nested_item_search = event_branch_item.get_first_child()
+															var nested_count = 0
+															while nested_item_search:
+																if nested_item_search == show_choices_item:
+																	nested_cmd_index = nested_count
+																	break
+																var nested_item_meta = nested_item_search.get_metadata(0)
+																if nested_item_meta and nested_item_meta.type == "nested_command":
+																	nested_count += 1
+																nested_item_search = nested_item_search.get_next()
+
+															if nested_cmd_index >= 0:
+																reselect_info["nested_show_choices_index"] = nested_cmd_index
+																reselect_info["nested_event_branch_index"] = event_branch_index
+
 		event_node.pages[page_index] = editable_page
 		_mark_as_changed()
 		_update_commands_tree(commands_tree, editable_page, page_index)
@@ -3498,14 +3546,21 @@ func _move_main_command(page: EventPage, command_index: int, direction: int) -> 
 func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tree, direction: int) -> bool:
 	var item_type = metadata.type
 
+	# Debug
+	print("Event Editor: _move_nested_item - item_type: ", item_type)
+
 	# Encontrar el comando padre
 	var parent_item = commands_tree.get_selected().get_parent()
 	if not parent_item:
+		push_warning("Event Editor: No se encontró parent_item")
 		return false
 
 	var parent_metadata = parent_item.get_metadata(0)
 	if not parent_metadata or not parent_metadata.has("type"):
+		push_warning("Event Editor: No se encontró parent_metadata o no tiene type")
 		return false
+
+	print("Event Editor: parent_metadata.type: ", parent_metadata.type)
 
 	# Buscar el comando principal que contiene este item
 	var main_command_item = parent_item
@@ -3524,6 +3579,7 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 	# Obtener el array de comandos donde está el item
 	var commands_array: Array = []
 	var item_index = -1
+	var actual_parent_command = main_command  # Para casos donde el comando real está anidado
 
 	if item_type == "nested_command":
 		# El item está en un array de comandos anidados
@@ -3560,27 +3616,86 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 			else:
 				return false
 
-		elif branch_meta.type == "choice_branch" and branch_meta.has("branch") and main_command is ShowChoicesCommand:
+		elif branch_meta.type == "choice_branch" and branch_meta.has("branch"):
 			# Es un branch de ShowChoicesCommand
-			# IMPORTANTE: Necesitamos obtener el branch del comando duplicado por su posición en el árbol
-			var choices_cmd = main_command as ShowChoicesCommand
-			# Encontrar el índice del branch contando cuántos choice_branch hay antes del actual
-			var branch_index = -1
-			var command_item = parent_item.get_parent()
-			if command_item:
-				var current = command_item.get_first_child()
-				var count = 0
-				while current:
-					if current == parent_item:
-						branch_index = count
-						break
-					var current_meta = current.get_metadata(0)
-					if current_meta and current_meta.type == "choice_branch":
-						count += 1
-					current = current.get_next()
+			# Puede estar en el nivel raíz o anidado dentro de un EventBranch
+			var choices_cmd: ShowChoicesCommand = null
+			var branch_index = branch_meta.get("branch_index", -1)
 
-			if branch_index >= 0 and branch_index < choices_cmd.branches.size():
+			# Si el main_command es ShowChoicesCommand, está en el nivel raíz
+			if main_command is ShowChoicesCommand:
+				choices_cmd = main_command as ShowChoicesCommand
+			# Si el main_command es ConditionalCommand, el ShowChoicesCommand está dentro de un EventBranch
+			elif main_command is ConditionalCommand:
+				var cond_cmd = main_command as ConditionalCommand
+				# El parent_item es el choice_branch, su parent es el ShowChoicesCommand (nested_command)
+				var show_choices_item = parent_item.get_parent()
+				if show_choices_item:
+					var show_choices_meta = show_choices_item.get_metadata(0)
+					# Si es un nested_command, está dentro de un EventBranch
+					if show_choices_meta and show_choices_meta.type == "nested_command":
+						# El parent del ShowChoicesCommand es el EventBranch
+						var event_branch_item = show_choices_item.get_parent()
+						if event_branch_item:
+							var event_branch_meta = event_branch_item.get_metadata(0)
+							if event_branch_meta and event_branch_meta.type == "branch":
+								# Encontrar el índice del EventBranch
+								var event_branch_index = event_branch_meta.get("branch_index", -1)
+								# Si no hay branch_index, encontrarlo contando
+								if event_branch_index < 0:
+									var command_item = event_branch_item.get_parent()
+									if command_item:
+										var current = command_item.get_first_child()
+										var count = 0
+										while current:
+											if current == event_branch_item:
+												event_branch_index = count
+												break
+											var current_meta = current.get_metadata(0)
+											if current_meta and current_meta.type == "branch":
+												count += 1
+											current = current.get_next()
+
+								if event_branch_index >= 0 and event_branch_index < cond_cmd.branches.size():
+									var event_branch = cond_cmd.branches[event_branch_index]
+									# Encontrar el índice del ShowChoicesCommand dentro del EventBranch
+									# Contando los nested_command antes del show_choices_item
+									var nested_cmd_index = -1
+									var nested_item = event_branch_item.get_first_child()
+									var nested_count = 0
+									while nested_item:
+										if nested_item == show_choices_item:
+											nested_cmd_index = nested_count
+											break
+										var nested_item_meta = nested_item.get_metadata(0)
+										if nested_item_meta and nested_item_meta.type == "nested_command":
+											nested_count += 1
+										nested_item = nested_item.get_next()
+
+									# Obtener el ShowChoicesCommand directamente del índice
+									if nested_cmd_index >= 0 and nested_cmd_index < event_branch.commands.size():
+										var nested_cmd = event_branch.commands[nested_cmd_index]
+										if nested_cmd is ShowChoicesCommand:
+											choices_cmd = nested_cmd as ShowChoicesCommand
+
+			# Si no tenemos branch_index del metadata, encontrarlo contando en el árbol
+			if branch_index < 0:
+				var command_item = parent_item.get_parent()
+				if command_item:
+					var current = command_item.get_first_child()
+					var count = 0
+					while current:
+						if current == parent_item:
+							branch_index = count
+							break
+						var current_meta = current.get_metadata(0)
+						if current_meta and current_meta.type == "choice_branch":
+							count += 1
+						current = current.get_next()
+
+			if choices_cmd and branch_index >= 0 and branch_index < choices_cmd.branches.size():
 				commands_array = choices_cmd.branches[branch_index].commands
+				actual_parent_command = choices_cmd  # Usar el ShowChoicesCommand real, no el ConditionalCommand
 			else:
 				return false
 
@@ -3726,11 +3841,15 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 
 	# Para nested_commands, continuar con la lógica existente
 	if commands_array.is_empty() or item_index < 0:
+		push_warning("Event Editor: commands_array vacío o item_index inválido. commands_array.size(): %d, item_index: %d" % [commands_array.size(), item_index])
 		return false
 
 	var new_index = item_index + direction
 	if new_index < 0 or new_index >= commands_array.size():
+		push_warning("Event Editor: new_index fuera de rango. new_index: %d, commands_array.size(): %d" % [new_index, commands_array.size()])
 		return false
+
+	print("Event Editor: Moviendo comando de índice %d a %d" % [item_index, new_index])
 
 	# Para nested_commands, crear un nuevo array para evitar el error de "read-only"
 	var new_commands_array: Array[EventCommand] = []
@@ -3772,7 +3891,7 @@ func _move_nested_item(page: EventPage, metadata: Dictionary, commands_tree: Tre
 	var branch_index = branch_meta.get("branch_index", -1)
 	var case_index = branch_meta.get("case_index", -1)
 
-	return _set_commands_array_to_branch_case(main_command, parent_type, branch_index, case_index, new_commands_array)
+	return _set_commands_array_to_branch_case(actual_parent_command, parent_type, branch_index, case_index, new_commands_array)
 
 func _reselect_moved_item(page_index: int, reselect_info: Dictionary) -> void:
 	var commands_tree = _get_commands_tree_for_page(page_index)
@@ -3822,8 +3941,45 @@ func _reselect_moved_item(page_index: int, reselect_info: Dictionary) -> void:
 			var parent_branch_index = reselect_info.get("parent_branch_index", -1)
 			var parent_branch_type = reselect_info.get("parent_branch_type", "")
 
-			if parent_branch_index >= 0 and parent_branch_type != "":
-				# Encontrar el branch/case por su índice específico
+			# Si hay información sobre un ShowChoicesCommand anidado dentro de un EventBranch
+			var nested_show_choices_index = reselect_info.get("nested_show_choices_index", -1)
+			var nested_event_branch_index = reselect_info.get("nested_event_branch_index", -1)
+
+			if nested_show_choices_index >= 0 and nested_event_branch_index >= 0 and parent_branch_type == "choice_branch":
+				# El ShowChoicesCommand está dentro de un EventBranch
+				# Primero encontrar el EventBranch
+				var event_branch_item = parent_command_item.get_first_child()
+				var branch_count = 0
+				while event_branch_item:
+					var branch_meta = event_branch_item.get_metadata(0)
+					if branch_meta and branch_meta.type == "branch":
+						if branch_count == nested_event_branch_index:
+							# Encontrar el ShowChoicesCommand dentro del EventBranch
+							var nested_item = event_branch_item.get_first_child()
+							var nested_count = 0
+							while nested_item:
+								var nested_meta = nested_item.get_metadata(0)
+								if nested_meta and nested_meta.type == "nested_command":
+									if nested_count == nested_show_choices_index:
+										# Encontrar el choice_branch dentro del ShowChoicesCommand
+										var choice_branch_item = nested_item.get_first_child()
+										var choice_count = 0
+										while choice_branch_item:
+											var choice_meta = choice_branch_item.get_metadata(0)
+											if choice_meta and choice_meta.type == "choice_branch":
+												if choice_count == parent_branch_index:
+													target_parent = choice_branch_item
+													break
+												choice_count += 1
+											choice_branch_item = choice_branch_item.get_next()
+										break
+									nested_count += 1
+								nested_item = nested_item.get_next()
+							break
+						branch_count += 1
+					event_branch_item = event_branch_item.get_next()
+			elif parent_branch_index >= 0 and parent_branch_type != "":
+				# Encontrar el branch/case por su índice específico (caso normal)
 				var branch_or_case = parent_command_item.get_first_child()
 				var count = 0
 				while branch_or_case:

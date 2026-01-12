@@ -45,6 +45,7 @@ script = ExtResource("4_animator")
 
 [node name="ReflectionSprite" parent="." instance=ExtResource("5_reflection")]
 visible = false
+z_as_relative = false
 offset = Vector2(0, -8)
 
 [node name="Occupancy" type="Node" parent="."]

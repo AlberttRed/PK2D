@@ -992,14 +992,8 @@ func _duplicate_event_node(event_node: Node) -> void:
 		push_error("Event Tools: No se pudo duplicar el nodo")
 		return
 
-	# Generar un nombre único para el nodo duplicado
-	var base_name = event_node.name
-	var new_name = base_name
-	var counter = 1
-	while parent.get_node_or_null(NodePath(new_name)) != null:
-		new_name = base_name + "_" + str(counter)
-		counter += 1
-
+	# Generar un nombre único para el nodo duplicado (estilo Godot)
+	var new_name = _generate_unique_name_godot_style(event_node.name, parent)
 	duplicated_node.name = new_name
 
 	# Crear acción de deshacer/rehacer
@@ -1083,4 +1077,34 @@ func _delete_event_node(event_node: Node) -> void:
 	)
 
 	dialog.popup_centered(Vector2(400, 150))
+
+## Genera un nombre único al estilo de Godot para duplicados
+## Si el nombre es "Chico", genera "Chico2"
+## Si el nombre es "Chico1", genera "Chico2"
+## Si el nombre es "Chico2", genera "Chico3", etc.
+func _generate_unique_name_godot_style(original_name: String, parent: Node) -> String:
+	var base_name = original_name
+	var start_number = 2
+
+	# Verificar si el nombre termina en un número
+	var regex = RegEx.new()
+	regex.compile("^(.*?)(\\d+)$")
+	var result = regex.search(original_name)
+
+	if result:
+		# El nombre termina en número, extraer base y número
+		base_name = result.get_string(1)
+		var number_str = result.get_string(2)
+		var number = number_str.to_int()
+		if number > 0:
+			start_number = number + 1
+
+	# Buscar el siguiente número disponible
+	var counter = start_number
+	var new_name = base_name + str(counter)
+	while parent.get_node_or_null(NodePath(new_name)) != null:
+		counter += 1
+		new_name = base_name + str(counter)
+
+	return new_name
 

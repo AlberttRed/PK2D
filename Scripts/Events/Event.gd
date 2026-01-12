@@ -77,7 +77,7 @@ func setup_current_page() -> void:
 		if not page:
 			continue
 
-		if page.evaluate_conditions(event_id):
+		if page.evaluate_conditions(event_id, self):
 			# Esta página cumple las condiciones
 			if page.has_conditions():
 				# Tiene condiciones y las cumple

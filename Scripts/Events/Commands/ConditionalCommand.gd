@@ -38,8 +38,14 @@ func execute(context: Node) -> void:
 	# Obtener el event_uid para crear el contexto de evaluación
 	var event_uid = _get_current_event_id(context)
 
+	# Obtener el evento fuente desde el contexto
+	var source_event: Event = null
+	if context is EventController and context.current_page:
+		source_event = context.current_page.source_event
+
 	# Crear el contexto de evaluación de condiciones
 	var condition_context = EventConditionContext.new(event_uid, GameStateService)
+	condition_context.source_event = source_event
 
 	# Iterar las ramas en orden
 	for i in range(branches.size()):

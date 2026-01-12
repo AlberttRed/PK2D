@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://ca0jpvrn30kqs"]
+[gd_scene load_steps=9 format=3 uid="uid://ca0jpvrn30kqs"]
 
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="1_03vl0"]
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mmedn"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_mpvrs"]
+[ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_n2uib"]
 [ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="4_n2uib"]
 [ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="5_b03hq"]
 
@@ -24,11 +25,19 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 [node name="MapScene" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_mmedn")
+metadata/_edit_lock_ = true
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
 script = ExtResource("1_03vl0")
-layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects"), NodePath("Agua")])
+metadata/_edit_lock_ = true
+
+[node name="Agua" type="TileMapLayer" parent="OverworldGrid"]
+z_index = -2
+y_sort_enabled = true
+tile_set = ExtResource("3_n2uib")
+metadata/_edit_lock_ = true
 
 [node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
 metadata/_edit_lock_ = true

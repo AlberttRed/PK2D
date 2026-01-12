@@ -104,6 +104,8 @@ func _create_movement_section() -> void:
 	movement_type_option.add_item("LookPattern", 4)
 	movement_type_option.add_item("RandomVertical", 5)
 	movement_type_option.add_item("RandomHorizontal", 6)
+	movement_type_option.add_item("RandomTurningHorizontal", 7)
+	movement_type_option.add_item("RandomTurningVertical", 8)
 	movement_type_option.item_selected.connect(_on_movement_type_changed)
 	movement_type_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row1.add_child(movement_type_option)

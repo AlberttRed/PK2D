@@ -486,6 +486,15 @@ func _deactivate_chunk_events(chunk_id: String) -> void:
 		if not event or not is_instance_valid(event):
 			continue
 
+		# Verificar si el evento está siendo controlado por un comando
+		# Si es así, no desactivarlo para evitar interrumpir el movimiento
+		var grid_motion = event.get_node_or_null("GridMotion")
+		if grid_motion and grid_motion.is_command_controlled:
+			# El evento está siendo controlado por un comando, no desactivarlo
+			# Se desactivará cuando termine el comando (is_command_controlled = false)
+			# y el chunk se desactive nuevamente
+			continue
+
 		if event.has_method("disconnect_external_signals"):
 			event.disconnect_external_signals()
 		event.process_mode = Node.PROCESS_MODE_DISABLED

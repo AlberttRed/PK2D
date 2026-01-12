@@ -38,6 +38,9 @@ var group_add_button: Button = null
 
 var not_edit_button: Button = null
 
+var actor_position_name_edit: LineEdit = null
+var actor_position_direction_option: OptionButton = null
+
 func _ready() -> void:
 	title = "Editar Condición"
 	size = Vector2(800, 600)
@@ -164,6 +167,11 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 
 	if cond is NotCondition:
 		return "NOT (...)"
+
+	if cond is ActorPositionCondition:
+		var pos_cond = cond as ActorPositionCondition
+		var dir_str = ["Up", "Down", "Left", "Right"][pos_cond.direction]
+		return "Actor Position: %s %s" % [pos_cond.actor_name, dir_str]
 
 	return "Condición desconocida"
 
@@ -436,6 +444,55 @@ func _show_not_properties(not_cond: NotCondition) -> void:
 		no_child_label.text = "(Sin condición hija)"
 		properties_panel.add_child(no_child_label)
 
+## Muestra las propiedades de ActorPositionCondition
+func _show_actor_position_properties(pos_cond: ActorPositionCondition) -> void:
+	_clear_properties_panel()
+
+	var info_label = Label.new()
+	info_label.text = "Condición: Actor Position"
+	info_label.add_theme_font_size_override("font_size", 14)
+	properties_panel.add_child(info_label)
+	properties_panel.add_child(HSeparator.new())
+
+	# Actor name
+	var name_container = HBoxContainer.new()
+	var name_label = Label.new()
+	name_label.text = "Actor:"
+	name_label.custom_minimum_size.x = 150
+	name_container.add_child(name_label)
+
+	actor_position_name_edit = LineEdit.new()
+	actor_position_name_edit.text = pos_cond.actor_name
+	actor_position_name_edit.placeholder_text = "Ej: Player, NPC_Hombre"
+	actor_position_name_edit.text_changed.connect(_on_actor_position_name_changed)
+	actor_position_name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_container.add_child(actor_position_name_edit)
+	properties_panel.add_child(name_container)
+
+	# Direction
+	var dir_container = HBoxContainer.new()
+	var dir_label = Label.new()
+	dir_label.text = "Dirección:"
+	dir_label.custom_minimum_size.x = 150
+	dir_container.add_child(dir_label)
+
+	actor_position_direction_option = OptionButton.new()
+	actor_position_direction_option.add_item("Up")
+	actor_position_direction_option.add_item("Down")
+	actor_position_direction_option.add_item("Left")
+	actor_position_direction_option.add_item("Right")
+	actor_position_direction_option.selected = pos_cond.direction
+	actor_position_direction_option.item_selected.connect(_on_actor_position_direction_changed)
+	actor_position_direction_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	dir_container.add_child(actor_position_direction_option)
+	properties_panel.add_child(dir_container)
+
+	# Info
+	var desc_label = Label.new()
+	desc_label.text = "Comprueba si el actor está en la dirección especificada respecto al evento actual."
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	properties_panel.add_child(desc_label)
+
 ## Se llama cuando se selecciona una condición en el árbol
 func _on_condition_selected() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -457,16 +514,26 @@ func _on_condition_selected() -> void:
 		return
 
 	# Mostrar propiedades según el tipo
-	if cond is FlagCondition:
+	# Verificar usando get_script() como fallback para clases que no se reconocen con 'is'
+	var cond_script = cond.get_script()
+	var script_path = cond_script.get_path() if cond_script else ""
+
+	if cond is FlagCondition or script_path.ends_with("FlagCondition.gd"):
 		_show_flag_properties(cond as FlagCondition)
-	elif cond is VariableCondition:
+	elif cond is VariableCondition or script_path.ends_with("VariableCondition.gd"):
 		_show_variable_properties(cond as VariableCondition)
-	elif cond is GroupCondition:
+	elif cond is GroupCondition or script_path.ends_with("GroupCondition.gd"):
 		_show_group_properties(cond as GroupCondition)
-	elif cond is NotCondition:
+	elif cond is NotCondition or script_path.ends_with("NotCondition.gd"):
 		_show_not_properties(cond as NotCondition)
+	elif cond is ActorPositionCondition or script_path.ends_with("ActorPositionCondition.gd"):
+		_show_actor_position_properties(cond as ActorPositionCondition)
 	else:
 		_clear_properties_panel()
+		# Debug: mostrar información sobre el tipo de condición
+		var debug_label = Label.new()
+		debug_label.text = "Tipo desconocido: %s" % script_path
+		properties_panel.add_child(debug_label)
 
 	_update_buttons_state()
 
@@ -520,6 +587,7 @@ func _on_add_condition_pressed() -> void:
 	popup.add_item("Variable")
 	popup.add_item("Grupo (AND/OR)")
 	popup.add_item("NOT")
+	popup.add_item("Actor Position")
 
 	add_child(popup)
 	popup.id_pressed.connect(func(id: int):
@@ -541,6 +609,8 @@ func _on_condition_type_selected(id: int) -> void:
 			new_cond = GroupCondition.new()
 		3:  # NOT
 			new_cond = NotCondition.new()
+		4:  # Actor Position
+			new_cond = ActorPositionCondition.new()
 
 	if not new_cond:
 		return
@@ -592,6 +662,8 @@ func _select_condition_recursive(item: TreeItem, target_cond: EventCondition) ->
 		if cond == target_cond:
 			item.select(0)
 			condition_tree.scroll_to_item(item)
+			# Asegurar que se muestren las propiedades
+			call_deferred("_on_condition_selected")
 			return true
 
 	var child = item.get_first_child()
@@ -854,6 +926,41 @@ func _on_group_add_child_pressed() -> void:
 	# Abrir el menú de selección de tipo
 	_on_add_condition_pressed()
 
+## Callbacks para ActorPositionCondition
+func _on_actor_position_name_changed(new_text: String) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+
+	var cond = metadata.get("condition")
+	if not cond is ActorPositionCondition:
+		return
+
+	var pos_cond = cond as ActorPositionCondition
+	pos_cond.actor_name = new_text.strip_edges()
+	_refresh_condition_tree()
+
+func _on_actor_position_direction_changed(index: int) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+
+	var cond = metadata.get("condition")
+	if not cond is ActorPositionCondition:
+		return
+
+	var pos_cond = cond as ActorPositionCondition
+	pos_cond.direction = index
+	_refresh_condition_tree()
+
 ## Callbacks para NotCondition
 func _on_not_edit_child_pressed() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -879,6 +986,7 @@ func _on_not_edit_child_pressed() -> void:
 		popup.add_item("Variable")
 		popup.add_item("Grupo (AND/OR)")
 		popup.add_item("NOT")
+		popup.add_item("Actor Position")
 
 		add_child(popup)
 		popup.id_pressed.connect(func(id: int):
@@ -907,6 +1015,8 @@ func _on_not_child_type_selected(not_cond: NotCondition, id: int) -> void:
 			new_cond = GroupCondition.new()
 		3:  # NOT
 			new_cond = NotCondition.new()
+		4:  # Actor Position
+			new_cond = ActorPositionCondition.new()
 
 	if new_cond:
 		not_cond.child = new_cond
