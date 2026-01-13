@@ -92,4 +92,3 @@ trainer_data.calculate_reward()  # Usa el multiplicador 5.0 de gym_leader
 2. Crear los `.tres` básicos (gym_leader, elite_four, pokemon_trainer)
 3. (Opcional) Crear todos los tipos de entrenador
 4. Actualizar DatabaseManager para cargar TrainerClasses automáticamente
-

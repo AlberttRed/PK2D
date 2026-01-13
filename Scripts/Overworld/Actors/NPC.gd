@@ -396,6 +396,11 @@ func _get_sprite_data_from_page(page: EventPage) -> Dictionary:
 
 ## Configura los timers según el tipo de movimiento
 func _setup_timers() -> void:
+	# No configurar timers si el evento no está en el árbol de escena
+	# (puede ocurrir cuando se des-renderiza el mapa y se aplican cambios diferidos)
+	if not is_inside_tree():
+		return
+
 	# Timer para movimiento aleatorio (solo para Random)
 	if get_movement_type() == 1:  # RANDOM
 		# Eliminar timer anterior si existe

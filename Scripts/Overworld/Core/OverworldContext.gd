@@ -227,8 +227,9 @@ func _on_warp_started(map_id: String, tile_pos: Vector2i) -> void:
 	warp_started.emit(map_id, tile_pos)
 
 func _on_warp_finished(map_id: String, tile_pos: Vector2i) -> void:
-	# Aplicar todos los cambios diferidos cuando se complete un warp
-	GameStateService.apply_deferred_changes()
+	# Los cambios diferidos ahora se aplican cuando se desactiva el mapa
+	# (en _unrender_map), no cuando se completa el warp
+	# GameStateService.apply_deferred_changes()  # REMOVIDO
 
 	warp_finished.emit(map_id, tile_pos)
 

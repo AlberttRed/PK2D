@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TrainerClassData" load_steps=2 format=3 uid="uid://xdwhfgotmps1"]
+
+[ext_resource type="Script" uid="uid://rtl6lttslxe3" path="res://Scripts/Resources/Classes/TrainerClassData.gd" id="1_0mwap"]
+
+[resource]
+script = ExtResource("1_0mwap")
+id = 3
+internal_name = "brock"
+display_name = "BROCK"
+metadata/_custom_type_script = "uid://rtl6lttslxe3"

@@ -143,4 +143,3 @@ func is_async() -> bool:
 ## Indica si este comando es seguro para ejecución paralela
 func is_safe_for_parallel() -> bool:
 	return false  # No es seguro para paralelo porque ejecuta comandos hijos secuencialmente
-

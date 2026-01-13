@@ -485,6 +485,13 @@ func change_to_map_instance(map_instance: Node) -> bool:
 
 	# Desactivar el mapa anterior (pero NO removerlo - sistema seamless)
 	if active_map:
+		var previous_map_id = active_map.name
+
+		# Aplicar cambios diferidos del mapa anterior antes de desactivarlo
+		# Esto es importante para warps/teleports donde el mapa anterior se des-renderizará
+		if GameStateService:
+			GameStateService.apply_deferred_changes(previous_map_id)
+
 		_cleanup_previous_map()
 
 		# En sistema seamless, los mapas pueden permanecer visibles
@@ -658,6 +665,13 @@ func _unrender_map(map_data: MapData) -> void:
 	# Marcar como no renderizado
 	map_data.is_rendered = false
 
+	# Aplicar cambios diferidos cuando se desactiva/des-renderiza un mapa
+	# Esto asegura que los cambios se apliquen fuera de pantalla
+	# (cuando el mapa ya no es vecino y se des-renderiza)
+	# Solo se aplican los cambios diferidos asociados a este mapa específico
+	if GameStateService:
+		GameStateService.apply_deferred_changes(map_data.id)
+
 	print("  ✓ Mapa des-renderizado: %s" % map_data.id)
 
 
@@ -727,6 +741,7 @@ func _on_seamless_map_crossed(_from_map_id: String, to_map_id: String) -> void:
 	_preload_neighbors(to_map_id)
 
 	# Descargar mapas que ya no son necesarios
+	# (esto des-renderizará mapas que ya no son vecinos, aplicando cambios diferidos)
 	_unload_non_neighbors(to_map_id)
 
 	# Inicializar chunks activos según nueva posición del jugador (después de cambiar de mapa)

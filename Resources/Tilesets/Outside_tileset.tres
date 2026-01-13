@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=7 format=3 uid="uid://bo4svjmq1mi66"]
 
 [ext_resource type="Texture2D" uid="uid://b54w4pqtu26o1" path="res://Sprites/Tilesets/Animated tiles/Floewrs1/Flowers1.png" id="1_6sahi"]
-[ext_resource type="Texture2D" uid="uid://deo26saxvibpt" path="res://Sprites/Tilesets/Outside.png" id="1_slg0e"]
+[ext_resource type="Texture2D" uid="uid://c1kaqhyqnb1o2" path="res://Sprites/Tilesets/Outside.png" id="1_slg0e"]
 [ext_resource type="Texture2D" uid="uid://qfiiatpabkos" path="res://Sprites/Autotiles/Sea.png" id="2_20srp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20srp"]

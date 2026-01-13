@@ -1,4 +1,4 @@
-[gd_scene load_steps=186 format=4 uid="uid://kknly2sw8nn1"]
+[gd_scene load_steps=188 format=4 uid="uid://kknly2sw8nn1"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vvr7d"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_kdrk2"]
@@ -863,17 +863,31 @@ initial_animation = "down_left"
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_44ryq")
-pokemon_id = 16
+pokemon_id = 19
 min_level = 2
-probability = 50.0
+probability = 45.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [sub_resource type="Resource" id="Resource_jlk61"]
 script = ExtResource("5_44ryq")
-pokemon_id = 19
+pokemon_id = 21
+min_level = 3
+probability = 10.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_jg8ap"]
+script = ExtResource("5_44ryq")
+pokemon_id = 56
 min_level = 2
-max_level = 4
-probability = 50.0
+probability = 45.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_e37pq"]
+script = ExtResource("5_44ryq")
+pokemon_id = 54
+min_level = 20
+max_level = 40
+probability = 100.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="Ruta_22" type="Node2D"]
@@ -934,4 +948,8 @@ pages = Array[ExtResource("6_xpy1a")]([SubResource("Resource_e6vhn")])
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_b4mmo")]
 
 [node name="Land" parent="MapAreaEncounters" instance=ExtResource("4_hcfew")]
-pokemon_encounters = Array[ExtResource("5_44ryq")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])
+pokemon_encounters = Array[ExtResource("5_44ryq")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61"), SubResource("Resource_jg8ap")])
+
+[node name="Water" parent="MapAreaEncounters" instance=ExtResource("4_hcfew")]
+area_type = 2
+pokemon_encounters = Array[ExtResource("5_44ryq")]([SubResource("Resource_e37pq")])
