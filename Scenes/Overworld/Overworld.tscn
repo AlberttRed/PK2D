@@ -60,7 +60,6 @@ exit_arrow_scene = ExtResource("16_exit_arrow")
 
 [node name="WildEncounterSystem" type="Node" parent="."]
 script = ExtResource("8_wild_encounter")
-encounters_enabled = true
 
 [node name="TileMotionSystem" type="Node" parent="."]
 script = ExtResource("9_tile_motion")

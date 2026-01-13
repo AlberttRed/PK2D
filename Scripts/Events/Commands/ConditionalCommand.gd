@@ -47,28 +47,36 @@ func execute(context: Node) -> void:
 	var condition_context = EventConditionContext.new(event_uid, GameStateService)
 	condition_context.source_event = source_event
 
-	# Iterar las ramas en orden
+	# Primero, evaluar todas las ramas que tienen condición
+	# Solo si ninguna se cumple, buscar y ejecutar la rama ELSE (condition == null)
+	var else_branch: EventBranch = null
+
 	for i in range(branches.size()):
 		var branch = branches[i]
 		if branch == null:
 			push_warning("ConditionalCommand: Branch %d es null, saltando" % i)
 			continue
 
-		# Si la condición es null, esta es la rama ELSE (por defecto)
+		# Si la condición es null, guardar como rama ELSE pero no ejecutarla aún
 		if branch.condition == null:
-			_execute_branch_commands(branch, context)
-			return
+			else_branch = branch
+			continue
 
 		# Evaluar la condición
 		var condition_met = branch.condition.evaluate(condition_context)
 
 		if condition_met:
+			# Esta rama se cumple, ejecutarla y retornar
 			_execute_branch_commands(branch, context)
 			return
 
-	# Si llegamos aquí, ninguna condición se cumplió y no hay rama ELSE
-	# No hacer nada
+	# Si llegamos aquí, ninguna condición se cumplió
+	# Si hay una rama ELSE, ejecutarla
+	if else_branch != null:
+		_execute_branch_commands(else_branch, context)
+		return
 
+	# Si no hay rama ELSE y ninguna condición se cumplió, no hacer nada
 	# Continuar con el siguiente comando del evento principal
 	context.continue_execution()
 

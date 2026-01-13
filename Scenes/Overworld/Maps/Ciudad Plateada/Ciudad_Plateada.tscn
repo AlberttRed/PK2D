@@ -1,10 +1,9 @@
-[gd_scene load_steps=373 format=4 uid="uid://dff2il63qlukf"]
+[gd_scene load_steps=372 format=4 uid="uid://dff2il63qlukf"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mjpg0"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_1mahn"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_m4t7r"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_t3bta"]
-[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="5_ucjtc"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="6_k5h1m"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="7_xlpb3"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="8_3jw34"]
@@ -127,171 +126,171 @@ is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_xgvdp"]
+[sub_resource type="Resource" id="Resource_blkgp"]
 script = ExtResource("8_ucjtc")
 message = "¿No eran geniales esos fósiles del MT. MOON?"
 
-[sub_resource type="Resource" id="Resource_wa4oq"]
+[sub_resource type="Resource" id="Resource_xgvdp"]
 script = ExtResource("13_3jw34")
 label = "SÍ"
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_xgvdp")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_blkgp")])
 
-[sub_resource type="Resource" id="Resource_jt555"]
+[sub_resource type="Resource" id="Resource_wa4oq"]
 script = ExtResource("8_ucjtc")
 message = "¿De verdad?
 ¡Pues tienes que ir!"
 
-[sub_resource type="Resource" id="Resource_7h5rv"]
+[sub_resource type="Resource" id="Resource_jt555"]
 script = ExtResource("16_bpwpp")
 follower_actor_name = "Player"
 leader_actor_name = "(evento actual)"
 
-[sub_resource type="Resource" id="Resource_ktgul"]
+[sub_resource type="Resource" id="Resource_7h5rv"]
 script = ExtResource("17_7wfnv")
 target_name = "Chico2"
 path = Array[int]([0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 8])
 
-[sub_resource type="Resource" id="Resource_cmdld"]
+[sub_resource type="Resource" id="Resource_ktgul"]
 script = ExtResource("17_7wfnv")
 target_name = "Player"
 path = Array[int]([8])
 
-[sub_resource type="Resource" id="Resource_ae0p5"]
+[sub_resource type="Resource" id="Resource_cmdld"]
 script = ExtResource("16_bpwpp")
 follower_actor_name = "Player"
 leader_actor_name = "(evento actual)"
 action = 1
 
-[sub_resource type="Resource" id="Resource_xc1ey"]
+[sub_resource type="Resource" id="Resource_ae0p5"]
 script = ExtResource("8_ucjtc")
 message = "¡Está aquí mismo!"
 close_at_end = false
 show_icon_at_end = true
 
-[sub_resource type="Resource" id="Resource_i0ngj"]
+[sub_resource type="Resource" id="Resource_xc1ey"]
 script = ExtResource("8_ucjtc")
 message = "¡Hay que pagar para entrar, pero vale la pena! ¡Hasta luego!"
 
-[sub_resource type="Resource" id="Resource_7a7ja"]
+[sub_resource type="Resource" id="Resource_i0ngj"]
 script = ExtResource("17_7wfnv")
 target_name = "Chico2"
 path = Array[int]([1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3])
 
-[sub_resource type="Resource" id="Resource_ft3j2"]
+[sub_resource type="Resource" id="Resource_7a7ja"]
 script = ExtResource("18_kfal7")
 actor_name = "Chico2"
 target_tile = Vector2i(27, 1)
 
-[sub_resource type="Resource" id="Resource_022e3"]
+[sub_resource type="Resource" id="Resource_ft3j2"]
 script = ExtResource("13_3jw34")
 label = "NO"
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_jt555"), SubResource("Resource_7h5rv"), SubResource("Resource_ktgul"), SubResource("Resource_cmdld"), SubResource("Resource_ae0p5"), SubResource("Resource_xc1ey"), SubResource("Resource_i0ngj"), SubResource("Resource_7a7ja"), SubResource("Resource_ft3j2")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_wa4oq"), SubResource("Resource_jt555"), SubResource("Resource_7h5rv"), SubResource("Resource_ktgul"), SubResource("Resource_cmdld"), SubResource("Resource_ae0p5"), SubResource("Resource_xc1ey"), SubResource("Resource_i0ngj"), SubResource("Resource_7a7ja")])
 
-[sub_resource type="Resource" id="Resource_uu0j3"]
+[sub_resource type="Resource" id="Resource_022e3"]
 script = ExtResource("14_ah8vx")
 message = "¿Has estado en el MUSEO?"
-branches = Array[ExtResource("13_3jw34")]([SubResource("Resource_wa4oq"), SubResource("Resource_022e3")])
+branches = Array[ExtResource("13_3jw34")]([SubResource("Resource_xgvdp"), SubResource("Resource_ft3j2")])
 cancel_branch_index = 1
 
-[sub_resource type="Resource" id="Resource_u35l3"]
+[sub_resource type="Resource" id="Resource_uu0j3"]
 script = ExtResource("18_wa4oq")
 
-[sub_resource type="Resource" id="Resource_nd45c"]
+[sub_resource type="Resource" id="Resource_u35l3"]
 script = ExtResource("19_jt555")
-child = SubResource("Resource_u35l3")
+child = SubResource("Resource_uu0j3")
+
+[sub_resource type="Resource" id="Resource_nd45c"]
+script = ExtResource("40_jt555")
+condition = SubResource("Resource_u35l3")
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_022e3")])
 
 [sub_resource type="Resource" id="Resource_od21x"]
-script = ExtResource("40_jt555")
-condition = SubResource("Resource_nd45c")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_uu0j3")])
-
-[sub_resource type="Resource" id="Resource_usr6m"]
 script = ExtResource("8_ucjtc")
 message = "¿No eran geniales esos fósiles del MT. MOON?"
 
-[sub_resource type="Resource" id="Resource_cu074"]
+[sub_resource type="Resource" id="Resource_usr6m"]
 script = ExtResource("13_3jw34")
 label = "SÍ"
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_usr6m")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_od21x")])
 
-[sub_resource type="Resource" id="Resource_bvf4w"]
+[sub_resource type="Resource" id="Resource_cu074"]
 script = ExtResource("8_ucjtc")
 message = "¿De verdad?
 ¡Pues tienes que ir!"
 
-[sub_resource type="Resource" id="Resource_gprnk"]
+[sub_resource type="Resource" id="Resource_bvf4w"]
 script = ExtResource("17_7wfnv")
-target_name = "Chico4"
+target_name = "Chico2"
 path = Array[int]([2, 0])
 
-[sub_resource type="Resource" id="Resource_ayall"]
+[sub_resource type="Resource" id="Resource_gprnk"]
 script = ExtResource("16_bpwpp")
 follower_actor_name = "Player"
 leader_actor_name = "(evento actual)"
 
-[sub_resource type="Resource" id="Resource_hs0oe"]
+[sub_resource type="Resource" id="Resource_ayall"]
 script = ExtResource("17_7wfnv")
 target_name = "Chico2"
 path = Array[int]([0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 8])
 
-[sub_resource type="Resource" id="Resource_mbrhw"]
+[sub_resource type="Resource" id="Resource_hs0oe"]
 script = ExtResource("17_7wfnv")
 target_name = "Player"
 path = Array[int]([8])
 
-[sub_resource type="Resource" id="Resource_ao451"]
+[sub_resource type="Resource" id="Resource_mbrhw"]
 script = ExtResource("16_bpwpp")
 follower_actor_name = "Player"
 leader_actor_name = "(evento actual)"
 action = 1
 
-[sub_resource type="Resource" id="Resource_jxtem"]
+[sub_resource type="Resource" id="Resource_ao451"]
 script = ExtResource("8_ucjtc")
 message = "¡Está aquí mismo!"
 close_at_end = false
 show_icon_at_end = true
 
-[sub_resource type="Resource" id="Resource_jj3ei"]
+[sub_resource type="Resource" id="Resource_jxtem"]
 script = ExtResource("8_ucjtc")
 message = "¡Hay que pagar para entrar, pero vale la pena! ¡Hasta luego!"
 
-[sub_resource type="Resource" id="Resource_opm6g"]
+[sub_resource type="Resource" id="Resource_jj3ei"]
 script = ExtResource("17_7wfnv")
 target_name = "Chico2"
 path = Array[int]([1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3])
 
-[sub_resource type="Resource" id="Resource_asn07"]
+[sub_resource type="Resource" id="Resource_opm6g"]
 script = ExtResource("18_kfal7")
 actor_name = "Chico2"
 target_tile = Vector2i(27, 1)
 
-[sub_resource type="Resource" id="Resource_2wbig"]
+[sub_resource type="Resource" id="Resource_asn07"]
 script = ExtResource("13_3jw34")
 label = "NO"
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_bvf4w"), SubResource("Resource_gprnk"), SubResource("Resource_ayall"), SubResource("Resource_hs0oe"), SubResource("Resource_mbrhw"), SubResource("Resource_ao451"), SubResource("Resource_jxtem"), SubResource("Resource_jj3ei"), SubResource("Resource_opm6g"), SubResource("Resource_asn07")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_cu074"), SubResource("Resource_bvf4w"), SubResource("Resource_gprnk"), SubResource("Resource_ayall"), SubResource("Resource_hs0oe"), SubResource("Resource_mbrhw"), SubResource("Resource_ao451"), SubResource("Resource_jxtem"), SubResource("Resource_jj3ei"), SubResource("Resource_opm6g")])
 
-[sub_resource type="Resource" id="Resource_cky0a"]
+[sub_resource type="Resource" id="Resource_2wbig"]
 script = ExtResource("14_ah8vx")
 message = "¿Has estado en el MUSEO?"
-branches = Array[ExtResource("13_3jw34")]([SubResource("Resource_cu074"), SubResource("Resource_2wbig")])
+branches = Array[ExtResource("13_3jw34")]([SubResource("Resource_usr6m"), SubResource("Resource_asn07")])
 cancel_branch_index = 1
 
-[sub_resource type="Resource" id="Resource_qi5i7"]
+[sub_resource type="Resource" id="Resource_cky0a"]
 script = ExtResource("40_jt555")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_cky0a")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_2wbig")])
+
+[sub_resource type="Resource" id="Resource_qi5i7"]
+script = ExtResource("41_7h5rv")
+branches = Array[ExtResource("40_jt555")]([SubResource("Resource_nd45c"), SubResource("Resource_cky0a")])
 
 [sub_resource type="Resource" id="Resource_pm8jt"]
-script = ExtResource("41_7h5rv")
-branches = Array[ExtResource("40_jt555")]([SubResource("Resource_od21x"), SubResource("Resource_qi5i7")])
-
-[sub_resource type="Resource" id="Resource_7nojt"]
 script = ExtResource("8_3jw34")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_rh44a"]
+[sub_resource type="Resource" id="Resource_7nojt"]
 script = ExtResource("6_k5h1m")
-trigger = SubResource("Resource_7nojt")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_pm8jt")])
+trigger = SubResource("Resource_pm8jt")
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_qi5i7")])
 movement_type = 3
 sprite_texture = ExtResource("16_ah8vx")
 is_spritesheet = true
@@ -2197,7 +2196,7 @@ pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_ky2up")])
 
 [node name="Chico2" parent="OverworldGrid/Events" instance=ExtResource("9_ah8vx")]
 position = Vector2(880, 48)
-pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_rh44a")])
+pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_7nojt")])
 
 [node name="Chico3" parent="OverworldGrid/Events" instance=ExtResource("9_ah8vx")]
 position = Vector2(1168, 144)
@@ -2242,10 +2241,8 @@ pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_wip0w"), SubResourc
 position = Vector2(304, 16)
 pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_iw6ja"), SubResource("Resource_j0m60")])
 
-[node name="Door6" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_t3bta")]
-z_index = 1
+[node name="Door6" parent="OverworldGrid/Events" instance=ExtResource("4_t3bta")]
 position = Vector2(624, -368)
-script = ExtResource("5_ucjtc")
 pages = Array[ExtResource("6_k5h1m")]([SubResource("Resource_x60o1"), SubResource("Resource_ueevc")])
 
 [node name="Medalla1" parent="OverworldGrid/Events" instance=ExtResource("4_t3bta")]
