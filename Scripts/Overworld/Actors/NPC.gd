@@ -151,6 +151,8 @@ var _random_turning_timer: Timer
 var _look_pattern_timer: Timer
 var _random_vertical_timer: Timer
 var _random_horizontal_timer: Timer
+var _random_turning_horizontal_timer: Timer
+var _random_turning_vertical_timer: Timer
 
 func _ready() -> void:
 	super._ready()
@@ -197,10 +199,19 @@ func _ready() -> void:
 
 ## Override del trigger() de Event para pausar movimiento
 func trigger() -> void:
-	if overworld_context:
-		overworld_context.block_player_control()
+	# Solo bloquear el player si el evento NO tiene blocks_player = true
+	# Si el evento tiene blocks_player = true, el EventController lo manejará
+	var should_npc_block = true
+	if current_page and not current_page.blocks_player:
+		# El evento no bloquea al player, el NPC debe bloquearlo temporalmente
+		if overworld_context:
+			overworld_context.block_player_control()
+		else:
+			push_warning("NPC '%s': OverworldContext no disponible para bloquear control" % name)
 	else:
-		push_warning("NPC '%s': OverworldContext no disponible para bloquear control" % name)
+		# El evento tiene blocks_player = true, el EventController lo manejará
+		should_npc_block = false
+
 	if motion.moving:
 		await motion.step_finished
 	# Pausar movimiento antes de ejecutar comandos
@@ -219,10 +230,18 @@ func trigger() -> void:
 	# Llamar al trigger() de la clase padre
 	super.trigger()
 
-	if overworld_context:
-		overworld_context.unblock_player_control()
-	else:
-		push_warning("NPC '%s': OverworldContext no disponible para desbloquear control" % name)
+	# Si el evento tiene blocks_player = true, el EventController manejará el bloqueo/desbloqueo
+	# No debemos desbloquear aquí porque el EventController lo hará cuando termine
+	# Si el evento NO tiene blocks_player = true, el NPC debe desbloquear inmediatamente
+	# porque el EventController no lo bloqueará
+	if should_npc_block:
+		# Esperar un frame para que el EventController tenga tiempo de empezar a ejecutar
+		# Esto evita que el player se desbloquee antes de que el EventController lo bloquee
+		await get_tree().process_frame
+		if overworld_context:
+			overworld_context.unblock_player_control()
+		else:
+			push_warning("NPC '%s': OverworldContext no disponible para desbloquear control" % name)
 
 func _process(_delta: float) -> void:
 	# Los timers manejan todo ahora, no necesitamos _process
@@ -317,6 +336,12 @@ func _update_movement_from_current_page() -> void:
 	if _look_pattern_timer:
 		_look_pattern_timer.queue_free()
 		_look_pattern_timer = null
+	if _random_turning_horizontal_timer:
+		_random_turning_horizontal_timer.queue_free()
+		_random_turning_horizontal_timer = null
+	if _random_turning_vertical_timer:
+		_random_turning_vertical_timer.queue_free()
+		_random_turning_vertical_timer = null
 	if _random_vertical_timer:
 		_random_vertical_timer.queue_free()
 		_random_vertical_timer = null
@@ -334,7 +359,7 @@ func _update_movement_from_current_page() -> void:
 
 	# Actualizar conexiones de awareness si es necesario
 	_disconnect_from_player_movement()
-	if get_awareness_enabled() and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if get_awareness_enabled() and get_movement_type() in [0, 3, 4, 7, 8]:  # NONE, RANDOM_TURNING, LOOK_PATTERN, RANDOM_TURNING_HORIZONTAL, RANDOM_TURNING_VERTICAL
 		_connect_to_player_movement()
 
 	# Reconfigurear timers según el nuevo tipo de movimiento
@@ -371,6 +396,11 @@ func _get_sprite_data_from_page(page: EventPage) -> Dictionary:
 
 ## Configura los timers según el tipo de movimiento
 func _setup_timers() -> void:
+	# No configurar timers si el evento no está en el árbol de escena
+	# (puede ocurrir cuando se des-renderiza el mapa y se aplican cambios diferidos)
+	if not is_inside_tree():
+		return
+
 	# Timer para movimiento aleatorio (solo para Random)
 	if get_movement_type() == 1:  # RANDOM
 		# Eliminar timer anterior si existe
@@ -440,7 +470,7 @@ func _disconnect_from_player_movement() -> void:
 func connect_external_signals() -> void:
 	super.connect_external_signals()
 	# Conectar awareness si está habilitado
-	if get_awareness_enabled() and get_movement_type() in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if get_awareness_enabled() and get_movement_type() in [0, 3, 4, 7, 8]:  # NONE, RANDOM_TURNING, LOOK_PATTERN, RANDOM_TURNING_HORIZONTAL, RANDOM_TURNING_VERTICAL
 		_connect_to_player_movement()
 
 	# Reiniciar timers si están configurados (por si se detuvieron al desactivarse)
@@ -471,6 +501,12 @@ func _start_movement_timers() -> void:
 	elif get_movement_type() == 6 and _random_horizontal_timer:  # RANDOM_HORIZONTAL
 		_random_horizontal_timer.stop()
 		_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
+	elif get_movement_type() == 7 and _random_turning_horizontal_timer:  # RANDOM_TURNING_HORIZONTAL
+		_random_turning_horizontal_timer.stop()
+		_random_turning_horizontal_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
+	elif get_movement_type() == 8 and _random_turning_vertical_timer:  # RANDOM_TURNING_VERTICAL
+		_random_turning_vertical_timer.stop()
+		_random_turning_vertical_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 
 ## Sobrescribe el método virtual de Event para desconectar señales externas
 ## Se llama cuando el NPC se desactiva en un chunk
@@ -659,6 +695,50 @@ func _on_random_horizontal_timer_timeout() -> void:
 	# Reiniciar timer con intervalo aleatorio
 	_random_horizontal_timer.start(randf_range(get_random_move_interval_min(), get_random_move_interval_max()))
 
+## Callback del timer de giro aleatorio horizontal (RandomTurningHorizontal)
+func _on_random_turning_horizontal_timer_timeout() -> void:
+	if not movement_enabled or _movement_paused:
+		return
+
+	# Solo comandos LOOK horizontal (LEFT y RIGHT)
+	var look_actions = [
+		DirectionEnum.Type.LOOK_LEFT,
+		DirectionEnum.Type.LOOK_RIGHT
+	]
+
+	# Elegir una dirección horizontal aleatoria para mirar
+	var random_look = look_actions[randi() % look_actions.size()]
+	var direction = DirectionEnum.to_vector2(random_look)
+
+	# Solo girar sin moverse
+	motion.face(direction)
+	animator.idle(direction)
+
+	# Reiniciar timer con intervalo aleatorio
+	_random_turning_horizontal_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
+
+## Callback del timer de giro aleatorio vertical (RandomTurningVertical)
+func _on_random_turning_vertical_timer_timeout() -> void:
+	if not movement_enabled or _movement_paused:
+		return
+
+	# Solo comandos LOOK vertical (UP y DOWN)
+	var look_actions = [
+		DirectionEnum.Type.LOOK_UP,
+		DirectionEnum.Type.LOOK_DOWN
+	]
+
+	# Elegir una dirección vertical aleatoria para mirar
+	var random_look = look_actions[randi() % look_actions.size()]
+	var direction = DirectionEnum.to_vector2(random_look)
+
+	# Solo girar sin moverse
+	motion.face(direction)
+	animator.idle(direction)
+
+	# Reiniciar timer con intervalo aleatorio
+	_random_turning_vertical_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
+
 ## Ejecuta la siguiente dirección del patrón de mirada
 func _execute_next_look_pattern() -> void:
 	var look_pattern_dirs = get_look_pattern_directions()
@@ -690,7 +770,7 @@ func _on_player_moved(_tile_pos: Vector2) -> void:
 		return
 
 	# Solo activar en tipos sin movimiento
-	if get_movement_type() not in [0, 3, 4]:  # NONE, RANDOM_TURNING, LOOK_PATTERN
+	if get_movement_type() not in [0, 3, 4, 7, 8]:  # NONE, RANDOM_TURNING, LOOK_PATTERN, RANDOM_TURNING_HORIZONTAL, RANDOM_TURNING_VERTICAL
 		return
 
 	# OPTIMIZACIÓN: Verificar distancia con tiles ANTES de buscar el player
@@ -965,6 +1045,10 @@ func _pause_movement() -> void:
 		_random_turning_timer.stop()
 	if _look_pattern_timer and _look_pattern_timer.time_left > 0:
 		_look_pattern_timer.stop()
+	if _random_turning_horizontal_timer and _random_turning_horizontal_timer.time_left > 0:
+		_random_turning_horizontal_timer.stop()
+	if _random_turning_vertical_timer and _random_turning_vertical_timer.time_left > 0:
+		_random_turning_vertical_timer.stop()
 
 
 ## Reanuda el movimiento del NPC cuando terminan los comandos
@@ -981,6 +1065,10 @@ func _resume_movement() -> void:
 		_random_turning_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 	elif get_movement_type() == 4 and _look_pattern_timer:  # LOOK_PATTERN
 		_look_pattern_timer.start(get_look_pattern_delay())
+	elif get_movement_type() == 7 and _random_turning_horizontal_timer:  # RANDOM_TURNING_HORIZONTAL
+		_random_turning_horizontal_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
+	elif get_movement_type() == 8 and _random_turning_vertical_timer:  # RANDOM_TURNING_VERTICAL
+		_random_turning_vertical_timer.start(randf_range(get_random_turning_interval_min(), get_random_turning_interval_max()))
 
 
 ## Callback cuando termina un evento (para reanudar movimiento)

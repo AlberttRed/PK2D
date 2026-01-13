@@ -16,11 +16,10 @@ var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags globales (Dictionary: nombre -> bool)
 var global_flags: Dictionary = {	"CHOOSING_STARTER": false,
-									"HAS_STARTER": false,
 									"HAS_POKEDEX": false}
 
 # Variables globales del juego (Dictionary: nombre -> valor)
-var game_variables: Dictionary = {}
+var game_variables: Dictionary = {	"BADGE_COUNT": 0}
 
 # Self flags por evento (Dictionary: "event_uid:flag" -> bool)
 # Ejemplo: "map_route1_trainer01:A" -> true
@@ -162,22 +161,41 @@ func register_trainer_battle_result(trainer_id: String, result: String) -> void:
 	defeated_trainers[trainer_id] = result
 
 # === SISTEMA DE CAMBIOS DIFERIDOS ===
-## Registra un cambio diferido que se aplicará en el próximo warp
+## Registra un cambio diferido que se aplicará cuando se des-renderice el mapa donde se registró
 ## change_type: "variable", "flag", o "self_switch"
 ## params: Dictionary con los parámetros específicos del tipo de cambio
 func defer_change(change_type: String, params: Dictionary) -> void:
+	var map_id = get_current_map_id()
 	deferred_changes.append({
 		"type": change_type,
-		"params": params
+		"params": params,
+		"map_id": map_id  # Asociar el cambio con el mapa donde se registró
 	})
 
-## Aplica todos los cambios diferidos pendientes
-## Se llama automáticamente cuando se completa un warp
-func apply_deferred_changes() -> void:
+## Aplica los cambios diferidos asociados a un mapa específico
+## Se llama automáticamente cuando se des-renderiza un mapa
+## @param map_id: ID del mapa que se está des-renderizando (solo se aplican cambios de este mapa)
+func apply_deferred_changes(map_id: String = "") -> void:
 	if deferred_changes.is_empty():
 		return
 
+	# Si no se especifica map_id, aplicar todos (compatibilidad hacia atrás)
+	# Pero es mejor especificar el map_id para aplicar solo los cambios del mapa que se des-renderiza
+	var changes_to_apply: Array[Dictionary] = []
+	var changes_to_keep: Array[Dictionary] = []
+
 	for change in deferred_changes:
+		if map_id.is_empty() or change.get("map_id", "") == map_id:
+			# Este cambio pertenece al mapa que se está des-renderizando
+			changes_to_apply.append(change)
+		else:
+			# Este cambio pertenece a otro mapa, mantenerlo
+			changes_to_keep.append(change)
+
+	if changes_to_apply.is_empty():
+		return
+
+	for change in changes_to_apply:
 		match change.type:
 			"variable":
 				set_variable(change.params.name, change.params.value)
@@ -188,7 +206,8 @@ func apply_deferred_changes() -> void:
 			_:
 				push_warning("GameStateService: Tipo de cambio diferido desconocido: %s" % change.type)
 
-	deferred_changes.clear()
+	# Reemplazar la cola con solo los cambios que no se aplicaron
+	deferred_changes = changes_to_keep
 
 ## Limpia todos los cambios diferidos sin aplicarlos
 func clear_deferred_changes() -> void:

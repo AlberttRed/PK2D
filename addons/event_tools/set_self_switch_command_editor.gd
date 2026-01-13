@@ -92,17 +92,10 @@ func _setup_ui() -> void:
 	switch_value_check.text = "Valor del switch (activado = true)"
 	vbox.add_child(switch_value_check)
 
-	# Separador para el grupo Defer Options
-	vbox.add_child(HSeparator.new())
-
-	var defer_label = Label.new()
-	defer_label.text = "Opciones de Diferimiento:"
-	defer_label.add_theme_constant_override("margin_top", 10)
-	vbox.add_child(defer_label)
-
 	# Defer Until Warp
 	defer_until_warp_check = CheckBox.new()
-	defer_until_warp_check.text = "Diferir hasta el próximo warp"
+	defer_until_warp_check.text = "Diferido"
+	defer_until_warp_check.tooltip_text = "Si está activado, el cambio del self-switch se aplicará cuando el mapa donde se registró se des-renderice (cuando ya no sea vecino del mapa actual o al hacer un warp). Esto asegura que los cambios se apliquen fuera de pantalla."
 	vbox.add_child(defer_until_warp_check)
 
 	# Botones

@@ -31,9 +31,7 @@ func _enter_tree() -> void:
 			push_warning("El nodo en '%s' no es un TileMapLayer" % [path])
 
 func _ready() -> void:
-	# Generar ReflectionMaskLayer automáticamente
-	_build_reflection_mask_layer()
-
+	pass
 	# El contexto se inyectará desde WorldSystem cuando se active este mapa
 	# Los eventos recibirán el contexto después de que el grid lo reciba
 
@@ -200,7 +198,7 @@ func can_enter_tile(to_tile: Vector2i, direction: Vector2) -> bool:
 					continue
 				# Verificar si se puede entrar desde esa dirección
 				if (entry_mask & entry_dir_flag) == 0:
-					return false  # Dirección NO está en la máscara, bloquear entrada
+					return false
 
 	return true  # Por defecto, permitir entrada
 
@@ -491,69 +489,3 @@ func _inject_context_to_events() -> void:
 	for event in events_container.get_children():
 		if event.has_method("set_overworld_context"):
 			event.set_overworld_context(context)
-
-## ============================================================================
-## REFLECTION MASK LAYER
-## ============================================================================
-
-## Construye automáticamente la ReflectionMaskLayer a partir de los tiles con custom_data["reflection_mask_id"]
-func _build_reflection_mask_layer() -> void:
-	var reflection_mask_layer := get_node_or_null("ReflectionMaskLayer") as TileMapLayer
-	if not reflection_mask_layer:
-		# No todos los mapas tienen ReflectionMaskLayer, esto es normal
-		return
-
-	# Limpiar la máscara existente
-	reflection_mask_layer.clear()
-
-	# Obtener el TileSet de referencia
-	var ref_layer := reference_layer()
-	if not ref_layer or not ref_layer.tile_set:
-		push_warning("OverworldGrid: No hay TileSet de referencia para generar máscara")
-		return
-
-	var tile_set := ref_layer.tile_set
-	reflection_mask_layer.tile_set = tile_set
-
-	# Recorrer todas las capas del grid
-	for layer in layers:
-		if not layer.tile_set:
-			continue
-
-		# Obtener todos los tiles usados en esta capa
-		var used_rect := layer.get_used_rect()
-		if used_rect.size == Vector2i.ZERO:
-			continue
-
-		# Recorrer cada tile usado
-		for x in range(used_rect.position.x, used_rect.position.x + used_rect.size.x):
-			for y in range(used_rect.position.y, used_rect.position.y + used_rect.size.y):
-				var tile_pos := Vector2i(x, y)
-				var tile_data := layer.get_cell_tile_data(tile_pos)
-
-				if not tile_data:
-					continue
-
-				# Verificar si el tile tiene custom_data["reflection_mask_id"]
-				var has_mask_id := false
-				if tile_data.has_custom_data("reflection_mask_id"):
-					var mask_id = tile_data.get_custom_data("reflection_mask_id")
-					if mask_id is int and mask_id >= 0:
-						has_mask_id = true
-						# Copiar el tile a la máscara usando el mismo source_id y atlas_coords
-						var source_id := layer.get_cell_source_id(tile_pos)
-						var atlas_coords := layer.get_cell_atlas_coords(tile_pos)
-						var alternative_tile := layer.get_cell_alternative_tile(tile_pos)
-
-						# Establecer el mismo tile en la máscara
-						reflection_mask_layer.set_cell(tile_pos, source_id, atlas_coords, alternative_tile)
-
-				# Si no tiene reflection_mask_id pero es agua, tratarlo como máscara completa
-				if not has_mask_id:
-					# Añadir el tile completo a la máscara (máscara completa 32x32)
-					var source_id := layer.get_cell_source_id(tile_pos)
-					var atlas_coords := layer.get_cell_atlas_coords(tile_pos)
-					var alternative_tile := layer.get_cell_alternative_tile(tile_pos)
-
-					# Establecer el mismo tile en la máscara (se usará como máscara completa)
-					reflection_mask_layer.set_cell(tile_pos, source_id, atlas_coords, alternative_tile)

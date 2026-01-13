@@ -31,7 +31,7 @@ var text_color_picker: ColorPickerButton = null
 
 func _ready() -> void:
 	title = "Editar ShowMessageCommand"
-	size = Vector2(600, 500)
+	size = Vector2(600, 550)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -62,7 +62,7 @@ func _setup_ui() -> void:
 	vbox.add_child(message_label)
 
 	message_text_edit = TextEdit.new()
-	message_text_edit.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	message_text_edit.custom_minimum_size.y = 60  # Aproximadamente 2 líneas de altura
 	message_text_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	vbox.add_child(message_text_edit)
 

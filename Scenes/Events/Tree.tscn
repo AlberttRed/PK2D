@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b5fhgiixlauaq"]
+[gd_scene load_steps=23 format=3 uid="uid://b5fhgiixlauaq"]
 
 [ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="1_rklyq"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="2_4usol"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cvsjona53tch5" path="res://Sprites/Eventos/MOs/Object tree 1.png" id="5_febl7"]
 [ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="6_4usol"]
 [ext_resource type="Texture2D" uid="uid://badawpxeby101" path="res://Sprites/Eventos/DefaultEventSprite.png" id="6_lkp8o"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="6_uw4pk"]
 [ext_resource type="Script" path="res://Scripts/Overworld/Core/ActorAnimator.gd" id="7_7nw6y"]
 [ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="8_6775b"]
 [ext_resource type="Script" uid="uid://cpbuansglnris" path="res://Scripts/Overworld/Core/Occupancy.gd" id="9_f71kk"]
@@ -55,20 +56,24 @@ animations = [{
 }]
 
 [sub_resource type="Resource" id="Resource_f71kk"]
+script = ExtResource("6_uw4pk")
+
+[sub_resource type="Resource" id="Resource_qa3tg"]
 script = ExtResource("2_4usol")
+trigger = SubResource("Resource_f71kk")
 commands = Array[ExtResource("3_uw4pk")]([SubResource("Resource_uw4pk")])
 frame_size = Vector2(32, 32)
 sprite_frames = SubResource("SpriteFrames_6775b")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_qa3tg"]
+[sub_resource type="Resource" id="Resource_h6xha"]
 script = ExtResource("6_4usol")
 flag_name = "A"
 scope = 1
 
-[sub_resource type="Resource" id="Resource_h6xha"]
+[sub_resource type="Resource" id="Resource_pdler"]
 script = ExtResource("2_4usol")
-root_condition = SubResource("Resource_qa3tg")
+root_condition = SubResource("Resource_h6xha")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -84,8 +89,9 @@ animations = [{
 }]
 
 [node name="Tree" type="Node2D"]
+z_index = 1
 script = ExtResource("1_rklyq")
-pages = Array[ExtResource("2_4usol")]([SubResource("Resource_f71kk"), SubResource("Resource_h6xha")])
+pages = Array[ExtResource("2_4usol")]([SubResource("Resource_qa3tg"), SubResource("Resource_pdler")])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_x7w3d")

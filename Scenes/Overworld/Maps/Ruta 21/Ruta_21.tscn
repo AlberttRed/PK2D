@@ -9,17 +9,17 @@
 
 [sub_resource type="Resource" id="Resource_f2pe6"]
 script = ExtResource("5_4hn0w")
-pokemon_id = 16
-min_level = 2
-probability = 50.0
+pokemon_id = 114
+min_level = 17
+max_level = 28
+probability = 100.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
-[sub_resource type="Resource" id="Resource_jlk61"]
+[sub_resource type="Resource" id="Resource_dh2sl"]
 script = ExtResource("5_4hn0w")
-pokemon_id = 19
-min_level = 2
-max_level = 4
-probability = 50.0
+pokemon_id = 72
+max_level = 40
+probability = 100.0
 metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 
 [node name="Ruta_21" type="Node2D"]
@@ -62,4 +62,8 @@ metadata/_edit_lock_ = true
 [node name="MapAreaEncounters" parent="." instance=ExtResource("3_48sd5")]
 
 [node name="Land" parent="MapAreaEncounters" instance=ExtResource("4_y2an3")]
-pokemon_encounters = Array[ExtResource("5_4hn0w")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])
+pokemon_encounters = Array[ExtResource("5_4hn0w")]([SubResource("Resource_f2pe6")])
+
+[node name="Water" parent="MapAreaEncounters" instance=ExtResource("4_y2an3")]
+area_type = 2
+pokemon_encounters = Array[ExtResource("5_4hn0w")]([SubResource("Resource_dh2sl")])

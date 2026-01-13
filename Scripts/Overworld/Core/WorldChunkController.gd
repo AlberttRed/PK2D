@@ -297,12 +297,10 @@ func get_active_chunks(player_position: Vector2) -> Array[String]:
 			var chunk_id = "chunk_%d_%d" % [chunk_coord.x, chunk_coord.y]
 
 			# Solo añadir si el chunk existe en el registro
+			# Nota: Es normal que algunos chunks no existan (áreas sin mapas)
 			if chunk_registry.has(chunk_id):
 				active_chunks.append(chunk_id)
-			else:
-				# Si el chunk no existe, es un error de generación de chunks
-				# Mostrar aviso pero no crear el chunk automáticamente
-				push_warning("WorldChunkController: Chunk '%s' no existe en el registro. Posición jugador: %s. Esto indica un error en la generación de chunks." % [chunk_id, str(player_position)])
+			# Si el chunk no existe, simplemente lo ignoramos (comportamiento esperado)
 
 	return active_chunks
 
@@ -484,6 +482,15 @@ func _deactivate_chunk_events(chunk_id: String) -> void:
 	for event_ref in chunk_data.event_refs:
 		var event = event_ref.get_ref()
 		if not event or not is_instance_valid(event):
+			continue
+
+		# Verificar si el evento está siendo controlado por un comando
+		# Si es así, no desactivarlo para evitar interrumpir el movimiento
+		var grid_motion = event.get_node_or_null("GridMotion")
+		if grid_motion and grid_motion.is_command_controlled:
+			# El evento está siendo controlado por un comando, no desactivarlo
+			# Se desactivará cuando termine el comando (is_command_controlled = false)
+			# y el chunk se desactive nuevamente
 			continue
 
 		if event.has_method("disconnect_external_signals"):

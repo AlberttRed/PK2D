@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="TrainerData" load_steps=6 format=3 uid="uid://6itik1l1vg5w"]
+
+[ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_6hnd1"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_ey1bv"]
+[ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="2_6hnd1"]
+
+[sub_resource type="Resource" id="Resource_ww0q6"]
+script = ExtResource("1_6hnd1")
+metadata/_custom_type_script = "uid://c4x2p6dx540kg"
+
+[sub_resource type="Resource" id="Resource_ey1bv"]
+script = ExtResource("1_ey1bv")
+pokemon_id = 74
+gender = 1
+metadata/_custom_type_script = "uid://d4mopscjx7rum"
+
+[resource]
+script = ExtResource("2_6hnd1")
+trainer_id = 5
+trainer_class_id = 100
+display_name = "BROCK"
+ai_profile = SubResource("Resource_ww0q6")
+intro_text = ""
+defeat_text = "Te he subestimado.
+¡Como prueba de tu victoria, aquí tienes la MEDALLA ROCA!"
+party_data = Array[ExtResource("1_ey1bv")]([SubResource("Resource_ey1bv")])
+metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

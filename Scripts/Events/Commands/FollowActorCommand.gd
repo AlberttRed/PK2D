@@ -29,6 +29,7 @@ class_name FollowActorCommand
 @export var catchup_policy: CatchupPolicy.Type = CatchupPolicy.Type.SNAP
 
 func execute(context: Node) -> void:
+	print("FollowActorCommand: execute() llamado - action: %d, follower_actor_name: '%s', leader_actor_name: '%s'" % [action, follower_actor_name, leader_actor_name])
 	match action:
 		0:  # START
 			_start_following(context)
@@ -37,9 +38,12 @@ func execute(context: Node) -> void:
 
 ## Inicia el seguimiento
 func _start_following(context: Node) -> void:
+	print("FollowActorCommand: _start_following() llamado")
 	# Resolver actores
 	var follower = _resolve_actor(context, follower_actor_name, true)
 	var leader = _resolve_actor(context, leader_actor_name, false)
+
+	print("FollowActorCommand: follower resuelto: %s, leader resuelto: %s" % [follower.name if follower else "null", leader.name if leader else "null"])
 
 	if not follower:
 		push_warning("FollowActorCommand: No se pudo resolver el follower")
@@ -125,13 +129,15 @@ func _stop_following(context: Node) -> void:
 
 ## Resuelve un actor por nombre
 func _resolve_actor(context: Node, name: String, is_follower: bool) -> Node2D:
-	# Si está vacío y es follower, usar el evento actual
-	if name.is_empty() and is_follower:
+	# Si está vacío o es "(evento actual)", usar el evento actual
+	# Esto funciona tanto para follower como para leader
+	if name.is_empty() or name == "(evento actual)":
 		if context is EventController and context.current_page:
 			var source_event = context.current_page.source_event
 			if source_event:
 				return source_event as Node2D
-		push_warning("FollowActorCommand: No se especificó follower y no se pudo obtener el evento actual")
+		var actor_type = "follower" if is_follower else "leader"
+		push_warning("FollowActorCommand: No se especificó %s y no se pudo obtener el evento actual" % actor_type)
 		return null
 
 	# Si es "Player", obtener del contexto

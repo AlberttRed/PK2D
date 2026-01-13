@@ -57,6 +57,7 @@ offset = Vector2(0, -8)
 metadata/_edit_lock_ = true
 
 [node name="ReflectionSprite" parent="." instance=ExtResource("15_reflection")]
+z_as_relative = false
 material = SubResource("ShaderMaterial_5yaag")
 
 [node name="Camera2D" type="Camera2D" parent="."]

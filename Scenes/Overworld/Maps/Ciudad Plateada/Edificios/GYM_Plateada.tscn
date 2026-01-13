@@ -1,0 +1,479 @@
+[gd_scene load_steps=98 format=4 uid="uid://6jesadgjg24s"]
+
+[ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_ilgld"]
+[ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gddux"]
+[ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="4_bj8l0"]
+[ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="4_l5hhm"]
+[ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="5_8tu4a"]
+[ext_resource type="PackedScene" uid="uid://b8jq4fvr3x2mk" path="res://Scenes/Overworld/Core/AreaEncounter.tscn" id="5_ui5ou"]
+[ext_resource type="Script" uid="uid://bgq1jwxt4ade5" path="res://Scripts/Resources/MapPokemonEncounter.gd" id="6_fcmnl"]
+[ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="7_hslhc"]
+[ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="8_air0d"]
+[ext_resource type="Texture2D" uid="uid://bpq3r1013hdt2" path="res://Sprites/Overworlds/Characters/trchar068.png" id="9_7okc6"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="9_dspqt"]
+[ext_resource type="Resource" uid="uid://6itik1l1vg5w" path="res://Resources/Trainers/BROCK.tres" id="10_nygvm"]
+[ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="11_agmev"]
+[ext_resource type="Texture2D" uid="uid://bdt1esc75mio2" path="res://Sprites/Overworlds/Characters/trchar033.png" id="11_hslhc"]
+[ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="12_5hyyh"]
+[ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="12_26jw8"]
+[ext_resource type="Script" uid="uid://ollu1kd3po24" path="res://Scripts/Events/Commands/SetVariableCommand.gd" id="12_320er"]
+[ext_resource type="Texture2D" uid="uid://wopdd8l3qh0e" path="res://Sprites/Overworlds/Characters/NPC 15.png" id="12_air0d"]
+[ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="13_g21i3"]
+[ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="13_k2w4l"]
+[ext_resource type="Resource" uid="uid://cp4vsoken5pug" path="res://Resources/Trainers/RIVAL_INICIO_B.tres" id="13_nygvm"]
+[ext_resource type="Script" uid="uid://cehl8pp7efus8" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="13_x0qxi"]
+[ext_resource type="Script" uid="uid://k6r0axpkwn50" path="res://Scripts/Events/Commands/FadeCommand.gd" id="14_5hyyh"]
+[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="14_320er"]
+[ext_resource type="Script" uid="uid://bprbbdhn4jhfb" path="res://Scripts/Events/Conditions/GroupCondition.gd" id="14_euigi"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="15_k2w4l"]
+[ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="16_0fjtw"]
+[ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="16_3wjj5"]
+[ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="17_agmev"]
+[ext_resource type="Script" uid="uid://c1hr8s5cdrs4o" path="res://Scripts/Events/Commands/ShowChoicesCommand.gd" id="17_bbo2r"]
+[ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="18_x0qxi"]
+[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="23_x0qxi"]
+
+[sub_resource type="Resource" id="Resource_p8wcn"]
+script = ExtResource("12_5hyyh")
+message = "¡Soy BROCK! ¡LÍDER del GIMNASIO de PLATEADA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_ts0rb"]
+script = ExtResource("12_5hyyh")
+message = "¡Creo en la gran resistencia de la roca y en la determinación!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_w3h5o"]
+script = ExtResource("12_5hyyh")
+message = "¡Por eso todos mis POKéMON son del tipo ROCA!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_plw16"]
+script = ExtResource("12_5hyyh")
+message = "¿Todavía quieres desafiarme?"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_mhw86"]
+script = ExtResource("12_5hyyh")
+message = "Sé que te mueve el orgullo de los ENTRENADORES POKéMON."
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_prlud"]
+script = ExtResource("12_5hyyh")
+message = "¡Muy bien!
+¡Enséñame lo que vales!"
+
+[sub_resource type="Resource" id="Resource_myntf"]
+script = ExtResource("12_26jw8")
+battle_type = 1
+trainer_data = ExtResource("10_nygvm")
+defeated_flag = "BROCK_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_3a41q"]
+script = ExtResource("12_5hyyh")
+message = "¡Espera!
+¡Lleva esto contigo!"
+close_at_end = false
+
+[sub_resource type="Resource" id="Resource_2t8ku"]
+script = ExtResource("12_5hyyh")
+message = "(Placeholder MT)"
+close_at_end = false
+
+[sub_resource type="Resource" id="Resource_8l1xj"]
+script = ExtResource("12_5hyyh")
+message = "¡La MT incluye un ataque que puede ser enseñado a los POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_6u63d"]
+script = ExtResource("12_5hyyh")
+message = "¡Pero solo puedes usarla una vez!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_0dffo"]
+script = ExtResource("12_5hyyh")
+message = "¡Así que elige con cuidado a qué POKéMON se la enseñas!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_l6pe8"]
+script = ExtResource("12_5hyyh")
+message = "¡La MT39 contiene TUMBA ROCAS!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_4mb2d"]
+script = ExtResource("12_5hyyh")
+message = "¡Podrás lanzar rocas al rival y bajar su VELOCIDAD!"
+
+[sub_resource type="Resource" id="Resource_wdhcl"]
+script = ExtResource("12_320er")
+variable_name = "BADGES_COUNT"
+value = 1
+
+[sub_resource type="Resource" id="Resource_ettn3"]
+script = ExtResource("9_dspqt")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_5yd3a"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_ettn3")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_p8wcn"), SubResource("Resource_ts0rb"), SubResource("Resource_w3h5o"), SubResource("Resource_plw16"), SubResource("Resource_mhw86"), SubResource("Resource_prlud"), SubResource("Resource_myntf"), SubResource("Resource_3a41q"), SubResource("Resource_2t8ku"), SubResource("Resource_8l1xj"), SubResource("Resource_6u63d"), SubResource("Resource_0dffo"), SubResource("Resource_l6pe8"), SubResource("Resource_4mb2d"), SubResource("Resource_wdhcl")])
+sprite_texture = ExtResource("9_7okc6")
+is_spritesheet = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_f4771"]
+script = ExtResource("12_5hyyh")
+message = "¡En el mundo hay todo tipo de ENTRENADORES!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_tliyt"]
+script = ExtResource("12_5hyyh")
+message = "¡Pareces ser muy hábil entrenando POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_7ikjy"]
+script = ExtResource("12_5hyyh")
+message = "¡Vete al GIMNASIO de CELESTE y pon a prueba tus habilidades!"
+
+[sub_resource type="Resource" id="Resource_in1ps"]
+script = ExtResource("13_k2w4l")
+variable_name = "BADGES_COUNT"
+operator = 3
+compare_value_serialized = "1"
+
+[sub_resource type="Resource" id="Resource_mg3o6"]
+script = ExtResource("9_dspqt")
+
+[sub_resource type="Resource" id="Resource_q6imk"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_mg3o6")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_f4771"), SubResource("Resource_tliyt"), SubResource("Resource_7ikjy")])
+root_condition = SubResource("Resource_in1ps")
+sprite_texture = ExtResource("9_7okc6")
+is_spritesheet = true
+initial_animation = "down_left"
+
+[sub_resource type="Resource" id="Resource_nd1qa"]
+script = ExtResource("12_26jw8")
+battle_type = 1
+trainer_data = ExtResource("13_nygvm")
+
+[sub_resource type="Resource" id="Resource_ppbnc"]
+script = ExtResource("9_dspqt")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_ea6fo"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_ppbnc")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_nd1qa")])
+enable_trainer_detection = true
+detection_range = 4
+initial_direction = 3
+sprite_texture = ExtResource("11_hslhc")
+is_spritesheet = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_e7d8y"]
+script = ExtResource("12_5hyyh")
+message = "¡Eres bastante fuerte, pero no tanto como BROCK!"
+
+[sub_resource type="Resource" id="Resource_vi3yq"]
+script = ExtResource("13_k2w4l")
+variable_name = "BADGES_COUNT"
+operator = 3
+compare_value_serialized = "1"
+
+[sub_resource type="Resource" id="Resource_ehg8b"]
+script = ExtResource("13_x0qxi")
+flag_name = "TRAINER1_GYM_PLATEADA_DEFEATED"
+
+[sub_resource type="Resource" id="Resource_5hmlb"]
+script = ExtResource("14_euigi")
+mode = 1
+children = Array[ExtResource("11_agmev")]([SubResource("Resource_vi3yq"), SubResource("Resource_ehg8b")])
+
+[sub_resource type="Resource" id="Resource_x2eh6"]
+script = ExtResource("9_dspqt")
+
+[sub_resource type="Resource" id="Resource_p27u1"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_x2eh6")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_e7d8y")])
+root_condition = SubResource("Resource_5hmlb")
+sprite_texture = ExtResource("11_hslhc")
+is_spritesheet = true
+initial_animation = "down_left"
+
+[sub_resource type="Resource" id="Resource_320er"]
+script = ExtResource("12_5hyyh")
+message = "¡Puedo decirte lo que se requiere para ser un campeón de POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_kl8t2"]
+script = ExtResource("12_5hyyh")
+message = "¡No soy ENTRENADOR, pero puedo decirte cómo ganar!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_oxtlj"]
+script = ExtResource("12_5hyyh")
+message = "¡Muy bien!
+¡Vamos allá!"
+close_at_end = false
+
+[sub_resource type="Resource" id="Resource_oxbgf"]
+script = ExtResource("16_0fjtw")
+label = "SÍ"
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_oxtlj")])
+
+[sub_resource type="Resource" id="Resource_i1p5f"]
+script = ExtResource("12_5hyyh")
+message = "¡Es gratis!
+¡Venga!"
+close_at_end = false
+
+[sub_resource type="Resource" id="Resource_fc6oo"]
+script = ExtResource("16_0fjtw")
+label = "NO"
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_i1p5f")])
+
+[sub_resource type="Resource" id="Resource_qc41s"]
+script = ExtResource("17_bbo2r")
+message = "¡Déjame que te lleve a la victoria!"
+branches = Array[ExtResource("16_0fjtw")]([SubResource("Resource_oxbgf"), SubResource("Resource_fc6oo")])
+cancel_branch_index = 0
+
+[sub_resource type="Resource" id="Resource_qhw3x"]
+script = ExtResource("12_5hyyh")
+message = "¡El 1er POKéMON que sale a luchar es el primero de la LISTA de los POKéMON!"
+close_at_end = false
+show_icon_at_end = true
+
+[sub_resource type="Resource" id="Resource_qn5kd"]
+script = ExtResource("12_5hyyh")
+message = "¡Cambiar el orden de los POKéMON podría facilitarte las cosas en combate!"
+
+[sub_resource type="Resource" id="Resource_1g36f"]
+script = ExtResource("9_dspqt")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_jrrq2"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_1g36f")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_320er"), SubResource("Resource_kl8t2"), SubResource("Resource_qc41s"), SubResource("Resource_qhw3x"), SubResource("Resource_qn5kd")])
+sprite_texture = ExtResource("12_air0d")
+is_spritesheet = true
+initial_animation = "down_left"
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_sr1qb"]
+script = ExtResource("12_5hyyh")
+message = "¡Lo sabía!
+¡Tienes madera!"
+
+[sub_resource type="Resource" id="Resource_jh0cl"]
+script = ExtResource("13_k2w4l")
+variable_name = "BADGES_COUNT"
+operator = 3
+compare_value_serialized = "1"
+
+[sub_resource type="Resource" id="Resource_j34ns"]
+script = ExtResource("9_dspqt")
+
+[sub_resource type="Resource" id="Resource_7jqs1"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_j34ns")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_sr1qb")])
+root_condition = SubResource("Resource_jh0cl")
+sprite_texture = ExtResource("12_air0d")
+is_spritesheet = true
+initial_animation = "down_left"
+
+[sub_resource type="Resource" id="Resource_g21i3"]
+script = ExtResource("14_5hyyh")
+mode = 0
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_5hyyh"]
+script = ExtResource("15_k2w4l")
+target_type = 1
+visible = false
+metadata/_custom_type_script = "uid://biam3qn6qasrt"
+
+[sub_resource type="Resource" id="Resource_k2w4l"]
+script = ExtResource("16_3wjj5")
+flag_name = "flash_on"
+flag_value = false
+metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
+
+[sub_resource type="Resource" id="Resource_3wjj5"]
+script = ExtResource("17_agmev")
+target_scene = "Ciudad_Plateada"
+target_tile = Vector2i(9, 0)
+metadata/_custom_type_script = "uid://c5vehg44neoyq"
+
+[sub_resource type="Resource" id="Resource_agmev"]
+script = ExtResource("14_5hyyh")
+duration = 0.3
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_x0qxi"]
+script = ExtResource("18_x0qxi")
+metadata/_custom_type_script = "uid://cenpvman6ylsr"
+
+[sub_resource type="Resource" id="Resource_euigi"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_x0qxi")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_g21i3"), SubResource("Resource_5hyyh"), SubResource("Resource_k2w4l"), SubResource("Resource_3wjj5"), SubResource("Resource_agmev")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_1jnn7"]
+script = ExtResource("12_5hyyh")
+message = "LÍDER del GIMNASIO POKéMON de PLATEADA: BROCK"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_eaewx"]
+script = ExtResource("12_5hyyh")
+message = "ENTRENADORES GANADORES:
+RIVAL"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_ql707"]
+script = ExtResource("9_dspqt")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_51pds"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_ql707")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_1jnn7"), SubResource("Resource_eaewx")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_xvkcg"]
+script = ExtResource("12_5hyyh")
+message = "LÍDER del GIMNASIO POKéMON de PLATEADA: BROCK"
+close_at_end = false
+show_icon_at_end = true
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_vu2tx"]
+script = ExtResource("12_5hyyh")
+message = "ENTRENADORES GANADORES:
+RIVAL y PLAYER"
+frame_style = 1
+
+[sub_resource type="Resource" id="Resource_1vt8v"]
+script = ExtResource("13_k2w4l")
+variable_name = "BADGES_COUNT"
+operator = 3
+compare_value_serialized = "1"
+
+[sub_resource type="Resource" id="Resource_syved"]
+script = ExtResource("9_dspqt")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_gtd4w"]
+script = ExtResource("7_hslhc")
+trigger = SubResource("Resource_syved")
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_xvkcg"), SubResource("Resource_vu2tx")])
+root_condition = SubResource("Resource_1vt8v")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_f2pe6"]
+script = ExtResource("6_fcmnl")
+pokemon_id = 16
+min_level = 2
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[sub_resource type="Resource" id="Resource_jlk61"]
+script = ExtResource("6_fcmnl")
+pokemon_id = 19
+min_level = 2
+max_level = 4
+probability = 50.0
+metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
+
+[node name="GYM_Plateada" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_ilgld")
+metadata/_edit_lock_ = true
+
+[node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
+y_sort_enabled = true
+script = ExtResource("2_gddux")
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
+metadata/_edit_lock_ = true
+
+[node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
+tile_map_data = PackedByteArray("AAADAA4AAwAHAAcAAAAEAA4AAwAEAAgAAAAFAA4AAwAEAAgAAAAGAA4AAwAEAAgAAAAHAA4AAwAEAAgAAAAIAA4AAwAEAAgAAAAJAA4AAwAEAAgAAAAKAA4AAwAEAAgAAAAMAA4AAwAEAAgAAAALAA4AAwAEAAgAAAANAA4AAwAEAAgAAAADAA0AAwAHAAcAAAADAAwAAwAHAAcAAAADAAsAAwABAAgAAAADAAoAAwABAAkAAAADAAkAAwABAAgAAAADAAgAAwABAAkAAAADAAcAAwABAAgAAAADAAYAAwABAAgAAAADAAUAAwABAAgAAAADAAQAAwABAAYAAAADAAMAAwABAAUAAAAEAAMAAwAGAAgAAAAFAAMAAwADAAUAAAAGAAMAAwADAAUAAAAHAAMAAwADAAYAAAAJAAMAAwADAAYAAAALAAMAAwADAAUAAAAKAAMAAwADAAUAAAAIAAMAAwADAAUAAAAMAAMAAwAGAAgAAAANAAMAAwAFAAUAAAANAAQAAwAFAAYAAAAEAAwAAwAEAAgAAAAFAAwAAwAEAAgAAAAGAAwAAwAGAAcAAAAHAAwAAwAHAAcAAAAIAAwAAwAEAAgAAAAJAAwAAwAEAAgAAAAKAAwAAwAGAAcAAAALAAwAAwAHAAcAAAAMAAwAAwAEAAgAAAANAAwAAwAEAAgAAAAOAA4AAwAGAAYAAAAOAA0AAwAGAAUAAAAOAAwAAwAGAAQAAAAOAAsAAwAGAAMAAAAOAAoAAwAGAAMAAAAOAAkAAwAGAAMAAAAOAAgAAwAGAAMAAAAOAAcAAwAGAAMAAAAOAAYAAwAGAAMAAAAOAAUAAwAGAAMAAAAEAA0AAwAEAAgAAAAFAA0AAwAEAAgAAAAGAA0AAwAGAAgAAAAHAA0AAwAHAAgAAAAIAA0AAwAEAAgAAAAJAA0AAwAEAAgAAAAKAA0AAwAGAAgAAAALAA0AAwAHAAgAAAAMAA0AAwAEAAgAAAANAA0AAwAEAAgAAAAIAAsAAwAEAAcAAAAEAAsAAwACAAcAAAAFAAsAAwACAAcAAAAGAAsAAwACAAYAAAAHAAsAAwACAAYAAAAJAAsAAwACAAYAAAAKAAsAAwACAAYAAAALAAsAAwACAAcAAAAMAAsAAwACAAcAAAANAAsAAwACAAcAAAAGAAoAAwADAAgAAAAHAAoAAwAEAAgAAAAIAAoAAwAEAAgAAAAJAAoAAwAEAAgAAAAKAAoAAwAFAAgAAAAIAAkAAwAEAAcAAAAGAAkAAwAEAAYAAAAHAAkAAwACAAYAAAAJAAkAAwACAAYAAAAKAAkAAwAEAAYAAAALAAkAAwACAAYAAAAFAAkAAwACAAYAAAAGAAgAAwAEAAgAAAAHAAgAAwAEAAgAAAAIAAgAAwAEAAgAAAAJAAgAAwAEAAgAAAAKAAgAAwAEAAgAAAAFAAgAAwADAAgAAAALAAgAAwAFAAgAAAAIAAcAAwADAAkAAAAHAAYAAwADAAoAAAAIAAYAAwADAAoAAAAJAAYAAwADAAoAAAAGAAYAAwACAAoAAAAKAAYAAwAEAAoAAAAGAAcAAwACAAYAAAAHAAcAAwAEAAYAAAAJAAcAAwAEAAYAAAAKAAcAAwACAAYAAAAHAAUAAwACAAoAAAAIAAUAAwADAAoAAAAJAAUAAwAEAAoAAAAIAAQAAwADAAkAAAAGAAUAAwACAAgAAAAKAAUAAwACAAgAAAAFAAcAAwACAAgAAAALAAcAAwACAAgAAAANAAgAAwACAAgAAAANAAoAAwACAAgAAAANAAkAAwACAAcAAAAMAAkAAwACAAcAAAAMAAoAAwACAAcAAAALAAoAAwACAAcAAAAMAAgAAwACAAcAAAAMAAcAAwACAAcAAAAMAAYAAwACAAcAAAAMAAQAAwACAAYAAAANAAUAAwACAAYAAAALAAYAAwACAAcAAAALAAUAAwACAAcAAAALAAQAAwACAAcAAAAMAAUAAwACAAcAAAANAAYAAwACAAcAAAANAAcAAwACAAcAAAAKAAQAAwACAAcAAAAJAAQAAwACAAcAAAAHAAQAAwACAAcAAAAGAAQAAwACAAcAAAAFAAQAAwACAAcAAAAFAAUAAwACAAcAAAAFAAYAAwACAAcAAAAEAAQAAwACAAYAAAAEAAUAAwACAAcAAAAEAAYAAwACAAcAAAAEAAcAAwACAAcAAAAEAAgAAwACAAcAAAAEAAkAAwACAAcAAAAEAAoAAwACAAcAAAAFAAoAAwACAAcAAAAOAAQAAwAGAAMAAAAOAAMAAwAGAAMAAAANAAIAAwAFAAQAAAAOAAIAAwAGAAQAAAANAAEAAwAFAAMAAAAOAAEAAwAGAAMAAAANAAAAAwAFAAIAAAAOAAAAAwAGAAIAAAAMAAAAAwACAAIAAAAMAAEAAwACAAMAAAAMAAIAAwACAAQAAAALAAAAAwACAAIAAAALAAEAAwACAAMAAAALAAIAAwACAAQAAAAKAAAAAwACAAIAAAAKAAEAAwAEAAMAAAAKAAIAAwACAAQAAAAJAAAAAwACAAIAAAAJAAEAAwAEAAMAAAAJAAIAAwACAAQAAAAIAAAAAwADAAIAAAAIAAEAAwADAAMAAAAIAAIAAwACAAQAAAAHAAAAAwACAAIAAAAHAAEAAwAEAAMAAAAHAAIAAwACAAQAAAAGAAAAAwACAAIAAAAGAAEAAwAEAAMAAAAGAAIAAwACAAQAAAAFAAAAAwACAAIAAAAFAAEAAwACAAMAAAAFAAIAAwACAAQAAAAEAAAAAwACAAIAAAAEAAEAAwACAAMAAAAEAAIAAwACAAQAAAACAAAAAwAAAAIAAAACAAEAAwAAAAMAAAACAAIAAwAAAAMAAAADAAAAAwABAAIAAAADAAEAAwABAAMAAAADAAIAAwABAAQAAAACAAMAAwAAAAMAAAACAAQAAwAAAAMAAAACAAUAAwAAAAMAAAACAAYAAwAAAAMAAAACAAcAAwAAAAMAAAACAAgAAwAAAAMAAAACAAkAAwAAAAMAAAACAAoAAwAAAAMAAAACAAsAAwAAAAMAAAACAAwAAwAAAAQAAAACAA0AAwAAAAUAAAACAA4AAwAAAAYAAAAHAA8AAwACAAEAAAAIAA8AAwADAAEAAAAJAA8AAwAEAAEAAAAGAA8AAwAAAAAAAAAFAA8AAwAAAAAAAAAEAA8AAwAAAAAAAAADAA8AAwAAAAAAAAACAA8AAwAAAAAAAAAKAA8AAwAAAAAAAAALAA8AAwAAAAAAAAAMAA8AAwAAAAAAAAANAA8AAwAAAAAAAAAOAA8AAwAAAAAAAAAFABAAAwAAAAAAAAAFABEAAwAAAAAAAAAFABIAAwAAAAAAAAAFABMAAwAAAAAAAAAFABQAAwAAAAAAAAACABAAAwAAAAAAAAACABEAAwAAAAAAAAACABIAAwAAAAAAAAACABMAAwAAAAAAAAACABQAAwAAAAAAAAADABAAAwAAAAAAAAADABEAAwAAAAAAAAADABIAAwAAAAAAAAADABMAAwAAAAAAAAADABQAAwAAAAAAAAAEABAAAwAAAAAAAAAEABEAAwAAAAAAAAAEABIAAwAAAAAAAAAEABMAAwAAAAAAAAAEABQAAwAAAAAAAAAGABAAAwAAAAAAAAAGABEAAwAAAAAAAAAGABIAAwAAAAAAAAAGABMAAwAAAAAAAAAGABQAAwAAAAAAAAAHABAAAwAAAAAAAAAHABEAAwAAAAAAAAAHABIAAwAAAAAAAAAHABMAAwAAAAAAAAAHABQAAwAAAAAAAAAIABAAAwAAAAAAAAAIABEAAwAAAAAAAAAIABIAAwAAAAAAAAAIABMAAwAAAAAAAAAIABQAAwAAAAAAAAAJABAAAwAAAAAAAAAJABEAAwAAAAAAAAAJABIAAwAAAAAAAAAJABMAAwAAAAAAAAAJABQAAwAAAAAAAAAKABAAAwAAAAAAAAAKABEAAwAAAAAAAAAKABIAAwAAAAAAAAAKABMAAwAAAAAAAAAKABQAAwAAAAAAAAALABAAAwAAAAAAAAALABEAAwAAAAAAAAALABIAAwAAAAAAAAALABMAAwAAAAAAAAALABQAAwAAAAAAAAAMABAAAwAAAAAAAAAMABEAAwAAAAAAAAAMABIAAwAAAAAAAAAMABMAAwAAAAAAAAAMABQAAwAAAAAAAAANABAAAwAAAAAAAAANABEAAwAAAAAAAAANABIAAwAAAAAAAAANABMAAwAAAAAAAAANABQAAwAAAAAAAAAOABAAAwAAAAAAAAAOABEAAwAAAAAAAAAOABIAAwAAAAAAAAAOABMAAwAAAAAAAAAOABQAAwAAAAAAAAAPAA0AAwAAAAAAAAAPAA4AAwAAAAAAAAAQAA0AAwAAAAAAAAAQAA4AAwAAAAAAAAARAA0AAwAAAAAAAAARAA4AAwAAAAAAAAASAA0AAwAAAAAAAAASAA4AAwAAAAAAAAATAA0AAwAAAAAAAAATAA4AAwAAAAAAAAAPAAAAAwAAAAAAAAAPAAEAAwAAAAAAAAAPAAIAAwAAAAAAAAAPAAMAAwAAAAAAAAAPAAQAAwAAAAAAAAAPAAUAAwAAAAAAAAAPAAYAAwAAAAAAAAAPAAcAAwAAAAAAAAAPAAgAAwAAAAAAAAAPAAkAAwAAAAAAAAAPAAoAAwAAAAAAAAAPAAsAAwAAAAAAAAAPAAwAAwAAAAAAAAAQAAAAAwAAAAAAAAAQAAEAAwAAAAAAAAAQAAIAAwAAAAAAAAAQAAMAAwAAAAAAAAAQAAQAAwAAAAAAAAAQAAUAAwAAAAAAAAAQAAYAAwAAAAAAAAAQAAcAAwAAAAAAAAAQAAgAAwAAAAAAAAAQAAkAAwAAAAAAAAAQAAoAAwAAAAAAAAAQAAsAAwAAAAAAAAAQAAwAAwAAAAAAAAARAAAAAwAAAAAAAAARAAEAAwAAAAAAAAARAAIAAwAAAAAAAAARAAMAAwAAAAAAAAARAAQAAwAAAAAAAAARAAUAAwAAAAAAAAARAAYAAwAAAAAAAAARAAcAAwAAAAAAAAARAAgAAwAAAAAAAAARAAkAAwAAAAAAAAARAAoAAwAAAAAAAAARAAsAAwAAAAAAAAARAAwAAwAAAAAAAAASAAAAAwAAAAAAAAASAAEAAwAAAAAAAAASAAIAAwAAAAAAAAASAAMAAwAAAAAAAAASAAQAAwAAAAAAAAASAAUAAwAAAAAAAAASAAYAAwAAAAAAAAASAAcAAwAAAAAAAAASAAgAAwAAAAAAAAASAAkAAwAAAAAAAAASAAoAAwAAAAAAAAASAAsAAwAAAAAAAAASAAwAAwAAAAAAAAATAAAAAwAAAAAAAAATAAEAAwAAAAAAAAATAAIAAwAAAAAAAAATAAMAAwAAAAAAAAATAAQAAwAAAAAAAAATAAUAAwAAAAAAAAATAAYAAwAAAAAAAAATAAcAAwAAAAAAAAATAAgAAwAAAAAAAAATAAkAAwAAAAAAAAATAAoAAwAAAAAAAAATAAsAAwAAAAAAAAATAAwAAwAAAAAAAAD//w0AAwAAAAAAAAD//w4AAwAAAAAAAAAAAA0AAwAAAAAAAAAAAA4AAwAAAAAAAAD9/w0AAwAAAAAAAAD9/w4AAwAAAAAAAAD+/w0AAwAAAAAAAAD+/w4AAwAAAAAAAAABAA0AAwAAAAAAAAABAA4AAwAAAAAAAAD9/wAAAwAAAAAAAAD9/wEAAwAAAAAAAAD9/wIAAwAAAAAAAAD9/wMAAwAAAAAAAAD9/wQAAwAAAAAAAAD9/wUAAwAAAAAAAAD9/wYAAwAAAAAAAAD9/wcAAwAAAAAAAAD9/wgAAwAAAAAAAAD9/wkAAwAAAAAAAAD9/woAAwAAAAAAAAD9/wsAAwAAAAAAAAD9/wwAAwAAAAAAAAD+/wAAAwAAAAAAAAD+/wEAAwAAAAAAAAD+/wIAAwAAAAAAAAD+/wMAAwAAAAAAAAD+/wQAAwAAAAAAAAD+/wUAAwAAAAAAAAD+/wYAAwAAAAAAAAD+/wcAAwAAAAAAAAD+/wgAAwAAAAAAAAD+/wkAAwAAAAAAAAD+/woAAwAAAAAAAAD+/wsAAwAAAAAAAAD+/wwAAwAAAAAAAAD//wAAAwAAAAAAAAD//wEAAwAAAAAAAAD//wIAAwAAAAAAAAD//wMAAwAAAAAAAAD//wQAAwAAAAAAAAD//wUAAwAAAAAAAAD//wYAAwAAAAAAAAD//wcAAwAAAAAAAAD//wgAAwAAAAAAAAD//wkAAwAAAAAAAAD//woAAwAAAAAAAAD//wsAAwAAAAAAAAD//wwAAwAAAAAAAAAAAAAAAwAAAAAAAAAAAAEAAwAAAAAAAAAAAAIAAwAAAAAAAAAAAAMAAwAAAAAAAAAAAAQAAwAAAAAAAAAAAAUAAwAAAAAAAAAAAAYAAwAAAAAAAAAAAAcAAwAAAAAAAAAAAAgAAwAAAAAAAAAAAAkAAwAAAAAAAAAAAAoAAwAAAAAAAAAAAAsAAwAAAAAAAAAAAAwAAwAAAAAAAAABAAAAAwAAAAAAAAABAAEAAwAAAAAAAAABAAIAAwAAAAAAAAABAAMAAwAAAAAAAAABAAQAAwAAAAAAAAABAAUAAwAAAAAAAAABAAYAAwAAAAAAAAABAAcAAwAAAAAAAAABAAgAAwAAAAAAAAABAAkAAwAAAAAAAAABAAoAAwAAAAAAAAABAAsAAwAAAAAAAAABAAwAAwAAAAAAAAADAP3/AwAAAAAAAAADAP7/AwAAAAAAAAADAP//AwAAAAAAAAAEAP3/AwAAAAAAAAAEAP7/AwAAAAAAAAAEAP//AwAAAAAAAAAFAP3/AwAAAAAAAAAFAP7/AwAAAAAAAAAFAP//AwAAAAAAAAAGAP3/AwAAAAAAAAAGAP7/AwAAAAAAAAAGAP//AwAAAAAAAAAHAP3/AwAAAAAAAAAHAP7/AwAAAAAAAAAHAP//AwAAAAAAAAAIAP3/AwAAAAAAAAAIAP7/AwAAAAAAAAAIAP//AwAAAAAAAAAJAP3/AwAAAAAAAAAJAP7/AwAAAAAAAAAJAP//AwAAAAAAAAAKAP3/AwAAAAAAAAAKAP7/AwAAAAAAAAAKAP//AwAAAAAAAAALAP3/AwAAAAAAAAALAP7/AwAAAAAAAAALAP//AwAAAAAAAAAMAP3/AwAAAAAAAAAMAP7/AwAAAAAAAAAMAP//AwAAAAAAAAANAP3/AwAAAAAAAAANAP7/AwAAAAAAAAANAP//AwAAAAAAAAAOAP3/AwAAAAAAAAAOAP7/AwAAAAAAAAAOAP//AwAAAAAAAAAPAP3/AwAAAAAAAAAPAP7/AwAAAAAAAAAPAP//AwAAAAAAAAAQAP3/AwAAAAAAAAAQAP7/AwAAAAAAAAAQAP//AwAAAAAAAAARAP3/AwAAAAAAAAARAP7/AwAAAAAAAAARAP//AwAAAAAAAAASAP3/AwAAAAAAAAASAP7/AwAAAAAAAAASAP//AwAAAAAAAAATAP3/AwAAAAAAAAATAP7/AwAAAAAAAAATAP//AwAAAAAAAAD9//3/AwAAAAAAAAD9//7/AwAAAAAAAAD9////AwAAAAAAAAD+//3/AwAAAAAAAAD+//7/AwAAAAAAAAD+////AwAAAAAAAAD///3/AwAAAAAAAAD///7/AwAAAAAAAAD/////AwAAAAAAAAAAAP3/AwAAAAAAAAAAAP7/AwAAAAAAAAAAAP//AwAAAAAAAAABAP3/AwAAAAAAAAABAP7/AwAAAAAAAAABAP//AwAAAAAAAAACAP3/AwAAAAAAAAACAP7/AwAAAAAAAAACAP//AwAAAAAAAAD9/w8AAwAAAAAAAAD9/xAAAwAAAAAAAAD9/xEAAwAAAAAAAAD9/xIAAwAAAAAAAAD9/xMAAwAAAAAAAAD9/xQAAwAAAAAAAAD+/w8AAwAAAAAAAAD+/xAAAwAAAAAAAAD+/xEAAwAAAAAAAAD+/xIAAwAAAAAAAAD+/xMAAwAAAAAAAAD+/xQAAwAAAAAAAAD//w8AAwAAAAAAAAD//xAAAwAAAAAAAAD//xEAAwAAAAAAAAD//xIAAwAAAAAAAAD//xMAAwAAAAAAAAD//xQAAwAAAAAAAAAAAA8AAwAAAAAAAAAAABAAAwAAAAAAAAAAABEAAwAAAAAAAAAAABIAAwAAAAAAAAAAABMAAwAAAAAAAAAAABQAAwAAAAAAAAABAA8AAwAAAAAAAAABABAAAwAAAAAAAAABABEAAwAAAAAAAAABABIAAwAAAAAAAAABABMAAwAAAAAAAAABABQAAwAAAAAAAAAPAA8AAwAAAAAAAAAPABAAAwAAAAAAAAAPABEAAwAAAAAAAAAPABIAAwAAAAAAAAAPABMAAwAAAAAAAAAPABQAAwAAAAAAAAAQAA8AAwAAAAAAAAAQABAAAwAAAAAAAAAQABEAAwAAAAAAAAAQABIAAwAAAAAAAAAQABMAAwAAAAAAAAAQABQAAwAAAAAAAAARAA8AAwAAAAAAAAARABAAAwAAAAAAAAARABEAAwAAAAAAAAARABIAAwAAAAAAAAARABMAAwAAAAAAAAARABQAAwAAAAAAAAASAA8AAwAAAAAAAAASABAAAwAAAAAAAAASABEAAwAAAAAAAAASABIAAwAAAAAAAAASABMAAwAAAAAAAAASABQAAwAAAAAAAAATAA8AAwAAAAAAAAATABAAAwAAAAAAAAATABEAAwAAAAAAAAATABIAAwAAAAAAAAATABMAAwAAAAAAAAATABQAAwAAAAAAAAA=")
+tile_set = ExtResource("4_bj8l0")
+metadata/_edit_lock_ = true
+
+[node name="MaskLayer" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 1
+metadata/_edit_lock_ = true
+
+[node name="Objects" type="TileMapLayer" parent="OverworldGrid"]
+tile_map_data = PackedByteArray("AAAHAAUAAwAFAAkAAAAHAAYAAwAFAAoAAAAIAAUAAwAGAAkAAAAIAAYAAwAGAAoAAAAJAAUAAwAHAAkAAAAJAAYAAwAHAAoAAAAHAA4AAwACAAAAAAAIAA4AAwADAAAAAAAJAA4AAwAEAAAAAAAGAAwAAwABAAEAAAAKAAwAAwABAAEAAAA=")
+tile_set = ExtResource("4_bj8l0")
+metadata/_edit_lock_ = true
+
+[node name="Above" type="TileMapLayer" parent="OverworldGrid"]
+z_index = 2
+tile_map_data = PackedByteArray("AAAGAAsAAwABAAAAAAAKAAsAAwABAAAAAAA=")
+tile_set = ExtResource("4_bj8l0")
+metadata/_edit_lock_ = true
+
+[node name="Events" type="Node2D" parent="OverworldGrid"]
+y_sort_enabled = true
+metadata/_edit_lock_ = true
+
+[node name="Brock" parent="OverworldGrid/Events" instance=ExtResource("5_8tu4a")]
+position = Vector2(272, 176)
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_5yd3a"), SubResource("Resource_q6imk")])
+
+[node name="Trainer" parent="OverworldGrid/Events" instance=ExtResource("5_8tu4a")]
+position = Vector2(176, 272)
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_ea6fo"), SubResource("Resource_p27u1")])
+
+[node name="Portero" parent="OverworldGrid/Events" instance=ExtResource("5_8tu4a")]
+position = Vector2(304, 400)
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_jrrq2"), SubResource("Resource_7jqs1")])
+
+[node name="Sortida" parent="OverworldGrid/Events" instance=ExtResource("13_g21i3")]
+position = Vector2(272, 496)
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_euigi")])
+
+[node name="Cartel1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("13_g21i3")]
+z_index = 1
+position = Vector2(208, 400)
+script = ExtResource("23_x0qxi")
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_51pds"), SubResource("Resource_gtd4w")])
+
+[node name="Cartel2" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("13_g21i3")]
+z_index = 1
+position = Vector2(336, 400)
+script = ExtResource("23_x0qxi")
+pages = Array[ExtResource("7_hslhc")]([SubResource("Resource_51pds"), SubResource("Resource_gtd4w")])
+
+[node name="MapAreaEncounters" parent="." instance=ExtResource("4_l5hhm")]
+
+[node name="Land" parent="MapAreaEncounters" instance=ExtResource("5_ui5ou")]
+pokemon_encounters = Array[ExtResource("6_fcmnl")]([SubResource("Resource_f2pe6"), SubResource("Resource_jlk61")])

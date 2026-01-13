@@ -1,5 +1,6 @@
 @tool
 extends Window
+class_name ConditionEditor
 
 ## Ventana de edición para EventCondition
 ## Permite editar condiciones de forma jerárquica usando un Tree
@@ -36,6 +37,9 @@ var group_mode_option: OptionButton = null
 var group_add_button: Button = null
 
 var not_edit_button: Button = null
+
+var actor_position_name_edit: LineEdit = null
+var actor_position_direction_option: OptionButton = null
 
 func _ready() -> void:
 	title = "Editar Condición"
@@ -147,7 +151,12 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 	if cond is VariableCondition:
 		var var_cond = cond as VariableCondition
 		var op_str = _get_operator_string(var_cond.operator)
-		var value_str = _value_to_string(var_cond.compare_value)
+		# Usar compare_value_serialized si compare_value está vacío (para números que se perdieron en serialización)
+		var actual_value = var_cond.compare_value
+		if (actual_value == null or (typeof(actual_value) == TYPE_STRING and actual_value == "")) and not var_cond.compare_value_serialized.is_empty():
+			# Restaurar desde compare_value_serialized para mostrar
+			actual_value = _parse_value(var_cond.compare_value_serialized)
+		var value_str = _value_to_string(actual_value)
 		return "Variable: '%s' %s %s" % [var_cond.variable_name, op_str, value_str]
 
 	if cond is GroupCondition:
@@ -158,6 +167,11 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 
 	if cond is NotCondition:
 		return "NOT (...)"
+
+	if cond is ActorPositionCondition:
+		var pos_cond = cond as ActorPositionCondition
+		var dir_str = ["Up", "Down", "Left", "Right"][pos_cond.direction]
+		return "Actor Position: %s %s" % [pos_cond.actor_name, dir_str]
 
 	return "Condición desconocida"
 
@@ -325,7 +339,37 @@ func _show_variable_properties(var_cond: VariableCondition) -> void:
 	value_container.add_child(value_label)
 
 	variable_value_edit = LineEdit.new()
-	variable_value_edit.text = _value_to_string(var_cond.compare_value).trim_prefix('"').trim_suffix('"')
+	# Manejar el caso especial de valores numéricos que pueden perderse en la serialización
+	var compare_val = var_cond.compare_value
+	var display_text = ""
+
+	# Si compare_value está vacío pero compare_value_serialized tiene un valor, restaurarlo
+	if (compare_val == null or (typeof(compare_val) == TYPE_STRING and compare_val == "")) and not var_cond.compare_value_serialized.is_empty():
+		# Restaurar el valor desde compare_value_serialized
+		compare_val = _parse_value(var_cond.compare_value_serialized)
+		var_cond.compare_value = compare_val
+		print("ConditionEditor: Restaurando valor desde compare_value_serialized: '%s' -> %s (tipo: %s)" % [var_cond.compare_value_serialized, compare_val, typeof(compare_val)])
+
+	# Determinar qué texto mostrar
+	if compare_val == null:
+		display_text = ""
+	elif typeof(compare_val) == TYPE_STRING:
+		if compare_val == "":
+			display_text = ""
+		else:
+			# Es un string, mostrar directamente (sin comillas si las tiene)
+			display_text = compare_val.trim_prefix('"').trim_suffix('"')
+	elif typeof(compare_val) == TYPE_INT or typeof(compare_val) == TYPE_FLOAT:
+		# Es un número, convertir a string para mostrar
+		display_text = str(compare_val)
+	elif typeof(compare_val) == TYPE_BOOL:
+		display_text = "true" if compare_val else "false"
+	else:
+		# Otro tipo, convertir a string
+		display_text = str(compare_val)
+
+	variable_value_edit.text = display_text
+	print("ConditionEditor: Cargando VariableCondition - compare_value: %s (tipo: %s), serialized: '%s', display_text: '%s'" % [compare_val, typeof(compare_val), var_cond.compare_value_serialized, display_text])
 	variable_value_edit.placeholder_text = "Ej: 100, \"texto\", true"
 	variable_value_edit.text_changed.connect(_on_variable_value_changed)
 	variable_value_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -400,6 +444,55 @@ func _show_not_properties(not_cond: NotCondition) -> void:
 		no_child_label.text = "(Sin condición hija)"
 		properties_panel.add_child(no_child_label)
 
+## Muestra las propiedades de ActorPositionCondition
+func _show_actor_position_properties(pos_cond: ActorPositionCondition) -> void:
+	_clear_properties_panel()
+
+	var info_label = Label.new()
+	info_label.text = "Condición: Actor Position"
+	info_label.add_theme_font_size_override("font_size", 14)
+	properties_panel.add_child(info_label)
+	properties_panel.add_child(HSeparator.new())
+
+	# Actor name
+	var name_container = HBoxContainer.new()
+	var name_label = Label.new()
+	name_label.text = "Actor:"
+	name_label.custom_minimum_size.x = 150
+	name_container.add_child(name_label)
+
+	actor_position_name_edit = LineEdit.new()
+	actor_position_name_edit.text = pos_cond.actor_name
+	actor_position_name_edit.placeholder_text = "Ej: Player, NPC_Hombre"
+	actor_position_name_edit.text_changed.connect(_on_actor_position_name_changed)
+	actor_position_name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_container.add_child(actor_position_name_edit)
+	properties_panel.add_child(name_container)
+
+	# Direction
+	var dir_container = HBoxContainer.new()
+	var dir_label = Label.new()
+	dir_label.text = "Dirección:"
+	dir_label.custom_minimum_size.x = 150
+	dir_container.add_child(dir_label)
+
+	actor_position_direction_option = OptionButton.new()
+	actor_position_direction_option.add_item("Up")
+	actor_position_direction_option.add_item("Down")
+	actor_position_direction_option.add_item("Left")
+	actor_position_direction_option.add_item("Right")
+	actor_position_direction_option.selected = pos_cond.direction
+	actor_position_direction_option.item_selected.connect(_on_actor_position_direction_changed)
+	actor_position_direction_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	dir_container.add_child(actor_position_direction_option)
+	properties_panel.add_child(dir_container)
+
+	# Info
+	var desc_label = Label.new()
+	desc_label.text = "Comprueba si el actor está en la dirección especificada respecto al evento actual."
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	properties_panel.add_child(desc_label)
+
 ## Se llama cuando se selecciona una condición en el árbol
 func _on_condition_selected() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -421,16 +514,26 @@ func _on_condition_selected() -> void:
 		return
 
 	# Mostrar propiedades según el tipo
-	if cond is FlagCondition:
+	# Verificar usando get_script() como fallback para clases que no se reconocen con 'is'
+	var cond_script = cond.get_script()
+	var script_path = cond_script.get_path() if cond_script else ""
+
+	if cond is FlagCondition or script_path.ends_with("FlagCondition.gd"):
 		_show_flag_properties(cond as FlagCondition)
-	elif cond is VariableCondition:
+	elif cond is VariableCondition or script_path.ends_with("VariableCondition.gd"):
 		_show_variable_properties(cond as VariableCondition)
-	elif cond is GroupCondition:
+	elif cond is GroupCondition or script_path.ends_with("GroupCondition.gd"):
 		_show_group_properties(cond as GroupCondition)
-	elif cond is NotCondition:
+	elif cond is NotCondition or script_path.ends_with("NotCondition.gd"):
 		_show_not_properties(cond as NotCondition)
+	elif cond is ActorPositionCondition or script_path.ends_with("ActorPositionCondition.gd"):
+		_show_actor_position_properties(cond as ActorPositionCondition)
 	else:
 		_clear_properties_panel()
+		# Debug: mostrar información sobre el tipo de condición
+		var debug_label = Label.new()
+		debug_label.text = "Tipo desconocido: %s" % script_path
+		properties_panel.add_child(debug_label)
 
 	_update_buttons_state()
 
@@ -484,6 +587,7 @@ func _on_add_condition_pressed() -> void:
 	popup.add_item("Variable")
 	popup.add_item("Grupo (AND/OR)")
 	popup.add_item("NOT")
+	popup.add_item("Actor Position")
 
 	add_child(popup)
 	popup.id_pressed.connect(func(id: int):
@@ -505,6 +609,8 @@ func _on_condition_type_selected(id: int) -> void:
 			new_cond = GroupCondition.new()
 		3:  # NOT
 			new_cond = NotCondition.new()
+		4:  # Actor Position
+			new_cond = ActorPositionCondition.new()
 
 	if not new_cond:
 		return
@@ -556,6 +662,8 @@ func _select_condition_recursive(item: TreeItem, target_cond: EventCondition) ->
 		if cond == target_cond:
 			item.select(0)
 			condition_tree.scroll_to_item(item)
+			# Asegurar que se muestren las propiedades
+			call_deferred("_on_condition_selected")
 			return true
 
 	var child = item.get_first_child()
@@ -818,6 +926,41 @@ func _on_group_add_child_pressed() -> void:
 	# Abrir el menú de selección de tipo
 	_on_add_condition_pressed()
 
+## Callbacks para ActorPositionCondition
+func _on_actor_position_name_changed(new_text: String) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+
+	var cond = metadata.get("condition")
+	if not cond is ActorPositionCondition:
+		return
+
+	var pos_cond = cond as ActorPositionCondition
+	pos_cond.actor_name = new_text.strip_edges()
+	_refresh_condition_tree()
+
+func _on_actor_position_direction_changed(index: int) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+
+	var cond = metadata.get("condition")
+	if not cond is ActorPositionCondition:
+		return
+
+	var pos_cond = cond as ActorPositionCondition
+	pos_cond.direction = index
+	_refresh_condition_tree()
+
 ## Callbacks para NotCondition
 func _on_not_edit_child_pressed() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -843,6 +986,7 @@ func _on_not_edit_child_pressed() -> void:
 		popup.add_item("Variable")
 		popup.add_item("Grupo (AND/OR)")
 		popup.add_item("NOT")
+		popup.add_item("Actor Position")
 
 		add_child(popup)
 		popup.id_pressed.connect(func(id: int):
@@ -871,6 +1015,8 @@ func _on_not_child_type_selected(not_cond: NotCondition, id: int) -> void:
 			new_cond = GroupCondition.new()
 		3:  # NOT
 			new_cond = NotCondition.new()
+		4:  # Actor Position
+			new_cond = ActorPositionCondition.new()
 
 	if new_cond:
 		not_cond.child = new_cond
@@ -895,7 +1041,11 @@ func _parse_value(text: String) -> Variant:
 
 	# Intentar como int
 	if trimmed.is_valid_int():
-		return trimmed.to_int()
+		var int_value = trimmed.to_int()
+		# IMPORTANTE: Para evitar problemas de serialización con Variant int en Resources,
+		# guardamos el int como String con un prefijo especial que luego parsearemos
+		# Pero primero intentamos guardarlo como int para mantener compatibilidad
+		return int_value
 
 	# Intentar como float
 	if trimmed.is_valid_float():
@@ -922,9 +1072,43 @@ func load_condition(cond: EventCondition) -> void:
 
 ## Aplica los valores editados
 func _apply_values() -> void:
-	# La condición ya está actualizada en memoria
-	# Solo necesitamos asegurarnos de que esté duplicada correctamente
-	pass
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+	var cond = metadata.get("condition")
+	if not cond:
+		return
+	if cond is VariableCondition:
+		var var_cond = cond as VariableCondition
+		if variable_name_edit != null and variable_name_edit.is_visible_in_tree():
+			var_cond.variable_name = variable_name_edit.text
+		if variable_operator_option != null and variable_operator_option.is_visible_in_tree():
+			var_cond.operator = variable_operator_option.selected
+		if variable_value_edit != null and variable_value_edit.is_visible_in_tree():
+			var text_value = variable_value_edit.text
+			var parsed_value = _parse_value(text_value)
+			var_cond.compare_value = parsed_value
+			if typeof(parsed_value) == TYPE_INT or typeof(parsed_value) == TYPE_FLOAT:
+				var_cond.compare_value_serialized = text_value.strip_edges()
+			elif typeof(parsed_value) == TYPE_STRING:
+				var_cond.compare_value_serialized = parsed_value
+			else:
+				var_cond.compare_value_serialized = str(parsed_value)
+	if cond is FlagCondition:
+		var flag_cond = cond as FlagCondition
+		if flag_name_edit != null and flag_name_edit.is_visible_in_tree():
+			flag_cond.flag_name = flag_name_edit.text
+		if flag_scope_option != null and flag_scope_option.is_visible_in_tree():
+			flag_cond.scope = FlagCondition.Scope.GLOBAL if flag_scope_option.selected == 0 else FlagCondition.Scope.SELF
+		if flag_value_check != null and flag_value_check.is_visible_in_tree():
+			flag_cond.expected_value = flag_value_check.button_pressed
+	if cond is GroupCondition:
+		var group_cond = cond as GroupCondition
+		if group_mode_option != null and group_mode_option.is_visible_in_tree():
+			group_cond.mode = GroupCondition.Mode.ALL if group_mode_option.selected == 0 else GroupCondition.Mode.ANY
 
 ## Restaura los valores originales
 func _restore_original_values() -> void:
@@ -939,6 +1123,16 @@ func _restore_original_values() -> void:
 ## Se llama cuando se presiona Aceptar
 func _on_accept_pressed() -> void:
 	_apply_values()
+	# Debug: verificar el valor antes de emitir
+	if condition is VariableCondition:
+		var var_cond = condition as VariableCondition
+		print("ConditionEditor: Emitiendo condición - compare_value: %s (tipo: %s)" % [var_cond.compare_value, typeof(var_cond.compare_value)])
+	elif condition is GroupCondition:
+		var group_cond = condition as GroupCondition
+		for child in group_cond.children:
+			if child is VariableCondition:
+				var var_cond = child as VariableCondition
+				print("ConditionEditor: Emitiendo condición (hijo) - compare_value: %s (tipo: %s)" % [var_cond.compare_value, typeof(var_cond.compare_value)])
 	condition_edited.emit(condition)
 	queue_free()
 

@@ -62,8 +62,6 @@ func setup_current_page() -> void:
 
 	# Obtener ID único del evento para self-switches
 	var event_id = _get_event_id()
-	if name == "Stop1":
-		pass
 	# Buscar todas las páginas que cumplen condiciones, separadas por si tienen condiciones o no
 	var best_page_with_conditions: EventPage = null
 	var best_index_with_conditions: int = -1
@@ -77,7 +75,7 @@ func setup_current_page() -> void:
 		if not page:
 			continue
 
-		if page.evaluate_conditions(event_id):
+		if page.evaluate_conditions(event_id, self):
 			# Esta página cumple las condiciones
 			if page.has_conditions():
 				# Tiene condiciones y las cumple
@@ -427,6 +425,10 @@ func _connect_to_state_signals() -> void:
 
 ## Callback cuando cambia un flag global
 func _on_state_changed(flag_name: String, _new_value: bool) -> void:
+	# Solo actualizar si el evento está en el árbol de escena
+	if not is_inside_tree():
+		return
+
 	# Reevaluar solo si la página actual o alguna página inactiva depende de este flag
 	var should_refresh = false
 	if current_page and current_page.depends_on_flag(flag_name):
@@ -442,6 +444,10 @@ func _on_state_changed(flag_name: String, _new_value: bool) -> void:
 
 ## Callback cuando cambia una variable global
 func _on_state_changed_var(variable_name: String, _new_value: Variant) -> void:
+	# Solo actualizar si el evento está en el árbol de escena
+	if not is_inside_tree():
+		return
+
 	# Reevaluar solo si la página actual o alguna página inactiva depende de esta variable
 	var should_refresh = false
 	if current_page and current_page.depends_on_variable(variable_name):
@@ -458,22 +464,41 @@ func _on_state_changed_var(variable_name: String, _new_value: Variant) -> void:
 ## Callback cuando cambia un self-switch
 func _on_state_changed_switch(event_id: String, _switch_letter: String, _new_value: bool) -> void:
 	# Solo reevaluar si el self-switch pertenece a este evento
-	if event_id == _get_event_id():
+	# Y si el evento está en el árbol de escena (no se actualiza si el mapa se está des-renderizando)
+	if event_id == _get_event_id() and is_inside_tree():
 		refresh_active_page()
 
 
 ## Obtiene un ID único para este evento (usado para self-switches)
 ## Formato: "mapid_eventname" para evitar colisiones entre eventos con el mismo nombre en diferentes mapas
+## IMPORTANTE: Usa el mapa donde está el evento (desde su jerarquía), no el mapa activo actual
 func _get_event_id() -> String:
-	var map_id = GameStateService.get_current_map_id()
-	if map_id.is_empty():
-		# Si no hay mapa actual, usar solo el nombre (fallback)
+	# Obtener el mapa desde la jerarquía del evento: Event → Events → OverworldGrid → MapScene
+	var grid = _get_grid()
+	if grid:
+		var map_scene = grid.get_parent()
+		if map_scene:
+			# El nombre del MapScene es el ID del mapa
+			var event_map_id = map_scene.name
+			if not event_map_id.is_empty():
+				return "%s_%s" % [event_map_id, name]
+
+	# Fallback: usar el mapa actual del GameStateService si no se puede obtener desde la jerarquía
+	var current_map_id = GameStateService.get_current_map_id()
+	if current_map_id.is_empty():
+		# Si no hay mapa, usar solo el nombre (último fallback)
 		return name
-	return "%s_%s" % [map_id, name]
+	return "%s_%s" % [current_map_id, name]
 
 func set_overworld_context(context: OverworldContext) -> void:
+	var had_context = overworld_context != null
 	overworld_context = context
-	# Re-evaluar la página activa después de recibir el contexto
-	# Esto asegura que el event_id se calcula con el map_id correcto
-	# (importante cuando se carga un mapa después de un teleport)
-	refresh_active_page()
+
+	# Solo re-evaluar la página activa la primera vez que se recibe el contexto
+	# (inicialización). NO re-evaluar cuando solo se actualiza el contexto por cambio de mapa
+	# La reactivación debe ocurrir solo cuando se activa el chunk (fuera de pantalla)
+	if not had_context:
+		# Primera vez que se recibe el contexto, evaluar la página
+		refresh_active_page()
+	# Si ya tenía contexto, no reactivar (evita resetear dirección al cambiar de mapa)
+	# El event_id se recalcula automáticamente en _get_event_id() usando el map_id actual

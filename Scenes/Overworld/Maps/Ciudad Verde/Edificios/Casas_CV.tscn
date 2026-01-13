@@ -1,4 +1,4 @@
-[gd_scene load_steps=142 format=4 uid="uid://7t7p0x84jhsq"]
+[gd_scene load_steps=140 format=4 uid="uid://7t7p0x84jhsq"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_xua5x"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_l11wd"]
@@ -12,12 +12,10 @@
 [ext_resource type="Script" uid="uid://c5vehg44neoyq" path="res://Scripts/Events/Commands/WarpCommand.gd" id="10_dk8mu"]
 [ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="11_0orxu"]
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="12_cply3"]
-[ext_resource type="Script" uid="uid://duy6kphc27h5t" path="res://Scripts/Overworld/Actors/NPC.gd" id="13_s6nqo"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="14_dk8mu"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="15_0orxu"]
 [ext_resource type="Texture2D" uid="uid://cquljp7bc6ehj" path="res://Sprites/Overworlds/Characters/trchar020.png" id="16_wyda7"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="17_s6nqo"]
-[ext_resource type="Script" uid="uid://sjy46vvgin41" path="res://Scripts/Events/Event.gd" id="18_wyda7"]
 [ext_resource type="Script" uid="uid://dkdqm32ve2cxw" path="res://Scripts/Resources/ChoiceBranch.gd" id="19_6ityf"]
 [ext_resource type="Script" uid="uid://c1hr8s5cdrs4o" path="res://Scripts/Events/Commands/ShowChoicesCommand.gd" id="20_c7fsu"]
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="21_6ityf"]
@@ -739,7 +737,7 @@ metadata/_edit_lock_ = true
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true
 script = ExtResource("2_l11wd")
-layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects")])
+layer_paths = Array[NodePath]([NodePath("Terrain"), NodePath("Objects"), NodePath("Terrain2")])
 metadata/_edit_lock_ = true
 
 [node name="Terrain" type="TileMapLayer" parent="OverworldGrid"]
@@ -779,64 +777,48 @@ pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_dk8mu")])
 position = Vector2(656, 112)
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_uompn")])
 
-[node name="Alumna" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
-z_index = 1
+[node name="Alumna" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
 position = Vector2(-48, 16)
-script = ExtResource("13_s6nqo")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_3jeuh")])
 
-[node name="Profesora" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
-z_index = 1
+[node name="Profesora" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
 position = Vector2(16, -80)
-script = ExtResource("13_s6nqo")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_eigod")])
 
 [node name="Mapa1" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(48, -112)
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_7x44d")])
 
-[node name="Pizarra1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
-z_index = 1
+[node name="Pizarra1" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(-48, -112)
-script = ExtResource("18_wyda7")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_538st")])
 
 [node name="Pizarra2" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(-16, -112)
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_538st")])
 
-[node name="Apuntes" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
-z_index = 1
+[node name="Apuntes" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(-48, -16)
-script = ExtResource("18_wyda7")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_r14ip")])
 
-[node name="Estanteria1" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
-z_index = 1
+[node name="Estanteria1" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(80, -112)
-script = ExtResource("18_wyda7")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_815ou")])
 
 [node name="Estanteria2" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(112, -112)
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_815ou")])
 
-[node name="Chica" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
-z_index = 1
+[node name="Chica" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
 position = Vector2(592, 16)
-script = ExtResource("13_s6nqo")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_c0k8x")])
 
-[node name="Hombre" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
-z_index = 1
+[node name="Hombre" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
 position = Vector2(752, -16)
-script = ExtResource("13_s6nqo")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_4wn46")])
 
-[node name="Spearow" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
-z_index = 1
+[node name="Spearow" parent="OverworldGrid/Events" instance=ExtResource("12_cply3")]
 position = Vector2(720, 48)
-script = ExtResource("13_s6nqo")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_4gyh5")])
 
 [node name="Encimera1" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
@@ -859,10 +841,8 @@ position = Vector2(624, -112)
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_0m324")])
 current_page_index = 1
 
-[node name="Cartel" type="Node2D" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
-z_index = 1
+[node name="Cartel" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]
 position = Vector2(752, -112)
-script = ExtResource("18_wyda7")
 pages = Array[ExtResource("5_mv16l")]([SubResource("Resource_i33kp")])
 
 [node name="Cartel2" parent="OverworldGrid/Events" instance=ExtResource("4_qkiws")]

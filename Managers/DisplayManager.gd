@@ -300,20 +300,54 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 		push_error("DisplayManager._show_message_with_choices: Array de opciones vacío")
 		return -1
 
-	# Mostrar el mensaje sin esperar input y sin cerrar
-	# Con waitInput: false, show_custom espera a que el texto se escriba pero no espera input
+	# Flag para indicar que estamos en modo choices
+	var choices_mode_active = true
+	var message_finished = false
+
+	# Conectar a la señal finishedAllText para mostrar opciones automáticamente al finalizar
+	# sin esperar input adicional
+	var finished_callback = func():
+		if choices_mode_active and msg.messageHasFinished:
+			message_finished = true
+			# Finalizar sin cerrar y sin esperar input
+			msg._finish_without_closing()
+
+	if not msg.finishedAllText.is_connected(finished_callback):
+		msg.finishedAllText.connect(finished_callback)
+
+	# Mostrar el mensaje esperando input entre líneas (como ShowMessageCommand)
+	# Con waitInput: true, el mensaje esperará input en cada salto de línea
+	# closeAtEnd: false para mantener el mensaje visible cuando se muestren las opciones
+	# Iniciar show_custom y esperar a que termine
+	# frameStyle: HGSS (0) por defecto para aplicar el tema y mostrar el icono
 	await msg.show_custom(text, {
-		"waitInput": false,
+		"waitInput": true,  # true para esperar input entre líneas
 		"closeAtEnd": false,
 		"waitTime": 0.0,
-		"showIconAtEnd": false
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS  # Aplicar tema para mostrar el icono
 	})
 
-	# Pequeña pausa adicional para que el mensaje sea legible
-	await get_tree().create_timer(0.3).timeout
+	# Si el mensaje terminó pero aún no se llamó a _finish_without_closing,
+	# llamarlo ahora (por si la señal no se emitió o no se conectó correctamente)
+	if choices_mode_active and msg.messageHasFinished and msg._is_processing_message:
+		msg._finish_without_closing()
+
+	# Desconectar la señal
+	if msg.finishedAllText.is_connected(finished_callback):
+		msg.finishedAllText.disconnect(finished_callback)
+	choices_mode_active = false
+
+	# Guardar la posición final del scroll antes de mostrar las opciones
+	# Esto asegura que el texto se mantenga en la posición final
+	var final_scroll_position = msg.scroll.scroll_vertical
 
 	# Mostrar las opciones (el MessageBox permanece visible de fondo)
 	var selected_index = await choice_box.show_choices(options)
+
+	# Restaurar la posición del scroll después de mostrar las opciones
+	# para asegurar que el texto se mantenga en la posición final
+	msg.scroll.scroll_vertical = final_scroll_position
 
 	# Cerrar el MessageBox después de la selección solo si close_at_end es true
 	if close_at_end:

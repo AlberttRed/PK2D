@@ -33,7 +33,7 @@ enum ExecutionMode { QUEUED, PARALLEL }
 
 @export_group("Movement (NPC)")
 ## Tipo de movimiento del NPC (solo para NPCs)
-@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern", "RandomVertical", "RandomHorizontal") var movement_type: int = 0
+@export_enum("None", "Random", "Path", "RandomTurning", "LookPattern", "RandomVertical", "RandomHorizontal", "RandomTurningHorizontal", "RandomTurningVertical") var movement_type: int = 0
 
 ## Comportamiento de orientación al interactuar (solo para NPCs)
 @export_enum("Face Player", "Fixed", "Face and Restore") var orientation_behavior: int = 0
@@ -214,9 +214,10 @@ func _generate_npc_sprite_frames(texture: Texture2D, frame_size: Vector2 = Vecto
 
 ## Evalúa si las condiciones de esta página se cumplen
 ## Retorna true si la página puede activarse
-func evaluate_conditions(event_id: String = "") -> bool:
+func evaluate_conditions(event_id: String = "", source_event: Event = null) -> bool:
 	# Crear el contexto de evaluación
 	var context = EventConditionContext.new(event_id, GameStateService)
+	context.source_event = source_event
 
 	# Si no hay root_condition, la página siempre se puede activar
 	if not root_condition:

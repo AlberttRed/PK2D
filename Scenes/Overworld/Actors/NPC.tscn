@@ -17,24 +17,13 @@ animations = [{
 }]
 
 [node name="NPC" instance=ExtResource("1_base")]
-z_index = 1
 script = ExtResource("2_npc")
-movement_type = 0
-orientation_behavior = 0
-initial_direction = 1
-movement_speed = 2
-random_move_interval_min = 2.0
-random_move_interval_max = 5.0
-path_directions = Array[int]([])
-look_pattern_directions = Array[int]([])
-look_pattern_delay = 2.0
-random_turning_interval_min = 2.0
-random_turning_interval_max = 5.0
-awareness_enabled = false
-awareness_detection_distance = 3.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_npc_default")
 
 [node name="GridMotion" type="Node" parent="." index="2"]
 script = ExtResource("3_motion")
+
+[node name="ReflectionSprite" parent="." index="3"]
+z_as_relative = false
