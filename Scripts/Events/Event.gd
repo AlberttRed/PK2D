@@ -128,7 +128,9 @@ func update_sprite_from_current_page() -> void:
 
 	if current_page:
 		# Aplicar posición de la página si está definida
-		if current_page.page_position.x >= 0 and current_page.page_position.y >= 0:
+		# Solo considerar "no definida" si es exactamente (-1, -1)
+		# Las coordenadas del mapa pueden tener valores negativos válidos
+		if current_page.page_position != Vector2i(-1, -1):
 			_apply_page_position(current_page.page_position)
 
 		var style: ActorStyle = current_page.actor_style
@@ -421,15 +423,17 @@ func _connect_to_state_signals() -> void:
 		GameStateService.variable_changed.connect(_on_state_changed_var)
 	if not GameStateService.self_switch_changed.is_connected(_on_state_changed_switch):
 		GameStateService.self_switch_changed.connect(_on_state_changed_switch)
+	if not GameStateService.trainer_battle_result_changed.is_connected(_on_trainer_battle_result_changed):
+		GameStateService.trainer_battle_result_changed.connect(_on_trainer_battle_result_changed)
 
 
 ## Callback cuando cambia un flag global
-func _on_state_changed(flag_name: String, _new_value: bool) -> void:
+func _on_state_changed(flag_name: String, new_value: bool) -> void:
 	# Solo actualizar si el evento está en el árbol de escena
 	if not is_inside_tree():
 		return
 
-	# Reevaluar solo si la página actual o alguna página inactiva depende de este flag
+	# Verificar si alguna página depende de este flag
 	var should_refresh = false
 	if current_page and current_page.depends_on_flag(flag_name):
 		should_refresh = true
@@ -438,6 +442,7 @@ func _on_state_changed(flag_name: String, _new_value: bool) -> void:
 			if page and page.depends_on_flag(flag_name):
 				should_refresh = true
 				break
+
 	if should_refresh:
 		refresh_active_page()
 
@@ -466,6 +471,25 @@ func _on_state_changed_switch(event_id: String, _switch_letter: String, _new_val
 	# Solo reevaluar si el self-switch pertenece a este evento
 	# Y si el evento está en el árbol de escena (no se actualiza si el mapa se está des-renderizando)
 	if event_id == _get_event_id() and is_inside_tree():
+		refresh_active_page()
+
+## Callback cuando cambia el resultado de un combate contra un trainer
+func _on_trainer_battle_result_changed(trainer_id: String, result: String) -> void:
+	# Solo actualizar si el evento está en el árbol de escena
+	if not is_inside_tree():
+		return
+
+	# Verificar si alguna página depende de este trainer
+	var should_refresh = false
+	if current_page and current_page.depends_on_trainer(trainer_id):
+		should_refresh = true
+	else:
+		for page in pages:
+			if page and page.depends_on_trainer(trainer_id):
+				should_refresh = true
+				break
+
+	if should_refresh:
 		refresh_active_page()
 
 

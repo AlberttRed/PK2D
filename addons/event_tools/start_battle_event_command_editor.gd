@@ -213,7 +213,7 @@ func _setup_ui() -> void:
 
 	defeated_flag_line_edit = LineEdit.new()
 	defeated_flag_line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	defeated_flag_line_edit.placeholder_text = "(vacío = usar flag del Trainer)"
+	defeated_flag_line_edit.placeholder_text = "ej: route_1_trainer_defeated"
 	defeated_flag_container.add_child(defeated_flag_line_edit)
 	vbox.add_child(defeated_flag_container)
 
@@ -278,6 +278,13 @@ func _on_select_trainer_data() -> void:
 		if trainer_data:
 			command.trainer_data = trainer_data
 			_update_trainer_data_display()
+
+			# Si el flag está vacío, generar uno basado en el TrainerData
+			if defeated_flag_line_edit and defeated_flag_line_edit.text.strip_edges().is_empty():
+				var default_flag = _generate_default_flag()
+				defeated_flag_line_edit.text = default_flag
+				command.defeated_flag = default_flag
+
 			print("StartBattleEventCommandEditor: TrainerData seleccionado: ", path)
 		else:
 			push_error("StartBattleEventCommandEditor: El archivo seleccionado no es un TrainerData válido")
@@ -402,6 +409,18 @@ func _on_remove_pokemon_pressed() -> void:
 
 	print("StartBattleEventCommandEditor: Pokémon eliminado del array")
 
+## Genera un flag por defecto basado en el formato estándar
+func _generate_default_flag() -> String:
+	# Si hay un TrainerData, usar su nombre como base
+	if command and command.trainer_data:
+		var trainer_name = command.trainer_data.resource_path.get_file().get_basename() if command.trainer_data.resource_path else "trainer"
+		# Convertir a snake_case y añadir sufijo
+		trainer_name = trainer_name.to_lower().replace(" ", "_")
+		return "%s_defeated" % trainer_name
+
+	# Si no hay TrainerData, usar un formato genérico
+	return "trainer_defeated"
+
 ## Carga un comando existente para editar
 func load_command(cmd: StartBattleEventCommand) -> void:
 	if not cmd:
@@ -409,6 +428,10 @@ func load_command(cmd: StartBattleEventCommand) -> void:
 		return
 
 	command = cmd
+
+	# Si el flag está vacío, generar uno por defecto
+	if cmd.defeated_flag.is_empty():
+		cmd.defeated_flag = _generate_default_flag()
 
 	# Guardar valores originales para poder cancelar
 	original_battle_type = cmd.battle_type
@@ -451,7 +474,15 @@ func _apply_values_to_command() -> void:
 	command.battle_type = battle_type_option.selected if battle_type_option else StartBattleEventCommand.BattleType.WILD
 	command.battle_mode = battle_mode_option.selected if battle_mode_option else 1
 	command.transition_type = transition_type_option.selected if transition_type_option else 0
-	command.defeated_flag = defeated_flag_line_edit.text if defeated_flag_line_edit else ""
+
+	# Aplicar flag con validación (no puede estar vacío)
+	var flag_text = defeated_flag_line_edit.text.strip_edges() if defeated_flag_line_edit else ""
+	if flag_text.is_empty():
+		# Si está vacío, generar uno por defecto
+		flag_text = _generate_default_flag()
+		if defeated_flag_line_edit:
+			defeated_flag_line_edit.text = flag_text
+	command.defeated_flag = flag_text
 	# trainer_data y wild_pokemon se editan desde el inspector
 
 ## Restaura los valores originales del comando
@@ -480,6 +511,18 @@ func _restore_original_values() -> void:
 	_update_wild_pokemon_display()
 
 func _on_accept_pressed() -> void:
+	# Validar que el flag no esté vacío
+	var flag_text = defeated_flag_line_edit.text.strip_edges() if defeated_flag_line_edit else ""
+	if flag_text.is_empty():
+		# Mostrar error y no cerrar la ventana
+		var error_dialog = AcceptDialog.new()
+		error_dialog.dialog_text = "El flag de derrota no puede estar vacío.\nPor favor, introduce un valor (ej: route_1_trainer_defeated)"
+		error_dialog.title = "Error de validación"
+		add_child(error_dialog)
+		error_dialog.popup_centered()
+		error_dialog.confirmed.connect(func(): error_dialog.queue_free())
+		return
+
 	_apply_values_to_command()
 	command_edited.emit(command)
 	hide()

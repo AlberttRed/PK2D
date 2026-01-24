@@ -8,6 +8,7 @@ extends Node
 signal flag_changed(flag_name: String, new_value: bool)
 signal variable_changed(variable_name: String, new_value: Variant)
 signal self_switch_changed(event_id: String, switch_letter: String, new_value: bool)
+signal trainer_battle_result_changed(trainer_id: String, result: String)
 
 # === DATOS DEL ESTADO DEL JUEGO ===
 var current_map_id: String = ""
@@ -15,8 +16,7 @@ var current_position: Vector2i = Vector2i.ZERO
 var facing_dir: Vector2 = Vector2.DOWN
 
 # Flags globales (Dictionary: nombre -> bool)
-var global_flags: Dictionary = {	"CHOOSING_STARTER": false,
-									"HAS_POKEDEX": false}
+var global_flags: Dictionary = {	"CHOOSING_STARTER": false}
 
 # Variables globales del juego (Dictionary: nombre -> valor)
 var game_variables: Dictionary = {	"BADGE_COUNT": 0}
@@ -159,6 +159,9 @@ func register_trainer_battle_result(trainer_id: String, result: String) -> void:
 		return
 
 	defeated_trainers[trainer_id] = result
+	print("GameStateService: Registrado resultado trainer_id='%s', result='%s'. Emitiendo señal trainer_battle_result_changed" % [trainer_id, result])
+	trainer_battle_result_changed.emit(trainer_id, result)
+	print("GameStateService: Señal trainer_battle_result_changed emitida para trainer_id='%s'" % trainer_id)
 
 # === SISTEMA DE CAMBIOS DIFERIDOS ===
 ## Registra un cambio diferido que se aplicará cuando se des-renderice el mapa donde se registró

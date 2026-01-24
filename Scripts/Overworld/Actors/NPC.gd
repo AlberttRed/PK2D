@@ -991,7 +991,10 @@ func _on_step_started() -> void:
 	var stride := ("left" if motion.stride_is_left else "right")
 
 	animator.set_direction(motion.dir, prefix, stride)
-	animator.set_speed_scale(motion.speed_multiplier)
+	# No aplicar speed_multiplier a la animación cuando se corre
+	# Las animaciones de correr ya tienen velocidad base 15.0 (vs 7.5 de caminar)
+	# El speed_multiplier solo afecta la velocidad de movimiento, no la animación
+	animator.set_speed_scale(1.0)
 
 ## Callback cuando GridMotion finaliza un paso
 func _on_step_finished(_tile: Vector2i) -> void:

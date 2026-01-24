@@ -37,6 +37,9 @@ const TRIGGER_CLASS_TO_INDEX = {
 	"AutorunTrigger": 4
 }
 
+# Script del editor de condiciones (precargado para mejor rendimiento)
+const CONDITION_EDITOR_SCRIPT = preload("res://addons/event_tools/condition_editor.gd")
+
 func _ready() -> void:
 	unresizable = false
 	always_on_top = false
@@ -920,6 +923,17 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 
 	if cond is NotCondition:
 		return "NOT (...)"
+
+	if cond is ActorPositionCondition:
+		var pos_cond = cond as ActorPositionCondition
+		var dir_str = ["Up", "Down", "Left", "Right"][pos_cond.direction]
+		return "Actor Position: %s %s" % [pos_cond.actor_name, dir_str]
+
+	if cond is TrainerDefeatedCondition:
+		var trainer_cond = cond as TrainerDefeatedCondition
+		if trainer_cond.flag_name.is_empty():
+			return "Trainer Defeated: (sin flag)"
+		return "Trainer Defeated: flag '%s'" % trainer_cond.flag_name
 
 	return "Condición desconocida"
 
@@ -2086,7 +2100,9 @@ func _on_map_view_button_pressed(page_index: int) -> void:
 		if pos == null or not pos is Vector2i:
 			pos = Vector2i(-1, -1)
 
-		if pos.x >= 0 and pos.y >= 0:
+		# Solo considerar "no definida" si es exactamente (-1, -1)
+		# Las coordenadas del mapa pueden tener valores negativos válidos
+		if pos != Vector2i(-1, -1):
 			# Las coordenadas guardadas ya son coordenadas reales del TileMapLayer
 			# No necesitamos ajustar, usar directamente
 			selector_window.selected_cell = pos
@@ -2107,14 +2123,17 @@ func _get_position_text(page: EventPage) -> String:
 	print("Event Editor: _get_position_text - acceso directo: (%d, %d)" % [pos.x, pos.y])
 
 	# Si el acceso directo falla o retorna valores inválidos, intentar con get()
-	if pos.x < 0 or pos.y < 0:
+	# Solo verificar si es exactamente (-1, -1) que es el valor por defecto "no definida"
+	if pos == Vector2i(-1, -1):
 		var pos_value = page.get("page_position")
 		print("Event Editor: _get_position_text - get() retornó: ", pos_value)
 		if pos_value != null and pos_value is Vector2i:
 			pos = pos_value as Vector2i
 			print("Event Editor: _get_position_text - después de get(): (%d, %d)" % [pos.x, pos.y])
 
-	if pos.x < 0 or pos.y < 0:
+	# Solo considerar "no definida" si es exactamente (-1, -1)
+	# Las coordenadas del mapa pueden tener valores negativos válidos
+	if pos == Vector2i(-1, -1):
 		print("Event Editor: _get_position_text - retornando 'No definida' porque pos es (%d, %d)" % [pos.x, pos.y])
 		return "No definida (usa posición del evento)"
 
@@ -2165,10 +2184,12 @@ func _update_position_label(page_index: int) -> void:
 		return
 
 	# Verificar si hay posición asignada usando la misma lógica que _get_position_text
+	# Solo considerar "no definida" si es exactamente (-1, -1)
+	# Las coordenadas del mapa pueden tener valores negativos válidos
 	var pos = page.get("page_position")
 	var has_position = false
 	if pos != null and pos is Vector2i:
-		if pos.x >= 0 and pos.y >= 0:
+		if pos != Vector2i(-1, -1):
 			has_position = true
 
 	# Forzar que el botón esté oculto si no hay posición
@@ -2184,20 +2205,50 @@ func _on_position_selected(page_index: int, cell_pos: Vector2i) -> void:
 		push_error("Event Editor: No se pudo obtener la página " + str(page_index))
 		return
 
-	# Asignar directamente como se hace con otras propiedades (blocks_player, through, etc.)
+	print("Event Editor: Asignando posición (%d, %d) a página %d" % [cell_pos.x, cell_pos.y, page_index])
+
+	# Asignar usando set() para asegurar que el cambio se propague correctamente
+	# Esto es importante en el editor para que Godot detecte el cambio en Resources
+	page.set("page_position", cell_pos)
+
+	# También asignar directamente por si acaso
 	page.page_position = cell_pos
+
+	# Forzar que el cambio se propague marcando el recurso como modificado
+	# Esto es importante en el editor para que Godot detecte el cambio
+	page.notify_property_list_changed()
 
 	has_unsaved_changes = true
 
-	# Esperar un frame para asegurar que la asignación se haya completado
-	await get_tree().process_frame
-
-	# Actualizar el label de posición
+	# Actualizar el label de posición inmediatamente
 	_update_position_label(page_index)
+
+	# Refrescar el inspector para que muestre el cambio
+	_refresh_inspector()
 
 	# Verificar que se guardó correctamente
 	var saved_pos = page.page_position
 	print("Event Editor: Posición guardada para página %d: (%d, %d), verificada: (%d, %d)" % [page_index, cell_pos.x, cell_pos.y, saved_pos.x, saved_pos.y])
+
+	# Si la verificación falla, intentar de nuevo después de un frame
+	if saved_pos != cell_pos:
+		print("Event Editor: WARNING - La posición no coincide, reintentando actualización...")
+		call_deferred("_retry_position_update", page_index, cell_pos)
+
+func _retry_position_update(page_index: int, cell_pos: Vector2i) -> void:
+	var page = _get_page(page_index)
+	if not page:
+		return
+
+	# Intentar asignar de nuevo
+	page.page_position = cell_pos
+	_update_position_label(page_index)
+
+	var saved_pos = page.page_position
+	if saved_pos == cell_pos:
+		print("Event Editor: Posición actualizada correctamente en el reintento")
+	else:
+		push_error("Event Editor: ERROR - No se pudo guardar la posición después del reintento")
 
 func _on_clear_position_button_pressed(page_index: int) -> void:
 	var page = _get_page(page_index)
@@ -2246,33 +2297,14 @@ func _on_conditions_button_pressed(page_index: int) -> void:
 		return
 
 	# Abrir ventana de edición de condiciones
-	var editor_script = load("res://addons/event_tools/condition_editor.gd")
-	if not editor_script:
-		push_error("Event Editor: No se encontró el script del editor de condiciones")
-		return
-
-	# Verificar que el script sea un GDScript válido
-	if not (editor_script is GDScript):
-		push_error("Event Editor: El script del editor de condiciones no es un GDScript válido (tipo: %s)" % typeof(editor_script))
-		return
-
-	# Crear la instancia del editor
-	var editor_window = (editor_script as GDScript).new()
+	var editor_window = _create_condition_editor()
 	if not editor_window:
-		push_error("Event Editor: No se pudo crear la instancia del editor")
 		return
 
-	# Verificar que sea una Window
-	if not (editor_window is Window):
-		push_error("Event Editor: El editor de condiciones no es una Window válida")
-		return
-
-	add_child(editor_window)
 	editor_window.set_event_node(event_node)
 	editor_window.load_condition(page.root_condition)
 	editor_window.condition_edited.connect(func(cond: EventCondition): _on_page_condition_edited(page_index, cond))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
-
 	editor_window.popup_centered()
 
 # === GESTIÓN DE COMANDOS ===
@@ -7278,23 +7310,30 @@ func _open_condition_editor_for_branch(branch: EventBranch, conditional_command:
 		return
 
 	# Abrir ventana de edición de condiciones
-	var editor_script = load("res://addons/event_tools/condition_editor.gd")
-	if not editor_script:
-		push_error("Event Editor: No se encontró el script del editor de condiciones")
-		return
-
-	var editor_window = editor_script.new()
+	var editor_window = _create_condition_editor()
 	if not editor_window:
-		push_error("Event Editor: No se pudo crear la instancia del editor")
 		return
 
-	add_child(editor_window)
 	editor_window.set_event_node(event_node)
 	editor_window.load_condition(branch.condition)
 	editor_window.condition_edited.connect(func(cond: EventCondition): _on_branch_condition_edited(conditional_command, branch_index, cond, page_index))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
-
 	editor_window.popup_centered()
+
+## Crea una instancia del editor de condiciones
+## Retorna null si hay algún error
+func _create_condition_editor() -> Window:
+	if not CONDITION_EDITOR_SCRIPT:
+		push_error("Event Editor: No se encontró el script del editor de condiciones")
+		return null
+
+	var editor_window = CONDITION_EDITOR_SCRIPT.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return null
+
+	add_child(editor_window)
+	return editor_window
 
 ## Se llama cuando se edita la condición de una rama desde el editor principal
 func _on_branch_condition_edited(conditional_command: ConditionalCommand, branch_index: int, new_condition: EventCondition, page_index: int) -> void:

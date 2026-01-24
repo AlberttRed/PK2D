@@ -71,5 +71,6 @@ is_player = true
 
 [node name="Shadow" type="Sprite2D" parent="."]
 visible = false
+z_index = 1
 z_as_relative = false
 texture = ExtResource("14_p0ptx")

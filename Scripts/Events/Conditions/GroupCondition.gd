@@ -60,3 +60,11 @@ func depends_on_flag(flag_name: String) -> bool:
 			return true
 	return false
 
+## Verifica si este grupo de condiciones depende de un trainer específico
+## Recorre recursivamente todas las condiciones hijas
+func depends_on_trainer(trainer_id: String) -> bool:
+	for child in children:
+		if child and child.depends_on_trainer(trainer_id):
+			return true
+	return false
+

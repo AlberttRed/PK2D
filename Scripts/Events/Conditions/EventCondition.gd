@@ -21,3 +21,9 @@ func depends_on_variable(variable_name: String) -> bool:
 ## Por defecto retorna false (las condiciones base no dependen de flags)
 func depends_on_flag(flag_name: String) -> bool:
 	return false
+
+## Verifica si esta condición depende de un trainer específico (para TrainerDefeatedCondition)
+## Retorna true si la condición usa este trainer, false en caso contrario
+## Por defecto retorna false (las condiciones base no dependen de trainers)
+func depends_on_trainer(trainer_id: String) -> bool:
+	return false
