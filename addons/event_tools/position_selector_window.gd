@@ -370,9 +370,6 @@ func _get_reference_tile_layer() -> TileMapLayer:
 	return null
 
 func _on_assign_button_pressed() -> void:
-	# Restaurar visibilidad de eventos ocultos
-	_restore_events_visibility()
-
 	if multiple_selection_mode:
 		# Modo múltiple: emitir todas las celdas seleccionadas
 		if selected_tiles.is_empty():
@@ -384,6 +381,9 @@ func _on_assign_button_pressed() -> void:
 			return
 		# Emitir señal de celda seleccionada
 		cell_selected.emit(selected_cell)
+
+	# Restaurar visibilidad de eventos ocultos ANTES de cerrar
+	_restore_events_visibility()
 
 	# Cerrar la ventana de forma segura
 	hide()
@@ -898,6 +898,8 @@ func _draw_grid_overlay() -> void:
 
 ## Maneja el cierre de la ventana (botón X o cancelar)
 func _on_close_requested() -> void:
+	# Restaurar visibilidad de eventos ocultos antes de cerrar
+	_restore_events_visibility()
 	# Emitir señal de cancelación
 	cancelled.emit()
 	# Cerrar la ventana de forma segura

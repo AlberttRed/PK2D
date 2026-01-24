@@ -244,37 +244,23 @@ func _create_wild_participant() -> BattleParticipant:
 
 ## Marca el Trainer NPC como derrotado (si existe) y guarda el estado
 func _mark_trainer_as_defeated(context: Node) -> void:
-	var trainer: Trainer = null
+	# Guardar flag en GameStateService (debe estar configurado en el comando)
+	if not defeated_flag.is_empty():
+		GameStateService.set_event_flag(defeated_flag, true)
+		# La señal flag_changed hará que el Event reevalúe páginas automáticamente
 
-	# Detectar automáticamente el Trainer desde current_page.source_event
-	if context.current_page != null:
-		var page = context.current_page
-		# EventPage tiene source_event (asignado por EventSystem)
-		if page.source_event and page.source_event is Trainer:
-			trainer = page.source_event
-			print("StartBattleCommand: Trainer detectado automáticamente: '%s'" % trainer.name)
-
-	# Determinar qué flag usar para GameStateService
-	var flag_to_save = defeated_flag  # Primero, intentar usar el configurado en el comando
-
-	# Si no hay flag en el comando pero hay un Trainer con flag, usar el del Trainer
-	if flag_to_save.is_empty() and trainer and not trainer.defeated_flag.is_empty():
-		flag_to_save = trainer.defeated_flag
-		print("StartBattleCommand: Usando defeated_flag del Trainer: '%s'" % flag_to_save)
-
-	# Guardar flag en GameStateService
-	if not flag_to_save.is_empty():
-		GameStateService.set_event_flag(flag_to_save, true)
-		print("StartBattleCommand: Estado guardado en GameStateService (flag: '%s')" % flag_to_save)
-
-	# Marcar el Battler del Trainer como derrotado (si hay un Trainer detectado)
+	# Marcar el Battler del Trainer como derrotado
+	var trainer = _get_trainer_from_context(context)
 	if trainer and trainer.battler:
 		trainer.battler.is_defeated = true
-		print("StartBattleCommand: Trainer '%s' marcado como derrotado" % trainer.name)
-		# Las señales se desconectarán automáticamente cuando cambie la página
-		# (la nueva página tendrá enable_trainer_detection = false)
-	elif trainer and not trainer.battler:
-		push_warning("StartBattleCommand: El Trainer '%s' no tiene un Battler hijo" % trainer.name)
+
+## Obtiene el Trainer desde el contexto del evento
+func _get_trainer_from_context(context: Node) -> Trainer:
+	if context.current_page != null:
+		var page = context.current_page
+		if page.source_event and page.source_event is Trainer:
+			return page.source_event
+	return null
 
 
 ## Resetea los flags internos del Trainer para permitir nuevas detecciones

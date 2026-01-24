@@ -61,13 +61,12 @@ func show_custom(text: String, config := {}):
 	waitTime = config.get("waitTime", 0.0)
 	showIconAtEnd = config.get("showIconAtEnd", false)
 
-	# Aplicar tema si se especifica un estilo de marco
-	if config.has("frameStyle"):
-		var frame_style = config.get("frameStyle")
-		if frame_style is int:
-			set_frame_style(frame_style as MessageBoxFrameStyle.Values)
-		elif frame_style is MessageBoxFrameStyle.Values:
-			set_frame_style(frame_style)
+	# Aplicar tema (por defecto HGSS si no se especifica)
+	var frame_style = config.get("frameStyle", MessageBoxFrameStyle.Values.HGSS)
+	if frame_style is int:
+		set_frame_style(frame_style as MessageBoxFrameStyle.Values)
+	elif frame_style is MessageBoxFrameStyle.Values:
+		set_frame_style(frame_style)
 
 	await showMessage(text)
 

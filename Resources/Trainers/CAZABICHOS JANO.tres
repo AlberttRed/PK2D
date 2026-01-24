@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TrainerData" load_steps=7 format=3 uid="uid://ckvnqmn22p20f"]
+[gd_resource type="Resource" script_class="TrainerData" load_steps=6 format=3 uid="uid://ckvnqmn22p20f"]
 
 [ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_1ee48"]
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_1gy8p"]
@@ -17,26 +17,17 @@ ability_id = 19
 custom_move_ids = Array[int]([81, 40])
 metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
-[sub_resource type="Resource" id="Resource_nyei7"]
-script = ExtResource("1_1gy8p")
-pokemon_id = 10
-level = 6
-gender = 1
-nature_id = 19
-ability_id = 19
-custom_move_ids = Array[int]([33, 81])
-metadata/_custom_type_script = "uid://d4mopscjx7rum"
-
 [resource]
 script = ExtResource("2_jck04")
 trainer_id = 4
 trainer_class_id = 2
 display_name = "Jano"
+resource_id = "cazabichos_jano_defeated"
 ai_profile = SubResource("Resource_n0ay5")
 intro_text = "¡Eh! ¡Tienes POKÉMON! 
 ¡Sí! 
 ¡Al ataque!"
 defeat_text = "¡No! ¡Mi CATERPIE no pudo más!"
-party_data = Array[ExtResource("1_1gy8p")]([SubResource("Resource_1ee48"), SubResource("Resource_nyei7")])
+party_data = Array[ExtResource("1_1gy8p")]([SubResource("Resource_1ee48")])
 reward_money = 72
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

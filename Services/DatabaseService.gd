@@ -142,25 +142,85 @@ func _load_trainer_classes() -> void:
 			_trainer_classes_by_name[res.internal_name.to_lower()] = res
 	)
 
-## Utilidad genérica para escanear un directorio y cargar .tres
-func load_resources_from_dir(dir_path: String, on_loaded: Callable) -> void:
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
+## Carga recursos usando ResourceLoader (funciona en debug y exports)
+## Usa patrones de nombres conocidos para cada tipo de recurso
+func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
+	# Para Pokémon: intentar cargar del 000 al 151
+	if dir_path == POKEMON_DIR:
+		for i in range(0, 152):
+			var path := "%s/%03d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
 		return
-	dir.list_dir_begin()
-	while true:
-		var file := dir.get_next()
-		if file == "":
-			break
-		if dir.current_is_dir():
-			continue
-		if not file.ends_with(".tres"):
-			continue
-		var path := dir_path + "/" + file
-		var res := load(path)
-		if res != null:
-			on_loaded.call(res)
-	dir.list_dir_end()
+
+	# Para Moves: intentar cargar del 001 al 621 (rango conocido)
+	if dir_path == MOVES_DIR:
+		for i in range(1, 622):
+			var path := "%s/%03d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		return
+
+	# Para Types: intentar cargar del 01 al 18 (rango conocido)
+	if dir_path == TYPES_DIR:
+		for i in range(1, 19):
+			var path := "%s/%02d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		return
+
+	# Para Abilities: intentar cargar del 001 al 232 (rango típico de Gen 1-3)
+	if dir_path == ABILITIES_DIR:
+		for i in range(1, 233):
+			var path := "%s/%03d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		return
+
+	# Para Weather: intentar cargar del 01 al 10
+	if dir_path == WEATHERS_DIR:
+		for i in range(1, 11):
+			var path := "%s/%02d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		return
+
+	# Para Trainer Classes: no hay un patrón numérico claro
+	# Intentar usar DirAccess como fallback solo si está disponible
+	var dir := DirAccess.open(dir_path)
+	if dir != null:
+		dir.list_dir_begin()
+		while true:
+			var file := dir.get_next()
+			if file == "":
+				break
+			if dir.current_is_dir():
+				continue
+			if not file.ends_with(".tres"):
+				continue
+			var path := dir_path + "/" + file
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		dir.list_dir_end()
+	else:
+		push_warning("DatabaseService: No se pudo cargar recursos de %s (sin patrón numérico y DirAccess no disponible)" % dir_path)
+
+## Utilidad genérica para escanear un directorio y cargar .tres
+## Usa ResourceLoader que funciona tanto en debug como en builds exportados
+func load_resources_from_dir(dir_path: String, on_loaded: Callable) -> void:
+	_load_resources_by_pattern(dir_path, on_loaded)
 
 # === API DE ACCESO ===
 

@@ -17,10 +17,8 @@ class_name Trainer
 ## === CONFIGURACIÓN DE ENTRENADOR ===
 
 @export_group("State Tracking")
-## Flag para guardar si el entrenador fue derrotado (usa GameStateService)
-## Si está vacío, no se guarda el estado
-## Ejemplo: "route_1_youngster_joey_defeated"
-@export var defeated_flag: String = ""
+## NOTA: El flag de derrota se configura en StartBattleEventCommand.defeated_flag
+## Esto permite gestionar múltiples combates en el mismo trainer usando diferentes páginas
 
 ## Animación de exclamación a mostrar sobre el trainer (64x32px, ocupa 2 tiles de alto)
 var exclamation_sprite: SpriteFrames = preload("res://Resources/Animations/Overworld/trainer_exclamation.tres")
@@ -49,12 +47,9 @@ func _ready() -> void:
 	# Buscar el Battler hijo
 	_find_battler()
 
-	# Restaurar estado desde GameStateService si hay un defeated_flag configurado
-	if battler and not defeated_flag.is_empty():
-		var is_defeated_saved = GameStateService.get_event_flag(defeated_flag)
-		if is_defeated_saved:
-			battler.is_defeated = true
-			print("Trainer '%s': Estado restaurado desde GameStateService - Ya fue derrotado" % name)
+	# Restaurar estado desde GameStateService si hay un defeated_flag en el comando
+	# Se hace después de que la página activa esté configurada
+	call_deferred("_restore_defeated_state")
 
 	# Conectar señal de batalla terminada desde DisplayManager
 	call_deferred("_connect_display_manager_signals")
@@ -84,6 +79,19 @@ func _find_battler() -> void:
 			return
 
 	push_warning("Trainer '%s': No se encontró un nodo Battler hijo. Configura un Battler para este entrenador." % name)
+
+## Restaura el estado de derrota desde GameStateService usando el flag del comando
+func _restore_defeated_state() -> void:
+	if not battler:
+		return
+
+	var flag_name = _get_defeated_flag()
+	if flag_name.is_empty():
+		return
+
+	if GameStateService.get_event_flag(flag_name):
+		battler.is_defeated = true
+		_disconnect_detection_signals()
 
 
 ## Conecta a la señal de movimiento del jugador para detección
@@ -146,8 +154,12 @@ func _update_detection_state() -> void:
 	if process_mode != Node.PROCESS_MODE_DISABLED:
 		# Desconectar primero (por si acaso)
 		disconnect_external_signals()
-		# Reconectar si la página actual requiere detección
-		connect_external_signals()
+		# Reconectar solo si la página actual requiere detección
+		if current_page and current_page.enable_trainer_detection:
+			connect_external_signals()
+			print("Trainer '%s': Detección activada (página %d)" % [name, current_page_index])
+		else:
+			print("Trainer '%s': Detección desactivada (página %d no tiene enable_trainer_detection)" % [name, current_page_index if current_page else -1])
 
 
 ## Sobrescribe el método virtual de Event para conectar señales externas
@@ -155,6 +167,8 @@ func _update_detection_state() -> void:
 func connect_external_signals() -> void:
 	super.connect_external_signals()
 	# Conectar detección si está habilitada en la página actual
+	if is_defeated():
+		return
 	if current_page and current_page.enable_trainer_detection:
 		_connect_to_player_for_detection()
 		_connect_own_movement_for_detection()
@@ -203,6 +217,8 @@ func _on_direction_changed(_new_direction: Vector2) -> void:
 func _on_movement_detected(_tile: Vector2i = Vector2i.ZERO) -> void:
 	# No detectar si ya está iniciando batalla
 	if _initiating_battle or _player_detected:
+		return
+	if is_defeated():
 		return
 
 	# No detectar durante eventos o movimiento pausado
@@ -354,6 +370,8 @@ func _is_tile_blocking_vision(tile: Vector2i, grid: OverworldGrid) -> bool:
 
 ## Inicia la secuencia de batalla: Exclamación → Movimiento → Batalla
 func _start_battle_sequence() -> void:
+	if is_defeated():
+		return
 	_initiating_battle = true
 
 	# Bloquear controles del jugador
@@ -537,21 +555,32 @@ func _on_battle_finished(winner_side: String) -> void:
 	if not _initiating_battle:
 		return
 
-	print("Trainer '%s': Batalla terminada. Ganador: %s" % [name, winner_side])
+	if winner_side != "player" or not battler:
+		_reset_battle_state()
+		return
 
-	# Marcar como derrotado si perdió y guardar en GameStateService
-	if winner_side == "player" and battler:
-		battler.is_defeated = true
-		print("Trainer '%s': Marcado como derrotado" % name)
+	# Marcar como derrotado
+	battler.is_defeated = true
 
-		# Guardar estado en GameStateService si hay un defeated_flag configurado
-		if not defeated_flag.is_empty():
-			GameStateService.set_event_flag(defeated_flag, true)
-			print("Trainer '%s': Estado guardado en GameStateService (flag: '%s')" % [name, defeated_flag])
-			# La señal flag_changed hará que el Event reevalúe páginas
-			# y _update_detection_state() se encargará de desconectar si es necesario
+	# Guardar flag en GameStateService (desde StartBattleEventCommand)
+	var flag_to_save = _get_defeated_flag()
+	if not flag_to_save.is_empty():
+		GameStateService.set_event_flag(flag_to_save, true)
+		# La señal flag_changed hará que el Event reevalúe páginas automáticamente
 
-	# Resetear flags
+	_reset_battle_state()
+
+## Obtiene el flag a guardar cuando el trainer es derrotado
+## Usa el defeated_flag del StartBattleEventCommand en la página activa
+func _get_defeated_flag() -> String:
+	if current_page:
+		var battle_command = current_page.get_battle_command()
+		if battle_command:
+			return battle_command.defeated_flag
+	return ""
+
+## Resetea el estado interno después de la batalla
+func _reset_battle_state() -> void:
 	_initiating_battle = false
 	_player_detected = false
 

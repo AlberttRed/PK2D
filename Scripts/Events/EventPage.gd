@@ -244,6 +244,13 @@ func depends_on_flag(flag_name: String) -> bool:
 		return false
 	return root_condition.depends_on_flag(flag_name)
 
+## Verifica si esta página depende de un trainer específico (para TrainerDefeatedCondition)
+## Retorna true si alguna condición de la página usa este trainer
+func depends_on_trainer(trainer_id: String) -> bool:
+	if not root_condition:
+		return false
+	return root_condition.depends_on_trainer(trainer_id)
+
 
 ## Busca el primer comando de un tipo específico en esta página
 ## Retorna el comando o null si no se encuentra

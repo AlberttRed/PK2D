@@ -179,6 +179,9 @@ class MapData:
 ## Registro de todos los mapas del mundo
 var map_registry: Dictionary = {} # {map_id: MapData}
 
+## Mapas que están siendo liberados (para evitar liberaciones duplicadas)
+var maps_being_freed: Array[String] = []
+
 ## Índice de escenas para búsqueda rápida (nombre_archivo: PackedScene)
 var scene_index: Dictionary = {}
 
@@ -316,7 +319,15 @@ func _register_map_from_scene(scene_name: String) -> void:
 		if prop_name == "world_position":
 			world_pos = prop_value
 		elif prop_name == "neighbors":
-			scene_neighbors = prop_value
+			# Convertir explícitamente a Array[String] ya que el estado de la escena
+			# puede devolver un Array genérico en builds exportados
+			if prop_value is Array:
+				scene_neighbors = []
+				for item in prop_value:
+					if item is String:
+						scene_neighbors.append(item)
+			else:
+				scene_neighbors = prop_value as Array[String]
 
 	# Registrar el mapa con la posición leída
 	register_map_with_position(scene_name, world_pos)
@@ -410,25 +421,53 @@ func _load_map(map_id: String) -> Node:
 	if enable_map_caching:
 		map_data.cached_instance = instance
 		# El mapa se añadirá al árbol cuando sea activado o renderizado como vecino
-		_manage_cache()
+		# Pasar map_id para proteger el mapa que se está cargando
+		_manage_cache(map_id)
 
 	return instance
 
 
 ## Gestiona el límite de caché
-func _manage_cache() -> void:
+## @param currently_loading: ID del mapa que se está cargando actualmente (para protegerlo)
+func _manage_cache(currently_loading: String = "") -> void:
 	if not enable_map_caching:
 		return
+
+	# Obtener lista de mapas a proteger (activo + vecinos + renderizados + el que se está cargando)
+	var maps_to_protect: Array[String] = []
+
+	# Proteger el mapa que se está cargando actualmente
+	if currently_loading != "":
+		maps_to_protect.append(currently_loading)
+
+	if active_map:
+		maps_to_protect.append(active_map.name)
+		# Añadir vecinos del mapa activo para protegerlos durante la precarga
+		if map_registry.has(active_map.name):
+			var active_data: MapData = map_registry[active_map.name]
+			maps_to_protect.append_array(active_data.neighbors)
+
+	# Añadir mapas renderizados a la lista de protección
+	for map_id in map_registry.keys():
+		var map_data: MapData = map_registry[map_id]
+		if map_data.is_rendered and not map_id in maps_to_protect:
+			maps_to_protect.append(map_id)
 
 	var cached_count := 0
 	var oldest_maps: Array[MapData] = []
 
+	# Contar mapas cacheados y crear lista de candidatos a liberar (excluyendo protegidos y los que se están liberando)
 	for map_data: MapData in map_registry.values():
 		if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
+			# Excluir mapas que están siendo liberados
+			if map_data.id in maps_being_freed:
+				continue
 			cached_count += 1
-			oldest_maps.append(map_data)
+			# Solo considerar para liberar si NO está protegido
+			if not map_data.id in maps_to_protect:
+				oldest_maps.append(map_data)
 
-	# Si excedemos el límite, liberar los más antiguos
+	# Si excedemos el límite, liberar los más antiguos que NO están protegidos
 	if cached_count > max_cached_maps:
 		var to_free := cached_count - max_cached_maps
 		print("WorldSystem: Gestionando caché - liberando %d mapas antiguos" % to_free)
@@ -440,11 +479,22 @@ func _manage_cache() -> void:
 ## Libera un mapa cacheado
 func _free_cached_map(map_data: MapData) -> void:
 	if map_data.cached_instance and is_instance_valid(map_data.cached_instance):
-		# Solo liberar si NO es el mapa activo
-		if map_data.cached_instance != active_map:
+		# Solo liberar si NO es el mapa activo y NO está siendo liberado ya
+		if map_data.cached_instance != active_map and not map_data.id in maps_being_freed:
+			# Marcar como siendo liberado antes de queue_free() (que es diferido)
+			maps_being_freed.append(map_data.id)
 			print("WorldSystem: Liberando mapa cacheado: %s" % map_data.id)
 			map_data.cached_instance.queue_free()
 			map_data.cached_instance = null
+
+			# Limpiar el flag después de que queue_free() se ejecute (en el siguiente frame)
+			# Esto evita que el flag se quede permanentemente
+			call_deferred("_remove_from_being_freed", map_data.id)
+
+
+## Remueve un mapa de la lista de mapas siendo liberados (llamado diferidamente)
+func _remove_from_being_freed(map_id: String) -> void:
+	maps_being_freed.erase(map_id)
 
 
 ## Cambia al mapa especificado
@@ -540,12 +590,18 @@ func _preload_neighbors(map_id: String) -> void:
 	var map_data: MapData = map_registry[map_id]
 
 	if map_data.neighbors.is_empty():
+		print("WorldSystem: Mapa %s no tiene vecinos definidos" % map_id)
 		return
+
+	print("WorldSystem: Precargando vecinos de %s: %s" % [map_id, map_data.neighbors])
 
 	# Cargar vecinos del mapa actual (sistema original - siempre ha funcionado así)
 	for neighbor_id in map_data.neighbors:
 		if map_registry.has(neighbor_id):
+			print("WorldSystem: Cargando vecino %s de %s" % [neighbor_id, map_id])
 			_load_neighbor_map(neighbor_id)
+		else:
+			print("WorldSystem: WARNING - Vecino %s de %s no está registrado" % [neighbor_id, map_id])
 
 	# Actualizar chunks activos después de cargar vecinos
 	# (los chunks se usan solo para activar/desactivar eventos/tiles, no para cargar mapas)
@@ -564,6 +620,7 @@ func _preload_neighbors(map_id: String) -> void:
 ## También registra el mapa en chunks globales cuando se carga
 func _load_neighbor_map(neighbor_id: String) -> void:
 	if not map_registry.has(neighbor_id):
+		print("WorldSystem: WARNING - Intento de cargar vecino no registrado: %s" % neighbor_id)
 		return
 
 	var neighbor_data: MapData = map_registry[neighbor_id]
@@ -571,42 +628,54 @@ func _load_neighbor_map(neighbor_id: String) -> void:
 	# Obtener o cargar la instancia
 	var neighbor_instance = get_map(neighbor_id)
 
-	if neighbor_instance and not neighbor_data.is_rendered:
-		# CRÍTICO: Añadir al WorldSystem para que sea visible (no al cache)
-		if not is_ancestor_of(neighbor_instance):
-			# Remover del padre actual si tiene uno
-			var current_parent = neighbor_instance.get_parent()
-			if current_parent:
-				current_parent.remove_child(neighbor_instance)
+	if not neighbor_instance:
+		print("WorldSystem: ERROR - No se pudo cargar instancia del vecino: %s" % neighbor_id)
+		return
 
-			# Añadir al WorldSystem
-			add_child(neighbor_instance)
-
-		# Posicionar según coordenadas mundiales
+	# Si ya está renderizado, solo asegurar que esté visible y en la posición correcta
+	if neighbor_data.is_rendered:
+		print("WorldSystem: Vecino %s ya está renderizado, asegurando visibilidad" % neighbor_id)
 		if neighbor_instance is Node2D:
+			neighbor_instance.visible = true
 			neighbor_instance.global_position = neighbor_data.world_position
+		return
 
-		# Hacer visible
-		neighbor_instance.visible = true
+	print("WorldSystem: Renderizando vecino %s (no estaba renderizado)" % neighbor_id)
+	# CRÍTICO: Añadir al WorldSystem para que sea visible (no al cache)
+	if not is_ancestor_of(neighbor_instance):
+		# Remover del padre actual si tiene uno
+		var current_parent = neighbor_instance.get_parent()
+		if current_parent:
+			current_parent.remove_child(neighbor_instance)
 
-		# Desactivar procesamiento (solo el activo procesa)
-		if neighbor_instance.has_method("deactivate"):
-			neighbor_instance.deactivate()
-		else:
-			_disable_map_processing(neighbor_instance)
+		# Añadir al WorldSystem
+		add_child(neighbor_instance)
 
-		neighbor_data.is_rendered = true
+	# Posicionar según coordenadas mundiales
+	if neighbor_instance is Node2D:
+		neighbor_instance.global_position = neighbor_data.world_position
 
-		# CRÍTICO: Inyectar contexto al grid del mapa vecino para que los NPCs tengan contexto
-		# Esto es necesario para que los NPCs en mapas vecinos puedan moverse correctamente
-		if context:
-			var neighbor_grid = neighbor_instance.get_node_or_null("OverworldGrid") as OverworldGrid
-			if neighbor_grid and neighbor_grid.has_method("set_context"):
-				neighbor_grid.set_context(context)
+	# Hacer visible
+	neighbor_instance.visible = true
 
-		# Registrar el mapa en chunks globales (cuando se carga por primera vez)
-		if chunk_controller:
-			chunk_controller.register_map_to_global_chunks(neighbor_id)
+	# Desactivar procesamiento (solo el activo procesa)
+	if neighbor_instance.has_method("deactivate"):
+		neighbor_instance.deactivate()
+	else:
+		_disable_map_processing(neighbor_instance)
+
+	neighbor_data.is_rendered = true
+
+	# CRÍTICO: Inyectar contexto al grid del mapa vecino para que los NPCs tengan contexto
+	# Esto es necesario para que los NPCs en mapas vecinos puedan moverse correctamente
+	if context:
+		var neighbor_grid = neighbor_instance.get_node_or_null("OverworldGrid") as OverworldGrid
+		if neighbor_grid and neighbor_grid.has_method("set_context"):
+			neighbor_grid.set_context(context)
+
+	# Registrar el mapa en chunks globales (cuando se carga por primera vez)
+	if chunk_controller:
+		chunk_controller.register_map_to_global_chunks(neighbor_id)
 
 
 ## Descarga mapas que ya no son vecinos del mapa actual (libera memoria)

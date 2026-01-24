@@ -173,6 +173,12 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 		var dir_str = ["Up", "Down", "Left", "Right"][pos_cond.direction]
 		return "Actor Position: %s %s" % [pos_cond.actor_name, dir_str]
 
+	if cond is TrainerDefeatedCondition:
+		var trainer_cond = cond as TrainerDefeatedCondition
+		if trainer_cond.flag_name.is_empty():
+			return "Trainer Defeated: (sin flag)"
+		return "Trainer Defeated: flag '%s'" % trainer_cond.flag_name
+
 	return "Condición desconocida"
 
 ## Convierte un operador a string
@@ -493,6 +499,58 @@ func _show_actor_position_properties(pos_cond: ActorPositionCondition) -> void:
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	properties_panel.add_child(desc_label)
 
+## Muestra las propiedades de TrainerDefeatedCondition
+func _show_trainer_defeated_properties(trainer_cond: TrainerDefeatedCondition) -> void:
+	_clear_properties_panel()
+
+	var info_label = Label.new()
+	info_label.text = "Condición: Trainer Defeated"
+	info_label.add_theme_font_size_override("font_size", 14)
+	properties_panel.add_child(info_label)
+	properties_panel.add_child(HSeparator.new())
+
+	# Flag name
+	var name_container = HBoxContainer.new()
+	var name_label = Label.new()
+	name_label.text = "Flag Name:"
+	name_label.custom_minimum_size.x = 150
+	name_container.add_child(name_label)
+
+	var flag_name_edit = LineEdit.new()
+	flag_name_edit.text = trainer_cond.flag_name
+	flag_name_edit.placeholder_text = "Ej: rival_inicio_c_defeated (debe coincidir con defeated_flag del StartBattleEventCommand)"
+	flag_name_edit.text_changed.connect(func(text: String):
+		var trimmed_text = text.strip_edges()
+		trainer_cond.flag_name = trimmed_text
+		_refresh_condition_tree()
+	)
+	flag_name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_container.add_child(flag_name_edit)
+	properties_panel.add_child(name_container)
+
+	# Validación: mostrar advertencia si el flag está vacío
+	var validation_label = Label.new()
+	validation_label.name = "ValidationLabel"
+	validation_label.add_theme_color_override("font_color", Color.RED)
+	validation_label.visible = trainer_cond.flag_name.is_empty()
+	validation_label.text = "⚠ El nombre del flag no puede estar vacío"
+	properties_panel.add_child(validation_label)
+
+	# Conectar para actualizar la validación en tiempo real
+	flag_name_edit.text_changed.connect(func(text: String):
+		var trimmed_text = text.strip_edges()
+		trainer_cond.flag_name = trimmed_text
+		if validation_label:
+			validation_label.visible = trimmed_text.is_empty()
+		_refresh_condition_tree()
+	)
+
+	# Info
+	var desc_label = Label.new()
+	desc_label.text = "Comprueba si el entrenador ha sido derrotado consultando el diccionario defeated_trainers de GameStateService.\n\nEl trainer está derrotado si tiene resultado 'V' (Victoria del jugador) en defeated_trainers."
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	properties_panel.add_child(desc_label)
+
 ## Se llama cuando se selecciona una condición en el árbol
 func _on_condition_selected() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -528,6 +586,8 @@ func _on_condition_selected() -> void:
 		_show_not_properties(cond as NotCondition)
 	elif cond is ActorPositionCondition or script_path.ends_with("ActorPositionCondition.gd"):
 		_show_actor_position_properties(cond as ActorPositionCondition)
+	elif cond is TrainerDefeatedCondition or script_path.ends_with("TrainerDefeatedCondition.gd"):
+		_show_trainer_defeated_properties(cond as TrainerDefeatedCondition)
 	else:
 		_clear_properties_panel()
 		# Debug: mostrar información sobre el tipo de condición
@@ -588,6 +648,7 @@ func _on_add_condition_pressed() -> void:
 	popup.add_item("Grupo (AND/OR)")
 	popup.add_item("NOT")
 	popup.add_item("Actor Position")
+	popup.add_item("Trainer Defeated")
 
 	add_child(popup)
 	popup.id_pressed.connect(func(id: int):
@@ -611,6 +672,8 @@ func _on_condition_type_selected(id: int) -> void:
 			new_cond = NotCondition.new()
 		4:  # Actor Position
 			new_cond = ActorPositionCondition.new()
+		5:  # Trainer Defeated
+			new_cond = TrainerDefeatedCondition.new()
 
 	if not new_cond:
 		return
@@ -987,6 +1050,7 @@ func _on_not_edit_child_pressed() -> void:
 		popup.add_item("Grupo (AND/OR)")
 		popup.add_item("NOT")
 		popup.add_item("Actor Position")
+		popup.add_item("Trainer Defeated")
 
 		add_child(popup)
 		popup.id_pressed.connect(func(id: int):
@@ -1017,6 +1081,8 @@ func _on_not_child_type_selected(not_cond: NotCondition, id: int) -> void:
 			new_cond = NotCondition.new()
 		4:  # Actor Position
 			new_cond = ActorPositionCondition.new()
+		5:  # Trainer Defeated
+			new_cond = TrainerDefeatedCondition.new()
 
 	if new_cond:
 		not_cond.child = new_cond
@@ -1109,6 +1175,7 @@ func _apply_values() -> void:
 		var group_cond = cond as GroupCondition
 		if group_mode_option != null and group_mode_option.is_visible_in_tree():
 			group_cond.mode = GroupCondition.Mode.ALL if group_mode_option.selected == 0 else GroupCondition.Mode.ANY
+	# TrainerDefeatedCondition: El flag se actualiza en tiempo real desde el LineEdit
 
 ## Restaura los valores originales
 func _restore_original_values() -> void:
@@ -1122,6 +1189,33 @@ func _restore_original_values() -> void:
 
 ## Se llama cuando se presiona Aceptar
 func _on_accept_pressed() -> void:
+	# Validar que TrainerDefeatedCondition tenga flag
+	if condition is TrainerDefeatedCondition:
+		var trainer_cond = condition as TrainerDefeatedCondition
+		if trainer_cond.flag_name.strip_edges().is_empty():
+			var error_dialog = AcceptDialog.new()
+			error_dialog.dialog_text = "El nombre del flag no puede estar vacío.\nPor favor, introduce un valor (ej: rival_inicio_c_defeated)"
+			error_dialog.title = "Error de validación"
+			add_child(error_dialog)
+			error_dialog.popup_centered()
+			error_dialog.confirmed.connect(func(): error_dialog.queue_free())
+			return
+
+	# Validar recursivamente si hay TrainerDefeatedCondition en grupos
+	if condition is GroupCondition:
+		var group_cond = condition as GroupCondition
+		for child_cond in group_cond.children:
+			if child_cond is TrainerDefeatedCondition:
+				var trainer_cond = child_cond as TrainerDefeatedCondition
+				if trainer_cond.flag_name.strip_edges().is_empty():
+					var error_dialog = AcceptDialog.new()
+					error_dialog.dialog_text = "El nombre del flag no puede estar vacío.\nPor favor, introduce un valor (ej: rival_inicio_c_defeated)"
+					error_dialog.title = "Error de validación"
+					add_child(error_dialog)
+					error_dialog.popup_centered()
+					error_dialog.confirmed.connect(func(): error_dialog.queue_free())
+					return
+
 	_apply_values()
 	# Debug: verificar el valor antes de emitir
 	if condition is VariableCondition:

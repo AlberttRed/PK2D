@@ -92,7 +92,10 @@ func _on_step_started() -> void:
 		sprite.stop()
 	sprite.play(anim_to_play)
 
-	sprite.speed_scale = motion.speed_multiplier#1.0 / motion.get_step_duration()   # usa el FPS que pusiste en el editor
+	# No aplicar speed_multiplier a la animación cuando se corre
+	# Las animaciones de correr ya tienen velocidad base 15.0 (vs 7.5 de caminar)
+	# El speed_multiplier solo afecta la velocidad de movimiento, no la animación
+	sprite.speed_scale = 1.0
 
 func _on_step_finished(tile: Vector2i) -> void:
 	# Si está en modo surfing, verificar si llegó a tierra
