@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://pmygoio0g6o0"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_bsb8d"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pn6jr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i7m4t"]
+atlas = ExtResource("1_bsb8d")
+region = Rect2(576, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_pn6jr")
+id = 281
+internal_name = "toxic-plate"
+display_name = "Tabla Tóxica"
+description = "Dispositivo de protección muy pesado. Cierto Pokémon lo adora."
+icon = SubResource("AtlasTexture_i7m4t")

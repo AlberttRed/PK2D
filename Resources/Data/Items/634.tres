@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bu5d17y2tanqx"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_da5au"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ow63p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4668p"]
+atlas = ExtResource("1_ow63p")
+region = Rect2(128, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_da5au")
+id = 634
+internal_name = "x-speed-2"
+display_name = "Velocidad X 2"
+description = "Cuando se usa, un Pokémon de tu equipo pierde su objeto."
+icon = SubResource("AtlasTexture_4668p")

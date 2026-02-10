@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cgll4ksqp2fpc"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d5m7o"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_kt73y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o37ch"]
+atlas = ExtResource("1_kt73y")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_d5m7o")
+id = 209
+internal_name = "scope-lens"
+display_name = "Periscopio"
+description = "Actúa como combustible y potencia los movimientos de tipo Fuego. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_o37ch")
+kind = 7

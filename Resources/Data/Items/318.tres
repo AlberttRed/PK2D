@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://chgw2c64ex4qs"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_10fgq"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_riw3e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ji0cq"]
+atlas = ExtResource("1_riw3e")
+region = Rect2(384, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_10fgq")
+id = 318
+internal_name = "tm14"
+display_name = "MT14"
+description = "Ataca con contundentes puñetazos. Puede destruir barreras como Pantalla de Luz y Reflejo."
+icon = SubResource("AtlasTexture_ji0cq")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

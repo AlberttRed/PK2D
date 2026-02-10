@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://myu68l41v40b"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ktjd1"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_rskyq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rskyq"]
+atlas = ExtResource("1_rskyq")
+region = Rect2(256, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_ktjd1")
+id = 15
+internal_name = "quick-ball"
+display_name = "Veloz Ball"
+description = "Una Poké Ball algo distinta que potencia el índice de captura si se usa al inicio de un encuentro con Pokémon salvajes."
+icon = SubResource("AtlasTexture_rskyq")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

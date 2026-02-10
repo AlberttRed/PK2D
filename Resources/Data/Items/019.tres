@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdrew2nin4g13"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7uyus"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_tfosr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tfosr"]
+atlas = ExtResource("1_tfosr")
+region = Rect2(512, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_7uyus")
+id = 19
+internal_name = "burn-heal"
+display_name = "Antiquemar"
+description = "Medicina en espray que cura las quemaduras a un Pokémon."
+icon = SubResource("AtlasTexture_tfosr")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

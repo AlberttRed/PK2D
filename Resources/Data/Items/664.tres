@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c64h6n57c3h5b"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_e4he0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_yawmx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6iqak"]
+atlas = ExtResource("1_e4he0")
+region = Rect2(128, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_yawmx")
+id = 664
+internal_name = "gram-1"
+display_name = "Envío 1"
+description = "Una carta sutilmente perfumada que el Profesor Ciprés le ha escrito a tu madre."
+icon = SubResource("AtlasTexture_6iqak")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

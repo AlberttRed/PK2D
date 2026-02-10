@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c5lsg7j717jwp"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_pendj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r2axm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssgbk"]
+atlas = ExtResource("1_pendj")
+region = Rect2(0, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_r2axm")
+id = 622
+internal_name = "big-nugget"
+display_name = "Maxipepita"
+description = "Aumenta bastante el Ataque Especial en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_ssgbk")

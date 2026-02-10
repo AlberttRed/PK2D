@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://0lyhupyp0gkm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_v2qi2"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_vim0t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bfgvu"]
+atlas = ExtResource("1_vim0t")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_v2qi2")
+id = 191
+internal_name = "white-herb"
+display_name = "Hierba Blanca"
+description = "Es un huevo lleno de felicidad que te hace ganar Puntos de Experiencia extra en combate. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_bfgvu")
+kind = 7

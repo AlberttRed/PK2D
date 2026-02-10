@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://j2nx12lqf8uk"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_84h44"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_h0ffu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jhy1q"]
+atlas = ExtResource("1_h0ffu")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_84h44")
+id = 793
+internal_name = "swampertite"
+display_name = "Swampertita"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Swampert en combate."
+icon = SubResource("AtlasTexture_jhy1q")

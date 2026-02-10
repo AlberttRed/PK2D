@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bf3tk7rwra0d1"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_2sfja"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kntse"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_snmfb"]
+atlas = ExtResource("1_2sfja")
+region = Rect2(448, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_kntse")
+id = 289
+internal_name = "dread-plate"
+display_name = "Tabla Oscura"
+description = "Engancha y araña al objetivo con unas potentes y enormes garras afiladas."
+icon = SubResource("AtlasTexture_snmfb")

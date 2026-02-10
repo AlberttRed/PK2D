@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://csvuvdneefrd6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d8lyp"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_lanrb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgput"]
+atlas = ExtResource("1_lanrb")
+region = Rect2(192, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_d8lyp")
+id = 174
+internal_name = "haban-berry"
+display_name = "Baya Anjiro"
+description = "Restaura cualquier característica reducida en combate. Solo se puede usar una vez. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_cgput")
+pocket = 5
+kind = 12

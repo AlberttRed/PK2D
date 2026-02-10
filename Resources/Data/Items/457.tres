@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bh2ls0qj1gd3y"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3cwup"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_4oy0j"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7qwu5"]
+atlas = ExtResource("1_4oy0j")
+region = Rect2(320, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_3cwup")
+id = 457
+internal_name = "sport-ball"
+display_name = "Competi Ball"
+description = "Contiene los datos del Pokéathlon con el número de placajes realizados."
+icon = SubResource("AtlasTexture_7qwu5")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

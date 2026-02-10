@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://puu0c6xdur7e"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_0oqcs"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tiudw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_url70"]
+atlas = ExtResource("1_0oqcs")
+region = Rect2(384, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_tiudw")
+id = 137
+internal_name = "wiki-berry"
+display_name = "Baya Wiki"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_url70")
+pocket = 5
+kind = 12

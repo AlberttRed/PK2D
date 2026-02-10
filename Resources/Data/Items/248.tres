@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bpmyicqtbhema"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8570h"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_sjgx7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fp22m"]
+atlas = ExtResource("1_sjgx7")
+region = Rect2(384, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_8570h")
+id = 248
+internal_name = "power-herb"
+display_name = "Hierba Única"
+description = "Daña en cada turno al Pokémon que la lleva. Puede adherirse al Pokémon que alcance con su ataque al portador."
+icon = SubResource("AtlasTexture_fp22m")
+kind = 7

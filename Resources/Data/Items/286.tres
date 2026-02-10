@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djlkwckjpt1yc"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_5vrmc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_c064m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oyw31"]
+atlas = ExtResource("1_5vrmc")
+region = Rect2(256, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_c064m")
+id = 286
+internal_name = "stone-plate"
+display_name = "Tabla Pétrea"
+description = "Aumenta la probabilidad de que el Pokémon que la lleve consiga un golpe crítico."
+icon = SubResource("AtlasTexture_oyw31")

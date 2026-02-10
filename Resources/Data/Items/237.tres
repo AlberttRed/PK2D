@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://sov6h5w4s00h"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_1b0wy"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_obahc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q1hh5"]
+atlas = ExtResource("1_1b0wy")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_obahc")
+id = 237
+internal_name = "red-scarf"
+display_name = "Pañuelo Rojo"
+description = "Potencia un movimiento que se use de forma consecutiva. Pero el efecto se pierde si se emplea otro movimiento."
+icon = SubResource("AtlasTexture_q1hh5")

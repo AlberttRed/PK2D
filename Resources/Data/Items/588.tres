@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dee85wjvwp1o5"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_10qdd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_npo6k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_046mm"]
+atlas = ExtResource("1_10qdd")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_npo6k")
+id = 588
+internal_name = "absorb-bulb"
+display_name = "Tubérculo"
+description = "Joya de un solo uso que potencia los movimientos de tipo Normal. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_046mm")
+kind = 7

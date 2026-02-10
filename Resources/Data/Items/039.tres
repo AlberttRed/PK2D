@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b8liev37mfuh3"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_3siyc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dbftn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3siyc"]
+atlas = ExtResource("1_3siyc")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_dbftn")
+id = 39
+internal_name = "max-ether"
+display_name = "Éter Máximo"
+description = "Restaura completamente los PP del movimiento elegido de un Pokémon."
+icon = SubResource("AtlasTexture_3siyc")
+pocket = 2
+kind = 2

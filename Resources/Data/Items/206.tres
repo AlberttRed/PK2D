@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdjvvuaqv07fv"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8qv20"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_17b2s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8wp6"]
+atlas = ExtResource("1_17b2s")
+region = Rect2(256, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_8qv20")
+id = 206
+internal_name = "everstone"
+display_name = "Piedra Eterna"
+description = "Fragmento de hielo que repele el calor y fortalece los movimientos de tipo Hielo. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_k8wp6")
+pocket = 8

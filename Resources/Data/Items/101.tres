@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://q7bcb7kfr8fj"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_2msda"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m7f5f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o23gr"]
+atlas = ExtResource("1_2msda")
+region = Rect2(0, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_m7f5f")
+id = 101
+internal_name = "helix-fossil"
+display_name = "Fósil Hélix"
+description = "Fósil de un Pokémon ancestral que vivió en el fondo del mar. Parece ser un fragmento de concha marina."
+icon = SubResource("AtlasTexture_o23gr")

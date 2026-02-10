@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cmtmq6wluyyyf"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6myyg"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_arvim"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xupae"]
+atlas = ExtResource("1_arvim")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_6myyg")
+id = 349
+internal_name = "tm45"
+display_name = "MT45"
+description = "Quien lo usa realiza un ataque rápido que aumenta de potencia si el atacante no lleva ningún objeto."
+icon = SubResource("AtlasTexture_xupae")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

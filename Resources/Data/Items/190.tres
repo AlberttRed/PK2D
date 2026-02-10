@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ylbdncrjd7mo"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3dti3"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_nbfe5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fvai7"]
+atlas = ExtResource("1_nbfe5")
+region = Rect2(512, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_3dti3")
+id = 190
+internal_name = "bright-powder"
+display_name = "Polvo Brillo"
+description = "El Pokémon que la lleva puede resistir un golpe que potencialmente lo dejaría K.O. y se queda con 1 PS."
+icon = SubResource("AtlasTexture_fvai7")
+kind = 7

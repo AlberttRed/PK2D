@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bx2qitel8lp8f"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_qhhsr"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t0361"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pbvf0"]
+atlas = ExtResource("1_qhhsr")
+region = Rect2(64, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_t0361")
+id = 132
+internal_name = "oran-berry"
+display_name = "Baya Aranja"
+description = "Al usarla con un Pokémon, se gana su amistad, pero también reduce su Ataque Especial de base."
+icon = SubResource("AtlasTexture_pbvf0")
+pocket = 5
+kind = 12

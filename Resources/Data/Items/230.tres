@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c5i6vn1748vtu"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_r06g6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xsteo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t351a"]
+atlas = ExtResource("1_r06g6")
+region = Rect2(512, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_xsteo")
+id = 230
+internal_name = "shell-bell"
+display_name = "Cascabel Concha"
+description = "Potencia los movimientos, pero consume PS con cada ataque. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_t351a")
+kind = 7

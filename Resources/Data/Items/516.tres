@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://csxiub6ynv0y2"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_c6tay"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_q26e1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7nr4"]
+atlas = ExtResource("1_c6tay")
+region = Rect2(256, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_q26e1")
+id = 516
+internal_name = "harbor-mail"
+display_name = "Carta Puerto"
+description = "A WINGULL-print MAIL to be held by a POKéMON."
+icon = SubResource("AtlasTexture_u7nr4")
+pocket = 4

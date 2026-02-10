@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://btxiwuch0deov"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_a10o2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vcnxo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h3pvc"]
+atlas = ExtResource("1_a10o2")
+region = Rect2(0, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_vcnxo")
+id = 652
+internal_name = "ability-urge"
+display_name = "Habilitador"
+description = "Permiso necesario para acceder a la Reserva Natural, lugar que solo unos pocos conocen."
+icon = SubResource("AtlasTexture_h3pvc")

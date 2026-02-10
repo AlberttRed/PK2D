@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://xyvog3ccbjrc"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_4lpr6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_63665"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1qjmq"]
+atlas = ExtResource("1_4lpr6")
+region = Rect2(256, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_63665")
+id = 216
+internal_name = "miracle-seed"
+display_name = "Semilla Milagro"
+description = "Un par de guantes que debe llevar Chansey. Potencian mucho su índice de golpe crítico."
+icon = SubResource("AtlasTexture_1qjmq")

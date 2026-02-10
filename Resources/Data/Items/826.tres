@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dc0w5dxlavctj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rftvl"]
+
+[resource]
+script = ExtResource("1_rftvl")
+id = 826
+internal_name = "flyinium-z--held"
+display_name = "Aerostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Volador."

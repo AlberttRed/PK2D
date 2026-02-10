@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dnia68tngl8y3"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_58bau"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_y0ora"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u37xj"]
+atlas = ExtResource("1_y0ora")
+region = Rect2(0, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_58bau")
+id = 161
+internal_name = "occa-berry"
+display_name = "Baya Caoca"
+description = "Si la lleva un Pokémon, le sube el Ataque en un momento de apuro."
+icon = SubResource("AtlasTexture_u37xj")
+pocket = 5
+kind = 12

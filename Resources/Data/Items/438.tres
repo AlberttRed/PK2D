@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvsfdcaf061b5"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_dqaeq"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ldr1n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w26f3"]
+atlas = ExtResource("1_dqaeq")
+region = Rect2(384, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_ldr1n")
+id = 438
+internal_name = "coupon-2"
+display_name = "Cupón 2"
+description = "Billete necesario para poder montar todas las veces que se desee en el Magnetotrén."
+icon = SubResource("AtlasTexture_w26f3")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

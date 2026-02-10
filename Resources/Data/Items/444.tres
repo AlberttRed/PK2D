@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://mong7m2ivf5b"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_fujyq"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ilff4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ok25j"]
+atlas = ExtResource("1_fujyq")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_ilff4")
+id = 444
+internal_name = "gracidea"
+display_name = "Gracídea"
+description = "Bonguri de color rojo y aroma muy penetrante."
+icon = SubResource("AtlasTexture_ok25j")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

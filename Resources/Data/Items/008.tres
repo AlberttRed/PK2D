@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjp0crcblehmd"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_22nfp"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o8l1l"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_22nfp"]
+atlas = ExtResource("1_22nfp")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_o8l1l")
+id = 8
+internal_name = "nest-ball"
+display_name = "Nido Ball"
+description = "Es algo distinta a las demás. Funciona especialmente bien con los Pokémon salvajes de nivel bajo."
+icon = SubResource("AtlasTexture_22nfp")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

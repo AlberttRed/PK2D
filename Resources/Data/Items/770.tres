@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjuvsjq32gvth"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dt2v3"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_o81sy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nrmgv"]
+atlas = ExtResource("1_o81sy")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_dt2v3")
+id = 770
+internal_name = "devon-parts"
+display_name = "Piezas Devon"
+description = "Contiene piezas de algo fabricado por Devon S. A."
+icon = SubResource("AtlasTexture_nrmgv")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

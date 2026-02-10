@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://yur2juwepsa5"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5mama"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ntulf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbt3e"]
+atlas = ExtResource("1_ntulf")
+region = Rect2(128, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_5mama")
+id = 374
+internal_name = "tm70"
+display_name = "MT70"
+description = "Envuelve al objetivo en confusión, pero también sube marcadamente su Ataque."
+icon = SubResource("AtlasTexture_mbt3e")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

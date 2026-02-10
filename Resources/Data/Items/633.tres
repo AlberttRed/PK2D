@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://s7rhendl4c7w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_b1nho"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ks4td"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8yffk"]
+atlas = ExtResource("1_ks4td")
+region = Rect2(64, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_b1nho")
+id = 633
+internal_name = "dire-hit-2"
+display_name = "Crítico X 2"
+description = "Al usarlo, activa la habilidad de un Pokémon de tu equipo."
+icon = SubResource("AtlasTexture_8yffk")

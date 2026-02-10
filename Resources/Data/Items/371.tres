@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddjny67w6c47i"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7nthe"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_vnuhv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_218ej"]
+atlas = ExtResource("1_vnuhv")
+region = Rect2(576, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_7nthe")
+id = 371
+internal_name = "tm67"
+display_name = "MT67"
+description = "Ataca con un tentáculo o brazo impregnado de veneno que puede llegar a envenenar al objetivo."
+icon = SubResource("AtlasTexture_218ej")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

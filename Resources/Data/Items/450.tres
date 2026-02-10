@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c2gym71dqtayt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3c08w"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_txdpr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_enfxm"]
+atlas = ExtResource("1_txdpr")
+region = Rect2(512, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_3c08w")
+id = 450
+internal_name = "level-ball"
+display_name = "Nivel Ball"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Rompelosas."
+icon = SubResource("AtlasTexture_enfxm")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

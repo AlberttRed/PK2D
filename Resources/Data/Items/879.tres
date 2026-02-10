@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c34feruc7d4xy"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_56roa"]
+
+[resource]
+script = ExtResource("1_56roa")
+id = 879
+internal_name = "fishing-rod"
+display_name = "Caña"
+description = "Caña fabricada por la Capitana Nereida. Permite pescar los Pokémon escondidos en las rocas sumergidas."
+pocket = 6

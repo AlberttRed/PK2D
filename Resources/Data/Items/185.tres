@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://def88evi7emdg"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mun4m"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_yj5ds"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4il8a"]
+atlas = ExtResource("1_yj5ds")
+region = Rect2(256, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_mun4m")
+id = 185
+internal_name = "enigma-berry"
+display_name = "Baya Enigma"
+description = "Un orbe fantástico que debe llevar Latios o Latias. Sube su Ataque Especial y su Defensa Especial."
+icon = SubResource("AtlasTexture_4il8a")
+pocket = 5
+kind = 12

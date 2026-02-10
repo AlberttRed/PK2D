@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ct8arljb1gljk"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_bujox"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r5ccc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jl4gu"]
+atlas = ExtResource("1_bujox")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_r5ccc")
+id = 337
+internal_name = "tm33"
+display_name = "MT33"
+description = "Quien lo usa ataca con toda su fuerza, pero ve muy reducido su Ataque Especial."
+icon = SubResource("AtlasTexture_jl4gu")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

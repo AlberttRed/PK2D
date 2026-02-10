@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://howb6awedpfy"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8bflb"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_e6f2w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f2ags"]
+atlas = ExtResource("1_e6f2w")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_8bflb")
+id = 491
+internal_name = "data-card-06"
+display_name = "Tarjeta Datos 06"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Carrera de Relevos."
+icon = SubResource("AtlasTexture_f2ags")

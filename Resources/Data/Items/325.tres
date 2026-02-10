@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://boku513pjo7h2"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_4crc2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_i3e4g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5hnr"]
+atlas = ExtResource("1_4crc2")
+region = Rect2(192, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_i3e4g")
+id = 325
+internal_name = "tm21"
+display_name = "MT21"
+description = "Ataca con una intensa ráfaga de fuego abrasador que puede causar quemaduras."
+icon = SubResource("AtlasTexture_d5hnr")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

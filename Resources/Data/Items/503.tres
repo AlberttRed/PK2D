@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bfdlmvm7i0qi2"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ehul7"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_gsciv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w1tif"]
+atlas = ExtResource("1_gsciv")
+region = Rect2(64, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_ehul7")
+id = 503
+internal_name = "data-card-18"
+display_name = "Tarjeta Datos 18"
+description = "El Pokémon que lo lleve flotará en el aire. Si recibe un golpe, estallará."
+icon = SubResource("AtlasTexture_w1tif")

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c7rq4istpjmlk"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_2hiv1"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w7hkb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h30hb"]
+atlas = ExtResource("1_2hiv1")
+region = Rect2(576, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_w7hkb")
+id = 231
+internal_name = "sea-incense"
+display_name = "Incienso Marino"
+description = "Permite el uso inmediato de cualquier movimiento en el primer turno. Es de un solo uso y debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_h30hb")

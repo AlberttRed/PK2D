@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bgla65gvrxegu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s33ad"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_vpmyh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_twa1w"]
+atlas = ExtResource("1_vpmyh")
+region = Rect2(384, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_s33ad")
+id = 147
+internal_name = "kelpsy-berry"
+display_name = "Baya Algama"
+description = "Al usarla con un Pokémon, se gana su amistad, pero también reduce su Ataque de base."
+icon = SubResource("AtlasTexture_twa1w")
+pocket = 5
+kind = 12

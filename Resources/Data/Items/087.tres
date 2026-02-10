@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwc15wv1am217"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7c648"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_l0l2d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qe1v5"]
+atlas = ExtResource("1_l0l2d")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_7c648")
+id = 87
+internal_name = "big-mushroom"
+display_name = "Seta Grande"
+description = "Una gran seta que es poco común y muy popular entre determinados grupos de gourmets."
+icon = SubResource("AtlasTexture_qe1v5")

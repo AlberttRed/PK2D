@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://u4nhkpd85swt"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_64bbs"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_j4bm6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c4tie"]
+atlas = ExtResource("1_64bbs")
+region = Rect2(512, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_j4bm6")
+id = 400
+internal_name = "hm04"
+display_name = "MO04"
+description = "Un mapa muy útil que puede consultarse en cualquier momento y que, además, te indica dónde te encuentras."
+icon = SubResource("AtlasTexture_c4tie")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

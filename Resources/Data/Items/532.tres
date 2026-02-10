@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c45uqvqih2srk"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_8chf6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_erxoy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o111c"]
+atlas = ExtResource("1_8chf6")
+region = Rect2(0, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_erxoy")
+id = 532
+internal_name = "pokeblock-case"
+display_name = "Tubo Pokécubos"
+description = "A case for holding POKéBLOCKS made with a BERRY BLENDER."
+icon = SubResource("AtlasTexture_o111c")
+pocket = 6

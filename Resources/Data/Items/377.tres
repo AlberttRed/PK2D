@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cssudcn814g8g"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kbv3l"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_lg36j"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nohy1"]
+atlas = ExtResource("1_lg36j")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_kbv3l")
+id = 377
+internal_name = "tm73"
+display_name = "MT73"
+description = "Quien lo usa utiliza parte de sus PS para hacer una copia de sí mismo que sirve como señuelo."
+icon = SubResource("AtlasTexture_nohy1")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://qq3qla5uiej1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ea52k"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_hycba"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dwhds"]
+atlas = ExtResource("1_hycba")
+region = Rect2(64, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_ea52k")
+id = 122
+internal_name = "space-mail"
+display_name = "Car. Sideral"
+description = "Stationery featuring a print depicting the huge expanse of space. Let a Pokémon hold it for delivery."
+icon = SubResource("AtlasTexture_dwhds")
+pocket = 4

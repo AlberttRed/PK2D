@@ -11,6 +11,7 @@ const ABILITIES_DIR := "res://Resources/Data/Abilities"
 const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
 const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
 const TRAINER_CLASSES_DIR := "res://Resources/Trainer Classes"
+const ITEMS_DIR := "res://Resources/Data/Items"
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}
@@ -33,6 +34,9 @@ var _weathers_by_name: Dictionary = {}
 var _trainer_classes_by_id: Dictionary = {}
 var _trainer_classes_by_name: Dictionary = {}
 
+var _items_by_id: Dictionary = {}
+var _items_by_name: Dictionary = {}
+
 func _ready() -> void:
 	_load_all()
 	_print_summary()
@@ -45,6 +49,7 @@ func _load_all() -> void:
 	_natures_by_id.clear(); _natures_by_name.clear()
 	_weathers_by_id.clear(); _weathers_by_name.clear()
 	_trainer_classes_by_id.clear(); _trainer_classes_by_name.clear()
+	_items_by_id.clear(); _items_by_name.clear()
 
 	load_resources_from_dir(POKEMON_DIR, func(res):
 		if res == null: return
@@ -60,6 +65,7 @@ func _load_all() -> void:
 	_load_natures()
 	_load_weathers()
 	_load_trainer_classes()
+	_load_items()
 
 func _print_summary() -> void:
 	pass
@@ -142,6 +148,53 @@ func _load_trainer_classes() -> void:
 			_trainer_classes_by_name[res.internal_name.to_lower()] = res
 	)
 
+func _load_items() -> void:
+	var dir := DirAccess.open(ITEMS_DIR)
+	if dir == null:
+		# Si no existe el directorio, no hay problema (se crearán más adelante)
+		return
+
+	var duplicate_ids: Array[int] = []
+	var duplicate_names: Array[String] = []
+
+	load_resources_from_dir(ITEMS_DIR, func(res):
+		if res == null: return
+		if not (res is ItemData): return
+
+		# Validar duplicados por ID (AC-06)
+		if _items_by_id.has(res.id):
+			var existing := _items_by_id[res.id] as ItemData
+			push_warning("DatabaseService: ItemData duplicado por ID %d. Existente: %s, Nuevo: %s" % [
+				res.id,
+				existing.internal_name if existing else "null",
+				res.internal_name
+			])
+			duplicate_ids.append(res.id)
+		else:
+			_items_by_id[res.id] = res
+
+		# Validar duplicados por nombre interno (AC-06)
+		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
+			var name_key: String = res.internal_name.to_lower()
+			if _items_by_name.has(name_key):
+				var existing := _items_by_name[name_key] as ItemData
+				push_warning("DatabaseService: ItemData duplicado por internal_name '%s'. Existente ID: %d, Nuevo ID: %d" % [
+					res.internal_name,
+					existing.id if existing else 0,
+					res.id
+				])
+				duplicate_names.append(res.internal_name)
+			else:
+				_items_by_name[name_key] = res
+	)
+
+	# Reportar resumen de duplicados si los hay
+	if not duplicate_ids.is_empty() or not duplicate_names.is_empty():
+		push_warning("DatabaseService: Se encontraron %d IDs duplicados y %d nombres duplicados en Items" % [
+			duplicate_ids.size(),
+			duplicate_names.size()
+		])
+
 ## Carga recursos usando ResourceLoader (funciona en debug y exports)
 ## Usa patrones de nombres conocidos para cada tipo de recurso
 func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
@@ -189,6 +242,16 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 	if dir_path == WEATHERS_DIR:
 		for i in range(1, 11):
 			var path := "%s/%02d.tres" % [dir_path, i]
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
+		return
+
+	# Para Items: intentar cargar del 001 al 999 (rango típico de Gen 3)
+	if dir_path == ITEMS_DIR:
+		for i in range(1, 1000):
+			var path := "%s/%03d.tres" % [dir_path, i]
 			if ResourceLoader.exists(path):
 				var res := load(path)
 				if res != null:
@@ -275,3 +338,38 @@ func get_trainer_class(name_or_id) -> TrainerClassData:
 	if key.is_valid_int():
 		return _trainer_classes_by_id.get(int(key), null)
 	return _trainer_classes_by_name.get(key, null)
+
+func get_item(name_or_id) -> ItemData:
+	var result: ItemData = null
+
+	if typeof(name_or_id) == TYPE_INT:
+		result = _items_by_id.get(name_or_id, null)
+	else:
+		var key := str(name_or_id).to_lower()
+		if key.is_valid_int():
+			result = _items_by_id.get(int(key), null)
+		else:
+			result = _items_by_name.get(key, null)
+
+	# Comportamiento ante no encontrado (AC-04)
+	if result == null:
+		push_warning("DatabaseService: Item no encontrado: %s (tipo: %s)" % [str(name_or_id), typeof(name_or_id)])
+
+	return result
+
+## Verifica si existe un item por ID (AC-03)
+func has_item_id(id: int) -> bool:
+	return _items_by_id.has(id)
+
+## Verifica si existe un item por nombre interno (AC-03)
+func has_item_name(item_name: String) -> bool:
+	var key := str(item_name).to_lower()
+	return _items_by_name.has(key)
+
+## Obtiene un item por ID (método explícito, AC-03)
+func get_item_by_id(id: int) -> ItemData:
+	return get_item(id)
+
+## Obtiene un item por nombre interno (método explícito, AC-03)
+func get_item_by_name(item_name: String) -> ItemData:
+	return get_item(item_name)

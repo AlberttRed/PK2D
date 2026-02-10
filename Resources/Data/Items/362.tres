@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ch0mvtkijn5sn"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jbxe0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o4vjn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h6n1f"]
+atlas = ExtResource("1_jbxe0")
+region = Rect2(0, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_o4vjn")
+id = 362
+internal_name = "tm58"
+display_name = "MT58"
+description = "Danza frenética que eleva el espíritu combativo. Aumenta mucho el Ataque de quien lo usa."
+icon = SubResource("AtlasTexture_h6n1f")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

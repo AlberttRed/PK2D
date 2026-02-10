@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dotrgat2hd2mx"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_je33j"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_qqb73"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jekku"]
+atlas = ExtResource("1_qqb73")
+region = Rect2(192, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_je33j")
+id = 465
+internal_name = "dowsing-machine"
+display_name = "Zahorí"
+description = "Bonguri de color blanco que no desprende aroma alguno."
+icon = SubResource("AtlasTexture_jekku")
+pocket = 6

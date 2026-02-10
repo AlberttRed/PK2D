@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2a5ctffdi1ao"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_eb5pu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ofewi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3vg1"]
+atlas = ExtResource("1_eb5pu")
+region = Rect2(64, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_ofewi")
+id = 162
+internal_name = "passho-berry"
+display_name = "Baya Pasio"
+description = "Si la lleva un Pokémon, le sube la Defensa en un momento de apuro."
+icon = SubResource("AtlasTexture_g3vg1")
+pocket = 5
+kind = 12

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://de1t84le2sdqf"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_sjrne"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vfb1h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0538"]
+atlas = ExtResource("1_sjrne")
+region = Rect2(320, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_vfb1h")
+id = 467
+internal_name = "red-orb"
+display_name = "Prisma Rojo"
+description = "Joya de un solo uso que potencia los movimientos de tipo Lucha. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_a0538")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

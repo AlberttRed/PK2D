@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5nsbbwvmsvgi"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2aqae"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_plg1r"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8kpp"]
+atlas = ExtResource("1_plg1r")
+region = Rect2(256, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_2aqae")
+id = 256
+internal_name = "lagging-tail"
+display_name = "Cola Plúmbea"
+description = "El Pokémon que la lleva recupera más PS al usar movimientos que drenan al objetivo."
+icon = SubResource("AtlasTexture_p8kpp")

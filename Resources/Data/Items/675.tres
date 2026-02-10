@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b2om0kc6krerg"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aa8p3"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_tnsj7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ygn73"]
+atlas = ExtResource("1_tnsj7")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_aa8p3")
+id = 675
+internal_name = "shiny-charm"
+display_name = "Amuleto Iris"
+description = "Una flauta con un timbre tan dulce y hermoso que despierta hasta el Pokémon más profundamente dormido."
+icon = SubResource("AtlasTexture_ygn73")
+pocket = 6

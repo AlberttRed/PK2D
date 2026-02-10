@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b87g53e8ujrt2"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_8p4rb"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mp1qx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8p4rb"]
+atlas = ExtResource("1_8p4rb")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_mp1qx")
+id = 48
+internal_name = "carbos"
+display_name = "Carburante"
+description = "Nutritiva bebida que potencia la Velocidad de base de un Pokémon."
+icon = SubResource("AtlasTexture_8p4rb")
+pocket = 2

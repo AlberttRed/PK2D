@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ccw42vfhxswng"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_318a4"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_utycw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlgjn"]
+atlas = ExtResource("1_utycw")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_318a4")
+id = 176
+internal_name = "babiri-berry"
+display_name = "Baya Baribá"
+description = "Al activar el dispositivo, todos los Pokémon de tu equipo ganan Puntos de Experiencia tras los combates, aunque no salgan a luchar."
+icon = SubResource("AtlasTexture_mlgjn")
+pocket = 5
+kind = 12

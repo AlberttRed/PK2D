@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cjupu8hmonl70"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jrukx"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_p7jwo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jt0hw"]
+atlas = ExtResource("1_jrukx")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_p7jwo")
+id = 307
+internal_name = "tm03"
+display_name = "MT03"
+description = "Un escudo que protege de problemas de estado, como el sueño o la parálisis, durante cinco turnos."
+icon = SubResource("AtlasTexture_jt0hw")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

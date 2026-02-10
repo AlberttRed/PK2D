@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cknbleywkr1nb"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ny73f"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rfn4p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4a8q"]
+atlas = ExtResource("1_ny73f")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_rfn4p")
+id = 449
+internal_name = "lure-ball"
+display_name = "Cebo Ball"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Atrapadiscos."
+icon = SubResource("AtlasTexture_y4a8q")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

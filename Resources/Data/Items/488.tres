@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bo4qnbgrn6uqe"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5f27r"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_gfvsu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8v7tb"]
+atlas = ExtResource("1_gfvsu")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_5f27r")
+id = 488
+internal_name = "data-card-03"
+display_name = "Tarjeta Datos 03"
+description = "Contiene los datos del Pokéathlon con el número de veces que has terminado en última posición en una disciplina."
+icon = SubResource("AtlasTexture_8v7tb")

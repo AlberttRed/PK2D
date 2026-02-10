@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c8i5wy8ecgmxy"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_3cupy"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_u0k12"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fe5dy"]
+atlas = ExtResource("1_3cupy")
+region = Rect2(0, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_u0k12")
+id = 542
+internal_name = "devon-scope"
+display_name = "Detector Devon"
+description = "Artilugio creado por Devon S. A. que reacciona a la presencia de Pokémon invisibles emitiendo sonidos."
+icon = SubResource("AtlasTexture_fe5dy")
+pocket = 6

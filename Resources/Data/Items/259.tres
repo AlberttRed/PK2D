@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://5frr0nkwey3o"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_chfnn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_h6efb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lmy6g"]
+atlas = ExtResource("1_chfnn")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_h6efb")
+id = 259
+internal_name = "icy-rock"
+display_name = "Roca Helada"
+description = "Tabla de piedra que potencia los movimientos de tipo Agua. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_lmy6g")
+kind = 7

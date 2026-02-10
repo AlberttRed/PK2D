@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c8plupjvylfhl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8lg83"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_qa50s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xgb8"]
+atlas = ExtResource("1_qa50s")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_8lg83")
+id = 288
+internal_name = "draco-plate"
+display_name = "Tabla Draco"
+description = "Lima y afila las garras. Aumenta el Ataque y la Precisión."
+icon = SubResource("AtlasTexture_5xgb8")

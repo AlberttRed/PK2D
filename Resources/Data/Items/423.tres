@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dyqnq82rxvwf5"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8ujrn"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_bymos"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5jfqd"]
+atlas = ExtResource("1_bymos")
+region = Rect2(64, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_8ujrn")
+id = 423
+internal_name = "good-rod"
+display_name = "Caña Buena"
+description = "Un fantástico dispositivo que graba combates entre amigos o celebrados en algún recinto especial."
+icon = SubResource("AtlasTexture_5jfqd")
+pocket = 6

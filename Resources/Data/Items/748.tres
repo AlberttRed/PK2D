@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dut1tbi3obuxw"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r5vqq"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_u8juf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nec0m"]
+atlas = ExtResource("1_u8juf")
+region = Rect2(192, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_r5vqq")
+id = 748
+internal_name = "tm99"
+display_name = "MT99"
+description = "Boleto hecho a mano por Handsome, decorado con una generosa cantidad de purpurina."
+icon = SubResource("AtlasTexture_nec0m")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

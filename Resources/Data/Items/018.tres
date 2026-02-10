@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b8gj2cvd8fwhs"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_co2fv"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_x6ppb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x6ppb"]
+atlas = ExtResource("1_x6ppb")
+region = Rect2(448, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_co2fv")
+id = 18
+internal_name = "antidote"
+display_name = "Antídoto"
+description = "Medicina en espray que contrarresta los efectos del veneno en un Pokémon."
+icon = SubResource("AtlasTexture_x6ppb")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

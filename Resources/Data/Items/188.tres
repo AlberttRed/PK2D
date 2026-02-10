@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://brvph2dnfx2nw"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_86qmc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oo47e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvj6f"]
+atlas = ExtResource("1_86qmc")
+region = Rect2(448, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_oo47e")
+id = 188
+internal_name = "jaboca-berry"
+display_name = "Baya Jaboca"
+description = "Debe llevarla un Pokémon. Permite huir siempre de combates contra Pokémon salvajes."
+icon = SubResource("AtlasTexture_lvj6f")
+pocket = 5
+kind = 12

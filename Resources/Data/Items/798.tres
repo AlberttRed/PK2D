@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://22gjgonfa7gb"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_bhpsk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_prcnj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_om6hw"]
+atlas = ExtResource("1_bhpsk")
+region = Rect2(384, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_prcnj")
+id = 798
+internal_name = "audinite"
+display_name = "Audinita"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Audino en combate."
+icon = SubResource("AtlasTexture_om6hw")

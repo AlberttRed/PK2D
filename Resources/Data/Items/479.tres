@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cbqgsfrd15ma2"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ao1pd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cypi0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qf4a1"]
+atlas = ExtResource("1_ao1pd")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_cypi0")
+id = 479
+internal_name = "pass"
+display_name = "Magnetopase"
+description = "Poké Ball que se utiliza en el Concurso de Captura de Bichos."
+icon = SubResource("AtlasTexture_qf4a1")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

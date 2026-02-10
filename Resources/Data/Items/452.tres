@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nqhggp2cqx11"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_fp0ts"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ksa08"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssqn6"]
+atlas = ExtResource("1_fp0ts")
+region = Rect2(0, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_ksa08")
+id = 452
+internal_name = "heavy-ball"
+display_name = "Peso Ball"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Nieve Cruzada."
+icon = SubResource("AtlasTexture_ssqn6")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

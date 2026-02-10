@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bq0d2adbe2s2g"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_fbxal"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r2u7r"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gc8h4"]
+atlas = ExtResource("1_fbxal")
+region = Rect2(576, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_r2u7r")
+id = 180
+internal_name = "salac-berry"
+display_name = "Baya Aslac"
+description = "Aumenta el Ataque, pero solo permite usar un movimiento. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_gc8h4")
+pocket = 5
+kind = 12

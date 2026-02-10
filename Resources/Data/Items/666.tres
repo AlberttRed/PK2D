@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://be3kquyuwjb5j"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_jokv0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_owpom"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fng2a"]
+atlas = ExtResource("1_jokv0")
+region = Rect2(256, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_owpom")
+id = 666
+internal_name = "gram-3"
+display_name = "Envío 3"
+description = "Tabla de piedra que potencia los movimientos de tipo Hada. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_fng2a")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

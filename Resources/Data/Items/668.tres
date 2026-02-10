@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nkkm3d8b6iay"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_4knw2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s10wi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_udblw"]
+atlas = ExtResource("1_4knw2")
+region = Rect2(320, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_s10wi")
+id = 668
+internal_name = "dragon-gem"
+display_name = "Gema Dragón"
+description = "Extraña seta que desprende un agradable aroma. Puede alcanzar un alto precio en las tiendas."
+icon = SubResource("AtlasTexture_udblw")

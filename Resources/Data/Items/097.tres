@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ihya3x50tgjh"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_mu2lp"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xq2to"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pul8u"]
+atlas = ExtResource("1_mu2lp")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_xq2to")
+id = 97
+internal_name = "stable-mulch"
+display_name = "Abono Fijador"
+description = "Un fertilizante usado en suelo fértil donde crecen las bayas."
+icon = SubResource("AtlasTexture_pul8u")

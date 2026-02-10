@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://iu7agwpnj73r"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_5xd5f"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t45wu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ngsg7"]
+atlas = ExtResource("1_5xd5f")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_t45wu")
+id = 595
+internal_name = "ice-gem"
+display_name = "Gema Hielo"
+description = "Pluma normal y corriente. Muy bonita, pero no sirve para nada."
+icon = SubResource("AtlasTexture_ngsg7")

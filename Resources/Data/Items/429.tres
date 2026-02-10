@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dbkhj4h6fsow8"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_isqx4"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jcuxo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ys15r"]
+atlas = ExtResource("1_jcuxo")
+region = Rect2(448, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_isqx4")
+id = 429
+internal_name = "oaks-letter"
+display_name = "Carta Prof. Oak"
+description = "Aparato de precisión que reacciona con luz y sonido ante los objetos que no se ven indicando su posición."
+icon = SubResource("AtlasTexture_ys15r")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

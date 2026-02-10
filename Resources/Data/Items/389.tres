@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djc7fclcpvt24"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5prvn"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_rk37c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cd3t7"]
+atlas = ExtResource("1_rk37c")
+region = Rect2(448, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_5prvn")
+id = 389
+internal_name = "tm85"
+display_name = "MT85"
+description = "Busca Pokémon que se esconden en la hierba. La batería se recarga mientras caminas."
+icon = SubResource("AtlasTexture_cd3t7")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

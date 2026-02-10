@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdi0sjpncfsly"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_553bm"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_aoj4m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5bnid"]
+atlas = ExtResource("1_aoj4m")
+region = Rect2(384, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_553bm")
+id = 608
+internal_name = "resist-wing"
+display_name = "Pluma Aguante"
+description = "Moneda de oro de más de 3000 años de antigüedad. Muy valorada por los coleccionistas."
+icon = SubResource("AtlasTexture_5bnid")
+pocket = 2

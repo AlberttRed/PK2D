@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ktx6m8ct2cl0"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rf826"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_rrwxj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_25738"]
+atlas = ExtResource("1_rrwxj")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_rf826")
+id = 355
+internal_name = "tm51"
+display_name = "MT51"
+description = "Quien lo usa carga contra el objetivo usando toda su energía y en el turno siguiente tiene que descansar."
+icon = SubResource("AtlasTexture_25738")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

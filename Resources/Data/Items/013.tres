@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b24dxvyi3svx7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r0qha"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_s4bum"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4bum"]
+atlas = ExtResource("1_s4bum")
+region = Rect2(128, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_r0qha")
+id = 13
+internal_name = "dusk-ball"
+display_name = "Ocaso Ball"
+description = "Es algo particular. Hace que sea más fácil capturar a los Pokémon salvajes por la noche o en lugares oscuros."
+icon = SubResource("AtlasTexture_s4bum")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

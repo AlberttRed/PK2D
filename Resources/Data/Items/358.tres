@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ccdnej67tiegv"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_30w46"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pphn7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gu3o0"]
+atlas = ExtResource("1_30w46")
+region = Rect2(384, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_pphn7")
+id = 358
+internal_name = "tm54"
+display_name = "MT54"
+description = "Apuñala al objetivo desde abajo con piedras afiladas. Su índice de golpe crítico es muy alto."
+icon = SubResource("AtlasTexture_gu3o0")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

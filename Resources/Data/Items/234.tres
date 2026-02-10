@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://yyd7bfptnm6q"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_s4m45"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_sxrcc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h06d2"]
+atlas = ExtResource("1_s4m45")
+region = Rect2(128, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_sxrcc")
+id = 234
+internal_name = "metal-powder"
+display_name = "Polvo Metálico"
+description = "Debe llevarlo Ditto. Es un polvo muy fino, pero a la vez resistente, que aumenta su Velocidad."
+icon = SubResource("AtlasTexture_h06d2")

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bhuocefjnjsgn"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_g5aun"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_herwa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_se4al"]
+atlas = ExtResource("1_g5aun")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_herwa")
+id = 172
+internal_name = "charti-berry"
+display_name = "Baya Alcho"
+description = "Si la lleva un Pokémon cuando otro lanza un ataque especial, este último también recibe daño."
+icon = SubResource("AtlasTexture_se4al")
+pocket = 5
+kind = 12

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bf3os20yhxhtp"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wrpej"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ylkmp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ct7oh"]
+atlas = ExtResource("1_ylkmp")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_wrpej")
+id = 106
+internal_name = "rare-bone"
+display_name = "Hueso Raro"
+description = "Un hueso de gran valor para la arqueología Pokémon. Puede alcanzar un alto precio en las tiendas."
+icon = SubResource("AtlasTexture_ct7oh")

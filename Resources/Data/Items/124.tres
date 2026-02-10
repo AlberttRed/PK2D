@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://o7pg7selvnyt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1k5sc"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_r787v"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okxsh"]
+atlas = ExtResource("1_r787v")
+region = Rect2(192, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_1k5sc")
+id = 124
+internal_name = "mosaic-mail"
+display_name = "Car. Mosaico"
+description = "Stationery featuring a print of a vivid rainbow pattern. Let a Pokémon hold it for delivery."
+icon = SubResource("AtlasTexture_okxsh")
+pocket = 4

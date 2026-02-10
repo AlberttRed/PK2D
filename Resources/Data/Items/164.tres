@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bf36s728fxyvh"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4msnl"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_08dcs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f2ax6"]
+atlas = ExtResource("1_08dcs")
+region = Rect2(192, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_4msnl")
+id = 164
+internal_name = "rindo-berry"
+display_name = "Baya Tamar"
+description = "Si la lleva un Pokémon, le sube el Ataque Especial en un momento de apuro."
+icon = SubResource("AtlasTexture_f2ax6")
+pocket = 5
+kind = 12

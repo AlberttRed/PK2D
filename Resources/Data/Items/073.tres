@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dhjxs4x4xv6nl"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_kw4s3"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lm6ih"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7w36v"]
+atlas = ExtResource("1_kw4s3")
+region = Rect2(128, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_lm6ih")
+id = 73
+internal_name = "blue-shard"
+display_name = "Parte Azul"
+description = "Un pequeño fragmento azul. Parece formar parte de algún tipo de herramienta antigua."
+icon = SubResource("AtlasTexture_7w36v")

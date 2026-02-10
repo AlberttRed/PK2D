@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crvxi5p6qmq5k"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3kaic"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_nbb1x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rsyqe"]
+atlas = ExtResource("1_nbb1x")
+region = Rect2(0, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_3kaic")
+id = 91
+internal_name = "star-piece"
+display_name = "Trozo Estrella"
+description = "Fragmento de una bonita gema roja que puede venderse muy caro en las tiendas."
+icon = SubResource("AtlasTexture_rsyqe")

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://f4t6ba77ydln"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5wud8"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_bgjq7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mjmva"]
+atlas = ExtResource("1_bgjq7")
+region = Rect2(128, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_5wud8")
+id = 364
+internal_name = "tm60"
+display_name = "MT60"
+description = "Quien lo usa se hipnotiza y copia cualquier cambio que haya en las características de su objetivo."
+icon = SubResource("AtlasTexture_mjmva")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bqhn6f74rlxwr"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_3vjep"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_yulrp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7pu8"]
+atlas = ExtResource("1_3vjep")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_yulrp")
+id = 799
+internal_name = "metagrossite"
+display_name = "Metagrossita"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Metagross en combate."
+icon = SubResource("AtlasTexture_h7pu8")

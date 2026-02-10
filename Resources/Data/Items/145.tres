@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dv1v6q358052t"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_n8vca"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ypy1m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1cwmw"]
+atlas = ExtResource("1_n8vca")
+region = Rect2(256, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_ypy1m")
+id = 145
+internal_name = "pinap-berry"
+display_name = "Baya Pinia"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Agua de un enemigo."
+icon = SubResource("AtlasTexture_1cwmw")
+pocket = 5
+kind = 12

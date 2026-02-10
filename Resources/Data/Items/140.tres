@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bl5yg3av1pt4p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ica5y"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_o6cjh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bg5i2"]
+atlas = ExtResource("1_o6cjh")
+region = Rect2(576, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_ica5y")
+id = 140
+internal_name = "iapapa-berry"
+display_name = "Baya Pabaya"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_bg5i2")
+pocket = 5
+kind = 12

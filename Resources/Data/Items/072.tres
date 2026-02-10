@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcqkt6vqklwhw"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4u4a0"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_hdjge"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_irx0b"]
+atlas = ExtResource("1_hdjge")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_4u4a0")
+id = 72
+internal_name = "red-shard"
+display_name = "Parte Roja"
+description = "Un pequeño fragmento rojo. Parece formar parte de algún tipo de herramienta antigua."
+icon = SubResource("AtlasTexture_irx0b")

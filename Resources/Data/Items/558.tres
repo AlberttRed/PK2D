@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://deevc3fq1350f"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_mmw7i"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qmn1h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g7agh"]
+atlas = ExtResource("1_mmw7i")
+region = Rect2(384, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_qmn1h")
+id = 558
+internal_name = "powder-jar"
+display_name = "Bote Polvos"
+description = "Stores BERRY POWDER made using a BERRY CRUSHER."
+icon = SubResource("AtlasTexture_g7agh")
+pocket = 6

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cpxegvbfp1ctu"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_5xwm3"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bvgye"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eb2bl"]
+atlas = ExtResource("1_5xwm3")
+region = Rect2(128, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_bvgye")
+id = 304
+internal_name = "razor-fang"
+display_name = "Colmillo Agudo"
+description = "Bloquea todos los ataques. Puede fallar si se usa repetidamente."
+icon = SubResource("AtlasTexture_eb2bl")
+kind = 7

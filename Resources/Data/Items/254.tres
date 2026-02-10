@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wsucursuiavt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1qp1h"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_8otbc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2p2og"]
+atlas = ExtResource("1_8otbc")
+region = Rect2(128, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_1qp1h")
+id = 254
+internal_name = "metronome"
+display_name = "Metrónomo"
+description = "Mejora los PS de base, pero reduce la Velocidad en combate. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_2p2og")
+kind = 7

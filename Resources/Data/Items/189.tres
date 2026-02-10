@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dix3mxckvb3ji"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6jkxk"]
+
+[resource]
+script = ExtResource("1_6jkxk")
+id = 189
+internal_name = "rowap-berry"
+display_name = "Baya Magua"
+description = "El Pokémon que lleva esta piedra mágica no evoluciona."
+pocket = 5
+kind = 12

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://0s61t3edr2wj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bx1yk"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_y3nmp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52vpd"]
+atlas = ExtResource("1_y3nmp")
+region = Rect2(192, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_bx1yk")
+id = 265
+internal_name = "sticky-barb"
+display_name = "Toxiestrella"
+description = "Tabla de piedra que potencia los movimientos de tipo Tierra. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_52vpd")

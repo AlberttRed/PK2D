@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://docaeanq1cnl"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_2a66l"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cq12o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fa1jn"]
+atlas = ExtResource("1_2a66l")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_cq12o")
+id = 609
+internal_name = "genius-wing"
+display_name = "Pluma Intelecto"
+description = "Jarrón de más de 3000 años de antigüedad. Muy valorado por los coleccionistas."
+icon = SubResource("AtlasTexture_fa1jn")
+pocket = 2

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmqq1nfxlxg8w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_armrj"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_x6otk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r3rxf"]
+atlas = ExtResource("1_x6otk")
+region = Rect2(64, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_armrj")
+id = 52
+internal_name = "zinc"
+display_name = "Zinc"
+description = "Nutritiva bebida que aumenta la Defensa Especial de base de un Pokémon."
+icon = SubResource("AtlasTexture_r3rxf")
+pocket = 2

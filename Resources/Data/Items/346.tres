@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c73q2l15wgmsl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qka5p"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ujh60"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ri6ht"]
+atlas = ExtResource("1_ujh60")
+region = Rect2(256, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_qka5p")
+id = 346
+internal_name = "tm42"
+display_name = "MT42"
+description = "Llamas que golpean a los objetivos adyacentes. Si estos llevan bayas u otros objetos, estos se quemarán y ya no se podrán usar."
+icon = SubResource("AtlasTexture_ri6ht")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

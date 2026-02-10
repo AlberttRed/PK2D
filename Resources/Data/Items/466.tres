@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://fo3uv8t3kjsp"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_giaej"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w2udt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5uix"]
+atlas = ExtResource("1_giaej")
+region = Rect2(256, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_w2udt")
+id = 466
+internal_name = "rage-candy-bar"
+display_name = "Caramelo Furia"
+description = "Contiene los datos del Pokéathlon con el número de victorias en conexión."
+icon = SubResource("AtlasTexture_k5uix")
+pocket = 6

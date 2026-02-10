@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://rhd1iqv52v3s"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_0lq4n"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vbwol"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mds66"]
+atlas = ExtResource("1_0lq4n")
+region = Rect2(64, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_vbwol")
+id = 463
+internal_name = "white-apricorn"
+display_name = "Bonguri Blanco"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Saltaobstáculos."
+icon = SubResource("AtlasTexture_mds66")

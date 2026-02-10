@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvu8qn1p5hqni"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_bhxwu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ptbpf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnu4o"]
+atlas = ExtResource("1_bhxwu")
+region = Rect2(576, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_ptbpf")
+id = 531
+internal_name = "soot-sack"
+display_name = "Saco Hollín"
+description = "Bolsa en la que recoger la ceniza de volcán sedimentada en el suelo."
+icon = SubResource("AtlasTexture_dnu4o")
+pocket = 6

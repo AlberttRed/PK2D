@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://biutp5qtw40pm"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_cstxa"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m5s08"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hthyn"]
+atlas = ExtResource("1_cstxa")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_m5s08")
+id = 455
+internal_name = "love-ball"
+display_name = "Amor Ball"
+description = "Contiene los datos del Pokéathlon con el número de puntos conseguidos."
+icon = SubResource("AtlasTexture_hthyn")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

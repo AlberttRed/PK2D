@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bkmwam7vxrs0k"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_mosgo"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r5gsa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6hyvm"]
+atlas = ExtResource("1_mosgo")
+region = Rect2(256, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_r5gsa")
+id = 356
+internal_name = "tm52"
+display_name = "MT52"
+description = "Quien lo usa reduce la resistencia que ofrece su cuerpo y gana mucho en Velocidad."
+icon = SubResource("AtlasTexture_6hyvm")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

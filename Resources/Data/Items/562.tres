@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ctp7n1fajstnn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4i2dh"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_eqhpy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o8pyo"]
+atlas = ExtResource("1_eqhpy")
+region = Rect2(0, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_4i2dh")
+id = 562
+internal_name = "old-sea-map"
+display_name = "Mapa Viejo"
+description = "A faded sea chart that shows the way to a certain island."
+icon = SubResource("AtlasTexture_o8pyo")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

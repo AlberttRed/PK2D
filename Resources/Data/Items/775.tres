@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dor4hhlqqkpa1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d2evc"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_dwpyb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5eiid"]
+atlas = ExtResource("1_dwpyb")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_d2evc")
+id = 775
+internal_name = "key-to-room-4"
+display_name = "Ll. Habitación 4"
+description = "Llave de acceso a una de las habitaciones de Malvamar."
+icon = SubResource("AtlasTexture_5eiid")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dovcnp65ivirn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8sydt"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_b8hto"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3teg3"]
+atlas = ExtResource("1_b8hto")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_8sydt")
+id = 659
+internal_name = "tm93"
+display_name = "MT93"
+description = "Videomisor encontrado en el parque de atracciones de Ciudad Mayólica. Parece que pertenece a una chica."
+icon = SubResource("AtlasTexture_3teg3")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

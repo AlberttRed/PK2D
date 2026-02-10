@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3cm8wb8nevmw"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_2w3fk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oddge"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rhowy"]
+atlas = ExtResource("1_2w3fk")
+region = Rect2(576, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_oddge")
+id = 571
+internal_name = "thanks-mail"
+display_name = "Carta Gracias"
+description = "Los Pokémon pueden llevarla o usarla para recuperarse de problemas de estado."
+icon = SubResource("AtlasTexture_rhowy")
+pocket = 4

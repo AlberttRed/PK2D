@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bec4epqg3sgru"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lc80e"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_xtgk7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lc378"]
+atlas = ExtResource("1_xtgk7")
+region = Rect2(384, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_lc80e")
+id = 568
+internal_name = "greet-mail"
+display_name = "Carta Inicial"
+description = "Los Pokémon pueden llevarla o usarla para restaurar 10 PP de un movimiento."
+icon = SubResource("AtlasTexture_lc378")
+pocket = 4

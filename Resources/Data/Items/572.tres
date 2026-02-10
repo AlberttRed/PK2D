@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b4prtxwdjj2a3"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_572gf"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_qiy2y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5y3yx"]
+atlas = ExtResource("1_qiy2y")
+region = Rect2(0, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_572gf")
+id = 572
+internal_name = "inquiry-mail"
+display_name = "Carta Pregunta"
+description = "Los Pokémon pueden llevarla o usarla para restaurar algunos PS."
+icon = SubResource("AtlasTexture_5y3yx")
+pocket = 4

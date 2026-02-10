@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bomu07431ni0i"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_dh0dj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jp0g4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p3t75"]
+atlas = ExtResource("1_dh0dj")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_jp0g4")
+id = 310
+internal_name = "tm06"
+display_name = "MT06"
+description = "El usuario ataca lanzando una piedra o un proyectil. Puede estrellar contra el suelo al objetivo si vuela."
+icon = SubResource("AtlasTexture_p3t75")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

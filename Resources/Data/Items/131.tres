@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://417e18l3tskm"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_hemka"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jbokd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxsyq"]
+atlas = ExtResource("1_hemka")
+region = Rect2(0, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_jbokd")
+id = 131
+internal_name = "leppa-berry"
+display_name = "Baya Zanama"
+description = "Al usarla con un Pokémon, se gana su amistad, pero también reduce su Defensa de base."
+icon = SubResource("AtlasTexture_rxsyq")
+pocket = 5
+kind = 12

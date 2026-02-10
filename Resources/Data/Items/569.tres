@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c74s1x0jios8w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_b32l8"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_fqkq2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xjyjb"]
+atlas = ExtResource("1_fqkq2")
+region = Rect2(448, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_b32l8")
+id = 569
+internal_name = "favored-mail"
+display_name = "Carta Favoritos"
+description = "Los Pokémon pueden llevarla o usarla para restaurar 10 PS."
+icon = SubResource("AtlasTexture_xjyjb")
+pocket = 4

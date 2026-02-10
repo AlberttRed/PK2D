@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://vcr2f5o3ycyj"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_r64jr"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_u0v62"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xw6n1"]
+atlas = ExtResource("1_r64jr")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_u0v62")
+id = 437
+internal_name = "coupon-1"
+display_name = "Cupón 1"
+description = "El muñeco Mime Jr. que perdió la Copiona."
+icon = SubResource("AtlasTexture_xw6n1")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

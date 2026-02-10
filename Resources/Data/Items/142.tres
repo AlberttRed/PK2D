@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc6n3rvrxhgxm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_blbgi"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_v1ogj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v5cqi"]
+atlas = ExtResource("1_v1ogj")
+region = Rect2(64, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_blbgi")
+id = 142
+internal_name = "bluk-berry"
+display_name = "Baya Oram"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_v5cqi")
+pocket = 5
+kind = 12

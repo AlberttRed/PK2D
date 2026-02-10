@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cvqshhw3yevqh"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bvbo4"]
+
+[resource]
+script = ExtResource("1_bvbo4")
+id = 882
+internal_name = "sparkling-stone"
+display_name = "Piedra Brillante"
+description = "Piedra con un misterioso brillo entregada por un Pokémon considerado como uno de los espíritus guardianes de Alola."
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

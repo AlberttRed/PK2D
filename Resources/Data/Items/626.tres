@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://f6y0rylxupu"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_a1s2c"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cstoy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sor2r"]
+atlas = ExtResource("1_a1s2c")
+region = Rect2(256, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_cstoy")
+id = 626
+internal_name = "relic-silver"
+display_name = "Real Plata"
+description = "Aumenta bastante la Precisión en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_sor2r")

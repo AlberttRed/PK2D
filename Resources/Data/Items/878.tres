@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://x2kcj5uillv2"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8yyao"]
+
+[resource]
+script = ExtResource("1_8yyao")
+id = 878
+internal_name = "forage-bag"
+display_name = "Zurrón"
+description = "Saco para guardar ingredientes, indispensable en la Jungla Umbría para superar la prueba de Lulú."
+pocket = 6

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://qigvvqgv7fqk"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_pk1hr"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s132q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1moq3"]
+atlas = ExtResource("1_pk1hr")
+region = Rect2(448, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_s132q")
+id = 98
+internal_name = "gooey-mulch"
+display_name = "Abono Brote"
+description = "Un fertilizante usado en suelo fértil donde crecen las bayas."
+icon = SubResource("AtlasTexture_1moq3")

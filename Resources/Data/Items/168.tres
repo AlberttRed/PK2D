@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://coe2yueobq6h1"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_17scq"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_awq3q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0amhb"]
+atlas = ExtResource("1_17scq")
+region = Rect2(448, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_awq3q")
+id = 168
+internal_name = "shuca-berry"
+display_name = "Baya Acardo"
+description = "Restaura los PS de un Pokémon si la lleva cuando le alcanza un ataque supereficaz."
+icon = SubResource("AtlasTexture_0amhb")
+pocket = 5
+kind = 12

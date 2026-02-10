@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dvs6xunrj5nu7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5lgsj"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_a7ujj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hv36f"]
+atlas = ExtResource("1_a7ujj")
+region = Rect2(64, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_5lgsj")
+id = 213
+internal_name = "light-ball"
+display_name = "Bola Luminosa"
+description = "Debe llevarla un Pokémon. Cada vez que este inflige daño, recupera algunos PS."
+icon = SubResource("AtlasTexture_hv36f")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

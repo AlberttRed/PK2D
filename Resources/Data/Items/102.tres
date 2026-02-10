@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxij0wxvw1do0"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_1oejv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lsdl7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_strq4"]
+atlas = ExtResource("1_1oejv")
+region = Rect2(64, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_lsdl7")
+id = 102
+internal_name = "dome-fossil"
+display_name = "Fósil Domo"
+description = "Fósil de un Pokémon ancestral que vivió en el fondo del mar. Parece ser un fragmento de concha."
+icon = SubResource("AtlasTexture_strq4")

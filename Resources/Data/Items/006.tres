@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjbb2hfes5n4c"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_bpf3h"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wdesr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bpf3h"]
+atlas = ExtResource("1_bpf3h")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_wdesr")
+id = 6
+internal_name = "net-ball"
+display_name = "Malla Ball"
+description = "Es algo distinta a las demás. Funciona especialmente bien con los Pokémon de tipo Agua y Bicho."
+icon = SubResource("AtlasTexture_bpf3h")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

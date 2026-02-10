@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://beamot0w7i1an"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_7oqv8"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_thg7a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ii67"]
+atlas = ExtResource("1_7oqv8")
+region = Rect2(192, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_thg7a")
+id = 525
+internal_name = "fab-mail"
+display_name = "Carta Fab."
+description = "A gorgeous-print MAIL to be held by a POKéMON."
+icon = SubResource("AtlasTexture_0ii67")
+pocket = 4

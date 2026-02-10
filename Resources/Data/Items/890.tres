@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://re6kr6rpobws"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_c0olr"]
+
+[resource]
+script = ExtResource("1_c0olr")
+id = 890
+internal_name = "yellow-nectar"
+display_name = "Néctar Amarillo"
+description = "Néctar de ciertas flores de los Jardines de Melemele, capaz de hacer cambiar de forma a una determinada especie de Pokémon."

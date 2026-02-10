@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dw0ujycw0cnuc"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wkit3"]
+
+[resource]
+script = ExtResource("1_wkit3")
+id = 885
+internal_name = "ice-stone"
+display_name = "Piedra Hielo"
+description = "Una piedra peculiar que hace evolucionar a algunos Pokémon. Presenta motivos que recuerdan a los cristales de hielo."
+kind = 9

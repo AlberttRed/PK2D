@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://chfsudq1dm2vq"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_nshpo"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wpteh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxox3"]
+atlas = ExtResource("1_nshpo")
+region = Rect2(512, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_wpteh")
+id = 290
+internal_name = "iron-plate"
+display_name = "Tabla Acero"
+description = "Crea una onda psíquica que causa daño físico al objetivo."
+icon = SubResource("AtlasTexture_qxox3")

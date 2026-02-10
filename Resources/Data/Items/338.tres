@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cyp3ykognq27a"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hsrby"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_oi81m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uu3lv"]
+atlas = ExtResource("1_oi81m")
+region = Rect2(384, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_hsrby")
+id = 338
+internal_name = "tm34"
+display_name = "MT34"
+description = "Alas macizas que golpean al objetivo y pueden subir la Defensa del usuario."
+icon = SubResource("AtlasTexture_uu3lv")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

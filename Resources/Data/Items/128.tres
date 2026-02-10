@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bg1ps8jgx5rbb"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bqhwr"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_wbg2w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yag23"]
+atlas = ExtResource("1_wbg2w")
+region = Rect2(448, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_bqhwr")
+id = 128
+internal_name = "pecha-berry"
+display_name = "Baya Meloc"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_yag23")
+pocket = 5
+kind = 12

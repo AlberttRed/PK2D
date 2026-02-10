@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnqqp6arqyija"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_nvmk0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xop3k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3rx74"]
+atlas = ExtResource("1_nvmk0")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_xop3k")
+id = 691
+internal_name = "rich-mulch"
+display_name = "Abono Fértil"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Pinsir en combate."
+icon = SubResource("AtlasTexture_3rx74")

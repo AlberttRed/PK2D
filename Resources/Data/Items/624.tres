@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dmewsbkkrv7jn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7oag7"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_f5fqe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fqx5l"]
+atlas = ExtResource("1_f5fqe")
+region = Rect2(128, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_7oag7")
+id = 624
+internal_name = "comet-shard"
+display_name = "Fragmento Cometa"
+description = "Aumenta bastante la Defensa en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_fqx5l")

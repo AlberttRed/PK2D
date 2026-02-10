@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bir65wtgihyvj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_00ih3"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_qsafp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nrb3c"]
+atlas = ExtResource("1_qsafp")
+region = Rect2(64, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_00ih3")
+id = 303
+internal_name = "razor-claw"
+display_name = "Garra Afilada"
+description = "Impresionante pared de luz que reduce el daño de los ataques especiales durante cinco turnos."
+icon = SubResource("AtlasTexture_nrb3c")
+kind = 7

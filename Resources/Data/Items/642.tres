@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddpqmolcyuasx"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_2n2yl"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4j8dv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ttx58"]
+atlas = ExtResource("1_2n2yl")
+region = Rect2(0, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_4j8dv")
+id = 642
+internal_name = "x-sp-def-3"
+display_name = "Def. Esp. X 3"
+description = "Ataca con un chillido desagradable que baja el Ataque Especial del rival."
+icon = SubResource("AtlasTexture_ttx58")

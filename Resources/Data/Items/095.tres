@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwd2xv03vaqy7"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_md6w6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ont8o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6gtol"]
+atlas = ExtResource("1_md6w6")
+region = Rect2(256, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_ont8o")
+id = 95
+internal_name = "growth-mulch"
+display_name = "Abono Rápido"
+description = "Un fertilizante usado en suelo fértil donde crecen las bayas."
+icon = SubResource("AtlasTexture_6gtol")

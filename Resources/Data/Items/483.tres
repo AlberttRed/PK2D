@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://lyl2kq36u0gk"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_pi5od"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t10ko"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ysut"]
+atlas = ExtResource("1_pi5od")
+region = Rect2(64, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_t10ko")
+id = 483
+internal_name = "mystery-egg"
+display_name = "Huevo Misterioso"
+description = "Campana de aspecto antiguo que emite un sonido que calma el espíritu."
+icon = SubResource("AtlasTexture_8ysut")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

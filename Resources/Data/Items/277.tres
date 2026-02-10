@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bass4i0gr0dcf"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_3ehwo"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7v4rn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nruvu"]
+atlas = ExtResource("1_3ehwo")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_7v4rn")
+id = 277
+internal_name = "zap-plate"
+display_name = "Tabla Trueno"
+description = "Tiene un curioso aroma que potencia los movimientos de tipo Agua. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_nruvu")

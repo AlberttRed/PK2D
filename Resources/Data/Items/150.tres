@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cx176by45sg8i"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_2mmbi"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_n11yg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j00g7"]
+atlas = ExtResource("1_2mmbi")
+region = Rect2(576, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_n11yg")
+id = 150
+internal_name = "grepa-berry"
+display_name = "Baya Uvav"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Veneno de un enemigo."
+icon = SubResource("AtlasTexture_j00g7")
+pocket = 5
+kind = 12

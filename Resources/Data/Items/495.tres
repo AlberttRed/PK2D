@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ba474p34tjogk"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7l447"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_fy18d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k57lr"]
+atlas = ExtResource("1_fy18d")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_7l447")
+id = 495
+internal_name = "data-card-10"
+display_name = "Tarjeta Datos 10"
+description = "Una Cápsula resistente que solo puede abrirse con una llave especial."
+icon = SubResource("AtlasTexture_k57lr")

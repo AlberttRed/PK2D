@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cw2abfgrl4bh2"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7o8hb"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_wgs5t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10ayq"]
+atlas = ExtResource("1_wgs5t")
+region = Rect2(128, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_7o8hb")
+id = 514
+internal_name = "photo-album"
+display_name = "Álbum"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Fuera del Ring."
+icon = SubResource("AtlasTexture_10ayq")

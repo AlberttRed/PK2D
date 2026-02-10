@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dyg4kihk1tlgx"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_7u3j0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_f2dru"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7u3j0"]
+atlas = ExtResource("1_7u3j0")
+region = Rect2(0, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_f2dru")
+id = 21
+internal_name = "awakening"
+display_name = "Despertar"
+description = "Medicina en espray que libera a un Pokémon de las garras del sueño."
+icon = SubResource("AtlasTexture_7u3j0")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

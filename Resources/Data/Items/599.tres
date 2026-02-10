@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dtwocnooy0dpm"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_gjgbn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mlso3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bmuq4"]
+atlas = ExtResource("1_gjgbn")
+region = Rect2(448, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_mlso3")
+id = 599
+internal_name = "flying-gem"
+display_name = "Gema Voladora"
+description = "Esfera misteriosa que contiene el poder de la región de Teselia y se utiliza para generar Poderes Regalo."
+icon = SubResource("AtlasTexture_bmuq4")

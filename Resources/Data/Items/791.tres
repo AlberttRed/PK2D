@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ksrwcbq46t2o"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4xpup"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_egb0y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwmfx"]
+atlas = ExtResource("1_egb0y")
+region = Rect2(0, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_4xpup")
+id = 791
+internal_name = "mega-anklet"
+display_name = "Megatobillera"
+description = "Tobillera con un poder misterioso que permite megaevolucionar a Pokémon que lleven la Megapiedra adecuada."
+icon = SubResource("AtlasTexture_vwmfx")

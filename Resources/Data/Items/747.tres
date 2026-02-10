@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dg1m0k33dch1o"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_emcxc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_fd5kg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tw5j0"]
+atlas = ExtResource("1_emcxc")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_fd5kg")
+id = 747
+internal_name = "tm98"
+display_name = "MT98"
+description = "Fósil de un Pokémon prehistórico terrestre. Parece la impresión de una aleta."
+icon = SubResource("AtlasTexture_tw5j0")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

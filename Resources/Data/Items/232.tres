@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bouka7bu5ahaj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1fb1o"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_44ixa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aevtt"]
+atlas = ExtResource("1_44ixa")
+region = Rect2(0, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_1fb1o")
+id = 232
+internal_name = "lax-incense"
+display_name = "Incienso Suave"
+description = "Extraña esfera que envenena gravemente al Pokémon que la lleva en combate."
+icon = SubResource("AtlasTexture_aevtt")
+kind = 7

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://rqwaewusettu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0besn"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_1iljw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1tv8"]
+atlas = ExtResource("1_1iljw")
+region = Rect2(512, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_0besn")
+id = 350
+internal_name = "tm46"
+display_name = "MT46"
+description = "Impide que el objetivo utilice el objeto que lleve y que su Entrenador use objetos sobre él."
+icon = SubResource("AtlasTexture_v1tv8")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

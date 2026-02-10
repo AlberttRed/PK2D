@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bahih5rf5frbo"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3k8su"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_j8brw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fy28n"]
+atlas = ExtResource("1_j8brw")
+region = Rect2(512, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_3k8su")
+id = 129
+internal_name = "rawst-berry"
+display_name = "Baya Safre"
+description = "Al usarla con un Pokémon, se gana su amistad, pero también reduce sus PS de base."
+icon = SubResource("AtlasTexture_fy28n")
+pocket = 5
+kind = 12

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dviiwrpujpgq1"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_47b20"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_arqb7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tua2v"]
+atlas = ExtResource("1_47b20")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_arqb7")
+id = 510
+internal_name = "data-card-25"
+display_name = "Tarjeta Datos 25"
+description = "Joya de un solo uso que potencia los movimientos de tipo Fuego. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_tua2v")

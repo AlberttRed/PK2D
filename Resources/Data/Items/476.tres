@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://kl5dvpnlv2u4"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a5hjk"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_s66a2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sr6yw"]
+atlas = ExtResource("1_s66a2")
+region = Rect2(256, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_a5hjk")
+id = 476
+internal_name = "basement-key"
+display_name = "Llave Sótano"
+description = "Poké Ball algo distinta que funciona especialmente bien a la hora de atrapar Pokémon de mucho peso."
+icon = SubResource("AtlasTexture_sr6yw")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

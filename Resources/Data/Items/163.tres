@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://deeqtdyyqd1y4"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6ylwv"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_kq14h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvnhk"]
+atlas = ExtResource("1_kq14h")
+region = Rect2(128, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_6ylwv")
+id = 163
+internal_name = "wacan-berry"
+display_name = "Baya Gualot"
+description = "Si la lleva un Pokémon, le sube la Velocidad en un momento de apuro."
+icon = SubResource("AtlasTexture_nvnhk")
+pocket = 5
+kind = 12

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c48hntppm8fwk"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_s7dqc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_y240t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw837"]
+atlas = ExtResource("1_s7dqc")
+region = Rect2(448, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_y240t")
+id = 639
+internal_name = "x-accuracy-2"
+display_name = "Precisión X 2"
+description = "Forma que adoptó Zekrom al perder su cuerpo. Espera la llegada de un nuevo héroe."
+icon = SubResource("AtlasTexture_nw837")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c0wdsesxpi0vv"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_0mafg"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cjyit"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v0u0l"]
+atlas = ExtResource("1_0mafg")
+region = Rect2(0, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_cjyit")
+id = 814
+internal_name = "key-stone"
+display_name = "Piedra Activadora"
+description = "Piedra de singulares poderes que permite megaevolucionar en combate a un Pokémon que lleve consigo una Megapiedra."
+icon = SubResource("AtlasTexture_v0u0l")
+pocket = 6

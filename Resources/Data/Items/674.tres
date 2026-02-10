@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dr6w0vpt117xn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8lt26"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_8tepv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjslh"]
+atlas = ExtResource("1_8tepv")
+region = Rect2(0, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_8lt26")
+id = 674
+internal_name = "oval-charm"
+display_name = "Amuleto Oval"
+description = "Gafa que protege de los efectos adversos del clima y del polvo lanzado por los rivales."
+icon = SubResource("AtlasTexture_yjslh")
+pocket = 6

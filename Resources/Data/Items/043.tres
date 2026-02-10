@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvhykeeyva3d0"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_4jb5j"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_53hdi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4jb5j"]
+atlas = ExtResource("1_4jb5j")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_53hdi")
+id = 43
+internal_name = "berry-juice"
+display_name = "Zumo de Baya"
+description = "Zumo de bayas 100% natural que restaura 20 PS de un Pokémon."
+icon = SubResource("AtlasTexture_4jb5j")
+pocket = 5
+kind = 12

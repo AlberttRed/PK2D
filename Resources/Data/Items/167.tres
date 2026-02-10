@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cuihu3c10gmil"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8cru2"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_wakmn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_362ig"]
+atlas = ExtResource("1_wakmn")
+region = Rect2(384, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_8cru2")
+id = 167
+internal_name = "kebia-berry"
+display_name = "Baya Kebia"
+description = "Si la lleva un Pokémon, aumenta mucho una característica en un momento de apuro."
+icon = SubResource("AtlasTexture_362ig")
+pocket = 5
+kind = 12

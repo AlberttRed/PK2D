@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwk0n76dig0tt"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_dy6e2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s1cdj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5j3w"]
+atlas = ExtResource("1_dy6e2")
+region = Rect2(256, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_s1cdj")
+id = 396
+internal_name = "tm92"
+display_name = "MT92"
+description = "Abre la puerta de la Central del Valle Eólico. La llevaba un Recluta del Equipo Galaxia."
+icon = SubResource("AtlasTexture_p5j3w")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

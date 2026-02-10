@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ctaf2ja2ksyqv"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_elrb8"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_snmdu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jgt5j"]
+atlas = ExtResource("1_elrb8")
+region = Rect2(320, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_snmdu")
+id = 126
+internal_name = "cheri-berry"
+display_name = "Baya Zreza"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_jgt5j")
+pocket = 5
+kind = 12

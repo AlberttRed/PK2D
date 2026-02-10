@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://kb8dx31h861x"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_1qyrd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3mg4n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uq64k"]
+atlas = ExtResource("1_1qyrd")
+region = Rect2(0, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_3mg4n")
+id = 312
+internal_name = "tm08"
+display_name = "MT08"
+description = "Ataca con un terrible rayo que puede paralizar al objetivo."
+icon = SubResource("AtlasTexture_uq64k")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

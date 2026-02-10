@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://10l34fu8e11h"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_80526"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hsica"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_waeyd"]
+atlas = ExtResource("1_80526")
+region = Rect2(128, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_hsica")
+id = 584
+internal_name = "air-balloon"
+display_name = "Globo Helio"
+description = "Joya de un solo uso que potencia los movimientos de tipo Fantasma. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_waeyd")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

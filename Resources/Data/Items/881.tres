@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d324ck06yle5o"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qbr1a"]
+
+[resource]
+script = ExtResource("1_qbr1a")
+id = 881
+internal_name = "festival-ticket"
+display_name = "Festicupón"
+description = "Se puede canjear para organizar minijuegos en la Festi Plaza."
+pocket = 6

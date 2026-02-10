@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cb0f4mkea2xo7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ak3qs"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_m6drk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0bjqe"]
+atlas = ExtResource("1_m6drk")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_ak3qs")
+id = 577
+internal_name = "bridge-mail-t"
+display_name = "Carta Puente A"
+description = "Los Pokémon pueden llevarla o usarla para restaurar algunos PS. Su sabor puede causar confusión."
+icon = SubResource("AtlasTexture_0bjqe")
+pocket = 4

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0i4ve2jlr2bl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_60ypa"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_bi2xp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_12ixe"]
+atlas = ExtResource("1_bi2xp")
+region = Rect2(64, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_60ypa")
+id = 253
+internal_name = "zoom-lens"
+display_name = "Telescopio"
+description = "Potencia la Velocidad de base, pero reduce la Velocidad en combate. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_12ixe")
+kind = 7

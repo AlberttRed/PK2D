@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bd6k5wldxi61k"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2481y"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_h1eco"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_av3d4"]
+atlas = ExtResource("1_h1eco")
+region = Rect2(256, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_2481y")
+id = 55
+internal_name = "guard-spec"
+display_name = "Protección X"
+description = "Evita que bajen las características del equipo Pokémon durante cinco turnos."
+icon = SubResource("AtlasTexture_av3d4")
+pocket = 8
+kind = 10
+allowed_contexts = 4

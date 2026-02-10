@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b7y23lol2e5n"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d4tg8"]
+
+[resource]
+script = ExtResource("1_d4tg8")
+id = 917
+internal_name = "dark-memory"
+display_name = "Disco Siniestro"
+description = "Disco de datos que contiene información relativa al tipo Siniestro. Permite cambiar de tipo a cierto Pokémon."

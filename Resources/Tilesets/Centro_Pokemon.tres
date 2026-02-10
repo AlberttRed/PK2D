@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://dr7bntiy6uqpb"]
+[gd_resource type="TileSet" format=3 uid="uid://dr7bntiy6uqpb"]
 
 [ext_resource type="Texture2D" uid="uid://bdqgn2nu4aunc" path="res://Sprites/Tilesets/Interior general.PNG" id="1_n1w34"]
 [ext_resource type="Texture2D" uid="uid://beqtf0tfeyihl" path="res://Sprites/Tilesets/Poke Centre interior.PNG" id="1_rcut2"]

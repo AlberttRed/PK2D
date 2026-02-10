@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://u7jlr2v0oa2p"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_e3v1v"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_l2jpa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n58il"]
+atlas = ExtResource("1_e3v1v")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_l2jpa")
+id = 293
+internal_name = "full-incense"
+display_name = "Incienso Lento"
+description = "Un movimiento altamente tóxico que envenena gravemente al objetivo y causa un daño mayor en cada turno."
+icon = SubResource("AtlasTexture_n58il")

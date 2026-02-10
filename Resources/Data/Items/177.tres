@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dl87u2cmieh07"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_07r37"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_i1s61"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3x5mn"]
+atlas = ExtResource("1_07r37")
+region = Rect2(384, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_i1s61")
+id = 177
+internal_name = "chilan-berry"
+display_name = "Baya Chilan"
+description = "Garra ligera y afilada que permite que el Pokémon que la lleve ataque a veces el primero."
+icon = SubResource("AtlasTexture_3x5mn")
+pocket = 5
+kind = 12

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dd3p6br5u6tlp"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_dw6jn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m2yme"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq7ot"]
+atlas = ExtResource("1_dw6jn")
+region = Rect2(576, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_m2yme")
+id = 331
+internal_name = "tm27"
+display_name = "MT27"
+description = "Restaura todos los PS y cura todos los problemas de estado del usuario. Duerme los dos próximos turnos."
+icon = SubResource("AtlasTexture_mq7ot")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

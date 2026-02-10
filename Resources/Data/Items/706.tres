@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bowrdimoh4ksp"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_4vbgh"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_b8s2h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0o4bc"]
+atlas = ExtResource("1_4vbgh")
+region = Rect2(64, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_b8s2h")
+id = 706
+internal_name = "aggronite"
+display_name = "Aggronita"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Hada de un enemigo."
+icon = SubResource("AtlasTexture_0o4bc")

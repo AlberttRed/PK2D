@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ckxerc0ohww2t"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_oym4w"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qrulg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5b6i5"]
+atlas = ExtResource("1_oym4w")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_qrulg")
+id = 136
+internal_name = "figy-berry"
+display_name = "Baya Higog"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_5b6i5")
+pocket = 5
+kind = 12

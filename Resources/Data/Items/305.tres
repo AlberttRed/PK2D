@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c6ve50wej2g8h"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ffct8"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_oy7a3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sr7ah"]
+atlas = ExtResource("1_oy7a3")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_ffct8")
+id = 305
+internal_name = "tm01"
+display_name = "MT01"
+description = "Quien lo usa invoca una fuerte lluvia que dura cinco turnos y fortalece los movimientos de tipo Agua."
+icon = SubResource("AtlasTexture_sr7ah")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

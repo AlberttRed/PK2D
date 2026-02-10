@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dveykt0q4nir3"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_4pse4"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cp578"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1kr0i"]
+atlas = ExtResource("1_4pse4")
+region = Rect2(192, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_cp578")
+id = 635
+internal_name = "x-sp-atk-2"
+display_name = "At. Esp. X 2"
+description = "Cuando se usa, un Pokémon de tu equipo utiliza su objeto inmediatamente."
+icon = SubResource("AtlasTexture_1kr0i")

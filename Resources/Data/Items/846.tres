@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djjs6yo1lshv1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a2vyv"]
+
+[resource]
+script = ExtResource("1_a2vyv")
+id = 846
+internal_name = "eevium-z--held"
+display_name = "Eeveestal Z"
+description = "Cristal que confiere el Poder Z al movimiento Última Baza de Eevee."

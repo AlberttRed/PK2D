@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ergdo51hfm4q"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cnoju"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_qmn2w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fhrv6"]
+atlas = ExtResource("1_qmn2w")
+region = Rect2(0, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_cnoju")
+id = 171
+internal_name = "tanga-berry"
+display_name = "Baya Yecana"
+description = "Si la lleva un Pokémon cuando otro lanza un ataque físico, este último también recibe daño."
+icon = SubResource("AtlasTexture_fhrv6")
+pocket = 5
+kind = 12

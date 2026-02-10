@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wt2g61d0l0yi"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_adya4"]
+
+[resource]
+script = ExtResource("1_adya4")
+id = 916
+internal_name = "dragon-memory"
+display_name = "Disco Dragón"
+description = "Disco de datos que contiene información relativa al tipo Dragón. Permite cambiar de tipo a cierto Pokémon."

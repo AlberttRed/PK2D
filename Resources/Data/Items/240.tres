@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://hk41nv35v25e"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jjtej"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_swbsy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w0xk1"]
+atlas = ExtResource("1_swbsy")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_jjtej")
+id = 240
+internal_name = "green-scarf"
+display_name = "Pañuelo Verde"
+description = "Un hilo largo y delgado de color rojo que transmite el enamoramiento del Pokémon que lo lleva a su objetivo."
+icon = SubResource("AtlasTexture_w0xk1")

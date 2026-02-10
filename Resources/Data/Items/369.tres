@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cumnspb61yva"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_c0lvv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wgsqj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfn2g"]
+atlas = ExtResource("1_c0lvv")
+region = Rect2(448, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_wgsqj")
+id = 369
+internal_name = "tm65"
+display_name = "MT65"
+description = "Se lleva al objetivo, que es cambiado por otro Pokémon. Si es un Pokémon salvaje, acaba el combate."
+icon = SubResource("AtlasTexture_lfn2g")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

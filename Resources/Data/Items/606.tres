@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bf8mrg4cqsxdc"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_n6od2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_q5d12"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hnj2c"]
+atlas = ExtResource("1_n6od2")
+region = Rect2(256, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_q5d12")
+id = 606
+internal_name = "health-wing"
+display_name = "Pluma Vigor"
+description = "Moneda de cobre de más de 3000 años de antigüedad. Muy valorada por los coleccionistas."
+icon = SubResource("AtlasTexture_hnj2c")
+pocket = 2

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cq5ygccacd4u8"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jt52y"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ysjak"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ilwwd"]
+atlas = ExtResource("1_ysjak")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_jt52y")
+id = 193
+internal_name = "exp-share"
+display_name = "Repartir Exp"
+description = "Película metálica que fortalece los ataques de tipo Acero. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_ilwwd")
+pocket = 8

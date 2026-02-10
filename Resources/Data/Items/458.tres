@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://br20selokcu8h"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ds5ob"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_m6yht"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ksqkq"]
+atlas = ExtResource("1_m6yht")
+region = Rect2(384, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_ds5ob")
+id = 458
+internal_name = "red-apricorn"
+display_name = "Bonguri Rojo"
+description = "Caramelo típico de Pueblo Caoba, muy popular como souvenir."
+icon = SubResource("AtlasTexture_ksqkq")

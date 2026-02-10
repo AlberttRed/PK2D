@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b16fyymn6pxdv"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mhud5"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_toni2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ylibr"]
+atlas = ExtResource("1_toni2")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_mhud5")
+id = 109
+internal_name = "dawn-stone"
+display_name = "Piedra Alba"
+description = "Una piedra peculiar que hace evolucionar a algunos Pokémon. Brilla como un lucero."
+icon = SubResource("AtlasTexture_ylibr")
+kind = 9

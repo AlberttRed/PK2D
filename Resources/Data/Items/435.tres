@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ck3ykf6bmk51f"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_542db"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xf81m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1lr0a"]
+atlas = ExtResource("1_542db")
+region = Rect2(192, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_xf81m")
+id = 435
+internal_name = "magma-stone"
+display_name = "Piedra Magma"
+description = "Objeto que contiene agua y se usa para regar las bayas del Plantabayas."
+icon = SubResource("AtlasTexture_1lr0a")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bl8xyrhftr2do"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_rrsd0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wcw1h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f40cn"]
+atlas = ExtResource("1_rrsd0")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_wcw1h")
+id = 407
+internal_name = "rule-book"
+display_name = "Reglamento"
+description = "Caja en la que se transportan los Pokochos elaborados con bayas."
+icon = SubResource("AtlasTexture_f40cn")

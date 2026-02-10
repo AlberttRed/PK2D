@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dockwu30nuf3y"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_5r3ll"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jtj7a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_og4yy"]
+atlas = ExtResource("1_5r3ll")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_jtj7a")
+id = 820
+internal_name = "electrium-z--held"
+display_name = "Electrostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Eléctrico."
+icon = SubResource("AtlasTexture_og4yy")

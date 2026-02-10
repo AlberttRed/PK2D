@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c8grri5aaqpl7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_22ywp"]
+
+[resource]
+script = ExtResource("1_22ywp")
+id = 908
+internal_name = "ghost-memory"
+display_name = "Disco Fantasma"
+description = "Disco de datos que contiene información relativa al tipo Fantasma. Permite cambiar de tipo a cierto Pokémon."

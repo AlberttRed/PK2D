@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d263b32s781lm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_c4reh"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_lg1vx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8aiht"]
+atlas = ExtResource("1_lg1vx")
+region = Rect2(320, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_c4reh")
+id = 267
+internal_name = "power-belt"
+display_name = "Cinto Recio"
+description = "Tabla de piedra que potencia los movimientos de tipo Psíquico. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_8aiht")
+pocket = 8
+kind = 10
+allowed_contexts = 4

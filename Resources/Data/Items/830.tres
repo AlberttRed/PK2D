@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://kp8pt0scijkr"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_31vyh"]
+
+[resource]
+script = ExtResource("1_31vyh")
+id = 830
+internal_name = "ghostium-z--held"
+display_name = "Espectrostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Fantasma."

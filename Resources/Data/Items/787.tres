@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://pof1ewm1w7vq"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_l8n4a"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_vk0j5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3h2ir"]
+atlas = ExtResource("1_vk0j5")
+region = Rect2(384, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_l8n4a")
+id = 787
+internal_name = "mega-glasses"
+display_name = "Megagafas"
+description = "Gafas con un poder misterioso que permiten megaevolucionar a Pokémon que lleven la Megapiedra adecuada."
+icon = SubResource("AtlasTexture_3h2ir")

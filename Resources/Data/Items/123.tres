@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://chyw6mlt560kq"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tvcv0"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ukujk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_onvhd"]
+atlas = ExtResource("1_ukujk")
+region = Rect2(128, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_tvcv0")
+id = 123
+internal_name = "air-mail"
+display_name = "Carta Aérea"
+description = "Stationery featuring a print of colorful letter sets. Let a Pokémon hold it for delivery."
+icon = SubResource("AtlasTexture_onvhd")
+pocket = 4

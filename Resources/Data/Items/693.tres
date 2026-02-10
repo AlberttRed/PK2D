@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://u0riv5jivcng"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_77whu"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_j84op"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgiiy"]
+atlas = ExtResource("1_j84op")
+region = Rect2(512, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_77whu")
+id = 693
+internal_name = "boost-mulch"
+display_name = "Abono Fructífero"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Lucario en combate."
+icon = SubResource("AtlasTexture_cgiiy")

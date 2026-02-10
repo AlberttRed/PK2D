@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cttq36myga3ou"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8shov"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_uvmc2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykdps"]
+atlas = ExtResource("1_uvmc2")
+region = Rect2(128, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_8shov")
+id = 314
+internal_name = "tm10"
+display_name = "MT10"
+description = "Un ataque de gran potencia que resulta más fuerte cuanto más le guste el Entrenador al Pokémon que lo usa."
+icon = SubResource("AtlasTexture_ykdps")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

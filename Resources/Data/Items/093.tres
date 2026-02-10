@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://6fkrxb7pxi6d"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4s7fp"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_eppnq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nahcf"]
+atlas = ExtResource("1_eppnq")
+region = Rect2(128, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_4s7fp")
+id = 93
+internal_name = "heart-scale"
+display_name = "Escama Corazón"
+description = "Bella escama con forma de corazón que brilla ligeramente como los colores del arcoíris. Es muy poco común."
+icon = SubResource("AtlasTexture_nahcf")

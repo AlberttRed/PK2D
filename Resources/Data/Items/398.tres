@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmgg0t1x5ccdl"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jsemu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t1660"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2kypn"]
+atlas = ExtResource("1_jsemu")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_t1660")
+id = 398
+internal_name = "hm02"
+display_name = "MO02"
+description = "Desactiva los sistemas de seguridad de la Base Galaxia. Por lo visto, perder esta tarjeta se castiga severamente."
+icon = SubResource("AtlasTexture_2kypn")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

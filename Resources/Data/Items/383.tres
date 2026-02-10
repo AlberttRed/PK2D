@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dj3otv13knu5m"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_153fi"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_iwy3q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mmkh0"]
+atlas = ExtResource("1_iwy3q")
+region = Rect2(64, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_153fi")
+id = 383
+internal_name = "tm79"
+display_name = "MT79"
+description = "Genera mucha fuerza y ataca con gran energía al objetivo. También puede usarse para mover piedras grandes."
+icon = SubResource("AtlasTexture_mmkh0")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

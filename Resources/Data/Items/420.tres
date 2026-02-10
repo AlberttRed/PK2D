@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://beuk2xswk07ro"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_nrvv4"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o2o8w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6k8k5"]
+atlas = ExtResource("1_nrvv4")
+region = Rect2(512, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_o2o8w")
+id = 420
+internal_name = "vs-seeker"
+display_name = "Buscapelea"
+description = "Uno de los tres cupones que sirve para obtener un Poké-reloj."
+icon = SubResource("AtlasTexture_6k8k5")
+pocket = 6

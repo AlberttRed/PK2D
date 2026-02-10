@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnk744bojd7kj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dlyyk"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_n71fp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8cp65"]
+atlas = ExtResource("1_n71fp")
+region = Rect2(128, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_dlyyk")
+id = 816
+internal_name = "eon-flute"
+display_name = "Flauta Eón"
+description = "Flauta capaz de invocar a Latios o Latias en cualquier lugar."
+icon = SubResource("AtlasTexture_8cp65")
+pocket = 6

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b3ueihtm8rchf"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_aj6my"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pga2n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va2d6"]
+atlas = ExtResource("1_aj6my")
+region = Rect2(512, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_pga2n")
+id = 200
+internal_name = "amulet-coin"
+display_name = "Moneda Amuleto"
+description = "Debe llevarlas un Pokémon. Fortalecen los movimientos de tipo Siniestro."
+icon = SubResource("AtlasTexture_va2d6")
+pocket = 8

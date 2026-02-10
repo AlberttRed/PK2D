@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnek8r75yfs0w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pln4p"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_vvi0w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ddjt"]
+atlas = ExtResource("1_vvi0w")
+region = Rect2(0, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_pln4p")
+id = 422
+internal_name = "old-rod"
+display_name = "Caña Vieja"
+description = "Fantástico medicamento vendido en la farmacia de Ciudad Orquídea. Cura completamente a un Pokémon."
+icon = SubResource("AtlasTexture_7ddjt")
+pocket = 6

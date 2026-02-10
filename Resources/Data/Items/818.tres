@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bbpitb4lx0txg"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_cqp6y"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o0wwn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6reu3"]
+atlas = ExtResource("1_cqp6y")
+region = Rect2(256, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_o0wwn")
+id = 818
+internal_name = "firium-z--held"
+display_name = "Pirostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Fuego."
+icon = SubResource("AtlasTexture_6reu3")

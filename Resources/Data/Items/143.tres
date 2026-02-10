@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc4tlelu48s88"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2bv7j"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_7o6x2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_68gui"]
+atlas = ExtResource("1_7o6x2")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_2bv7j")
+id = 143
+internal_name = "nanab-berry"
+display_name = "Baya Latano"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_68gui")
+pocket = 5
+kind = 12

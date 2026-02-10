@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cckcm5uk8iam7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ml4vv"]
+
+[resource]
+script = ExtResource("1_ml4vv")
+id = 838
+internal_name = "z-ring"
+display_name = "Pulsera Z"
+description = "Misteriosa pulsera que transmite la fuerza física y mental del Entrenador a sus Pokémon, lo que les permite usar movimientos Z."
+pocket = 6

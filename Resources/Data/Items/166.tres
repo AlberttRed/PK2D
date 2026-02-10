@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cwvcs41wtju6d"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_heuwh"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rl0yq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bd73d"]
+atlas = ExtResource("1_heuwh")
+region = Rect2(320, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_rl0yq")
+id = 166
+internal_name = "chople-berry"
+display_name = "Baya Pomaro"
+description = "Si la lleva un Pokémon, aumenta la probabilidad de dar un golpe crítico en un momento de apuro."
+icon = SubResource("AtlasTexture_bd73d")
+pocket = 5
+kind = 12

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dbjflyufqilme"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4ax1k"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_4x1ye"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vm4r2"]
+atlas = ExtResource("1_4x1ye")
+region = Rect2(64, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_4ax1k")
+id = 768
+internal_name = "mega-charm"
+display_name = "Megacolgante"
+description = "Amuleto con un poder misterioso que permite megaevolucionar a Pokémon que lleven la Megapiedra adecuada."
+icon = SubResource("AtlasTexture_vm4r2")

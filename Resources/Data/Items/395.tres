@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2ipp38wpnlof"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qxpom"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_w536n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b6kxl"]
+atlas = ExtResource("1_w536n")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_qxpom")
+id = 395
+internal_name = "tm91"
+display_name = "MT91"
+description = "Un cuaderno muy práctico en el que puedes registrar amigos, claves de amigo, etc."
+icon = SubResource("AtlasTexture_b6kxl")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

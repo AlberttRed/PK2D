@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c53au28i6ojok"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_oanp0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ryt28"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8t3qa"]
+atlas = ExtResource("1_oanp0")
+region = Rect2(384, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_ryt28")
+id = 428
+internal_name = "suite-key"
+display_name = "Llave Suite"
+description = "Dispositivo portátil de cultivo que permite plantar bayas en cualquier momento de forma sencilla."
+icon = SubResource("AtlasTexture_8t3qa")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

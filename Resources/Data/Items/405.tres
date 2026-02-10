@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxwjuxqn08qsl"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_51sdg"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bs1ur"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_whci4"]
+atlas = ExtResource("1_51sdg")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_bs1ur")
+id = 405
+internal_name = "explorer-kit"
+display_name = "Kit Explorador"
+description = "Increíble caña de pescar de alta tecnología. Pesca Pokémon salvajes en todo tipo de aguas."
+icon = SubResource("AtlasTexture_whci4")
+pocket = 6

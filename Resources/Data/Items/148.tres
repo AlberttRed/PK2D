@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b1cwofflbw62"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_hquj6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rmwje"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyckd"]
+atlas = ExtResource("1_hquj6")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_rmwje")
+id = 148
+internal_name = "qualot-berry"
+display_name = "Baya Ispero"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Hielo de un enemigo."
+icon = SubResource("AtlasTexture_vyckd")
+pocket = 5
+kind = 12

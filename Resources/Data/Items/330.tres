@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://donnrx3bydbpj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ht8r8"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_o5e5i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nq2oj"]
+atlas = ExtResource("1_o5e5i")
+region = Rect2(512, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_ht8r8")
+id = 330
+internal_name = "tm26"
+display_name = "MT26"
+description = "Ataca al objetivo envuelto en llamas. Acumula fuerza y hace subir la Velocidad del usuario."
+icon = SubResource("AtlasTexture_nq2oj")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

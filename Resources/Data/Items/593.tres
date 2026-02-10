@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://buietrpvdkwdm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cuauk"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_vs41a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jssym"]
+atlas = ExtResource("1_vs41a")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_cuauk")
+id = 593
+internal_name = "electric-gem"
+display_name = "Gema Eléctrica"
+description = "Pluma que aumenta un poco la Defensa Especial de base de un Pokémon."
+icon = SubResource("AtlasTexture_jssym")

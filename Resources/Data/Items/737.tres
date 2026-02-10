@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cwjm5dk5sy70n"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_03mqa"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_sfpuk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20tw0"]
+atlas = ExtResource("1_03mqa")
+region = Rect2(128, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_sfpuk")
+id = 737
+internal_name = "lens-case"
+display_name = "Portalentillas"
+description = "A rather chic-looking case for carrying contact lenses."
+icon = SubResource("AtlasTexture_20tw0")
+pocket = 6

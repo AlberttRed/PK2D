@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://i1nfc2x4vbfk"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6uvat"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_hei4e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdipy"]
+atlas = ExtResource("1_hei4e")
+region = Rect2(384, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_6uvat")
+id = 268
+internal_name = "power-lens"
+display_name = "Lente Recia"
+description = "Tabla de piedra que potencia los movimientos de tipo Bicho. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_vdipy")
+pocket = 8
+kind = 10
+allowed_contexts = 4

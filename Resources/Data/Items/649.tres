@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cn3k1tv7if7ss"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_flf1u"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pfpjd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7miae"]
+atlas = ExtResource("1_flf1u")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_pfpjd")
+id = 649
+internal_name = "x-defense-6"
+display_name = "Defensa X 6"
+description = "Un dispositivo con forma de caja que almacena las Insignias y la información relacionada."
+icon = SubResource("AtlasTexture_7miae")

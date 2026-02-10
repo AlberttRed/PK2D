@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dg3f5rhsrj5fi"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cvp7p"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_gxp5v"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u2f31"]
+atlas = ExtResource("1_gxp5v")
+region = Rect2(256, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_cvp7p")
+id = 175
+internal_name = "colbur-berry"
+display_name = "Baya Dillo"
+description = "Sólido y pesado brazal. Sube más las características al subir de nivel, pero baja la Velocidad de quien lo lleva."
+icon = SubResource("AtlasTexture_u2f31")
+pocket = 5
+kind = 12

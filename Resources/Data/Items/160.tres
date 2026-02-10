@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dggysc37kulx"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_28wwd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_51r8r"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1upty"]
+atlas = ExtResource("1_28wwd")
+region = Rect2(576, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_51r8r")
+id = 160
+internal_name = "belue-berry"
+display_name = "Baya Andano"
+description = "Si la lleva un Pokémon, debilita un ataque de tipo Normal de un enemigo."
+icon = SubResource("AtlasTexture_1upty")
+pocket = 5
+kind = 12

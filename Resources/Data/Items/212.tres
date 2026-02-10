@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://buemncpegp7ok"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_7r703"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_y7fel"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tr1s2"]
+atlas = ExtResource("1_7r703")
+region = Rect2(0, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_y7fel")
+id = 212
+internal_name = "dragon-scale"
+display_name = "Escama Dragón"
+description = "Peculiar dispositivo fabricado en Silph S. A. que contiene todo tipo de datos."
+icon = SubResource("AtlasTexture_tr1s2")
+kind = 9

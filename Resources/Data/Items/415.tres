@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bgw57cdoq3e1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_10wra"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_dg74x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x2hwy"]
+atlas = ExtResource("1_dg74x")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_10wra")
+id = 415
+internal_name = "works-key"
+display_name = "Llave Central"
+description = "Es necesario para participar en Concursos Pokémon. Tiene una Cinta de ganador dibujada."
+icon = SubResource("AtlasTexture_x2hwy")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

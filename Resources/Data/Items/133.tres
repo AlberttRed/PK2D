@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c1npy2pkbpfsd"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_eqsui"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qg033"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nu5ls"]
+atlas = ExtResource("1_eqsui")
+region = Rect2(128, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_qg033")
+id = 133
+internal_name = "persim-berry"
+display_name = "Baya Caquic"
+description = "Al usarla con un Pokémon, se gana su amistad, pero también reduce su Defensa Especial de base."
+icon = SubResource("AtlasTexture_nu5ls")
+pocket = 5
+kind = 12

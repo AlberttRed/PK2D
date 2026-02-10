@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://byt5gbb6xehxy"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_j1duy"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oirno"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jl2jh"]
+atlas = ExtResource("1_j1duy")
+region = Rect2(320, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_oirno")
+id = 527
+internal_name = "mach-bike"
+display_name = "Bici de Carreras"
+description = "Bicicleta plegable que va a más del doble de velocidad que otras."
+icon = SubResource("AtlasTexture_jl2jh")
+pocket = 6

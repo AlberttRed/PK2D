@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://43m1qrv76dbd"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_kuytj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qck3h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y6kk7"]
+atlas = ExtResource("1_kuytj")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_qck3h")
+id = 78
+internal_name = "escape-rope"
+display_name = "Cuerda Huida"
+description = "Cuerda larga y resistente que sirve para huir de cuevas y sitios cerrados en general."
+icon = SubResource("AtlasTexture_y6kk7")

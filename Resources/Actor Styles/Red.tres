@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ActorStyle" load_steps=80 format=3 uid="uid://but4gb65vkb58"]
+[gd_resource type="Resource" script_class="ActorStyle" format=3 uid="uid://but4gb65vkb58"]
 
 [ext_resource type="Texture2D" uid="uid://cro7tc6ncdeaj" path="res://Sprites/Overworlds/Characters/Red/red_item.png" id="1_n3kdq"]
 [ext_resource type="Script" uid="uid://dkogrto37y1yu" path="res://Scripts/Resources/ActorStyle.gd" id="1_ymykc"]

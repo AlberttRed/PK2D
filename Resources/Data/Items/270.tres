@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0j0g2nelfkk7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4hr0c"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_p37xe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_28qg3"]
+atlas = ExtResource("1_p37xe")
+region = Rect2(512, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_4hr0c")
+id = 270
+internal_name = "power-anklet"
+display_name = "Franja Recia"
+description = "Tabla de piedra que potencia los movimientos de tipo Fantasma. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_28qg3")
+pocket = 8
+kind = 10
+allowed_contexts = 4

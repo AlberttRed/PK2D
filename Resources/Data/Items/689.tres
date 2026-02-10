@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dehwngye1660a"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kjwru"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_s4atb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_57wcc"]
+atlas = ExtResource("1_s4atb")
+region = Rect2(256, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_kjwru")
+id = 689
+internal_name = "snowball"
+display_name = "Bola de Nieve"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Banette en combate."
+icon = SubResource("AtlasTexture_57wcc")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dpip8rytx4l5c"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_7px81"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lln2a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uvpif"]
+atlas = ExtResource("1_7px81")
+region = Rect2(512, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_lln2a")
+id = 550
+internal_name = "tm-case"
+display_name = "Estuche de MT"
+description = "A convenient case  that holds TMs and HMs."
+icon = SubResource("AtlasTexture_uvpif")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

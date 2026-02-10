@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://h1yfgoamvm5p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_01lwt"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_i58oc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u88d2"]
+atlas = ExtResource("1_i58oc")
+region = Rect2(128, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_01lwt")
+id = 324
+internal_name = "tm20"
+display_name = "MT20"
+description = "Tormenta de arena de cinco turnos que daña a todos los Pokémon excepto a los de tipo Roca, Tierra y Acero."
+icon = SubResource("AtlasTexture_u88d2")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

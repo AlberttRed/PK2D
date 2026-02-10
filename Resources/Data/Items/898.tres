@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bb0ydrm8p2nma"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_25jkm"]
+
+[resource]
+script = ExtResource("1_25jkm")
+id = 898
+internal_name = "electric-seed"
+display_name = "Semilla Electro"
+description = "Aumenta la Defensa del portador si se usa cuando el terreno está cubierto por un campo eléctrico."
+kind = 7

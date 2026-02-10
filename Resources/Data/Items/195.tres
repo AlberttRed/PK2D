@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://du41qdgqsfxhl"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ex4ae"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qy312"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ssyu"]
+atlas = ExtResource("1_ex4ae")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_qy312")
+id = 195
+internal_name = "soothe-bell"
+display_name = "Cascabel Alivio"
+description = "Una gruesa y resistente escama que pueden llevar los Pokémon de tipo Dragón cuando son capturados."
+icon = SubResource("AtlasTexture_2ssyu")
+pocket = 8

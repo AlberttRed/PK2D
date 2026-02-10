@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bt8c2avpx0odn"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_0evn8"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7af2i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o8usp"]
+atlas = ExtResource("1_0evn8")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_7af2i")
+id = 178
+internal_name = "liechi-berry"
+display_name = "Baya Lichi"
+description = "Una campana con un tañido calmante que reconforta al Pokémon que la lleva y lo vuelve más amistoso."
+icon = SubResource("AtlasTexture_o8usp")
+pocket = 5
+kind = 12
