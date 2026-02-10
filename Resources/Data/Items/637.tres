@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3mycnnuakj4f"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_i3xot"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_jkk2d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3q1fy"]
+atlas = ExtResource("1_jkk2d")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_i3xot")
+id = 637
+internal_name = "x-defense-2"
+display_name = "Defensa X 2"
+description = "Aumenta mucho la probabilidad de asestar un golpe crítico. Al cambiar de Pokémon, su efecto desaparece."
+icon = SubResource("AtlasTexture_3q1fy")

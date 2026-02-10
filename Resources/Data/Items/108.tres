@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bw05p0uli2yrx"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_o1unx"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t4hr0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sj1mt"]
+atlas = ExtResource("1_o1unx")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_t4hr0")
+id = 108
+internal_name = "dusk-stone"
+display_name = "Piedra Noche"
+description = "Una piedra peculiar que hace evolucionar a algunos Pokémon. Es oscura como la noche."
+icon = SubResource("AtlasTexture_sj1mt")
+kind = 9

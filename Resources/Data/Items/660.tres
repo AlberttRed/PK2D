@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cjoi22fcx3pqk"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_a7qrs"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_y71tc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptkck"]
+atlas = ExtResource("1_a7qrs")
+region = Rect2(512, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_y71tc")
+id = 660
+internal_name = "tm94"
+display_name = "MT94"
+description = "Espejo misterioso que refleja la verdad y devuelve los Pokémon a su forma original."
+icon = SubResource("AtlasTexture_ptkck")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

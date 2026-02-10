@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://lmv7dr3lsyq0"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_j7754"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lc1cg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i4c5r"]
+atlas = ExtResource("1_j7754")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_lc1cg")
+id = 591
+internal_name = "fire-gem"
+display_name = "Gema Fuego"
+description = "Pluma que aumenta un poco la Defensa de base de un Pokémon."
+icon = SubResource("AtlasTexture_i4c5r")

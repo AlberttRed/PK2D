@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bs6rhfvcm1i6y"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6dwrc"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_hwco5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4nk5c"]
+atlas = ExtResource("1_hwco5")
+region = Rect2(448, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_6dwrc")
+id = 399
+internal_name = "hm03"
+display_name = "MO03"
+description = "Se dice que esta cadena mítica está relacionada con el Pokémon legendario que creó la región de Sinnoh."
+icon = SubResource("AtlasTexture_4nk5c")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

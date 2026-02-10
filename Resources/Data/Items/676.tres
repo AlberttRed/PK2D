@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3ns36jst3rqc"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_0q1jd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_f1dd7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_waapy"]
+atlas = ExtResource("1_0q1jd")
+region = Rect2(128, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_f1dd7")
+id = 676
+internal_name = "plasma-card"
+display_name = "Tarjeta Plasma"
+description = "Al usarse en un huerto de bayas, multiplica la cosecha sin necesidad de cuidados especiales."
+icon = SubResource("AtlasTexture_waapy")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

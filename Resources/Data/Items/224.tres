@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnmtgi7lp3t2s"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_a5t1n"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_g5xo8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtcd4"]
+atlas = ExtResource("1_a5t1n")
+region = Rect2(128, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_g5xo8")
+id = 224
+internal_name = "spell-tag"
+display_name = "Hechizo"
+description = "Debe llevarlo un Pokémon. Aumenta la dureza en los concursos."
+icon = SubResource("AtlasTexture_mtcd4")

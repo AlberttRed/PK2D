@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dcy7m2daayir2"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_is8qc"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_k7wpq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_47gju"]
+atlas = ExtResource("1_k7wpq")
+region = Rect2(0, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_is8qc")
+id = 141
+internal_name = "razz-berry"
+display_name = "Baya Frambu"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_47gju")
+pocket = 5
+kind = 12

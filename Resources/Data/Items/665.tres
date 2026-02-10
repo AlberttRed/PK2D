@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b4fj246ts7r6u"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qakaa"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ugbrq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p4jed"]
+atlas = ExtResource("1_ugbrq")
+region = Rect2(192, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_qakaa")
+id = 665
+internal_name = "gram-2"
+display_name = "Envío 2"
+description = "Ruedas que se acoplan a la suela del calzado y te permiten ir más rápido y realizar piruetas espectaculares."
+icon = SubResource("AtlasTexture_p4jed")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

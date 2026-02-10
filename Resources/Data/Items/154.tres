@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dv3m00iqo0bti"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_42gxj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hblko"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oxt8p"]
+atlas = ExtResource("1_42gxj")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_hblko")
+id = 154
+internal_name = "rabuta-berry"
+display_name = "Baya Rautan"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Bicho de un enemigo."
+icon = SubResource("AtlasTexture_oxt8p")
+pocket = 5
+kind = 12

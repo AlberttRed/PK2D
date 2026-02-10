@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cw12apto5j3ck"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_c3bqv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t0mtm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mxe4"]
+atlas = ExtResource("1_c3bqv")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_t0mtm")
+id = 373
+internal_name = "tm69"
+display_name = "MT69"
+description = "Atrapa al objetivo con hierbas y lo derriba. Cuanto más pesado sea el objetivo, más daño causa."
+icon = SubResource("AtlasTexture_4mxe4")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

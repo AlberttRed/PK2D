@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dep771i30iqa8"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ibej7"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_tlq0m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tlq0m"]
+atlas = ExtResource("1_tlq0m")
+region = Rect2(0, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_ibej7")
+id = 41
+internal_name = "max-elixir"
+display_name = "Elixir Máximo"
+description = "Restaura completamente los PP de todos los movimientos aprendidos por el Pokémon elegido."
+icon = SubResource("AtlasTexture_tlq0m")
+pocket = 2
+kind = 2

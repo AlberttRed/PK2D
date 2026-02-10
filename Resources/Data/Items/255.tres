@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddly77cl5khof"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_o0o7g"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xew6l"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnocd"]
+atlas = ExtResource("1_o0o7g")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_xew6l")
+id = 255
+internal_name = "iron-ball"
+display_name = "Bola Férrea"
+description = "En combate, esta concha desechada sirve para que un Pokémon se cambie por otro que no esté combatiendo."
+icon = SubResource("AtlasTexture_dnocd")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

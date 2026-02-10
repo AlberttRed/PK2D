@@ -1,0 +1,43 @@
+## Contexto de uso de un item
+## Contiene toda la información necesaria para que un ItemEffect pueda ejecutarse
+extends RefCounted
+class_name ItemUseContext
+
+## Contexto donde se está usando el item
+var use_context: ItemEnums.UseContext
+
+## Referencia al party del jugador (puede ser null si no aplica)
+var party: Array = []
+
+## Referencia al bag/inventario (puede ser null si no aplica)
+var bag: Dictionary = {}
+
+## Pokémon objetivo (si aplica)
+var target_pokemon: Pokemon = null
+
+## Slot del party objetivo (si aplica)
+var target_party_slot: int = -1
+
+## Slot de movimiento objetivo (si aplica)
+var target_move_slot: int = -1
+
+## Datos adicionales del contexto de combate (opcional, para futuras fases)
+var battle_controller = null
+var battle_pokemon = null
+
+## Constructor
+func _init(
+	context: ItemEnums.UseContext,
+	_party: Array = [],
+	_bag: Dictionary = {},
+	_target_pokemon: Pokemon = null,
+	_target_party_slot: int = -1,
+	_target_move_slot: int = -1
+) -> void:
+	use_context = context
+	party = _party
+	bag = _bag
+	target_pokemon = _target_pokemon
+	target_party_slot = _target_party_slot
+	target_move_slot = _target_move_slot
+

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b4pxmg0h7o4kg"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_fhkf4"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_tr1x6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5hf60"]
+atlas = ExtResource("1_tr1x6")
+region = Rect2(192, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_fhkf4")
+id = 688
+internal_name = "luminous-moss"
+display_name = "Musgo Brillante"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Aggron en combate."
+icon = SubResource("AtlasTexture_5hf60")
+kind = 7

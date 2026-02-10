@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bg3moe8vccwf1"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ra5dt"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_v28vk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aobaq"]
+atlas = ExtResource("1_ra5dt")
+region = Rect2(256, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_v28vk")
+id = 306
+internal_name = "tm02"
+display_name = "MT02"
+description = "Aterriza sobre la superficie para descansar. Recupera hasta la mitad del total de sus PS."
+icon = SubResource("AtlasTexture_aobaq")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

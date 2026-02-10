@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dafo10o1fh7kl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2jfp8"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_baf0t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vafte"]
+atlas = ExtResource("1_baf0t")
+region = Rect2(512, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_2jfp8")
+id = 733
+internal_name = "elevator-key"
+display_name = "Llave Ascensor"
+description = "A card key that activates the elevator in Lysandre Labs. It is emblazoned with Team Flare’s logo."
+icon = SubResource("AtlasTexture_vafte")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c741mvoparwk1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ju5vt"]
+
+[resource]
+script = ExtResource("1_ju5vt")
+id = 901
+internal_name = "grassy-seed"
+display_name = "Semilla Hierba"
+description = "Aumenta la Defensa del portador si se usa cuando el terreno está cubierto por un campo de hierba."
+kind = 7

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://br7tivkatwh8m"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w4s8e"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_xjeoh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fscb"]
+atlas = ExtResource("1_xjeoh")
+region = Rect2(0, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_w4s8e")
+id = 342
+internal_name = "tm38"
+display_name = "MT38"
+description = "Abrasa al objetivo con agua hirviendo y puede causarle quemaduras."
+icon = SubResource("AtlasTexture_0fscb")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

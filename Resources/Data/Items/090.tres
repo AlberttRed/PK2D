@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5ux3571omllj"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_2b3u6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_eai81"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_44efu"]
+atlas = ExtResource("1_2b3u6")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_eai81")
+id = 90
+internal_name = "stardust"
+display_name = "Polvo Estelar"
+description = "Bonita arena roja de tacto sedoso que alcanza un alto precio en las tiendas."
+icon = SubResource("AtlasTexture_44efu")

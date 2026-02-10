@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cu6vac2shb457"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_apxdb"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pio86"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11bu4"]
+atlas = ExtResource("1_apxdb")
+region = Rect2(576, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_pio86")
+id = 170
+internal_name = "payapa-berry"
+display_name = "Baya Payapa"
+description = "El Pokémon que la lleva puede actuar en primer lugar una vez cuando se encuentra en un momento de apuro."
+icon = SubResource("AtlasTexture_11bu4")
+pocket = 5
+kind = 12

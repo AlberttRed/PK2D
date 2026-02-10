@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dx6w1vwirbxhx"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ukk0l"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_x8d73"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtip3"]
+atlas = ExtResource("1_x8d73")
+region = Rect2(576, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_ukk0l")
+id = 361
+internal_name = "tm57"
+display_name = "MT57"
+description = "Quien lo usa ataca al objetivo como un remolino. Cuanto más lento sea quien lo usa, más daño causa."
+icon = SubResource("AtlasTexture_wtip3")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

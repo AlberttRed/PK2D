@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b7h260rek1te2"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_3t0n6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wcseu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6as8r"]
+atlas = ExtResource("1_3t0n6")
+region = Rect2(192, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_wcseu")
+id = 235
+internal_name = "thick-club"
+display_name = "Hueso Grueso"
+description = "Si el Pokémon que la lleva tiene los PS al máximo, puede resistir un golpe que lo dejaría K.O. y se queda con 1 PS."
+icon = SubResource("AtlasTexture_6as8r")

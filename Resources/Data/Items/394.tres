@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://do34rfhhu008i"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_c7qoo"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_cqwqo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbelq"]
+atlas = ExtResource("1_cqwqo")
+region = Rect2(128, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_c7qoo")
+id = 394
+internal_name = "tm90"
+display_name = "MT90"
+description = "Bolsita con capacidad para diez Sellos de los que decoran las Poké Balls."
+icon = SubResource("AtlasTexture_bbelq")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

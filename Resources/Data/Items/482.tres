@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crdql542kpmb8"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_axs0g"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_kt6s6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_45xgd"]
+atlas = ExtResource("1_kt6s6")
+region = Rect2(0, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_axs0g")
+id = 482
+internal_name = "rainbow-wing"
+display_name = "Ala Arcoíris"
+description = "Lector con el que se pueden escuchar aquellas canciones tan nostálgicas. Se cambia con un solo interruptor."
+icon = SubResource("AtlasTexture_45xgd")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

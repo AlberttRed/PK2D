@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b2odw3lo4230f"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jy2bx"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_vr8aw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xx4g1"]
+atlas = ExtResource("1_vr8aw")
+region = Rect2(192, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_jy2bx")
+id = 585
+internal_name = "red-card"
+display_name = "Tarjeta Roja"
+description = "Joya de un solo uso que potencia los movimientos de tipo Dragón. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_xx4g1")
+kind = 7

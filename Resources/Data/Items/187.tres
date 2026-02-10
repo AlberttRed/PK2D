@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dn7y1ia5at1k3"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_km45q"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ql1vc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w0uut"]
+atlas = ExtResource("1_km45q")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_ql1vc")
+id = 187
+internal_name = "custap-berry"
+display_name = "Baya Chiri"
+description = "Tiene un débil brillo rosado y debe llevarla Clamperl. Sube la Defensa Especial."
+icon = SubResource("AtlasTexture_w0uut")
+pocket = 5
+kind = 12

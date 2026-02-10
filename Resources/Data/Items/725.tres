@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c6ey7xep7q6ap"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3a5kq"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_s6o8d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y6qph"]
+atlas = ExtResource("1_s6o8d")
+region = Rect2(0, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_3a5kq")
+id = 725
+internal_name = "maranga-berry"
+display_name = "Baya Maranga"
+description = "Baúl ligero de increíble capacidad donde pueden guardarse todas las prendas de ropa adquiridas."
+icon = SubResource("AtlasTexture_y6qph")
+pocket = 5
+kind = 12

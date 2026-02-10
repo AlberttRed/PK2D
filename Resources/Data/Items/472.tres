@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bef5j3pr1i56m"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3oit4"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jid6y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkspo"]
+atlas = ExtResource("1_jid6y")
+region = Rect2(0, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_3oit4")
+id = 472
+internal_name = "blue-card"
+display_name = "Tarjeta Azul"
+description = "Bonguri de color negro y aroma indescriptible."
+icon = SubResource("AtlasTexture_wkspo")
+pocket = 6

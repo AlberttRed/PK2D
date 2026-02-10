@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://gumoljvyya6m"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ftjkn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pjlig"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7uv8j"]
+atlas = ExtResource("1_ftjkn")
+region = Rect2(576, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_pjlig")
+id = 461
+internal_name = "green-apricorn"
+display_name = "Bonguri Verde"
+description = "Contiene los datos del Pokéathlon con el número de sprints de los Pokémon."
+icon = SubResource("AtlasTexture_7uv8j")

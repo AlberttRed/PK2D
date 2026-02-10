@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcipdcl55l7y6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0l18s"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_d3cm7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bydfe"]
+atlas = ExtResource("1_d3cm7")
+region = Rect2(512, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_0l18s")
+id = 630
+internal_name = "relic-statue"
+display_name = "Efigie Antigua"
+description = "Aumenta mucho la Defensa en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_bydfe")

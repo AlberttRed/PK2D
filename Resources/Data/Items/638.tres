@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ckr2qo60dqt7l"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_lyr54"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_q450f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_43jep"]
+atlas = ExtResource("1_lyr54")
+region = Rect2(384, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_q450f")
+id = 638
+internal_name = "x-attack-2"
+display_name = "Ataque X 2"
+description = "Forma que adoptó Reshiram al perder su cuerpo. Espera la llegada de un nuevo héroe."
+icon = SubResource("AtlasTexture_43jep")

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b1p4w07pi40mv"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_5k1i7"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jmtfj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t48xs"]
+atlas = ExtResource("1_5k1i7")
+region = Rect2(576, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_jmtfj")
+id = 601
+internal_name = "bug-gem"
+display_name = "Gema Bicho"
+description = "Un objeto que atrae a los Pokémon. Es útil para huir de un combate contra un Pokémon salvaje."
+icon = SubResource("AtlasTexture_t48xs")

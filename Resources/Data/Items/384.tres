@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cswvnqat3v8k2"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_c53t4"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kjov2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcx83"]
+atlas = ExtResource("1_c53t4")
+region = Rect2(128, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_kjov2")
+id = 384
+internal_name = "tm80"
+display_name = "MT80"
+description = "Carga contra el objetivo a una velocidad increíble. También puede usarse para remontar una cascada."
+icon = SubResource("AtlasTexture_wcx83")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

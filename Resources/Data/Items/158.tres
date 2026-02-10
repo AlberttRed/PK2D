@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvfir1r02nwnt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6xd1c"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_kn5ri"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1jktq"]
+atlas = ExtResource("1_kn5ri")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_6xd1c")
+id = 158
+internal_name = "watmel-berry"
+display_name = "Baya Sambia"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Siniestro de un enemigo."
+icon = SubResource("AtlasTexture_1jktq")
+pocket = 5
+kind = 12

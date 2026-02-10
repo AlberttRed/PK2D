@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ccjsdl4lculw6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m2o6w"]
+
+[resource]
+script = ExtResource("1_m2o6w")
+id = 909
+internal_name = "steel-memory"
+display_name = "Disco Acero"
+description = "Disco de datos que contiene información relativa al tipo Acero. Permite cambiar de tipo a cierto Pokémon."

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bgtpnqpupqemt"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ka5cd"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ta4v5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0pah2"]
+atlas = ExtResource("1_ka5cd")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_ta4v5")
+id = 459
+internal_name = "blue-apricorn"
+display_name = "Bonguri Azul"
+description = "Contiene los datos del Pokéathlon con el número de victorias."
+icon = SubResource("AtlasTexture_0pah2")

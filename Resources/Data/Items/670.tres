@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dovsp8jifcg1r"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_pj018"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tv74x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ri6tw"]
+atlas = ExtResource("1_pj018")
+region = Rect2(448, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_tv74x")
+id = 670
+internal_name = "medal-box"
+display_name = "Caja Insignias"
+description = "Un dulce a base de suave y esponjosa nata montada. A algunos Pokémon les encanta."
+icon = SubResource("AtlasTexture_ri6tw")
+pocket = 6

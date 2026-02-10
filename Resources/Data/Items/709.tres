@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://by4caotr2768p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mxwxt"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_v4s3u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4cx4e"]
+atlas = ExtResource("1_v4s3u")
+region = Rect2(256, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_mxwxt")
+id = 709
+internal_name = "scizorite"
+display_name = "Scizorita"
+description = "Una regadera con forma de Lotad. Ayuda a que las bayas plantadas en suelo blandito crezcan mejor."
+icon = SubResource("AtlasTexture_4cx4e")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnuw37cnlrfn"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_fjnnn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_umrsw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t0x6t"]
+atlas = ExtResource("1_fjnnn")
+region = Rect2(512, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_umrsw")
+id = 520
+internal_name = "wave-mail"
+display_name = "Carta Ola"
+description = "A WAILMER-print MAIL to be held by a POKéMON."
+icon = SubResource("AtlasTexture_t0x6t")
+pocket = 4

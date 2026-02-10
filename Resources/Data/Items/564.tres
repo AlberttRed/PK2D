@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://o0wyk02m0k2w"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_3pt6w"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_nyvjv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rtydy"]
+atlas = ExtResource("1_3pt6w")
+region = Rect2(128, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_nyvjv")
+id = 564
+internal_name = "shock-drive"
+display_name = "FulgoROM"
+description = "Chocolatina de sabor dulce. Restaura 20 PS de un Pokémon."
+icon = SubResource("AtlasTexture_rtydy")

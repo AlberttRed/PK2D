@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://co34j6hdmtqb0"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dl13k"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_xmhyk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3j0lo"]
+atlas = ExtResource("1_xmhyk")
+region = Rect2(0, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_dl13k")
+id = 181
+internal_name = "petaya-berry"
+display_name = "Baya Yapati"
+description = "El Pokémon que la lleva puede hacer retroceder al Pokémon al que le inflige daño."
+icon = SubResource("AtlasTexture_3j0lo")
+pocket = 5
+kind = 12

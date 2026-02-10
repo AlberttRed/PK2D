@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cncygdbql3eyu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5po54"]
+
+[resource]
+script = ExtResource("1_5po54")
+id = 903
+internal_name = "flying-memory"
+display_name = "Disco Volador"
+description = "Disco de datos que contiene información relativa al tipo Volador. Permite cambiar de tipo a cierto Pokémon."

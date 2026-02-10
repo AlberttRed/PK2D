@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://67dwkfnpe70l"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_8q1e2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ps4r6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ltmmr"]
+atlas = ExtResource("1_8q1e2")
+region = Rect2(576, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_ps4r6")
+id = 471
+internal_name = "unown-report"
+display_name = "Bloc Unown"
+description = "Bonguri de color verde y aroma peculiar que recuerda al café tostado."
+icon = SubResource("AtlasTexture_ltmmr")
+pocket = 6

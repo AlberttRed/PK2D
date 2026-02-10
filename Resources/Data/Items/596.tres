@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://barsj1wwhfwqm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jowwl"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_lchg4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mceqa"]
+atlas = ExtResource("1_lchg4")
+region = Rect2(256, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_jowwl")
+id = 596
+internal_name = "fighting-gem"
+display_name = "Gema Lucha"
+description = "Fósil de un Pokémon ancestral que vivió en el fondo del mar. Parece ser un fragmento de concha marina."
+icon = SubResource("AtlasTexture_mceqa")

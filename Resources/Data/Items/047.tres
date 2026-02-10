@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b72nyma7dxm2p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pk1cb"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_vqrno"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vqrno"]
+atlas = ExtResource("1_vqrno")
+region = Rect2(384, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_pk1cb")
+id = 47
+internal_name = "iron"
+display_name = "Hierro"
+description = "Nutritiva bebida que potencia la Defensa de base de un Pokémon."
+icon = SubResource("AtlasTexture_vqrno")
+pocket = 2

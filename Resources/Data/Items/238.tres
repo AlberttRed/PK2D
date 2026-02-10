@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1td65j3mf5mn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_33k2v"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_biil1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58s1o"]
+atlas = ExtResource("1_biil1")
+region = Rect2(384, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_33k2v")
+id = 238
+internal_name = "blue-scarf"
+display_name = "Pañuelo Azul"
+description = "Reduce la Velocidad. Los Pokémon que levitan y los de tipo Volador se tornan sensibles a movimientos de tipo Tierra."
+icon = SubResource("AtlasTexture_58s1o")

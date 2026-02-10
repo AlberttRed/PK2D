@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://deamiwidctxv6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_nmh8q"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_tg48u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qeuao"]
+atlas = ExtResource("1_tg48u")
+region = Rect2(64, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_nmh8q")
+id = 583
+internal_name = "rocky-helmet"
+display_name = "Casco Dentado"
+description = "Joya de un solo uso que potencia los movimientos de tipo Roca. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_qeuao")
+kind = 7

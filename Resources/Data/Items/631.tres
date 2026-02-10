@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://273jg8fh6kej"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_giwwd"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_h6psv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1s7gc"]
+atlas = ExtResource("1_h6psv")
+region = Rect2(576, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_giwwd")
+id = 631
+internal_name = "relic-crown"
+display_name = "Corona Antigua"
+description = "Aumenta mucho el Ataque en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_1s7gc")

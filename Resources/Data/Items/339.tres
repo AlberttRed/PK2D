@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cluxdt0pmq26f"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_5njr8"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_flvla"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3empn"]
+atlas = ExtResource("1_5njr8")
+region = Rect2(448, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_flvla")
+id = 339
+internal_name = "tm35"
+display_name = "MT35"
+description = "Quien lo usa ataca con toda su energía. También puede bajar la Defensa Especial del objetivo si lo alcanza."
+icon = SubResource("AtlasTexture_3empn")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

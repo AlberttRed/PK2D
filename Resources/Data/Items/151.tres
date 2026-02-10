@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3yhruey388qt"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_rikpw"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ueark"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4dtk3"]
+atlas = ExtResource("1_rikpw")
+region = Rect2(0, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_ueark")
+id = 151
+internal_name = "tamato-berry"
+display_name = "Baya Tamate"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Tierra de un enemigo."
+icon = SubResource("AtlasTexture_4dtk3")
+pocket = 5
+kind = 12

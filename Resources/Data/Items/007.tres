@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqw0tdg7e7dmx"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_slevf"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_x0d1r"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slevf"]
+atlas = ExtResource("1_slevf")
+region = Rect2(384, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_x0d1r")
+id = 7
+internal_name = "dive-ball"
+display_name = "Buceo Ball"
+description = "Es algo distinta a las demás. Funciona especialmente bien con los Pokémon que viven bajo el agua."
+icon = SubResource("AtlasTexture_slevf")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

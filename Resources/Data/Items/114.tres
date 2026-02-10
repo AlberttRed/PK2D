@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dr8m4h7shb87s"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2hva6"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_jhvea"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dn5rf"]
+atlas = ExtResource("1_jhvea")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_2hva6")
+id = 114
+internal_name = "grass-mail"
+display_name = "Carta Hierba"
+description = "Stationery featuring a print of a refreshingly green field. Let a Pokémon hold it for delivery."
+icon = SubResource("AtlasTexture_dn5rf")
+pocket = 4

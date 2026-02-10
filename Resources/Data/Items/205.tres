@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://clpxk56j2m0el"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_60qyw"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_px0ed"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1a3j"]
+atlas = ExtResource("1_px0ed")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_60qyw")
+id = 205
+internal_name = "smoke-ball"
+display_name = "Bola de Humo"
+description = "Flecha venenosa que refuerza los movimientos de tipo Veneno. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_o1a3j")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

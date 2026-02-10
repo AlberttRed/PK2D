@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://duhuu2fmktx7l"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_0jr7t"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6vp1q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bgnfk"]
+atlas = ExtResource("1_0jr7t")
+region = Rect2(256, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_6vp1q")
+id = 85
+internal_name = "leaf-stone"
+display_name = "Piedra Hoja"
+description = "Curiosa piedra que hace evolucionar a determinadas especies de Pokémon. Tiene grabada una hoja."
+icon = SubResource("AtlasTexture_bgnfk")
+kind = 9

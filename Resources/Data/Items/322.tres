@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bpmld37w0asow"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_fbjdq"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vnla5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eb38j"]
+atlas = ExtResource("1_fbjdq")
+region = Rect2(0, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_vnla5")
+id = 322
+internal_name = "tm18"
+display_name = "MT18"
+description = "Abrasa al objetivo con una intensa llamarada que puede causarle quemaduras."
+icon = SubResource("AtlasTexture_eb38j")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

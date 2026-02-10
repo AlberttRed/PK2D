@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://hk4a0udn41o7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_blddk"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_tv55o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jhp4j"]
+atlas = ExtResource("1_tv55o")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_blddk")
+id = 393
+internal_name = "tm89"
+display_name = "MT89"
+description = "Una bonita cajita donde guardar todos los Complementos para vestir a tus Pokémon en el Teatro Musical."
+icon = SubResource("AtlasTexture_jhp4j")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

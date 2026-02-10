@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dghlvdkp42fge"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bqocj"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_nc6dh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nc6dh"]
+atlas = ExtResource("1_nc6dh")
+region = Rect2(64, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_bqocj")
+id = 2
+internal_name = "ultra-ball"
+display_name = "Ultra Ball"
+description = "Poké Ball de rendimiento superior. Tiene un índice de éxito mayor al de la Super Ball."
+icon = SubResource("AtlasTexture_nc6dh")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

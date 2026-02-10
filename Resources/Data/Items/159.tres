@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d4dhravkjyiqs"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_4yfw6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jgh55"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jtxxh"]
+atlas = ExtResource("1_4yfw6")
+region = Rect2(512, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_jgh55")
+id = 159
+internal_name = "durin-berry"
+display_name = "Baya Rudion"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Acero de un enemigo."
+icon = SubResource("AtlasTexture_jtxxh")
+pocket = 5
+kind = 12

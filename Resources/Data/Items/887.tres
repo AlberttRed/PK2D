@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nl7sjo5t08ut"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oop1v"]
+
+[resource]
+script = ExtResource("1_oop1v")
+id = 887
+internal_name = "beast-ball"
+display_name = "Ente Ball"
+description = "Un tipo especial de Poké Ball diseñada para capturar de forma específica y exclusiva a los misteriosos seres conocidos como Ultraentes."
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

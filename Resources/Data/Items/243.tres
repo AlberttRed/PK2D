@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://tlseh3hhsbod"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_7twdx"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_u72jl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hs6g7"]
+atlas = ExtResource("1_7twdx")
+region = Rect2(64, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_u72jl")
+id = 243
+internal_name = "muscle-band"
+display_name = "Cinta Fuerte"
+description = "Prolonga la duración del movimiento Tormenta de Arena que use el Pokémon que la lleva."
+icon = SubResource("AtlasTexture_hs6g7")
+kind = 7

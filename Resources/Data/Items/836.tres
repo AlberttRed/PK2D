@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bniqa3qfaqkim"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mneri"]
+
+[resource]
+script = ExtResource("1_mneri")
+id = 836
+internal_name = "bottle-cap"
+display_name = "Chapa Plateada"
+description = "Una bonita chapa de color plata. Hay gente que las aprecia mucho."

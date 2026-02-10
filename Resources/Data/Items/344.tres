@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bp5um32cy6oa4"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_f618e"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s28lh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwar4"]
+atlas = ExtResource("1_f618e")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_s28lh")
+id = 344
+internal_name = "tm40"
+display_name = "MT40"
+description = "Quien lo usa ataca con una descarga eléctrica y puede utilizar la electricidad restante para subir su Ataque Especial."
+icon = SubResource("AtlasTexture_uwar4")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

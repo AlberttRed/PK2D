@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2q1fm0wfixf7"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_3pscj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_q0txn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_55rqw"]
+atlas = ExtResource("1_3pscj")
+region = Rect2(448, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_q0txn")
+id = 722
+internal_name = "garchompite"
+display_name = "Garchompita"
+description = "Símbolo otorgado en reconocimiento a quienes han realizado gestas excepcionales en la región de Kalos."
+icon = SubResource("AtlasTexture_55rqw")

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://clg3va52yje7i"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ngpbr"]
+
+[resource]
+script = ExtResource("1_ngpbr")
+id = 831
+internal_name = "dragonium-z--held"
+display_name = "Dracostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Dragón."

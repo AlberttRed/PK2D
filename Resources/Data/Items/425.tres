@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://u8luq0gjyrea"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_6umii"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bfhl6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_omd8j"]
+atlas = ExtResource("1_6umii")
+region = Rect2(192, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_bfhl6")
+id = 425
+internal_name = "sprayduck"
+display_name = "Psydugadera"
+description = "Una llave de alta tecnología que debe usarse en un lugar concreto. Emite una señal eléctrica que abre una puerta."
+icon = SubResource("AtlasTexture_omd8j")
+pocket = 6

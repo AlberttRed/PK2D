@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1ogkyd08i3pf"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_6ylsb"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jxes2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ypa7"]
+atlas = ExtResource("1_6ylsb")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_jxes2")
+id = 104
+internal_name = "armor-fossil"
+display_name = "Fósil Coraza"
+description = "Fósil de un Pokémon prehistórico terrestre. Parece ser parte de una protección ósea del cuello."
+icon = SubResource("AtlasTexture_0ypa7")

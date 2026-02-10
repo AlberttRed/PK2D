@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://g24i0rpktuwl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dpvwj"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_g3hak"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpdph"]
+atlas = ExtResource("1_g3hak")
+region = Rect2(0, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_dpvwj")
+id = 552
+internal_name = "teachy-tv"
+display_name = "Poké Tele"
+description = "A TV set tuned to an advice program for TRAINERS."
+icon = SubResource("AtlasTexture_kpdph")
+pocket = 6

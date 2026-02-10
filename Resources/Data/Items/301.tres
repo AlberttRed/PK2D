@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3fkmoi0xd5gw"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3voc7"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_8fubu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnjcc"]
+atlas = ExtResource("1_8fubu")
+region = Rect2(576, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_3voc7")
+id = 301
+internal_name = "dubious-disc"
+display_name = "Disco Extraño"
+description = "Invoca una tormenta de viento y nieve que envuelve al objetivo y puede llegar a congelarlo."
+icon = SubResource("AtlasTexture_dnjcc")
+kind = 9

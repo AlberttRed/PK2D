@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://csh2qoyswwke3"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_3eicv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bj5ix"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0mafq"]
+atlas = ExtResource("1_3eicv")
+region = Rect2(384, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_bj5ix")
+id = 618
+internal_name = "poke-toy"
+display_name = "Pokéseñuelo"
+description = "Aumenta ligeramente la Defensa en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_0mafq")

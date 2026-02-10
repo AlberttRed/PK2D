@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c76hb1yihyfr1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_17bcf"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_wc14t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v11o1"]
+atlas = ExtResource("1_wc14t")
+region = Rect2(576, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_17bcf")
+id = 241
+internal_name = "yellow-scarf"
+display_name = "Pañuelo Amarillo"
+description = "Restaura gradualmente los PS de los Pokémon de tipo Veneno y daña a todos los demás."
+icon = SubResource("AtlasTexture_v11o1")

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://df3x8j5tmhk1p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dnr2e"]
+
+[resource]
+script = ExtResource("1_dnr2e")
+id = 911
+internal_name = "water-memory"
+display_name = "Disco Agua"
+description = "Disco de datos que contiene información relativa al tipo Agua. Permite cambiar de tipo a cierto Pokémon."

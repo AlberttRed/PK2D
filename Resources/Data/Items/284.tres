@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://i2pm622i18sc"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_8ixbw"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ovstn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jy1dm"]
+atlas = ExtResource("1_8ixbw")
+region = Rect2(128, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_ovstn")
+id = 284
+internal_name = "mind-plate"
+display_name = "Tabla Mental"
+description = "Dispositivo transparente que contiene datos misteriosos. Es de fabricante desconocido."
+icon = SubResource("AtlasTexture_jy1dm")

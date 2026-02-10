@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bgnh6yy5am44l"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6xkgh"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_vb8uj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vb8uj"]
+atlas = ExtResource("1_vb8uj")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_6xkgh")
+id = 4
+internal_name = "poke-ball"
+display_name = "Poké Ball"
+description = "Dispositivo con diseño capsular que atrapa Pokémon salvajes. Se lanza como una bola contra el blanco."
+icon = SubResource("AtlasTexture_vb8uj")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

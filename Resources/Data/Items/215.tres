@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://btcdrywfiuhsp"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_4uuc6"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_un6uo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kt3aq"]
+atlas = ExtResource("1_4uuc6")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_un6uo")
+id = 215
+internal_name = "hard-stone"
+display_name = "Piedra Dura"
+description = "Debe llevarlo un Pokémon. Su peculiar aroma reduce la Precisión del objetivo."
+icon = SubResource("AtlasTexture_kt3aq")

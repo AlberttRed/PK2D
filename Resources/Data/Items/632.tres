@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bt8emjrtrtl2l"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_n6lw7"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_y06cu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ufmuh"]
+atlas = ExtResource("1_y06cu")
+region = Rect2(0, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_n6lw7")
+id = 632
+internal_name = "casteliacone"
+display_name = "Porcehelado"
+description = "Aumenta mucho la Precisión en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_ufmuh")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

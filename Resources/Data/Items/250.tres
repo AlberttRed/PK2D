@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnkvmc4j1yl3f"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_govre"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_y0isr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gvfng"]
+atlas = ExtResource("1_govre")
+region = Rect2(512, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_y0isr")
+id = 250
+internal_name = "flame-orb"
+display_name = "Llamasfera"
+description = "Potencia la Defensa de base, pero reduce la Velocidad en combate. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_gvfng")

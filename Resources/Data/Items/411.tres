@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ca48q2d7u4evu"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_l4xbw"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_yrjvy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gaw6e"]
+atlas = ExtResource("1_l4xbw")
+region = Rect2(576, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_yrjvy")
+id = 411
+internal_name = "seal-case"
+display_name = "Caja Sellos"
+description = "Pluma que brilla como la luna. Se dice que tiene el poder de disipar pesadillas."
+icon = SubResource("AtlasTexture_gaw6e")
+pocket = 6

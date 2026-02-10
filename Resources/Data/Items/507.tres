@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cusq2l6cb7e6c"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_g27at"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qjswr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n003d"]
+atlas = ExtResource("1_g27at")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_qjswr")
+id = 507
+internal_name = "data-card-22"
+display_name = "Tarjeta Datos 22"
+description = "Raíz de usar y tirar que sube el Ataque Especial cuando se recibe un ataque de tipo Agua."
+icon = SubResource("AtlasTexture_n003d")

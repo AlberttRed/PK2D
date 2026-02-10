@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdtgavs240vkm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_msqxn"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_qq8ly"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nqr0"]
+atlas = ExtResource("1_qq8ly")
+region = Rect2(320, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_msqxn")
+id = 740
+internal_name = "power-plant-pass"
+display_name = "Pase Central"
+description = "Este aparato permite recibir vídeos holográficos y visualizarlos en cualquier momento."
+icon = SubResource("AtlasTexture_7nqr0")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

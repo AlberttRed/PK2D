@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://7w8t86fiomb4"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kwm7s"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_qg66q"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qig0b"]
+atlas = ExtResource("1_qg66q")
+region = Rect2(448, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_kwm7s")
+id = 199
+internal_name = "silver-powder"
+display_name = "Polvo Plata"
+description = "Debe llevarla un Pokémon. La vitalidad de la semilla fortalece los movimientos de tipo Planta."
+icon = SubResource("AtlasTexture_qig0b")

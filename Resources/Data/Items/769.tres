@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://n2ff5nhyheqd"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_153au"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_j1px7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xw8e"]
+atlas = ExtResource("1_j1px7")
+region = Rect2(128, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_153au")
+id = 769
+internal_name = "mega-glove"
+display_name = "Megaguante"
+description = "Guante con un poder misterioso que permite megaevolucionar a Pokémon que lleven la Megapiedra adecuada."
+icon = SubResource("AtlasTexture_5xw8e")

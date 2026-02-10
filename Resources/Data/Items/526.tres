@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://vccjaevlmf50"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jvc0u"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_oty3g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bl2t7"]
+atlas = ExtResource("1_oty3g")
+region = Rect2(256, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_jvc0u")
+id = 526
+internal_name = "retro-mail"
+display_name = "Carta Retro."
+description = "MAIL featuring the drawings of three POKéMON."
+icon = SubResource("AtlasTexture_bl2t7")
+pocket = 4

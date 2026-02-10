@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c5aw463htc6ti"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_g705g"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lqhch"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rar3o"]
+atlas = ExtResource("1_g705g")
+region = Rect2(0, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_lqhch")
+id = 252
+internal_name = "focus-sash"
+display_name = "Banda Focus"
+description = "Potencia la Defensa Especial de base, pero reduce la Velocidad en combate. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_rar3o")
+kind = 7

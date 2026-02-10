@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5cs62nfuww8w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dbkls"]
+
+[resource]
+script = ExtResource("1_dbkls")
+id = 886
+internal_name = "ride-pager"
+display_name = "Buscamontura"
+description = "Dispositivo dotado de un teclado numérico con el que llamar a diversas Pokémonturas."

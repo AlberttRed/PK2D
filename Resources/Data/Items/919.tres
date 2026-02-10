@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cj20k38n1ke7g"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_47eix"]
+
+[resource]
+script = ExtResource("1_47eix")
+id = 919
+internal_name = "bike--green"
+display_name = "Bici"
+description = "Bicicleta plegable con la que se va más rápido que corriendo."

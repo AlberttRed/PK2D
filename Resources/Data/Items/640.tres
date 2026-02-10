@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://8xlyhd1qdoic"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_aoo0n"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_gchef"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u8psn"]
+atlas = ExtResource("1_aoo0n")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_gchef")
+id = 640
+internal_name = "x-speed-3"
+display_name = "Velocidad X 3"
+description = "Placaje de alto voltaje que hiere también al atacante."
+icon = SubResource("AtlasTexture_u8psn")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ceh68vwo4toqn"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_4bart"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7xrex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jghga"]
+atlas = ExtResource("1_4bart")
+region = Rect2(320, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_7xrex")
+id = 690
+internal_name = "safety-goggles"
+display_name = "Gafa Protectora"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Tyranitar en combate."
+icon = SubResource("AtlasTexture_jghga")
+kind = 7

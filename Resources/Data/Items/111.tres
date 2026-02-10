@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bbw8cucgptyo5"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_8rijt"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jdu4o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocb70"]
+atlas = ExtResource("1_8rijt")
+region = Rect2(0, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_jdu4o")
+id = 111
+internal_name = "odd-keystone"
+display_name = "Piedra Espíritu"
+description = "Vital para impedir que una torre de piedra se derrumbe. A veces se oyen voces en su interior."
+icon = SubResource("AtlasTexture_ocb70")

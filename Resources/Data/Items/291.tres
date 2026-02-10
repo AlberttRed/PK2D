@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://sun5vhtc3us4"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_8no55"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_twna7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_el5ar"]
+atlas = ExtResource("1_8no55")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_twna7")
+id = 291
+internal_name = "odd-incense"
+display_name = "Incienso Raro"
+description = "Quien lo usa concentra su energía mental y calma su espíritu para aumentar su Ataque Especial y su Defensa Especial."
+icon = SubResource("AtlasTexture_el5ar")

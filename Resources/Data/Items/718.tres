@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bq5ssasiyqx4p"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2njuj"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_qlr01"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2o3mf"]
+atlas = ExtResource("1_qlr01")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_2njuj")
+id = 718
+internal_name = "alakazite"
+display_name = "Alakazamita"
+description = "Una piedra de aspecto normal que a algunos les puede parecer de gran valor."
+icon = SubResource("AtlasTexture_2o3mf")

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bb2tvwh72rn8f"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cyrqk"]
+
+[resource]
+script = ExtResource("1_cyrqk")
+id = 900
+internal_name = "misty-seed"
+display_name = "Semilla Bruma"
+description = "Aumenta la Defensa Especial del portador si se usa cuando el terreno está cubierto por un campo de niebla."
+kind = 7

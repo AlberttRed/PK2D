@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cywwg8h2y8fpa"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_abrdi"]
+
+[resource]
+script = ExtResource("1_abrdi")
+id = 904
+internal_name = "poison-memory"
+display_name = "Disco Veneno"
+description = "Disco de datos que contiene información relativa al tipo Veneno. Permite cambiar de tipo a cierto Pokémon."

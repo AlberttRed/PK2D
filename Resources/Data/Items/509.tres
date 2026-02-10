@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dstqli3vr0led"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_552gn"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_fugtb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c11xl"]
+atlas = ExtResource("1_fugtb")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_552gn")
+id = 509
+internal_name = "data-card-24"
+display_name = "Tarjeta Datos 24"
+description = "Si el portador es alcanzado por un ataque, saldrá del combate y será sustituido por otro Pokémon del equipo."
+icon = SubResource("AtlasTexture_c11xl")

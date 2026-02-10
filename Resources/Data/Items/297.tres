@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cts8im3pqyj4w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_46s0w"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_gwrbd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fbdj0"]
+atlas = ExtResource("1_gwrbd")
+region = Rect2(320, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_46s0w")
+id = 297
+internal_name = "pure-incense"
+display_name = "Incienso Puro"
+description = "Movimiento especial que cambia de tipo dependiendo del Pokémon que lo use."
+icon = SubResource("AtlasTexture_fbdj0")
+pocket = 8

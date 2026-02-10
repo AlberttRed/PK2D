@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqq2s4of6lbwb"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oeues"]
+
+[resource]
+script = ExtResource("1_oeues")
+id = 895
+internal_name = "enigmatic-card"
+display_name = "Nota Intrigante"
+description = "Misteriosa nota que reza: “Te espero en una habitación del motel de la Ruta 8 en Akala”."
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

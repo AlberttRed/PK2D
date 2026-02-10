@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bkoon057i2bot"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0mbma"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_vsiax"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_86cdv"]
+atlas = ExtResource("1_vsiax")
+region = Rect2(320, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_0mbma")
+id = 547
+internal_name = "lift-key"
+display_name = "Llave Ascensor"
+description = "Llave que permite acceder al ascensor de la Guarida del Team Rocket. Lleva grabado el símbolo del Team Rocket."
+icon = SubResource("AtlasTexture_86cdv")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

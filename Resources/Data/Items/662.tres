@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d3bso52my541"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_bevjj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pkhul"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qa0p5"]
+atlas = ExtResource("1_bevjj")
+region = Rect2(0, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_pkhul")
+id = 662
+internal_name = "xtransceiver"
+display_name = "Videomisor"
+description = "Chaleco que potencia la Defensa Especial del Pokémon que lo lleva, pero le impide lanzar ataques de estado."
+icon = SubResource("AtlasTexture_qa0p5")
+pocket = 6

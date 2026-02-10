@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d2qohekkdklc6"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_0afya"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_e2kcn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2y2a5"]
+atlas = ExtResource("1_0afya")
+region = Rect2(128, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_e2kcn")
+id = 194
+internal_name = "quick-claw"
+display_name = "Garra Rápida"
+description = "Restaura gradualmente los PS del Pokémon que lo lleva durante el combate."
+icon = SubResource("AtlasTexture_2y2a5")
+kind = 7

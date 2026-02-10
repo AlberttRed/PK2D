@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bt74bbkkgfpex"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_1bb6d"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_g6hd3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hq4f"]
+atlas = ExtResource("1_1bb6d")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_g6hd3")
+id = 139
+internal_name = "aguav-berry"
+display_name = "Baya Guaya"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_2hq4f")
+pocket = 5
+kind = 12

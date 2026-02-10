@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dcdumxkaf6dfe"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_6k15o"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bm5ot"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2djk7"]
+atlas = ExtResource("1_6k15o")
+region = Rect2(512, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_bm5ot")
+id = 671
+internal_name = "dna-splicers"
+display_name = "Punta ADN"
+description = "Un saquito lleno de sustancias aromáticas cuyo perfume resulta abrumador, pero que a ciertos Pokémon les encanta."
+icon = SubResource("AtlasTexture_2djk7")
+pocket = 6

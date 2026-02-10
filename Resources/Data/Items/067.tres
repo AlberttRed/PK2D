@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://07y7wg1htxw4"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_qk2ly"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wcmdo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2swpt"]
+atlas = ExtResource("1_qk2ly")
+region = Rect2(384, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_wcmdo")
+id = 67
+internal_name = "red-flute"
+display_name = "Flauta Roja"
+description = "Una flauta de juguete de cristal rojo."
+icon = SubResource("AtlasTexture_2swpt")

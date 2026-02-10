@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cygf2jkigbtjc"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_1fiy0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kkedw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_erq0h"]
+atlas = ExtResource("1_1fiy0")
+region = Rect2(448, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_kkedw")
+id = 229
+internal_name = "up-grade"
+display_name = "Mejora"
+description = "Prolonga la duración de barreras como Reflejo y Pantalla de Luz. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_erq0h")
+kind = 9

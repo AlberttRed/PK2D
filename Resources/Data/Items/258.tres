@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ossr5b0tmlyy"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oadd4"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_risyb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvita"]
+atlas = ExtResource("1_risyb")
+region = Rect2(384, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_oadd4")
+id = 258
+internal_name = "black-sludge"
+display_name = "Lodo Negro"
+description = "Tabla de piedra que potencia los movimientos de tipo Fuego. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_mvita")
+kind = 7

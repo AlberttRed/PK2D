@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="MessageBoxTheme" load_steps=4 format=3 uid="uid://biuggiktsxlr7"]
+[gd_resource type="Resource" script_class="MessageBoxTheme" format=3 uid="uid://biuggiktsxlr7"]
 
 [ext_resource type="Script" uid="uid://dnqu4apuujlwo" path="res://Scripts/UI/MessageBox/MessageBoxTheme.gd" id="1_2jbts"]
 [ext_resource type="Texture2D" uid="uid://mkrmvgqrk8nn" path="res://Sprites/UI/Choices Skins/choice 1.png" id="1_55vyl"]

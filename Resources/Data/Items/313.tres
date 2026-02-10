@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bkybykqjp2dm3"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_5eoxu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r35ol"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_reymn"]
+atlas = ExtResource("1_5eoxu")
+region = Rect2(64, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_r35ol")
+id = 313
+internal_name = "tm09"
+display_name = "MT09"
+description = "Quien lo usa genera un terremoto que afecta a los Pokémon de alrededor en combate."
+icon = SubResource("AtlasTexture_reymn")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

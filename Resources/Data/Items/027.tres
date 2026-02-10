@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b0j21mdfqn847"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_065v2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bpaih"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_065v2"]
+atlas = ExtResource("1_065v2")
+region = Rect2(384, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_bpaih")
+id = 27
+internal_name = "full-heal"
+display_name = "Cura Total"
+description = "Medicina en espray que cura todos los problemas de estado de un Pokémon."
+icon = SubResource("AtlasTexture_065v2")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2ugojiqvejin"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bh4do"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_l4p4g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uotgh"]
+atlas = ExtResource("1_l4p4g")
+region = Rect2(64, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_bh4do")
+id = 433
+internal_name = "ss-ticket"
+display_name = "Ticket Barco"
+description = "Llave con forma de tarjeta que abre las puertas de la Torre Radio."
+icon = SubResource("AtlasTexture_uotgh")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

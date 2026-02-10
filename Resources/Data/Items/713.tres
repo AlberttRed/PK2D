@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b6fuifmdw8ubl"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6m7cv"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_wlnhk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d36se"]
+atlas = ExtResource("1_wlnhk")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_6m7cv")
+id = 713
+internal_name = "abomasite"
+display_name = "Abomasnowita"
+description = "Inflige daño a los oponentes con una potente luz."
+icon = SubResource("AtlasTexture_d36se")

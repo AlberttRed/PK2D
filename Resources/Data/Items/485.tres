@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://btrnf2tqm7gq"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0vcbb"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_2065a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4kwlb"]
+atlas = ExtResource("1_2065a")
+region = Rect2(192, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_0vcbb")
+id = 485
+internal_name = "tidal-bell"
+display_name = "Cascabel Oleaje"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Pisacírculos."
+icon = SubResource("AtlasTexture_4kwlb")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

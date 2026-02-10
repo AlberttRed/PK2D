@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://pgk0ja2uligd"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7x05n"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_kk33l"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5s3pc"]
+atlas = ExtResource("1_kk33l")
+region = Rect2(128, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_7x05n")
+id = 244
+internal_name = "wise-glasses"
+display_name = "Gafas Especiales"
+description = "Prolonga la duración del movimiento Día Soleado que use el Pokémon que la lleva."
+icon = SubResource("AtlasTexture_5s3pc")
+kind = 7

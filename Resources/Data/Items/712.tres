@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crbgqdkgoybul"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0j2gi"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_f2r8b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvs81"]
+atlas = ExtResource("1_f2r8b")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_0j2gi")
+id = 712
+internal_name = "lucarionite"
+display_name = "Lucarita"
+description = "Cada vez que golpea a un oponente se endurecen sus puños. Si acierta al objetivo, el Ataque del usuario aumenta."
+icon = SubResource("AtlasTexture_qvs81")

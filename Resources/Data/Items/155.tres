@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dudh2yb4kkrv5"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_en7mk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_y7wi3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hmj5r"]
+atlas = ExtResource("1_en7mk")
+region = Rect2(256, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_y7wi3")
+id = 155
+internal_name = "nomel-berry"
+display_name = "Baya Monli"
+description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo Roca de un enemigo."
+icon = SubResource("AtlasTexture_hmj5r")
+pocket = 5
+kind = 12

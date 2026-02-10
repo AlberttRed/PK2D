@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://hk1g584nnbsf"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6v3vu"]
+
+[resource]
+script = ExtResource("1_6v3vu")
+id = 907
+internal_name = "bug-memory"
+display_name = "Disco Bicho"
+description = "Disco de datos que contiene información relativa al tipo Bicho. Permite cambiar de tipo a cierto Pokémon."

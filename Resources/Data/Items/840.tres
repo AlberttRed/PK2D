@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cetc1uh6py7h3"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xh5qm"]
+
+[resource]
+script = ExtResource("1_xh5qm")
+id = 840
+internal_name = "incinium-z--held"
+display_name = "Incinostal Z"
+description = "Cristal que confiere el Poder Z al movimiento Lariat Oscuro de Incineroar."

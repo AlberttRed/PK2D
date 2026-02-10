@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b4etucf0u8s1q"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_cth8u"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tkqcv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_so4kd"]
+atlas = ExtResource("1_cth8u")
+region = Rect2(384, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_tkqcv")
+id = 648
+internal_name = "x-sp-def-6"
+display_name = "Def. Esp. X 6"
+description = "Comunicador de alta tecnología con cámara que permite hablar a cuatro personas a la vez."
+icon = SubResource("AtlasTexture_so4kd")

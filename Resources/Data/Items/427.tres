@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dxftr4k8sqxcg"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_14ce2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_juu5y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pqojp"]
+atlas = ExtResource("1_14ce2")
+region = Rect2(320, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_juu5y")
+id = 427
+internal_name = "bicycle"
+display_name = "Bici"
+description = "A folding bicycle that is faster than the RUNNING SHOES."
+icon = SubResource("AtlasTexture_pqojp")
+pocket = 6

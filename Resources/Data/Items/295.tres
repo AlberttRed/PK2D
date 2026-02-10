@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5wvh3ubmj83r"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_7i06k"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dfyup"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_deif8"]
+atlas = ExtResource("1_7i06k")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_dfyup")
+id = 295
+internal_name = "rose-incense"
+display_name = "Incienso Floral"
+description = "Tensa los músculos de quien lo usa y potencia su Ataque y su Defensa."
+icon = SubResource("AtlasTexture_deif8")

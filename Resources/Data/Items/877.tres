@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://daagpw1riuhqs"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dlw5x"]
+
+[resource]
+script = ExtResource("1_dlw5x")
+id = 877
+internal_name = "pikashunium-z--held"
+display_name = "Ash-Pikastal Z"
+description = "Cristal que confiere el Poder Z al movimiento Rayo de los Pikachu que llevan gorra."

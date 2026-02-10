@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://jxjg7rmc4sh1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_i4n8t"]
+
+[resource]
+script = ExtResource("1_i4n8t")
+id = 920
+internal_name = "storage-key--galactic-warehouse"
+display_name = "Llave Almacén"
+description = "Llave del siniestro almacén del Equipo Galaxia que está ubicado en las afueras de Ciudad Rocavelo."

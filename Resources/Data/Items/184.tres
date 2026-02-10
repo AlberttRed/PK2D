@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://upkofj4rwrfn"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dogrq"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_f8hbk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x84xs"]
+atlas = ExtResource("1_f8hbk")
+region = Rect2(192, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_dogrq")
+id = 184
+internal_name = "starf-berry"
+display_name = "Baya Arabol"
+description = "Si lo lleva el primer Pokémon del equipo, se reduce la probabilidad de que se acerquen Pokémon salvajes."
+icon = SubResource("AtlasTexture_x84xs")
+pocket = 5
+kind = 12

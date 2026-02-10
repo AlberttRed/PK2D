@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3iaya3yxnyb6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bo7r7"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_wpqct"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3x2q"]
+atlas = ExtResource("1_wpqct")
+region = Rect2(384, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_bo7r7")
+id = 308
+internal_name = "tm04"
+display_name = "MT04"
+description = "Un ataque de gran potencia que resulta más fuerte cuanto menos le guste el Entrenador al Pokémon que lo usa."
+icon = SubResource("AtlasTexture_v3x2q")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

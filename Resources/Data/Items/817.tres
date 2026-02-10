@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3a0f81ttk3ff"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2akhh"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_brjwp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0e51h"]
+atlas = ExtResource("1_brjwp")
+region = Rect2(192, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_2akhh")
+id = 817
+internal_name = "normalium-z--held"
+display_name = "Normastal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Normal."
+icon = SubResource("AtlasTexture_0e51h")

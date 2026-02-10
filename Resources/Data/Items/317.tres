@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d05ls7jornyu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_uvtwo"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_yuybp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mws5"]
+atlas = ExtResource("1_yuybp")
+region = Rect2(320, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_uvtwo")
+id = 317
+internal_name = "tm13"
+display_name = "MT13"
+description = "Lanza una bola oscura que puede bajar la Defensa Especial del objetivo."
+icon = SubResource("AtlasTexture_1mws5")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

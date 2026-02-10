@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqhj3m1gbfrru"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bapcr"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_i4x8a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pr3ba"]
+atlas = ExtResource("1_i4x8a")
+region = Rect2(448, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_bapcr")
+id = 589
+internal_name = "cell-battery"
+display_name = "Pila"
+description = "Pluma que aumenta un poco los PS de base de un Pokémon."
+icon = SubResource("AtlasTexture_pr3ba")
+kind = 7

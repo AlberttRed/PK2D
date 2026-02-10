@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wmv7f1gt1foe"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5wc8p"]
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_yaibk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsdym"]
+atlas = ExtResource("1_yaibk")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_5wc8p")
+id = 743
+internal_name = "sprinklotad"
+display_name = "Lotadgadera"
+description = "El dulce estrella de Ciudad Luminalia. Cura los problemas de estado de un Pokémon."
+icon = SubResource("AtlasTexture_xsdym")
+pocket = 6

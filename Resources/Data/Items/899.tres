@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://baexw52tblb8j"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kh08t"]
+
+[resource]
+script = ExtResource("1_kh08t")
+id = 899
+internal_name = "psychic-seed"
+display_name = "Semilla Psique"
+description = "Aumenta la Defensa Especial del portador si se usa cuando el terreno está cubierto por un campo psíquico."
+kind = 7

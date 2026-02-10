@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5dw6a6cbq8pm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ib2sm"]
+
+[resource]
+script = ExtResource("1_ib2sm")
+id = 839
+internal_name = "decidium-z--held"
+display_name = "Dueyestal Z"
+description = "Cristal que confiere el Poder Z al movimiento Puntada Sombría de Decidueye."

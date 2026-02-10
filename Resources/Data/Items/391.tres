@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cstklvgnrnuhv"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_0ggw0"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ab3jx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j8q7c"]
+atlas = ExtResource("1_0ggw0")
+region = Rect2(576, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_ab3jx")
+id = 391
+internal_name = "tm87"
+display_name = "MT87"
+description = "Un cuaderno en el que se recogen, día a día, los progresos de tu aventura."
+icon = SubResource("AtlasTexture_j8q7c")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

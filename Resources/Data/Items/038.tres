@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c52phorjtpeo"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3miaw"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_hj0p1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hj0p1"]
+atlas = ExtResource("1_hj0p1")
+region = Rect2(448, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_3miaw")
+id = 38
+internal_name = "ether"
+display_name = "Éter"
+description = "Restaura 10 PP del movimiento elegido de un Pokémon."
+icon = SubResource("AtlasTexture_hj0p1")
+pocket = 2
+kind = 2

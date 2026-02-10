@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c8mod4sf6dnav"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_iwqa3"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_waa4f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f1os3"]
+atlas = ExtResource("1_waa4f")
+region = Rect2(576, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_iwqa3")
+id = 481
+internal_name = "silver-wing"
+display_name = "Ala Plateada"
+description = "Álbum que recoge las fotos que se toman a lo largo de la aventura."
+icon = SubResource("AtlasTexture_f1os3")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://boygb6n7lkdkl"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_a3pk1"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dkngo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_md4dm"]
+atlas = ExtResource("1_a3pk1")
+region = Rect2(576, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_dkngo")
+id = 551
+internal_name = "berry-pouch"
+display_name = "Saco Bayas"
+description = "A convenient container that holds BERRIES."
+icon = SubResource("AtlasTexture_md4dm")
+pocket = 5
+kind = 12

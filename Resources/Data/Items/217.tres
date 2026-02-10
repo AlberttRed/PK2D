@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bdnce33wfjafu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lmc0h"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_nx57g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vlqp2"]
+atlas = ExtResource("1_nx57g")
+region = Rect2(320, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_lmc0h")
+id = 217
+internal_name = "black-glasses"
+display_name = "Gafas de Sol"
+description = "Debe llevarlas un Pokémon. Fortalecen los movimientos de tipo Siniestro."
+icon = SubResource("AtlasTexture_vlqp2")

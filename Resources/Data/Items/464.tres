@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://xisv652kh6eu"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2j6ub"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_idmn0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_np2hf"]
+atlas = ExtResource("1_idmn0")
+region = Rect2(128, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_2j6ub")
+id = 464
+internal_name = "black-apricorn"
+display_name = "Bonguri Negro"
+description = "Contiene los datos del Pokéathlon con el número de victorias en Carrera de Relevos."
+icon = SubResource("AtlasTexture_np2hf")

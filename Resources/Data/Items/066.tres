@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5cb812tinqrm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d4cvk"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_smwhi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0x6jh"]
+atlas = ExtResource("1_smwhi")
+region = Rect2(320, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_d4cvk")
+id = 66
+internal_name = "yellow-flute"
+display_name = "Flauta Amarilla"
+description = "Una flauta de juguete de cristal amarillo."
+icon = SubResource("AtlasTexture_0x6jh")

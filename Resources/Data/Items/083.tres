@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcx4isoxij40e"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_ije8t"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o6enu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvn8h"]
+atlas = ExtResource("1_ije8t")
+region = Rect2(128, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_o6enu")
+id = 83
+internal_name = "thunder-stone"
+display_name = "Piedra Trueno"
+description = "Curiosa piedra que hace evolucionar a determinadas especies de Pokémon. Tiene grabado un rayo."
+icon = SubResource("AtlasTexture_lvn8h")
+kind = 9

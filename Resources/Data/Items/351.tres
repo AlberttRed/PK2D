@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dw2pmgkpxbngj"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_b5bxu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hvyoj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3b7qe"]
+atlas = ExtResource("1_b5bxu")
+region = Rect2(576, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_hvyoj")
+id = 351
+internal_name = "tm47"
+display_name = "MT47"
+description = "Quien lo usa explosiona en combate e inflige daño a todos los Pokémon a su alrededor. El usuario se debilita."
+icon = SubResource("AtlasTexture_3b7qe")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxhronulflqbd"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_njr7x"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_x64jv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x64jv"]
+atlas = ExtResource("1_x64jv")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_njr7x")
+id = 14
+internal_name = "heal-ball"
+display_name = "Sana Ball"
+description = "Poké Ball curativa que restaura los PS y cura todos los problemas de estado de un Pokémon después de capturarlo."
+icon = SubResource("AtlasTexture_x64jv")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

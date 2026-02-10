@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ducr6gtn37ueg"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5t3t3"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_u1uah"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vrwn7"]
+atlas = ExtResource("1_u1uah")
+region = Rect2(384, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_5t3t3")
+id = 388
+internal_name = "tm84"
+display_name = "MT84"
+description = "Recoge las normas de los combates. En los combates en conexión puedes elegir el conjunto de reglas que quieres usar."
+icon = SubResource("AtlasTexture_vrwn7")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

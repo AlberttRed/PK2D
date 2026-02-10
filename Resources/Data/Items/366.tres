@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dfctnux0as0xd"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_6shec"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_uh0mq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2j7x"]
+atlas = ExtResource("1_6shec")
+region = Rect2(256, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_uh0mq")
+id = 366
+internal_name = "tm62"
+display_name = "MT62"
+description = "Quien lo usa ataca lanzando un aliento gélido. Siempre resulta en un golpe crítico."
+icon = SubResource("AtlasTexture_h2j7x")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

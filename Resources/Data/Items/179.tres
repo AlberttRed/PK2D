@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bw0pu1mpm7dhp"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_axash"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vpwpf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6bwoa"]
+atlas = ExtResource("1_axash")
+region = Rect2(512, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_vpwpf")
+id = 179
+internal_name = "ganlon-berry"
+display_name = "Baya Gonlan"
+description = "El Pokémon que la lleva se libera del enamoramiento. Solo puede usarse una vez."
+icon = SubResource("AtlasTexture_6bwoa")
+pocket = 5
+kind = 12

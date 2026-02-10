@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://clhulob4kq01g"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_ekleu"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w77pp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7x8u"]
+atlas = ExtResource("1_ekleu")
+region = Rect2(576, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_w77pp")
+id = 521
+internal_name = "bead-mail"
+display_name = "Carta Imagen"
+description = "MAIL featuring a sketch of the holding POKéMON."
+icon = SubResource("AtlasTexture_r7x8u")
+pocket = 4

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://newjqpb051bd"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aeo4o"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_yvwk8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbrda"]
+atlas = ExtResource("1_yvwk8")
+region = Rect2(320, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_aeo4o")
+id = 56
+internal_name = "dire-hit"
+display_name = "Crítico X"
+description = "Aumenta el índice de golpe crítico en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_bbrda")
+pocket = 8
+kind = 10
+allowed_contexts = 4

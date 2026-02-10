@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvu71ft22hlec"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_51jbr"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_de4dh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c35or"]
+atlas = ExtResource("1_51jbr")
+region = Rect2(256, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_de4dh")
+id = 586
+internal_name = "ring-target"
+display_name = "Blanco"
+description = "Joya de un solo uso que potencia los movimientos de tipo Siniestro. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_c35or")
+kind = 7

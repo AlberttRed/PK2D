@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://clsl4yvj35v6n"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5n5hh"]
+
+[resource]
+script = ExtResource("1_5n5hh")
+id = 905
+internal_name = "ground-memory"
+display_name = "Disco Tierra"
+description = "Disco de datos que contiene información relativa al tipo Tierra. Permite cambiar de tipo a cierto Pokémon."

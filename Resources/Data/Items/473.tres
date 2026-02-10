@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bteknry282wh4"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7cm8w"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_cy0ud"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1h3f"]
+atlas = ExtResource("1_cy0ud")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_7cm8w")
+id = 473
+internal_name = "slowpoke-tail"
+display_name = "Cola Slowpoke"
+description = "Poké Ball algo distinta, especialmente indicada para capturar Pokémon evasivos."
+icon = SubResource("AtlasTexture_a1h3f")

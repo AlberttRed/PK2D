@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cjjy73a1ql8qe"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_81s06"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_gqb1l"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fijlr"]
+atlas = ExtResource("1_gqb1l")
+region = Rect2(128, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_81s06")
+id = 424
+internal_name = "super-rod"
+display_name = "Supercaña"
+description = "Una flor que se suele regalar en ramos para expresar agradecimiento en ocasiones especiales, como cumpleaños."
+icon = SubResource("AtlasTexture_fijlr")
+pocket = 6

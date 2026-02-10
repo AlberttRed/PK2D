@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1mafncshkqkr"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hv2qf"]
+
+[resource]
+script = ExtResource("1_hv2qf")
+id = 893
+internal_name = "sun-flute"
+display_name = "Flauta Solar"
+description = "Flauta que se hace sonar como muestra de gratitud hacia el Pokémon legendario del sol."
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

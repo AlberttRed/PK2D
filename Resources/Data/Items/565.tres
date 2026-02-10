@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bygc6gfu4ea3e"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_f3pam"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_psgiw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ih0do"]
+atlas = ExtResource("1_f3pam")
+region = Rect2(192, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_psgiw")
+id = 565
+internal_name = "burn-drive"
+display_name = "PiroROM"
+description = "Una esfera brillante que potencia los movimientos de tipo Acero y Dragón. Debe llevarla Dialga."
+icon = SubResource("AtlasTexture_ih0do")

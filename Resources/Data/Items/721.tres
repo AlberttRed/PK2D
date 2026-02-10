@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cyjwkvapttno"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_jc2mo"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_u13ni"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s25tt"]
+atlas = ExtResource("1_jc2mo")
+region = Rect2(384, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_u13ni")
+id = 721
+internal_name = "manectite"
+display_name = "Manectricita"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Manectric en combate."
+icon = SubResource("AtlasTexture_s25tt")

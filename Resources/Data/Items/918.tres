@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bra68w3qjuev6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w7yax"]
+
+[resource]
+script = ExtResource("1_w7yax")
+id = 918
+internal_name = "fairy-memory"
+display_name = "Disco Hada"
+description = "Disco de datos que contiene información relativa al tipo Hada. Permite cambiar de tipo a cierto Pokémon."

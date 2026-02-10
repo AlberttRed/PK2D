@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://rph13me3qm06"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r72sv"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_wqocs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnnx5"]
+atlas = ExtResource("1_wqocs")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_r72sv")
+id = 655
+internal_name = "reset-urge"
+display_name = "Quitaestado"
+description = "Tarjeta necesaria para introducir la contraseña en la Fragata Plasma."
+icon = SubResource("AtlasTexture_wnnx5")

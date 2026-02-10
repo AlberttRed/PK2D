@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dnexqjgtaepuq"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4puhg"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_mx0sa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3wlj1"]
+atlas = ExtResource("1_mx0sa")
+region = Rect2(64, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_4puhg")
+id = 686
+internal_name = "whipped-dream"
+display_name = "Dulce de Nata"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Medicham en combate."
+icon = SubResource("AtlasTexture_3wlj1")
+kind = 9

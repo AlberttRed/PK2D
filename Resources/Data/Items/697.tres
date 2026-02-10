@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cje4oq5lrukum"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_3bv3y"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_p6dyx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s8wj0"]
+atlas = ExtResource("1_3bv3y")
+region = Rect2(128, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_p6dyx")
+id = 697
+internal_name = "ampharosite"
+display_name = "Ampharosita"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Absol en combate."
+icon = SubResource("AtlasTexture_s8wj0")

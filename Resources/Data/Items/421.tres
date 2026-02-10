@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bx8eqg5gpu21s"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5twyl"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_rl6w6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dapv5"]
+atlas = ExtResource("1_rl6w6")
+region = Rect2(576, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_5twyl")
+id = 421
+internal_name = "coin-case"
+display_name = "Monedero"
+description = "Llave del siniestro almacén del Equipo Galaxia que está ubicado en las afueras de Ciudad Rocavelo."
+icon = SubResource("AtlasTexture_dapv5")
+pocket = 6

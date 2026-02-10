@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bfrur8pdnxeq1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d5ml1"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_t4xjp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lls2q"]
+atlas = ExtResource("1_t4xjp")
+region = Rect2(192, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_d5ml1")
+id = 385
+internal_name = "tm81"
+display_name = "MT81"
+description = "Quien lo usa se sumerge en el agua y ataca al siguiente turno. También puede usarse para bucear en el mar."
+icon = SubResource("AtlasTexture_lls2q")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

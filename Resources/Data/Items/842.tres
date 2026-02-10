@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djxgxij4npism"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2mvww"]
+
+[resource]
+script = ExtResource("1_2mvww")
+id = 842
+internal_name = "tapunium-z--held"
+display_name = "Tapistal Z"
+description = "Cristal que confiere el Poder Z al movimiento Furia Natural de los Tapu."

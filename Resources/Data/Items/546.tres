@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c04oo0nte5lqt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6wq7g"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_83n3h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmrd5"]
+atlas = ExtResource("1_83n3h")
+region = Rect2(256, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_6wq7g")
+id = 546
+internal_name = "gold-teeth"
+display_name = "Dentadura de Oro"
+description = "Unos dientes de oro que perdió el Guarda de la Zona Safari con los que tiene una sonrisa deslumbrante."
+icon = SubResource("AtlasTexture_qmrd5")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

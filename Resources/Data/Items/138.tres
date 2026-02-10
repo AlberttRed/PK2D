@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dfmpiji75or7f"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_qcv0x"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s6htk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dg88i"]
+atlas = ExtResource("1_qcv0x")
+region = Rect2(448, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_s6htk")
+id = 138
+internal_name = "mago-berry"
+display_name = "Baya Ango"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_dg88i")
+pocket = 5
+kind = 12

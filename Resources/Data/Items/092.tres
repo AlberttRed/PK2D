@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://brotkfmnm628m"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lfytc"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_v13ba"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l7l2x"]
+atlas = ExtResource("1_v13ba")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_lfytc")
+id = 92
+internal_name = "nugget"
+display_name = "Pepita"
+description = "Pepita de oro puro que desprende un brillo espectacular. Puede venderse muy cara en las tiendas."
+icon = SubResource("AtlasTexture_l7l2x")

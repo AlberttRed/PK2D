@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://s40fnoc2l65m"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_o1w05"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tlj8l"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1w05"]
+atlas = ExtResource("1_o1w05")
+region = Rect2(576, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_tlj8l")
+id = 10
+internal_name = "timer-ball"
+display_name = "Turno Ball"
+description = "Una Poké Ball algo distinta que va mejorando su rendimiento con cada turno de combate."
+icon = SubResource("AtlasTexture_o1w05")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

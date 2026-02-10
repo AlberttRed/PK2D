@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=5 format=3 uid="uid://dv47eum5xc1ej"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dv47eum5xc1ej"]
 
 [ext_resource type="Texture2D" uid="uid://bgfshwh7wfn0q" path="res://Sprites/Others/trainer exclamation.png" id="1_syqqe"]
 

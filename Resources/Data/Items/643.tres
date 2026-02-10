@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://t03f71xdlob3"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_de1ov"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_f1nyy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03xu1"]
+atlas = ExtResource("1_f1nyy")
+region = Rect2(64, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_de1ov")
+id = 643
+internal_name = "x-defense-3"
+display_name = "Defensa X 3"
+description = "Comunicador de alta tecnología con cámara que permite hablar a cuatro personas a la vez."
+icon = SubResource("AtlasTexture_03xu1")

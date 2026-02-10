@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c8pl8io2x43ho"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0atca"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_x2g74"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjfhc"]
+atlas = ExtResource("1_x2g74")
+region = Rect2(320, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_0atca")
+id = 186
+internal_name = "micle-berry"
+display_name = "Baya Lagro"
+description = "Tiene el brillo afilado de la plata y debe llevarlo Clamperl. Sube el Ataque Especial."
+icon = SubResource("AtlasTexture_wjfhc")
+pocket = 5
+kind = 12

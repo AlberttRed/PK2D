@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://berqcfypmx4q1"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ngiha"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s51yj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4f4d"]
+atlas = ExtResource("1_ngiha")
+region = Rect2(576, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_s51yj")
+id = 661
+internal_name = "tm95"
+display_name = "MT95"
+description = "Ataca con un chillido desagradable que baja el Ataque Especial del rival."
+icon = SubResource("AtlasTexture_n4f4d")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

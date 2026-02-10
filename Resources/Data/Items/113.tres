@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cre2mb4t1lrlu"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_w7m0w"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wscvx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53f5h"]
+atlas = ExtResource("1_w7m0w")
+region = Rect2(128, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_wscvx")
+id = 113
+internal_name = "lustrous-orb"
+display_name = "Lustresfera"
+description = "Los Pokémon pueden llevarla o usarla para descongelarse."
+icon = SubResource("AtlasTexture_53f5h")

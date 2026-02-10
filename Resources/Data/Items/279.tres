@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c6m2stvmr3hw"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_jg23u"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jgdcl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4kcvw"]
+atlas = ExtResource("1_jg23u")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_jgdcl")
+id = 279
+internal_name = "icicle-plate"
+display_name = "Tabla Helada"
+description = "Si el Pokémon que lo lleva lucha en un combate, duplica las ganancias."
+icon = SubResource("AtlasTexture_4kcvw")

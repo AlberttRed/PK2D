@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cntkcxg4y74gm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5srqj"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_unqoo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2s1dp"]
+atlas = ExtResource("1_unqoo")
+region = Rect2(448, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_5srqj")
+id = 529
+internal_name = "wailmer-pail"
+display_name = "Wailmegadera"
+description = "Regadera con forma de Wailmer. Muy útil para que crezcan las bayas plantadas."
+icon = SubResource("AtlasTexture_2s1dp")
+pocket = 6

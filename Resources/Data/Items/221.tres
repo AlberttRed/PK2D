@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dpkgj7jnoesvj"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_g6y7f"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mnxur"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jvcjk"]
+atlas = ExtResource("1_g6y7f")
+region = Rect2(576, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_mnxur")
+id = 221
+internal_name = "sharp-beak"
+display_name = "Pico Afilado"
+description = "Debe llevarlo un Pokémon. Aumenta la belleza en los concursos."
+icon = SubResource("AtlasTexture_jvcjk")

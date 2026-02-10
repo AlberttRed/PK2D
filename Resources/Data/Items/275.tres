@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://w7dgbx7lyyu5"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_otaxe"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_urx6d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4aufk"]
+atlas = ExtResource("1_urx6d")
+region = Rect2(192, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_otaxe")
+id = 275
+internal_name = "flame-plate"
+display_name = "Tabla Llama"
+description = "Incienso de exótico aroma que fortalece los movimientos de tipo Roca. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_4aufk")

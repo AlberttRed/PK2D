@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://w5yjm0s6xkt4"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_2j2er"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a43j2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21gpe"]
+atlas = ExtResource("1_2j2er")
+region = Rect2(256, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_a43j2")
+id = 296
+internal_name = "luck-incense"
+display_name = "Incienso Duplo"
+description = "Un líquido venenoso que cubre al objetivo y provoca un daño doble si este ya estaba envenenado."
+icon = SubResource("AtlasTexture_21gpe")
+pocket = 8

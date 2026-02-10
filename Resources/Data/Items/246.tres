@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://fyn48cbr0lt"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_3klsy"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_n52o0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_05qms"]
+atlas = ExtResource("1_3klsy")
+region = Rect2(256, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_n52o0")
+id = 246
+internal_name = "light-clay"
+display_name = "Refleluz"
+description = "Prolonga la duración de ataques multiturno como Atadura y Constricción si la lleva un Pokémon."
+icon = SubResource("AtlasTexture_05qms")
+kind = 7

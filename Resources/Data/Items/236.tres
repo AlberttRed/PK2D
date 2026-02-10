@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cs28pi557jxoq"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_6n4v3"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lq12t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_odckh"]
+atlas = ExtResource("1_6n4v3")
+region = Rect2(256, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_lq12t")
+id = 236
+internal_name = "stick"
+display_name = "Puerro"
+description = "Debe llevarlo un Pokémon. Si se mueve después del enemigo, aumenta la Precisión del Pokémon."
+icon = SubResource("AtlasTexture_odckh")

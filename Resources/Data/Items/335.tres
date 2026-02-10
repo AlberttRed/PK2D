@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1lxn8efk47ys"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_j6rex"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jlpop"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k70en"]
+atlas = ExtResource("1_jlpop")
+region = Rect2(192, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_j6rex")
+id = 335
+internal_name = "tm31"
+display_name = "MT31"
+description = "Canto que sirve de ataque. Su fuerza aumenta cuantos más Pokémon lo usan en cadena."
+icon = SubResource("AtlasTexture_k70en")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

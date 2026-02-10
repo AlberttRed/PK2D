@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c0podo74aujji"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_o7x73"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w3qxg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4crov"]
+atlas = ExtResource("1_o7x73")
+region = Rect2(384, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_w3qxg")
+id = 328
+internal_name = "tm24"
+display_name = "MT24"
+description = "Atormenta al objetivo y le provoca un ataque de ira que le impide usar el mismo movimiento dos veces seguidas."
+icon = SubResource("AtlasTexture_4crov")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

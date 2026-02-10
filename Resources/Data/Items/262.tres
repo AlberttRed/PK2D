@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://by0p4rvuohwan"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_kt7c2"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ostvm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t4k7b"]
+atlas = ExtResource("1_kt7c2")
+region = Rect2(0, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_ostvm")
+id = 262
+internal_name = "damp-rock"
+display_name = "Roca Lluvia"
+description = "Tabla de piedra que potencia los movimientos de tipo Hielo. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_t4k7b")
+kind = 7

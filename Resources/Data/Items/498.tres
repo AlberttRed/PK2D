@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bx3t2mrf8soer"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_p3mit"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xv3yb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7rs5u"]
+atlas = ExtResource("1_p3mit")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_xv3yb")
+id = 498
+internal_name = "data-card-13"
+display_name = "Tarjeta Datos 13"
+description = "Esfera cristalina encontrada bajo tierra. A pesar de estar cubierta de roca y tierra, su belleza es increíble."
+icon = SubResource("AtlasTexture_7rs5u")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://67ieerm22ypt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1soqs"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_5ooqw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q6wmt"]
+atlas = ExtResource("1_5ooqw")
+region = Rect2(192, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_1soqs")
+id = 515
+internal_name = "orange-mail"
+display_name = "Car. Naranja"
+description = "A ZIGZAGOON-print MAIL to be held by a POKéMON."
+icon = SubResource("AtlasTexture_q6wmt")
+pocket = 4

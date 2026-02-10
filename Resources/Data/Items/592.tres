@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b3c7jthrutam6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_86irl"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_sikuy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7dthg"]
+atlas = ExtResource("1_sikuy")
+region = Rect2(0, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_86irl")
+id = 592
+internal_name = "water-gem"
+display_name = "Gema Agua"
+description = "Pluma que aumenta un poco el Ataque Especial de base de un Pokémon."
+icon = SubResource("AtlasTexture_7dthg")

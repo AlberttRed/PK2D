@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dj2giwni2v18u"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w5bpr"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_xrdcs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b4hj7"]
+atlas = ExtResource("1_xrdcs")
+region = Rect2(128, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_w5bpr")
+id = 454
+internal_name = "friend-ball"
+display_name = "Amigo Ball"
+description = "Contiene los datos del Pokéathlon con el número de derrotas."
+icon = SubResource("AtlasTexture_b4hj7")
+pocket = 3
+kind = 5
+allowed_contexts = 4
+target_type = 1

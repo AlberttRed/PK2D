@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0nbvnfaiy1b1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_g4rxw"]
+
+[resource]
+script = ExtResource("1_g4rxw")
+id = 829
+internal_name = "rockium-z--held"
+display_name = "Litostal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Roca."

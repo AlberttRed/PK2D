@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wc5rgf7bswqh"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_0pjbc"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a5s52"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtebh"]
+atlas = ExtResource("1_0pjbc")
+region = Rect2(192, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_a5s52")
+id = 74
+internal_name = "yellow-shard"
+display_name = "Parte Amarilla"
+description = "Un pequeño fragmento amarillo. Parece formar parte de algún tipo de herramienta antigua."
+icon = SubResource("AtlasTexture_mtebh")

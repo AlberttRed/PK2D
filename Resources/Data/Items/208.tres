@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bsn85gnbhag7g"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2chpd"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_rvndv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_urjdd"]
+atlas = ExtResource("1_rvndv")
+region = Rect2(384, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_2chpd")
+id = 208
+internal_name = "lucky-egg"
+display_name = "Huevo Suerte"
+description = "Cuchara imbuida de energía telequinética que potencia los movimientos de tipo Psíquico. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_urjdd")
+pocket = 8

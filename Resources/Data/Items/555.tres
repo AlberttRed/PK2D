@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dch30j1vflvno"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_j12k8"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kadwt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gwkmd"]
+atlas = ExtResource("1_j12k8")
+region = Rect2(192, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_kadwt")
+id = 555
+internal_name = "tea"
+display_name = "Té"
+description = "Un aromático té de sabor ligeramente amargo que resulta ideal para aplacar la sed."
+icon = SubResource("AtlasTexture_gwkmd")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

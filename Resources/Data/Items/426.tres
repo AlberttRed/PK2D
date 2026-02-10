@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c42njt7u6ns5s"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jy0ku"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m7evs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxoyx"]
+atlas = ExtResource("1_jy0ku")
+region = Rect2(256, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_m7evs")
+id = 426
+internal_name = "poffin-case"
+display_name = "Pokochera"
+description = "Práctico recipiente que puede almacenar hasta 99 Bonguri de cada especie."
+icon = SubResource("AtlasTexture_gxoyx")
+pocket = 6

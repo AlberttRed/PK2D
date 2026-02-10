@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://33nmthtxklqm"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qqgik"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_v651v"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpf2x"]
+atlas = ExtResource("1_v651v")
+region = Rect2(256, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_qqgik")
+id = 135
+internal_name = "sitrus-berry"
+display_name = "Baya Zidra"
+description = "Una baya muy rara en la región de Teselia."
+icon = SubResource("AtlasTexture_xpf2x")
+pocket = 5
+kind = 12

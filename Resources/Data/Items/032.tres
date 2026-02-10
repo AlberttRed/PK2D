@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://erd025fymvxm"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_5hbdp"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ci8df"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5hbdp"]
+atlas = ExtResource("1_5hbdp")
+region = Rect2(64, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_ci8df")
+id = 32
+internal_name = "lemonade"
+display_name = "Limonada"
+description = "Bebida muy dulce que restaura 70 PS de un Pokémon."
+icon = SubResource("AtlasTexture_5hbdp")
+pocket = 2
+kind = 3
+allowed_contexts = 3
+target_type = 1

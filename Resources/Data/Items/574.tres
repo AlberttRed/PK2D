@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2qnbx5myfxcv"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_mafpt"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s2v8j"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qplmm"]
+atlas = ExtResource("1_mafpt")
+region = Rect2(128, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_s2v8j")
+id = 574
+internal_name = "reply-mail"
+display_name = "Carta Respuesta"
+description = "Los Pokémon pueden llevarla o usarla para restaurar algunos PS. Su sabor puede causar confusión."
+icon = SubResource("AtlasTexture_qplmm")
+pocket = 4

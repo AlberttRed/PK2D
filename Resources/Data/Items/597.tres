@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cpe718omoskdk"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_47405"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_urda2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxyxi"]
+atlas = ExtResource("1_urda2")
+region = Rect2(320, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_47405")
+id = 597
+internal_name = "poison-gem"
+display_name = "Gema Veneno"
+description = "Fósil de un Pokémon ancestral que surcó los cielos. Parece ser parte de una de sus alas."
+icon = SubResource("AtlasTexture_fxyxi")

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bo6q05nk5mdv5"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_et0qw"]
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_s455b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ch5s7"]
+atlas = ExtResource("1_s455b")
+region = Rect2(0, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_et0qw")
+id = 192
+internal_name = "macho-brace"
+display_name = "Brazal Firme"
+description = "Su lente aumenta la probabilidad que tiene el Pokémon que lo lleva de conseguir un golpe crítico."
+icon = SubResource("AtlasTexture_ch5s7")
+pocket = 8
+kind = 10
+allowed_contexts = 4

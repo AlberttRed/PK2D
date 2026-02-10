@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://eg73f31io0nv"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_e1ucv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qh8wv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_esdgv"]
+atlas = ExtResource("1_e1ucv")
+region = Rect2(320, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_qh8wv")
+id = 627
+internal_name = "relic-gold"
+display_name = "Real Oro"
+description = "Aumenta mucho la Velocidad en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_esdgv")

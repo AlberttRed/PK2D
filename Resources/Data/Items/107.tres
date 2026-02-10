@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://2vqfxgu7aw21"]
+
+[ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_cawrn"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_iipyl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hexwm"]
+atlas = ExtResource("1_cawrn")
+region = Rect2(384, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_iipyl")
+id = 107
+internal_name = "shiny-stone"
+display_name = "Piedra Día"
+description = "Una piedra peculiar que hace evolucionar a algunos Pokémon. Tiene un brillo espectacular."
+icon = SubResource("AtlasTexture_hexwm")
+kind = 9

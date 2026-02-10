@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bpr5cqn03jhj5"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aha1n"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_mklf0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5jfc"]
+atlas = ExtResource("1_mklf0")
+region = Rect2(512, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_aha1n")
+id = 440
+internal_name = "storage-key"
+display_name = "Llave Almacén"
+description = "Misteriosa ala de un brillante color plateado."
+icon = SubResource("AtlasTexture_l5jfc")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

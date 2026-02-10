@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dcfne6hx5g7kc"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_sdtvk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_uwmie"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ubqm6"]
+atlas = ExtResource("1_sdtvk")
+region = Rect2(128, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_uwmie")
+id = 204
+internal_name = "deep-sea-scale"
+display_name = "Escama Marina"
+description = "Pico largo y afilado que aumenta la potencia de los movimientos de tipo Volador. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_ubqm6")

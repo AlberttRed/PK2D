@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djkxeylwyls06"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_m1ijj"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_x21bl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5j4r"]
+atlas = ExtResource("1_m1ijj")
+region = Rect2(320, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_x21bl")
+id = 587
+internal_name = "binding-band"
+display_name = "Banda Atadura"
+description = "Joya de un solo uso que potencia los movimientos de tipo Acero. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_p5j4r")
+kind = 7

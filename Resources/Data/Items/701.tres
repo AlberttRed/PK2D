@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cyty43iwpurp3"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_bh5rv"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_eh56g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vjsr2"]
+atlas = ExtResource("1_bh5rv")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_eh56g")
+id = 701
+internal_name = "mewtwonite-x"
+display_name = "Mewtwoita X"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Mawile en combate."
+icon = SubResource("AtlasTexture_vjsr2")

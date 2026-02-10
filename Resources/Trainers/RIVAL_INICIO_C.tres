@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TrainerData" load_steps=6 format=3 uid="uid://cuiev7vjw3d6y"]
+[gd_resource type="Resource" script_class="TrainerData" format=3 uid="uid://cuiev7vjw3d6y"]
 
 [ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_3jxos"]
 [ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_xt1ny"]

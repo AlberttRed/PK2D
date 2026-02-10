@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nothlmhpyghi"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_5jqwf"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cyhhj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mdm37"]
+atlas = ExtResource("1_5jqwf")
+region = Rect2(448, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_cyhhj")
+id = 58
+internal_name = "x-defense"
+display_name = "Defensa X"
+description = "Aumenta la Defensa en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_mdm37")
+pocket = 8
+kind = 10
+allowed_contexts = 4

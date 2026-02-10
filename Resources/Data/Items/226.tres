@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ve3ncocgcw4u"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_25blw"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_awfnf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kijfr"]
+atlas = ExtResource("1_awfnf")
+region = Rect2(256, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_25blw")
+id = 226
+internal_name = "charcoal"
+display_name = "Carbón"
+description = "Cinta de pelo que aumenta ligeramente la potencia de los movimientos físicos. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_kijfr")

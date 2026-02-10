@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cf7b6rqxmtmgp"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7culw"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_k06oy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_br31x"]
+atlas = ExtResource("1_k06oy")
+region = Rect2(128, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_7culw")
+id = 504
+internal_name = "data-card-19"
+display_name = "Tarjeta Datos 19"
+description = "Misteriosa tarjeta que permite al Pokémon que la lleva expulsar al oponente cuando este le cause daño."
+icon = SubResource("AtlasTexture_br31x")

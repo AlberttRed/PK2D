@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://men8mxnvhq65"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a5k1r"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_d0w1c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d7i87"]
+atlas = ExtResource("1_d0w1c")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_a5k1r")
+id = 210
+internal_name = "metal-coat"
+display_name = "Revest. Metálico"
+description = "Colmillo de gran dureza que refuerza los movimientos de tipo Dragón. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_d7i87")

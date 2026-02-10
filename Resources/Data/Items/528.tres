@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b78xm4enrn28g"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_37743"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_roond"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8vo7"]
+atlas = ExtResource("1_37743")
+region = Rect2(384, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_roond")
+id = 528
+internal_name = "acro-bike"
+display_name = "Bici Acrobática"
+description = "Bicicleta plegable capaz de correr sobre una sola rueda, realizar saltos y otras acrobacias."
+icon = SubResource("AtlasTexture_d8vo7")
+pocket = 6

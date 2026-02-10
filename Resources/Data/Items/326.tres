@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dre2v6wqfwr3i"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hhs2o"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ijplc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tnqck"]
+atlas = ExtResource("1_ijplc")
+region = Rect2(256, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_hhs2o")
+id = 326
+internal_name = "tm22"
+display_name = "MT22"
+description = "Tira rocas que detienen al objetivo y bajan su Velocidad."
+icon = SubResource("AtlasTexture_tnqck")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

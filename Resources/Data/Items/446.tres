@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cj48o7bngk1do"]
+
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_6dqni"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_h8r64"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkfnm"]
+atlas = ExtResource("1_6dqni")
+region = Rect2(256, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_h8r64")
+id = 446
+internal_name = "apricorn-box"
+display_name = "Caja Bonguri"
+description = "Bonguri de color amarillo y aroma refrescante."
+icon = SubResource("AtlasTexture_fkfnm")
+pocket = 6

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bi4rgs62m8y4u"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_k8mr7"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ylhsa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ao064"]
+atlas = ExtResource("1_ylhsa")
+region = Rect2(0, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_k8mr7")
+id = 302
+internal_name = "reaper-cloth"
+display_name = "Tela Terrible"
+description = "Ataca al objetivo con un potente rayo, pero quien lo usa debe descansar en el siguiente turno para reponer energía."
+icon = SubResource("AtlasTexture_ao064")
+kind = 9

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dd4k4f4gw2gy6"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_anvok"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_widoj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mnlsv"]
+atlas = ExtResource("1_anvok")
+region = Rect2(128, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_widoj")
+id = 554
+internal_name = "rainbow-pass"
+display_name = "Iris-Ticket"
+description = "For ferries serving VERMILION and the SEVII ISLANDS."
+icon = SubResource("AtlasTexture_mnlsv")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

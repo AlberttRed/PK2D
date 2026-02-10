@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cuaen8uddahkw"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3liq0"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_ei6cv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lh2fn"]
+atlas = ExtResource("1_ei6cv")
+region = Rect2(384, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_3liq0")
+id = 77
+internal_name = "max-repel"
+display_name = "Repelente Máximo"
+description = "Repele Pokémon salvajes débiles en un recorrido de 250 pasos."
+icon = SubResource("AtlasTexture_lh2fn")
+kind = 11

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdg12wfikmk4c"]
+
+[ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_bi4qk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vl85w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7i4f2"]
+atlas = ExtResource("1_bi4qk")
+region = Rect2(192, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_vl85w")
+id = 738
+internal_name = "looker-ticket"
+display_name = "Boleto Handsome"
+description = "A ticket that was handmade by Looker. It’s decorated with a liberal amount of glittery paint."
+icon = SubResource("AtlasTexture_7i4f2")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

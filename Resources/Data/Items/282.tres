@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dqxqsyiwyj2ak"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_euyjy"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t3748"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u10iw"]
+atlas = ExtResource("1_euyjy")
+region = Rect2(0, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_t3748")
+id = 282
+internal_name = "earth-plate"
+display_name = "Tabla Terrax"
+description = "Este dispositivo contiene una gran cantidad de energía eléctrica. Cierto Pokémon lo adora."
+icon = SubResource("AtlasTexture_u10iw")

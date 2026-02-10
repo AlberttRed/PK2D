@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://boobxc5qkid5"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_5nqon"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_adqmj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n62ou"]
+atlas = ExtResource("1_5nqon")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_adqmj")
+id = 679
+internal_name = "dropped-item"
+display_name = "Objeto Perdido"
+description = "Un abono increíble, con todas las propiedades de los Abonos Fértil, Sorpresa y Fructífero."
+icon = SubResource("AtlasTexture_n62ou")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

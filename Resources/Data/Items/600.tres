@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crjo2t7wdulk7"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vpkld"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_x0rga"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mmfal"]
+atlas = ExtResource("1_x0rga")
+region = Rect2(512, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_vpkld")
+id = 600
+internal_name = "psychic-gem"
+display_name = "Gema Psíquica"
+description = "Bola especial que aparece de pronto en tu Bolsa en el Bosque Nexo y puede atrapar a cualquier Pokémon."
+icon = SubResource("AtlasTexture_mmfal")

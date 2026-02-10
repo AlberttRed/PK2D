@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://de2hmkoji0r5n"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ij00j"]
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_mguvj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_24pv1"]
+atlas = ExtResource("1_mguvj")
+region = Rect2(448, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_ij00j")
+id = 549
+internal_name = "fame-checker"
+display_name = "Memorín"
+description = "Stores information on famous people for instant recall."
+icon = SubResource("AtlasTexture_24pv1")
+pocket = 6

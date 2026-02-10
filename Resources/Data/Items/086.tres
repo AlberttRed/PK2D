@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0m6evpfen3yx"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oygix"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_xxseh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dmo4n"]
+atlas = ExtResource("1_xxseh")
+region = Rect2(320, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_oygix")
+id = 86
+internal_name = "tiny-mushroom"
+display_name = "Miniseta"
+description = "Una pequeña seta que es poco común y bastante popular entre determinados grupos de gourmets."
+icon = SubResource("AtlasTexture_dmo4n")

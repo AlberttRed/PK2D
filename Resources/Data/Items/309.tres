@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c2pnlls426wqv"]
+
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_cpkii"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r67xt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_su0v7"]
+atlas = ExtResource("1_cpkii")
+region = Rect2(448, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_r67xt")
+id = 309
+internal_name = "tm05"
+display_name = "MT05"
+description = "Ataque de dos turnos. En el primer turno se concentra luz, y en el segundo se canaliza en un rayo para atacar."
+icon = SubResource("AtlasTexture_su0v7")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

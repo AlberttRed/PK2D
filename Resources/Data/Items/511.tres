@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://v27idu53gdc"]
+
+[ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_1qyt1"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ygbja"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u4kqj"]
+atlas = ExtResource("1_1qyt1")
+region = Rect2(576, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_ygbja")
+id = 511
+internal_name = "data-card-26"
+display_name = "Tarjeta Datos 26"
+description = "Joya de un solo uso que potencia los movimientos de tipo Agua. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_u4kqj")

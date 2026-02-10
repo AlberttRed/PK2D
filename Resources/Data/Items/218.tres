@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cs7i14ycb5hbr"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_eq82x"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_gfqfa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tqb41"]
+atlas = ExtResource("1_gfqfa")
+region = Rect2(384, 64, 64, 64)
+
+[resource]
+script = ExtResource("1_eq82x")
+id = 218
+internal_name = "black-belt"
+display_name = "Cinturón Negro"
+description = "Un extraño tipo de hueso que potencia el Ataque. Deben llevarlo Cubone o Marowak."
+icon = SubResource("AtlasTexture_tqb41")

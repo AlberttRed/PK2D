@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bnurdxhy6qgmj"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bl8f7"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_lxc1b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkrie"]
+atlas = ExtResource("1_lxc1b")
+region = Rect2(256, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_bl8f7")
+id = 656
+internal_name = "dire-hit-3"
+display_name = "Crítico X 3"
+description = "Pañuelo perdido por un cliente habitual del Café Alma en Ciudad Esmalte. Desprende el olor de un Pokémon."
+icon = SubResource("AtlasTexture_wkrie")

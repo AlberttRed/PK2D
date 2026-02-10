@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dqv2j2q04yjqh"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_gyp1q"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_xs0gb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvl2t"]
+atlas = ExtResource("1_xs0gb")
+region = Rect2(512, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_gyp1q")
+id = 460
+internal_name = "yellow-apricorn"
+display_name = "Bonguri Amarillo"
+description = "Contiene los datos del Pokéathlon con el número de veces que se ha quedado en último lugar."
+icon = SubResource("AtlasTexture_qvl2t")

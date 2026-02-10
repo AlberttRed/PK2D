@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://dwey8ik2pkcox"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dwey8ik2pkcox"]
 
 [ext_resource type="Texture2D" uid="uid://c77cw86aql5eu" path="res://Sprites/Others/Exit Arrow/exit_arrow.png" id="1_cjddo"]
 

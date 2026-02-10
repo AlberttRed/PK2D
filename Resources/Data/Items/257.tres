@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djg6l73ackwx1"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_nadwg"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_xgwgn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjevm"]
+atlas = ExtResource("1_xgwgn")
+region = Rect2(320, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_nadwg")
+id = 257
+internal_name = "destiny-knot"
+display_name = "Lazo Destino"
+description = "Potencian el Ataque Especial, pero solo permiten usar un movimiento. Debe llevarlas un Pokémon."
+icon = SubResource("AtlasTexture_wjevm")
+kind = 7

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dpf4j8bk1er5g"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_fqfsk"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_uua2u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbqsd"]
+atlas = ExtResource("1_fqfsk")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_uua2u")
+id = 207
+internal_name = "focus-band"
+display_name = "Cinta Focus"
+description = "Misterioso y siniestro objeto que potencia los movimientos de tipo Fantasma. Debe llevarlo un Pokémon."
+icon = SubResource("AtlasTexture_bbqsd")
+kind = 7

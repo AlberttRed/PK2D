@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c11g530t3avg1"]
+
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_44i35"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xyu8n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01biq"]
+atlas = ExtResource("1_44i35")
+region = Rect2(0, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_xyu8n")
+id = 292
+internal_name = "rock-incense"
+display_name = "Incienso Roca"
+description = "Asusta tanto al objetivo que tiene que cambiarse por otro de su grupo. Si es un Pokémon salvaje, el combate acaba."
+icon = SubResource("AtlasTexture_01biq")

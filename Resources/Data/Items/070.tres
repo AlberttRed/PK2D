@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://g1yujgpu7dcn"]
+
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_bn80o"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_v63p5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_axxqj"]
+atlas = ExtResource("1_bn80o")
+region = Rect2(576, 384, 64, 64)
+
+[resource]
+script = ExtResource("1_v63p5")
+id = 70
+internal_name = "shoal-salt"
+display_name = "Sal Cardumen"
+description = "Una sal muy fina encontrada en la Cueva Cardumen."
+icon = SubResource("AtlasTexture_axxqj")

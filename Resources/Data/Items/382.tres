@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c2fj73dccbtnt"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5n742"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_6wg7w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sduve"]
+atlas = ExtResource("1_6wg7w")
+region = Rect2(0, 512, 64, 64)
+
+[resource]
+script = ExtResource("1_5n742")
+id = 382
+internal_name = "tm78"
+display_name = "MT78"
+description = "Inunda el campo de batalla con una ola gigante. También se puede usar para desplazarse por el agua."
+icon = SubResource("AtlasTexture_sduve")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

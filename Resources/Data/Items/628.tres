@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://45qiukr757f8"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_cpljx"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_olos5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bq4h"]
+atlas = ExtResource("1_cpljx")
+region = Rect2(384, 128, 64, 64)
+
+[resource]
+script = ExtResource("1_olos5")
+id = 628
+internal_name = "relic-vase"
+display_name = "Ánfora"
+description = "Aumenta mucho el Ataque Especial en combate. Al cambiar de Pokémon, el efecto desaparece."
+icon = SubResource("AtlasTexture_8bq4h")

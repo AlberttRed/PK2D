@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc07qfwbhgc1j"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kwvyk"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_s4nfn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26wga"]
+atlas = ExtResource("1_s4nfn")
+region = Rect2(64, 320, 64, 64)
+
+[resource]
+script = ExtResource("1_kwvyk")
+id = 653
+internal_name = "item-drop"
+display_name = "Tiraobjeto"
+description = "Misterioso amuleto redondo que aumenta la posibilidad de encontrar Huevos en la Guardería Pokémon."
+icon = SubResource("AtlasTexture_26wga")

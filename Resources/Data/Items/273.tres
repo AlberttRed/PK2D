@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://rrtgvlt6b8km"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bafbm"]
+[ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_iwiwa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7hitu"]
+atlas = ExtResource("1_iwiwa")
+region = Rect2(64, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_bafbm")
+id = 273
+internal_name = "big-root"
+display_name = "Raíz Grande"
+description = "Tabla de piedra que potencia los movimientos de tipo Acero. Debe llevarla un Pokémon."
+icon = SubResource("AtlasTexture_7hitu")
+kind = 7

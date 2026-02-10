@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cgm7bucx8teuv"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_k7u3h"]
+
+[resource]
+script = ExtResource("1_k7u3h")
+id = 834
+internal_name = "fairium-z--held"
+display_name = "Feeristal Z"
+description = "Cristal que confiere el Poder Z a los movimientos de tipo Hada."

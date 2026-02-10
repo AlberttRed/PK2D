@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dq2sq0y65m7m6"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_01r8v"]
+[ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_g1l6u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qppi"]
+atlas = ExtResource("1_g1l6u")
+region = Rect2(128, 192, 64, 64)
+
+[resource]
+script = ExtResource("1_01r8v")
+id = 334
+internal_name = "tm30"
+display_name = "MT30"
+description = "Ataque rápido dirigido a los pies del objetivo que le hace perder Velocidad."
+icon = SubResource("AtlasTexture_0qppi")
+pocket = 4
+kind = 6
+allowed_contexts = 2
+target_type = 3

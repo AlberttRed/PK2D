@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c4rowhl4u7f0w"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bcicl"]
+[ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_qyuny"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0vkn5"]
+atlas = ExtResource("1_qyuny")
+region = Rect2(320, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_bcicl")
+id = 76
+internal_name = "super-repel"
+display_name = "Superrepelente"
+description = "Repele Pokémon salvajes débiles en un recorrido de 200 pasos."
+icon = SubResource("AtlasTexture_0vkn5")
+kind = 11

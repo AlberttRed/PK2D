@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dn8uwo6bx5kad"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_821mm"]
+[ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_mtmdx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbfqw"]
+atlas = ExtResource("1_mtmdx")
+region = Rect2(192, 256, 64, 64)
+
+[resource]
+script = ExtResource("1_821mm")
+id = 445
+internal_name = "secret-key"
+display_name = "Llave Secreta"
+description = "Bonguri de color azul y aroma tierno."
+icon = SubResource("AtlasTexture_mbfqw")
+pocket = 6
+kind = 8
+is_consumable = false
+stack_limit = 1

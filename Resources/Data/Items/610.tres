@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cfpxa2do644vy"]
+
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lacne"]
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ub3on"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5et63"]
+atlas = ExtResource("1_ub3on")
+region = Rect2(512, 0, 64, 64)
+
+[resource]
+script = ExtResource("1_lacne")
+id = 610
+internal_name = "clever-wing"
+display_name = "Pluma Mente"
+description = "Brazalete de más de 3000 años de antigüedad. Muy valorado por los coleccionistas."
+icon = SubResource("AtlasTexture_5et63")
+pocket = 2

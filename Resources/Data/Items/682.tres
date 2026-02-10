@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc8ly0urulkb5"]
+
+[ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_kp512"]
+[ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pcrir"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sola5"]
+atlas = ExtResource("1_kp512")
+region = Rect2(448, 448, 64, 64)
+
+[resource]
+script = ExtResource("1_pcrir")
+id = 682
+internal_name = "weakness-policy"
+display_name = "Seguro Debilidad"
+description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Ampharos en combate."
+icon = SubResource("AtlasTexture_sola5")
+kind = 7
