@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cuomjfdpl5n5y"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7cjdo"]
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_sehjk"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_0mcgu"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_u07en"]
+
+[resource]
+resource_name = "395 - Palmeo"
+script = ExtResource("1_7cjdo")
+internal_name = "force-palm"
+Name = "Palmeo"
+id = 395
+description = "Ataca al objetivo con una onda de choque y puede 
+llegar a paralizarlo."
+type = ExtResource("2_0mcgu")
+power = 60
+accuracy = 100
+pp = 10
+effect_chance = 30
+priority = 0
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target."
+stat_changes = Dictionary[int, int]({})
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 30
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+ailment = ExtResource("1_sehjk")
+category = ExtResource("2_u07en")

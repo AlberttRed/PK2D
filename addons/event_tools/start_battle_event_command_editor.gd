@@ -339,15 +339,38 @@ func _get_pokemon_name(pokemon: Pokemon) -> String:
 	var pokemon_id = pokemon.get("pokemon_id")
 	if pokemon_id:
 		# Intentar cargar el PokemonData directamente desde el archivo
-		# El formato es: res://Resources/Data/Pokemon/XXX.tres donde XXX es el ID con ceros a la izquierda
+		# Soporta tanto formato antiguo "001.tres" como nuevo "001 - Bulbasaur.tres"
 		var pokemon_id_int = pokemon_id as int
 		if pokemon_id_int > 0:
+			# Intentar primero con el formato nuevo (con nombre)
+			var dir := DirAccess.open("res://Resources/Data/Pokemon")
+			if dir:
+				dir.list_dir_begin()
+				var file_name := dir.get_next()
+				while file_name != "":
+					if not dir.current_is_dir() and file_name.ends_with(".tres"):
+						var file_base := file_name.get_basename()
+						var parts := file_base.split(" - ", false, 1)
+						var id_str := parts[0].strip_edges()
+						if id_str.is_valid_int() and int(id_str) == pokemon_id_int:
+							var pokemon_path = "res://Resources/Data/Pokemon/" + file_name
+							var pokemon_data = load(pokemon_path) as PokemonData
+							if pokemon_data:
+								var name_value = pokemon_data.get("Name")
+								if name_value and name_value != "":
+									dir.list_dir_end()
+									return name_value
+					file_name = dir.get_next()
+				dir.list_dir_end()
+
+			# Fallback: intentar con formato antiguo
 			var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_id_int
-			var pokemon_data = load(pokemon_path) as PokemonData
-			if pokemon_data:
-				var name_value = pokemon_data.get("Name")
-				if name_value and name_value != "":
-					return name_value
+			if ResourceLoader.exists(pokemon_path):
+				var pokemon_data = load(pokemon_path) as PokemonData
+				if pokemon_data:
+					var name_value = pokemon_data.get("Name")
+					if name_value and name_value != "":
+						return name_value
 
 		# Si no se puede cargar desde archivo, intentar DatabaseService
 		var db_service = null

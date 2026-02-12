@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://spww1l72t6d7"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_ny6ta"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_v8ngw"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_30xuu"]
+
+[resource]
+resource_name = "607 - Manos Juntas"
+script = ExtResource("1_v8ngw")
+internal_name = "hold-hands"
+Name = "Manos Juntas"
+id = 607
+description = "El Pokémon le da la mano a un aliado y ambos se 
+sienten muy felices."
+type = ExtResource("2_30xuu")
+power = 0
+accuracy = 0
+pp = 40
+effect_chance = 0
+priority = 0
+damage_class_id = 1
+effect_entries = "Does nothing. Does nothing."
+stat_changes = Dictionary[int, int]({})
+target_id = 3
+meta_ailment_id = 0
+meta_category_id = 13
+meta_min_hits = 1
+meta_max_hits = 1
+meta_min_turns = 1
+meta_max_turns = 1
+meta_drain = 0
+meta_healing = 0
+meta_crit_rate = 0
+meta_ailment_chance = 0
+meta_flinch_chance = 0
+meta_stat_chance = 0
+contact_flag = false
+category = ExtResource("1_ny6ta")

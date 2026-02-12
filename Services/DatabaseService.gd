@@ -196,26 +196,67 @@ func _load_items() -> void:
 		])
 
 ## Carga recursos usando ResourceLoader (funciona en debug y exports)
-## Usa patrones de nombres conocidos para cada tipo de recurso
+## Soporta tanto formato numérico simple ("001.tres") como con nombre ("001 - Bulbasaur.tres")
 func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
-	# Para Pokémon: intentar cargar del 000 al 151
+	# Para Pokémon: buscar archivos que empiecen con 000-151
 	if dir_path == POKEMON_DIR:
-		for i in range(0, 152):
-			var path := "%s/%03d.tres" % [dir_path, i]
-			if ResourceLoader.exists(path):
-				var res := load(path)
-				if res != null:
-					on_loaded.call(res)
+		var dir := DirAccess.open(dir_path)
+		if dir != null:
+			dir.list_dir_begin()
+			var file_name := dir.get_next()
+
+			while file_name != "":
+				if dir.current_is_dir() or not file_name.ends_with(".tres"):
+					file_name = dir.get_next()
+					continue
+
+				# Extraer ID del nombre del archivo
+				# Soporta tanto "001.tres" como "001 - Bulbasaur.tres"
+				var file_base := file_name.get_basename()
+				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
+
+				if id_str.is_valid_int():
+					var id := int(id_str)
+					if id >= 0 and id < 152:  # Rango válido para Pokémon
+						var path := dir_path + "/" + file_name
+						if ResourceLoader.exists(path):
+							var res := load(path)
+							if res != null:
+								on_loaded.call(res)
+
+				file_name = dir.get_next()
+
+			dir.list_dir_end()
 		return
 
-	# Para Moves: intentar cargar del 001 al 621 (rango conocido)
+	# Para Moves: escanear directorio y extraer ID del nombre del archivo
+	# Soporta tanto "001.tres" como "001 - Nombre.tres"
 	if dir_path == MOVES_DIR:
-		for i in range(1, 622):
-			var path := "%s/%03d.tres" % [dir_path, i]
-			if ResourceLoader.exists(path):
-				var res := load(path)
-				if res != null:
-					on_loaded.call(res)
+		var dir := DirAccess.open(dir_path)
+		if dir != null:
+			dir.list_dir_begin()
+			var file_name := dir.get_next()
+
+			while file_name != "":
+				if dir.current_is_dir() or not file_name.ends_with(".tres"):
+					file_name = dir.get_next()
+					continue
+
+				# Extraer ID del nombre del archivo
+				# Soporta tanto "001.tres" como "001 - Nombre.tres"
+				var file_base := file_name.get_basename()
+				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
+
+				if id_str.is_valid_int():
+					var path := dir_path + "/" + file_name
+					if ResourceLoader.exists(path):
+						var res := load(path)
+						if res != null:
+							on_loaded.call(res)
+
+				file_name = dir.get_next()
+
+			dir.list_dir_end()
 		return
 
 	# Para Types: intentar cargar del 01 al 18 (rango conocido)
