@@ -12,12 +12,11 @@ Name = "Excavar"
 id = 91
 description = "El usuario cava durante el primer turno y ataca en el
 segundo."
+type_id = 5
 type = ExtResource("2_xeot7")
 power = 80
 accuracy = 100
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "User digs underground, dodging all attacks, and hits next turn. Inflicts regular damage.  User digs underground for one turn, becoming immune to attack, and hits on the second turn.
 
@@ -26,19 +25,6 @@ During the immune turn, earthquake, fissure, and magnitude still hit the user no
 The user may be hit during its immune turn if under the effect of lock on, mind reader, or no guard.
 
 This move cannot be selected by sleep talk."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_qrkej")

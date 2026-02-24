@@ -14,30 +14,20 @@ id = 573
 description = "Enfría súbitamente al objetivo e incluso puede
 congelarlo. Es supereficaz contra Pokémon de tipo
 Agua."
+type_id = 15
 type = ExtResource("2_k7np2")
 power = 70
 accuracy = 100
 pp = 20
 effect_chance = 10
-priority = 0
 damage_class_id = 3
 effect_entries = "Super-effective against water. Inflicts regular damage.  This move is super-effective against the water type.
 
 The target's other type will affect damage as usual.  If this move's type is changed, it remains super-effective against Water regardless of its type."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 3
 meta_category_id = 4
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
 meta_ailment_chance = 10
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
+ailment_id = 3
 ailment = ExtResource("1_qf5hp")
 category = ExtResource("2_r0ptl")

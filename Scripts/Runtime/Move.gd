@@ -62,7 +62,14 @@ func get_description() -> String:
 	return base.description
 
 func get_type() -> TypeData:
-	return base.type as TypeData
+	# Usar type_id para cargar el TypeData solo cuando sea necesario
+	if base.type_id > 0:
+		if Engine.has_singleton("DatabaseService"):
+			return DatabaseService.get_type(base.type_id) as TypeData
+	# Compatibilidad: si type_id es 0 pero existe type (Resource), usarlo
+	if base.type != null:
+		return base.type as TypeData
+	return null
 
 func get_power() -> int:
 	return base.power
@@ -86,13 +93,24 @@ func get_category_id() -> int:
 	return base.meta_category_id
 
 func get_ailment() -> AilmentData:
-	return base.ailment
+	# Por ahora, solo usar compatibilidad con Resource antiguo
+	# TODO: Agregar soporte para ailments en DatabaseService
+	if base.ailment != null:
+		return base.ailment as AilmentData
+	return null
 
 func get_ailment_chance() -> int:
 	return base.meta_ailment_chance
 
 func get_weather() -> WeatherData:
-	return base.weather
+	# Usar weather_id para cargar el WeatherData solo cuando sea necesario
+	if base.weather_id > 0:
+		if Engine.has_singleton("DatabaseService"):
+			return DatabaseService.get_weather(base.weather_id) as WeatherData
+	# Compatibilidad: si weather_id es 0 pero existe weather (Resource), usarlo
+	if base.weather != null:
+		return base.weather as WeatherData
+	return null
 
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base.stat_changes

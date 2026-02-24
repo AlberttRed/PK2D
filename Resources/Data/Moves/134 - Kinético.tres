@@ -12,29 +12,15 @@ Name = "Kinético"
 id = 134
 description = "Dobla una cuchara para distraer al objetivo y bajar su
 nivel de Precisión."
+type_id = 14
 type = ExtResource("2_qsv3u")
-power = 0
 accuracy = 80
 pp = 15
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Lowers the target's accuracy by one stage. Lowers the target's accuracy by one stage."
 stat_changes = Dictionary[int, int]({
 5: -1
 })
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 2
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_lfkow")

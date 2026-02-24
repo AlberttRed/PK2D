@@ -42,6 +42,7 @@ script = ExtResource("4_8hq38")
 id = 4
 internal_name = "charmander"
 Name = "Charmander"
+type_a_id = 10
 type_a = ExtResource("5_pb2ok")
 base_exprience = 62
 height = 6.0

@@ -13,6 +13,8 @@ var pokemon_editor_scene: PackedScene = null
 var current_pokemon_editor: Window = null
 var move_editor_scene: PackedScene = null
 var current_move_editor: Window = null
+var item_editor_scene: PackedScene = null
+var current_item_editor: Window = null
 
 func _ready() -> void:
 	title = "Database Editor"
@@ -25,6 +27,7 @@ func _ready() -> void:
 	# Cargar escenas de editores
 	pokemon_editor_scene = load("res://addons/database_editor/pokemon_editor_window.tscn")
 	move_editor_scene = load("res://addons/database_editor/move_editor_window.tscn")
+	item_editor_scene = load("res://addons/database_editor/item_editor_window.tscn")
 
 	# Conectar señal de cierre
 	close_requested.connect(_on_close_requested)
@@ -37,6 +40,10 @@ func _ready() -> void:
 	# Conectar señal de cambio de pestaña para cargar recursos solo cuando se activa
 	if tab_container:
 		tab_container.tab_selected.connect(_on_tab_selected)
+		# Establecer títulos de los tabs
+		tab_container.set_tab_title(0, "Pokémon")
+		tab_container.set_tab_title(1, "Movimientos")
+		tab_container.set_tab_title(2, "Items")
 
 	# Esperar varios frames para que todos los nodos y scripts estén completamente listos
 	await get_tree().process_frame
@@ -339,8 +346,9 @@ func _on_tab_selected(tab_index: int) -> void:
 		1:  # Moves
 			print("[DatabaseEditor] Intentando cargar Moves...")
 			_load_move_resources_directly(current_tab_node)
-		2:  # Items - DESHABILITADO TEMPORALMENTE
-			pass
+		2:  # Items
+			if item_tab:
+				_load_item_resources_directly(current_tab_node)
 
 ## Refresca la pestaña de Pokémon
 ## Carga recursos de Pokémon directamente sin depender de que el script se ejecute
@@ -935,19 +943,23 @@ func _on_move_duplicate_requested(resource: Resource) -> void:
 
 ## Callbacks para Items
 func _on_item_create_requested() -> void:
-	print("[DatabaseEditor] Crear nuevo Item (placeholder)")
+	print("[DatabaseEditor] Crear nuevo Item")
+	_open_item_editor_create()
 
 func _on_item_edit_requested(resource: Resource) -> void:
 	print("[DatabaseEditor] Editar Item: %s" % resource.resource_path)
-	# TODO: Abrir ItemEditor
+	if resource is ItemData:
+		_open_item_editor_edit(resource as ItemData)
 
 func _on_item_delete_requested(resource: Resource) -> void:
 	print("[DatabaseEditor] Eliminar Item: %s" % resource.resource_path)
-	# TODO: Implementar eliminación
+	if resource is ItemData:
+		_show_delete_item_confirmation_dialog(resource as ItemData, item_tab)
 
 func _on_item_duplicate_requested(resource: Resource) -> void:
 	print("[DatabaseEditor] Duplicar Item: %s" % resource.resource_path)
-	# TODO: Implementar duplicación
+	if resource is ItemData:
+		_open_item_editor_duplicate(resource as ItemData)
 
 ## Manejo del cierre de ventana
 func _on_close_requested() -> void:
@@ -1166,7 +1178,21 @@ func _on_move_item_selected(index: int, tab_node: Control) -> void:
 
 	_add_section_header(detail_container, "Tipo y Categoría")
 	var type_name := "None"
-	if move_data.type and move_data.type is TypeData:
+	# Usar type_id directamente (optimización)
+	if move_data.type_id > 0:
+		var type_data: TypeData = null
+		# En runtime, usar DatabaseService
+		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+			type_data = DatabaseService.get_type(move_data.type_id) as TypeData
+		# En editor, cargar directamente desde archivo
+		else:
+			var type_path := "res://Resources/Data/Types/%02d.tres" % move_data.type_id
+			if ResourceLoader.exists(type_path):
+				type_data = load(type_path) as TypeData
+		if type_data:
+			type_name = type_data.Name
+	# Compatibilidad: si type_id es 0 pero existe type (Resource), usarlo
+	elif move_data.type != null and move_data.type is TypeData:
 		type_name = (move_data.type as TypeData).Name
 	_add_detail_row(detail_container, "Tipo", type_name)
 	var damage_class_names := ["None", "Estado", "Físico", "Especial"]
@@ -1474,4 +1500,471 @@ func _delete_move_file(file_path: String, tab_node: Control) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_refresh_move_tab()
+
+## ============================================
+## FUNCIONES PARA ITEMS
+## ============================================
+
+## Carga recursos de Items directamente
+func _load_item_resources_directly(tab_node: Control) -> void:
+	print("[DatabaseEditor] Cargando recursos de Items directamente...")
+
+	# Obtener el ItemList directamente del nodo
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		push_error("[DatabaseEditor] No se encontró ResourceList en ItemTab")
+		return
+
+	resource_list.clear()
+
+	# Cargar recursos desde el directorio
+	var dir_path := "res://Resources/Data/Items"
+	var filesystem_path := ProjectSettings.globalize_path(dir_path)
+	var dir := DirAccess.open(filesystem_path)
+	if dir == null:
+		push_error("[DatabaseEditor] No se pudo abrir directorio: %s" % dir_path)
+		return
+
+	var all_resources: Array = []
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+
+	while file_name != "":
+		if dir.current_is_dir() or not file_name.ends_with(".tres"):
+			file_name = dir.get_next()
+			continue
+
+		# Extraer ID y nombre del nombre del archivo
+		var file_base := file_name.get_basename()
+		var parts := file_base.split(" - ", false, 1)
+
+		var id_str := parts[0].strip_edges()
+		var name_str := ""
+		if parts.size() >= 2:
+			name_str = parts[1].strip_edges()
+
+		# Si no tiene el formato "XXX - Nombre", intentar extraer solo el ID
+		if not id_str.is_valid_int() and file_base.is_valid_int():
+			id_str = file_base
+
+		# Si aún no es válido, intentar extraer números del inicio
+		if not id_str.is_valid_int():
+			var id_match := file_base.split(" ")[0]
+			if id_match.is_valid_int():
+				id_str = id_match
+
+		if id_str.is_valid_int():
+			var id := int(id_str)
+			# Si el nombre no está en el archivo, usar un nombre por defecto
+			# (No cargamos el recurso para hacer la carga más rápida)
+			if name_str == "":
+				name_str = "Item #%d" % id
+
+			var file_path := dir_path + "/" + file_name
+			var metadata := {
+				"id": id,
+				"name": name_str,
+				"path": file_path,
+				"file_name": file_name
+			}
+			all_resources.append(metadata)
+
+		file_name = dir.get_next()
+
+	dir.list_dir_end()
+
+	# Ordenar por ID
+	all_resources.sort_custom(func(a, b): return int(a.get("id", 0)) < int(b.get("id", 0)))
+
+	# Guardar metadata para poder accederla cuando se seleccione un item
+	tab_node.set_meta("item_metadata", all_resources)
+	tab_node.set_meta("item_metadata_all", all_resources)
+
+	# Conectar señal de selección
+	var connection_result = resource_list.item_selected.connect(func(idx: int):
+		_on_item_item_selected(idx, tab_node)
+	)
+	if connection_result != OK:
+		push_error("[DatabaseEditor] Error al conectar señal item_selected para Items: %d" % connection_result)
+
+	# Conectar señal de búsqueda
+	var search_line_edit: LineEdit = tab_node.get_node_or_null("VBoxContainer/SearchContainer/SearchLineEdit")
+	if search_line_edit:
+		if not search_line_edit.text_changed.is_connected(_on_item_search_text_changed.bind(tab_node)):
+			search_line_edit.text_changed.connect(_on_item_search_text_changed.bind(tab_node))
+
+	# Conectar botones de acción
+	var create_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/CreateButton")
+	var edit_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/EditButton")
+	var delete_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DeleteButton")
+	var duplicate_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DuplicateButton")
+
+	if create_button:
+		if not create_button.pressed.is_connected(_on_item_create_button_pressed.bind(tab_node)):
+			create_button.pressed.connect(_on_item_create_button_pressed.bind(tab_node))
+	if edit_button:
+		if not edit_button.pressed.is_connected(_on_item_edit_button_pressed.bind(tab_node)):
+			edit_button.pressed.connect(_on_item_edit_button_pressed.bind(tab_node))
+	if delete_button:
+		if not delete_button.pressed.is_connected(_on_item_delete_button_pressed.bind(tab_node)):
+			delete_button.pressed.connect(_on_item_delete_button_pressed.bind(tab_node))
+	if duplicate_button:
+		if not duplicate_button.pressed.is_connected(_on_item_duplicate_button_pressed.bind(tab_node)):
+			duplicate_button.pressed.connect(_on_item_duplicate_button_pressed.bind(tab_node))
+
+	# Mostrar todos los recursos inicialmente
+	_update_item_list(tab_node, "")
+
+	print("[DatabaseEditor] Recursos de Items cargados: %d" % all_resources.size())
+
+## Callback cuando se selecciona un item en la lista de Items
+func _on_item_item_selected(index: int, tab_node: Control) -> void:
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	var detail_container: VBoxContainer = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer")
+
+	if not resource_list:
+		push_error("[DatabaseEditor] No se encontró ResourceList")
+		return
+	if not detail_container:
+		# Intentar encontrar recursivamente o crearlo
+		var right_panel = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel")
+		if not right_panel:
+			push_error("[DatabaseEditor] No se encontró RightPanel en ItemTab")
+			return
+
+		var detail_panel = right_panel.get_node_or_null("DetailPanel")
+		if not detail_panel:
+			push_error("[DatabaseEditor] No se encontró DetailPanel en ItemTab")
+			return
+
+		# Buscar ScrollContainer
+		var scroll_container: ScrollContainer = null
+		for child in detail_panel.get_children():
+			if child is ScrollContainer:
+				scroll_container = child
+				break
+
+		# Si no hay ScrollContainer, crearlo
+		if not scroll_container:
+			scroll_container = ScrollContainer.new()
+			scroll_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+			scroll_container.offset_left = 8
+			scroll_container.offset_top = 8
+			scroll_container.offset_right = -8
+			scroll_container.offset_bottom = -8
+			detail_panel.add_child(scroll_container)
+
+		# Buscar DetailContainer dentro del ScrollContainer
+		for child in scroll_container.get_children():
+			if child is VBoxContainer:
+				detail_container = child
+				break
+
+		# Si no hay DetailContainer, crearlo
+		if not detail_container:
+			detail_container = VBoxContainer.new()
+			detail_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			detail_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			detail_container.add_theme_constant_override("separation", 8)
+			scroll_container.add_child(detail_container)
+
+	# Eliminar el DetailLabel placeholder si existe (está directamente en DetailPanel, no en DetailContainer)
+	var detail_panel = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel/DetailPanel")
+	if detail_panel:
+		var detail_label = detail_panel.get_node_or_null("DetailLabel")
+		if detail_label:
+			detail_panel.remove_child(detail_label)
+			detail_label.queue_free()
+
+	# Limpiar el contenedor (eliminar todos los hijos, incluyendo placeholders)
+	var children = detail_container.get_children()
+	for child in children:
+		detail_container.remove_child(child)
+		child.queue_free()
+
+	# Obtener metadata del item seleccionado
+	var metadata_array: Array = tab_node.get_meta("item_metadata", [])
+	if index < 0 or index >= metadata_array.size():
+		push_error("[DatabaseEditor] Índice de item inválido: %d" % index)
+		return
+
+	var metadata: Dictionary = metadata_array[index]
+	var file_path: String = metadata.get("path", "")
+
+	if file_path.is_empty() or not ResourceLoader.exists(file_path):
+		push_error("[DatabaseEditor] No se pudo cargar el recurso desde: %s" % file_path)
+		return
+
+	var item_data: ItemData = load(file_path) as ItemData
+	if not item_data:
+		push_error("[DatabaseEditor] No se pudo cargar ItemData desde: %s" % file_path)
+		return
+
+	# Guardar el ItemData seleccionado en metadata del tab
+	tab_node.set_meta("selected_item_data", item_data)
+
+	# Mostrar información del item
+	_add_section_header(detail_container, "Información General")
+	_add_detail_row(detail_container, "ID", str(item_data.id))
+	_add_detail_row(detail_container, "Nombre interno", item_data.internal_name if item_data.internal_name != "" else "N/A")
+	_add_detail_row(detail_container, "Nombre", item_data.display_name if item_data.display_name != "" else "N/A")
+	_add_detail_row(detail_container, "Descripción", item_data.description if item_data.description != "" else "N/A")
+
+	# Clasificación
+	_add_section_header(detail_container, "Clasificación")
+	var pocket_names := ["None", "Items", "Medicine", "Balls", "TM/HM", "Berries", "Key Items", "Machines", "Battle Items"]
+	var pocket_name := "Unknown"
+	if item_data.pocket >= 0 and item_data.pocket < pocket_names.size():
+		pocket_name = pocket_names[item_data.pocket]
+	_add_detail_row(detail_container, "Bolsillo", pocket_name)
+
+	var kind_names := ["Generic", "Heal HP", "Heal PP", "Cure Status", "Revive", "Poké Ball", "TM/HM", "Held", "Key", "Evolution", "Stat Boost", "Repel", "Berry"]
+	var kind_name := "Unknown"
+	if item_data.kind >= 0 and item_data.kind < kind_names.size():
+		kind_name = kind_names[item_data.kind]
+	_add_detail_row(detail_container, "Tipo", kind_name)
+
+	# Icono
+	if item_data.icon:
+		_add_section_header(detail_container, "Icono")
+		var icon_texture_rect := TextureRect.new()
+		icon_texture_rect.texture = item_data.icon
+		icon_texture_rect.custom_minimum_size = Vector2(64, 64)
+		icon_texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		detail_container.add_child(icon_texture_rect)
+
+## Actualiza la lista de Items según el texto de búsqueda
+func _update_item_list(tab_node: Control, search_text: String) -> void:
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		return
+
+	var all_metadata: Array = tab_node.get_meta("item_metadata_all", [])
+	resource_list.clear()
+
+	var search_lower := search_text.to_lower()
+	for metadata in all_metadata:
+		var name_str: String = metadata.get("name", "")
+		var id: int = metadata.get("id", 0)
+
+		if search_text.is_empty() or name_str.to_lower().contains(search_lower) or str(id).contains(search_lower):
+			resource_list.add_item("%03d - %s" % [id, name_str])
+
+	# Guardar metadata filtrada
+	var filtered_metadata: Array = []
+	for i in range(resource_list.get_item_count()):
+		var item_text := resource_list.get_item_text(i)
+		# Extraer ID del texto (formato "001 - Nombre")
+		var parts := item_text.split(" - ", false, 1)
+		if parts.size() >= 1:
+			var id_str := parts[0].strip_edges()
+			if id_str.is_valid_int():
+				var item_id := int(id_str)
+				# Buscar metadata por ID
+				for metadata in all_metadata:
+					if metadata.get("id", 0) == item_id:
+						filtered_metadata.append(metadata)
+						break
+
+	tab_node.set_meta("item_metadata", filtered_metadata)
+
+## Callback cuando cambia el texto de búsqueda de Items
+func _on_item_search_text_changed(new_text: String, tab_node: Control) -> void:
+	_update_item_list(tab_node, new_text)
+
+## Maneja el botón Crear de Items
+func _on_item_create_button_pressed(tab_node: Control) -> void:
+	_open_item_editor_create()
+
+## Abre el editor de Items en modo Edit
+func _on_item_edit_button_pressed(tab_node: Control) -> void:
+	var item_data: ItemData = tab_node.get_meta("selected_item_data", null)
+	if not item_data:
+		_show_warning("No hay ningún item seleccionado")
+		return
+	_open_item_editor_edit(item_data)
+
+## Abre el editor de Items en modo Duplicate
+func _on_item_duplicate_button_pressed(tab_node: Control) -> void:
+	var item_data: ItemData = tab_node.get_meta("selected_item_data", null)
+	if not item_data:
+		_show_warning("No hay ningún item seleccionado")
+		return
+	_open_item_editor_duplicate(item_data)
+
+## Abre el editor de Items en modo Delete
+func _on_item_delete_button_pressed(tab_node: Control) -> void:
+	var item_data: ItemData = tab_node.get_meta("selected_item_data", null)
+	if not item_data:
+		_show_warning("No hay ningún item seleccionado")
+		return
+	_show_delete_item_confirmation_dialog(item_data, tab_node)
+
+## Abre el editor de Items en modo Create
+func _open_item_editor_create() -> void:
+	if not item_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar item_editor_window.tscn")
+		return
+
+	# Cerrar editor anterior si existe
+	if current_item_editor and is_instance_valid(current_item_editor):
+		current_item_editor.queue_free()
+
+	await get_tree().process_frame
+
+	var editor := item_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar ItemEditorWindow")
+		return
+
+	# Añadir como hijo del DatabaseEditor para que sea modal
+	add_child(editor)
+	current_item_editor = editor
+
+	# Abrir en modo Create
+	if editor.has_method("open_create"):
+		editor.open_create(_refresh_item_tab)
+
+	# Conectar señales después de que se haya abierto
+	await get_tree().process_frame
+	_connect_item_editor_signals(editor)
+
+## Abre el editor de Items en modo Edit
+func _open_item_editor_edit(item_data: ItemData) -> void:
+	if not item_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar item_editor_window.tscn")
+		return
+
+	# Cerrar editor anterior si existe
+	if current_item_editor and is_instance_valid(current_item_editor):
+		current_item_editor.queue_free()
+
+	await get_tree().process_frame
+
+	var editor := item_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar ItemEditorWindow")
+		return
+
+	# Añadir como hijo del DatabaseEditor para que sea modal
+	add_child(editor)
+	current_item_editor = editor
+
+	# Abrir en modo Edit
+	if editor.has_method("open_edit"):
+		editor.open_edit(item_data, _refresh_item_tab)
+
+	# Conectar señales después de que se haya abierto
+	await get_tree().process_frame
+	_connect_item_editor_signals(editor)
+
+## Abre el editor de Items en modo Duplicate
+func _open_item_editor_duplicate(item_data: ItemData) -> void:
+	if not item_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar item_editor_window.tscn")
+		return
+
+	# Cerrar editor anterior si existe
+	if current_item_editor and is_instance_valid(current_item_editor):
+		current_item_editor.queue_free()
+
+	await get_tree().process_frame
+
+	var editor := item_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar ItemEditorWindow")
+		return
+
+	# Añadir como hijo del DatabaseEditor para que sea modal
+	add_child(editor)
+	current_item_editor = editor
+
+	# Abrir en modo Duplicate
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(item_data, _refresh_item_tab)
+
+	# Conectar señales después de que se haya abierto
+	await get_tree().process_frame
+	_connect_item_editor_signals(editor)
+
+## Conecta las señales del editor de Items
+func _connect_item_editor_signals(editor: Window) -> void:
+	if not editor or not is_instance_valid(editor):
+		return
+
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	# Intentar conectar señales usando el script del editor
+	var script := editor.get_script()
+	if script:
+		# Verificar si las señales existen en el script
+		if script.has_method("get") or script.has_method("has_signal"):
+			# Las señales deberían estar disponibles automáticamente
+			# Intentar conectar directamente
+			if editor.has_signal("saved"):
+				editor.saved.connect(_on_item_editor_saved)
+			if editor.has_signal("cancelled"):
+				editor.cancelled.connect(_on_item_editor_cancelled)
+		else:
+			push_warning("[DatabaseEditor] Las señales no están disponibles en el script de ItemEditor")
+	else:
+		push_warning("[DatabaseEditor] No se pudo obtener el script del ItemEditor")
+
+func _on_item_editor_saved(item_data: ItemData, was_new: bool) -> void:
+	print("[DatabaseEditor] Item guardado: %s (nuevo: %s)" % [item_data.resource_path, was_new])
+	_refresh_item_tab()
+
+func _on_item_editor_cancelled() -> void:
+	print("[DatabaseEditor] Editor de Items cancelado")
+
+## Refresca la pestaña de Items
+func _refresh_item_tab() -> void:
+	if item_tab:
+		_load_item_resources_directly(item_tab)
+
+## Muestra diálogo de confirmación para eliminar un item
+func _show_delete_item_confirmation_dialog(item_data: ItemData, tab_node: Control) -> void:
+	var dialog := ConfirmationDialog.new()
+	var item_name := item_data.display_name if item_data.display_name != "" else item_data.internal_name
+	if item_name == "":
+		item_name = "Item #%d" % item_data.id
+	dialog.dialog_text = "¿Está seguro de que desea eliminar el item '%s'?" % item_name
+	dialog.ok_button_text = "Eliminar"
+	dialog.cancel_button_text = "Cancelar"
+	dialog.title = "Confirmar Eliminación"
+
+	add_child(dialog)
+	dialog.popup_centered()
+
+	dialog.confirmed.connect(func():
+		_delete_item_file(item_data, tab_node)
+		dialog.queue_free()
+	)
+
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+
+## Elimina el archivo de un item
+func _delete_item_file(item_data: ItemData, tab_node: Control) -> void:
+	if not item_data or not item_data.resource_path:
+		_show_warning("No se puede eliminar: el item no tiene ruta de archivo")
+		return
+
+	var file_path := item_data.resource_path
+	var dir := DirAccess.open(ProjectSettings.globalize_path(file_path.get_base_dir()))
+	if not dir:
+		_show_warning("No se pudo abrir el directorio para eliminar el archivo")
+		return
+
+	var file_name := file_path.get_file()
+	if dir.file_exists(file_name):
+		var error := dir.remove(file_name)
+		if error != OK:
+			_show_warning("Error al eliminar el archivo: %s" % error_string(error))
+		else:
+			print("[DatabaseEditor] Item eliminado: %s" % file_path)
+			_refresh_filesystem()
+			_refresh_item_tab()
 

@@ -12,29 +12,16 @@ Name = "Golpe Bajo"
 id = 389
 description = "Permite atacar con prioridad. Falla si el objetivo no está
 preparando ningún ataque."
+type_id = 17
 type = ExtResource("2_ecy0t")
 power = 70
 accuracy = 100
 pp = 5
-effect_chance = 0
 priority = 1
 damage_class_id = 2
 effect_entries = "Only works if the target is about to use a damaging move. Inflicts regular damage.  If the target has not selected a damaging move this turn, or if the target has already acted this turn, this move will fail.
 
 This move is not affected by iron fist."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_7ggtk")

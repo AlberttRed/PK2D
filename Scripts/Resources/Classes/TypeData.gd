@@ -20,8 +20,10 @@ func get_effectiveness_from(type) -> float:
 		return 1.0
 
 	var type_id: int = 0
-	if type.has("id"):
-		type_id = type.id
+	if "id" in type:
+		var id_variant = type.get("id")
+		if id_variant != null:
+			type_id = int(id_variant)
 	else:
 		var id_variant = type.get("id")
 		if id_variant != null:
@@ -46,8 +48,10 @@ func get_effectiveness_against(type) -> float:
 		return 1.0
 
 	var type_id: int = 0
-	if type.has("id"):
-		type_id = type.id
+	if "id" in type:
+		var id_variant = type.get("id")
+		if id_variant != null:
+			type_id = int(id_variant)
 	else:
 		var id_variant = type.get("id")
 		if id_variant != null:
@@ -79,4 +83,3 @@ func _to_string() -> String:
 
 func print_info():
 	print("[Type] %s | ID: %d | internal: %s" % [Name, id, internal_name])
-

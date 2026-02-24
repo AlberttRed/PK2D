@@ -297,19 +297,21 @@ func _load_move_data_to_ui(move_data: MoveData) -> void:
 	if description_text_edit:
 		description_text_edit.text = move_data.description if move_data.description else ""
 
-	# Tipo
+	# Tipo - usar type_id directamente (optimización)
 	if type_option_button:
 		var type_index := 0
-		var type_id: int = 0
-		if move_data.type:
-			if move_data.type is TypeData:
-				type_id = (move_data.type as TypeData).id
-			else:
-				var type_resource = move_data.type as Resource
-				if type_resource:
-					var id_value = type_resource.get("id")
-					if id_value != null:
-						type_id = int(id_value)
+		var type_id: int = move_data.type_id
+
+		# Compatibilidad: si type_id es 0 pero existe type (Resource), extraer el ID
+		if type_id == 0 and move_data.type != null:
+			var type_resource = move_data.type as Resource
+			if type_resource:
+				var id_value = type_resource.get("id")
+				if id_value != null:
+					type_id = int(id_value)
+					# Migrar automáticamente: guardar type_id y limpiar type
+					move_data.type_id = type_id
+					move_data.type = null
 
 		if type_id > 0:
 			for i in range(type_option_button.get_item_count()):
@@ -345,17 +347,17 @@ func _update_move_data_from_ui() -> void:
 	if description_text_edit:
 		current_move_data.description = description_text_edit.text
 
-	# Tipo
+	# Tipo - usar type_id directamente (optimización)
 	if type_option_button:
 		var selected_index = type_option_button.selected
 		if selected_index > 0:
 			var type_id = type_option_button.get_item_id(selected_index)
-			# Buscar el TypeData correspondiente
-			for type_data in available_types:
-				if type_data.id == type_id:
-					current_move_data.type = type_data
-					break
+			current_move_data.type_id = type_id
+			# Limpiar referencia antigua si existe
+			current_move_data.type = null
 		else:
+			current_move_data.type_id = 0
+			# Limpiar referencia antigua si existe
 			current_move_data.type = null
 
 	# Damage Class

@@ -13,6 +13,7 @@ id = 2
 description = "Este movimiento no se puede usar, por lo que sería
 mejor olvidarlo, aunque eso implique que no se pueda
 recordar posteriormente."
+type_id = 1
 type = ExtResource("3_lt571")
 power = 50
 accuracy = 100

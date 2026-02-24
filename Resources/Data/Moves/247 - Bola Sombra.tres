@@ -12,29 +12,18 @@ Name = "Bola Sombra"
 id = 247
 description = "Lanza una bola oscura que puede bajar la Defensa 
 Especial del objetivo."
+type_id = 8
 type = ExtResource("2_lvajc")
 power = 80
 accuracy = 100
 pp = 15
 effect_chance = 20
-priority = 0
 damage_class_id = 3
 effect_entries = "Has a $effect_chance% chance to lower the target's Special Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Defense by one stage."
 stat_changes = Dictionary[int, int]({
 3: -1
 })
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 6
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
 meta_stat_chance = 20
-contact_flag = false
 category = ExtResource("1_rj1bd")

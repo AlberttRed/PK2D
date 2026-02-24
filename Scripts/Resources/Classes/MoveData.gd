@@ -9,7 +9,8 @@ class_name MoveData
 @export var Name : String = "" # the resource name e.g. Overgrow.
 @export var id : int = 0 # the id of the resource.
 @export_multiline var description : String = "" # a description of the move.
-@export var type : Resource = null
+@export var type_id : int = 0 # ID del tipo (optimización: usar ID en lugar de Resource para evitar cargar subrecursos)
+@export var type : Resource = null # DEPRECATED: Se mantiene para compatibilidad. Usar type_id en su lugar.
 #@export_enum("None, Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Steel, Fire, Water, Grass, Electric, Psychic, Ice, Dragon, Dark, Fairy") var type = 1
 @export var power : int = 0 # the power of the move.
 @export var accuracy : int = 0 # the accuracy of the move.
@@ -33,8 +34,10 @@ class_name MoveData
 @export var meta_flinch_chance : int = 0 # % de que un atac fagi retrocedir  al rival
 @export var meta_stat_chance : int = 0 # % de que un atac pugi o baixi els stats
 @export var contact_flag : bool = false
-@export var ailment : AilmentData = null
-@export var weather : WeatherData = null
+@export var ailment_id : int = 0 # ID del ailment (optimización: usar ID en lugar de Resource)
+@export var ailment : AilmentData = null # DEPRECATED: Se mantiene para compatibilidad. Usar ailment_id en su lugar.
+@export var weather_id : int = 0 # ID del weather (optimización: usar ID en lugar de Resource)
+@export var weather : WeatherData = null # DEPRECATED: Se mantiene para compatibilidad. Usar weather_id en su lugar.
 @export var move_effect : Script = null
 
 @export var category: BattleMoveCategory = null
@@ -58,17 +61,17 @@ func _init():
 #
 #	emit_signal("move_done")
 #
-#func ShowAnimation(from,to):	
+#func ShowAnimation(from,to):
 #	MOVE_ANIMATIONS.animations["Move_Animation" + str(self.move_effect).pad_zeros(3)].new().ShowAnimation(from,to)
 #	yield(MOVE_ANIMATIONS.animations["Move_Animation" + str(self.move_effect).pad_zeros(3)].new(), "animation_done")
 #	emit_signal("animation_done")
 #
 func is_special():
 	return damage_class_id == CONST.DAMAGE_CLASS.ESPECIAL
-	
+
 func has_target(target):
 	return target_id == target
-	
+
 func has_multiple_targets(from):
 	if from.listEnemies.size() == 2:
 		if has_target(CONST.TARGETS.BASE_ENEMY) or has_target(CONST.TARGETS.ALL_OTHER) or has_target(CONST.TARGETS.ENEMIES) or has_target(CONST.TARGETS.ALL_FIELD) or has_target(CONST.TARGETS.ALL_POKEMON) or has_target(CONST.TARGETS.PLAYERS) or has_target(CONST.TARGETS.BASE_PLAYER):
@@ -77,10 +80,21 @@ func has_multiple_targets(from):
 			return false
 	else:
 		return false
-		
+
 func is_type(t):
-	return type == t
-	
+	# Si t es un int, comparar directamente con type_id
+	if typeof(t) == TYPE_INT:
+		return type_id == t
+	# Compatibilidad: si t es un Resource (TypeData), comparar por ID
+	if t is Resource:
+		var t_id = t.get("id") if t.get("id") != null else null
+		if t_id != null and typeof(t_id) == TYPE_INT:
+			return type_id == int(t_id)
+	# Fallback: usar type antiguo si type_id es 0 (compatibilidad con recursos antiguos)
+	if type_id == 0 and type != null:
+		return type == t
+	return false
+
 
 func makeContact():
 	return contact_flag

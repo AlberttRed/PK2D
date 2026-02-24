@@ -149,4 +149,3 @@ func _sanitize_filename(name: String) -> String:
 		sanitized = "Unknown"
 
 	return sanitized
-

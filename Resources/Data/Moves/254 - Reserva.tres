@@ -12,12 +12,9 @@ Name = "Reserva"
 id = 254
 description = "Acumula energía y sube la Defensa y la Defensa 
 Especial. Puede utilizarse hasta tres veces."
+type_id = 1
 type = ExtResource("2_rw0jl")
-power = 0
-accuracy = 0
 pp = 20
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Stores energy up to three times for use with Spit Up and Swallow. Raises the user's Defense and Special Defense by one stage each.  Stores energy for use with spit up and swallow.  Up to three levels of energy can be stored, and all are lost if the user leaves the field.  Energy is still stored even if the stat boosts cannot be applied.
 
@@ -27,17 +24,5 @@ stat_changes = Dictionary[int, int]({
 3: 1
 })
 target_id = 7
-meta_ailment_id = 0
 meta_category_id = 13
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_j22jw")

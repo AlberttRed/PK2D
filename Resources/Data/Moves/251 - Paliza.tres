@@ -12,29 +12,16 @@ Name = "Paliza"
 id = 251
 description = "Ataque de todo el equipo Pokémon. Cuantos más haya,
 más veces se atacará."
+type_id = 17
 type = ExtResource("2_t5b3x")
-power = 0
 accuracy = 100
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "Hits once for every conscious Pokémon the trainer has. Inflicts typeless regular damage.  Every Pokémon in the user's party, excepting those that have fainted or have a major status effect, attacks the target.  Calculated stats are ignored; the base stats for the target and assorted attackers are used instead.  The random factor in the damage formula is not used.  dark Pokémon still get STAB.
 
 This effect breaks through wonder guard."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
 meta_min_hits = 6
 meta_max_hits = 6
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_qbrwy")

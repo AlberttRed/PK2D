@@ -42,6 +42,7 @@ script = ExtResource("4_2pomf")
 id = 8
 internal_name = "wartortle"
 Name = "Wartortle"
+type_a_id = 11
 type_a = ExtResource("5_15lbr")
 base_exprience = 142
 height = 10.0

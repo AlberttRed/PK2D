@@ -12,29 +12,17 @@ Name = "Pisotón"
 id = 23
 description = "Tremendo pisotón que puede hacer que el objetivo se
 amedrente."
+type_id = 1
 type = ExtResource("2_c7l0f")
 power = 65
 accuracy = 100
 pp = 20
 effect_chance = 30
-priority = 0
 damage_class_id = 2
 effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch.
 
 Power is doubled against Pokémon that have used minimize since entering the field."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
 meta_flinch_chance = 30
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_v3okt")

@@ -13,32 +13,24 @@ Name = "Lluvia Ígnea"
 id = 463
 description = "El objetivo queda atrapado en una tormenta de fuego
 que dura de cuatro a cinco turnos."
+type_id = 10
 type = ExtResource("2_pf8e2")
 power = 100
 accuracy = 75
 pp = 5
 effect_chance = 100
-priority = 0
 damage_class_id = 3
 effect_entries = "Prevents the target from fleeing and inflicts damage for 2-5 turns. Inflicts regular damage.  For the next 2–5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.  The user continues to use other moves during this time.  If the user leaves the field, this effect ends.
 
 Has a 3/8 chance each to hit 2 or 3 times, and a 1/8 chance each to hit 4 or 5 times.  Averages to 3 hits per use.
 
 rapid spin cancels this effect."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 8
 meta_category_id = 4
-meta_min_hits = 1
-meta_max_hits = 1
 meta_min_turns = 5
 meta_max_turns = 6
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
 meta_ailment_chance = 100
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
+ailment_id = 8
 ailment = ExtResource("1_ey2vp")
 category = ExtResource("2_flryo")

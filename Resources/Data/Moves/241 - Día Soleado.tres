@@ -13,12 +13,9 @@ id = 241
 description = "Hace que se intensifique el efecto del sol durante
 cinco turnos, lo que potencia los movimientos de tipo
 Fuego y debilita los de tipo Agua."
+type_id = 10
 type = ExtResource("2_v003a")
-power = 0
-accuracy = 0
 pp = 5
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Changes the weather to sunny for five turns. Changes the weather to sunshine for five turns, during which fire moves inflict 50% extra damage, and water moves inflict half damage.
 
@@ -43,19 +40,6 @@ Pokémon with flower gift change form; every Pokémon on their side of the field
 Pokémon with dry skin lose 1/8 max HP at the end of each turn.
 
 Pokémon with solar power have their original Special Attack raised by 50% but lose 1/8 their max HP at the end of each turn."
-stat_changes = Dictionary[int, int]({})
 target_id = 12
-meta_ailment_id = 0
 meta_category_id = 10
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_1671l")

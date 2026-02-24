@@ -13,11 +13,9 @@ id = 289
 description = "Este movimiento no se puede usar, por lo que sería
 mejor olvidarlo, aunque eso implique que no se pueda
 recordar posteriormente."
+type_id = 17
 type = ExtResource("2_ccdeu")
-power = 0
-accuracy = 0
 pp = 10
-effect_chance = 0
 priority = 4
 damage_class_id = 1
 effect_entries = "Steals the target's move, if it's self-targeted. The next time a Pokémon uses a beneficial move on itself or itself and its ally this turn, the user of this move will steal the move and use it itself.  Moves which may be stolen by this move are identified by the \"snatchable\" flag.
@@ -27,19 +25,6 @@ If two Pokémon use this move on the same turn, the faster Pokémon will steal t
 If the user steals psych up, it will target the Pokémon that used psych up.  If the user was the original target of psych up, and the Pokémon that originally used it's affected by pressure, it will only lose 1 PP.
 
 This move cannot be copied by mirror move, nor selected by assist or metronome."
-stat_changes = Dictionary[int, int]({})
 target_id = 7
-meta_ailment_id = 0
 meta_category_id = 13
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_5f7xy")

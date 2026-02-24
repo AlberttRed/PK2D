@@ -12,12 +12,9 @@ Name = "Sonámbulo"
 id = 214
 description = "Mientras duerme, usa uno de sus movimientos elegido
 al azar."
+type_id = 1
 type = ExtResource("2_3shqm")
-power = 0
-accuracy = 0
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Randomly uses one of the user's other three moves.  Only works if the user is sleeping. Only usable if the user is sleeping.  Randomly selects and uses one of the user's other three moves.  Use of the selected move requires and costs 0 PP.
 
@@ -26,19 +23,6 @@ This move will not select assist, bide, bounce, chatter, copycat, dig, dive, fly
 If the selected move requires a recharge turn—i.e., one of blast burn, frenzy plant, giga impact, hydro cannon, hyper beam, roar of time, or rock wrecker—and the user is still sleeping next turn, then it's forced to use this move again and pay another PP for the recharge turn.
 
 This move cannot be copied by mirror move, nor selected by assist, metronome, or sleep talk."
-stat_changes = Dictionary[int, int]({})
 target_id = 7
-meta_ailment_id = 0
 meta_category_id = 13
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_yfc6c")

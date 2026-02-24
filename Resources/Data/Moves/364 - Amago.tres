@@ -13,29 +13,16 @@ id = 364
 description = "Permite golpear a objetivos que han utilizado
 movimientos como Protección o Detección y anula
 sus efectos."
+type_id = 1
 type = ExtResource("2_8ot1r")
 power = 30
 accuracy = 100
 pp = 10
-effect_chance = 0
 priority = 2
 damage_class_id = 2
 effect_entries = "Hits through Protect and Detect. Inflicts regular damage.  Removes the effects of detect or protect from the target before hitting.
 
 This move cannot be copied by mirror move, nor selected by assist or metronome."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_ajn82")

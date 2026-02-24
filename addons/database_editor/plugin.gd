@@ -7,6 +7,7 @@ extends EditorPlugin
 var database_editor_scene: PackedScene = null
 var pokemon_editor_scene: PackedScene = null
 var move_editor_scene: PackedScene = null
+var item_editor_scene: PackedScene = null
 
 func _enter_tree() -> void:
 	# Cargar la escena del editor
@@ -33,6 +34,18 @@ func _enter_tree() -> void:
 		else:
 			print("[DatabaseEditor Plugin] ✓ move_editor_window.tscn cargado correctamente")
 
+	# Cargar la escena del editor de Items
+	await get_tree().process_frame
+	var item_editor_path := "res://addons/database_editor/item_editor_window.tscn"
+	if not ResourceLoader.exists(item_editor_path):
+		push_error("Database Editor: El archivo item_editor_window.tscn no existe en: %s" % item_editor_path)
+	else:
+		item_editor_scene = load(item_editor_path)
+		if not item_editor_scene:
+			push_error("Database Editor: No se pudo cargar item_editor_window.tscn desde: %s" % item_editor_path)
+		else:
+			print("[DatabaseEditor Plugin] ✓ item_editor_window.tscn cargado correctamente")
+
 	# Añadir al menú de herramientas
 	add_tool_menu_item("Database Editor", _open_database_editor)
 
@@ -48,6 +61,7 @@ func _exit_tree() -> void:
 	database_editor_scene = null
 	pokemon_editor_scene = null
 	move_editor_scene = null
+	item_editor_scene = null
 
 ## Abre la ventana del Database Editor
 func _open_database_editor() -> void:
@@ -161,6 +175,10 @@ func _on_filesystem_menu_about_to_show(popup_menu: PopupMenu) -> void:
 		print("[DatabaseEditor Plugin] ✓ Es un MoveData, añadiendo opción al menú")
 		# Añadir "Editar Movimiento" al principio del menú
 		_add_edit_move_to_menu(popup_menu, file_path)
+	elif resource is ItemData:
+		print("[DatabaseEditor Plugin] ✓ Es un ItemData, añadiendo opción al menú")
+		# Añadir "Editar Item" al principio del menú
+		_add_edit_item_to_menu(popup_menu, file_path)
 
 ## Obtiene los archivos seleccionados del FileSystem dock
 func _get_selected_filesystem_paths() -> PackedStringArray:
@@ -295,7 +313,7 @@ func _add_edit_pokemon_to_menu(popup_menu: PopupMenu, file_path: String) -> void
 
 ## Maneja la selección de items del menú contextual del FileSystem
 func _on_filesystem_menu_item_selected(id: int, popup_menu: PopupMenu) -> void:
-	if id == 99999:  # "Editar Pokémon" o "Editar Movimiento"
+	if id == 99999 or id == 1000:  # "Editar Pokémon", "Editar Movimiento" o "Editar Item"
 		var file_path: String = popup_menu.get_item_metadata(0)
 		var item_text: String = popup_menu.get_item_text(0)
 
@@ -303,6 +321,8 @@ func _on_filesystem_menu_item_selected(id: int, popup_menu: PopupMenu) -> void:
 			_open_pokemon_editor_from_file(file_path)
 		elif item_text == "Editar Movimiento":
 			_open_move_editor_from_file(file_path)
+		elif item_text == "Editar Item":
+			_open_item_editor_from_file(file_path)
 
 ## Abre el editor de Pokémon desde un archivo
 func _open_pokemon_editor_from_file(file_path: String) -> void:
@@ -437,6 +457,103 @@ func _open_move_editor_from_file(file_path: String) -> void:
 	# Abrir en modo Edit
 	if editor.has_method("open_edit"):
 		editor.open_edit(move_data, refresh_callback)
+		editor.popup_centered(Vector2i(700, 600))
+	else:
+		push_error("Database Editor: El editor no tiene el método open_edit")
+		editor.queue_free()
+
+## Añade la opción "Editar Item" al menú contextual
+func _add_edit_item_to_menu(popup_menu: PopupMenu, file_path: String) -> void:
+	if not is_instance_valid(popup_menu):
+		return
+
+	# Guardar items actuales
+	var items = []
+	for i in range(popup_menu.get_item_count()):
+		items.append({
+			"text": popup_menu.get_item_text(i),
+			"icon": popup_menu.get_item_icon(i),
+			"is_separator": popup_menu.is_item_separator(i),
+			"is_disabled": popup_menu.is_item_disabled(i),
+			"metadata": popup_menu.get_item_metadata(i)
+		})
+
+	# Limpiar el menú
+	popup_menu.clear()
+
+	# Añadir "Editar Item" como primer item
+	var item_id = 1000
+	popup_menu.add_item("Editar Item", item_id)
+	popup_menu.set_item_metadata(popup_menu.get_item_count() - 1, file_path)
+
+	# Conectar señal si no está conectada
+	if not popup_menu.id_pressed.is_connected(_on_filesystem_menu_item_selected):
+		popup_menu.id_pressed.connect(_on_filesystem_menu_item_selected.bind(popup_menu))
+
+	# Añadir separador
+	popup_menu.add_separator()
+
+	# Restaurar items originales
+	for item in items:
+		var new_item_id = popup_menu.get_item_count()
+		popup_menu.add_item(item.text, new_item_id)
+		var item_idx = popup_menu.get_item_count() - 1
+		if item.icon:
+			popup_menu.set_item_icon(item_idx, item.icon)
+		if item.is_disabled:
+			popup_menu.set_item_disabled(item_idx, true)
+		if item.metadata != null:
+			popup_menu.set_item_metadata(item_idx, item.metadata)
+
+	# Conectar señal si no está conectada
+	if not popup_menu.id_pressed.is_connected(_on_filesystem_menu_item_selected):
+		popup_menu.id_pressed.connect(_on_filesystem_menu_item_selected.bind(popup_menu))
+
+## Abre el editor de Items desde un archivo
+func _open_item_editor_from_file(file_path: String) -> void:
+	if not item_editor_scene:
+		# Intentar cargar de nuevo si no está cargado
+		var item_editor_path := "res://addons/database_editor/item_editor_window.tscn"
+		if ResourceLoader.exists(item_editor_path):
+			item_editor_scene = load(item_editor_path)
+			print("[DatabaseEditor Plugin] Reintentando cargar item_editor_window.tscn: %s" % ("✓ OK" if item_editor_scene else "✗ FALLO"))
+
+		if not item_editor_scene:
+			push_error("Database Editor: No se pudo cargar item_editor_window.tscn")
+			return
+
+	# Cargar el ItemData
+	var item_data = load(file_path) as ItemData
+	if not item_data:
+		push_error("Database Editor: No se pudo cargar ItemData desde: %s" % file_path)
+		return
+
+	# Buscar si hay una ventana de DatabaseEditor abierta para obtener el callback de refresco
+	var refresh_callback := Callable()
+	var base_control := EditorInterface.get_base_control()
+
+	# Buscar la ventana DatabaseEditor en los hijos del base_control
+	for child in base_control.get_children():
+		if child is Window and child.title == "Database Editor":
+			var script = child.get_script()
+			if script and script.resource_path.ends_with("database_editor.gd"):
+				# Si tiene el método _refresh_item_tab, usarlo como callback
+				if child.has_method("_refresh_item_tab"):
+					refresh_callback = child._refresh_item_tab
+				break
+
+	# Instanciar y mostrar el editor
+	var editor = item_editor_scene.instantiate()
+	if not editor:
+		push_error("Database Editor: No se pudo instanciar ItemEditorWindow")
+		return
+
+	# Añadir como hijo del base_control
+	base_control.add_child(editor)
+
+	# Abrir en modo Edit
+	if editor.has_method("open_edit"):
+		editor.open_edit(item_data, refresh_callback)
 		editor.popup_centered(Vector2i(700, 600))
 	else:
 		push_error("Database Editor: El editor no tiene el método open_edit")

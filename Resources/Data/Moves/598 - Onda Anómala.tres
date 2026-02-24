@@ -13,29 +13,15 @@ id = 598
 description = "El usuario irradia unas raras ondas que, al alcanzar a un
 oponente, hacen que disminuya mucho su Ataque
 Especial."
+type_id = 13
 type = ExtResource("2_j5iyv")
-power = 0
 accuracy = 100
 pp = 15
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Lowers the target's Special Attack by two stages. Lowers the target's Special Attack by two stages."
 stat_changes = Dictionary[int, int]({
 2: -2
 })
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 2
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_okhqb")

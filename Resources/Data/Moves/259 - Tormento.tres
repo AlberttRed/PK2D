@@ -13,30 +13,16 @@ Name = "Tormento"
 id = 259
 description = "Atormenta y enfurece al objetivo, que no puede usar
 dos veces seguidas el mismo movimiento. "
+type_id = 17
 type = ExtResource("2_mrhfh")
-power = 0
 accuracy = 100
 pp = 15
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Prevents the target from using the same move twice in a row. Prevents the target from attempting to use the same move twice in a row.  When the target leaves the field, this effect ends.
 
 If the target is forced to attempt a repeated move due to choice band, choice scarf, choice specs, disable, encore, taunt, only having PP remaining for one move, or any other effect, the target will use struggle instead.  The target is then free to use the forced move next turn, as it didn't use that move this turn."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 12
-meta_category_id = 1
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
+ailment_id = 12
 ailment = ExtResource("1_7o10n")
 category = ExtResource("2_lt80i")

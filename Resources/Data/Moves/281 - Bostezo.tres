@@ -13,32 +13,19 @@ Name = "Bostezo"
 id = 281
 description = "Gran bostezo que induce al sueño al objetivo en el
 siguiente turno."
+type_id = 1
 type = ExtResource("2_a2ict")
-power = 0
-accuracy = 0
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Target sleeps at the end of the next turn. Puts the target to sleep at the end of the next turn.  Ignores accuracy and evasion modifiers.  If the target leaves the field, this effect is canceled.  If the target has a status effect when this move is used, this move will fail.
 
 If the target is protected by safeguard when this move is used, this move will fail.
 
 insomnia and vital spirit prevent the sleep if the target has either at the end of the next turn, but will not cause this move to fail on use."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
 meta_ailment_id = 14
-meta_category_id = 1
-meta_min_hits = 1
-meta_max_hits = 1
 meta_min_turns = 2
 meta_max_turns = 2
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
+ailment_id = 14
 ailment = ExtResource("1_kpscq")
 category = ExtResource("2_xhra6")

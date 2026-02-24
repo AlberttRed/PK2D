@@ -13,12 +13,9 @@ id = 390
 description = "Lanza una trampa de púas tóxicas a los pies del
 objetivo. El veneno afecta a los Pokémon oponentes
 que entran en combate."
+type_id = 4
 type = ExtResource("2_pe0dr")
-power = 0
-accuracy = 0
 pp = 20
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Scatters poisoned spikes, poisoning opposing Pokémon that switch in. Scatters poisoned spikes around the opposing field, which poison opposing Pokémon that enter the field.  A second layer of these spikes may be laid down, in which case Pokémon will be badly poisoned instead.  Pokémon immune to either ground moves or being poisoned are immune to this effect.  Pokémon otherwise immune to ground moves are affected during gravity.
 
@@ -29,19 +26,6 @@ rapid spin will remove this effect from its user's side of the field.  defog wil
 This move does not trigger synchronize, unless the Pokémon with synchronize was forced to enter the field by another effect such as roar.
 
 Pokémon entering the field due to baton pass are not affected by this effect."
-stat_changes = Dictionary[int, int]({})
 target_id = 6
-meta_ailment_id = 0
 meta_category_id = 11
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_sdpov")

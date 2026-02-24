@@ -12,12 +12,11 @@ Name = "Antojo"
 id = 343
 description = "Se acerca con ternura al objetivo, pero le ataca y le
 roba el objeto que lleve."
+type_id = 1
 type = ExtResource("2_tupad")
 power = 60
 accuracy = 100
 pp = 25
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "Takes the target's item. Inflicts regular damage.  If the target is holding an item and the user is not, the user will permanently take the item.  Damage is still inflicted if an item cannot be taken.
 
@@ -26,19 +25,6 @@ Pokémon with sticky hold or multitype are immune to the item theft effect.
 The target cannot recover its item with recycle.
 
 This move cannot be selected by assist or metronome."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_1jig5")

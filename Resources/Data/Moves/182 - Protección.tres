@@ -12,11 +12,9 @@ Name = "Protección"
 id = 182
 description = "Frena todos los ataques, pero puede fallar si se usa 
 repetidamente."
+type_id = 1
 type = ExtResource("2_chreg")
-power = 0
-accuracy = 0
 pp = 10
-effect_chance = 0
 priority = 4
 damage_class_id = 1
 effect_entries = "Prevents any moves from hitting the user this turn. No moves will hit the user for the remainder of this turn.  If the user is last to act this turn, this move will fail.
@@ -39,19 +37,6 @@ The following effects are not prevented by this move:
 * Moves that merely copy the user, such as transform or psych up
 
 This move cannot be selected by assist or metronome."
-stat_changes = Dictionary[int, int]({})
 target_id = 7
-meta_ailment_id = 0
 meta_category_id = 13
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_qnh1l")

@@ -13,29 +13,15 @@ id = 445
 description = "Este movimiento no se puede usar, por lo que sería
 mejor olvidarlo, aunque eso implique que no se pueda
 recordar posteriormente."
+type_id = 1
 type = ExtResource("2_e233a")
-power = 0
 accuracy = 100
 pp = 20
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Lowers the target's Special Attack by two stages if it's the opposite gender. Lowers the target's Special Attack by two stages.  If the user and target are the same gender, or either is genderless, this move will fail."
 stat_changes = Dictionary[int, int]({
 2: -2
 })
 target_id = 11
-meta_ailment_id = 0
 meta_category_id = 2
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_a2ku4")

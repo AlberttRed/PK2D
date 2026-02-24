@@ -741,20 +741,21 @@ func _load_pokemon_data_to_ui(pokemon_data: PokemonData) -> void:
 		description_node.text = pokemon_data.description if pokemon_data.description else ""
 
 	# Tipos
+	# Tipo A - usar type_a_id directamente (optimización)
 	if type_a_option_button:
 		var type_a_index := 0
-		var type_a_id: int = 0
-		if pokemon_data.type_a:
-			# type_a es un Resource (TypeData), extraer el ID
-			if pokemon_data.type_a is TypeData:
-				type_a_id = (pokemon_data.type_a as TypeData).id
-			else:
-				# Intentar obtener el ID si es un Resource con propiedad id
-				var type_resource = pokemon_data.type_a as Resource
-				if type_resource:
-					var id_value = type_resource.get("id")
-					if id_value != null:
-						type_a_id = int(id_value)
+		var type_a_id: int = pokemon_data.type_a_id
+
+		# Compatibilidad: si type_a_id es 0 pero existe type_a (Resource), extraer el ID
+		if type_a_id == 0 and pokemon_data.type_a != null:
+			var type_resource = pokemon_data.type_a as Resource
+			if type_resource:
+				var id_value = type_resource.get("id")
+				if id_value != null:
+					type_a_id = int(id_value)
+					# Migrar automáticamente: guardar type_a_id y limpiar type_a
+					pokemon_data.type_a_id = type_a_id
+					pokemon_data.type_a = null
 
 		if type_a_id > 0:
 			for i in range(type_a_option_button.get_item_count()):
@@ -763,20 +764,21 @@ func _load_pokemon_data_to_ui(pokemon_data: PokemonData) -> void:
 					break
 		type_a_option_button.selected = type_a_index
 
+	# Tipo B - usar type_b_id directamente (optimización)
 	if type_b_option_button:
 		var type_b_index := 0
-		var type_b_id: int = 0
-		if pokemon_data.type_b:
-			# type_b es un Resource (TypeData), extraer el ID
-			if pokemon_data.type_b is TypeData:
-				type_b_id = (pokemon_data.type_b as TypeData).id
-			else:
-				# Intentar obtener el ID si es un Resource con propiedad id
-				var type_resource = pokemon_data.type_b as Resource
-				if type_resource:
-					var id_value = type_resource.get("id")
-					if id_value != null:
-						type_b_id = int(id_value)
+		var type_b_id: int = pokemon_data.type_b_id
+
+		# Compatibilidad: si type_b_id es 0 pero existe type_b (Resource), extraer el ID
+		if type_b_id == 0 and pokemon_data.type_b != null:
+			var type_resource = pokemon_data.type_b as Resource
+			if type_resource:
+				var id_value = type_resource.get("id")
+				if id_value != null:
+					type_b_id = int(id_value)
+					# Migrar automáticamente: guardar type_b_id y limpiar type_b
+					pokemon_data.type_b_id = type_b_id
+					pokemon_data.type_b = null
 
 		if type_b_id > 0:
 			for i in range(type_b_option_button.get_item_count()):
@@ -900,33 +902,29 @@ func _update_pokemon_data_from_ui() -> void:
 	if description_text_edit:
 		current_pokemon_data.description = description_text_edit.text
 
-	# Tipos - type_a y type_b son Resource (TypeData), no int
+	# Tipos - usar type_a_id y type_b_id directamente (optimización)
 	if type_a_option_button:
 		var selected_index := type_a_option_button.selected
 		if selected_index > 0:
 			var type_id: int = type_a_option_button.get_item_id(selected_index)
-			# Buscar el TypeData correspondiente al ID
-			var type_data: TypeData = null
-			for type in available_types:
-				if type.id == type_id:
-					type_data = type
-					break
-			current_pokemon_data.type_a = type_data
+			current_pokemon_data.type_a_id = type_id
+			# Limpiar referencia antigua si existe
+			current_pokemon_data.type_a = null
 		else:
+			current_pokemon_data.type_a_id = 0
+			# Limpiar referencia antigua si existe
 			current_pokemon_data.type_a = null
 
 	if type_b_option_button:
 		var selected_index := type_b_option_button.selected
 		if selected_index > 0:
 			var type_id: int = type_b_option_button.get_item_id(selected_index)
-			# Buscar el TypeData correspondiente al ID
-			var type_data: TypeData = null
-			for type in available_types:
-				if type.id == type_id:
-					type_data = type
-					break
-			current_pokemon_data.type_b = type_data
+			current_pokemon_data.type_b_id = type_id
+			# Limpiar referencia antigua si existe
+			current_pokemon_data.type_b = null
 		else:
+			current_pokemon_data.type_b_id = 0
+			# Limpiar referencia antigua si existe
 			current_pokemon_data.type_b = null
 
 	# Base Stats

@@ -13,29 +13,15 @@ id = 301
 description = "Este movimiento no se puede usar, por lo que sería
 mejor olvidarlo, aunque eso implique que no se pueda
 recordar posteriormente."
+type_id = 15
 type = ExtResource("2_qbx1g")
 power = 30
 accuracy = 90
 pp = 20
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "Power doubles every turn this move is used in succession after the first, resetting after five turns. Inflicts regular damage.  User is forced to use this move for five turns.  Power doubles every time this move is used in succession to a maximum of 16x, and resets to normal after the lock-in ends.  If this move misses or becomes unusable, the lock-in ends.
 
 If the user has used defense curl since entering the field, this move has double power."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_4x83k")

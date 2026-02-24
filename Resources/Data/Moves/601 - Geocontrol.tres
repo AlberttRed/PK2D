@@ -13,12 +13,9 @@ id = 601
 description = "Concentra energía durante el primer turno, de forma
 que su Velocidad, Ataque Especial y Defensa Especial
 aumenten mucho en el segundo."
+type_id = 18
 type = ExtResource("2_pl4k6")
-power = 0
-accuracy = 0
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 1
 effect_entries = "Takes one turn to charge, then raises the user's Special Attack, Special Defense, and Speed by two stages. Takes one turn to charge, then raises the user's Special Attack, Special Defense, and Speed by two stages."
 stat_changes = Dictionary[int, int]({
@@ -27,17 +24,5 @@ stat_changes = Dictionary[int, int]({
 4: 2
 })
 target_id = 7
-meta_ailment_id = 0
 meta_category_id = 2
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_00dhm")

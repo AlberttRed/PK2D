@@ -12,29 +12,15 @@ Name = "Terremoto"
 id = 89
 description = "Un terremoto que afecta a todos los Pokémon que
 estén a su alrededor."
+type_id = 5
 type = ExtResource("2_iegei")
 power = 100
 accuracy = 100
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "Inflicts regular damage and can hit Dig users. Inflicts regular damage.
 
 If the target is in the first turn of dig, this move will hit with double power."
-stat_changes = Dictionary[int, int]({})
 target_id = 9
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_d5yvq")

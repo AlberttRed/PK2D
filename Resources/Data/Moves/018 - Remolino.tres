@@ -13,29 +13,14 @@ id = 18
 description = "Se lleva al objetivo, que es cambiado por otro
 Pokémon. Si es un Pokémon salvaje, acaba el
 combate."
+type_id = 1
 type = ExtResource("2_7h3i5")
-power = 0
-accuracy = 0
 pp = 20
-effect_chance = 0
 priority = -6
 damage_class_id = 1
 effect_entries = "Immediately ends wild battles.  Forces trainers to switch Pokémon. Switches the target out for another of its trainer's Pokémon selected at random.  Wild battles end immediately.
 
 Doesn't affect Pokémon with suction cups or under the effect of ingrain."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 12
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_5q75g")

@@ -12,31 +12,16 @@ Name = "Lanzamiento"
 id = 374
 description = "El usuario lanza contra el objetivo el objeto que lleva.
 La fuerza del ataque y su efecto varían según el objeto."
+type_id = 17
 type = ExtResource("2_bvhxl")
-power = 0
 accuracy = 100
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 2
 effect_entries = "Throws held item at the target; power depends on the item. Inflicts regular damage.  Power and type are determined by the user's held item.  The item is consumed.  If the user is not holding an item, or its item has no set type and power, this move will fail.
 
 This move ignores sticky hold.
 
 If the user is under the effect of embargo, this move will fail."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_h54a4")

@@ -12,12 +12,11 @@ Name = "Rayo Solar"
 id = 76
 description = "El usuario absorbe luz en el primer turno y en el
 segundo lanza un potente rayo de energía."
+type_id = 12
 type = ExtResource("2_nuod1")
 power = 120
 accuracy = 100
 pp = 10
-effect_chance = 0
-priority = 0
 damage_class_id = 3
 effect_entries = "Requires a turn to charge before attacking. Inflicts regular damage.  User charges for one turn before attacking.
 
@@ -26,19 +25,6 @@ During sunny day, the charge turn is skipped.
 During hail, rain dance, or sandstorm, power is halved.
 
 This move cannot be selected by sleep talk."
-stat_changes = Dictionary[int, int]({})
 target_id = 10
-meta_ailment_id = 0
 meta_category_id = 0
-meta_min_hits = 1
-meta_max_hits = 1
-meta_min_turns = 1
-meta_max_turns = 1
-meta_drain = 0
-meta_healing = 0
-meta_crit_rate = 0
-meta_ailment_chance = 0
-meta_flinch_chance = 0
-meta_stat_chance = 0
-contact_flag = false
 category = ExtResource("1_lt25b")
