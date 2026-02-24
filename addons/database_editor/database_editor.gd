@@ -3,6 +3,21 @@ extends Window
 
 ## Ventana principal del Database Editor
 ## Contiene pestañas para gestionar diferentes tipos de recursos
+## También puede funcionar en modo "picker" para seleccionar recursos desde otros editores
+
+## Tipos de recursos soportados en el picker
+## Extensible: Para añadir nuevos tipos (ej: TRAINER), agregar aquí y en _configure_picker_tabs
+enum ResourceType {
+	POKEMON,
+	MOVE,
+	ITEM,
+	# TRAINER,  # Futuro: descomentar cuando se implemente
+}
+
+## Señal emitida cuando se confirma una selección en modo picker
+signal resource_selected(result: ResourcePickerResult)
+## Señal emitida cuando se cancela el picker
+signal picker_cancelled
 
 @onready var tab_container: TabContainer = $VBoxContainer/TabContainer
 @onready var pokemon_tab: Control = $VBoxContainer/TabContainer/PokemonTab
@@ -15,6 +30,14 @@ var move_editor_scene: PackedScene = null
 var current_move_editor: Window = null
 var item_editor_scene: PackedScene = null
 var current_item_editor: Window = null
+
+# Modo picker
+var is_picker_mode: bool = false
+var picker_resource_type: ResourceType = ResourceType.POKEMON
+var selected_resource: Resource = null
+var selected_resource_id: int = 0
+var selected_resource_path: String = ""
+var selected_display_name: String = ""
 
 func _ready() -> void:
 	title = "Database Editor"
@@ -32,10 +55,8 @@ func _ready() -> void:
 	# Conectar señal de cierre
 	close_requested.connect(_on_close_requested)
 
-	# Conectar botón Cerrar
-	var close_button: Button = get_node_or_null("VBoxContainer/BottomButtons/CloseButton")
-	if close_button:
-		close_button.pressed.connect(_on_close_requested)
+	# Configurar botones inferiores (se configurarán según el modo)
+	_setup_bottom_buttons()
 
 	# Conectar señal de cambio de pestaña para cargar recursos solo cuando se activa
 	if tab_container:
@@ -309,6 +330,14 @@ func _on_pokemon_editor_saved(pokemon_data: PokemonData, was_new: bool) -> void:
 	print("[DatabaseEditor] Pokémon guardado: %s (nuevo: %s)" % [pokemon_data.resource_path, was_new])
 	current_pokemon_editor = null
 
+	# Si estamos en modo picker, refrescar y seleccionar el recurso guardado
+	if is_picker_mode and picker_resource_type == ResourceType.POKEMON:
+		_refresh_pokemon_tab()
+		# Esperar a que se cargue la lista y luego seleccionar
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_set_initial_selection(pokemon_data.id)
+
 ## Callback cuando se cancela el editor de Pokémon
 func _on_pokemon_editor_cancelled() -> void:
 	current_pokemon_editor = null
@@ -528,6 +557,11 @@ func _on_pokemon_item_selected(index: int, tab_node: Control) -> void:
 
 	# Guardar el recurso seleccionado para que los botones puedan usarlo
 	tab_node.set_meta("selected_pokemon_data", pokemon_data)
+
+	# Si estamos en modo picker, actualizar la selección
+	if is_picker_mode and picker_resource_type == ResourceType.POKEMON:
+		var display_name: String = pokemon_data.Name if pokemon_data.Name != "" else pokemon_data.internal_name
+		_update_picker_selection(pokemon_data, pokemon_data.id, file_path, display_name)
 
 	# Crear secciones con Labels individuales
 	_add_section_header(detail_container, "INFORMACIÓN DEL POKÉMON")
@@ -963,7 +997,234 @@ func _on_item_duplicate_requested(resource: Resource) -> void:
 
 ## Manejo del cierre de ventana
 func _on_close_requested() -> void:
+	if is_picker_mode:
+		# En modo picker, emitir señal de cancelación
+		picker_cancelled.emit()
 	queue_free()
+
+## Configura los botones inferiores según el modo (normal o picker)
+func _setup_bottom_buttons() -> void:
+	var bottom_buttons = get_node_or_null("VBoxContainer/BottomButtons")
+	if not bottom_buttons:
+		return
+
+	# Limpiar botones existentes
+	for child in bottom_buttons.get_children():
+		child.queue_free()
+
+	if is_picker_mode:
+		# Modo picker: botones Seleccionar y Cancelar
+		var select_button = Button.new()
+		select_button.text = "Seleccionar"
+		select_button.custom_minimum_size = Vector2(100, 0)
+		select_button.disabled = true  # Deshabilitado inicialmente hasta que se seleccione un recurso
+		select_button.pressed.connect(_on_picker_select_pressed)
+		bottom_buttons.add_child(select_button)
+
+		var cancel_button = Button.new()
+		cancel_button.text = "Cancelar"
+		cancel_button.custom_minimum_size = Vector2(100, 0)
+		cancel_button.pressed.connect(_on_picker_cancel_pressed)
+		bottom_buttons.add_child(cancel_button)
+
+		# Guardar referencia al botón de seleccionar para habilitar/deshabilitar
+		select_button.name = "SelectButton"
+
+		# Ocultar todos los botones de acción en modo picker
+		_hide_action_buttons_in_picker_mode()
+	else:
+		# Modo normal: botón Cerrar
+		var close_button = Button.new()
+		close_button.text = "Cerrar"
+		close_button.custom_minimum_size = Vector2(100, 0)
+		close_button.pressed.connect(_on_close_requested)
+		bottom_buttons.add_child(close_button)
+		close_button.name = "CloseButton"
+
+## Abre el DatabaseEditor en modo picker
+## @param resource_type: Tipo de recurso a seleccionar (ResourceType.POKEMON, MOVE, ITEM)
+## @param initial_selection: ID o path del recurso preseleccionado (opcional)
+func open_picker_mode(resource_type: ResourceType, initial_selection = null) -> void:
+	is_picker_mode = true
+	picker_resource_type = resource_type
+
+	# Configurar título según el tipo
+	match resource_type:
+		ResourceType.POKEMON:
+			title = "Seleccionar Pokémon"
+		ResourceType.MOVE:
+			title = "Seleccionar Movimiento"
+		ResourceType.ITEM:
+			title = "Seleccionar Item"
+
+	# Esperar a que _ready() termine antes de modificar las pestañas
+	call_deferred("_configure_picker_tabs", resource_type)
+	call_deferred("_setup_bottom_buttons")
+
+	# Si hay selección inicial, seleccionarla después de que todo esté listo
+	if initial_selection != null:
+		call_deferred("_set_initial_selection", initial_selection)
+
+## Configura las pestañas para el modo picker (llamado deferred)
+func _configure_picker_tabs(resource_type: ResourceType) -> void:
+	if not tab_container:
+		return
+
+	# Ocultar pestañas no relevantes
+	for i in range(tab_container.get_tab_count()):
+		match resource_type:
+			ResourceType.POKEMON:
+				tab_container.set_tab_hidden(i, i != 0)
+			ResourceType.MOVE:
+				tab_container.set_tab_hidden(i, i != 1)
+			ResourceType.ITEM:
+				tab_container.set_tab_hidden(i, i != 2)
+
+	# Activar la pestaña correcta
+	match resource_type:
+		ResourceType.POKEMON:
+			tab_container.current_tab = 0
+			_on_tab_selected(0)
+		ResourceType.MOVE:
+			tab_container.current_tab = 1
+			_on_tab_selected(1)
+		ResourceType.ITEM:
+			tab_container.current_tab = 2
+			_on_tab_selected(2)
+
+	# Ocultar botones de acción en modo picker
+	_hide_action_buttons_in_picker_mode()
+
+## Establece la selección inicial en modo picker
+func _set_initial_selection(selection) -> void:
+	if selection == null:
+		return
+
+	# Esperar a que las pestañas estén listas
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	var tab_node: Control = null
+	var resource_list: ItemList = null
+
+	# Obtener la pestaña y lista correctas según el tipo
+	match picker_resource_type:
+		ResourceType.POKEMON:
+			tab_node = pokemon_tab
+		ResourceType.MOVE:
+			tab_node = move_tab
+		ResourceType.ITEM:
+			tab_node = item_tab
+
+	if not tab_node:
+		return
+
+	resource_list = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		return
+
+	# Buscar el recurso en la lista
+	var target_id: int = -1
+	if typeof(selection) == TYPE_INT:
+		target_id = selection
+	elif typeof(selection) == TYPE_STRING:
+		# Si es un path, intentar cargar y obtener el ID
+		if ResourceLoader.exists(selection):
+			var resource = load(selection)
+			if resource and "id" in resource:
+				target_id = resource.id
+
+	if target_id < 0:
+		return
+
+	# Buscar en la lista por ID
+	var metadata_key := ""
+	match picker_resource_type:
+		ResourceType.POKEMON:
+			metadata_key = "pokemon_metadata"
+		ResourceType.MOVE:
+			metadata_key = "move_metadata"
+		ResourceType.ITEM:
+			metadata_key = "item_metadata"
+
+	var metadata_array: Array = tab_node.get_meta(metadata_key, [])
+	for i in range(metadata_array.size()):
+		var metadata: Dictionary = metadata_array[i]
+		if metadata.get("id", -1) == target_id:
+			# Seleccionar en la lista
+			resource_list.select(i)
+			resource_list.emit_signal("item_selected", i)
+			break
+
+## Callback cuando se presiona "Seleccionar" en modo picker
+func _on_picker_select_pressed() -> void:
+	if not selected_resource:
+		# No hay selección, mostrar aviso o deshabilitar botón
+		return
+
+	# Crear resultado
+	var result = ResourcePickerResult.new(
+		selected_resource_id,
+		selected_resource_path,
+		selected_display_name,
+		_get_resource_type_string(),
+		selected_resource
+	)
+
+	# Emitir señal
+	resource_selected.emit(result)
+
+	# Cerrar ventana
+	queue_free()
+
+## Callback cuando se presiona "Cancelar" en modo picker
+func _on_picker_cancel_pressed() -> void:
+	picker_cancelled.emit()
+	queue_free()
+
+## Obtiene el string del tipo de recurso actual
+func _get_resource_type_string() -> String:
+	match picker_resource_type:
+		ResourceType.POKEMON:
+			return "POKEMON"
+		ResourceType.MOVE:
+			return "MOVE"
+		ResourceType.ITEM:
+			return "ITEM"
+	return ""
+
+## Actualiza la selección cuando el usuario selecciona un recurso en la lista
+func _update_picker_selection(resource: Resource, resource_id: int, resource_path: String, display_name: String) -> void:
+	selected_resource = resource
+	selected_resource_id = resource_id
+	selected_resource_path = resource_path
+	selected_display_name = display_name
+
+	# Habilitar/deshabilitar botón de seleccionar
+	var select_button = get_node_or_null("VBoxContainer/BottomButtons/SelectButton")
+	if select_button:
+		select_button.disabled = (selected_resource == null)
+
+## Deshabilita los botones Eliminar en modo picker (opcional según AC-02)
+## Oculta todos los botones de acción en modo picker (Crear, Editar, Eliminar, Duplicar, Renombrar)
+func _hide_action_buttons_in_picker_mode() -> void:
+	if not is_picker_mode:
+		return
+
+	var tab_node: Control = null
+	match picker_resource_type:
+		ResourceType.POKEMON:
+			tab_node = pokemon_tab
+		ResourceType.MOVE:
+			tab_node = move_tab
+		ResourceType.ITEM:
+			tab_node = item_tab
+
+	if tab_node:
+		# Ocultar el contenedor completo de botones de acción
+		var action_buttons_container: HBoxContainer = tab_node.get_node_or_null("VBoxContainer/ActionButtons")
+		if action_buttons_container:
+			action_buttons_container.visible = false
 
 ## ============================================
 ## FUNCIONES PARA MOVES
@@ -1159,6 +1420,11 @@ func _on_move_item_selected(index: int, tab_node: Control) -> void:
 
 	# Guardar el recurso seleccionado para los botones de acción
 	tab_node.set_meta("selected_move_data", move_data)
+
+	# Si estamos en modo picker, actualizar la selección
+	if is_picker_mode and picker_resource_type == ResourceType.MOVE:
+		var display_name: String = move_data.Name if move_data.Name != "" else move_data.internal_name
+		_update_picker_selection(move_data, move_data.id, file_path, display_name)
 
 	# Limpiar el contenedor (igual que en PokemonTab)
 	print("[DatabaseEditor] Limpiando DetailContainer, hijos actuales: %d" % detail_container.get_child_count())
@@ -1420,7 +1686,14 @@ func _do_connect_move_signals(editor: Window) -> void:
 
 func _on_move_editor_saved(move_data: MoveData, was_new: bool) -> void:
 	print("[DatabaseEditor] Movimiento guardado: %s (nuevo: %s)" % [move_data.resource_path, was_new])
+	current_move_editor = null
 	_refresh_move_tab()
+
+	# Si estamos en modo picker, seleccionar el recurso guardado
+	if is_picker_mode and picker_resource_type == ResourceType.MOVE:
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_set_initial_selection(move_data.id)
 
 func _on_move_editor_cancelled() -> void:
 	print("[DatabaseEditor] Editor de Moves cancelado")
@@ -1703,6 +1976,11 @@ func _on_item_item_selected(index: int, tab_node: Control) -> void:
 	# Guardar el ItemData seleccionado en metadata del tab
 	tab_node.set_meta("selected_item_data", item_data)
 
+	# Si estamos en modo picker, actualizar la selección
+	if is_picker_mode and picker_resource_type == ResourceType.ITEM:
+		var display_name: String = item_data.display_name if item_data.display_name != "" else item_data.internal_name
+		_update_picker_selection(item_data, item_data.id, file_path, display_name)
+
 	# Mostrar información del item
 	_add_section_header(detail_container, "Información General")
 	_add_detail_row(detail_container, "ID", str(item_data.id))
@@ -1913,7 +2191,14 @@ func _connect_item_editor_signals(editor: Window) -> void:
 
 func _on_item_editor_saved(item_data: ItemData, was_new: bool) -> void:
 	print("[DatabaseEditor] Item guardado: %s (nuevo: %s)" % [item_data.resource_path, was_new])
+	current_item_editor = null
 	_refresh_item_tab()
+
+	# Si estamos en modo picker, seleccionar el recurso guardado
+	if is_picker_mode and picker_resource_type == ResourceType.ITEM:
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_set_initial_selection(item_data.id)
 
 func _on_item_editor_cancelled() -> void:
 	print("[DatabaseEditor] Editor de Items cancelado")
