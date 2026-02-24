@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ipyhqk6ggten"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1tfle"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_8rgja"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_v1on1"]
+
+[resource]
+resource_name = "189 - Bofetón Lodo"
+script = ExtResource("1_1tfle")
+internal_name = "mud-slap"
+Name = "Bofetón Lodo"
+id = 189
+description = "Echa lodo en la cara para bajar la Precisión."
+type_id = 5
+type = ExtResource("2_v1on1")
+power = 20
+accuracy = 100
+pp = 10
+effect_chance = 100
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's accuracy by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's accuracy by one stage."
+stat_changes = Dictionary[int, int]({
+5: -1
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 100
+category = ExtResource("1_8rgja")

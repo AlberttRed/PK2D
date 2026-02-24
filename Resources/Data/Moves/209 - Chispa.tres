@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://db27yvdapk11f"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_god8l"]
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_porvg"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_a8y20"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_te88m"]
+
+[resource]
+resource_name = "209 - Chispa"
+script = ExtResource("1_god8l")
+internal_name = "spark"
+Name = "Chispa"
+id = 209
+description = "Ataque eléctrico que puede llegar a paralizar."
+type_id = 13
+type = ExtResource("2_te88m")
+power = 65
+accuracy = 100
+pp = 20
+effect_chance = 30
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target."
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_ailment_chance = 30
+ailment_id = 1
+ailment = ExtResource("1_porvg")
+category = ExtResource("2_a8y20")

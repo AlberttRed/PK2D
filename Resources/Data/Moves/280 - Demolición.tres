@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://gsofvs0b0wpp"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_rel7r"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ywnqk"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_vfjo5"]
+
+[resource]
+resource_name = "280 - Demolición"
+script = ExtResource("1_ywnqk")
+internal_name = "brick-break"
+Name = "Demolición"
+id = 280
+description = "Potente ataque que también es capaz de destruir 
+barreras como Pantalla de Luz y Reflejo."
+type_id = 2
+type = ExtResource("2_vfjo5")
+power = 75
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Destroys Reflect and Light Screen. Destroys any light screen or reflect on the target's side of the field, then inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_rel7r")

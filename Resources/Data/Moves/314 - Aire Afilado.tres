@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://csub3miwjtkvm"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_6mvs6"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_cnj04"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_auhgi"]
+
+[resource]
+resource_name = "314 - Aire Afilado"
+script = ExtResource("1_cnj04")
+internal_name = "air-cutter"
+Name = "Aire Afilado"
+id = 314
+description = "Viento cortante que azota. Suele ser un golpe crítico."
+type_id = 3
+type = ExtResource("2_auhgi")
+power = 60
+accuracy = 95
+pp = 25
+damage_class_id = 3
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 11
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_6mvs6")

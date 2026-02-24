@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://birh0bpls4dw4"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2nrl5"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_7ggtk"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_ecy0t"]
+
+[resource]
+resource_name = "389 - Golpe Bajo"
+script = ExtResource("1_2nrl5")
+internal_name = "sucker-punch"
+Name = "Golpe Bajo"
+id = 389
+description = "Permite atacar con prioridad. Falla si el objetivo no está
+preparando ningún ataque."
+type_id = 17
+type = ExtResource("2_ecy0t")
+power = 70
+accuracy = 100
+pp = 5
+priority = 1
+damage_class_id = 2
+effect_entries = "Only works if the target is about to use a damaging move. Inflicts regular damage.  If the target has not selected a damaging move this turn, or if the target has already acted this turn, this move will fail.
+
+This move is not affected by iron fist."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_7ggtk")

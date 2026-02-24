@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bakdl2xidww80"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_bh314"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_u0768"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_mktm1"]
+
+[resource]
+resource_name = "559 - Rayo Fusión"
+script = ExtResource("1_bh314")
+internal_name = "fusion-bolt"
+Name = "Rayo Fusión"
+id = 559
+description = "Ataca con una enorme descarga eléctrica. Aumenta 
+su potencia si es influenciada por una gigantesca 
+llamarada."
+type_id = 13
+type = ExtResource("2_mktm1")
+power = 100
+accuracy = 100
+pp = 5
+damage_class_id = 2
+effect_entries = "With Fusion Flare, inflicts double damage. Inflicts regular damage.  If a friendly Pokémon used fusion flare earlier this turn, this move has double power."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_u0768")

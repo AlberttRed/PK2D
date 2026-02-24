@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ce58ltjwvhos5"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_aq3du"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_iqv0t"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_374us"]
+
+[resource]
+resource_name = "310 - Impresionar"
+script = ExtResource("1_aq3du")
+internal_name = "astonish"
+Name = "Impresionar"
+id = 310
+description = "Lanza un grito tan tremendo que impresiona y puede
+amedrentar al objetivo."
+type_id = 8
+type = ExtResource("2_374us")
+power = 30
+accuracy = 100
+pp = 15
+effect_chance = 30
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
+target_id = 10
+meta_category_id = 0
+meta_flinch_chance = 30
+category = ExtResource("1_iqv0t")

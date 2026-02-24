@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b2ttnoyphf10w"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_tcf2x"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageHealMoveCategory.tres" id="1_wsjg6"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_4t236"]
+
+[resource]
+resource_name = "570 - Carga Parábola"
+script = ExtResource("1_tcf2x")
+internal_name = "parabolic-charge"
+Name = "Carga Parábola"
+id = 570
+description = "Inflige daño a todos los Pokémon a su alrededor.
+El usuario absorbe la mitad del daño producido para
+restaurar sus propios PS."
+type_id = 13
+type = ExtResource("2_4t236")
+power = 65
+accuracy = 100
+pp = 20
+damage_class_id = 3
+effect_entries = "Heals the user for half the total damage dealt to all targets. Heals the user for half the total damage dealt to all targets."
+target_id = 9
+meta_category_id = 8
+meta_drain = 50
+category = ExtResource("1_wsjg6")

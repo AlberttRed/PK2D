@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bm32ldkef01wb"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_c1yg5"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_tti8c"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_77a6v"]
+
+[resource]
+resource_name = "319 - Eco Metálico"
+script = ExtResource("1_c1yg5")
+internal_name = "metal-sound"
+Name = "Eco Metálico"
+id = 319
+description = "Horrible chirrido metálico que baja mucho la Defensa
+Especial del objetivo."
+type_id = 9
+type = ExtResource("2_77a6v")
+accuracy = 85
+pp = 40
+damage_class_id = 1
+effect_entries = "Lowers the target's Special Defense by two stages. Lowers the target's Special Defense by two stages."
+stat_changes = Dictionary[int, int]({
+3: -2
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_tti8c")

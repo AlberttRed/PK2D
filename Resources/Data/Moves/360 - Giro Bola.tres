@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dgrvwp5jg2lkn"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_joswx"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_ne8sn"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_wh1ai"]
+
+[resource]
+resource_name = "360 - Giro Bola"
+script = ExtResource("1_joswx")
+internal_name = "gyro-ball"
+Name = "Giro Bola"
+id = 360
+description = "Embiste al objetivo con un potente ataque giratorio. 
+Cuanto más lento es el usuario, más daño causa. "
+type_id = 9
+type = ExtResource("2_wh1ai")
+accuracy = 100
+pp = 5
+damage_class_id = 2
+effect_entries = "Power raises when the user has lower Speed, up to a maximum of 150. Inflicts regular damage.  Power increases with the target's current Speed compared to the user, given by `1 + 25 * target Speed / user Speed`, capped at 150."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_ne8sn")

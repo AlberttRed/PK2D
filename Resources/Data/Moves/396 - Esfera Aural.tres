@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dlue2disbca1a"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_1por5"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_8ash3"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_4qb36"]
+
+[resource]
+resource_name = "396 - Esfera Aural"
+script = ExtResource("1_8ash3")
+internal_name = "aura-sphere"
+Name = "Esfera Aural"
+id = 396
+description = "Libera, desde su interior, una inmensa descarga de aura.
+Es infalible."
+type_id = 2
+type = ExtResource("2_4qb36")
+power = 80
+pp = 20
+damage_class_id = 3
+effect_entries = "Never misses. Inflicts regular damage.  Ignores accuracy and evasion modifiers."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_1por5")

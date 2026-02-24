@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d3cjopwhlt0w6"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_dupsy"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_jx5gm"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_dxxjq"]
+
+[resource]
+resource_name = "6 - Día de Pago"
+script = ExtResource("1_dupsy")
+internal_name = "pay-day"
+Name = "Día de Pago"
+id = 6
+description = "Arroja monedas al objetivo y las recupera al final del
+combate."
+type_id = 1
+type = ExtResource("2_dxxjq")
+power = 40
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "Scatters money on the ground worth five times the user's level. Inflicts regular damage.  After the battle ends, the winner receives five times the user's level in extra money for each time this move was used."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_jx5gm")

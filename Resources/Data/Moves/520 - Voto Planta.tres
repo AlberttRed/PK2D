@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dr2406utkng1g"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_lplgr"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_pnykn"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_fmch6"]
+
+[resource]
+resource_name = "520 - Voto Planta"
+script = ExtResource("1_pnykn")
+internal_name = "grass-pledge"
+Name = "Voto Planta"
+id = 520
+description = "Ataca con columnas de hojas. Combinado con
+Voto Agua, crea un pantano y aumenta su potencia."
+type_id = 12
+type = ExtResource("2_fmch6")
+power = 80
+accuracy = 100
+pp = 10
+damage_class_id = 3
+effect_entries = "With Fire Pledge, damages opposing Pokémon for 1/8 their max HP every turn for four turns. Inflicts regular damage.  If a friendly Pokémon used fire pledge earlier this turn, all opposing Pokémon will take 1/8 their max HP in damage at the end of every turn for four turns (including this one)."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_lplgr")

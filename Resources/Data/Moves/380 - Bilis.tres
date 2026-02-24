@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d28yoo6he8a57"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_f6pdu"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_ni8yd"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_6nres"]
+
+[resource]
+resource_name = "380 - Bilis"
+script = ExtResource("1_f6pdu")
+internal_name = "gastro-acid"
+Name = "Bilis"
+id = 380
+description = "El usuario arroja sus jugos biliares al objetivo, lo que
+anula el efecto de la habilidad en uso."
+type_id = 4
+type = ExtResource("2_6nres")
+accuracy = 100
+pp = 10
+damage_class_id = 1
+effect_entries = "Nullifies target's ability until it leaves battle. The target's ability is disabled as long as it remains on the field.
+
+This effect is passed on by baton pass."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_ni8yd")

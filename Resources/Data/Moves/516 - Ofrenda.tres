@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cwiw25siihb6b"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_4ykyk"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_g1rqr"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_mngp6"]
+
+[resource]
+resource_name = "516 - Ofrenda"
+script = ExtResource("1_4ykyk")
+internal_name = "bestow"
+Name = "Ofrenda"
+id = 516
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_mngp6")
+pp = 15
+damage_class_id = 1
+effect_entries = "Gives the user's held item to the target. Transfers the user's held item to the target.  If the user has no held item, or the target already has a held item, this move will fail."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_g1rqr")

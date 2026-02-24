@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://iohyicww5b07"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_87t1t"]
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_uphta"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_rgigg"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_s5pxs"]
+
+[resource]
+resource_name = "93 - Confusión"
+script = ExtResource("1_87t1t")
+internal_name = "confusion"
+Name = "Confusión"
+id = 93
+description = "Débil ataque telequinético que puede causar confusión."
+type_id = 14
+type = ExtResource("2_s5pxs")
+power = 50
+accuracy = 100
+pp = 25
+effect_chance = 10
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to confuse the target. Inflicts regular damage.  Has a $effect_chance% chance to confuse the target."
+target_id = 10
+meta_ailment_id = 6
+meta_category_id = 4
+meta_min_turns = 2
+meta_max_turns = 5
+meta_ailment_chance = 10
+ailment_id = 6
+ailment = ExtResource("1_uphta")
+category = ExtResource("2_rgigg")

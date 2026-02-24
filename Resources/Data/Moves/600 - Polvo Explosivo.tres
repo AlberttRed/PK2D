@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://6bmhu8waskw2"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_5xvs6"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_35sp4"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_wy717"]
+
+[resource]
+resource_name = "600 - Polvo Explosivo"
+script = ExtResource("1_5xvs6")
+internal_name = "powder"
+Name = "Polvo Explosivo"
+id = 600
+description = "Esparce un polvo sobre el objetivo. Si este usa un
+movimiento de tipo Fuego en el mismo turno, el polvo
+explota y le inflige daño."
+type_id = 7
+type = ExtResource("2_wy717")
+accuracy = 100
+pp = 20
+priority = 1
+damage_class_id = 1
+effect_entries = "Explodes if the target uses a fire move this turn, damaging it for 1/4 its max HP and preventing the move. Explodes if the target uses a fire move this turn, damaging it for 1/4 its max HP and preventing the move."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_35sp4")

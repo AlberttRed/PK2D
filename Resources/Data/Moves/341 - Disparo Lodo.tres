@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cfw5br3mskegn"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_8jmoh"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_rvnk2"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_cku4o"]
+
+[resource]
+resource_name = "341 - Disparo Lodo"
+script = ExtResource("1_8jmoh")
+internal_name = "mud-shot"
+Name = "Disparo Lodo"
+id = 341
+description = "El usuario lanza lodo al objetivo y reduce su Velocidad."
+type_id = 5
+type = ExtResource("2_cku4o")
+power = 55
+accuracy = 95
+pp = 15
+effect_chance = 100
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Speed by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Speed by one stage."
+stat_changes = Dictionary[int, int]({
+4: -1
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 100
+category = ExtResource("1_rvnk2")

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://mctqwt8phg8u"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_16ki7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_lq6kp"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_l1tn5"]
+
+[resource]
+resource_name = "575 - Última Palabra"
+script = ExtResource("1_lq6kp")
+internal_name = "parting-shot"
+Name = "Última Palabra"
+id = 575
+description = "El usuario se cambia por otro Pokémon de su equipo,
+pero antes amedrenta a su oponente y hace que
+disminuyan su Ataque y Ataque Especial."
+type_id = 17
+type = ExtResource("2_l1tn5")
+accuracy = 100
+pp = 20
+effect_chance = 100
+damage_class_id = 1
+effect_entries = "Lowers all targets' Attack and Special Attack by one stage.  Makes the user switch out. Lowers all targets' Attack and Special Attack by one stage.  Makes the user switch out."
+stat_changes = Dictionary[int, int]({
+0: -1,
+2: -1
+})
+target_id = 10
+meta_category_id = 2
+meta_stat_chance = 100
+category = ExtResource("1_16ki7")

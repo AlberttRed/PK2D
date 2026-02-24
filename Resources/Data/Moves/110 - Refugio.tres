@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://i3jgby74ew4v"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_jjwd1"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qx45s"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_pgppd"]
+
+[resource]
+resource_name = "110 - Refugio"
+script = ExtResource("1_qx45s")
+internal_name = "withdraw"
+Name = "Refugio"
+id = 110
+description = "El usuario se resguarda en su coraza, por lo que le sube
+la Defensa."
+type_id = 11
+type = ExtResource("2_pgppd")
+pp = 40
+damage_class_id = 1
+effect_entries = "Raises the user's Defense by one stage. Raises the user's Defense by one stage."
+stat_changes = Dictionary[int, int]({
+1: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_jjwd1")

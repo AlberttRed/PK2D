@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cuagln0bcf2vo"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1m2hf"]
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_3dsa2"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_4352r"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_p2wlf"]
+
+[resource]
+resource_name = "221 - Fuego Sagrado"
+script = ExtResource("1_1m2hf")
+internal_name = "sacred-fire"
+Name = "Fuego Sagrado"
+id = 221
+description = "Fuego místico de gran intensidad que puede causar 
+quemaduras."
+type_id = 10
+type = ExtResource("2_4352r")
+power = 100
+accuracy = 95
+pp = 5
+effect_chance = 50
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to burn the target.  Lets frozen Pokémon thaw themselves. Inflicts regular damage.  Has a $effect_chance% chance to burn the target.  Frozen Pokémon may use this move, in which case they will thaw."
+target_id = 10
+meta_ailment_id = 4
+meta_category_id = 4
+meta_ailment_chance = 50
+ailment_id = 4
+ailment = ExtResource("1_3dsa2")
+category = ExtResource("2_p2wlf")

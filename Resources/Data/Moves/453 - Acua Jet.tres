@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bw08h70p1yeo8"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_3nlrd"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rorp5"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_hvyv4"]
+
+[resource]
+resource_name = "453 - Acua Jet"
+script = ExtResource("1_rorp5")
+internal_name = "aqua-jet"
+Name = "Acua Jet"
+id = 453
+description = "Ataque de una rapidez espeluznante. Este movimiento
+tiene prioridad alta. "
+type_id = 11
+type = ExtResource("2_hvyv4")
+power = 40
+accuracy = 100
+pp = 20
+priority = 1
+damage_class_id = 2
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_3nlrd")

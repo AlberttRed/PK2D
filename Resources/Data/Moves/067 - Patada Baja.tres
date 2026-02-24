@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dqebkvr6w7wpn"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1jmmr"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_fm0it"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_dm8tq"]
+
+[resource]
+resource_name = "67 - Patada Baja"
+script = ExtResource("1_1jmmr")
+internal_name = "low-kick"
+Name = "Patada Baja"
+id = 67
+description = "Patada baja que derriba al oponente. Cuanto más pesa
+el objetivo, más daño le causa."
+type_id = 2
+type = ExtResource("2_dm8tq")
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "Inflicts more damage to heavier targets, with a maximum of 120 power. Inflicts regular damage.  Power increases with the target's weight in kilograms, to a maximum of 120.
+
+Target's weight | Power
+--------------- | ----:
+Up to 10kg      |    20
+Up to 25kg      |    40
+Up to 50kg      |    60
+Up to 100kg     |    80
+Up to 200kg     |   100
+Above 200kg     |   120
+"
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_fm0it")

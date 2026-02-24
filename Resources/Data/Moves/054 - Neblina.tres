@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dbx3p8qiklbmt"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_18a0q"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_s3jid"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_niduv"]
+
+[resource]
+resource_name = "54 - Neblina"
+script = ExtResource("1_s3jid")
+internal_name = "mist"
+Name = "Neblina"
+id = 54
+description = "Rodea de fina niebla al usuario y protege las 
+características de su equipo durante cinco turnos. "
+type_id = 15
+type = ExtResource("2_niduv")
+pp = 30
+damage_class_id = 1
+effect_entries = "Protects the user's stats from being changed by enemy moves. Pokémon on the user's side of the field are immune to stat-lowering effects for five turns.
+
+guard swap, heart swap, and power swap may still be used.
+
+defog used by an opponent will end this effect."
+target_id = 4
+meta_category_id = 11
+category = ExtResource("1_18a0q")

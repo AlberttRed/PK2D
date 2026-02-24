@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dfdu515fqln75"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_he8vs"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_ixaj5"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_fo61w"]
+
+[resource]
+resource_name = "561 - Escudo Tatami"
+script = ExtResource("1_he8vs")
+internal_name = "mat-block"
+Name = "Escudo Tatami"
+id = 561
+description = "El usuario usa un tatami para escudarse de los ataques
+enemigos. Protege también a los aliados. No funciona
+contra movimientos de estado. "
+type_id = 2
+type = ExtResource("2_fo61w")
+pp = 10
+damage_class_id = 1
+effect_entries = "Protects all friendly Pokémon from damaging moves.  Only works on the first turn after the user is sent out. Protects all friendly Pokémon from damaging moves.  Only works on the first turn after the user is sent out."
+target_id = 4
+meta_category_id = 11
+category = ExtResource("1_ixaj5")

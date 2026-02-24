@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cjdmejbd08cln"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_1galh"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_msdgf"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_cwtrj"]
+
+[resource]
+resource_name = "565 - Aguijón Letal"
+script = ExtResource("1_msdgf")
+internal_name = "fell-stinger"
+Name = "Aguijón Letal"
+id = 565
+description = "Si se derrota al objetivo utilizando este movimiento,
+aumenta muchísimo el Ataque del usuario."
+type_id = 7
+type = ExtResource("2_cwtrj")
+power = 50
+accuracy = 100
+pp = 25
+damage_class_id = 2
+effect_entries = "Raises the user's Attack by two stages if it KOs the target. Inflicts regular damage.  Raises the user's Attack by two stages if it KOs the target."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_1galh")

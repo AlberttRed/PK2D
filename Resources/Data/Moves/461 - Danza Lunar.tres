@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dt03yiuv4y5r2"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_0fda3"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_51tle"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_878ye"]
+
+[resource]
+resource_name = "461 - Danza Lunar"
+script = ExtResource("1_0fda3")
+internal_name = "lunar-dance"
+Name = "Danza Lunar"
+id = 461
+description = "El usuario se debilita, pero el Pokémon que lo sustituye
+recupera su estado, los PS y los PP."
+type_id = 14
+type = ExtResource("2_878ye")
+pp = 10
+damage_class_id = 1
+effect_entries = "User faints, and its replacement is fully healed. User faints.  Its replacement's HP and PP are fully restored, and any major status effect is removed."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_51tle")

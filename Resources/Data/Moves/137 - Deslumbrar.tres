@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cyhgs7m42frnd"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_m0ehd"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_oiae8"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_5fj35"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_esijh"]
+
+[resource]
+resource_name = "137 - Deslumbrar"
+script = ExtResource("1_oiae8")
+internal_name = "glare"
+Name = "Deslumbrar"
+id = 137
+description = "Intimida y asusta al objetivo con la mirada para dejarlo
+paralizado."
+type_id = 1
+type = ExtResource("2_esijh")
+accuracy = 100
+pp = 30
+damage_class_id = 1
+effect_entries = "Paralyzes the target. Paralyzes the target."
+target_id = 10
+meta_ailment_id = 1
+ailment_id = 1
+ailment = ExtResource("1_m0ehd")
+category = ExtResource("2_5fj35")

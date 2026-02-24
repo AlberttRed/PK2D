@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bn42uvwu8vjcd"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_h23mj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_wvvaw"]
+[ext_resource type="Resource" uid="uid://81m8cd1k8t8y" path="res://Resources/Data/Types/16.tres" id="2_r2y7k"]
+
+[resource]
+resource_name = "525 - Cola Dragón"
+script = ExtResource("1_wvvaw")
+internal_name = "dragon-tail"
+Name = "Cola Dragón"
+id = 525
+description = "Ataca al objetivo y lo obliga a cambiarse por otro 
+Pokémon. Si es uno salvaje, acaba el combate."
+type_id = 16
+type = ExtResource("2_r2y7k")
+power = 60
+accuracy = 90
+pp = 10
+priority = -6
+damage_class_id = 2
+effect_entries = "Ends wild battles.  Forces trainers to switch Pokémon. Inflicts regular damage, then switches the target out for another of its trainer's Pokémon, selected at random.
+
+If the target is under the effect of ingrain or suction cups, or it has a substitute, or its Trainer has no more usable Pokémon, it will not be switched out.  If the target is a wild Pokémon, the battle ends instead."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_h23mj")

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cqdmt7nkchw2l"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2im33"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_iiu5g"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_iohbu"]
+
+[resource]
+resource_name = "215 - Campana Cura"
+script = ExtResource("1_2im33")
+internal_name = "heal-bell"
+Name = "Campana Cura"
+id = 215
+description = "Tañido que cura los problemas de estado de todos los
+Pokémon del equipo."
+type_id = 1
+type = ExtResource("2_iohbu")
+pp = 5
+damage_class_id = 1
+effect_entries = "Cures the entire party of major status effects. Removes major status effects and confusion from every Pokémon in the user's party."
+target_id = 13
+meta_category_id = 13
+category = ExtResource("1_iiu5g")

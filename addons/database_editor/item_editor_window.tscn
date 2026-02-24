@@ -1,0 +1,170 @@
+[gd_scene load_steps=2 format=3 uid="uid://item_editor_window"]
+
+[ext_resource type="Script" path="res://addons/database_editor/item_editor_window.gd" id="1_item_editor"]
+
+[node name="ItemEditorWindow" type="Window"]
+script = ExtResource("1_item_editor")
+initial_position = 2
+size = Vector2i(700, 600)
+title = "Item Editor"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GeneralSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection"]
+layout_mode = 2
+text = "Información General"
+theme_override_font_sizes/font_size = 16
+
+[node name="IdContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/IdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "ID:"
+
+[node name="IdSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/IdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 9999.0
+step = 1.0
+
+[node name="InternalNameContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="InternalNameLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Nombre interno:"
+
+[node name="InternalNameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ej: master-ball"
+
+[node name="DisplayNameContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="DisplayNameLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Nombre:"
+
+[node name="DisplayNameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ej: Master Ball"
+
+[node name="DescriptionContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/DescriptionContainer"]
+layout_mode = 2
+text = "Descripción:"
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/VBoxContainer/GeneralSection/DescriptionContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 100)
+placeholder_text = "Descripción del item..."
+
+[node name="ClassificationSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection"]
+layout_mode = 2
+text = "Clasificación"
+theme_override_font_sizes/font_size = 16
+
+[node name="PocketContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection"]
+layout_mode = 2
+
+[node name="PocketLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/PocketContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Bolsillo:"
+
+[node name="PocketOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/PocketContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="KindContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection"]
+layout_mode = 2
+
+[node name="KindLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/KindContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Tipo:"
+
+[node name="KindOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/KindContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="IconSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/IconSection"]
+layout_mode = 2
+text = "Icono"
+theme_override_font_sizes/font_size = 16
+
+[node name="IconContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/IconSection"]
+layout_mode = 2
+
+[node name="IconLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/IconSection/IconContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Icono:"
+
+[node name="IconTextureButton" type="TextureButton" parent="VBoxContainer/ScrollContainer/VBoxContainer/IconSection/IconContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(64, 64)
+stretch_mode = 5
+
+[node name="ClearIconButton" type="Button" parent="VBoxContainer/ScrollContainer/VBoxContainer/IconSection/IconContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+visible = false
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Guardar"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancelar"
+

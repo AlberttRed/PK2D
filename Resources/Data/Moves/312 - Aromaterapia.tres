@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://u4qu2ndmd1oq"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7vfpb"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_tg61v"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_617gb"]
+
+[resource]
+resource_name = "312 - Aromaterapia"
+script = ExtResource("1_7vfpb")
+internal_name = "aromatherapy"
+Name = "Aromaterapia"
+id = 312
+description = "Cura todos los problemas de estado del equipo con un
+suave aroma."
+type_id = 12
+type = ExtResource("2_617gb")
+pp = 5
+damage_class_id = 1
+effect_entries = "Cures the entire party of major status effects. Removes major status effects and confusion from every Pokémon in the user's party."
+target_id = 13
+meta_category_id = 13
+category = ExtResource("1_tg61v")

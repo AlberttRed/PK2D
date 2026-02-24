@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://0kysnb6dkfhy"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_w1bnk"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_xjn11"]
+[ext_resource type="Resource" uid="uid://81m8cd1k8t8y" path="res://Resources/Data/Types/16.tres" id="2_jckrl"]
+
+[resource]
+resource_name = "349 - Danza Dragón"
+script = ExtResource("1_xjn11")
+internal_name = "dragon-dance"
+Name = "Danza Dragón"
+id = 349
+description = "Danza mística que sube el Ataque y la Velocidad. "
+type_id = 16
+type = ExtResource("2_jckrl")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Attack and Speed by one stage. Raises the user's Attack and Speed by one stage each."
+stat_changes = Dictionary[int, int]({
+0: 1,
+4: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_w1bnk")

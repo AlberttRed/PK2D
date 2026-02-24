@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://4kjxv2dnu0ut"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_647c7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_d686d"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_efo6l"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_hisrg"]
+
+[resource]
+resource_name = "34 - Golpe Cuerpo"
+script = ExtResource("1_d686d")
+internal_name = "body-slam"
+Name = "Golpe Cuerpo"
+id = 34
+description = "Salta sobre el objetivo con todo su peso y puede llegar
+a paralizarlo."
+type_id = 1
+type = ExtResource("2_efo6l")
+power = 85
+accuracy = 100
+pp = 15
+effect_chance = 30
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target."
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_ailment_chance = 30
+ailment_id = 1
+ailment = ExtResource("1_647c7")
+category = ExtResource("2_hisrg")

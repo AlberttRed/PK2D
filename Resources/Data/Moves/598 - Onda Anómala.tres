@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dxkhyfwgesh6x"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_okhqb"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rpf70"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_j5iyv"]
+
+[resource]
+resource_name = "598 - Onda Anómala"
+script = ExtResource("1_rpf70")
+internal_name = "eerie-impulse"
+Name = "Onda Anómala"
+id = 598
+description = "El usuario irradia unas raras ondas que, al alcanzar a un
+oponente, hacen que disminuya mucho su Ataque
+Especial."
+type_id = 13
+type = ExtResource("2_j5iyv")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Lowers the target's Special Attack by two stages. Lowers the target's Special Attack by two stages."
+stat_changes = Dictionary[int, int]({
+2: -2
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_okhqb")

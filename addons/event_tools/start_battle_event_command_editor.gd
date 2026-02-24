@@ -1,5 +1,6 @@
 @tool
 extends Window
+class_name StartBattleEventCommandEditor
 
 ## Ventana de edición para StartBattleEventCommand
 ## Permite editar todas las propiedades export del comando
@@ -132,7 +133,7 @@ func _setup_ui() -> void:
 
 	var add_pokemon_button = Button.new()
 	add_pokemon_button.text = "Añadir"
-	add_pokemon_button.pressed.connect(func(): print("Añadir pokémon (placeholder)"))
+	add_pokemon_button.pressed.connect(_on_add_pokemon_pressed)
 	wild_pokemon_buttons.add_child(add_pokemon_button)
 
 	var edit_pokemon_button = Button.new()
@@ -339,15 +340,38 @@ func _get_pokemon_name(pokemon: Pokemon) -> String:
 	var pokemon_id = pokemon.get("pokemon_id")
 	if pokemon_id:
 		# Intentar cargar el PokemonData directamente desde el archivo
-		# El formato es: res://Resources/Data/Pokemon/XXX.tres donde XXX es el ID con ceros a la izquierda
+		# Soporta tanto formato antiguo "001.tres" como nuevo "001 - Bulbasaur.tres"
 		var pokemon_id_int = pokemon_id as int
 		if pokemon_id_int > 0:
+			# Intentar primero con el formato nuevo (con nombre)
+			var dir := DirAccess.open("res://Resources/Data/Pokemon")
+			if dir:
+				dir.list_dir_begin()
+				var file_name := dir.get_next()
+				while file_name != "":
+					if not dir.current_is_dir() and file_name.ends_with(".tres"):
+						var file_base := file_name.get_basename()
+						var parts := file_base.split(" - ", false, 1)
+						var id_str := parts[0].strip_edges()
+						if id_str.is_valid_int() and int(id_str) == pokemon_id_int:
+							var pokemon_path = "res://Resources/Data/Pokemon/" + file_name
+							var pokemon_data = load(pokemon_path) as PokemonData
+							if pokemon_data:
+								var name_value = pokemon_data.get("Name")
+								if name_value and name_value != "":
+									dir.list_dir_end()
+									return name_value
+					file_name = dir.get_next()
+				dir.list_dir_end()
+
+			# Fallback: intentar con formato antiguo
 			var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_id_int
-			var pokemon_data = load(pokemon_path) as PokemonData
-			if pokemon_data:
-				var name_value = pokemon_data.get("Name")
-				if name_value and name_value != "":
-					return name_value
+			if ResourceLoader.exists(pokemon_path):
+				var pokemon_data = load(pokemon_path) as PokemonData
+				if pokemon_data:
+					var name_value = pokemon_data.get("Name")
+					if name_value and name_value != "":
+						return name_value
 
 		# Si no se puede cargar desde archivo, intentar DatabaseService
 		var db_service = null
@@ -382,6 +406,94 @@ func _update_wild_pokemon_display() -> void:
 		for pokemon in command.wild_pokemon:
 			var pokemon_name = _get_pokemon_name(pokemon)
 			wild_pokemon_list.add_item(pokemon_name)
+
+## Abre el picker para añadir un Pokémon salvaje
+func _on_add_pokemon_pressed() -> void:
+	if not command:
+		return
+
+	# Abrir el picker de Pokémon
+	var picker_window = ResourcePickerAPI.open_pokemon_picker(
+		null,  # initial_selection (ninguno por defecto)
+		_on_pokemon_selected,  # callback cuando se selecciona
+		_on_pokemon_picker_cancelled  # callback cuando se cancela
+	)
+
+	if not picker_window:
+		push_error("StartBattleEventCommandEditor: No se pudo abrir el picker de Pokémon")
+		return
+
+	print("StartBattleEventCommandEditor: Picker de Pokémon abierto")
+
+## Callback cuando se selecciona un Pokémon en el picker
+func _on_pokemon_selected(result: ResourcePickerResult) -> void:
+	if not command or not result:
+		return
+
+	# Cargar el PokemonData
+	var pokemon_data: PokemonData = null
+
+	# Intentar usar el resource directamente si está disponible (método preferido)
+	if result.resource and result.resource is PokemonData:
+		pokemon_data = result.resource as PokemonData
+	# Si no, cargar desde el path
+	elif not result.resource_path.is_empty() and ResourceLoader.exists(result.resource_path):
+		pokemon_data = load(result.resource_path) as PokemonData
+	# Si aún no tenemos el PokemonData, intentar cargar por ID
+	elif result.resource_id > 0:
+		# Intentar primero con formato "ID - Name.tres"
+		var found := false
+		var dir := DirAccess.open("res://Resources/Data/Pokemon")
+		if dir:
+			dir.list_dir_begin()
+			var file_name := dir.get_next()
+			while file_name != "":
+				if not dir.current_is_dir() and file_name.ends_with(".tres"):
+					var file_base := file_name.get_basename()
+					var parts := file_base.split(" - ", false, 1)
+					var id_str := parts[0].strip_edges()
+					if id_str.is_valid_int() and int(id_str) == result.resource_id:
+						var pokemon_path = "res://Resources/Data/Pokemon/" + file_name
+						if ResourceLoader.exists(pokemon_path):
+							pokemon_data = load(pokemon_path) as PokemonData
+							found = true
+							break
+				file_name = dir.get_next()
+			dir.list_dir_end()
+
+		# Fallback: formato antiguo "001.tres"
+		if not found:
+			var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % result.resource_id
+			if ResourceLoader.exists(pokemon_path):
+				pokemon_data = load(pokemon_path) as PokemonData
+
+	if not pokemon_data:
+		push_error("StartBattleEventCommandEditor: No se pudo cargar PokemonData (ID: %d, Path: %s)" % [result.resource_id, result.resource_path])
+		return
+
+	# Crear un Pokemon runtime desde el PokemonData
+	# Por defecto, nivel 5 (puede editarse después desde el inspector)
+	var pokemon = Pokemon.new(pokemon_data, 5, null, null, null, false)
+	if not pokemon:
+		push_error("StartBattleEventCommandEditor: No se pudo crear Pokemon desde PokemonData")
+		return
+
+	# Crear un nuevo array para evitar el error de "read-only"
+	var new_wild_pokemon: Array[Pokemon] = []
+	for existing_pokemon in command.wild_pokemon:
+		if existing_pokemon:
+			new_wild_pokemon.append(existing_pokemon)
+	new_wild_pokemon.append(pokemon)
+	command.wild_pokemon = new_wild_pokemon
+
+	# Actualizar la visualización
+	_update_wild_pokemon_display()
+
+	print("StartBattleEventCommandEditor: Pokémon añadido: %s (ID: %d)" % [result.display_name, result.resource_id])
+
+## Callback cuando se cancela el picker
+func _on_pokemon_picker_cancelled() -> void:
+	print("StartBattleEventCommandEditor: Selección de Pokémon cancelada")
 
 ## Elimina el pokémon seleccionado del array
 func _on_remove_pokemon_pressed() -> void:

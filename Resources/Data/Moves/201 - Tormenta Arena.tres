@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://djnmfeu3jf0ah"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_2gmlq"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_6pebr"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_nhjok"]
+
+[resource]
+resource_name = "201 - Tormenta Arena"
+script = ExtResource("1_6pebr")
+internal_name = "sandstorm"
+Name = "Tormenta Arena"
+id = 201
+description = "Tormenta de arena que dura cinco turnos y hiere a 
+todos, excepto a los de tipo Roca, Tierra y Acero,
+y aumenta la Defensa Especial de los de tipo Roca."
+type_id = 6
+type = ExtResource("2_nhjok")
+pp = 10
+damage_class_id = 1
+effect_entries = "Changes the weather to a sandstorm for five turns. Changes the weather to a sandstorm for five turns.  Pokémon that are not ground, rock, or steel take 1/16 their max HP at the end of every turn.  Every rock Pokémon's original Special Defense is raised by 50% for the duration of this effect.
+
+solar beam's power is halved.
+
+moonlight, morning sun, and synthesis only heal 1/4 the user's max HP."
+target_id = 12
+meta_category_id = 10
+category = ExtResource("1_2gmlq")

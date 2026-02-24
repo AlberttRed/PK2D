@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dpedip3fd1w4l"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2db6t"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_msmvn"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_1scno"]
+
+[resource]
+resource_name = "604 - Campo Eléctrico"
+script = ExtResource("1_2db6t")
+internal_name = "electric-terrain"
+Name = "Campo Eléctrico"
+id = 604
+description = "Durante cinco turnos, se potencian los movimientos de
+tipo Eléctrico y los Pokémon que están en contacto con
+el suelo no pueden quedarse dormidos."
+type_id = 13
+type = ExtResource("2_1scno")
+pp = 10
+damage_class_id = 1
+effect_entries = "For five turns, prevents all Pokémon on the ground from sleeping and strengthens their electric moves to 1.5× their power. For five turns, prevents all Pokémon on the ground from sleeping and strengthens their electric moves to 1.5× their power.
+
+Changes nature power to thunderbolt."
+target_id = 12
+meta_category_id = 10
+category = ExtResource("1_msmvn")

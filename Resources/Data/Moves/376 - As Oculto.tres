@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://k87p71mrctk5"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_bhmeg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_f7pgf"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_t3ajd"]
+
+[resource]
+resource_name = "376 - As Oculto"
+script = ExtResource("1_f7pgf")
+internal_name = "trump-card"
+Name = "As Oculto"
+id = 376
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_t3ajd")
+pp = 5
+damage_class_id = 3
+effect_entries = "Power increases when this move has less PP, up to a maximum of 200. Inflicts regular damage.  Power is determined by the PP remaining for this move, after its PP cost is deducted.  Ignores accuracy and evasion modifiers.
+
+PP remaining | Power
+------------ | ----:
+4 or more    |    40
+3            |    50
+2            |    60
+1            |    80
+0            |   200
+
+If this move is activated by another move, the activating move's PP is used to calculate power."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_bhmeg")

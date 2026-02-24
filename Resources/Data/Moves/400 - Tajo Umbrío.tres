@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cfhbnptvgkfvr"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_tj4nq"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_uhq4q"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_1osjp"]
+
+[resource]
+resource_name = "400 - Tajo Umbrío"
+script = ExtResource("1_tj4nq")
+internal_name = "night-slash"
+Name = "Tajo Umbrío"
+id = 400
+description = "Ataca al objetivo a la primera oportunidad. Suele ser
+crítico."
+type_id = 17
+type = ExtResource("2_1osjp")
+power = 70
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_uhq4q")

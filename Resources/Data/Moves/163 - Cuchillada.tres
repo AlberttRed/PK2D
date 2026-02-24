@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://4lysh07o5f40"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_8756w"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_s5fes"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_v0ii3"]
+
+[resource]
+resource_name = "163 - Cuchillada"
+script = ExtResource("1_8756w")
+internal_name = "slash"
+Name = "Cuchillada"
+id = 163
+description = "Ataca con cuchillas o con pinzas. Suele asestar un
+golpe crítico."
+type_id = 1
+type = ExtResource("2_v0ii3")
+power = 70
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_s5fes")

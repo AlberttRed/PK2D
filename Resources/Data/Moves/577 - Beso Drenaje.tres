@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dvbvxccgw54wd"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageHealMoveCategory.tres" id="1_0wyqo"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_y07m8"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_xn5qh"]
+
+[resource]
+resource_name = "577 - Beso Drenaje"
+script = ExtResource("1_y07m8")
+internal_name = "draining-kiss"
+Name = "Beso Drenaje"
+id = 577
+description = "El usuario absorbe PS del objetivo con un beso y
+restaura su propia energía en una cantidad igual o
+superior a la mitad del daño infligido."
+type_id = 18
+type = ExtResource("2_xn5qh")
+power = 50
+accuracy = 100
+pp = 10
+damage_class_id = 3
+effect_entries = "Drains 75% of the damage inflicted to heal the user. Deals regular damage.  Drains 75% of the damage inflicted to heal the user."
+target_id = 10
+meta_category_id = 8
+meta_drain = 75
+category = ExtResource("1_0wyqo")

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cgn31tbime38h"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1uy05"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_bj1s4"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_oay6d"]
+
+[resource]
+resource_name = "158 - Hipercolmillo"
+script = ExtResource("1_1uy05")
+internal_name = "hyper-fang"
+Name = "Hipercolmillo"
+id = 158
+description = "Ataca con agudos colmillos. Puede amedrentar al
+objetivo."
+type_id = 1
+type = ExtResource("2_oay6d")
+power = 80
+accuracy = 90
+pp = 15
+effect_chance = 10
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
+target_id = 10
+meta_category_id = 0
+meta_flinch_chance = 10
+category = ExtResource("1_bj1s4")

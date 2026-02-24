@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://hywjxxpmqgy8"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_kg2qt"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_v3okt"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_c7l0f"]
+
+[resource]
+resource_name = "23 - Pisotón"
+script = ExtResource("1_kg2qt")
+internal_name = "stomp"
+Name = "Pisotón"
+id = 23
+description = "Tremendo pisotón que puede hacer que el objetivo se
+amedrente."
+type_id = 1
+type = ExtResource("2_c7l0f")
+power = 65
+accuracy = 100
+pp = 20
+effect_chance = 30
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch.
+
+Power is doubled against Pokémon that have used minimize since entering the field."
+target_id = 10
+meta_category_id = 0
+meta_flinch_chance = 30
+category = ExtResource("1_v3okt")

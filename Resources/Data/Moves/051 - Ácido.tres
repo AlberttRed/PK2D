@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cvqywutxr2xmx"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_8cyod"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_y0fpb"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_oqqlu"]
+
+[resource]
+resource_name = "51 - Ácido"
+script = ExtResource("1_8cyod")
+internal_name = "acid"
+Name = "Ácido"
+id = 51
+description = "Rocía a los enemigos con un ácido corrosivo. 
+Puede bajar la Defensa Especial."
+type_id = 4
+type = ExtResource("2_oqqlu")
+power = 40
+accuracy = 100
+pp = 30
+effect_chance = 10
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Special Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Defense by one stage."
+stat_changes = Dictionary[int, int]({
+3: -1
+})
+target_id = 11
+meta_category_id = 6
+meta_stat_chance = 10
+category = ExtResource("1_y0fpb")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dk85mf1dnrlu2"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_1mflo"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_t4xl5"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_2uu86"]
+
+[resource]
+resource_name = "264 - Puño Certero"
+script = ExtResource("1_t4xl5")
+internal_name = "focus-punch"
+Name = "Puño Certero"
+id = 264
+description = "Se concentra para dar un puñetazo. Falla si se sufre un
+golpe antes de su uso."
+type_id = 2
+type = ExtResource("2_2uu86")
+power = 150
+accuracy = 100
+pp = 20
+priority = -3
+damage_class_id = 2
+effect_entries = "If the user takes damage before attacking, the attack is canceled. Inflicts regular damage.  If the user takes damage this turn before hitting, this move will fail.
+
+This move cannot be copied by mirror move, nor selected by assist, metronome, or sleep talk."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_1mflo")

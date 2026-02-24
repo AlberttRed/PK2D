@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bjrtf3uxc2mia"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_tvqxo"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ucnuh"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_gc1te"]
+
+[resource]
+resource_name = "589 - Camaradería"
+script = ExtResource("1_ucnuh")
+internal_name = "play-nice"
+Name = "Camaradería"
+id = 589
+description = "Se hace amigo de su oponente y consigue que a este
+se le quiten las ganas de combatir. Además, reduce su
+Ataque."
+type_id = 1
+type = ExtResource("2_gc1te")
+pp = 20
+effect_chance = 100
+damage_class_id = 1
+effect_entries = "Lowers the target's Attack by one stage. Lowers the target's Attack by one stage."
+stat_changes = Dictionary[int, int]({
+0: -1
+})
+target_id = 10
+meta_category_id = 2
+meta_stat_chance = 100
+category = ExtResource("1_tvqxo")

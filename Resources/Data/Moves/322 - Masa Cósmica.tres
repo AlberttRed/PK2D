@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://4o15wc3ja3fg"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_4ee3h"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_mqkg2"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_xt34l"]
+
+[resource]
+resource_name = "322 - Masa Cósmica"
+script = ExtResource("1_mqkg2")
+internal_name = "cosmic-power"
+Name = "Masa Cósmica"
+id = 322
+description = "Sube la Defensa y la Defensa Especial propias con 
+energía mística."
+type_id = 14
+type = ExtResource("2_xt34l")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Defense and Special Defense by one stage. Raises the user's Defense and Special Defense by one stage."
+stat_changes = Dictionary[int, int]({
+1: 1,
+3: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_4ee3h")

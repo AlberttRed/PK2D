@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cnipu4qsu8kxw"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_dy3pq"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_tsb4q"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_3xyi5"]
+
+[resource]
+resource_name = "210 - Corte Furia"
+script = ExtResource("1_tsb4q")
+internal_name = "fury-cutter"
+Name = "Corte Furia"
+id = 210
+description = "Ataque con garras o guadaña que crece en intensidad
+si se usa repetidas veces."
+type_id = 7
+type = ExtResource("2_3xyi5")
+power = 40
+accuracy = 95
+pp = 20
+damage_class_id = 2
+effect_entries = "Power doubles every turn this move is used in succession after the first, maxing out after five turns. Inflicts regular damage.  Power doubles after every time this move is used, whether consecutively or not, maxing out at 16x.  If this move misses or the user leaves the field, power resets."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_dy3pq")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://keo1he6qc1ov"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_1i2ux"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_p6ifs"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_f5srq"]
+
+[resource]
+resource_name = "274 - Ayuda"
+script = ExtResource("1_p6ifs")
+internal_name = "assist"
+Name = "Ayuda"
+id = 274
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_f5srq")
+pp = 20
+damage_class_id = 1
+effect_entries = "Randomly selects and uses one of the trainer's other Pokémon's moves. Uses a move from another Pokémon in the user's party, both selected at random.  Moves from fainted Pokémon can be used.  If there are no eligible Pokémon or moves, this move will fail.
+
+This move will not select assist, chatter, circle throw, copycat, counter, covet, destiny bond, detect, dig, dive, dragon tail, endure, feint, fly focus punch, follow me, helping hand, me first, metronome, mimic, mirror coat, mirror move, phantom force protect, quick guard, roar shadow force, sketch, sleep talk, snatch, struggle, switcheroo, thief, trick, whirlwind, or wide guard.
+
+This move cannot be copied by mirror move, nor selected by metronome or sleep talk."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_1i2ux")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://crgl3j13qe0yp"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_wc7ft"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_yth3u"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3383y"]
+
+[resource]
+resource_name = "43 - Malicioso"
+script = ExtResource("1_yth3u")
+internal_name = "leer"
+Name = "Malicioso"
+id = 43
+description = "Intimida a los rivales para bajar su Defensa."
+type_id = 1
+type = ExtResource("2_3383y")
+accuracy = 100
+pp = 30
+effect_chance = 100
+damage_class_id = 1
+effect_entries = "Lowers the target's Defense by one stage. Lowers the target's Defense by one stage."
+stat_changes = Dictionary[int, int]({
+1: -1
+})
+target_id = 11
+meta_category_id = 2
+meta_stat_chance = 100
+category = ExtResource("1_wc7ft")

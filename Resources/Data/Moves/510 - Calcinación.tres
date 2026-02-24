@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c5m4nysbfo6ho"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7g372"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_qbode"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_kekhn"]
+
+[resource]
+resource_name = "510 - Calcinación"
+script = ExtResource("1_7g372")
+internal_name = "incinerate"
+Name = "Calcinación"
+id = 510
+description = "Llamas que golpean a los objetivos adyacentes. Si estos
+llevan bayas o ciertos objetos, se quemarán y ya no se
+podrán usar."
+type_id = 10
+type = ExtResource("2_kekhn")
+power = 60
+accuracy = 100
+pp = 15
+damage_class_id = 3
+effect_entries = "Destroys the target's held berry. Inflicts regular damage.  If the target is holding a berry, it's destroyed and cannot be used in response to this move."
+target_id = 11
+meta_category_id = 0
+category = ExtResource("1_qbode")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://6cmtdeokokh"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_cyyrn"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_vn05e"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_7acom"]
+
+[resource]
+resource_name = "302 - Brazo Pincho"
+script = ExtResource("1_cyyrn")
+internal_name = "needle-arm"
+Name = "Brazo Pincho"
+id = 302
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 12
+type = ExtResource("2_7acom")
+power = 60
+accuracy = 100
+pp = 15
+effect_chance = 30
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
+target_id = 10
+meta_category_id = 0
+meta_flinch_chance = 30
+category = ExtResource("1_vn05e")

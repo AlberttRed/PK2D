@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://vjvt3lcu023n"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/HealMoveCategory.tres" id="1_f281w"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_keetv"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_nupl6"]
+
+[resource]
+resource_name = "235 - Síntesis"
+script = ExtResource("1_keetv")
+internal_name = "synthesis"
+Name = "Síntesis"
+id = 235
+description = "Restaura PS del usuario. La cantidad varía según 
+el tiempo que haga."
+type_id = 12
+type = ExtResource("2_nupl6")
+pp = 5
+damage_class_id = 1
+effect_entries = "Heals the user by half its max HP.  Affected by weather. Heals the user for half its max HP.
+
+During sunny day, the healing is increased to 2/3 max HP.
+
+During hail, rain dance, or sandstorm, the healing is decreased to 1/4 max HP."
+target_id = 7
+meta_category_id = 3
+meta_healing = 50
+category = ExtResource("1_f281w")

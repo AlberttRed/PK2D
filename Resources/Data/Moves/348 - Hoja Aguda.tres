@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c4udd73m4geh2"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_lr0uc"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_vtqjv"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_ro6t0"]
+
+[resource]
+resource_name = "348 - Hoja Aguda"
+script = ExtResource("1_lr0uc")
+internal_name = "leaf-blade"
+Name = "Hoja Aguda"
+id = 348
+description = "Acuchilla con una hoja fina. Suele dar un golpe crítico."
+type_id = 12
+type = ExtResource("2_ro6t0")
+power = 90
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_vtqjv")

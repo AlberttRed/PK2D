@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d0o764iinqdsk"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_oqno2"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_t1p8y"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_kajv4"]
+
+[resource]
+resource_name = "515 - Sacrificio"
+script = ExtResource("1_oqno2")
+internal_name = "final-gambit"
+Name = "Sacrificio"
+id = 515
+description = "El usuario se sacrifica causándole un daño al objetivo
+equivalente a sus propios PS perdidos."
+type_id = 2
+type = ExtResource("2_kajv4")
+accuracy = 100
+pp = 5
+damage_class_id = 3
+effect_entries = "Inflicts damage equal to the user's remaining HP.  User faints. Inflicts damage equal to the user's remaining HP.  User faints."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_t1p8y")

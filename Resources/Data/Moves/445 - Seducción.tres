@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://brn14th3c8tv8"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_a2ku4"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_cmkld"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_e233a"]
+
+[resource]
+resource_name = "445 - Seducción"
+script = ExtResource("1_cmkld")
+internal_name = "captivate"
+Name = "Seducción"
+id = 445
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_e233a")
+accuracy = 100
+pp = 20
+damage_class_id = 1
+effect_entries = "Lowers the target's Special Attack by two stages if it's the opposite gender. Lowers the target's Special Attack by two stages.  If the user and target are the same gender, or either is genderless, this move will fail."
+stat_changes = Dictionary[int, int]({
+2: -2
+})
+target_id = 11
+meta_category_id = 2
+category = ExtResource("1_a2ku4")

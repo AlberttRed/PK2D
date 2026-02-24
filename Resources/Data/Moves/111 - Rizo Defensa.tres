@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bru3jtjcy6k8g"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_7uuv7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_gok3b"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_4xi0j"]
+
+[resource]
+resource_name = "111 - Rizo Defensa"
+script = ExtResource("1_gok3b")
+internal_name = "defense-curl"
+Name = "Rizo Defensa"
+id = 111
+description = "Se enrosca para ocultar sus puntos débiles y aumentar
+la Defensa."
+type_id = 1
+type = ExtResource("2_4xi0j")
+pp = 40
+damage_class_id = 1
+effect_entries = "Raises user's Defense by one stage. Raises user's Defense by one stage.
+
+After this move is used, the power of ice ball and rollout are doubled until the user leaves the field."
+stat_changes = Dictionary[int, int]({
+1: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_7uuv7")

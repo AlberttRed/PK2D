@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bbcxc1lmycivd"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_d3jkm"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rm232"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_1a3fx"]
+
+[resource]
+resource_name = "518 - Voto Agua"
+script = ExtResource("1_rm232")
+internal_name = "water-pledge"
+Name = "Voto Agua"
+id = 518
+description = "Ataca con columnas de agua. Combinado con
+Voto Fuego, crea un arcoíris y aumenta su potencia."
+type_id = 11
+type = ExtResource("2_1a3fx")
+power = 80
+accuracy = 100
+pp = 10
+damage_class_id = 3
+effect_entries = "With Grass Pledge, halves opposing Pokémon's Speed for four turns. Inflicts regular damage.  If a friendly Pokémon used grass pledge earlier this turn, all opposing Pokémon have halved Speed for four turns (including this one)."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_d3jkm")

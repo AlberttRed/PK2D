@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://diat2cwrmayey"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_rc1do"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vx0l1"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_18ypd"]
+
+[resource]
+resource_name = "416 - Gigaimpacto"
+script = ExtResource("1_vx0l1")
+internal_name = "giga-impact"
+Name = "Gigaimpacto"
+id = 416
+description = "El usuario carga contra el objetivo con toda la fuerza
+que tiene y descansa durante el siguiente turno."
+type_id = 1
+type = ExtResource("2_18ypd")
+power = 150
+accuracy = 90
+pp = 5
+damage_class_id = 2
+effect_entries = "User foregoes its next turn to recharge. Inflicts regular damage.  User loses its next turn to \"recharge\", and cannot attack or switch out during that turn."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_rc1do")

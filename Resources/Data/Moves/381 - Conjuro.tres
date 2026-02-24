@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bctojlxn71x20"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_0rv2a"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q2877"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_bcdsv"]
+
+[resource]
+resource_name = "381 - Conjuro"
+script = ExtResource("1_q2877")
+internal_name = "lucky-chant"
+Name = "Conjuro"
+id = 381
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_bcdsv")
+pp = 30
+damage_class_id = 1
+effect_entries = "Prevents the target from scoring critical hits for five turns. For five turns, opposing Pokémon cannot score critical hits."
+target_id = 4
+meta_category_id = 11
+category = ExtResource("1_0rv2a")

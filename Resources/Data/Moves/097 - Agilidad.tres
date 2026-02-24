@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c36w8olsy5gse"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_n100u"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_smoou"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_7ugkc"]
+
+[resource]
+resource_name = "97 - Agilidad"
+script = ExtResource("1_smoou")
+internal_name = "agility"
+Name = "Agilidad"
+id = 97
+description = "Relaja el cuerpo para ganar mucha Velocidad. "
+type_id = 14
+type = ExtResource("2_7ugkc")
+pp = 30
+damage_class_id = 1
+effect_entries = "Raises the user's Speed by two stages. Raises the user's Speed by two stages."
+stat_changes = Dictionary[int, int]({
+4: 2
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_n100u")

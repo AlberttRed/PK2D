@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://i57hb1qcyjdf"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_5bqbp"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_pmam4"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_vgwbq"]
+
+[resource]
+resource_name = "103 - Chirrido"
+script = ExtResource("1_pmam4")
+internal_name = "screech"
+Name = "Chirrido"
+id = 103
+description = "Alarido agudo que reduce mucho la Defensa del 
+objetivo."
+type_id = 1
+type = ExtResource("2_vgwbq")
+accuracy = 85
+pp = 40
+damage_class_id = 1
+effect_entries = "Lowers the target's Defense by two stages. Lowers the target's Defense by two stages."
+stat_changes = Dictionary[int, int]({
+1: -2
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_5bqbp")

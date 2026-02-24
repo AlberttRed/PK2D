@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bjw0fma833hrm"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_bhpou"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_n3cn0"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_cxyvl"]
+
+[resource]
+resource_name = "258 - Granizo"
+script = ExtResource("1_n3cn0")
+internal_name = "hail"
+Name = "Granizo"
+id = 258
+description = "Tormenta de granizo que dura cinco turnos. Hiere a
+todos los Pokémon excepto a los de tipo Hielo."
+type_id = 15
+type = ExtResource("2_cxyvl")
+pp = 10
+damage_class_id = 1
+effect_entries = "Changes the weather to a hailstorm for five turns. Changes the weather to hail for five turns, during which non-ice Pokémon are damaged for 1/16 their max HP at the end of every turn.
+
+If the user is holding icy rock, this effect lasts for eight turns.
+
+blizzard has 100% accuracy.  If the target has used detect or protect, blizzard has a (100 - accuracy)% chance to break through the protection.
+
+moonlight, morning sun, and synthesis heal only 1/4 of the user's max HP.
+
+Pokémon with snow cloak are exempt from this effect's damage."
+target_id = 12
+meta_category_id = 10
+category = ExtResource("1_bhpou")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cy7erj3c2betg"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_4fsu3"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_h11b0"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_551xy"]
+
+[resource]
+resource_name = "382 - Yo Primero"
+script = ExtResource("1_h11b0")
+internal_name = "me-first"
+Name = "Yo Primero"
+id = 382
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_551xy")
+pp = 20
+damage_class_id = 1
+effect_entries = "Uses the target's move against it before it attacks, with power increased by half. If the target has selected a damaging move this turn, the user will copy that move and use it against the target, with a 50% increase in power.
+
+If the target moves before the user, this move will fail.
+
+This move cannot be copied by mirror move, nor selected by assist, metronome, or sleep talk."
+target_id = 2
+meta_category_id = 0
+category = ExtResource("1_4fsu3")

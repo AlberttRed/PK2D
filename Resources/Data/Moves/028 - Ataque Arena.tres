@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://boqwj7f7k77o7"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_15s52"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_t5ff6"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_clqf6"]
+
+[resource]
+resource_name = "28 - Ataque Arena"
+script = ExtResource("1_t5ff6")
+internal_name = "sand-attack"
+Name = "Ataque Arena"
+id = 28
+description = "Arroja arena a la cara y baja la Precisión."
+type_id = 5
+type = ExtResource("2_clqf6")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Lowers the target's accuracy by one stage. Lowers the target's accuracy by one stage."
+stat_changes = Dictionary[int, int]({
+5: -1
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_15s52")

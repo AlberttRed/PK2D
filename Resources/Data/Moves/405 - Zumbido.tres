@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://pin0cwa50xxi"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2x1s3"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_vde2t"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_klsqd"]
+
+[resource]
+resource_name = "405 - Zumbido"
+script = ExtResource("1_2x1s3")
+internal_name = "bug-buzz"
+Name = "Zumbido"
+id = 405
+description = "El usuario crea una onda sónica dañina moviendo
+su cuerpo que también puede disminuir la Defensa
+Especial del objetivo."
+type_id = 7
+type = ExtResource("2_klsqd")
+power = 90
+accuracy = 100
+pp = 10
+effect_chance = 10
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Special Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Defense by one stage."
+stat_changes = Dictionary[int, int]({
+3: -1
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 10
+category = ExtResource("1_vde2t")

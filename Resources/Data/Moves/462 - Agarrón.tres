@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d3yjqv0vpvmsv"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_gmg4h"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_x614x"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_l8wd2"]
+
+[resource]
+resource_name = "462 - Agarrón"
+script = ExtResource("1_gmg4h")
+internal_name = "crush-grip"
+Name = "Agarrón"
+id = 462
+description = "Estruja al objetivo con gran fuerza. Cuantos más PS le
+queden al objetivo, más fuerte será el ataque."
+type_id = 1
+type = ExtResource("2_l8wd2")
+accuracy = 100
+pp = 5
+damage_class_id = 2
+effect_entries = "Power increases against targets with more HP remaining, up to a maximum of 121 power. Inflicts regular damage.  Power directly relates to the target's relative remaining HP, given by `1 + 120 * current HP / max HP`, to a maximum of 121."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_x614x")

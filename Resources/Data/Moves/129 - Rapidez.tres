@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bl227xb6c6b0t"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qobty"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_xapv3"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_u4vlr"]
+
+[resource]
+resource_name = "129 - Rapidez"
+script = ExtResource("1_qobty")
+internal_name = "swift"
+Name = "Rapidez"
+id = 129
+description = "Lanza rayos en forma de estrella que no fallan nunca."
+type_id = 1
+type = ExtResource("2_u4vlr")
+power = 60
+pp = 20
+damage_class_id = 3
+effect_entries = "Never misses. Inflicts regular damage.  Ignores accuracy and evasion modifiers."
+target_id = 11
+meta_category_id = 0
+category = ExtResource("1_xapv3")

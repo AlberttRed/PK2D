@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bindo51iwtlqj"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_ajn82"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_apbv6"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8ot1r"]
+
+[resource]
+resource_name = "364 - Amago"
+script = ExtResource("1_apbv6")
+internal_name = "feint"
+Name = "Amago"
+id = 364
+description = "Permite golpear a objetivos que han utilizado
+movimientos como Protección o Detección y anula
+sus efectos."
+type_id = 1
+type = ExtResource("2_8ot1r")
+power = 30
+accuracy = 100
+pp = 10
+priority = 2
+damage_class_id = 2
+effect_entries = "Hits through Protect and Detect. Inflicts regular damage.  Removes the effects of detect or protect from the target before hitting.
+
+This move cannot be copied by mirror move, nor selected by assist or metronome."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_ajn82")

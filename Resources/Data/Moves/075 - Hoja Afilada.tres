@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ylb4s1r3hiv6"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ihkw7"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_o83tv"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_mc11p"]
+
+[resource]
+resource_name = "75 - Hoja Afilada"
+script = ExtResource("1_ihkw7")
+internal_name = "razor-leaf"
+Name = "Hoja Afilada"
+id = 75
+description = "Corta con hojas afiladas. Un ataque que suele ser
+crítico."
+type_id = 12
+type = ExtResource("2_mc11p")
+power = 55
+accuracy = 95
+pp = 25
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 11
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_o83tv")

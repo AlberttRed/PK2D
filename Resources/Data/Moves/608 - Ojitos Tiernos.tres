@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://6pj64xhnf6bl"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2n0rm"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_aq6jd"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_byaiu"]
+
+[resource]
+resource_name = "608 - Ojitos Tiernos"
+script = ExtResource("1_2n0rm")
+internal_name = "baby-doll-eyes"
+Name = "Ojitos Tiernos"
+id = 608
+description = "Lanza una mirada al objetivo con ojos acaramelados,
+con lo que logra que su Ataque se reduzca. Este
+movimiento tiene prioridad alta."
+type_id = 18
+type = ExtResource("2_byaiu")
+accuracy = 100
+pp = 30
+priority = 1
+damage_class_id = 1
+effect_entries = "Lowers the target's Attack by one stage. Lowers the target's Attack by one stage."
+stat_changes = Dictionary[int, int]({
+0: -1
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_aq6jd")

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ddmr3b5rk4310"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_pguxj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_xhshu"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_ud0fq"]
+
+[resource]
+resource_name = "410 - Onda Vacío"
+script = ExtResource("1_xhshu")
+internal_name = "vacuum-wave"
+Name = "Onda Vacío"
+id = 410
+description = "Gira los puños y libera una onda de vacío contra el
+objetivo. Este movimiento tiene prioridad alta."
+type_id = 2
+type = ExtResource("2_ud0fq")
+power = 40
+accuracy = 100
+pp = 30
+priority = 1
+damage_class_id = 3
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_pguxj")

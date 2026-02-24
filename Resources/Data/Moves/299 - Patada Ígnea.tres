@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://t1lyj6a4hs7a"]
+
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_gaw4w"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_l8b2s"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_p6wjk"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_sm8hp"]
+
+[resource]
+resource_name = "299 - Patada Ígnea"
+script = ExtResource("1_l8b2s")
+internal_name = "blaze-kick"
+Name = "Patada Ígnea"
+id = 299
+description = "Patada que suele ser un golpe crítico y puede causar
+quemaduras."
+type_id = 10
+type = ExtResource("2_sm8hp")
+power = 85
+accuracy = 90
+pp = 10
+effect_chance = 10
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit and a $effect_chance% chance to burn the target. Inflicts regular damage.  User's critical hit rate is one level higher when using this move. Has a $effect_chance% chance to burn the target."
+target_id = 10
+meta_ailment_id = 4
+meta_category_id = 4
+meta_crit_rate = 1
+meta_ailment_chance = 10
+ailment_id = 4
+ailment = ExtResource("1_gaw4w")
+category = ExtResource("2_p6wjk")

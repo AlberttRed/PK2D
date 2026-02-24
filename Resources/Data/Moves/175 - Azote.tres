@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://rs0os5eqb8lx"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_h614o"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vscx3"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_fpk8r"]
+
+[resource]
+resource_name = "175 - Azote"
+script = ExtResource("1_vscx3")
+internal_name = "flail"
+Name = "Azote"
+id = 175
+description = "Ataque frenético. Cuantos menos PS tenga el usuario,
+más daño producirá."
+type_id = 1
+type = ExtResource("2_fpk8r")
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Inflicts more damage when the user has less HP remaining, with a maximum of 200 power. Inflicts regular damage.  Power varies inversely with the user's proportional remaining HP.
+
+64 * current HP / max HP | Power
+-----------------------: | ----:
+ 0– 1                    |  200
+ 2– 5                    |  150
+ 6–12                    |  100
+13–21                    |   80
+22–42                    |   40
+43–64                    |   20
+"
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_h614o")

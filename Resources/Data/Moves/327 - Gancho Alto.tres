@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d13y0tg8xjgxs"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ibg1d"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_qquhj"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_ymy4v"]
+
+[resource]
+resource_name = "327 - Gancho Alto"
+script = ExtResource("1_ibg1d")
+internal_name = "sky-uppercut"
+Name = "Gancho Alto"
+id = 327
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 2
+type = ExtResource("2_ymy4v")
+power = 85
+accuracy = 90
+pp = 15
+damage_class_id = 2
+effect_entries = "Inflicts regular damage and can hit Bounce and Fly users. Inflicts regular damage.
+
+This move can hit Pokémon under the effect of bounce, fly, or sky drop."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_qquhj")

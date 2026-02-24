@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://nspobrq0mxk4"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_0df3m"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hdtdg"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_ib3p5"]
+
+[resource]
+resource_name = "548 - Sable Místico"
+script = ExtResource("1_hdtdg")
+internal_name = "secret-sword"
+Name = "Sable Místico"
+id = 548
+description = "Ensarta al objetivo con un largo cuerno dotado de un
+poder místico que provoca daño físico."
+type_id = 2
+type = ExtResource("2_ib3p5")
+power = 85
+accuracy = 100
+pp = 10
+damage_class_id = 3
+effect_entries = "Inflicts damage based on the target's Defense, not Special Defense. Inflicts regular damage.  Damage calculation always uses the target's Defense, regardless of this move's damage class."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_0df3m")

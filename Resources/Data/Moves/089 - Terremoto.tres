@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dod85shp8nmw5"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_aoe4i"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_d5yvq"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_iegei"]
+
+[resource]
+resource_name = "89 - Terremoto"
+script = ExtResource("1_aoe4i")
+internal_name = "earthquake"
+Name = "Terremoto"
+id = 89
+description = "Un terremoto que afecta a todos los Pokémon que
+estén a su alrededor."
+type_id = 5
+type = ExtResource("2_iegei")
+power = 100
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "Inflicts regular damage and can hit Dig users. Inflicts regular damage.
+
+If the target is in the first turn of dig, this move will hit with double power."
+target_id = 9
+meta_category_id = 0
+category = ExtResource("1_d5yvq")

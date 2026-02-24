@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b4t7tpudq0ibq"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_2nfw1"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_4kt35"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_us30w"]
+
+[resource]
+resource_name = "519 - Voto Fuego"
+script = ExtResource("1_4kt35")
+internal_name = "fire-pledge"
+Name = "Voto Fuego"
+id = 519
+description = "Ataca con columnas de fuego. Combinado con
+Voto Planta, crea un mar de llamas y aumenta su 
+potencia."
+type_id = 10
+type = ExtResource("2_us30w")
+power = 80
+accuracy = 100
+pp = 10
+damage_class_id = 3
+effect_entries = "With Water Pledge, doubles the effect chance of friendly Pokémon's moves for four turns. Inflicts regular damage.  If a friendly Pokémon used water pledge earlier this turn, moves used by any friendly Pokémon have doubled effect chance for four turns (including this one)."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_2nfw1")

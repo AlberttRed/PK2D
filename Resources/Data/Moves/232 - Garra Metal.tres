@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://y6a5bxa5ifqj"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageRaiseMoveCategory.tres" id="1_k0yoy"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_xnnpi"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_alrxc"]
+
+[resource]
+resource_name = "232 - Garra Metal"
+script = ExtResource("1_xnnpi")
+internal_name = "metal-claw"
+Name = "Garra Metal"
+id = 232
+description = "Ataque con garras de acero que puede aumentar el 
+Ataque del usuario."
+type_id = 9
+type = ExtResource("2_alrxc")
+power = 50
+accuracy = 95
+pp = 35
+effect_chance = 10
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to raise the user's Attack by one stage. Inflicts regular damage. Has a $effect_chance% chance to raise the user's Attack one stage."
+stat_changes = Dictionary[int, int]({
+0: 1
+})
+target_id = 10
+meta_category_id = 7
+meta_stat_chance = 10
+category = ExtResource("1_k0yoy")

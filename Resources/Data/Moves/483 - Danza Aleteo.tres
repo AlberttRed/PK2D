@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d2dq2eua7n41m"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_2o8kg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_aw044"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_nysb6"]
+
+[resource]
+resource_name = "483 - Danza Aleteo"
+script = ExtResource("1_aw044")
+internal_name = "quiver-dance"
+Name = "Danza Aleteo"
+id = 483
+description = "Danza mística que sube el Ataque Especial, la Defensa
+Especial y la Velocidad."
+type_id = 7
+type = ExtResource("2_nysb6")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Special Attack, Special Defense, and Speed by one stage each. Raises the user's Special Attack, Special Defense, and Speed by one stage each."
+stat_changes = Dictionary[int, int]({
+2: 1,
+3: 1,
+4: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_2o8kg")

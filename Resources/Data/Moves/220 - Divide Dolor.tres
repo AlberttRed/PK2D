@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://blq5obc2grd3v"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_1ffu0"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q28c0"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_ibr0l"]
+
+[resource]
+resource_name = "220 - Divide Dolor"
+script = ExtResource("1_q28c0")
+internal_name = "pain-split"
+Name = "Divide Dolor"
+id = 220
+description = "Suma los PS del usuario a los del objetivo y los reparte
+a partes iguales."
+type_id = 1
+type = ExtResource("2_ibr0l")
+pp = 20
+damage_class_id = 1
+effect_entries = "Sets the user's and targets's HP to the average of their current HP. Changes the user's and target's remaining HP to the average of their current remaining HP.  Ignores accuracy and evasion modifiers.  This effect does not count as inflicting damage for other moves and effects that respond to damage taken.
+
+This effect fails against a substitute."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_1ffu0")

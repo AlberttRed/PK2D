@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dd1l2isevud5a"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_t6u1k"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vl3vg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_h2655"]
+
+[resource]
+resource_name = "336 - Aullido"
+script = ExtResource("1_vl3vg")
+internal_name = "howl"
+Name = "Aullido"
+id = 336
+description = "Aullido que sube el ánimo y aumenta el Ataque del
+equipo. "
+type_id = 1
+type = ExtResource("2_h2655")
+pp = 40
+damage_class_id = 1
+effect_entries = "Raises the user's Attack by one stage. Raises the user's Attack by one stage."
+stat_changes = Dictionary[int, int]({
+0: 1
+})
+target_id = 13
+meta_category_id = 2
+category = ExtResource("1_t6u1k")

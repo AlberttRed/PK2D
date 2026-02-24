@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://caet4a0w0370"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_cmold"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_wlbv3"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_udcio"]
+
+[resource]
+resource_name = "10 - Arañazo"
+script = ExtResource("1_wlbv3")
+internal_name = "scratch"
+Name = "Arañazo"
+id = 10
+description = "Araña con afiladas garras."
+type_id = 1
+type = ExtResource("2_udcio")
+power = 40
+accuracy = 100
+pp = 35
+damage_class_id = 2
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_cmold")

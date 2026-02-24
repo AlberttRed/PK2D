@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://crslo60yp48wu"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_a8frs"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_wb0x1"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_55ypx"]
+
+[resource]
+resource_name = "450 - Picadura"
+script = ExtResource("1_a8frs")
+internal_name = "bug-bite"
+Name = "Picadura"
+id = 450
+description = "Pica al objetivo. Si el objetivo lleva una baya, el usuario
+se la come y se beneficia de su efecto."
+type_id = 7
+type = ExtResource("2_55ypx")
+power = 60
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "If target has a berry, inflicts double damage and uses the berry. Inflicts regular damage.  If the target is holding a berry, this move has double power, and the user takes the berry and uses it immediately.
+
+If the target is holding a jaboca berry or rowap berry, the berry is still removed, but has no effect.
+
+If this move is super effective and the target is holding a berry that can reduce this move's damage, it will do so, and will not be stolen."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_wb0x1")

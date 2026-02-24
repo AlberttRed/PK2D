@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bgoosdtytn1x0"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_4hbm7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_mvljv"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_2j61k"]
+
+[resource]
+resource_name = "603 - Paga Extra"
+script = ExtResource("1_mvljv")
+internal_name = "happy-hour"
+Name = "Paga Extra"
+id = 603
+description = "Al usar este movimiento se consigue duplicar la 
+recompensa recibida tras el combate."
+type_id = 1
+type = ExtResource("2_2j61k")
+pp = 30
+damage_class_id = 1
+effect_entries = "Doubles prize money. Doubles prize money.
+
+Stacks with a held item.  Only works once per battle."
+target_id = 4
+meta_category_id = 13
+category = ExtResource("1_4hbm7")

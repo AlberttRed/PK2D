@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d18vm5xxpganl"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_2bxcb"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ncujh"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_j4ply"]
+
+[resource]
+resource_name = "226 - Relevo"
+script = ExtResource("1_ncujh")
+internal_name = "baton-pass"
+Name = "Relevo"
+id = 226
+description = "Cambia el puesto con otro miembro del equipo y le
+pasa los cambios de características."
+type_id = 1
+type = ExtResource("2_j4ply")
+pp = 40
+damage_class_id = 1
+effect_entries = "Allows the trainer to switch out the user and pass effects along to its replacement. User switches out, and the trainer selects a replacement Pokémon from the party.  Stat changes, confusion, and persistent move effects are passed along to the replacement Pokémon.
+
+The following move effects are passed:
+
+* aqua ring
+* both the user's and target's effect of block, mean look, and spider web
+* the curse effect of curse
+* embargo
+* focus energy or an activated lansat berry
+* gastro acid
+* ingrain
+* being sapped by leech seed
+* being targeted by lock on or mind reader
+* magnet rise
+* perish song's counter
+* power trick
+* substitute; the doll's HP is unchanged
+
+The replacement Pokémon does not trigger effects that respond to Pokémon switching in."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_2bxcb")

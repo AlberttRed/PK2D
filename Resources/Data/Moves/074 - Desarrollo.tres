@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ds0ljiwojb03n"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_s55km"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_y283n"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_yilqm"]
+
+[resource]
+resource_name = "74 - Desarrollo"
+script = ExtResource("1_s55km")
+internal_name = "growth"
+Name = "Desarrollo"
+id = 74
+description = "Hace que su cuerpo crezca a marchas forzadas con lo
+que aumenta su Ataque y Ataque Especial."
+type_id = 1
+type = ExtResource("2_yilqm")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Attack and Special Attack by one stage. Raises the user's Attack and Special Attack by one stage each.  During sunny day, raises both stats by two stages."
+stat_changes = Dictionary[int, int]({
+0: 1,
+2: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_y283n")

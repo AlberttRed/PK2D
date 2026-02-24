@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bd4xjkqiogp5b"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_hchs7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_n644r"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_1yeaq"]
+
+[resource]
+resource_name = "39 - Látigo"
+script = ExtResource("1_n644r")
+internal_name = "tail-whip"
+Name = "Látigo"
+id = 39
+description = "Agita la cola para bajar la Defensa del equipo rival. "
+type_id = 1
+type = ExtResource("2_1yeaq")
+accuracy = 100
+pp = 30
+damage_class_id = 1
+effect_entries = "Lowers the target's Defense by one stage. Lowers the target's Defense by one stage."
+stat_changes = Dictionary[int, int]({
+1: -1
+})
+target_id = 11
+meta_category_id = 2
+category = ExtResource("1_hchs7")

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cw352ux8ol86b"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_6mwbj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_j01u1"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_2nbs7"]
+
+[resource]
+resource_name = "427 - Psicocorte"
+script = ExtResource("1_j01u1")
+internal_name = "psycho-cut"
+Name = "Psicocorte"
+id = 427
+description = "Ataca al objetivo con cuchillas formadas por energía
+psíquica. Suele ser crítico."
+type_id = 14
+type = ExtResource("2_2nbs7")
+power = 70
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_6mwbj")

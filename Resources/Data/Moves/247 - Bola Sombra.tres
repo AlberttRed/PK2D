@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bb1mclgl435sd"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qj8dx"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_rj1bd"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_lvajc"]
+
+[resource]
+resource_name = "247 - Bola Sombra"
+script = ExtResource("1_qj8dx")
+internal_name = "shadow-ball"
+Name = "Bola Sombra"
+id = 247
+description = "Lanza una bola oscura que puede bajar la Defensa 
+Especial del objetivo."
+type_id = 8
+type = ExtResource("2_lvajc")
+power = 80
+accuracy = 100
+pp = 15
+effect_chance = 20
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Special Defense by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Defense by one stage."
+stat_changes = Dictionary[int, int]({
+3: -1
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 20
+category = ExtResource("1_rj1bd")

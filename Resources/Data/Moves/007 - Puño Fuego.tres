@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://baoyq4m33lkgt"]
+
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_4h4fs"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_h2lro"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_flpdb"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_i3mvs"]
+
+[resource]
+resource_name = "7 - Puño Fuego"
+script = ExtResource("1_h2lro")
+internal_name = "fire-punch"
+Name = "Puño Fuego"
+id = 7
+description = "Puñetazo ardiente que puede causar quemaduras."
+type_id = 10
+type = ExtResource("2_i3mvs")
+power = 75
+accuracy = 100
+pp = 15
+effect_chance = 10
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to burn the target. Inflicts regular damage.  Has a $effect_chance% chance to burn the target."
+target_id = 10
+meta_ailment_id = 4
+meta_category_id = 4
+meta_ailment_chance = 10
+ailment_id = 4
+ailment = ExtResource("1_4h4fs")
+category = ExtResource("2_flpdb")

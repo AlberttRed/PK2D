@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c74a8vclqf03c"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_gdey3"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qnwoa"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_0iqcy"]
+
+[resource]
+resource_name = "185 - Finta"
+script = ExtResource("1_qnwoa")
+internal_name = "feint-attack"
+Name = "Finta"
+id = 185
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 17
+type = ExtResource("2_0iqcy")
+power = 60
+pp = 20
+damage_class_id = 2
+effect_entries = "Never misses. Inflicts regular damage.  Ignores accuracy and evasion modifiers."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_gdey3")

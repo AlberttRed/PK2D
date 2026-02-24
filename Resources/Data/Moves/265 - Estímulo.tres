@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b6lry6cotrulp"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_kidne"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_xvcsj"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_f406b"]
+
+[resource]
+resource_name = "265 - Estímulo"
+script = ExtResource("1_kidne")
+internal_name = "smelling-salts"
+Name = "Estímulo"
+id = 265
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_f406b")
+power = 70
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "If the target is paralyzed, inflicts double damage and cures the paralysis. Inflicts regular damage.  If the target is paralyzed, this move has double power, and the target is cured of its paralysis."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_xvcsj")

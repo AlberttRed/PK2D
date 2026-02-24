@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cjmqipk8yyiei"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_c8gwm"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hcdba"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_buula"]
+
+[resource]
+resource_name = "339 - Corpulencia"
+script = ExtResource("1_hcdba")
+internal_name = "bulk-up"
+Name = "Corpulencia"
+id = 339
+description = "Robustece el cuerpo para subir el Ataque y la 
+Defensa."
+type_id = 2
+type = ExtResource("2_buula")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Attack and Defense by one stage. Raises the user's Attack and Defense by one stage each."
+stat_changes = Dictionary[int, int]({
+0: 1,
+1: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_c8gwm")

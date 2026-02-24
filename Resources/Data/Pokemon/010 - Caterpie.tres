@@ -1,0 +1,74 @@
+[gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bxegamf02flbn"]
+
+[ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ncfj3"]
+[ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_0foxe"]
+[ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_8n0ob"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_7impg"]
+[ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_ynh5g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ncfj3"]
+atlas = ExtResource("1_ncfj3")
+region = Rect2(1312, 5852, 102, 100)
+margin = Rect2(30, 60, 58, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0foxe"]
+atlas = ExtResource("1_ncfj3")
+region = Rect2(272, 5896, 102, 100)
+margin = Rect2(30, 60, 58, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8n0ob"]
+atlas = ExtResource("1_ncfj3")
+region = Rect2(160, 6600, 66, 66)
+margin = Rect2(48, 48, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7impg"]
+atlas = ExtResource("1_ncfj3")
+region = Rect2(584, 6600, 66, 66)
+margin = Rect2(48, 48, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ynh5g"]
+atlas = ExtResource("2_0foxe")
+region = Rect2(68, 800, 8, 8)
+margin = Rect2(12, 12, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ns6r5"]
+atlas = ExtResource("3_8n0ob")
+region = Rect2(96, 2076, 90, 32)
+margin = Rect2(18, 24, 38, 32)
+
+[resource]
+resource_name = "10 - Caterpie"
+script = ExtResource("4_7impg")
+id = 10
+internal_name = "caterpie"
+Name = "Caterpie"
+type_a_id = 7
+type_a = ExtResource("5_ynh5g")
+base_exprience = 39
+height = 3.0
+weight = 29.0
+abilities = ["19", null, "50"]
+learn_type = ["1", "1", "3", "1", "3"]
+learn_lvl = [1, 1, 0, 15, 0]
+learn_move_id = ["33", "81", "173", "450", "527"]
+hp_base = 45
+attack_base = 30
+defense_base = 35
+special_attack_base = 20
+special_defense_base = 20
+speed_base = 45
+hp_effort_EVs = 1
+gender_rate = 4
+capture_rate = 255
+base_happiness = 50
+hatch_counter = 15
+growth_rate_id = 2
+description = "Sus cortas patas están recubiertas de ventosas
+que le permiten subir incansable por muros y
+cuestas."
+icon_sprite = SubResource("AtlasTexture_ns6r5")
+footprint_sprite = SubResource("AtlasTexture_ynh5g")
+battle_front_sprite = SubResource("AtlasTexture_7impg")
+battle_back_sprite = SubResource("AtlasTexture_0foxe")
+battle_front_shiny_sprite = SubResource("AtlasTexture_8n0ob")
+battle_back_shiny_sprite = SubResource("AtlasTexture_ncfj3")

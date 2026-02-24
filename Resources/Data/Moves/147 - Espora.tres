@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dbi8x4x6g1nhl"]
+
+[ext_resource type="Resource" uid="uid://cwcxxqx6mbg3b" path="res://Resources/Data/Ailments/SLEEP.tres" id="1_h4xdm"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rusdi"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_6uv8q"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_7mbhh"]
+
+[resource]
+resource_name = "147 - Espora"
+script = ExtResource("1_rusdi")
+internal_name = "spore"
+Name = "Espora"
+id = 147
+description = "Esparce esporas que inducen al sueño."
+type_id = 12
+type = ExtResource("2_7mbhh")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Puts the target to sleep. Puts the target to sleep."
+target_id = 10
+meta_ailment_id = 2
+meta_min_turns = 2
+meta_max_turns = 4
+ailment_id = 2
+ailment = ExtResource("1_h4xdm")
+category = ExtResource("2_6uv8q")

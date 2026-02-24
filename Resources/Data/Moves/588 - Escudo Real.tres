@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://crtkrxwlmt7th"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_3udyl"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hgh6u"]
+[ext_resource type="Resource" uid="uid://cw6dyteewp8u8" path="res://Resources/Data/Types/09.tres" id="2_16fbm"]
+
+[resource]
+resource_name = "588 - Escudo Real"
+script = ExtResource("1_hgh6u")
+internal_name = "kings-shield"
+Name = "Escudo Real"
+id = 588
+description = "El usuario adopta una postura defensiva y se protege de
+cualquier daño. Reduce el Ataque de cualquier
+Pokémon con el que entre en contacto."
+type_id = 9
+type = ExtResource("2_16fbm")
+pp = 10
+priority = 4
+damage_class_id = 1
+effect_entries = "Blocks damaging attacks and lowers attacking Pokémon's Attack by two stages on contact.  Switches Aegislash to Shield Forme. Blocks damaging attacks and lowers attacking Pokémon's Attack by two stages on contact.  Switches Aegislash to Shield Forme."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_3udyl")

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://biik425c746cg"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_jomht"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_tiaxt"]
+[ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_w8vqj"]
+
+[resource]
+resource_name = "300 - Chapoteo Lodo"
+script = ExtResource("1_jomht")
+internal_name = "mud-sport"
+Name = "Chapoteo Lodo"
+id = 300
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 5
+type = ExtResource("2_w8vqj")
+pp = 15
+damage_class_id = 1
+effect_entries = "Halves all Electric-type damage. electric moves inflict half damage, regardless of target.  If the user leaves the field, this effect ends."
+target_id = 12
+meta_category_id = 10
+category = ExtResource("1_tiaxt")

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d13k0hxi3s6pd"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_a1nwe"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rvktr"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_hb7kc"]
+
+[resource]
+resource_name = "367 - Acupresión"
+script = ExtResource("1_rvktr")
+internal_name = "acupressure"
+Name = "Acupresión"
+id = 367
+description = "Aplica presión en puntos clave del cuerpo para
+potenciar mucho una de sus características."
+type_id = 1
+type = ExtResource("2_hb7kc")
+pp = 30
+damage_class_id = 1
+effect_entries = "Raises one of a friendly Pokémon's stats at random by two stages. Raises one of the target's stats by two stages.  The raised stat is chosen at random from any stats that can be raised by two stages.  If no stat is eligible, this move will fail.
+
+If the target has a substitute, this move will have no effect, even if the user is the target.
+
+This move cannot be copied by mirror move."
+target_id = 5
+meta_category_id = 13
+category = ExtResource("1_a1nwe")

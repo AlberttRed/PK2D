@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://csx6epwrhk8l6"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_e21k2"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageRaiseMoveCategory.tres" id="1_i2er6"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_2tcop"]
+
+[resource]
+resource_name = "451 - Rayo Carga"
+script = ExtResource("1_e21k2")
+internal_name = "charge-beam"
+Name = "Rayo Carga"
+id = 451
+description = "Lanza un rayo eléctrico contra el objetivo. Puede subir
+el Ataque Especial de quien lo usa."
+type_id = 13
+type = ExtResource("2_2tcop")
+power = 50
+accuracy = 90
+pp = 10
+effect_chance = 70
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to raise the user's Special Attack by one stage. Inflicts regular damage.  Has a $effect_chance% chance to raise the user's Special Attack by one stage."
+stat_changes = Dictionary[int, int]({
+2: 1
+})
+target_id = 10
+meta_category_id = 7
+meta_stat_chance = 70
+category = ExtResource("1_i2er6")

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bnldrfp70c4xo"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_5heox"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/ForceSwitchMoveCategory.tres" id="1_e7nsp"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3f8tt"]
+
+[resource]
+resource_name = "46 - Rugido"
+script = ExtResource("1_5heox")
+internal_name = "roar"
+Name = "Rugido"
+id = 46
+description = "Se lleva al objetivo, que es cambiado por otro 
+Pokémon. Si es un Pokémon salvaje, acaba el 
+combate."
+type_id = 1
+type = ExtResource("2_3f8tt")
+pp = 20
+priority = -6
+damage_class_id = 1
+effect_entries = "Immediately ends wild battles.  Forces trainers to switch Pokémon. Switches the target out for another of its trainer's Pokémon selected at random.  Wild battles end immediately.
+
+Doesn't affect Pokémon with suction cups or under the effect of ingrain."
+target_id = 10
+meta_category_id = 12
+category = ExtResource("1_e7nsp")

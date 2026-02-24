@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://spmd1nvnj5a0"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_cml83"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vf8e1"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3yljs"]
+
+[resource]
+resource_name = "263 - Imagen"
+script = ExtResource("1_vf8e1")
+internal_name = "facade"
+Name = "Imagen"
+id = 263
+description = "Si el usuario está quemado, paralizado o envenenado,
+ataca con el doble de potencia."
+type_id = 1
+type = ExtResource("2_3yljs")
+power = 70
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "Power doubles if user is burned, paralyzed, or poisoned. Inflicts regular damage.  If the user is burned, paralyzed, or poisoned, this move has double power."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_cml83")

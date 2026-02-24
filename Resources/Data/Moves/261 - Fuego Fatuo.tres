@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d1oh6w4di7ngg"]
+
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_lb4fn"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_osl5k"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_d72j7"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_eq2pl"]
+
+[resource]
+resource_name = "261 - Fuego Fatuo"
+script = ExtResource("1_osl5k")
+internal_name = "will-o-wisp"
+Name = "Fuego Fatuo"
+id = 261
+description = "Siniestra llama morada que produce quemaduras. "
+type_id = 10
+type = ExtResource("2_eq2pl")
+accuracy = 85
+pp = 15
+damage_class_id = 1
+effect_entries = "Burns the target. Burns the target."
+target_id = 10
+meta_ailment_id = 4
+ailment_id = 4
+ailment = ExtResource("1_lb4fn")
+category = ExtResource("2_d72j7")

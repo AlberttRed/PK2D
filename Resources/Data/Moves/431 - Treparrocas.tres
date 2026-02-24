@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://feagj7nq56hs"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_i3sva"]
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_sl6kp"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_86fie"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_351v8"]
+
+[resource]
+resource_name = "431 - Treparrocas"
+script = ExtResource("1_i3sva")
+internal_name = "rock-climb"
+Name = "Treparrocas"
+id = 431
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_351v8")
+power = 90
+accuracy = 85
+pp = 20
+effect_chance = 20
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to confuse the target. Inflicts regular damage.  Has a $effect_chance% chance to confuse the target."
+target_id = 10
+meta_ailment_id = 6
+meta_category_id = 4
+meta_min_turns = 2
+meta_max_turns = 5
+meta_ailment_chance = 20
+ailment_id = 6
+ailment = ExtResource("1_sl6kp")
+category = ExtResource("2_86fie")

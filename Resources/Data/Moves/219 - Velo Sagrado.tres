@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://e634cdm0fidd"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_i2hbg"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_r77ik"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_h87mk"]
+
+[resource]
+resource_name = "219 - Velo Sagrado"
+script = ExtResource("1_i2hbg")
+internal_name = "safeguard"
+Name = "Velo Sagrado"
+id = 219
+description = "Un escudo que protege de problemas de estado, como
+el sueño o la parálisis, durante cinco turnos. "
+type_id = 1
+type = ExtResource("2_h87mk")
+pp = 25
+damage_class_id = 1
+effect_entries = "Protects the user's field from major status ailments and confusion for five turns. Protects Pokémon on the user's side of the field from major status effects and confusion for five turns.  Does not cancel existing ailments.  This effect remains even if the user leaves the field.
+
+If yawn is used while this move is in effect, it will immediately fail.
+
+defog used by an opponent will end this effect.
+
+This effect does not prevent the confusion caused by outrage, petal dance, or thrash."
+target_id = 4
+meta_category_id = 11
+category = ExtResource("1_r77ik")

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://csyb0d05x8ksf"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_7cnq7"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_e30uc"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_803p3"]
+
+[resource]
+resource_name = "606 - Celebración"
+script = ExtResource("1_e30uc")
+internal_name = "celebrate"
+Name = "Celebración"
+id = 606
+description = "El Pokémon te felicita en un día muy especial para ti. "
+type_id = 1
+type = ExtResource("2_803p3")
+pp = 40
+damage_class_id = 1
+effect_entries = "Does nothing. Does nothing."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_7cnq7")

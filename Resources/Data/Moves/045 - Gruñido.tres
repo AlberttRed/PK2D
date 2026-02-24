@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bhm3dgrrwgq6p"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_5728v"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_ex3gr"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_rwg1s"]
+
+[resource]
+resource_name = "45 - Gruñido"
+script = ExtResource("1_5728v")
+internal_name = "growl"
+Name = "Gruñido"
+id = 45
+description = "Dulce gruñido que reduce el Ataque del equipo rival."
+type_id = 1
+type = ExtResource("2_rwg1s")
+accuracy = 100
+pp = 40
+damage_class_id = 1
+effect_entries = "Lowers the target's Attack by one stage. Lowers the target's Attack by one stage."
+stat_changes = Dictionary[int, int]({
+0: -1
+})
+target_id = 11
+meta_category_id = 2
+category = ExtResource("1_ex3gr")

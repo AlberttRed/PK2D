@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bbrwqwf747irt"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ahi1e"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_ope67"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3onog"]
+
+[resource]
+resource_name = "493 - Onda Simple"
+script = ExtResource("1_ahi1e")
+internal_name = "simple-beam"
+Name = "Onda Simple"
+id = 493
+description = "Lanza una onda psíquica que hace que la habilidad del
+objetivo pase a ser Simple."
+type_id = 1
+type = ExtResource("2_3onog")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Changes the target's ability to Simple. Changes the target's ability to simple."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_ope67")

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dt2kdxtl4udvi"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q1dfo"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_xqebx"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_v8gib"]
+
+[resource]
+resource_name = "535 - Golpe Calor"
+script = ExtResource("1_q1dfo")
+internal_name = "heat-crash"
+Name = "Golpe Calor"
+id = 535
+description = "El usuario ataca con su cuerpo ardiente. Cuanto mayor
+sea su peso comparado con el del objetivo, más daño
+causará."
+type_id = 10
+type = ExtResource("2_v8gib")
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "Power is higher when the user weighs more than the target, up to a maximum of 120. Inflicts regular damage.  The greater the user's weight compared to the target's, the higher power this move has, to a maximum of 120.
+
+User's weight                    | Power
+-------------------------------- | ----:
+Up to 2× the target's weight     |    40
+Up to 3× the target's weight     |    60
+Up to 4× the target's weight     |    80
+Up to 5× the target's weight     |   100
+More than 5× the target's weight |   120
+"
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_xqebx")

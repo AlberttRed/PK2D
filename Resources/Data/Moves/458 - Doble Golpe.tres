@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dewqctfxc61vh"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_h1em5"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rbcja"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_ccalo"]
+
+[resource]
+resource_name = "458 - Doble Golpe"
+script = ExtResource("1_rbcja")
+internal_name = "double-hit"
+Name = "Doble Golpe"
+id = 458
+description = "Golpea al objetivo dos veces seguidas con la cola u
+otras partes de su cuerpo."
+type_id = 1
+type = ExtResource("2_ccalo")
+power = 35
+accuracy = 90
+pp = 10
+damage_class_id = 2
+effect_entries = "Hits twice in one turn. Inflicts regular damage.  Hits twice in one turn."
+target_id = 10
+meta_category_id = 0
+meta_min_hits = 2
+meta_max_hits = 2
+category = ExtResource("1_h1em5")

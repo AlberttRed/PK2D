@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dmu7545xoimuh"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_i0lh6"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_k0kng"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_ujh70"]
+
+[resource]
+resource_name = "148 - Destello"
+script = ExtResource("1_k0kng")
+internal_name = "flash"
+Name = "Destello"
+id = 148
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_ujh70")
+accuracy = 100
+pp = 20
+damage_class_id = 1
+effect_entries = "Lowers the target's accuracy by one stage. Lowers the target's accuracy by one stage."
+stat_changes = Dictionary[int, int]({
+5: -1
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_i0lh6")

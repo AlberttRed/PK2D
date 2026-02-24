@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cxn1eucf7w8rk"]
+
+[ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_ba2m0"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_frqr0"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_au6rj"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_itn3h"]
+
+[resource]
+resource_name = "186 - Beso Dulce"
+script = ExtResource("1_frqr0")
+internal_name = "sweet-kiss"
+Name = "Beso Dulce"
+id = 186
+description = "Da un beso con tal dulzura que causa confusión. "
+type_id = 18
+type = ExtResource("2_au6rj")
+accuracy = 75
+pp = 10
+damage_class_id = 1
+effect_entries = "Confuses the target. Confuses the target."
+target_id = 10
+meta_ailment_id = 6
+meta_min_turns = 2
+meta_max_turns = 5
+ailment_id = 6
+ailment = ExtResource("1_ba2m0")
+category = ExtResource("2_itn3h")

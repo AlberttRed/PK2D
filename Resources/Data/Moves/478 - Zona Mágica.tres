@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://egx0ncu1y6ss"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_7jpjg"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_tt14x"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_bqf8j"]
+
+[resource]
+resource_name = "478 - Zona Mágica"
+script = ExtResource("1_tt14x")
+internal_name = "magic-room"
+Name = "Zona Mágica"
+id = 478
+description = "Crea un espacio misterioso que inutiliza todos los 
+objetos de los Pokémon durante cinco turnos."
+type_id = 14
+type = ExtResource("2_bqf8j")
+pp = 10
+damage_class_id = 1
+effect_entries = "Negates held items for five turns. For five turns (including this one), passive effects of held items are ignored, and Pokémon will not use their held items."
+target_id = 12
+meta_category_id = 10
+category = ExtResource("1_7jpjg")

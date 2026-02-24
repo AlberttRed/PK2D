@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dd0802keoasdc"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qhgo8"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_ynfsg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_f51c2"]
+
+[resource]
+resource_name = "187 - Tambor"
+script = ExtResource("1_qhgo8")
+internal_name = "belly-drum"
+Name = "Tambor"
+id = 187
+description = "Reduce la mitad de los PS máximos para mejorar al
+máximo el Ataque."
+type_id = 1
+type = ExtResource("2_f51c2")
+pp = 10
+damage_class_id = 1
+effect_entries = "User pays half its max HP to max out its Attack. User pays half its max HP to raise its Attack to +6 stages.  If the user cannot pay the HP cost, this move will fail."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_ynfsg")

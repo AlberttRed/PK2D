@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://jvf5m2xxdvas"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_eecim"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_svnu2"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_lywog"]
+
+[resource]
+resource_name = "184 - Cara Susto"
+script = ExtResource("1_eecim")
+internal_name = "scary-face"
+Name = "Cara Susto"
+id = 184
+description = "Asusta al objetivo para reducir mucho su Velocidad. "
+type_id = 1
+type = ExtResource("2_lywog")
+accuracy = 100
+pp = 10
+damage_class_id = 1
+effect_entries = "Lowers the target's Speed by two stages. Lowers the target's Speed by two stages."
+stat_changes = Dictionary[int, int]({
+4: -2
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_svnu2")

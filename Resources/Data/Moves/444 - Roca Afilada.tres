@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ca6pn4b64wvov"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_cj3kv"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_u4au4"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_0ougs"]
+
+[resource]
+resource_name = "444 - Roca Afilada"
+script = ExtResource("1_u4au4")
+internal_name = "stone-edge"
+Name = "Roca Afilada"
+id = 444
+description = "Clava piedras muy afiladas al objetivo. Suele ser crítico."
+type_id = 6
+type = ExtResource("2_0ougs")
+power = 100
+accuracy = 80
+pp = 5
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_cj3kv")

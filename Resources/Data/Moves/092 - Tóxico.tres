@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ditaebsx2swk6"]
+
+[ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_m8m1w"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q8cjc"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_qdbt6"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_u5rss"]
+
+[resource]
+resource_name = "92 - Tóxico"
+script = ExtResource("1_q8cjc")
+internal_name = "toxic"
+Name = "Tóxico"
+id = 92
+description = "Envenena gravemente al objetivo y causa un daño 
+mayor en cada turno."
+type_id = 4
+type = ExtResource("2_u5rss")
+accuracy = 90
+pp = 10
+damage_class_id = 1
+effect_entries = "Badly poisons the target, inflicting more damage every turn. Badly poisons the target.  Never misses when used by a poison-type Pokémon."
+target_id = 10
+meta_ailment_id = 5
+meta_min_turns = 15
+meta_max_turns = 15
+ailment_id = 5
+ailment = ExtResource("1_m8m1w")
+category = ExtResource("2_qdbt6")

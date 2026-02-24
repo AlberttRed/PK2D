@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ee37wjcvlpxc"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_6xois"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_x73xa"]
+[ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_nubcn"]
+
+[resource]
+resource_name = "397 - Pulimento"
+script = ExtResource("1_6xois")
+internal_name = "rock-polish"
+Name = "Pulimento"
+id = 397
+description = "Reduce la resistencia puliendo su cuerpo. Aumenta
+mucho la Velocidad."
+type_id = 6
+type = ExtResource("2_nubcn")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Speed by two stages. Raises the user's Speed by two stages."
+stat_changes = Dictionary[int, int]({
+4: 2
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_x73xa")

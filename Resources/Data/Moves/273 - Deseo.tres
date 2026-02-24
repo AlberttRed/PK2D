@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dakarfpmgljh7"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7aji8"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_7vh5w"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_v08nd"]
+
+[resource]
+resource_name = "273 - Deseo"
+script = ExtResource("1_7aji8")
+internal_name = "wish"
+Name = "Deseo"
+id = 273
+description = "Restaura en el siguiente turno la mitad de los PS
+máximos del usuario o se los pasa al Pokémon que lo
+sustituye."
+type_id = 1
+type = ExtResource("2_v08nd")
+pp = 10
+damage_class_id = 1
+effect_entries = "User will recover half its max HP at the end of the next turn. At the end of the next turn, user will be healed for half its max HP.  If the user is switched out, its replacement will be healed instead for half of the user's max HP.  If the user faints or is forcefully switched by roar or whirlwind, this effect will not activate."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_7vh5w")

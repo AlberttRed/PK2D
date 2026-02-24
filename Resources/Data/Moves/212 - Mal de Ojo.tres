@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bhb8brj5spjgu"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7ighq"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_kbv6o"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_nk11s"]
+
+[resource]
+resource_name = "212 - Mal de Ojo"
+script = ExtResource("1_7ighq")
+internal_name = "mean-look"
+Name = "Mal de Ojo"
+id = 212
+description = "Mal de ojo que impide al objetivo huir del combate."
+type_id = 1
+type = ExtResource("2_nk11s")
+pp = 5
+damage_class_id = 1
+effect_entries = "Prevents the target from leaving battle. The target cannot switch out normally.  Ignores accuracy and evasion modifiers.  This effect ends when the user leaves the field.
+
+The target may still escape by using baton pass, u turn, or a shed shell.
+
+Both the user and the target pass on this effect with baton pass."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_kbv6o")

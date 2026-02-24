@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://brejsmh7tgmha"]
+
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_gct4g"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="2_3r6jj"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_wqjix"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="3_8vxk8"]
+
+[resource]
+resource_name = "86 - Onda Trueno"
+script = ExtResource("2_3r6jj")
+internal_name = "thunder-wave"
+Name = "Onda Trueno"
+id = 86
+description = "Una ligera descarga que paraliza al objetivo si lo 
+alcanza."
+type_id = 13
+type = ExtResource("3_8vxk8")
+accuracy = 90
+pp = 20
+damage_class_id = 1
+effect_entries = "Paralyzes the target. Paralyzes the target."
+target_id = 10
+meta_ailment_id = 1
+ailment_id = 1
+ailment = ExtResource("1_gct4g")
+category = ExtResource("2_wqjix")

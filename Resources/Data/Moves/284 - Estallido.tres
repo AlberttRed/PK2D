@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dv4rytly8q20w"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_f3cit"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_w6241"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_4e53f"]
+
+[resource]
+resource_name = "284 - Estallido"
+script = ExtResource("1_f3cit")
+internal_name = "eruption"
+Name = "Estallido"
+id = 284
+description = "Furia explosiva. Cuanto menor sea el número de PS del
+usuario, menos daño hará el ataque. "
+type_id = 10
+type = ExtResource("2_4e53f")
+power = 150
+accuracy = 100
+pp = 5
+damage_class_id = 3
+effect_entries = "Inflicts more damage when the user has more HP remaining, with a maximum of 150 power. Inflicts regular damage.  Power increases with the user's remaining HP and is given by `150 * HP / max HP`, to a maximum of 150 when the user has full HP."
+target_id = 11
+meta_category_id = 0
+category = ExtResource("1_w6241")

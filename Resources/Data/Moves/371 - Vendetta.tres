@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dsrjbg1ap7lmi"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_jq5xs"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_uxwtr"]
+[ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_u7edi"]
+
+[resource]
+resource_name = "371 - Vendetta"
+script = ExtResource("1_uxwtr")
+internal_name = "payback"
+Name = "Vendetta"
+id = 371
+description = "El usuario contraataca con el doble de fuerza si el 
+objetivo usa un movimiento antes."
+type_id = 17
+type = ExtResource("2_u7edi")
+power = 50
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "Power is doubled if the target has already moved this turn. Inflicts regular damage.  If the target uses a move or switches out this turn before this move is used, this move has double power."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_jq5xs")

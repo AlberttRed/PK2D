@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cgpxyvj4g8n84"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_22dxq"]
+[ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_xno2b"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_csop6"]
+[ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_jfph4"]
+
+[resource]
+resource_name = "517 - Infierno"
+script = ExtResource("1_22dxq")
+internal_name = "inferno"
+Name = "Infierno"
+id = 517
+description = "Ataca con una gran ráfaga de fuego que causa 
+quemaduras."
+type_id = 10
+type = ExtResource("2_jfph4")
+power = 100
+accuracy = 50
+pp = 5
+effect_chance = 100
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to burn the target. Inflicts regular damage.  Has a $effect_chance% chance to burn the target."
+target_id = 10
+meta_ailment_id = 4
+meta_category_id = 4
+meta_ailment_chance = 100
+ailment_id = 4
+ailment = ExtResource("1_xno2b")
+category = ExtResource("2_csop6")

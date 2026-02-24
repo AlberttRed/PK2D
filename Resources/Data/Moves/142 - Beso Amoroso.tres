@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dvtt7s0kjyunh"]
+
+[ext_resource type="Resource" uid="uid://cwcxxqx6mbg3b" path="res://Resources/Data/Ailments/SLEEP.tres" id="1_mim4h"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qqwnn"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_3nnrg"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_ahnsp"]
+
+[resource]
+resource_name = "142 - Beso Amoroso"
+script = ExtResource("1_qqwnn")
+internal_name = "lovely-kiss"
+Name = "Beso Amoroso"
+id = 142
+description = "Intimida al objetivo con una cara que asusta y le da
+un beso que lo deja dormido."
+type_id = 1
+type = ExtResource("2_ahnsp")
+accuracy = 75
+pp = 10
+damage_class_id = 1
+effect_entries = "Puts the target to sleep. Puts the target to sleep."
+target_id = 10
+meta_ailment_id = 2
+meta_min_turns = 2
+meta_max_turns = 4
+ailment_id = 2
+ailment = ExtResource("1_mim4h")
+category = ExtResource("2_3nnrg")

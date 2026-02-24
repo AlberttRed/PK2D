@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ctlkh34ix63k6"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_svuyk"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_wpb8u"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_7kpev"]
+
+[resource]
+resource_name = "585 - Fuerza Lunar"
+script = ExtResource("1_wpb8u")
+internal_name = "moonblast"
+Name = "Fuerza Lunar"
+id = 585
+description = "Invoca el poder de la luna para atacar al objetivo. 
+Puede disminuir el Ataque Especial del objetivo."
+type_id = 18
+type = ExtResource("2_7kpev")
+power = 95
+accuracy = 100
+pp = 15
+effect_chance = 30
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to lower the target's Special Attack by one stage. Inflicts regular damage.  Has a $effect_chance% chance to lower the target's Special Attack by one stage."
+stat_changes = Dictionary[int, int]({
+2: -1
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 30
+category = ExtResource("1_svuyk")

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bnihfbx25dl1a"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2xtpf"]
+[ext_resource type="Resource" uid="uid://djlu5d7nxiwrg" path="res://Resources/Data/Ailments/FREEZE.tres" id="1_68t5j"]
+[ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_8eauw"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_ju8c8"]
+
+[resource]
+resource_name = "423 - Colmillo Hielo"
+script = ExtResource("1_2xtpf")
+internal_name = "ice-fang"
+Name = "Colmillo Hielo"
+id = 423
+description = "El usuario muerde al objetivo con colmillos helados y
+puede hacer que se amedrente o se congele."
+type_id = 15
+type = ExtResource("2_8eauw")
+power = 65
+accuracy = 95
+pp = 15
+effect_chance = 10
+damage_class_id = 2
+effect_entries = "Has a $effect_chance% chance to freeze the target and a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to freeze the target and a separate $effect_chance% chance to make the target flinch."
+target_id = 10
+meta_ailment_id = 3
+meta_category_id = 4
+meta_ailment_chance = 10
+meta_flinch_chance = 10
+ailment_id = 3
+ailment = ExtResource("1_68t5j")
+category = ExtResource("2_ju8c8")

@@ -120,7 +120,14 @@ func _init(
 	# Cargar PokemonData
 	if pokemon_data is int:
 		pokemon_id = pokemon_data as PokemonsEnum.Values
-		base = DatabaseService.get_pokemon(pokemon_data)
+		# Solo usar DatabaseService si está disponible (no en editor)
+		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+			base = DatabaseService.get_pokemon(pokemon_data)
+		else:
+			# En editor, cargar directamente desde archivo
+			var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_data
+			if ResourceLoader.exists(pokemon_path):
+				base = load(pokemon_path) as PokemonData
 	elif pokemon_data is PokemonData:
 		base = pokemon_data
 		pokemon_id = base.id as PokemonsEnum.Values
@@ -154,7 +161,10 @@ func _init(
 		ability_id = _calculate_ability() as AbilitiesEnum.Values
 	else:
 		ability_id = pokemon_ability as AbilitiesEnum.Values
-	ability = DatabaseService.get_ability(ability_id)
+
+	# Solo cargar ability si DatabaseService está disponible (no en editor)
+	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		ability = DatabaseService.get_ability(ability_id)
 
 	# Configurar naturaleza
 	if pokemon_nature == null:
@@ -164,7 +174,10 @@ func _init(
 		nature_id = NaturesEnum.get_random_nature() as NaturesEnum.Values
 	else:
 		nature_id = pokemon_nature as NaturesEnum.Values
-	nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
+
+	# Solo cargar nature si DatabaseService está disponible (no en editor)
+	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
 
 	# Inicializar stats (IVs, EVs, base_stats)
 	_initialize_stats(randomize_stats)
@@ -185,7 +198,14 @@ func _init(
 ## Battler.gd llamará esto en _ready() para inicializar Pokemon del inspector
 func _post_init() -> void:
 	# Cargar PokemonData desde el enum pokemon_id
-	base = DatabaseService.get_pokemon(pokemon_id)
+	# Solo usar DatabaseService si está disponible (no en editor)
+	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		base = DatabaseService.get_pokemon(pokemon_id)
+	else:
+		# En editor, cargar directamente desde archivo
+		var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_id
+		if ResourceLoader.exists(pokemon_path):
+			base = load(pokemon_path) as PokemonData
 	if base == null:
 		push_error("Pokemon._post_init: No se pudo cargar PokemonData para id %d" % pokemon_id)
 		return
@@ -196,9 +216,14 @@ func _post_init() -> void:
 
 	if ability_id == AbilitiesEnum.Values.NONE:
 		ability_id = _calculate_ability() as AbilitiesEnum.Values
-	ability = DatabaseService.get_ability(ability_id)
 
-	nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
+	# Solo cargar ability si DatabaseService está disponible (no en editor)
+	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		ability = DatabaseService.get_ability(ability_id)
+
+	# Solo cargar nature si DatabaseService está disponible (no en editor)
+	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
 
 	# Inicializar stats (NO aleatorizar, usar valores @export)
 	_initialize_stats(false)
@@ -444,13 +469,34 @@ func get_display_name() -> String:
 
 ## Helpers de acceso a propiedades base
 func get_type1() -> TypeData:
-	return base.type_a as TypeData
+	# Usar type_a_id para cargar el TypeData solo cuando sea necesario
+	if base.type_a_id > 0:
+		if Engine.has_singleton("DatabaseService"):
+			return DatabaseService.get_type(base.type_a_id) as TypeData
+	# Compatibilidad: si type_a_id es 0 pero existe type_a (Resource), usarlo
+	if base.type_a != null:
+		return base.type_a as TypeData
+	return null
 
 func get_type2() -> TypeData:
-	return base.type_b as TypeData
+	# Usar type_b_id para cargar el TypeData solo cuando sea necesario
+	if base.type_b_id > 0:
+		if Engine.has_singleton("DatabaseService"):
+			return DatabaseService.get_type(base.type_b_id) as TypeData
+	# Compatibilidad: si type_b_id es 0 pero existe type_b (Resource), usarlo
+	if base.type_b != null:
+		return base.type_b as TypeData
+	return null
 
 func get_types() -> Array[TypeData]:
-	return [base.type_a as TypeData, base.type_b as TypeData]
+	var t1 = get_type1()
+	var t2 = get_type2()
+	var types: Array[TypeData] = []
+	if t1:
+		types.append(t1)
+	if t2 and t2 != t1:
+		types.append(t2)
+	return types
 
 func get_battle_front_sprite() -> AtlasTexture:
 	return base.battle_front_shiny_sprite if shiny else base.battle_front_sprite

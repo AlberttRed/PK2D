@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://x6l4xw21q6jm"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_13lsj"]
+[ext_resource type="Resource" uid="uid://ba73lcc1e1247" path="res://Resources/Data/Ailments/YAWN.tres" id="1_kpscq"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_a2ict"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_xhra6"]
+
+[resource]
+resource_name = "281 - Bostezo"
+script = ExtResource("1_13lsj")
+internal_name = "yawn"
+Name = "Bostezo"
+id = 281
+description = "Gran bostezo que induce al sueño al objetivo en el
+siguiente turno."
+type_id = 1
+type = ExtResource("2_a2ict")
+pp = 10
+damage_class_id = 1
+effect_entries = "Target sleeps at the end of the next turn. Puts the target to sleep at the end of the next turn.  Ignores accuracy and evasion modifiers.  If the target leaves the field, this effect is canceled.  If the target has a status effect when this move is used, this move will fail.
+
+If the target is protected by safeguard when this move is used, this move will fail.
+
+insomnia and vital spirit prevent the sleep if the target has either at the end of the next turn, but will not cause this move to fail on use."
+target_id = 10
+meta_ailment_id = 14
+meta_min_turns = 2
+meta_max_turns = 2
+ailment_id = 14
+ailment = ExtResource("1_kpscq")
+category = ExtResource("2_xhra6")

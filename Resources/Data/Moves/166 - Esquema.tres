@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dg7hv6kmiid8r"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_g46yb"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_opdyb"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_dlrlh"]
+
+[resource]
+resource_name = "166 - Esquema"
+script = ExtResource("1_opdyb")
+internal_name = "sketch"
+Name = "Esquema"
+id = 166
+description = "Aprende de forma permanente el último movimiento 
+utilizado por el objetivo. Es de un solo uso."
+type_id = 1
+type = ExtResource("2_dlrlh")
+pp = 1
+damage_class_id = 1
+effect_entries = "Permanently becomes the target's last used move. Permanently replaces itself with the target's last used move.  If that move is chatter or struggle, this move will fail.
+
+This move cannot be copied by mimic or mirror move, nor selected by assist or metronome, nor forced by encore."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_g46yb")

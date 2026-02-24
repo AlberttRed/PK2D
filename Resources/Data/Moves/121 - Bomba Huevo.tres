@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://by4ftwl0rv7vn"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_04vfa"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_wq6n2"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8lmfc"]
+
+[resource]
+resource_name = "121 - Bomba Huevo"
+script = ExtResource("1_wq6n2")
+internal_name = "egg-bomb"
+Name = "Bomba Huevo"
+id = 121
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_8lmfc")
+power = 100
+accuracy = 75
+pp = 10
+damage_class_id = 2
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_04vfa")

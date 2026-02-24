@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cc6q0u8r8romc"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_37ctq"]
+[ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_sdybe"]
+[ext_resource type="Resource" uid="uid://81m8cd1k8t8y" path="res://Resources/Data/Types/16.tres" id="2_a81bd"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_qjaei"]
+
+[resource]
+resource_name = "225 - Dragoaliento"
+script = ExtResource("1_37ctq")
+internal_name = "dragon-breath"
+Name = "Dragoaliento"
+id = 225
+description = "Poderosa ráfaga de aliento que golpea al objetivo y 
+puede paralizarlo."
+type_id = 16
+type = ExtResource("2_a81bd")
+power = 60
+accuracy = 100
+pp = 20
+effect_chance = 30
+damage_class_id = 3
+effect_entries = "Has a $effect_chance% chance to paralyze the target. Inflicts regular damage.  Has a $effect_chance% chance to paralyze the target."
+target_id = 10
+meta_ailment_id = 1
+meta_category_id = 4
+meta_ailment_chance = 30
+ailment_id = 1
+ailment = ExtResource("1_sdybe")
+category = ExtResource("2_qjaei")

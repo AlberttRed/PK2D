@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b2yhk3o5pmefq"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_62tmf"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_fo20m"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_1637i"]
+
+[resource]
+resource_name = "572 - Tormenta Floral"
+script = ExtResource("1_62tmf")
+internal_name = "petal-blizzard"
+Name = "Tormenta Floral"
+id = 572
+description = "El usuario desata un intenso vendaval de pétalos que
+daña a los Pokémon a su alrededor."
+type_id = 12
+type = ExtResource("2_1637i")
+power = 90
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Inflicts regular damage. Inflicts regular damage."
+target_id = 9
+meta_category_id = 0
+category = ExtResource("1_fo20m")

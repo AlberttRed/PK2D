@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cr06l5oldkx8b"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_flo0k"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_p7wkj"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_480v4"]
+
+[resource]
+resource_name = "116 - Foco Energía"
+script = ExtResource("1_flo0k")
+internal_name = "focus-energy"
+Name = "Foco Energía"
+id = 116
+description = "Concentra energía para aumentar las posibilidades de
+asestar un golpe crítico."
+type_id = 1
+type = ExtResource("2_480v4")
+pp = 30
+damage_class_id = 1
+effect_entries = "Increases the user's chance to score a critical hit. User's critical hit rate is two levels higher until it leaves the field.  If the user has already used focus energy since entering the field, this move will fail.
+
+This effect is passed on by baton pass."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_p7wkj")

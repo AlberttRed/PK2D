@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://e7x8s58hekfs"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_cjdkm"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_sbnfo"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_amq1x"]
+
+[resource]
+resource_name = "99 - Furia"
+script = ExtResource("1_cjdkm")
+internal_name = "rage"
+Name = "Furia"
+id = 99
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 1
+type = ExtResource("2_amq1x")
+power = 20
+accuracy = 100
+pp = 20
+damage_class_id = 2
+effect_entries = "If the user is hit after using this move, its Attack rises by one stage. Inflicts regular damage.  Every time the user is hit after it uses this move but before its next action, its Attack raises by one stage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_sbnfo")

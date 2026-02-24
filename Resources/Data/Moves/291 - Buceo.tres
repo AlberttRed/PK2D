@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b7hij2dc75fct"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_n7v2r"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_nbgmv"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_h4cgp"]
+
+[resource]
+resource_name = "291 - Buceo"
+script = ExtResource("1_nbgmv")
+internal_name = "dive"
+Name = "Buceo"
+id = 291
+description = "El usuario se sumerge en el primer turno y ataca en el
+segundo."
+type_id = 11
+type = ExtResource("2_h4cgp")
+power = 80
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "User dives underwater, dodging all attacks, and hits next turn. Inflicts regular damage.  User dives underwater for one turn, becoming immune to attack, and hits on the second turn.
+
+During the immune turn, surf, and whirlpool still hit the user normally, and their power is doubled if appropriate.
+
+The user may be hit during its immune turn if under the effect of lock on, mind reader, or no guard.
+
+This move cannot be selected by sleep talk."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_n7v2r")

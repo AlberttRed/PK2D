@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://biefu72dipy0n"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_awsk7"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_ns7p8"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_pjstv"]
+
+[resource]
+resource_name = "25 - Megapatada"
+script = ExtResource("1_awsk7")
+internal_name = "mega-kick"
+Name = "Megapatada"
+id = 25
+description = "Patada de extrema fuerza."
+type_id = 1
+type = ExtResource("2_pjstv")
+power = 120
+accuracy = 75
+pp = 5
+damage_class_id = 2
+effect_entries = "Inflicts regular damage with no additional effect. Inflicts regular damage."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_ns7p8")

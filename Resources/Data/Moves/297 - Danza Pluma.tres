@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://qneinhfnj5ml"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_1dtea"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_eboub"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_xakew"]
+
+[resource]
+resource_name = "297 - Danza Pluma"
+script = ExtResource("1_eboub")
+internal_name = "feather-dance"
+Name = "Danza Pluma"
+id = 297
+description = "Envuelve al objetivo con un manto de plumas para 
+reducir mucho su Ataque."
+type_id = 3
+type = ExtResource("2_xakew")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Lowers the target's Attack by two stages. Lowers the target's Attack by two stages."
+stat_changes = Dictionary[int, int]({
+0: -2
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_1dtea")

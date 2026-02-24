@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ct4aw4xb2x7k0"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/HealMoveCategory.tres" id="1_1f7fm"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_aj675"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_e53ov"]
+
+[resource]
+resource_name = "208 - Batido"
+script = ExtResource("1_aj675")
+internal_name = "milk-drink"
+Name = "Batido"
+id = 208
+description = "Restaura la mitad de los PS máximos del usuario."
+type_id = 1
+type = ExtResource("2_e53ov")
+pp = 10
+damage_class_id = 1
+effect_entries = "Heals the user by half its max HP. Heals the user for half its max HP."
+target_id = 7
+meta_category_id = 3
+meta_healing = 50
+category = ExtResource("1_1f7fm")

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bw85x36fkdu1v"]
+
+[ext_resource type="Resource" uid="uid://cwcxxqx6mbg3b" path="res://Resources/Data/Ailments/SLEEP.tres" id="1_51day"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_jr44w"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_c4s4v"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_gyu2x"]
+
+[resource]
+resource_name = "320 - Silbato"
+script = ExtResource("1_jr44w")
+internal_name = "grass-whistle"
+Name = "Silbato"
+id = 320
+description = "Este movimiento no se puede usar, por lo que sería
+mejor olvidarlo, aunque eso implique que no se pueda
+recordar posteriormente."
+type_id = 12
+type = ExtResource("2_gyu2x")
+accuracy = 55
+pp = 15
+damage_class_id = 1
+effect_entries = "Puts the target to sleep. Puts the target to sleep."
+target_id = 10
+meta_ailment_id = 2
+meta_min_turns = 2
+meta_max_turns = 4
+ailment_id = 2
+ailment = ExtResource("1_51day")
+category = ExtResource("2_c4s4v")

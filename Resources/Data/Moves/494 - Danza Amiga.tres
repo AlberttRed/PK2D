@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cwmo1chvadmfn"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_42s0s"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_y3jnq"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_n1okh"]
+
+[resource]
+resource_name = "494 - Danza Amiga"
+script = ExtResource("1_42s0s")
+internal_name = "entrainment"
+Name = "Danza Amiga"
+id = 494
+description = "Una extraña danza que hace que el usuario y el objetivo
+tengan la misma habilidad."
+type_id = 1
+type = ExtResource("2_n1okh")
+accuracy = 100
+pp = 15
+damage_class_id = 1
+effect_entries = "Copies the user's ability onto the target. Changes the target's ability to match the user's.  This effect ends when the target leaves battle."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_y3jnq")

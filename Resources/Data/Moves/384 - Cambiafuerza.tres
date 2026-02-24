@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://brfqexduef10n"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_b6nfi"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_uoe7n"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_476lm"]
+
+[resource]
+resource_name = "384 - Cambiafuerza"
+script = ExtResource("1_b6nfi")
+internal_name = "power-swap"
+Name = "Cambiafuerza"
+id = 384
+description = "El usuario emplea su poder mental para intercambiar los
+cambios en el Ataque y Ataque Especial con el objetivo."
+type_id = 14
+type = ExtResource("2_476lm")
+pp = 10
+damage_class_id = 1
+effect_entries = "User swaps Attack and Special Attack changes with the target. User swaps its Attack and Special Attack stat modifiers modifiers with the target."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_uoe7n")

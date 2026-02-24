@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c1athxup7w06i"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_h3lcj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_r838x"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_icerh"]
+
+[resource]
+resource_name = "24 - Doble Patada"
+script = ExtResource("1_r838x")
+internal_name = "double-kick"
+Name = "Doble Patada"
+id = 24
+description = "Una patada doble. Golpea dos veces."
+type_id = 2
+type = ExtResource("2_icerh")
+power = 30
+accuracy = 100
+pp = 30
+damage_class_id = 2
+effect_entries = "Hits twice in one turn. Inflicts regular damage.  Hits twice in one turn."
+target_id = 10
+meta_category_id = 0
+meta_min_hits = 2
+meta_max_hits = 2
+category = ExtResource("1_h3lcj")

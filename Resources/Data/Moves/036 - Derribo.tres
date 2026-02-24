@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cin6hppsbwxk2"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_1n3ur"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vbrrw"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_dyrmf"]
+
+[resource]
+resource_name = "36 - Derribo"
+script = ExtResource("1_vbrrw")
+internal_name = "take-down"
+Name = "Derribo"
+id = 36
+description = "Carga desmedida que también hiere al agresor."
+type_id = 1
+type = ExtResource("2_dyrmf")
+power = 90
+accuracy = 85
+pp = 20
+damage_class_id = 2
+effect_entries = "User receives 1/4 the damage it inflicts in recoil. Inflicts regular damage.  User takes 1/4 the damage it inflicts in recoil."
+target_id = 10
+meta_category_id = 0
+meta_drain = -25
+category = ExtResource("1_1n3ur")

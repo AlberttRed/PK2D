@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://c54n1jbo5fwd1"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_5rrrj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_e7jp4"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_utowb"]
+
+[resource]
+resource_name = "567 - Halloween"
+script = ExtResource("1_e7jp4")
+internal_name = "trick-or-treat"
+Name = "Halloween"
+id = 567
+description = "Invita al objetivo a celebrar Halloween, lo que añade 
+el tipo Fantasma a los tipos de este."
+type_id = 8
+type = ExtResource("2_utowb")
+accuracy = 100
+pp = 20
+damage_class_id = 1
+effect_entries = "Adds ghost to the target's types. Adds ghost to the target's types."
+target_id = 10
+meta_category_id = 13
+category = ExtResource("1_5rrrj")

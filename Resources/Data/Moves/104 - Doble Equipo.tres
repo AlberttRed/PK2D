@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bil74dyexj0h8"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_1y542"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_325k2"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_uecof"]
+
+[resource]
+resource_name = "104 - Doble Equipo"
+script = ExtResource("1_325k2")
+internal_name = "double-team"
+Name = "Doble Equipo"
+id = 104
+description = "Crea copias de sí mismo para mejorar la Evasión. "
+type_id = 1
+type = ExtResource("2_uecof")
+pp = 15
+damage_class_id = 1
+effect_entries = "Raises the user's evasion by one stage. Raises the user's evasion by one stage."
+stat_changes = Dictionary[int, int]({
+6: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_1y542")

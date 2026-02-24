@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dbu25padunpvu"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_bpf5s"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_nh1rl"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_m7yjo"]
+
+[resource]
+resource_name = "323 - Salpicar"
+script = ExtResource("1_nh1rl")
+internal_name = "water-spout"
+Name = "Salpicar"
+id = 323
+description = "Chorro de agua. Cuantos menos PS tenga el usuario,
+menos dañino será."
+type_id = 11
+type = ExtResource("2_m7yjo")
+power = 150
+accuracy = 100
+pp = 5
+damage_class_id = 3
+effect_entries = "Inflicts more damage when the user has more HP remaining, with a maximum of 150 power. Inflicts regular damage.  Power increases with the user's remaining HP and is given by `150 * HP / max HP`, to a maximum of 150 when the user has full HP."
+target_id = 11
+meta_category_id = 0
+category = ExtResource("1_bpf5s")

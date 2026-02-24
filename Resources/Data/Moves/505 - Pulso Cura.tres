@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ivcsqy3t05m1"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/HealMoveCategory.tres" id="1_is7jc"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_s5tir"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_d2eqa"]
+
+[resource]
+resource_name = "505 - Pulso Cura"
+script = ExtResource("1_s5tir")
+internal_name = "heal-pulse"
+Name = "Pulso Cura"
+id = 505
+description = "Una onda curativa restaura la mitad de los PS máximos
+del objetivo."
+type_id = 14
+type = ExtResource("2_d2eqa")
+pp = 10
+damage_class_id = 1
+effect_entries = "Heals the target for half its max HP. Heals the target for half its max HP."
+target_id = 10
+meta_category_id = 3
+meta_healing = 50
+category = ExtResource("1_is7jc")

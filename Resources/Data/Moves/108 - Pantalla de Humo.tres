@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dk576u34dfc4t"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_ctjs2"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_tumpb"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_tyxuw"]
+
+[resource]
+resource_name = "108 - Pantalla de Humo"
+script = ExtResource("1_tumpb")
+internal_name = "smokescreen"
+Name = "Pantalla de Humo"
+id = 108
+description = "Baja la Precisión del objetivo con una nube de humo 
+o tinta."
+type_id = 1
+type = ExtResource("2_tyxuw")
+accuracy = 100
+pp = 20
+damage_class_id = 1
+effect_entries = "Lowers the target's accuracy by one stage. Lowers the target's accuracy by one stage."
+stat_changes = Dictionary[int, int]({
+5: -1
+})
+target_id = 10
+meta_category_id = 2
+category = ExtResource("1_ctjs2")

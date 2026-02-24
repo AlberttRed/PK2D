@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dle50dlsd7qdw"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_62hwh"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_nt48y"]
+[ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_faba1"]
+
+[resource]
+resource_name = "238 - Tajo Cruzado"
+script = ExtResource("1_nt48y")
+internal_name = "cross-chop"
+Name = "Tajo Cruzado"
+id = 238
+description = "Corte doble que suele propinar un golpe crítico. "
+type_id = 2
+type = ExtResource("2_faba1")
+power = 100
+accuracy = 80
+pp = 5
+damage_class_id = 2
+effect_entries = "Has an increased chance for a critical hit. Inflicts regular damage.  User's critical hit rate is one level higher when using this move."
+target_id = 10
+meta_category_id = 0
+meta_crit_rate = 1
+category = ExtResource("1_62hwh")

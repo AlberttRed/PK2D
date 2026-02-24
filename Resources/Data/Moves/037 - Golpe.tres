@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://8v3t6a1k56mv"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_1ymyj"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_4fwby"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_g8dgk"]
+
+[resource]
+resource_name = "37 - Golpe"
+script = ExtResource("1_4fwby")
+internal_name = "thrash"
+Name = "Golpe"
+id = 37
+description = "Ataque de dos a tres turnos que acaba confundiendo
+al agresor."
+type_id = 1
+type = ExtResource("2_g8dgk")
+power = 120
+accuracy = 100
+pp = 10
+damage_class_id = 2
+effect_entries = "Hits every turn for 2-3 turns, then confuses the user. Inflicts regular damage.  User is forced to attack with this move for 2–3 turns,selected at random.  After the last hit, the user becomes confused.
+
+safeguard does not protect against the confusion from this move."
+target_id = 8
+meta_category_id = 0
+category = ExtResource("1_1ymyj")

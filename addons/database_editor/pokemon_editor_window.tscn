@@ -1,0 +1,878 @@
+[gd_scene load_steps=2 format=3 uid="uid://pokemon_editor_window"]
+
+[ext_resource type="Script" path="res://addons/database_editor/pokemon_editor_window.gd" id="1_editor"]
+
+[node name="PokemonEditorWindow" type="Window"]
+script = ExtResource("1_editor")
+initial_position = 2
+size = Vector2i(900, 800)
+title = "Pokémon Editor"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="General" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/General"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BaseStatsEVs" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Otros" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Otros"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GeneralSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection"]
+layout_mode = 2
+text = "Información General"
+theme_override_font_sizes/font_size = 16
+
+[node name="IdContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/IdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "ID:"
+
+[node name="IdSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/IdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 999.0
+step = 1.0
+
+[node name="InternalNameContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="InternalNameLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Nombre interno:"
+
+[node name="InternalNameLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ej: bulbasaur"
+
+[node name="DisplayNameContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="DisplayNameLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Nombre:"
+
+[node name="DisplayNameLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ej: Bulbasaur"
+
+[node name="DescriptionContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/DescriptionContainer"]
+layout_mode = 2
+text = "Descripción:"
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/TabContainer/General/VBoxContainer/GeneralSection/DescriptionContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+placeholder_text = "Descripción del Pokémon..."
+
+[node name="TypesSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection"]
+layout_mode = 2
+text = "Tipos"
+theme_override_font_sizes/font_size = 16
+
+[node name="TypeAContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection"]
+layout_mode = 2
+
+[node name="TypeALabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection/TypeAContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Tipo A:"
+
+[node name="TypeAOptionButton" type="OptionButton" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection/TypeAContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TypeBContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection"]
+layout_mode = 2
+
+[node name="TypeBLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection/TypeBContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Tipo B:"
+
+[node name="TypeBOptionButton" type="OptionButton" parent="VBoxContainer/TabContainer/General/VBoxContainer/TypesSection/TypeBContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BaseStatsSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+text = "Estadísticas Base"
+theme_override_font_sizes/font_size = 16
+
+[node name="HpBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="HpBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/HpBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "HP Base:"
+
+[node name="HpBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/HpBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="AttackBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="AttackBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/AttackBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Ataque Base:"
+
+[node name="AttackBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/AttackBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="DefenseBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="DefenseBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/DefenseBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Defensa Base:"
+
+[node name="DefenseBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/DefenseBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpecialAttackBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="SpecialAttackBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpecialAttackBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Ataque Especial Base:"
+
+[node name="SpecialAttackBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpecialAttackBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpecialDefenseBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="SpecialDefenseBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpecialDefenseBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Defensa Especial Base:"
+
+[node name="SpecialDefenseBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpecialDefenseBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpeedBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="SpeedBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpeedBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Velocidad Base:"
+
+[node name="SpeedBaseSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpeedBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="TotalBaseContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection"]
+layout_mode = 2
+
+[node name="TotalBaseLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/TotalBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Total Base:"
+
+[node name="TotalBaseLabelValue" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/TotalBaseContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="EVsSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+text = "Valores de Esfuerzo (EVs)"
+theme_override_font_sizes/font_size = 16
+
+[node name="HpEffortEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="HpEffortEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/HpEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "HP EVs:"
+
+[node name="HpEffortEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/HpEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="AttackEffortEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="AttackEffortEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/AttackEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Ataque EVs:"
+
+[node name="AttackEffortEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/AttackEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="DefenseEffortEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="DefenseEffortEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/DefenseEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Defensa EVs:"
+
+[node name="DefenseEffortEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/DefenseEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpecialEffortAttackEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="SpecialEffortAttackEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpecialEffortAttackEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Ataque Especial EVs:"
+
+[node name="SpecialEffortAttackEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpecialEffortAttackEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpecialEffortDefenseEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="SpecialEffortDefenseEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpecialEffortDefenseEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Defensa Especial EVs:"
+
+[node name="SpecialEffortDefenseEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpecialEffortDefenseEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="SpeedEffortEVsContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection"]
+layout_mode = 2
+
+[node name="SpeedEffortEVsLabel" type="Label" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpeedEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Velocidad EVs:"
+
+[node name="SpeedEffortEVsSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/SpeedEffortEVsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="PhysicalInfoSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection"]
+layout_mode = 2
+text = "Información Física"
+theme_override_font_sizes/font_size = 16
+
+[node name="HeightContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection"]
+layout_mode = 2
+
+[node name="HeightLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/HeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Altura:"
+
+[node name="HeightSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/HeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 999.0
+step = 0.1
+suffix = " m"
+
+[node name="WeightContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection"]
+layout_mode = 2
+
+[node name="WeightLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/WeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Peso:"
+
+[node name="WeightSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/WeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 999.0
+step = 0.1
+suffix = " kg"
+
+[node name="BaseExperienceContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection"]
+layout_mode = 2
+
+[node name="BaseExperienceLabel" type="Label" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/BaseExperienceContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Experiencia Base:"
+
+[node name="BaseExperienceSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/General/VBoxContainer/PhysicalInfoSection/BaseExperienceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 9999.0
+step = 1.0
+
+[node name="OtherInfoSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+text = "Otra Información"
+theme_override_font_sizes/font_size = 16
+
+[node name="GenderRateContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="GenderRateLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/GenderRateContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Tasa de Género:"
+
+[node name="GenderRateSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/GenderRateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -1.0
+max_value = 255.0
+step = 1.0
+
+[node name="CaptureRateContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="CaptureRateLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/CaptureRateContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Tasa de Captura:"
+
+[node name="CaptureRateSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/CaptureRateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="BaseHappinessContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="BaseHappinessLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/BaseHappinessContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Felicidad Base:"
+
+[node name="BaseHappinessSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/BaseHappinessContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="HatchCounterContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="HatchCounterLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/HatchCounterContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Contador de Eclosión:"
+
+[node name="HatchCounterSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/HatchCounterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="GrowthRateIdContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="GrowthRateIdLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/GrowthRateIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "ID Tasa de Crecimiento:"
+
+[node name="GrowthRateIdSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/GrowthRateIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 6.0
+step = 1.0
+
+[node name="EggGroupAIdContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="EggGroupAIdLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/EggGroupAIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Grupo Huevo A:"
+
+[node name="EggGroupAIdSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/EggGroupAIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="EggGroupBIdContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="EggGroupBIdLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/EggGroupBIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Grupo Huevo B:"
+
+[node name="EggGroupBIdSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/EggGroupBIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 255.0
+step = 1.0
+
+[node name="HabitatIdContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection"]
+layout_mode = 2
+
+[node name="HabitatIdLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/HabitatIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "ID Hábitat:"
+
+[node name="HabitatIdSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/OtherInfoSection/HabitatIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 255.0
+step = 1.0
+
+[node name="FlagsSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection"]
+layout_mode = 2
+text = "Flags"
+theme_override_font_sizes/font_size = 16
+
+[node name="IsDefaultContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection"]
+layout_mode = 2
+
+[node name="IsDefaultCheckBox" type="CheckBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection/IsDefaultContainer"]
+layout_mode = 2
+text = "Es forma por defecte"
+
+[node name="IsBabyContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection"]
+layout_mode = 2
+
+[node name="IsBabyCheckBox" type="CheckBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection/IsBabyContainer"]
+layout_mode = 2
+text = "Es bebé"
+
+[node name="HasGenderDifferencesContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection"]
+layout_mode = 2
+
+[node name="HasGenderDifferencesCheckBox" type="CheckBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection/HasGenderDifferencesContainer"]
+layout_mode = 2
+text = "Tiene diferencias de género"
+
+[node name="FormsSwitchableContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection"]
+layout_mode = 2
+
+[node name="FormsSwitchableCheckBox" type="CheckBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/FlagsSection/FormsSwitchableContainer"]
+layout_mode = 2
+text = "Formas intercambiables"
+
+[node name="BattlePositionsSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection"]
+layout_mode = 2
+text = "Posiciones de Combate"
+theme_override_font_sizes/font_size = 16
+
+[node name="BattlerPlayerYContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection"]
+layout_mode = 2
+
+[node name="BattlerPlayerYLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerPlayerYContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Y Jugador:"
+
+[node name="BattlerPlayerYSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerPlayerYContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -999.0
+max_value = 999.0
+step = 1.0
+
+[node name="BattlerEnemyYContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection"]
+layout_mode = 2
+
+[node name="BattlerEnemyYLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerEnemyYContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Y Enemigo:"
+
+[node name="BattlerEnemyYSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerEnemyYContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -999.0
+max_value = 999.0
+step = 1.0
+
+[node name="BattlerAltitudeContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection"]
+layout_mode = 2
+
+[node name="BattlerAltitudeLabel" type="Label" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerAltitudeContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Altitud:"
+
+[node name="BattlerAltitudeSpinBox" type="SpinBox" parent="VBoxContainer/TabContainer/Otros/VBoxContainer/BattlePositionsSection/BattlerAltitudeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -999.0
+max_value = 999.0
+step = 1.0
+
+[node name="Sprites" type="ScrollContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Sprites"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpritesSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection"]
+layout_mode = 2
+text = "Sprites del Pokémon"
+theme_override_font_sizes/font_size = 16
+
+[node name="IconSpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection"]
+layout_mode = 2
+
+[node name="IconSpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/IconSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Icono:"
+
+[node name="IconSpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/IconSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="IconSpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/IconSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="FootprintSpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection"]
+layout_mode = 2
+
+[node name="FootprintSpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/FootprintSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Huella:"
+
+[node name="FootprintSpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/FootprintSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="FootprintSpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/SpritesSection/FootprintSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="BattleSpritesSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection"]
+layout_mode = 2
+text = "Sprites de Combate"
+theme_override_font_sizes/font_size = 16
+
+[node name="BattleFrontSpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection"]
+layout_mode = 2
+
+[node name="BattleFrontSpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Frontal Normal:"
+
+[node name="BattleFrontSpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="BattleFrontSpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="BattleBackSpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection"]
+layout_mode = 2
+
+[node name="BattleBackSpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Trasero Normal:"
+
+[node name="BattleBackSpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="BattleBackSpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackSpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="BattleFrontShinySpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection"]
+layout_mode = 2
+
+[node name="BattleFrontShinySpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Frontal Shiny:"
+
+[node name="BattleFrontShinySpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="BattleFrontShinySpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleFrontShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="BattleBackShinySpriteContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection"]
+layout_mode = 2
+
+[node name="BattleBackShinySpriteLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Trasero Shiny:"
+
+[node name="BattleBackShinySpritePreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="BattleBackShinySpriteButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/BattleSpritesSection/BattleBackShinySpriteContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="OverworldSpritesSection" type="VBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection"]
+layout_mode = 2
+text = "Sprites de Overworld"
+theme_override_font_sizes/font_size = 16
+
+[node name="OverworldSpritesheetContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection"]
+layout_mode = 2
+
+[node name="OverworldSpritesheetLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldSpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Spritesheet Normal:"
+
+[node name="OverworldSpritesheetPreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldSpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="OverworldSpritesheetButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldSpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="OverworldShinySpritesheetContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection"]
+layout_mode = 2
+
+[node name="OverworldShinySpritesheetLabel" type="Label" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldShinySpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Spritesheet Shiny:"
+
+[node name="OverworldShinySpritesheetPreview" type="TextureButton" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldShinySpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(96, 96)
+stretch_mode = 5
+expand_mode = 1
+toggle_mode = false
+
+[node name="OverworldShinySpritesheetButton" type="Button" parent="VBoxContainer/TabContainer/Sprites/VBoxContainer/OverworldSpritesSection/OverworldShinySpritesheetContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(80, 0)
+text = "Limpiar"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Guardar"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancelar"

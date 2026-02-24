@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://b5ugh81r55x4w"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageLowerMoveCategory.tres" id="1_iw473"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_k8d2i"]
+[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_80kv2"]
+
+[resource]
+resource_name = "491 - Bomba Ácida"
+script = ExtResource("1_k8d2i")
+internal_name = "acid-spray"
+Name = "Bomba Ácida"
+id = 491
+description = "Ataca con un líquido corrosivo que reduce mucho la
+Defensa Especial del objetivo."
+type_id = 4
+type = ExtResource("2_80kv2")
+power = 40
+accuracy = 100
+pp = 20
+effect_chance = 100
+damage_class_id = 3
+effect_entries = "Lowers the target's Special Defense by two stages. Inflicts regular damage.  Lowers the target's Special Defense by two stages."
+stat_changes = Dictionary[int, int]({
+3: -2
+})
+target_id = 10
+meta_category_id = 6
+meta_stat_chance = 100
+category = ExtResource("1_iw473")

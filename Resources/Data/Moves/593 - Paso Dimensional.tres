@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://3bt3omtakthj"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_hjfmk"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vca6k"]
+[ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_r2bqq"]
+
+[resource]
+resource_name = "593 - Paso Dimensional"
+script = ExtResource("1_vca6k")
+internal_name = "hyperspace-hole"
+Name = "Paso Dimensional"
+id = 593
+description = "El usuario aparece junto al rival usando un agujero
+dimensional y le asesta un golpe que movimientos
+como Protección o Detección no pueden evitar."
+type_id = 14
+type = ExtResource("2_r2bqq")
+power = 80
+pp = 5
+damage_class_id = 3
+effect_entries = "Ignores and destroys protection effects. Inflicts regular damage.  Bypasses and removes any protection effect on the target."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_hjfmk")

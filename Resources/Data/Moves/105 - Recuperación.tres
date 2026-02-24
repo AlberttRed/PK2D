@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ccqj5sv6m68p2"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/HealMoveCategory.tres" id="1_72yu4"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ggyr3"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_gar0v"]
+
+[resource]
+resource_name = "105 - Recuperación"
+script = ExtResource("1_ggyr3")
+internal_name = "recover"
+Name = "Recuperación"
+id = 105
+description = "Restaura hasta la mitad de los PS máximos."
+type_id = 1
+type = ExtResource("2_gar0v")
+pp = 10
+damage_class_id = 1
+effect_entries = "Heals the user by half its max HP. Heals the user for half its max HP."
+target_id = 7
+meta_category_id = 3
+meta_healing = 50
+category = ExtResource("1_72yu4")

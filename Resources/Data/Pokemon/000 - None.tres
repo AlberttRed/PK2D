@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://dsdm5mwfr5116"]
+
+[ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2iadx"]
+[ext_resource type="Texture2D" uid="uid://cmg7dsja8cn5q" path="res://pkmn_icon.png" id="2_0iecp"]
+[ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="2_k1v7i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2iadx"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(1544, 6424, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k1v7i"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(356, 6428, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xd5cx"]
+atlas = ExtResource("1_2iadx")
+region = Rect2(516, 6412, 80, 80)
+margin = Rect2(40, 40, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gme8x"]
+atlas = ExtResource("2_0iecp")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+script = ExtResource("2_k1v7i")
+Name = "None"
+battle_front_sprite = SubResource("AtlasTexture_gme8x")
+battle_back_sprite = SubResource("AtlasTexture_k1v7i")
+battle_front_shiny_sprite = SubResource("AtlasTexture_xd5cx")
+battle_back_shiny_sprite = SubResource("AtlasTexture_2iadx")

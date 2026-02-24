@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bpmtun3oog2s"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_5643d"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_p3bae"]
+[ext_resource type="Resource" uid="uid://21x5a20qtl45" path="res://Resources/Data/Types/18.tres" id="2_3xtgu"]
+
+[resource]
+resource_name = "574 - Voz Cautivadora"
+script = ExtResource("1_p3bae")
+internal_name = "disarming-voice"
+Name = "Voz Cautivadora"
+id = 574
+description = "Obnubila a los oponentes con su fascinante voz y les
+provoca daños emocionales. Siempre acierta al objetivo."
+type_id = 18
+type = ExtResource("2_3xtgu")
+power = 40
+pp = 15
+damage_class_id = 3
+effect_entries = "Never misses. Inflicts regular damage.  Ignores accuracy and evasion."
+target_id = 11
+meta_category_id = 0
+category = ExtResource("1_5643d")

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://rqqhmtpg1cg5"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_07qni"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_75bgg"]
+[ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_iq15w"]
+
+[resource]
+resource_name = "268 - Carga"
+script = ExtResource("1_07qni")
+internal_name = "charge"
+Name = "Carga"
+id = 268
+description = "Recarga energía para potenciar el siguiente movimiento
+de tipo Eléctrico. También sube la Defensa Especial."
+type_id = 13
+type = ExtResource("2_iq15w")
+pp = 20
+damage_class_id = 1
+effect_entries = "Raises the user's Special Defense by one stage.  User's Electric moves have doubled power next turn. Raises the user's Special Defense by one stage.  If the user uses an electric move next turn, its power will be doubled."
+stat_changes = Dictionary[int, int]({
+3: 1
+})
+target_id = 7
+meta_category_id = 2
+category = ExtResource("1_75bgg")

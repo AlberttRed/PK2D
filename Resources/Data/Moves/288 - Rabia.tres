@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://2gp1usxqarsp"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2gvun"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_eu66p"]
+[ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_ox61k"]
+
+[resource]
+resource_name = "288 - Rabia"
+script = ExtResource("1_2gvun")
+internal_name = "grudge"
+Name = "Rabia"
+id = 288
+description = "Si el usuario se debilita al recibir un ataque, todos los
+PP de este último ataque serán eliminados."
+type_id = 8
+type = ExtResource("2_ox61k")
+pp = 5
+damage_class_id = 1
+effect_entries = "If the user faints this turn, the PP of the move that fainted it drops to 0. If the user faints before it next acts, the move that fainted it will have its PP dropped to 0.  End-of-turn damage does not trigger this effect."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_eu66p")

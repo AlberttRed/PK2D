@@ -11,8 +11,10 @@ class_name PokemonData
 #@export_enum("None, Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Steel, Fire, Water, Grass, Electric, Psychic, Ice, Dragon, Dark, Fairy") var type_a
 #@export_enum("None, Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Steel, Fire, Water, Grass, Electric, Psychic, Ice, Dragon, Dark, Fairy") var type_b
 
-@export var type_a : Resource = null
-@export var type_b : Resource = null
+@export var type_a_id : int = 0 # ID del tipo A (optimización: usar ID en lugar de Resource para evitar cargar subrecursos)
+@export var type_a : Resource = null # DEPRECATED: Se mantiene para compatibilidad. Usar type_a_id en su lugar.
+@export var type_b_id : int = 0 # ID del tipo B (optimización: usar ID en lugar de Resource para evitar cargar subrecursos)
+@export var type_b : Resource = null # DEPRECATED: Se mantiene para compatibilidad. Usar type_b_id en su lugar.
 
 @export var base_exprience:int = 0 #experiencia que guanyes al derrotar aquest pkmn
 @export var height:float = 0

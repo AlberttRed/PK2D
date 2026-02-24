@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://yhepyx0k8bnr"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_ap35i"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_x5xqy"]
+[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="2_tq2id"]
+
+[resource]
+resource_name = "178 - Esporagodón"
+script = ExtResource("1_ap35i")
+internal_name = "cotton-spore"
+Name = "Esporagodón"
+id = 178
+description = "Adhiere esporas a los rivales para reducir mucho su 
+Velocidad."
+type_id = 12
+type = ExtResource("2_tq2id")
+accuracy = 100
+pp = 40
+damage_class_id = 1
+effect_entries = "Lowers the target's Speed by two stages. Lowers the target's Speed by two stages."
+stat_changes = Dictionary[int, int]({
+4: -2
+})
+target_id = 11
+meta_category_id = 2
+category = ExtResource("1_x5xqy")

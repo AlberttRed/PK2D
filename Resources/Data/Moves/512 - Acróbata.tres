@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cjhepy53cyddr"]
+
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_m5y3d"]
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_r2wab"]
+[ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_0qm2x"]
+
+[resource]
+resource_name = "512 - Acróbata"
+script = ExtResource("1_r2wab")
+internal_name = "acrobatics"
+Name = "Acróbata"
+id = 512
+description = "Golpea ágilmente. Si el usuario no porta ningún objeto,
+el objetivo resulta seriamente dañado."
+type_id = 3
+type = ExtResource("2_0qm2x")
+power = 55
+accuracy = 100
+pp = 15
+damage_class_id = 2
+effect_entries = "Has double power if the user has no held item. Inflicts regular damage.  If the user has no held item, this move has double power."
+target_id = 10
+meta_category_id = 0
+category = ExtResource("1_m5y3d")

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bdncf0khvjkm0"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1kgh5"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_jwvjj"]
+[ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3cgqh"]
+
+[resource]
+resource_name = "590 - Confidencia"
+script = ExtResource("1_1kgh5")
+internal_name = "confide"
+Name = "Confidencia"
+id = 590
+description = "Hace que el objetivo pierda la concentración 
+contándole un secreto. Disminuye el Ataque
+Especial del oponente."
+type_id = 1
+type = ExtResource("2_3cgqh")
+pp = 20
+effect_chance = 100
+damage_class_id = 1
+effect_entries = "Lowers the target's Special Attack by one stage. Lowers the target's Special Attack by one stage."
+stat_changes = Dictionary[int, int]({
+2: -1
+})
+target_id = 10
+meta_category_id = 2
+meta_stat_chance = 100
+category = ExtResource("1_jwvjj")

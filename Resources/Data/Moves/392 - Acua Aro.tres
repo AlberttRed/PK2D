@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://ch3k6lh1860mu"]
+
+[ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_k4wjm"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_py86r"]
+[ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_mptv7"]
+
+[resource]
+resource_name = "392 - Acua Aro"
+script = ExtResource("1_k4wjm")
+internal_name = "aqua-ring"
+Name = "Acua Aro"
+id = 392
+description = "Un manto de agua cubre al Pokémon que lo usa. 
+Recupera algunos PS en cada turno."
+type_id = 11
+type = ExtResource("2_mptv7")
+pp = 20
+damage_class_id = 1
+effect_entries = "Restores 1/16 of the user's max HP each turn. Restores 1/16 of the user's max HP at the end of each turn.  If the user leaves the field, this effect ends.
+
+This effect is passed on by baton pass."
+target_id = 7
+meta_category_id = 13
+category = ExtResource("1_py86r")
