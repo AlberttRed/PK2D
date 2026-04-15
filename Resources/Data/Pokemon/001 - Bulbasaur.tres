@@ -3,9 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_uefem"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_fexyp"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="2_kh32u"]
-[ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="3_fexyp"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_fh1oi"]
-[ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="4_fh1oi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fexyp"]
 atlas = ExtResource("1_uefem")
@@ -44,9 +42,7 @@ id = 1
 internal_name = "bulbasaur"
 Name = "Bulbasaur"
 type_a_id = 12
-type_a = ExtResource("3_fexyp")
 type_b_id = 4
-type_b = ExtResource("4_fh1oi")
 base_exprience = 64
 height = 7.0
 weight = 69.0
@@ -60,6 +56,7 @@ defense_base = 49
 special_attack_base = 65
 special_defense_base = 65
 speed_base = 45
+total_base = 318
 special_effort_attack_EVs = 1
 gender_rate = 1
 capture_rate = 45

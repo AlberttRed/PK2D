@@ -71,25 +71,46 @@ func _load_from_trainer_data() -> void:
 	init_battle_message = trainer_data.intro_text  # Usar intro para ambos
 	end_battle_message = trainer_data.defeat_text
 
-	# Cargar equipo desde TrainerData
-	party = trainer_data.create_party()
+	# Cargar equipo según el tipo de battler
+	if is_player:
+		# Player: si tiene TrainerData con PokemonDefinition, crear Pokemon persistentes
+		# Solo cargar si el party está vacío (para no duplicar Pokemon ya configurados)
+		if trainer_data and party.is_empty():
+			var definitions = trainer_data.get_party_data()
+			if not definitions.is_empty():
+				print("Battler._load_from_trainer_data(): Player tiene %d PokemonDefinition(s), creando Pokemon persistentes" % definitions.size())
+				for definition in definitions:
+					if definition:
+						var pokemon = definition.create_pokemon()
+						if pokemon:
+							party.append(pokemon)
+							print("Battler._load_from_trainer_data(): Creado Pokemon %s (Lv.%d) para player" % [pokemon.get_display_name(), pokemon.level])
+			else:
+				push_warning("Battler._load_from_trainer_data(): Player TrainerData no tiene PokemonDefinition en party_data")
+		elif party.is_empty() and not trainer_data:
+			push_warning("Battler._load_from_trainer_data(): Player no tiene TrainerData ni Pokemon en party. El party debe configurarse manualmente.")
+	# Para trainers: party se creará en to_battle_participant() desde PokemonDefinition (temporal)
 
 
 ## Inicializa el equipo cargado desde TrainerData
 ## Si el equipo está vacío, muestra una advertencia
+## NOTA: Para trainers, el party se crea runtime en to_battle_participant()
 func _initialize_party() -> void:
-	var trainer_display_name = trainer_data.display_name if trainer_data else trainer_name
+	# Solo inicializar si es player (party persistente)
+	# Para trainers, el party se crea temporalmente en to_battle_participant()
+	if is_player:
+		var trainer_display_name = trainer_data.display_name if trainer_data else trainer_name
 
-	if party.is_empty():
-		push_warning("Battler '%s': No tiene Pokémon en el equipo. Asegúrate de configurar party_data en el TrainerData." % trainer_display_name)
-		return
+		if party.is_empty():
+			push_warning("Battler '%s': No tiene Pokémon en el equipo." % trainer_display_name)
+			return
 
-	# Inicializar cada Pokemon del array (cargados desde TrainerData)
-	for pokemon in party:
-		if pokemon:
-			# Solo llamar _post_init si el Pokemon no está inicializado
-			if pokemon.base == null:
-				pokemon._post_init()
+		# Inicializar cada Pokemon del array (solo para player)
+		for pokemon in party:
+			if pokemon:
+				# Solo llamar _post_init si el Pokemon no está inicializado
+				if pokemon.base == null:
+					pokemon._post_init()
 
 
 ## Agrega un Pokémon al equipo (runtime)
@@ -137,21 +158,36 @@ func has_pokemon(pokemon) -> bool:  # pokemon: Pokemon
 
 ## Obtiene el número de Pokémon en el equipo
 func get_party_size() -> int:
-	return party.size()
+	if is_player:
+		return party.size()
+	else:
+		# Para trainers, obtener desde PokemonDefinition
+		if trainer_data:
+			return trainer_data.get_party_data().size()
+		return party.size()  # Fallback legacy
 
 
 ## Obtiene el número de Pokémon no debilitados
+## NOTA: Para trainers, esto solo funciona durante el combate (cuando party está poblado temporalmente)
 func get_alive_pokemon_count() -> int:
 	var count := 0
 	for pokemon in party:
-		if pokemon.hp_actual > 0:
+		if pokemon and pokemon.hp_actual > 0:
 			count += 1
 	return count
 
 
 ## Verifica si el entrenador puede pelear
 func can_battle() -> bool:
-	return get_alive_pokemon_count() > 0
+	if is_player:
+		# Player: verificar party persistente
+		return get_alive_pokemon_count() > 0
+	else:
+		# Trainer: verificar que tenga PokemonDefinition válidos
+		if trainer_data:
+			return trainer_data.has_valid_party()
+		# Fallback legacy
+		return get_alive_pokemon_count() > 0
 
 
 ## Obtiene el nombre completo del entrenador (clase + nombre si trainer_data existe)
@@ -206,12 +242,70 @@ func to_battle_participant() -> BattleParticipant:
 	participant.defeat_message = end_battle_message
 	participant.victory_message = ""  # Por si se añade en el futuro
 
-	# Convertir el equipo a BattlePokemon
-	for pokemon in party:
-		var battle_pokemon = pokemon.to_battle_pokemon()  # BattlePokemon
-		battle_pokemon.controllable = is_player
-		battle_pokemon.participant = participant
+	# Obtener el equipo según el tipo de battler
+	var battle_pokemon_team: Array[BattlePokemon] = []
+
+	if is_player:
+		# Player: usar Pokemon persistentes del party
+		print("Battler.to_battle_participant(): Player tiene %d Pokemon en party" % party.size())
+
+		if party.is_empty():
+			push_error("Battler.to_battle_participant(): Player party está vacío. Asegúrate de que el Battler del player tenga Pokemon en su party.")
+		else:
+			for pokemon in party:
+				if pokemon:
+					var battle_pokemon = pokemon.to_battle_pokemon()
+					battle_pokemon.controllable = true
+					battle_pokemon.participant = participant
+					battle_pokemon_team.append(battle_pokemon)
+					print("Battler.to_battle_participant(): Añadido BattlePokemon %s (Lv.%d) del player" % [pokemon.get_display_name(), pokemon.level])
+	else:
+		# Trainer: crear Pokemon runtime desde PokemonDefinition
+		if trainer_data:
+			var definitions = trainer_data.get_party_data()
+			print("Battler.to_battle_participant(): Trainer '%s' tiene %d PokemonDefinition(s)" % [trainer_name, definitions.size()])
+
+			if definitions.is_empty():
+				push_error("Battler.to_battle_participant(): Trainer '%s' no tiene PokemonDefinition en party_data" % trainer_name)
+			else:
+				for i in range(definitions.size()):
+					var definition = definitions[i]
+					if definition == null:
+						push_warning("Battler.to_battle_participant(): PokemonDefinition[%d] null en trainer '%s', saltando" % [i, trainer_name])
+						continue
+
+					# Crear Pokemon runtime desde la definición
+					var pokemon = definition.create_pokemon()
+					if pokemon == null:
+						push_error("Battler.to_battle_participant(): No se pudo crear Pokemon desde PokemonDefinition[%d] (pokemon_id: %d) para trainer '%s'" % [i, definition.pokemon_id, trainer_name])
+						continue
+
+					# Convertir a BattlePokemon
+					var battle_pokemon = pokemon.to_battle_pokemon(battle_ia)
+					if battle_pokemon == null:
+						push_error("Battler.to_battle_participant(): No se pudo convertir Pokemon a BattlePokemon para trainer '%s'" % trainer_name)
+						continue
+
+					battle_pokemon.controllable = false
+					battle_pokemon.is_wild = false
+					battle_pokemon.participant = participant
+					battle_pokemon_team.append(battle_pokemon)
+					print("Battler.to_battle_participant(): Añadido BattlePokemon %s (Lv.%d) al participante" % [pokemon.get_display_name(), pokemon.level])
+		else:
+			# Fallback: usar party existente (compatibilidad legacy)
+			for pokemon in party:
+				if pokemon:
+					var battle_pokemon = pokemon.to_battle_pokemon(battle_ia)
+					battle_pokemon.controllable = false
+					battle_pokemon.participant = participant
+					battle_pokemon_team.append(battle_pokemon)
+
+	# Añadir todos los BattlePokemon al participante
+	print("Battler.to_battle_participant(): Añadiendo %d BattlePokemon(s) al participante '%s'" % [battle_pokemon_team.size(), participant.name])
+	for battle_pokemon in battle_pokemon_team:
 		participant.add_pokemon(battle_pokemon)
+
+	print("Battler.to_battle_participant(): Participante '%s' tiene %d Pokemon en pokemon_team" % [participant.name, participant.pokemon_team.size()])
 
 	return participant
 
@@ -235,16 +329,47 @@ func print_party_info() -> void:
 	print("=== Battler: %s ===" % trainer_name)
 	print("  Tipo: %s" % CONST.BATTLER_TYPES.keys()[battler_type])
 	print("  Es jugador: %s" % is_player)
-	print("  Equipo (%d):" % party.size())
-	for i in party.size():
-		var pokemon = party[i]
-		print("    %d. %s (Lv.%d) - HP: %d/%d" % [
-			i + 1,
-			pokemon.get_display_name(),
-			pokemon.level,
-			pokemon.hp_actual,
-			pokemon.get_final_stat(StatsEnum.Values.HP)
-		])
+
+	if is_player:
+		# Player: mostrar party persistente
+		print("  Equipo (%d):" % party.size())
+		for i in party.size():
+			var pokemon = party[i]
+			if pokemon:
+				print("    %d. %s (Lv.%d) - HP: %d/%d" % [
+					i + 1,
+					pokemon.get_display_name(),
+					pokemon.level,
+					pokemon.hp_actual,
+					pokemon.get_final_stat(StatsEnum.Values.HP)
+				])
+	else:
+		# Trainer: mostrar PokemonDefinition
+		if trainer_data:
+			var definitions = trainer_data.get_party_data()
+			print("  Equipo (PokemonDefinition) (%d):" % definitions.size())
+			for i in definitions.size():
+				var definition = definitions[i]
+				if definition:
+					print("    %d. PokemonDefinition: %s (Lv.%d) - pokemon_id: %d" % [
+						i + 1,
+						PokemonsEnum.get_display_name(definition.pokemon_id),
+						definition.level,
+						definition.pokemon_id
+					])
+		else:
+			# Fallback legacy
+			print("  Equipo (%d):" % party.size())
+			for i in party.size():
+				var pokemon = party[i]
+				if pokemon:
+					print("    %d. %s (Lv.%d) - HP: %d/%d" % [
+						i + 1,
+						pokemon.get_display_name(),
+						pokemon.level,
+						pokemon.hp_actual,
+						pokemon.get_final_stat(StatsEnum.Values.HP)
+					])
 
 
 ## === MÉTODOS LEGACY (compatibilidad) ===

@@ -13,7 +13,7 @@ var resource_path: String = ""
 ## Nombre para mostrar del recurso (display_name o Name)
 var display_name: String = ""
 
-## Tipo de recurso seleccionado (POKEMON, MOVE, ITEM)
+## Tipo de recurso seleccionado (POKEMON, MOVE, ITEM, TRAINER, TYPE, AILMENT, ABILITY, WEATHER)
 var resource_type: String = ""
 
 ## Recurso completo (opcional, para acceso directo)

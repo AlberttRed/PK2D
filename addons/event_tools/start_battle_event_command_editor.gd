@@ -22,20 +22,28 @@ var original_wild_pokemon: Array[Pokemon] = []
 var battle_type_option: OptionButton = null
 var trainer_data_label: Label = null
 var trainer_data_button: Button = null
+var trainer_new_embedded_button: Button = null
+var trainer_edit_button: Button = null
 var wild_pokemon_list: ItemList = null
 var battle_mode_option: OptionButton = null
 var transition_type_option: OptionButton = null
 var defeated_flag_line_edit: LineEdit = null
+var definition_editor_script: GDScript = null
+var trainer_editor_scene: PackedScene = null
+var current_trainer_editor: Window = null
 
 func _ready() -> void:
 	title = "Editar StartBattleEventCommand"
-	size = Vector2(600, 530)
+	size = Vector2(820, 560)
+	min_size = Vector2i(820, 560)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
 	close_requested.connect(_on_close_requested)
 
 	_setup_ui()
+	definition_editor_script = load("res://addons/event_tools/pokemon_definition_editor_window.gd") as GDScript
+	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
 
 func _setup_ui() -> void:
 	var vbox = VBoxContainer.new()
@@ -90,6 +98,16 @@ func _setup_ui() -> void:
 	trainer_data_button.pressed.connect(_on_select_trainer_data)
 	trainer_data_row.add_child(trainer_data_button)
 
+	trainer_new_embedded_button = Button.new()
+	trainer_new_embedded_button.text = "Nuevo embebido"
+	trainer_new_embedded_button.pressed.connect(_on_new_embedded_trainer)
+	trainer_data_row.add_child(trainer_new_embedded_button)
+
+	trainer_edit_button = Button.new()
+	trainer_edit_button.text = "Editar"
+	trainer_edit_button.pressed.connect(_on_edit_embedded_trainer)
+	trainer_data_row.add_child(trainer_edit_button)
+
 	var clear_trainer_button = Button.new()
 	clear_trainer_button.text = "Limpiar"
 	clear_trainer_button.pressed.connect(_on_clear_trainer_data)
@@ -138,7 +156,7 @@ func _setup_ui() -> void:
 
 	var edit_pokemon_button = Button.new()
 	edit_pokemon_button.text = "Editar"
-	edit_pokemon_button.pressed.connect(func(): print("Editar pokémon (placeholder)"))
+	edit_pokemon_button.pressed.connect(_on_edit_pokemon_pressed)
 	wild_pokemon_buttons.add_child(edit_pokemon_button)
 
 	var remove_pokemon_button = Button.new()
@@ -314,14 +332,96 @@ func _update_trainer_data_display() -> void:
 		return
 
 	if command.trainer_data:
-		var resource_path = ""
-		if command.trainer_data.resource_path:
-			resource_path = command.trainer_data.resource_path
+		if _is_trainer_external(command.trainer_data):
+			trainer_data_label.text = command.trainer_data.resource_path.get_file()
 		else:
-			resource_path = command.trainer_data.resource_name if command.trainer_data.has("resource_name") else "TrainerData"
-		trainer_data_label.text = resource_path.get_file()
+			var embedded_name := str(command.trainer_data.get("display_name")).strip_edges()
+			if embedded_name.is_empty():
+				embedded_name = "Trainer embebido"
+			var embedded_id := int(command.trainer_data.get("trainer_id"))
+			trainer_data_label.text = "%s (embebido, ID %d)" % [embedded_name, embedded_id]
 	else:
 		trainer_data_label.text = "(Ninguno)"
+	_update_trainer_buttons_state()
+
+func _is_trainer_external(trainer: TrainerData) -> bool:
+	return trainer != null and not trainer.resource_path.is_empty()
+
+func _update_trainer_buttons_state() -> void:
+	if trainer_edit_button == null:
+		return
+	var has_trainer := command != null and command.trainer_data != null
+	var is_external := _is_trainer_external(command.trainer_data) if has_trainer else false
+	trainer_edit_button.disabled = not has_trainer or is_external
+	if is_external:
+		trainer_edit_button.tooltip_text = "No editable: es un trainer de archivo (.tres)."
+	elif has_trainer:
+		trainer_edit_button.tooltip_text = "Editar trainer embebido en este comando."
+	else:
+		trainer_edit_button.tooltip_text = "No hay trainer para editar."
+
+func _on_new_embedded_trainer() -> void:
+	if not command:
+		return
+	var trainer := TrainerData.new()
+	trainer.trainer_id = 1
+	trainer.trainer_class_id = TrainerClassEnum.Values.POKEMON_TRAINER
+	trainer.display_name = "Entrenador embebido"
+	trainer.reward_money = 1000
+	command.trainer_data = trainer
+	_update_trainer_data_display()
+	_on_edit_embedded_trainer()
+
+func _on_edit_embedded_trainer() -> void:
+	if not command or command.trainer_data == null:
+		return
+	if _is_trainer_external(command.trainer_data):
+		_show_error_dialog("Este trainer viene de archivo y no se puede editar desde aquí.")
+		return
+	_open_embedded_trainer_editor(command.trainer_data)
+
+func _open_embedded_trainer_editor(trainer_data: TrainerData) -> void:
+	if trainer_editor_scene == null:
+		_show_error_dialog("No se pudo cargar trainer_editor_window.tscn")
+		return
+	if current_trainer_editor and is_instance_valid(current_trainer_editor):
+		current_trainer_editor.queue_free()
+	var editor := trainer_editor_scene.instantiate()
+	if editor == null:
+		_show_error_dialog("No se pudo instanciar TrainerEditorWindow")
+		return
+	add_child(editor)
+	current_trainer_editor = editor
+	if editor.has_method("open_edit_embedded"):
+		editor.open_edit_embedded(trainer_data, func():
+			_update_trainer_data_display()
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(updated_trainer: Resource, _was_new: bool):
+			if updated_trainer is TrainerData:
+				command.trainer_data = updated_trainer
+			_update_trainer_data_display()
+			current_trainer_editor = null
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_trainer_editor = null
+		)
+
+func _show_error_dialog(message: String) -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Error"
+	dialog.dialog_text = message
+	add_child(dialog)
+	dialog.popup_centered()
+	dialog.confirmed.connect(func(): dialog.queue_free())
+
+func _clone_trainer_for_restore(trainer: TrainerData) -> TrainerData:
+	if trainer == null:
+		return null
+	if _is_trainer_external(trainer):
+		return trainer
+	return trainer.duplicate(true) as TrainerData
 
 ## Actualiza la visualización de Wild Pokemon
 ## Obtiene el nombre de un Pokémon desde su recurso
@@ -471,25 +571,26 @@ func _on_pokemon_selected(result: ResourcePickerResult) -> void:
 		push_error("StartBattleEventCommandEditor: No se pudo cargar PokemonData (ID: %d, Path: %s)" % [result.resource_id, result.resource_path])
 		return
 
-	# Crear un Pokemon runtime desde el PokemonData
-	# Por defecto, nivel 5 (puede editarse después desde el inspector)
-	var pokemon = Pokemon.new(pokemon_data, 5, null, null, null, false)
-	if not pokemon:
-		push_error("StartBattleEventCommandEditor: No se pudo crear Pokemon desde PokemonData")
-		return
+	var definition := PokemonDefinition.new()
+	definition.pokemon_id = pokemon_data.id as PokemonsEnum.Values
+	definition.level = 5
+	_open_definition_editor(definition, "Nuevo PokemonDefinition", func(updated_definition: PokemonDefinition):
+		var pokemon := updated_definition.create_pokemon()
+		if pokemon == null:
+			push_error("StartBattleEventCommandEditor: No se pudo crear Pokemon desde PokemonDefinition")
+			return
 
-	# Crear un nuevo array para evitar el error de "read-only"
-	var new_wild_pokemon: Array[Pokemon] = []
-	for existing_pokemon in command.wild_pokemon:
-		if existing_pokemon:
-			new_wild_pokemon.append(existing_pokemon)
-	new_wild_pokemon.append(pokemon)
-	command.wild_pokemon = new_wild_pokemon
+		# Crear un nuevo array para evitar el error de "read-only"
+		var new_wild_pokemon: Array[Pokemon] = []
+		for existing_pokemon in command.wild_pokemon:
+			if existing_pokemon:
+				new_wild_pokemon.append(existing_pokemon)
+		new_wild_pokemon.append(pokemon)
+		command.wild_pokemon = new_wild_pokemon
 
-	# Actualizar la visualización
-	_update_wild_pokemon_display()
-
-	print("StartBattleEventCommandEditor: Pokémon añadido: %s (ID: %d)" % [result.display_name, result.resource_id])
+		_update_wild_pokemon_display()
+		print("StartBattleEventCommandEditor: Pokémon añadido: %s (ID: %d)" % [result.display_name, result.resource_id])
+	)
 
 ## Callback cuando se cancela el picker
 func _on_pokemon_picker_cancelled() -> void:
@@ -521,6 +622,75 @@ func _on_remove_pokemon_pressed() -> void:
 
 	print("StartBattleEventCommandEditor: Pokémon eliminado del array")
 
+func _on_edit_pokemon_pressed() -> void:
+	if not command or not wild_pokemon_list:
+		return
+
+	var selected_indices = wild_pokemon_list.get_selected_items()
+	if selected_indices.is_empty():
+		return
+	var index: int = selected_indices[0]
+	if index < 0 or index >= command.wild_pokemon.size():
+		return
+
+	var pokemon := command.wild_pokemon[index]
+	if pokemon == null:
+		return
+
+	var definition := _runtime_to_definition(pokemon)
+	_open_definition_editor(definition, "Editar PokemonDefinition", func(updated_definition: PokemonDefinition):
+		var updated_pokemon := updated_definition.create_pokemon()
+		if updated_pokemon == null:
+			push_error("StartBattleEventCommandEditor: No se pudo crear Pokemon al editar")
+			return
+		command.wild_pokemon[index] = updated_pokemon
+		_update_wild_pokemon_display()
+		wild_pokemon_list.select(index)
+	)
+
+func _runtime_to_definition(pokemon: Pokemon) -> PokemonDefinition:
+	var definition := PokemonDefinition.new()
+	definition.pokemon_id = pokemon.pokemon_id
+	definition.level = pokemon.level
+	definition.nickname = pokemon.nickname
+	definition.gender = pokemon.gender
+	definition.shiny = pokemon.shiny
+	definition.is_wild = pokemon.is_wild
+	definition.randomize_ivs = false
+	definition.hp_IVs = pokemon.hp_IVs
+	definition.attack_IVs = pokemon.attack_IVs
+	definition.defense_IVs = pokemon.defense_IVs
+	definition.spAttack_IVs = pokemon.spAttack_IVs
+	definition.spDefense_IVs = pokemon.spDefense_IVs
+	definition.speed_IVs = pokemon.speed_IVs
+	definition.randomize_evs = false
+	definition.hp_EVs = pokemon.hp_EVs
+	definition.attack_EVs = pokemon.attack_EVs
+	definition.defense_EVs = pokemon.defense_EVs
+	definition.spAttack_EVs = pokemon.spAttack_EVs
+	definition.spDefense_EVs = pokemon.spDefense_EVs
+	definition.speed_EVs = pokemon.speed_EVs
+	definition.nature_id = pokemon.nature_id
+	definition.ability_id = pokemon.ability_id
+	definition.custom_move_ids = pokemon.custom_move_ids.duplicate()
+	definition.held_item_id = pokemon.held_item_id
+	return definition
+
+func _open_definition_editor(definition: PokemonDefinition, title_text: String, on_save: Callable) -> void:
+	if definition_editor_script == null:
+		push_error("StartBattleEventCommandEditor: No se pudo cargar PokemonDefinitionEditorWindow")
+		return
+	var editor = definition_editor_script.new()
+	if editor == null:
+		push_error("StartBattleEventCommandEditor: No se pudo instanciar PokemonDefinitionEditorWindow")
+		return
+	add_child(editor)
+	editor.saved.connect(func(updated_definition: PokemonDefinition):
+		if on_save.is_valid():
+			on_save.call(updated_definition)
+	)
+	editor.open_for_definition(definition, title_text)
+
 ## Genera un flag por defecto basado en el formato estándar
 func _generate_default_flag() -> String:
 	# Si hay un TrainerData, usar su nombre como base
@@ -550,7 +720,7 @@ func load_command(cmd: StartBattleEventCommand) -> void:
 	original_battle_mode = cmd.battle_mode
 	original_transition_type = cmd.transition_type
 	original_defeated_flag = cmd.defeated_flag
-	original_trainer_data = cmd.trainer_data
+	original_trainer_data = _clone_trainer_for_restore(cmd.trainer_data)
 	# Hacer una copia profunda del array de wild_pokemon
 	original_wild_pokemon.clear()
 	for pokemon in cmd.wild_pokemon:
@@ -608,15 +778,18 @@ func _restore_original_values() -> void:
 	command.defeated_flag = original_defeated_flag
 	command.trainer_data = original_trainer_data
 
-	# Restaurar el array de wild_pokemon desde la copia
-	command.wild_pokemon.clear()
+	# Restaurar el array de wild_pokemon desde la copia.
+	# Evitamos clear() porque en algunos contextos el array exportado
+	# puede venir en estado read-only dentro del editor.
+	var restored_wild_pokemon: Array[Pokemon] = []
 	for pokemon in original_wild_pokemon:
 		if pokemon:
 			# Duplicar cada pokémon para restaurar una copia independiente
 			var pokemon_copy = pokemon.duplicate(true) as Pokemon
-			command.wild_pokemon.append(pokemon_copy)
+			restored_wild_pokemon.append(pokemon_copy)
 		else:
-			command.wild_pokemon.append(null)
+			restored_wild_pokemon.append(null)
+	command.wild_pokemon = restored_wild_pokemon
 
 	# Actualizar visualización
 	_update_trainer_data_display()

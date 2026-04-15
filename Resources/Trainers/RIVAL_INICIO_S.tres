@@ -23,5 +23,5 @@ intro_text = ""
 defeat_text = "¿QUÉ?
 ¡Increíble!
 ¡Tu POKéMON es mejor que el mío!"
-party_data = Array[ExtResource("1_56uki")]([SubResource("Resource_56uki")])
+party_data = [SubResource("Resource_56uki")]
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

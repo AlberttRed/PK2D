@@ -28,6 +28,6 @@ intro_text = "¡Eh! ¡Tienes POKÉMON!
 ¡Sí! 
 ¡Al ataque!"
 defeat_text = "¡No! ¡Mi CATERPIE no pudo más!"
-party_data = Array[ExtResource("1_1gy8p")]([SubResource("Resource_1ee48")])
+party_data = [SubResource("Resource_1ee48")]
 reward_money = 72
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

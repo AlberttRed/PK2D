@@ -15,6 +15,27 @@ func get_intro_messages(
 	enemy_trainers: Array[String]) -> Array[Dictionary]:
 	var messages: Array[Dictionary] = []
 
+	# Validar que hay Pokemon disponibles
+	if player_pokemon.is_empty():
+		push_error("BattleMessageController.get_intro_messages(): player_pokemon está vacío. El player no tiene Pokemon disponibles para combatir.")
+		# Retornar mensaje de error en lugar de array vacío
+		messages.append({
+			"type": "input",
+			"text": "¡Error: El jugador no tiene Pokemon disponibles!",
+			"showIconAtEnd": true
+		})
+		return messages
+
+	if enemy_pokemon.is_empty():
+		push_error("BattleMessageController.get_intro_messages(): enemy_pokemon está vacío. El trainer no tiene Pokemon disponibles para combatir.")
+		# Retornar mensaje de error en lugar de array vacío
+		messages.append({
+			"type": "input",
+			"text": "¡Error: El entrenador no tiene Pokemon disponibles!",
+			"showIconAtEnd": true
+		})
+		return messages
+
 	match rules.mode:
 		BattleRules.BattleModes.SINGLE:
 			if rules.type == BattleRules.BattleTypes.WILD:
@@ -24,7 +45,7 @@ func get_intro_messages(
 					"showIconAtEnd": true
 				})
 			else:
-				var enemy = enemy_trainers[0]
+				var enemy = enemy_trainers[0] if not enemy_trainers.is_empty() else "Entrenador"
 				messages.append({
 					"type": "input",
 					"text": "¡" + enemy + " quiere luchar!",
@@ -94,9 +115,9 @@ func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 		return { "type": "wait", "text": "No es muy eficaz...", "wait_time": 1.0 }
 	elif result.is_ineffective():
 		return { "type": "wait", "text": "No afecta %s..." % result.target.get_battle_target_name(), "wait_time": 1.0 }
-	
+
 	return {}
-	
+
 func get_critical_hit_message() -> Dictionary:
 	return { "type": "wait", "text": "¡Golpe crítico!", "wait_time": 1.0 }
 
@@ -145,7 +166,7 @@ func get_ailment_previous_effect_message(user:BattlePokemon, ailment_id: Ailment
 	if user == null:
 		return {}
 	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id)
-	
+
 func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
 	if user == null or target == null:
 		return {}
@@ -270,9 +291,9 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Value
 		verb = "bajó mucho" if applied else "no puede bajar más"
 	elif amount == -1:
 		verb = "bajó" if applied else "no puede bajar más"
-	
+
 	msg =  "¡%s %s %s!" % [stat_name, pokemon.get_battle_possessive_name(), verb]
-	
+
 	return {
 		"type": "display",
 		"text": msg,
@@ -282,7 +303,7 @@ func get_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Value
 func get_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: bool) -> Dictionary:
 	var verb := "subir" if is_increase else "bajar"
 	var msg := "¡Las características %s no pueden %s más!" % [pokemon.get_battle_possessive_name(), verb]
-	
+
 	return {
 		"type": "display",
 		"text": msg,
@@ -297,7 +318,7 @@ func get_failed_move_message(user: BattlePokemon) -> Dictionary:
 		"text": "¡El ataque %s falló!" % [user.get_battle_possessive_name()],
 		"wait_time": 1.0
 	}
-	
+
 func get_multi_hit_message(num_hits: int) -> Dictionary:
 	return {
 		"type": "wait",
@@ -305,7 +326,7 @@ func get_multi_hit_message(num_hits: int) -> Dictionary:
 		"wait_time": 1.0
 	}
 
-func get_faint_message(pokemon: BattlePokemon) -> Dictionary: 
+func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
 	return {
 		"type": "input",
 		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true), #Validado HGSS
@@ -362,7 +383,7 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_parti
 				for participant in enemy_participants:
 					if participant is BattleParticipant:
 						enemy_trainer_names.append(participant.name)
-				
+
 				var trainer_text = ""
 				if enemy_trainer_names.size() == 1:
 					trainer_text = enemy_trainer_names[0]
@@ -370,7 +391,7 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_parti
 					trainer_text = enemy_trainer_names[0] + " y " + enemy_trainer_names[1]
 				else:
 					trainer_text = "el entrenador"
-				
+
 				return {
 					"type": "input",
 					"text": "¡Has vencido a %s!" % trainer_text,
