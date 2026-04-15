@@ -29,6 +29,7 @@ signal portrait_box_closed
 # === CONSTANTES ===
 const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
 const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
+const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 
 # === VARIABLES ===
 var fading: bool = false
@@ -38,12 +39,14 @@ var pressed_actions := {}
 var choices_options = null
 var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
+var _bag_controller = null
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
 @onready var choice_box: ChoiceBox = $ChoiceBox
 @onready var BattleNew: BattleScene = $BattleNew
 @onready var pause_menu = $PauseMenu
+@onready var _bag_ui = $BagUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -65,6 +68,8 @@ func _ready() -> void:
 	choice_box.process_mode = Node.PROCESS_MODE_ALWAYS
 	if pause_menu:
 		pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _bag_ui:
+		_bag_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -89,6 +94,13 @@ func _ready() -> void:
 		pause_menu.menu_closed.connect(_on_pause_menu_closed)
 		if pause_menu.has_signal("visibility_changed"):
 			pause_menu.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _bag_ui:
+		_bag_ui.back_requested.connect(_on_bag_back_requested)
+		_bag_ui.use_requested.connect(_on_bag_use_requested)
+		_bag_ui.closed.connect(_on_bag_closed)
+		if _bag_ui.has_signal("visibility_changed"):
+			_bag_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -302,13 +314,11 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 
 	# Flag para indicar que estamos en modo choices
 	var choices_mode_active = true
-	var message_finished = false
 
 	# Conectar a la señal finishedAllText para mostrar opciones automáticamente al finalizar
 	# sin esperar input adicional
 	var finished_callback = func():
 		if choices_mode_active and msg.messageHasFinished:
-			message_finished = true
 			# Finalizar sin cerrar y sin esperar input
 			msg._finish_without_closing()
 
@@ -365,7 +375,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible)
 
 ## Método privado para iniciar batalla
 ## from_event: true si el combate fue iniciado desde un evento (no desbloquear control al terminar)
@@ -681,7 +691,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -725,7 +735,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or battle_message_box_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or battle_message_box_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -736,7 +746,62 @@ func _on_pause_party_requested() -> void:
 	print("PauseMenu: Party solicitado (placeholder)")
 
 func _on_pause_bag_requested() -> void:
-	print("PauseMenu: Bag solicitado (placeholder)")
+	_open_bag_ui()
+
+func _open_bag_ui() -> void:
+	if _bag_ui != null and _bag_ui.visible:
+		return
+
+	if _bag_ui == null:
+		push_error("DisplayManager: Nodo BagUI no disponible en la escena.")
+		return
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+
+	_bag_ui.setup(_bag_controller)
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+func _close_bag_ui() -> void:
+	if _bag_ui == null:
+		return
+	_bag_ui.close()
+
+func _on_bag_back_requested() -> void:
+	_close_bag_ui()
+
+func _on_bag_closed() -> void:
+	_bag_controller = null
+	if pause_menu and not pause_menu.visible:
+		pause_menu.open(2) # Mantener cursor en "MOCHILA"
+	_on_ui_visibility_changed()
+
+func _on_bag_use_requested(item_id: int) -> void:
+	if _bag_controller == null:
+		return
+
+	var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
+	print(
+		"BagUI[Placeholder]: seleccionado '%s' (id=%d) cantidad=%d" % [
+			str(debug_info.get("display_name", "Item")),
+			item_id,
+			int(debug_info.get("quantity", 0))
+		]
+	)
+
+func _resolve_overworld_context() -> OverworldContext:
+	var nodes := get_tree().root.find_children("*", "OverworldCoordinator", true, false)
+	if nodes.is_empty():
+		return null
+
+	var coordinator := nodes[0]
+	if coordinator and coordinator.has_method("get_context"):
+		return coordinator.get_context()
+	return null
 
 func _on_pause_player_requested() -> void:
 	print("PauseMenu: Player solicitado (placeholder)")
@@ -760,6 +825,7 @@ func _update_game_pause_state() -> void:
 		msg.visible or
 		choice_box.visible or
 		(pause_menu != null && pause_menu.visible) or
+		(_bag_ui != null and _bag_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

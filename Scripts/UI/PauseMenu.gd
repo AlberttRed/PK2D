@@ -54,11 +54,14 @@ func _ready() -> void:
 	hide()
 
 ## Abre el menú de pausa
-func open() -> void:
+func open(initial_index: int = -1) -> void:
 	if visible:
 		return
 
-	selected_index = 0
+	if initial_index >= 0 and initial_index < menu_options.size():
+		selected_index = initial_index
+	else:
+		selected_index = 0
 
 	# Limpiar opciones previas
 	_clear_options()

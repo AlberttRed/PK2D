@@ -200,14 +200,14 @@ func _load_items() -> void:
 func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 	# Para Pokémon: buscar archivos que empiecen con 000-151
 	if dir_path == POKEMON_DIR:
-		var dir := DirAccess.open(dir_path)
-		if dir != null:
-			dir.list_dir_begin()
-			var file_name := dir.get_next()
+		var scan_dir := DirAccess.open(dir_path)
+		if scan_dir != null:
+			scan_dir.list_dir_begin()
+			var file_name := scan_dir.get_next()
 
 			while file_name != "":
-				if dir.current_is_dir() or not file_name.ends_with(".tres"):
-					file_name = dir.get_next()
+				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
+					file_name = scan_dir.get_next()
 					continue
 
 				# Extraer ID del nombre del archivo
@@ -224,22 +224,22 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 							if res != null:
 								on_loaded.call(res)
 
-				file_name = dir.get_next()
+				file_name = scan_dir.get_next()
 
-			dir.list_dir_end()
+			scan_dir.list_dir_end()
 		return
 
 	# Para Moves: escanear directorio y extraer ID del nombre del archivo
 	# Soporta tanto "001.tres" como "001 - Nombre.tres"
 	if dir_path == MOVES_DIR:
-		var dir := DirAccess.open(dir_path)
-		if dir != null:
-			dir.list_dir_begin()
-			var file_name := dir.get_next()
+		var scan_dir := DirAccess.open(dir_path)
+		if scan_dir != null:
+			scan_dir.list_dir_begin()
+			var file_name := scan_dir.get_next()
 
 			while file_name != "":
-				if dir.current_is_dir() or not file_name.ends_with(".tres"):
-					file_name = dir.get_next()
+				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
+					file_name = scan_dir.get_next()
 					continue
 
 				# Extraer ID del nombre del archivo
@@ -254,9 +254,9 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 						if res != null:
 							on_loaded.call(res)
 
-				file_name = dir.get_next()
+				file_name = scan_dir.get_next()
 
-			dir.list_dir_end()
+			scan_dir.list_dir_end()
 		return
 
 	# Para Types: intentar cargar del 01 al 18 (rango conocido)
@@ -289,14 +289,31 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 					on_loaded.call(res)
 		return
 
-	# Para Items: intentar cargar del 001 al 999 (rango típico de Gen 3)
+	# Para Items: escanear directorio y extraer ID del nombre del archivo
+	# Soporta tanto "017.tres" como "017 - Poción.tres"
 	if dir_path == ITEMS_DIR:
-		for i in range(1, 1000):
-			var path := "%s/%03d.tres" % [dir_path, i]
-			if ResourceLoader.exists(path):
-				var res := load(path)
-				if res != null:
-					on_loaded.call(res)
+		var scan_dir := DirAccess.open(dir_path)
+		if scan_dir != null:
+			scan_dir.list_dir_begin()
+			var file_name := scan_dir.get_next()
+
+			while file_name != "":
+				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
+					file_name = scan_dir.get_next()
+					continue
+
+				var file_base := file_name.get_basename()
+				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
+				if id_str.is_valid_int():
+					var path := dir_path + "/" + file_name
+					if ResourceLoader.exists(path):
+						var res := load(path)
+						if res != null:
+							on_loaded.call(res)
+
+				file_name = scan_dir.get_next()
+
+			scan_dir.list_dir_end()
 		return
 
 	# Para Trainer Classes: no hay un patrón numérico claro

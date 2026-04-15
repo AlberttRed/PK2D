@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dmtx4hx3sgp4g"]
+[gd_scene load_steps=13 format=3 uid="uid://dmtx4hx3sgp4g"]
 
 [ext_resource type="Script" uid="uid://dhjb44wauaqyq" path="res://Managers/DisplayManager.gd" id="1"]
 [ext_resource type="Script" uid="uid://6d5fhb0upic7" path="res://Scripts/UI/FadeLayer.gd" id="2"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b8k7m2oap4q5r" path="res://Scenes/UI/PauseMenu.tscn" id="7"]
 [ext_resource type="Script" uid="uid://brvi5cb0dlao1" path="res://Scripts/UI/OverlayLayer.gd" id="8"]
 [ext_resource type="Shader" uid="uid://i23gj0rrtxja" path="res://Shaders/overlay_flashlight.gdshader" id="9"]
+[ext_resource type="PackedScene" uid="uid://cjyn725u2m23r" path="res://Scenes/UI/BAG.tscn" id="10_bag"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -140,6 +141,9 @@ visible = false
 [node name="PauseMenu" parent="." instance=ExtResource("7")]
 visible = false
 anchors_preset = 1
+
+[node name="BagUI" parent="." instance=ExtResource("10_bag")]
+visible = false
 
 [node name="FadeLayer" type="ColorRect" parent="."]
 visible = false

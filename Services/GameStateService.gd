@@ -1,5 +1,7 @@
 extends Node
 
+const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
+
 ## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
 ## Accesible globalmente como autoload: GameStateService
@@ -30,6 +32,9 @@ var event_self_flags: Dictionary = {}
 # Valor: "V" si se ganó, "D" si se perdió
 var defeated_trainers: Dictionary = {}
 
+# Inventario global del jugador
+var bag = BAG_SCRIPT.new()
+
 # Cola de cambios diferidos que se aplicarán en el próximo warp
 # Cada cambio es un Dictionary con "type" y "params"
 var deferred_changes: Array[Dictionary] = []
@@ -43,9 +48,21 @@ func initialize_new_game() -> void:
 	current_map_id = "Pueblo_Paleta"
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
+	bag = BAG_SCRIPT.new()
+	_seed_test_bag_items()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
+
+## Carga items iniciales de prueba para validar BagUI rápidamente.
+## TODO: mover a configuración de inventario inicial de diseño/juego.
+func _seed_test_bag_items() -> void:
+	var player_bag = get_bag()
+	player_bag.add_item(17, 5)   # Poción (Medicine)
+	player_bag.add_item(3, 10)   # Super Ball (Balls)
+	player_bag.add_item(77, 2)   # Repelente Máximo (Items)
+	player_bag.add_item(132, 3)  # Baya Aranja (Berries)
+	print("GameStateService: Bag de prueba inicializado con %d entradas." % get_bag_save_data().size())
 
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
@@ -95,6 +112,12 @@ func get_self_switch(event_id: String, switch_letter: String) -> bool:
 ## Retorna: "V" si se ganó, "D" si se perdió, o "" si no hay registro
 func get_trainer_battle_result(trainer_id: String) -> String:
 	return defeated_trainers.get(trainer_id, "")
+
+## Retorna el inventario global del jugador
+func get_bag():
+	if bag == null:
+		bag = BAG_SCRIPT.new()
+	return bag
 
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
@@ -231,6 +254,14 @@ func update_position_after_transition(position: Vector2i) -> void:
 func reset_to_default() -> void:
 	initialize_new_game()
 
+## Serializa el bag para guardado futuro (item_id + quantity)
+func get_bag_save_data() -> Array[Dictionary]:
+	return get_bag().to_serializable_data()
+
+## Carga el bag desde una estructura serializada simple
+func load_bag_save_data(entries: Array[Dictionary]) -> void:
+	get_bag().load_serializable_data(entries)
+
 ## Retorna un resumen del estado actual
 func get_state_summary() -> String:
 	var summary = "=== ESTADO DEL JUEGO ===\n"
@@ -240,4 +271,5 @@ func get_state_summary() -> String:
 	summary += "Flags: %s\n" % global_flags
 	summary += "Variables: %s\n" % game_variables
 	summary += "Self-switches: %s\n" % event_self_flags
+	summary += "Bag entries: %d\n" % get_bag_save_data().size()
 	return summary
