@@ -1,0 +1,112 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/database_editor/weather_editor_window.gd" id="1_script"]
+
+[node name="WeatherEditorWindow" type="Window"]
+script = ExtResource("1_script")
+initial_position = 2
+size = Vector2i(700, 420)
+title = "Weather Editor"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme_override_constants/separation = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="GeneralSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="IdContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/IdContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "ID:"
+
+[node name="IdSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/IdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 9999.0
+step = 1.0
+
+[node name="InternalNameContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+
+[node name="InternalNameLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "Nombre interno:"
+
+[node name="InternalNameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/InternalNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "rain"
+
+[node name="DisplayNameContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+
+[node name="DisplayNameLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "Nombre visible:"
+
+[node name="DisplayNameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Lluvia"
+
+[node name="EffectContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EffectLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/EffectContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "Effect script:"
+
+[node name="EffectPathLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/EffectContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "(Sin effect)"
+autowrap_mode = 3
+
+[node name="EffectPickButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/EffectContainer"]
+layout_mode = 2
+text = "Seleccionar"
+
+[node name="EffectClearButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/EffectContainer"]
+layout_mode = 2
+text = "Limpiar"
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Guardar"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Cancelar"

@@ -1,0 +1,15 @@
+=== Reporte de Migración TrainerData ===
+dry_run: true
+trainers_dir: res://Resources/Trainers
+
+SKIP: res://Resources/Trainers/BROCK.tres - Ya migrado (tiene 1 PokemonDefinition) (Pokemon: 0, PokemonDefinition: 1)
+SKIP: res://Resources/Trainers/CAZABICHOS JANO.tres - Ya migrado (tiene 1 PokemonDefinition) (Pokemon: 0, PokemonDefinition: 1)
+SKIP: res://Resources/Trainers/RIVAL_INICIO_S.tres - Ya migrado (tiene 1 PokemonDefinition) (Pokemon: 0, PokemonDefinition: 1)
+SKIP: res://Resources/Trainers/RIVAL_INICIO_C.tres - Ya migrado (tiene 1 PokemonDefinition) (Pokemon: 0, PokemonDefinition: 1)
+SKIP: res://Resources/Trainers/TEST.tres - Sin party_data (Pokemon: 0, PokemonDefinition: 0)
+SKIP: res://Resources/Trainers/RIVAL_INICIO_B.tres - Ya migrado (tiene 1 PokemonDefinition) (Pokemon: 0, PokemonDefinition: 1)
+
+=== Resumen ===
+Migrados: 0
+Saltados: 6
+Errores: 0

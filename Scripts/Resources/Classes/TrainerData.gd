@@ -53,9 +53,12 @@ var trainer_class: TrainerClassData  # Se carga desde trainer_class_id
 
 ## === EQUIPO POKÉMON ===
 
-## Equipo del entrenador como Array de Pokemon
-## Configura Pokemon directamente desde el inspector con nivel, IVs, movimientos, etc.
-@export var party_data: Array[Pokemon] = []
+## Equipo del entrenador como Array de PokemonDefinition (plantillas)
+## Configura PokemonDefinition desde el inspector con nivel, IVs, movimientos, etc.
+## Los Pokémon runtime se crean al iniciar el combate mediante create_party()
+## NOTA: Usamos Array genérico para permitir migración automática desde Pokemon antiguos
+@export var party_data: Array = []
+var _party_data_migrated: bool = false
 
 
 ## === CONFIGURACIÓN DE COMBATE ===
@@ -85,25 +88,138 @@ var is_defeated: bool = false
 ## Inicializa el TrainerData (carga el TrainerClassData desde el enum)
 ## Llamar esto después de crear/cargar el TrainerData
 func initialize() -> void:
+	# Migrar party_data si es necesario (convertir Pokemon antiguos a PokemonDefinition)
+	_migrate_party_data()
+
 	# Cargar TrainerClassData desde el enum (DatabaseService o directorio)
 	# Por ahora, creamos uno temporal hasta que existan los .tres
 	_load_trainer_class()
+
+## Migra party_data de Array[Pokemon] a Array[PokemonDefinition] si es necesario
+func _migrate_party_data() -> void:
+	if _party_data_migrated:
+		return
+
+	var migrated_party: Array[PokemonDefinition] = []
+	var needs_migration = false
+
+	for item in party_data:
+		if item == null:
+			continue
+		elif item is PokemonDefinition:
+			# Ya es PokemonDefinition, añadir directamente
+			migrated_party.append(item)
+		elif item is Pokemon:
+			# Es un Pokemon antiguo, convertir a PokemonDefinition
+			needs_migration = true
+			var pokemon_runtime = item as Pokemon
+			var definition = _convert_pokemon_to_definition(pokemon_runtime)
+			if definition:
+				migrated_party.append(definition)
+				push_warning("TrainerData._migrate_party_data(): Migrado Pokemon a PokemonDefinition para trainer '%s'" % display_name)
+		else:
+			push_warning("TrainerData._migrate_party_data(): Elemento de tipo desconocido (%s) en party_data, saltando" % (item.get_class() if item else "null"))
+
+	if needs_migration:
+		party_data = migrated_party
+		_party_data_migrated = true
+		# Guardar automáticamente si hay resource_path
+		if not resource_path.is_empty():
+			var error = ResourceSaver.save(self, resource_path)
+			if error == OK:
+				print("TrainerData._migrate_party_data(): Guardado trainer migrado: %s" % resource_path)
+			else:
+				push_warning("TrainerData._migrate_party_data(): Error al guardar trainer migrado: %s (error: %d)" % [resource_path, error])
 
 ## Carga el TrainerClassData desde el enum ID
 func _load_trainer_class() -> void:
 	# Intentar cargar desde DatabaseService
 	trainer_class = DatabaseService.get_trainer_class(trainer_class_id)
 
+## Convierte un Pokemon runtime a PokemonDefinition (para migración automática)
+func _convert_pokemon_to_definition(pokemon: Pokemon) -> PokemonDefinition:
+	if pokemon == null:
+		return null
 
-## Retorna el equipo (ya están configurados como Pokemon desde el inspector)
+	var definition = PokemonDefinition.new()
+
+	# Copiar campos básicos
+	definition.pokemon_id = pokemon.pokemon_id
+	definition.level = pokemon.level
+	definition.nickname = pokemon.nickname
+	definition.gender = pokemon.gender
+	definition.shiny = pokemon.shiny
+	definition.is_wild = pokemon.is_wild
+
+	# Copiar IVs (no aleatorizar, usar valores existentes)
+	definition.randomize_ivs = false
+	definition.hp_IVs = pokemon.hp_IVs
+	definition.attack_IVs = pokemon.attack_IVs
+	definition.defense_IVs = pokemon.defense_IVs
+	definition.spAttack_IVs = pokemon.spAttack_IVs
+	definition.spDefense_IVs = pokemon.spDefense_IVs
+	definition.speed_IVs = pokemon.speed_IVs
+
+	# Copiar EVs (no aleatorizar, usar valores existentes)
+	definition.randomize_evs = false
+	definition.hp_EVs = pokemon.hp_EVs
+	definition.attack_EVs = pokemon.attack_EVs
+	definition.defense_EVs = pokemon.defense_EVs
+	definition.spAttack_EVs = pokemon.spAttack_EVs
+	definition.spDefense_EVs = pokemon.spDefense_EVs
+	definition.speed_EVs = pokemon.speed_EVs
+
+	# Copiar naturaleza y habilidad
+	definition.nature_id = pokemon.nature_id
+	definition.ability_id = pokemon.ability_id
+
+	# Copiar movimientos personalizados
+	definition.custom_move_ids = pokemon.custom_move_ids.duplicate()
+
+	# Copiar objeto equipado
+	definition.held_item_id = pokemon.held_item_id
+
+	return definition
+
+## Obtiene party_data como Array[PokemonDefinition] tipado
+func get_party_data() -> Array[PokemonDefinition]:
+	var result: Array[PokemonDefinition] = []
+	for item in party_data:
+		if item is PokemonDefinition:
+			result.append(item)
+	return result
+
+## Crea el equipo runtime a partir de las definiciones (PokemonDefinition)
+## Retorna un Array[Pokemon] listo para usar en combate
 func create_party() -> Array[Pokemon]:
-	# Los Pokemon ya están listos, solo aseguramos que tengan los datos del entrenador
-	for pokemon in party_data:
-		if pokemon:
-			pokemon.trainer_id = trainer_id
-			pokemon.original_trainer = display_name
+	var party: Array[Pokemon] = []
 
-	return party_data
+	# Asegurar que party_data esté migrado
+	_migrate_party_data()
+	var definitions = get_party_data()
+
+	# Crear Pokemon runtime desde cada PokemonDefinition
+	for i in range(definitions.size()):
+		var definition = definitions[i]
+		if definition == null:
+			push_warning("TrainerData.create_party(): party_data[%d] es null para trainer '%s', saltando" % [i, display_name])
+			continue
+
+		if not (definition is PokemonDefinition):
+			push_error("TrainerData.create_party(): party_data[%d] no es PokemonDefinition (tipo: %s) para trainer '%s', saltando" % [i, definition.get_class() if definition else "null", display_name])
+			continue
+
+		var pokemon = definition.create_pokemon()
+		if pokemon == null:
+			push_error("TrainerData.create_party(): No se pudo crear Pokemon desde party_data[%d] para trainer '%s'" % [i, display_name])
+			continue
+
+		# Asignar datos del entrenador
+		pokemon.trainer_id = trainer_id
+		pokemon.original_trainer = display_name
+		party.append(pokemon)
+
+	return party
 
 ## Retorna el nombre completo (clase + nombre)
 func get_full_name() -> String:
@@ -147,19 +263,53 @@ func calculate_reward() -> int:
 		return reward_money
 
 	# Si no, calcular según clase y nivel promedio del equipo
-	if trainer_class and not party_data.is_empty():
+	_migrate_party_data()
+	var definitions = get_party_data()
+	if trainer_class and not definitions.is_empty():
 		var total_level = 0
-		for pokemon in party_data:
-			if pokemon:
-				total_level += pokemon.level
-		var avg_level = int(float(total_level) / float(party_data.size()))
+		for definition in definitions:
+			if definition:
+				total_level += definition.level
+		var avg_level = int(float(total_level) / float(definitions.size()))
 		return trainer_class.calculate_base_reward(avg_level)
 
 	return 1000  # Recompensa por defecto
 
 ## Verifica si el entrenador tiene un equipo válido
 func has_valid_party() -> bool:
-	return not party_data.is_empty() and party_data[0] != null
+	_migrate_party_data()
+	var definitions = get_party_data()
+
+	if definitions.is_empty():
+		push_warning("TrainerData.has_valid_party(): party_data está vacío para trainer '%s'" % display_name)
+		return false
+
+	# Verificar que al menos un PokemonDefinition sea válido
+	for i in range(definitions.size()):
+		var definition = definitions[i]
+		if definition == null:
+			push_warning("TrainerData.has_valid_party(): party_data[%d] es null para trainer '%s'" % [i, display_name])
+			continue
+
+		# Verificar que sea un PokemonDefinition válido
+		if not (definition is PokemonDefinition):
+			push_warning("TrainerData.has_valid_party(): party_data[%d] no es PokemonDefinition (tipo: %s) para trainer '%s'" % [i, definition.get_class(), display_name])
+			continue
+
+		# Verificar que tenga un pokemon_id válido
+		if definition.pokemon_id == null:
+			push_warning("TrainerData.has_valid_party(): party_data[%d].pokemon_id es null para trainer '%s'" % [i, display_name])
+			continue
+
+		if definition.pokemon_id == PokemonsEnum.Values.NONE:
+			push_warning("TrainerData.has_valid_party(): party_data[%d].pokemon_id es NONE para trainer '%s'" % [i, display_name])
+			continue
+
+		# Si llegamos aquí, encontramos un PokemonDefinition válido
+		return true
+
+	push_warning("TrainerData.has_valid_party(): No se encontró ningún PokemonDefinition válido para trainer '%s' (party_data.size() = %d)" % [display_name, definitions.size()])
+	return false
 
 ## Obtiene el identificador único del trainer desde el resource_path
 ## Retorna el nombre del archivo .res sin extensión (ej: "brock" de "res://Resources/Trainers/brock.tres")
@@ -187,7 +337,8 @@ func print_trainer_info() -> void:
 	print("=== Entrenador: %s ===" % get_full_name())
 	print("ID: %d" % trainer_id)
 	print("Resource ID: %s" % get_resource_id())
-	print("Equipo: %d Pokémon" % party_data.size())
+	var definitions = get_party_data()
+	print("Equipo: %d Pokémon" % definitions.size())
 	print("Dinero: $%d" % reward_money)
 	print("Combate doble: %s" % ("Sí" if double_battle else "No"))
 	print("========================")

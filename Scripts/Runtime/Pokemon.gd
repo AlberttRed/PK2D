@@ -197,15 +197,42 @@ func _init(
 ## Inicialización posterior (cuando se crea desde inspector)
 ## Battler.gd llamará esto en _ready() para inicializar Pokemon del inspector
 func _post_init() -> void:
+	# Si ya está inicializado, no hacer nada
+	if base != null:
+		return
+
 	# Cargar PokemonData desde el enum pokemon_id
-	# Solo usar DatabaseService si está disponible (no en editor)
+	# Intentar primero con DatabaseService si está disponible
 	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
 		base = DatabaseService.get_pokemon(pokemon_id)
-	else:
-		# En editor, cargar directamente desde archivo
+
+	# Si DatabaseService no funcionó o no está disponible, cargar directamente desde archivo
+	if base == null:
+		# Intentar primero con formato "007.tres"
 		var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_id
 		if ResourceLoader.exists(pokemon_path):
 			base = load(pokemon_path) as PokemonData
+
+		# Si no existe, buscar archivos con formato "007 - Nombre.tres"
+		if base == null:
+			var dir = DirAccess.open("res://Resources/Data/Pokemon")
+			if dir:
+				dir.list_dir_begin()
+				var file_name = dir.get_next()
+				while file_name != "":
+					if not dir.current_is_dir() and file_name.ends_with(".tres"):
+						var file_base = file_name.get_basename()
+						var parts = file_base.split(" - ", false, 1)
+						if parts.size() > 0:
+							var id_str = parts[0].strip_edges()
+							if id_str.is_valid_int() and int(id_str) == pokemon_id:
+								var full_path = "res://Resources/Data/Pokemon/" + file_name
+								base = load(full_path) as PokemonData
+								if base:
+									break
+					file_name = dir.get_next()
+				dir.list_dir_end()
+
 	if base == null:
 		push_error("Pokemon._post_init: No se pudo cargar PokemonData para id %d" % pokemon_id)
 		return

@@ -1,9 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://database_editor"]
+[gd_scene load_steps=13 format=3 uid="uid://database_editor"]
 
 [ext_resource type="Script" path="res://addons/database_editor/database_editor.gd" id="1_main"]
 [ext_resource type="Script" path="res://addons/database_editor/pokemon_tab.gd" id="2_pokemon"]
 [ext_resource type="Script" path="res://addons/database_editor/move_tab.gd" id="3_move"]
 [ext_resource type="Script" path="res://addons/database_editor/item_tab.gd" id="4_item"]
+[ext_resource type="Script" path="res://addons/database_editor/trainer_tab.gd" id="5_trainer"]
+[ext_resource type="Script" path="res://addons/database_editor/type_tab.gd" id="6_type"]
+[ext_resource type="Script" path="res://addons/database_editor/ailment_tab.gd" id="7_ailment"]
+[ext_resource type="Script" path="res://addons/database_editor/ability_tab.gd" id="8_ability"]
+[ext_resource type="Script" path="res://addons/database_editor/weather_tab.gd" id="9_weather"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 bg_color = Color(0.2, 0.2, 0.2, 1)
@@ -336,6 +341,536 @@ layout_mode = 2
 text = "Eliminar"
 
 [node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/ItemTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Duplicar"
+
+[node name="TrainerTab" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("5_trainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/TrainerTab"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Buscar:"
+
+[node name="SearchLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por ID, nombre o archivo..."
+
+[node name="ContentContainer" type="HSplitContainer" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Panel" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="ResourceList" type="ItemList" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RightPanel" type="Panel" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="DetailPanel" type="Panel" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DetailContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PlaceholderLabel" type="Label" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer"]
+layout_mode = 2
+text = "Selecciona un trainer para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Crear"
+
+[node name="EditButton" type="Button" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/TrainerTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Duplicar"
+
+[node name="TypeTab" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("6_type")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/TypeTab"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Buscar:"
+
+[node name="SearchLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por ID o nombre..."
+
+[node name="ContentContainer" type="HSplitContainer" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Panel" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="ResourceList" type="ItemList" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RightPanel" type="Panel" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="DetailPanel" type="Panel" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DetailContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PlaceholderLabel" type="Label" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer"]
+layout_mode = 2
+text = "Selecciona un tipo para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Crear"
+
+[node name="EditButton" type="Button" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/TypeTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Duplicar"
+
+[node name="AilmentTab" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("7_ailment")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/AilmentTab"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Buscar:"
+
+[node name="SearchLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por ID o nombre..."
+
+[node name="ContentContainer" type="HSplitContainer" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Panel" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="ResourceList" type="ItemList" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RightPanel" type="Panel" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="DetailPanel" type="Panel" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DetailContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PlaceholderLabel" type="Label" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer"]
+layout_mode = 2
+text = "Selecciona un ailment para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Crear"
+
+[node name="EditButton" type="Button" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/AilmentTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Duplicar"
+
+[node name="AbilityTab" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("8_ability")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/AbilityTab"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Buscar:"
+
+[node name="SearchLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por ID o nombre..."
+
+[node name="ContentContainer" type="HSplitContainer" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Panel" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="ResourceList" type="ItemList" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RightPanel" type="Panel" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="DetailPanel" type="Panel" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DetailContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PlaceholderLabel" type="Label" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer"]
+layout_mode = 2
+text = "Selecciona una habilidad para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Crear"
+
+[node name="EditButton" type="Button" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/AbilityTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Duplicar"
+
+[node name="WeatherTab" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("9_weather")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/WeatherTab"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="SearchContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="SearchLabel" type="Label" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Buscar:"
+
+[node name="SearchLineEdit" type="LineEdit" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/SearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Buscar por ID o nombre..."
+
+[node name="ContentContainer" type="HSplitContainer" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="Panel" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="ResourceList" type="ItemList" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RightPanel" type="Panel" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="DetailPanel" type="Panel" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DetailContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PlaceholderLabel" type="Label" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer"]
+layout_mode = 2
+text = "Selecciona un weather para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Crear"
+
+[node name="EditButton" type="Button" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Editar"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Eliminar"
+
+[node name="DuplicateButton" type="Button" parent="VBoxContainer/TabContainer/WeatherTab/VBoxContainer/ActionButtons"]
 layout_mode = 2
 text = "Duplicar"
 

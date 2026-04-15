@@ -11,7 +11,11 @@ enum ResourceType {
 	POKEMON,
 	MOVE,
 	ITEM,
-	# TRAINER,  # Futuro: descomentar cuando se implemente
+	TRAINER,
+	TYPE,
+	ABILITY,
+	AILMENT,
+	WEATHER,
 }
 
 ## Señal emitida cuando se confirma una selección en modo picker
@@ -23,6 +27,11 @@ signal picker_cancelled
 @onready var pokemon_tab: Control = $VBoxContainer/TabContainer/PokemonTab
 @onready var move_tab: Control = $VBoxContainer/TabContainer/MoveTab
 @onready var item_tab: Control = $VBoxContainer/TabContainer/ItemTab
+@onready var trainer_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("TrainerTab")
+@onready var type_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("TypeTab")
+@onready var ability_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("AbilityTab")
+@onready var ailment_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("AilmentTab")
+@onready var weather_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("WeatherTab")
 
 var pokemon_editor_scene: PackedScene = null
 var current_pokemon_editor: Window = null
@@ -30,6 +39,16 @@ var move_editor_scene: PackedScene = null
 var current_move_editor: Window = null
 var item_editor_scene: PackedScene = null
 var current_item_editor: Window = null
+var trainer_editor_scene: PackedScene = null
+var current_trainer_editor: Window = null
+var type_editor_scene: PackedScene = null
+var current_type_editor: Window = null
+var ailment_editor_scene: PackedScene = null
+var current_ailment_editor: Window = null
+var ability_editor_scene: PackedScene = null
+var current_ability_editor: Window = null
+var weather_editor_scene: PackedScene = null
+var current_weather_editor: Window = null
 
 # Modo picker
 var is_picker_mode: bool = false
@@ -51,6 +70,11 @@ func _ready() -> void:
 	pokemon_editor_scene = load("res://addons/database_editor/pokemon_editor_window.tscn")
 	move_editor_scene = load("res://addons/database_editor/move_editor_window.tscn")
 	item_editor_scene = load("res://addons/database_editor/item_editor_window.tscn")
+	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	type_editor_scene = load("res://addons/database_editor/type_editor_window.tscn")
+	ailment_editor_scene = load("res://addons/database_editor/ailment_editor_window.tscn")
+	ability_editor_scene = load("res://addons/database_editor/ability_editor_window.tscn")
+	weather_editor_scene = load("res://addons/database_editor/weather_editor_window.tscn")
 
 	# Conectar señal de cierre
 	close_requested.connect(_on_close_requested)
@@ -61,10 +85,11 @@ func _ready() -> void:
 	# Conectar señal de cambio de pestaña para cargar recursos solo cuando se activa
 	if tab_container:
 		tab_container.tab_selected.connect(_on_tab_selected)
-		# Establecer títulos de los tabs
-		tab_container.set_tab_title(0, "Pokémon")
-		tab_container.set_tab_title(1, "Movimientos")
-		tab_container.set_tab_title(2, "Items")
+		# Establecer títulos de los tabs de forma segura.
+		var titles := ["Pokémon", "Movimientos", "Items", "Trainers", "Tipos", "Ailments", "Habilidades", "Weather"]
+		var tab_count := tab_container.get_tab_count()
+		for i in range(min(tab_count, titles.size())):
+			tab_container.set_tab_title(i, titles[i])
 
 	# Esperar varios frames para que todos los nodos y scripts estén completamente listos
 	await get_tree().process_frame
@@ -378,6 +403,21 @@ func _on_tab_selected(tab_index: int) -> void:
 		2:  # Items
 			if item_tab:
 				_load_item_resources_directly(current_tab_node)
+		3:  # Trainers
+			if trainer_tab:
+				_load_trainer_resources_directly(current_tab_node)
+		4:  # Types
+			if type_tab:
+				_load_simple_resources_directly(current_tab_node, "type")
+		5:  # Ailments
+			if ailment_tab:
+				_load_simple_resources_directly(current_tab_node, "ailment")
+		6:  # Abilities
+			if ability_tab:
+				_load_simple_resources_directly(current_tab_node, "ability")
+		7:  # Weather
+			if weather_tab:
+				_load_simple_resources_directly(current_tab_node, "weather")
 
 ## Refresca la pestaña de Pokémon
 ## Carga recursos de Pokémon directamente sin depender de que el script se ejecute
@@ -1056,6 +1096,16 @@ func open_picker_mode(resource_type: ResourceType, initial_selection = null) -> 
 			title = "Seleccionar Movimiento"
 		ResourceType.ITEM:
 			title = "Seleccionar Item"
+		ResourceType.TRAINER:
+			title = "Seleccionar Trainer"
+		ResourceType.TYPE:
+			title = "Seleccionar Tipo"
+		ResourceType.ABILITY:
+			title = "Seleccionar Habilidad"
+		ResourceType.AILMENT:
+			title = "Seleccionar Ailment"
+		ResourceType.WEATHER:
+			title = "Seleccionar Weather"
 
 	# Esperar a que _ready() termine antes de modificar las pestañas
 	call_deferred("_configure_picker_tabs", resource_type)
@@ -1079,6 +1129,16 @@ func _configure_picker_tabs(resource_type: ResourceType) -> void:
 				tab_container.set_tab_hidden(i, i != 1)
 			ResourceType.ITEM:
 				tab_container.set_tab_hidden(i, i != 2)
+			ResourceType.TRAINER:
+				tab_container.set_tab_hidden(i, i != 3)
+			ResourceType.TYPE:
+				tab_container.set_tab_hidden(i, i != 4)
+			ResourceType.AILMENT:
+				tab_container.set_tab_hidden(i, i != 5)
+			ResourceType.ABILITY:
+				tab_container.set_tab_hidden(i, i != 6)
+			ResourceType.WEATHER:
+				tab_container.set_tab_hidden(i, i != 7)
 
 	# Activar la pestaña correcta
 	match resource_type:
@@ -1091,6 +1151,21 @@ func _configure_picker_tabs(resource_type: ResourceType) -> void:
 		ResourceType.ITEM:
 			tab_container.current_tab = 2
 			_on_tab_selected(2)
+		ResourceType.TRAINER:
+			tab_container.current_tab = 3
+			_on_tab_selected(3)
+		ResourceType.TYPE:
+			tab_container.current_tab = 4
+			_on_tab_selected(4)
+		ResourceType.AILMENT:
+			tab_container.current_tab = 5
+			_on_tab_selected(5)
+		ResourceType.ABILITY:
+			tab_container.current_tab = 6
+			_on_tab_selected(6)
+		ResourceType.WEATHER:
+			tab_container.current_tab = 7
+			_on_tab_selected(7)
 
 	# Ocultar botones de acción en modo picker
 	_hide_action_buttons_in_picker_mode()
@@ -1115,6 +1190,16 @@ func _set_initial_selection(selection) -> void:
 			tab_node = move_tab
 		ResourceType.ITEM:
 			tab_node = item_tab
+		ResourceType.TRAINER:
+			tab_node = trainer_tab
+		ResourceType.TYPE:
+			tab_node = type_tab
+		ResourceType.AILMENT:
+			tab_node = ailment_tab
+		ResourceType.ABILITY:
+			tab_node = ability_tab
+		ResourceType.WEATHER:
+			tab_node = weather_tab
 
 	if not tab_node:
 		return
@@ -1146,6 +1231,16 @@ func _set_initial_selection(selection) -> void:
 			metadata_key = "move_metadata"
 		ResourceType.ITEM:
 			metadata_key = "item_metadata"
+		ResourceType.TRAINER:
+			metadata_key = "trainer_metadata"
+		ResourceType.TYPE:
+			metadata_key = "type_metadata"
+		ResourceType.AILMENT:
+			metadata_key = "ailment_metadata"
+		ResourceType.ABILITY:
+			metadata_key = "ability_metadata"
+		ResourceType.WEATHER:
+			metadata_key = "weather_metadata"
 
 	var metadata_array: Array = tab_node.get_meta(metadata_key, [])
 	for i in range(metadata_array.size()):
@@ -1191,6 +1286,16 @@ func _get_resource_type_string() -> String:
 			return "MOVE"
 		ResourceType.ITEM:
 			return "ITEM"
+		ResourceType.TRAINER:
+			return "TRAINER"
+		ResourceType.TYPE:
+			return "TYPE"
+		ResourceType.AILMENT:
+			return "AILMENT"
+		ResourceType.ABILITY:
+			return "ABILITY"
+		ResourceType.WEATHER:
+			return "WEATHER"
 	return ""
 
 ## Actualiza la selección cuando el usuario selecciona un recurso en la lista
@@ -1219,6 +1324,16 @@ func _hide_action_buttons_in_picker_mode() -> void:
 			tab_node = move_tab
 		ResourceType.ITEM:
 			tab_node = item_tab
+		ResourceType.TRAINER:
+			tab_node = trainer_tab
+		ResourceType.TYPE:
+			tab_node = type_tab
+		ResourceType.AILMENT:
+			tab_node = ailment_tab
+		ResourceType.ABILITY:
+			tab_node = ability_tab
+		ResourceType.WEATHER:
+			tab_node = weather_tab
 
 	if tab_node:
 		# Ocultar el contenedor completo de botones de acción
@@ -2208,6 +2323,81 @@ func _refresh_item_tab() -> void:
 	if item_tab:
 		_load_item_resources_directly(item_tab)
 
+## Abre el editor de Trainers en modo Create
+func _open_trainer_editor_create() -> void:
+	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	if not trainer_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
+		return
+	if current_trainer_editor and is_instance_valid(current_trainer_editor):
+		current_trainer_editor.queue_free()
+	await get_tree().process_frame
+	var editor := trainer_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar TrainerEditorWindow")
+		return
+	add_child(editor)
+	current_trainer_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(_refresh_trainer_tab)
+	await get_tree().process_frame
+	_connect_trainer_editor_signals(editor)
+
+## Abre el editor de Trainers en modo Edit
+func _open_trainer_editor_edit(trainer_data: Resource, trainer_path: String = "") -> void:
+	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	if not trainer_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
+		return
+	if current_trainer_editor and is_instance_valid(current_trainer_editor):
+		current_trainer_editor.queue_free()
+	await get_tree().process_frame
+	var editor := trainer_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar TrainerEditorWindow")
+		return
+	add_child(editor)
+	current_trainer_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(trainer_data, _refresh_trainer_tab, trainer_path)
+	await get_tree().process_frame
+	_connect_trainer_editor_signals(editor)
+
+## Abre el editor de Trainers en modo Duplicate
+func _open_trainer_editor_duplicate(trainer_data: Resource, trainer_path: String = "") -> void:
+	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	if not trainer_editor_scene:
+		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
+		return
+	if current_trainer_editor and is_instance_valid(current_trainer_editor):
+		current_trainer_editor.queue_free()
+	await get_tree().process_frame
+	var editor := trainer_editor_scene.instantiate()
+	if not editor:
+		push_error("DatabaseEditor: No se pudo instanciar TrainerEditorWindow")
+		return
+	add_child(editor)
+	current_trainer_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(trainer_data, _refresh_trainer_tab, trainer_path)
+	await get_tree().process_frame
+	_connect_trainer_editor_signals(editor)
+
+func _connect_trainer_editor_signals(editor: Window) -> void:
+	if not editor or not is_instance_valid(editor):
+		return
+	if editor.has_signal("saved"):
+		editor.saved.connect(_on_trainer_editor_saved)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(_on_trainer_editor_cancelled)
+
+func _on_trainer_editor_saved(_trainer_data: Resource, _was_new: bool) -> void:
+	current_trainer_editor = null
+	_refresh_trainer_tab()
+
+func _on_trainer_editor_cancelled() -> void:
+	current_trainer_editor = null
+
 ## Muestra diálogo de confirmación para eliminar un item
 func _show_delete_item_confirmation_dialog(item_data: ItemData, tab_node: Control) -> void:
 	var dialog := ConfirmationDialog.new()
@@ -2252,4 +2442,1057 @@ func _delete_item_file(item_data: ItemData, tab_node: Control) -> void:
 			print("[DatabaseEditor] Item eliminado: %s" % file_path)
 			_refresh_filesystem()
 			_refresh_item_tab()
+
+## ============================================
+## FUNCIONES PARA TRAINERS
+## ============================================
+
+## Carga recursos de Trainers directamente
+func _load_trainer_resources_directly(tab_node: Control) -> void:
+	print("[DatabaseEditor] Cargando recursos de Trainers directamente...")
+
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		push_error("[DatabaseEditor] No se encontró ResourceList en TrainerTab")
+		return
+
+	resource_list.clear()
+
+	var dir_path := "res://Resources/Trainers"
+	var filesystem_path := ProjectSettings.globalize_path(dir_path)
+	var dir := DirAccess.open(filesystem_path)
+	if dir == null:
+		dir = DirAccess.open(dir_path)
+		if dir == null:
+			push_error("[DatabaseEditor] No se pudo abrir directorio: %s" % dir_path)
+			return
+
+	var all_resources: Array = []
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+
+	while file_name != "":
+		if dir.current_is_dir() or not file_name.ends_with(".tres"):
+			file_name = dir.get_next()
+			continue
+
+		var file_path := dir_path + "/" + file_name
+		if not ResourceLoader.exists(file_path):
+			file_name = dir.get_next()
+			continue
+
+		var resource = load(file_path)
+		if not (resource is TrainerData):
+			file_name = dir.get_next()
+			continue
+
+		var trainer_data := resource as TrainerData
+		var display_name := trainer_data.display_name if trainer_data.display_name != "" else file_name.get_basename()
+		var metadata := {
+			"id": trainer_data.trainer_id,
+			"name": display_name,
+			"path": file_path,
+			"file_name": file_name
+		}
+		all_resources.append(metadata)
+
+		file_name = dir.get_next()
+
+	dir.list_dir_end()
+
+	all_resources.sort_custom(func(a, b):
+		var a_id: int = a.get("id", 0)
+		var b_id: int = b.get("id", 0)
+		if a_id == b_id:
+			return str(a.get("name", "")).to_lower() < str(b.get("name", "")).to_lower()
+		return a_id < b_id
+	)
+
+	tab_node.set_meta("trainer_metadata", all_resources)
+	tab_node.set_meta("trainer_metadata_all", all_resources)
+
+	var connection_result = resource_list.item_selected.connect(func(idx: int):
+		_on_trainer_item_selected(idx, tab_node)
+	)
+	if connection_result != OK:
+		push_error("[DatabaseEditor] Error al conectar señal item_selected para Trainers: %d" % connection_result)
+
+	var search_line_edit: LineEdit = tab_node.get_node_or_null("VBoxContainer/SearchContainer/SearchLineEdit")
+	if search_line_edit:
+		if not search_line_edit.text_changed.is_connected(_on_trainer_search_text_changed.bind(tab_node)):
+			search_line_edit.text_changed.connect(_on_trainer_search_text_changed.bind(tab_node))
+
+	var create_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/CreateButton")
+	var edit_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/EditButton")
+	var delete_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DeleteButton")
+	var duplicate_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DuplicateButton")
+
+	if create_button:
+		if not create_button.pressed.is_connected(_on_trainer_create_button_pressed.bind(tab_node)):
+			create_button.pressed.connect(_on_trainer_create_button_pressed.bind(tab_node))
+	if edit_button:
+		if not edit_button.pressed.is_connected(_on_trainer_edit_button_pressed.bind(tab_node)):
+			edit_button.pressed.connect(_on_trainer_edit_button_pressed.bind(tab_node))
+	if delete_button:
+		if not delete_button.pressed.is_connected(_on_trainer_delete_button_pressed.bind(tab_node)):
+			delete_button.pressed.connect(_on_trainer_delete_button_pressed.bind(tab_node))
+	if duplicate_button:
+		if not duplicate_button.pressed.is_connected(_on_trainer_duplicate_button_pressed.bind(tab_node)):
+			duplicate_button.pressed.connect(_on_trainer_duplicate_button_pressed.bind(tab_node))
+
+	_update_trainer_list(tab_node, "")
+	print("[DatabaseEditor] Recursos de Trainers cargados: %d" % all_resources.size())
+
+func _on_trainer_item_selected(index: int, tab_node: Control) -> void:
+	var detail_container: VBoxContainer = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer")
+	if not detail_container:
+		push_error("[DatabaseEditor] No se encontró DetailContainer en TrainerTab")
+		return
+
+	var metadata_array: Array = tab_node.get_meta("trainer_metadata", [])
+	if index < 0 or index >= metadata_array.size():
+		return
+
+	var metadata: Dictionary = metadata_array[index]
+	var file_path: String = metadata.get("path", "")
+	if file_path == "" or not ResourceLoader.exists(file_path):
+		_add_detail_label(detail_container, "Error: No se pudo cargar el trainer", true)
+		return
+
+	var trainer_data := load(file_path)
+	if not trainer_data:
+		_add_detail_label(detail_container, "Error: El recurso no es TrainerData válido", true)
+		return
+
+	tab_node.set_meta("selected_trainer_data", trainer_data)
+	tab_node.set_meta("selected_trainer_path", file_path)
+
+	if is_picker_mode and picker_resource_type == ResourceType.TRAINER:
+		var trainer_display: String = str(trainer_data.get("display_name"))
+		var trainer_name: String = trainer_display if trainer_display != "" else trainer_data.resource_path.get_file().get_basename()
+		_update_picker_selection(trainer_data, trainer_data.trainer_id, file_path, trainer_name)
+
+	for child in detail_container.get_children():
+		detail_container.remove_child(child)
+		child.queue_free()
+
+	var definitions_count := 0
+	var party_value: Variant = trainer_data.get("party_data")
+	if party_value is Array:
+		for entry in party_value:
+			if entry != null:
+				definitions_count += 1
+	_add_section_header(detail_container, "INFORMACIÓN DEL TRAINER")
+	_add_detail_row(detail_container, "ID", str(trainer_data.trainer_id))
+	_add_detail_row(detail_container, "Nombre", trainer_data.display_name)
+	_add_detail_row(detail_container, "Clase", TrainerClassEnum.get_display_name(trainer_data.trainer_class_id))
+	_add_detail_row(detail_container, "Equipo", "%d Pokémon" % definitions_count)
+	_add_detail_row(detail_container, "Dinero", "$%d" % trainer_data.reward_money)
+	_add_detail_row(detail_container, "Combate doble", "Sí" if trainer_data.double_battle else "No")
+	_add_detail_row(detail_container, "Rematch", "Sí" if trainer_data.can_rematch else "No")
+
+	if party_value is Array and definitions_count > 0:
+		_add_section_header(detail_container, "EQUIPO")
+		var slot := 1
+		for entry in party_value:
+			if entry == null:
+				continue
+
+			var pokemon_id: int = int(entry.get("pokemon_id")) if entry.has_method("get") else 0
+			var level: int = int(entry.get("level")) if entry.has_method("get") else 1
+			var nickname: String = str(entry.get("nickname")) if entry.has_method("get") else ""
+
+			var species_name := ""
+			if pokemon_id > 0:
+				species_name = PokemonsEnum.get_display_name(pokemon_id)
+			if species_name == "":
+				species_name = "Pokemon ID %d" % pokemon_id
+
+			var display_name := species_name
+			if nickname != "":
+				display_name = "%s (%s)" % [nickname, species_name]
+
+			_add_detail_row(detail_container, "#%d" % slot, "%s - Nv.%d" % [display_name, level])
+			slot += 1
+
+	if trainer_data.intro_text != "":
+		_add_section_header(detail_container, "TEXTO INTRO")
+		_add_detail_label(detail_container, trainer_data.intro_text)
+	if trainer_data.defeat_text != "":
+		_add_section_header(detail_container, "TEXTO DERROTA")
+		_add_detail_label(detail_container, trainer_data.defeat_text)
+	if trainer_data.victory_text != "":
+		_add_section_header(detail_container, "TEXTO VICTORIA")
+		_add_detail_label(detail_container, trainer_data.victory_text)
+
+	_add_section_header(detail_container, "ARCHIVO")
+	_add_detail_label(detail_container, file_path, false)
+
+func _update_trainer_list(tab_node: Control, search_text: String) -> void:
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		return
+
+	var all_metadata: Array = tab_node.get_meta("trainer_metadata_all", [])
+	resource_list.clear()
+
+	var search_lower := search_text.to_lower()
+	var filtered_metadata: Array = []
+
+	for metadata in all_metadata:
+		var matches := false
+		var id: int = metadata.get("id", 0)
+		var name: String = metadata.get("name", "")
+		var file_name: String = metadata.get("file_name", "")
+
+		if str(id).contains(search_text):
+			matches = true
+		elif name.to_lower().contains(search_lower):
+			matches = true
+		elif file_name.to_lower().contains(search_lower):
+			matches = true
+
+		if matches or search_text.is_empty():
+			resource_list.add_item("%d - %s" % [id, name])
+			filtered_metadata.append(metadata)
+
+	tab_node.set_meta("trainer_metadata", filtered_metadata)
+	tab_node.remove_meta("selected_trainer_data")
+
+	var detail_container: VBoxContainer = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer")
+	if detail_container:
+		for child in detail_container.get_children():
+			child.queue_free()
+
+func _on_trainer_search_text_changed(new_text: String, tab_node: Control) -> void:
+	_update_trainer_list(tab_node, new_text)
+
+func _on_trainer_create_button_pressed(_tab_node: Control) -> void:
+	_open_trainer_editor_create()
+
+func _on_trainer_edit_button_pressed(tab_node: Control) -> void:
+	var trainer_data := tab_node.get_meta("selected_trainer_data", null)
+	if not trainer_data:
+		_show_warning("No hay ningún trainer seleccionado")
+		return
+	var trainer_path: String = tab_node.get_meta("selected_trainer_path", "")
+	_open_trainer_editor_edit(trainer_data, trainer_path)
+
+func _on_trainer_duplicate_button_pressed(tab_node: Control) -> void:
+	var trainer_data := tab_node.get_meta("selected_trainer_data", null)
+	if not trainer_data:
+		_show_warning("No hay ningún trainer seleccionado")
+		return
+	var trainer_path: String = tab_node.get_meta("selected_trainer_path", "")
+	_open_trainer_editor_duplicate(trainer_data, trainer_path)
+
+func _on_trainer_delete_button_pressed(tab_node: Control) -> void:
+	var trainer_data := tab_node.get_meta("selected_trainer_data", null)
+	if not trainer_data:
+		_show_warning("No hay ningún trainer seleccionado")
+		return
+
+	var dialog := ConfirmationDialog.new()
+	var trainer_display: String = str(trainer_data.get("display_name"))
+	var trainer_name: String = trainer_display if trainer_display != "" else "trainer"
+	dialog.dialog_text = "¿Está seguro de que desea eliminar el trainer '%s'?" % trainer_name
+	dialog.ok_button_text = "Eliminar"
+	dialog.cancel_button_text = "Cancelar"
+	dialog.title = "Confirmar Eliminación"
+	add_child(dialog)
+	dialog.popup_centered()
+
+	dialog.confirmed.connect(func():
+		_delete_trainer_file(trainer_data, tab_node)
+		dialog.queue_free()
+	)
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+
+func _delete_trainer_file(trainer_data: Resource, tab_node: Control) -> void:
+	if not trainer_data or not trainer_data.resource_path:
+		_show_warning("No se puede eliminar: el trainer no tiene ruta de archivo")
+		return
+
+	var file_path := trainer_data.resource_path
+	var dir := DirAccess.open(ProjectSettings.globalize_path(file_path.get_base_dir()))
+	if not dir:
+		_show_warning("No se pudo abrir el directorio para eliminar el archivo")
+		return
+
+	var file_name := file_path.get_file()
+	if dir.file_exists(file_name):
+		var error := dir.remove(file_name)
+		if error != OK:
+			_show_warning("Error al eliminar el archivo: %s" % error_string(error))
+			return
+
+	_refresh_filesystem()
+	tab_node.remove_meta("selected_trainer_data")
+	_refresh_trainer_tab()
+
+func _refresh_trainer_tab() -> void:
+	if trainer_tab:
+		_load_trainer_resources_directly(trainer_tab)
+
+func _open_type_editor_create(tab_node: Control) -> void:
+	if not type_editor_scene:
+		_show_warning("No se pudo cargar type_editor_window.tscn")
+		return
+	if current_type_editor and is_instance_valid(current_type_editor):
+		current_type_editor.queue_free()
+	await get_tree().process_frame
+	var editor := type_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar TypeEditorWindow")
+		return
+	add_child(editor)
+	current_type_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(func():
+			_load_simple_resources_directly(tab_node, "type")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_type_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_type_editor = null
+			_load_simple_resources_directly(tab_node, "type")
+		)
+
+func _open_type_editor_edit(tab_node: Control, type_data: TypeData) -> void:
+	if not type_editor_scene:
+		_show_warning("No se pudo cargar type_editor_window.tscn")
+		return
+	if current_type_editor and is_instance_valid(current_type_editor):
+		current_type_editor.queue_free()
+	await get_tree().process_frame
+	var editor := type_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar TypeEditorWindow")
+		return
+	add_child(editor)
+	current_type_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(type_data, func():
+			_load_simple_resources_directly(tab_node, "type")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_type_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_type_editor = null
+			_load_simple_resources_directly(tab_node, "type")
+		)
+
+func _open_type_editor_duplicate(tab_node: Control, type_data: TypeData) -> void:
+	if not type_editor_scene:
+		_show_warning("No se pudo cargar type_editor_window.tscn")
+		return
+	if current_type_editor and is_instance_valid(current_type_editor):
+		current_type_editor.queue_free()
+	await get_tree().process_frame
+	var editor := type_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar TypeEditorWindow")
+		return
+	add_child(editor)
+	current_type_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(type_data, func():
+			_load_simple_resources_directly(tab_node, "type")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_type_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_type_editor = null
+			_load_simple_resources_directly(tab_node, "type")
+		)
+
+func _open_ailment_editor_create(tab_node: Control) -> void:
+	if not ailment_editor_scene:
+		_show_warning("No se pudo cargar ailment_editor_window.tscn")
+		return
+	if current_ailment_editor and is_instance_valid(current_ailment_editor):
+		current_ailment_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ailment_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AilmentEditorWindow")
+		return
+	add_child(editor)
+	current_ailment_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(func():
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ailment_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ailment_editor = null
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+
+func _open_ailment_editor_edit(tab_node: Control, ailment_data: AilmentData) -> void:
+	if not ailment_editor_scene:
+		_show_warning("No se pudo cargar ailment_editor_window.tscn")
+		return
+	if current_ailment_editor and is_instance_valid(current_ailment_editor):
+		current_ailment_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ailment_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AilmentEditorWindow")
+		return
+	add_child(editor)
+	current_ailment_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(ailment_data, func():
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ailment_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ailment_editor = null
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+
+func _open_ailment_editor_duplicate(tab_node: Control, ailment_data: AilmentData) -> void:
+	if not ailment_editor_scene:
+		_show_warning("No se pudo cargar ailment_editor_window.tscn")
+		return
+	if current_ailment_editor and is_instance_valid(current_ailment_editor):
+		current_ailment_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ailment_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AilmentEditorWindow")
+		return
+	add_child(editor)
+	current_ailment_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(ailment_data, func():
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ailment_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ailment_editor = null
+			_load_simple_resources_directly(tab_node, "ailment")
+		)
+
+func _open_ability_editor_create(tab_node: Control) -> void:
+	if not ability_editor_scene:
+		_show_warning("No se pudo cargar ability_editor_window.tscn")
+		return
+	if current_ability_editor and is_instance_valid(current_ability_editor):
+		current_ability_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ability_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AbilityEditorWindow")
+		return
+	add_child(editor)
+	current_ability_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(func():
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ability_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ability_editor = null
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+
+func _open_ability_editor_edit(tab_node: Control, ability_data: AbilityData) -> void:
+	if not ability_editor_scene:
+		_show_warning("No se pudo cargar ability_editor_window.tscn")
+		return
+	if current_ability_editor and is_instance_valid(current_ability_editor):
+		current_ability_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ability_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AbilityEditorWindow")
+		return
+	add_child(editor)
+	current_ability_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(ability_data, func():
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ability_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ability_editor = null
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+
+func _open_ability_editor_duplicate(tab_node: Control, ability_data: AbilityData) -> void:
+	if not ability_editor_scene:
+		_show_warning("No se pudo cargar ability_editor_window.tscn")
+		return
+	if current_ability_editor and is_instance_valid(current_ability_editor):
+		current_ability_editor.queue_free()
+	await get_tree().process_frame
+	var editor := ability_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar AbilityEditorWindow")
+		return
+	add_child(editor)
+	current_ability_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(ability_data, func():
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_ability_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_ability_editor = null
+			_load_simple_resources_directly(tab_node, "ability")
+		)
+
+func _open_weather_editor_create(tab_node: Control) -> void:
+	if not weather_editor_scene:
+		_show_warning("No se pudo cargar weather_editor_window.tscn")
+		return
+	if current_weather_editor and is_instance_valid(current_weather_editor):
+		current_weather_editor.queue_free()
+	await get_tree().process_frame
+	var editor := weather_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar WeatherEditorWindow")
+		return
+	add_child(editor)
+	current_weather_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(func():
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_weather_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_weather_editor = null
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+
+func _open_weather_editor_edit(tab_node: Control, weather_data: WeatherData) -> void:
+	if not weather_editor_scene:
+		_show_warning("No se pudo cargar weather_editor_window.tscn")
+		return
+	if current_weather_editor and is_instance_valid(current_weather_editor):
+		current_weather_editor.queue_free()
+	await get_tree().process_frame
+	var editor := weather_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar WeatherEditorWindow")
+		return
+	add_child(editor)
+	current_weather_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(weather_data, func():
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_weather_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_weather_editor = null
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+
+func _open_weather_editor_duplicate(tab_node: Control, weather_data: WeatherData) -> void:
+	if not weather_editor_scene:
+		_show_warning("No se pudo cargar weather_editor_window.tscn")
+		return
+	if current_weather_editor and is_instance_valid(current_weather_editor):
+		current_weather_editor.queue_free()
+	await get_tree().process_frame
+	var editor := weather_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar WeatherEditorWindow")
+		return
+	add_child(editor)
+	current_weather_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(weather_data, func():
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_weather_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_weather_editor = null
+			_load_simple_resources_directly(tab_node, "weather")
+		)
+
+## ============================================
+## FUNCIONES PARA TYPES / AILMENTS / ABILITIES / WEATHER
+## ============================================
+
+func _load_simple_resources_directly(tab_node: Control, kind: String) -> void:
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		push_error("[DatabaseEditor] No se encontró ResourceList para %s" % kind)
+		return
+
+	resource_list.clear()
+	var dir_path := _get_simple_resource_dir(kind)
+	var dir := DirAccess.open(ProjectSettings.globalize_path(dir_path))
+	if dir == null:
+		dir = DirAccess.open(dir_path)
+	if dir == null:
+		push_warning("[DatabaseEditor] Directorio no encontrado para %s: %s" % [kind, dir_path])
+		tab_node.set_meta("%s_metadata" % kind, [])
+		tab_node.set_meta("%s_metadata_all" % kind, [])
+		return
+
+	var all_resources: Array = []
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if dir.current_is_dir() or not file_name.ends_with(".tres"):
+			file_name = dir.get_next()
+			continue
+
+		var file_path := dir_path + "/" + file_name
+		if not ResourceLoader.exists(file_path):
+			file_name = dir.get_next()
+			continue
+
+		var resource := load(file_path)
+		if resource == null:
+			file_name = dir.get_next()
+			continue
+		if not _is_expected_simple_resource(resource, kind):
+			file_name = dir.get_next()
+			continue
+
+		var metadata := {
+			"id": _get_simple_resource_id(resource, kind),
+			"name": _get_simple_resource_name(resource, kind, file_name),
+			"path": file_path,
+			"file_name": file_name
+		}
+		all_resources.append(metadata)
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+	all_resources.sort_custom(func(a, b):
+		var a_id = a.get("id")
+		var b_id = b.get("id")
+		if typeof(a_id) == TYPE_INT and typeof(b_id) == TYPE_INT and a_id != b_id:
+			return a_id < b_id
+		return str(a.get("name", "")).to_lower() < str(b.get("name", "")).to_lower()
+	)
+
+	var meta_key := "%s_metadata" % kind
+	var meta_all_key := "%s_metadata_all" % kind
+	tab_node.set_meta(meta_key, all_resources)
+	tab_node.set_meta(meta_all_key, all_resources)
+
+	var selection_handler := Callable(self, "_on_simple_item_selected").bind(tab_node, kind)
+	var search_handler := Callable(self, "_on_simple_search_text_changed").bind(tab_node, kind)
+	var create_handler := Callable(self, "_on_simple_create_button_pressed").bind(tab_node, kind)
+	var edit_handler := Callable(self, "_on_simple_edit_button_pressed").bind(tab_node, kind)
+	var delete_handler := Callable(self, "_on_simple_delete_button_pressed").bind(tab_node, kind)
+	var duplicate_handler := Callable(self, "_on_simple_duplicate_button_pressed").bind(tab_node, kind)
+
+	var connection_result = resource_list.item_selected.connect(func(idx: int):
+		_on_simple_item_selected(idx, tab_node, kind)
+	)
+	if connection_result != OK:
+		push_error("[DatabaseEditor] Error al conectar item_selected para %s: %d" % [kind, connection_result])
+
+	var search_line_edit: LineEdit = tab_node.get_node_or_null("VBoxContainer/SearchContainer/SearchLineEdit")
+	if search_line_edit and not search_line_edit.text_changed.is_connected(search_handler):
+		search_line_edit.text_changed.connect(search_handler)
+
+	var create_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/CreateButton")
+	var edit_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/EditButton")
+	var delete_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DeleteButton")
+	var duplicate_button: Button = tab_node.get_node_or_null("VBoxContainer/ActionButtons/DuplicateButton")
+
+	if create_button and not create_button.pressed.is_connected(create_handler):
+		create_button.pressed.connect(create_handler)
+	if edit_button and not edit_button.pressed.is_connected(edit_handler):
+		edit_button.pressed.connect(edit_handler)
+	if delete_button and not delete_button.pressed.is_connected(delete_handler):
+		delete_button.pressed.connect(delete_handler)
+	if duplicate_button and not duplicate_button.pressed.is_connected(duplicate_handler):
+		duplicate_button.pressed.connect(duplicate_handler)
+
+	_update_simple_list(tab_node, "", kind)
+
+func _on_simple_item_selected(index: int, tab_node: Control, kind: String) -> void:
+	var detail_container: VBoxContainer = tab_node.get_node_or_null("VBoxContainer/ContentContainer/RightPanel/DetailPanel/ScrollContainer/DetailContainer")
+	if not detail_container:
+		return
+
+	var metadata_array: Array = tab_node.get_meta("%s_metadata" % kind, [])
+	if index < 0 or index >= metadata_array.size():
+		return
+
+	var metadata: Dictionary = metadata_array[index]
+	var file_path: String = metadata.get("path", "")
+	if file_path == "" or not ResourceLoader.exists(file_path):
+		return
+
+	var resource := load(file_path)
+	if resource == null:
+		return
+
+	tab_node.set_meta("selected_%s_data" % kind, resource)
+	tab_node.set_meta("selected_%s_path" % kind, file_path)
+
+	if is_picker_mode and _is_simple_kind_in_picker(kind):
+		var picker_type := _get_picker_type_for_kind(kind)
+		if picker_resource_type == picker_type:
+			_update_picker_selection(
+				resource,
+				int(_get_simple_resource_id(resource, kind)) if typeof(_get_simple_resource_id(resource, kind)) == TYPE_INT else 0,
+				file_path,
+				_get_simple_resource_name(resource, kind)
+			)
+
+	for child in detail_container.get_children():
+		child.queue_free()
+
+	_add_section_header(detail_container, "INFORMACIÓN")
+	_add_detail_row(detail_container, "Tipo", kind.capitalize())
+	_add_detail_row(detail_container, "ID", str(_get_simple_resource_id(resource, kind)))
+	_add_detail_row(detail_container, "Nombre", _get_simple_resource_name(resource, kind))
+
+	if kind == "ability":
+		_add_detail_row(detail_container, "Nombre interno", str(resource.get("internal_name")))
+		_add_detail_row(detail_container, "Descripción", str(resource.get("description")))
+	elif kind == "type":
+		_add_detail_row(detail_container, "Nombre interno", str(resource.get("internal_name")))
+	elif kind == "ailment":
+		_add_detail_row(detail_container, "Nombre interno", str(resource.get("internal_name")))
+		_add_detail_row(detail_container, "Descripción", str(resource.get("description")))
+	elif kind == "weather":
+		_add_detail_row(detail_container, "Nombre interno", str(resource.get("internal_name")))
+
+	_add_section_header(detail_container, "ARCHIVO")
+	_add_detail_label(detail_container, file_path)
+
+func _update_simple_list(tab_node: Control, search_text: String, kind: String) -> void:
+	var resource_list: ItemList = tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList")
+	if not resource_list:
+		return
+
+	var all_metadata: Array = tab_node.get_meta("%s_metadata_all" % kind, [])
+	resource_list.clear()
+	var search_lower := search_text.to_lower()
+	var filtered: Array = []
+
+	for metadata in all_metadata:
+		var id_text := str(metadata.get("id", ""))
+		var name_text := str(metadata.get("name", ""))
+		var file_text := str(metadata.get("file_name", ""))
+		var matches := search_text.is_empty() \
+			or id_text.to_lower().contains(search_lower) \
+			or name_text.to_lower().contains(search_lower) \
+			or file_text.to_lower().contains(search_lower)
+		if matches:
+			resource_list.add_item("%s - %s" % [id_text, name_text])
+			filtered.append(metadata)
+
+	tab_node.set_meta("%s_metadata" % kind, filtered)
+	tab_node.remove_meta("selected_%s_data" % kind)
+
+func _on_simple_search_text_changed(new_text: String, tab_node: Control, kind: String) -> void:
+	_update_simple_list(tab_node, new_text, kind)
+
+func _on_simple_create_button_pressed(tab_node: Control, kind: String) -> void:
+	if kind == "type":
+		_open_type_editor_create(tab_node)
+		return
+	if kind == "ailment":
+		_open_ailment_editor_create(tab_node)
+		return
+	if kind == "ability":
+		_open_ability_editor_create(tab_node)
+		return
+	if kind == "weather":
+		_open_weather_editor_create(tab_node)
+		return
+
+	var script := load(_get_simple_resource_script_path(kind))
+	if script == null:
+		_show_warning("No se pudo cargar el script de %s" % kind)
+		return
+	var resource: Resource = script.new()
+	if resource == null:
+		_show_warning("No se pudo crear recurso de %s" % kind)
+		return
+	_initialize_simple_new_resource(resource, kind)
+	var path := _build_simple_unique_path(kind, _get_simple_resource_name(resource, kind))
+	var error := ResourceSaver.save(resource, path)
+	if error != OK:
+		_show_warning("Error al crear %s: %s" % [kind, error_string(error)])
+		return
+	_refresh_filesystem()
+	_load_simple_resources_directly(tab_node, kind)
+	EditorInterface.edit_resource(load(path))
+
+func _on_simple_edit_button_pressed(tab_node: Control, kind: String) -> void:
+	var resource: Resource = tab_node.get_meta("selected_%s_data" % kind, null)
+	if not resource:
+		_show_warning("No hay ningún recurso seleccionado.")
+		return
+	if kind == "type":
+		_open_type_editor_edit(tab_node, resource as TypeData)
+		return
+	if kind == "ailment":
+		_open_ailment_editor_edit(tab_node, resource as AilmentData)
+		return
+	if kind == "ability":
+		_open_ability_editor_edit(tab_node, resource as AbilityData)
+		return
+	if kind == "weather":
+		_open_weather_editor_edit(tab_node, resource as WeatherData)
+		return
+	EditorInterface.edit_resource(resource)
+
+func _on_simple_duplicate_button_pressed(tab_node: Control, kind: String) -> void:
+	var resource: Resource = tab_node.get_meta("selected_%s_data" % kind, null)
+	if not resource:
+		_show_warning("No hay ningún recurso seleccionado.")
+		return
+	if kind == "type":
+		_open_type_editor_duplicate(tab_node, resource as TypeData)
+		return
+	if kind == "ailment":
+		_open_ailment_editor_duplicate(tab_node, resource as AilmentData)
+		return
+	if kind == "ability":
+		_open_ability_editor_duplicate(tab_node, resource as AbilityData)
+		return
+	if kind == "weather":
+		_open_weather_editor_duplicate(tab_node, resource as WeatherData)
+		return
+	var dup := resource.duplicate(true) as Resource
+	if dup == null:
+		_show_warning("No se pudo duplicar el recurso.")
+		return
+	_initialize_simple_duplicate_resource(dup, kind)
+	var path := _build_simple_unique_path(kind, _get_simple_resource_name(dup, kind))
+	var error := ResourceSaver.save(dup, path)
+	if error != OK:
+		_show_warning("Error al duplicar %s: %s" % [kind, error_string(error)])
+		return
+	_refresh_filesystem()
+	_load_simple_resources_directly(tab_node, kind)
+
+func _on_simple_delete_button_pressed(tab_node: Control, kind: String) -> void:
+	var path: String = tab_node.get_meta("selected_%s_path" % kind, "")
+	if path == "":
+		_show_warning("No hay ningún recurso seleccionado.")
+		return
+	var dialog := ConfirmationDialog.new()
+	dialog.title = "Confirmar Eliminación"
+	dialog.dialog_text = "¿Eliminar este recurso?"
+	dialog.ok_button_text = "Eliminar"
+	dialog.cancel_button_text = "Cancelar"
+	add_child(dialog)
+	dialog.popup_centered()
+	dialog.confirmed.connect(func():
+		var dir := DirAccess.open(ProjectSettings.globalize_path(path.get_base_dir()))
+		if dir and dir.file_exists(path.get_file()):
+			var error := dir.remove(path.get_file())
+			if error != OK:
+				_show_warning("Error al eliminar: %s" % error_string(error))
+		_refresh_filesystem()
+		_load_simple_resources_directly(tab_node, kind)
+		dialog.queue_free()
+	)
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+
+func _is_expected_simple_resource(resource: Resource, kind: String) -> bool:
+	match kind:
+		"type":
+			return resource is TypeData
+		"ailment":
+			return resource is AilmentData
+		"ability":
+			return resource is AbilityData
+		"weather":
+			return resource is WeatherData
+	return false
+
+func _get_simple_resource_dir(kind: String) -> String:
+	match kind:
+		"type":
+			return "res://Resources/Data/Types"
+		"ailment":
+			return "res://Resources/Data/Ailments"
+		"ability":
+			return "res://Resources/Data/Abilities"
+		"weather":
+			return "res://Resources/Data/Weather"
+	return ""
+
+func _get_simple_resource_script_path(kind: String) -> String:
+	match kind:
+		"type":
+			return "res://Scripts/Resources/Classes/TypeData.gd"
+		"ailment":
+			return "res://Scripts/Resources/Classes/AilmentData.gd"
+		"ability":
+			return "res://Scripts/Resources/Classes/AbilityData.gd"
+		"weather":
+			return "res://Scripts/Resources/Classes/WeatherData.gd"
+	return ""
+
+func _get_simple_resource_id(resource: Resource, kind: String):
+	match kind:
+		"type":
+			return int(resource.get("id"))
+		"ailment":
+			return int(resource.get("id"))
+		"ability":
+			return int(resource.get("id"))
+		"weather":
+			return int(resource.get("id"))
+	return ""
+
+func _get_simple_resource_name(resource: Resource, kind: String, fallback_file_name: String = "") -> String:
+	match kind:
+		"type":
+			var n: String = str(resource.get("Name"))
+			return n if n != "" else fallback_file_name.get_basename()
+		"ailment":
+			var dn: String = str(resource.get("display_name"))
+			return dn if dn != "" else str(resource.get("internal_name"))
+		"ability":
+			var an: String = str(resource.get("display_name"))
+			if an != "":
+				return an
+			var internal: String = str(resource.get("internal_name"))
+			return internal if internal != "" else fallback_file_name.get_basename()
+		"weather":
+			var wn: String = str(resource.get("display_name"))
+			return wn if wn != "" else str(resource.get("internal_name"))
+	return fallback_file_name.get_basename()
+
+func _initialize_simple_new_resource(resource: Resource, kind: String) -> void:
+	match kind:
+		"type":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("Name", "Nuevo Tipo")
+			resource.set("internal_name", "new_type")
+		"ailment":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "Nuevo Ailment")
+			resource.set("internal_name", "new_ailment")
+		"ability":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "Nueva Habilidad")
+			resource.set("internal_name", "new_ability")
+		"weather":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "Nuevo Weather")
+			resource.set("internal_name", "new_weather")
+
+func _initialize_simple_duplicate_resource(resource: Resource, kind: String) -> void:
+	match kind:
+		"type":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("Name", "%s Copia" % str(resource.get("Name")))
+		"ailment":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
+		"ability":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
+		"weather":
+			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
+
+func _get_next_simple_numeric_id(kind: String) -> int:
+	var dir_path := _get_simple_resource_dir(kind)
+	var dir := DirAccess.open(ProjectSettings.globalize_path(dir_path))
+	if dir == null:
+		dir = DirAccess.open(dir_path)
+	if dir == null:
+		return 1
+	var max_id := 0
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with(".tres"):
+			var path := dir_path + "/" + file_name
+			var resource := load(path)
+			if resource:
+				max_id = maxi(max_id, int(_get_simple_resource_id(resource, kind)))
+		file_name = dir.get_next()
+	dir.list_dir_end()
+	return max_id + 1
+
+func _build_simple_unique_path(kind: String, base_name: String) -> String:
+	var dir_path := _get_simple_resource_dir(kind)
+	var safe := base_name.strip_edges().replace("/", "-").replace("\\", "-")
+	safe = safe.replace(":", "-").replace("*", "").replace("?", "")
+	safe = safe.replace("\"", "").replace("<", "").replace(">", "").replace("|", "")
+	if safe == "":
+		safe = kind
+	var path := "%s/%s.tres" % [dir_path, safe]
+	var i := 1
+	while ResourceLoader.exists(path):
+		path = "%s/%s_%d.tres" % [dir_path, safe, i]
+		i += 1
+	return path
+
+func _is_simple_kind_in_picker(kind: String) -> bool:
+	return kind == "type" or kind == "ailment" or kind == "ability" or kind == "weather"
+
+func _get_picker_type_for_kind(kind: String) -> ResourceType:
+	match kind:
+		"type":
+			return ResourceType.TYPE
+		"ailment":
+			return ResourceType.AILMENT
+		"ability":
+			return ResourceType.ABILITY
+		"weather":
+			return ResourceType.WEATHER
+	return ResourceType.POKEMON
 

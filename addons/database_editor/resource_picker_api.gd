@@ -13,7 +13,11 @@ enum ResourceType {
 	POKEMON,
 	MOVE,
 	ITEM,
-	# TRAINER,  # Futuro: descomentar cuando se implemente
+	TRAINER,
+	TYPE,
+	ABILITY,
+	AILMENT,
+	WEATHER,
 }
 
 ## Abre el DatabaseEditor en modo picker
@@ -81,4 +85,24 @@ static func open_move_picker(initial_selection = null, callback: Callable = Call
 ## Abre el picker para seleccionar un Item
 static func open_item_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
 	return open_resource_picker(ResourceType.ITEM, initial_selection, callback, cancel_callback)
+
+## Abre el picker para seleccionar un Trainer
+static func open_trainer_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
+	return open_resource_picker(ResourceType.TRAINER, initial_selection, callback, cancel_callback)
+
+## Abre el picker para seleccionar un Type
+static func open_type_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
+	return open_resource_picker(ResourceType.TYPE, initial_selection, callback, cancel_callback)
+
+## Abre el picker para seleccionar una Ability
+static func open_ability_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
+	return open_resource_picker(ResourceType.ABILITY, initial_selection, callback, cancel_callback)
+
+## Abre el picker para seleccionar un Ailment
+static func open_ailment_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
+	return open_resource_picker(ResourceType.AILMENT, initial_selection, callback, cancel_callback)
+
+## Abre el picker para seleccionar un Weather
+static func open_weather_picker(initial_selection = null, callback: Callable = Callable(), cancel_callback: Callable = Callable()) -> Window:
+	return open_resource_picker(ResourceType.WEATHER, initial_selection, callback, cancel_callback)
 
