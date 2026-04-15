@@ -707,6 +707,21 @@ func _get_command_detail_text(command: EventCommand) -> String:
 			return message_text.substr(0, first_line_end)
 		return message_text
 
+	# DialogueCommand: mostrar solo la primera línea de la primera página
+	if command is DialogueCommand:
+		var dialogue_cmd = command as DialogueCommand
+		if dialogue_cmd.pages.is_empty():
+			return ""
+
+		var first_page = dialogue_cmd.pages[0]
+		if first_page == null or first_page.text.is_empty():
+			return ""
+
+		var first_line_end = first_page.text.find("\n")
+		if first_line_end >= 0:
+			return first_page.text.substr(0, first_line_end)
+		return first_page.text
+
 	# SetFlagCommand: mostrar flag y valor
 	if command is SetFlagCommand:
 		var flag_cmd = command as SetFlagCommand
@@ -2617,6 +2632,8 @@ func _on_edit_command_pressed(page_index: int) -> void:
 	# Al editar, no es un comando nuevo
 	if command is ShowMessageCommand:
 		_open_show_message_editor(command, page_index, false, -1)
+	elif command is DialogueCommand:
+		_open_dialogue_command_editor(command, page_index, false, -1)
 	elif command is SetFlagCommand:
 		_open_set_flag_editor(command, page_index, false, -1)
 	elif command is SetVariableCommand:
@@ -4052,7 +4069,7 @@ func _reselect_moved_item(page_index: int, reselect_info: Dictionary) -> void:
 # === DIÁLOGO DE AÑADIR COMANDO ===
 func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary = {}) -> void:
 	var command_types = [
-		"ShowMessage", "SetFlag", "SetVariable", "SetSelfSwitch",
+		"ShowMessage", "Dialogue", "SetFlag", "SetVariable", "SetSelfSwitch",
 		"StartBattleEvent", "Warp", "ShowChoices", "Conditional",
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
@@ -4370,6 +4387,8 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 				# Abrir el editor específico según el tipo de comando
 				if target_command is ShowMessageCommand:
 					_open_show_message_editor(target_command, page_index, true, command_index)
+				elif target_command is DialogueCommand:
+					_open_dialogue_command_editor(target_command, page_index, true, command_index)
 				elif target_command is SetFlagCommand:
 					_open_set_flag_editor(target_command, page_index, true, command_index)
 				elif target_command is SetVariableCommand:
@@ -5386,6 +5405,21 @@ func _commands_match_by_properties(cmd1: EventCommand, cmd2: EventCommand) -> bo
 		var sm2 = cmd2 as ShowMessageCommand
 		return sm1.message == sm2.message
 
+	# Para DialogueCommand, comparar por contenido de páginas
+	if cmd1 is DialogueCommand and cmd2 is DialogueCommand:
+		var d1 = cmd1 as DialogueCommand
+		var d2 = cmd2 as DialogueCommand
+		if d1.pages.size() != d2.pages.size():
+			return false
+		for i in range(d1.pages.size()):
+			var p1 = d1.pages[i]
+			var p2 = d2.pages[i]
+			var t1 = p1.text if p1 else ""
+			var t2 = p2.text if p2 else ""
+			if t1 != t2:
+				return false
+		return true
+
 	# Para otros comandos del mismo tipo, considerarlos iguales si están en la misma posición
 	# Esto es una aproximación - en la práctica, si dos comandos del mismo tipo están en la misma posición,
 	# probablemente son el mismo comando
@@ -5911,6 +5945,69 @@ func _on_show_message_command_edited(command: ShowMessageCommand, page_index: in
 		if commands_tree:
 			_update_commands_tree(commands_tree, page, page_index)
 			# Deseleccionar el comando y actualizar botones
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+
+	_refresh_inspector()
+
+## Abre el editor para DialogueCommand
+## is_new_command: true si es un comando nuevo que se está añadiendo, false si se está editando
+## command_index: índice del comando en la página (solo relevante si is_new_command es true)
+func _open_dialogue_command_editor(command: DialogueCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un DialogueCommand válido")
+		return
+
+	# Cerrar cualquier ventana de edición existente
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	# Esperar un frame para asegurar que la ventana anterior se haya cerrado
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/dialogue_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de DialogueCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: DialogueCommand): _on_dialogue_command_edited(cmd, page_index))
+
+	# Si es un comando nuevo y se cancela, eliminarlo
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+## Callback cuando se edita un DialogueCommand
+func _on_dialogue_command_edited(command: DialogueCommand, page_index: int) -> void:
+	if not command:
+		return
+
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
 			commands_tree.deselect_all()
 			_update_buttons_state(page_index, false, false, false, false, false)
 
