@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dmtx4hx3sgp4g"]
+[gd_scene format=3 uid="uid://dmtx4hx3sgp4g"]
 
 [ext_resource type="Script" uid="uid://dhjb44wauaqyq" path="res://Managers/DisplayManager.gd" id="1"]
 [ext_resource type="Script" uid="uid://6d5fhb0upic7" path="res://Scripts/UI/FadeLayer.gd" id="2"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b8k7m2oap4q5r" path="res://Scenes/UI/PauseMenu.tscn" id="7"]
 [ext_resource type="Script" uid="uid://brvi5cb0dlao1" path="res://Scripts/UI/OverlayLayer.gd" id="8"]
 [ext_resource type="Shader" uid="uid://i23gj0rrtxja" path="res://Shaders/overlay_flashlight.gdshader" id="9"]
+[ext_resource type="PackedScene" uid="uid://cjyn725u2m23r" path="res://Scenes/UI/BAG.tscn" id="10_bag"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -27,10 +28,10 @@ shader = ExtResource("3")
 shader_parameter/progress = 0.0
 shader_parameter/smoothness = 0.1
 
-[node name="DisplayManager" type="CanvasLayer" groups=["GUI"]]
+[node name="DisplayManager" type="CanvasLayer" unique_id=797032242 groups=["GUI"]]
 script = ExtResource("1")
 
-[node name="OverlayLayer" type="Control" parent="."]
+[node name="OverlayLayer" type="Control" parent="." unique_id=1915064357]
 z_index = -5
 layout_mode = 3
 anchors_preset = 15
@@ -41,7 +42,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("8")
 
-[node name="DarknessRect" type="ColorRect" parent="OverlayLayer"]
+[node name="DarknessRect" type="ColorRect" parent="OverlayLayer" unique_id=1741699183]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +52,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 
-[node name="WeatherContainer" type="Control" parent="OverlayLayer"]
+[node name="WeatherContainer" type="Control" parent="OverlayLayer" unique_id=1795719326]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +61,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="RainOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+[node name="RainOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer" unique_id=1856603579]
 visible = false
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
@@ -72,7 +73,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.6, 0.7, 0.9, 0.4)
 
-[node name="SnowOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+[node name="SnowOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer" unique_id=2024608916]
 visible = false
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
@@ -84,7 +85,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.9, 0.9, 1, 0.45)
 
-[node name="FogOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+[node name="FogOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer" unique_id=190534440]
 visible = false
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
@@ -96,7 +97,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.8, 0.85, 0.95, 0.35)
 
-[node name="StormOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer"]
+[node name="StormOverlay" type="ColorRect" parent="OverlayLayer/WeatherContainer" unique_id=961444421]
 visible = false
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
@@ -108,7 +109,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.3, 0.35, 0.45, 0.55)
 
-[node name="FlashlightMask" type="ColorRect" parent="OverlayLayer"]
+[node name="FlashlightMask" type="ColorRect" parent="OverlayLayer" unique_id=160295660]
 visible = false
 material = SubResource("ShaderMaterial_flashlight")
 layout_mode = 1
@@ -120,11 +121,23 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="MSG" parent="." instance=ExtResource("4")]
+[node name="BattleNew" parent="." unique_id=567659588 instance=ExtResource("6")]
 visible = false
 
-[node name="ChoiceBox" parent="." instance=ExtResource("5")]
+[node name="PauseMenu" parent="." unique_id=1112036495 instance=ExtResource("7")]
 visible = false
+anchors_preset = 1
+
+[node name="BagUI" parent="." unique_id=59512004 instance=ExtResource("10_bag")]
+visible = false
+
+[node name="MSG" parent="." unique_id=1471044678 instance=ExtResource("4")]
+visible = false
+z_index = 200
+
+[node name="ChoiceBox" parent="." unique_id=279823458 instance=ExtResource("5")]
+visible = false
+z_index = 210
 anchors_preset = 6
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -134,14 +147,7 @@ offset_right = 0.0
 offset_bottom = 98.0
 grow_vertical = 2
 
-[node name="BattleNew" parent="." instance=ExtResource("6")]
-visible = false
-
-[node name="PauseMenu" parent="." instance=ExtResource("7")]
-visible = false
-anchors_preset = 1
-
-[node name="FadeLayer" type="ColorRect" parent="."]
+[node name="FadeLayer" type="ColorRect" parent="." unique_id=1337564051]
 visible = false
 z_index = 10
 anchors_preset = -1
@@ -151,7 +157,7 @@ offset_right = -435.2
 offset_bottom = -236.16
 script = ExtResource("2")
 
-[node name="ColorRect" type="ColorRect" parent="FadeLayer"]
+[node name="ColorRect" type="ColorRect" parent="FadeLayer" unique_id=297557463]
 visible = false
 material = SubResource("ShaderMaterial_j64dw")
 layout_mode = 1

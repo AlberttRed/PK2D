@@ -3,14 +3,16 @@
 extends RefCounted
 class_name ItemUseContext
 
+const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
+
 ## Contexto donde se está usando el item
-var use_context: ItemEnums.UseContext
+var use_context: ItemEnums.UseContext = ItemEnums.UseContext.OVERWORLD
 
 ## Referencia al party del jugador (puede ser null si no aplica)
 var party: Array = []
 
 ## Referencia al bag/inventario (puede ser null si no aplica)
-var bag: Dictionary = {}
+var bag = null
 
 ## Pokémon objetivo (si aplica)
 var target_pokemon: Pokemon = null
@@ -29,13 +31,15 @@ var battle_pokemon = null
 func _init(
 	context: ItemEnums.UseContext,
 	_party: Array = [],
-	_bag: Dictionary = {},
+	_bag = null,
 	_target_pokemon: Pokemon = null,
 	_target_party_slot: int = -1,
 	_target_move_slot: int = -1
 ) -> void:
 	use_context = context
 	party = _party
+	if _bag != null and not (_bag is BAG_SCRIPT):
+		push_warning("ItemUseContext: _bag no es una instancia de Bag")
 	bag = _bag
 	target_pokemon = _target_pokemon
 	target_party_slot = _target_party_slot

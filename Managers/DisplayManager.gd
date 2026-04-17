@@ -29,6 +29,7 @@ signal portrait_box_closed
 # === CONSTANTES ===
 const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
 const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
+const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 
 # === VARIABLES ===
 var fading: bool = false
@@ -38,12 +39,17 @@ var pressed_actions := {}
 var choices_options = null
 var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
+var _bag_controller = null
+var _bag_dialog_layout_saved: bool = false
+var _bag_dialog_saved_msg_layout: Dictionary = {}
+var _bag_dialog_saved_choice_layout: Dictionary = {}
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
 @onready var choice_box: ChoiceBox = $ChoiceBox
 @onready var BattleNew: BattleScene = $BattleNew
 @onready var pause_menu = $PauseMenu
+@onready var _bag_ui = $BagUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -65,6 +71,8 @@ func _ready() -> void:
 	choice_box.process_mode = Node.PROCESS_MODE_ALWAYS
 	if pause_menu:
 		pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _bag_ui:
+		_bag_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -89,6 +97,13 @@ func _ready() -> void:
 		pause_menu.menu_closed.connect(_on_pause_menu_closed)
 		if pause_menu.has_signal("visibility_changed"):
 			pause_menu.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _bag_ui:
+		_bag_ui.back_requested.connect(_on_bag_back_requested)
+		_bag_ui.use_requested.connect(_on_bag_use_requested)
+		_bag_ui.closed.connect(_on_bag_closed)
+		if _bag_ui.has_signal("visibility_changed"):
+			_bag_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -302,13 +317,11 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 
 	# Flag para indicar que estamos en modo choices
 	var choices_mode_active = true
-	var message_finished = false
 
 	# Conectar a la señal finishedAllText para mostrar opciones automáticamente al finalizar
 	# sin esperar input adicional
 	var finished_callback = func():
 		if choices_mode_active and msg.messageHasFinished:
-			message_finished = true
 			# Finalizar sin cerrar y sin esperar input
 			msg._finish_without_closing()
 
@@ -365,7 +378,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible)
 
 ## Método privado para iniciar batalla
 ## from_event: true si el combate fue iniciado desde un evento (no desbloquear control al terminar)
@@ -681,7 +694,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -725,7 +738,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or battle_message_box_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or battle_message_box_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -736,7 +749,224 @@ func _on_pause_party_requested() -> void:
 	print("PauseMenu: Party solicitado (placeholder)")
 
 func _on_pause_bag_requested() -> void:
-	print("PauseMenu: Bag solicitado (placeholder)")
+	_open_bag_ui()
+
+func _open_bag_ui() -> void:
+	if _bag_ui != null and _bag_ui.visible:
+		return
+
+	if _bag_ui == null:
+		push_error("DisplayManager: Nodo BagUI no disponible en la escena.")
+		return
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+
+	_bag_ui.setup(_bag_controller)
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+func _close_bag_ui() -> void:
+	if _bag_ui == null:
+		return
+	_bag_ui.close()
+
+func _on_bag_back_requested() -> void:
+	_close_bag_ui()
+
+func _on_bag_closed() -> void:
+	_bag_controller = null
+	if pause_menu and not pause_menu.visible:
+		pause_menu.open(2) # Mantener cursor en "MOCHILA"
+	_on_ui_visibility_changed()
+
+func _on_bag_use_requested(item_id: int) -> void:
+	await _run_bag_item_use_flow(item_id)
+
+func _run_bag_item_use_flow(item_id: int) -> void:
+	if _bag_controller == null or _bag_ui == null:
+		return
+	if not _bag_ui.visible:
+		return
+
+	_push_bag_item_dialog_layout()
+
+	var restore_bag_input := false
+	if _bag_ui.has_method("set_input_enabled"):
+		restore_bag_input = true
+		_bag_ui.set_input_enabled(false)
+
+	var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
+	var item_name: String = str(debug_info.get("display_name", "Objeto"))
+	var message_text := "Has seleccionado %s." % item_name
+	var options: Array[String] = ["Usar", "Tirar", "Salir"]
+
+	if msg.visible:
+		_close_message()
+
+	# Mostrar el texto en el MessageBox global y, encima, el ChoiceBox (misma UX que eventos).
+	await msg.show_custom(message_text, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": "instant"
+	})
+
+	var choice_index := await _show_choices(options)
+
+	match choice_index:
+		0:
+			var use_result: Dictionary = _bag_controller.request_use_item(item_id)
+			if bool(use_result.get("ok", false)):
+				await _show_message_with_config(str(use_result.get("message", "")), {
+					"waitInput": false,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+					"typingMode": "instant"
+				})
+			else:
+				await _show_message_with_config(str(use_result.get("message", "No se puede usar.")), {
+					"waitInput": false,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+					"typingMode": "instant"
+				})
+		1:
+			await _show_message_with_config("Tirar: pendiente de implementar.", {
+				"waitInput": false,
+				"closeAtEnd": true,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"typingMode": "instant"
+			})
+		2:
+			pass
+		_:
+			pass
+
+	_close_message()
+
+	if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(true)
+
+	_pop_bag_item_dialog_layout()
+
+func _push_bag_item_dialog_layout() -> void:
+	if _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		return
+
+	_bag_dialog_saved_msg_layout = {
+		"anchor_left": msg.anchor_left,
+		"anchor_top": msg.anchor_top,
+		"anchor_right": msg.anchor_right,
+		"anchor_bottom": msg.anchor_bottom,
+		"offset_left": msg.offset_left,
+		"offset_top": msg.offset_top,
+		"offset_right": msg.offset_right,
+		"offset_bottom": msg.offset_bottom,
+		"grow_horizontal": msg.grow_horizontal,
+		"grow_vertical": msg.grow_vertical,
+		"custom_minimum_size": msg.custom_minimum_size,
+	}
+
+	_bag_dialog_saved_choice_layout = {
+		"anchors_preset": choice_box.anchors_preset,
+		"anchor_left": choice_box.anchor_left,
+		"anchor_top": choice_box.anchor_top,
+		"anchor_right": choice_box.anchor_right,
+		"anchor_bottom": choice_box.anchor_bottom,
+		"offset_left": choice_box.offset_left,
+		"offset_top": choice_box.offset_top,
+		"offset_right": choice_box.offset_right,
+		"offset_bottom": choice_box.offset_bottom,
+		"grow_horizontal": choice_box.grow_horizontal,
+		"grow_vertical": choice_box.grow_vertical,
+	}
+
+	msg.apply_bag_dialog_text_layout(true)
+
+	# MessageBox: mitad de ancho, posición fija en pantalla (viewport base 512×384).
+	const BAG_MSG_POS := Vector2(2.0, 285.0)
+	var half_w := 256.0
+	var h := 96.0
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(half_w, h)
+	msg.offset_left = BAG_MSG_POS.x
+	msg.offset_top = BAG_MSG_POS.y
+	msg.offset_right = BAG_MSG_POS.x + half_w
+	msg.offset_bottom = BAG_MSG_POS.y + h
+
+	# ChoiceBox: esquina superior izquierda fija; tamaño lo calcula `_adjust_panel_size`.
+	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	choice_box.set_fixed_top_left_position(true, Vector2(400.0, 254.0))
+
+	_bag_dialog_layout_saved = true
+
+func _pop_bag_item_dialog_layout() -> void:
+	if not _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		_bag_dialog_layout_saved = false
+		return
+
+	msg.anchor_left = float(_bag_dialog_saved_msg_layout.get("anchor_left", 0.0))
+	msg.anchor_top = float(_bag_dialog_saved_msg_layout.get("anchor_top", 1.0))
+	msg.anchor_right = float(_bag_dialog_saved_msg_layout.get("anchor_right", 1.0))
+	msg.anchor_bottom = float(_bag_dialog_saved_msg_layout.get("anchor_bottom", 1.0))
+	msg.offset_left = float(_bag_dialog_saved_msg_layout.get("offset_left", 0.0))
+	msg.offset_top = float(_bag_dialog_saved_msg_layout.get("offset_top", -96.0))
+	msg.offset_right = float(_bag_dialog_saved_msg_layout.get("offset_right", 512.0))
+	msg.offset_bottom = float(_bag_dialog_saved_msg_layout.get("offset_bottom", 0.0))
+	msg.grow_horizontal = _bag_dialog_saved_msg_layout.get("grow_horizontal", Control.GROW_DIRECTION_BOTH)
+	msg.grow_vertical = _bag_dialog_saved_msg_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	msg.custom_minimum_size = _bag_dialog_saved_msg_layout.get("custom_minimum_size", Vector2(512, 96))
+
+	msg.apply_bag_dialog_text_layout(false)
+
+	choice_box.set_fixed_top_left_position(false)
+	choice_box.anchor_left = float(_bag_dialog_saved_choice_layout.get("anchor_left", 0.0))
+	choice_box.anchor_top = float(_bag_dialog_saved_choice_layout.get("anchor_top", 0.5))
+	choice_box.anchor_right = float(_bag_dialog_saved_choice_layout.get("anchor_right", 0.0))
+	choice_box.anchor_bottom = float(_bag_dialog_saved_choice_layout.get("anchor_bottom", 0.5))
+	choice_box.offset_left = float(_bag_dialog_saved_choice_layout.get("offset_left", -144.0))
+	choice_box.offset_top = float(_bag_dialog_saved_choice_layout.get("offset_top", 70.0))
+	choice_box.offset_right = float(_bag_dialog_saved_choice_layout.get("offset_right", 0.0))
+	choice_box.offset_bottom = float(_bag_dialog_saved_choice_layout.get("offset_bottom", 98.0))
+	choice_box.grow_horizontal = _bag_dialog_saved_choice_layout.get("grow_horizontal", Control.GROW_DIRECTION_BEGIN)
+	choice_box.grow_vertical = _bag_dialog_saved_choice_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	choice_box.set("anchors_preset", int(_bag_dialog_saved_choice_layout.get("anchors_preset", 6)))
+	_sync_choice_box_base_offsets_from_current()
+
+	_bag_dialog_layout_saved = false
+
+func _sync_choice_box_base_offsets_from_current() -> void:
+	if choice_box == null:
+		return
+	# ChoiceBox._adjust_panel_size() ancla el tamaño a estos valores (se fijan en _ready()).
+	choice_box._base_offset_right = choice_box.offset_right
+	choice_box._base_offset_bottom = choice_box.offset_bottom
+
+func _resolve_overworld_context() -> OverworldContext:
+	var nodes := get_tree().root.find_children("*", "OverworldCoordinator", true, false)
+	if nodes.is_empty():
+		return null
+
+	var coordinator := nodes[0]
+	if coordinator and coordinator.has_method("get_context"):
+		return coordinator.get_context()
+	return null
 
 func _on_pause_player_requested() -> void:
 	print("PauseMenu: Player solicitado (placeholder)")
@@ -760,6 +990,7 @@ func _update_game_pause_state() -> void:
 		msg.visible or
 		choice_box.visible or
 		(pause_menu != null && pause_menu.visible) or
+		(_bag_ui != null and _bag_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

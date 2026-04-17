@@ -1,0 +1,292 @@
+[gd_scene load_steps=15 format=3 uid="uid://cjyn725u2m23r"]
+
+[ext_resource type="Texture2D" uid="uid://c5g2lfbt533lw" path="res://Sprites/UI/Bag/bagbg1.png" id="1_r6uq1"]
+[ext_resource type="Script" uid="uid://bxfeili7om0r2" path="res://Scripts/UI/BagUI.gd" id="2_lafka"]
+[ext_resource type="Texture2D" uid="uid://63o4g2hhliy3" path="res://Sprites/UI/Bag/bag4.PNG" id="2_x1jmc"]
+[ext_resource type="Texture2D" uid="uid://t0oficbebyly" path="res://Sprites/UI/Bag/bagSlider.png" id="3_v6tpc"]
+[ext_resource type="Texture2D" uid="uid://ltsba8w1f4c2" path="res://Sprites/UI/Bag/bagSel.png" id="4_k55d4"]
+[ext_resource type="Texture2D" uid="uid://bf4ocpvll00ue" path="res://Sprites/UI/Bag/leftarrow.png" id="4_lafka"]
+[ext_resource type="Texture2D" uid="uid://bjvk865eg2yel" path="res://Sprites/UI/Bag/rightarrow.png" id="5_yp7op"]
+[ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="7_w0e1r"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="9_font"]
+[ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="10_apetd"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="10_labelhgss"]
+[ext_resource type="Texture2D" uid="uid://uughwx3qye3u" path="res://Sprites/UI/Bag/itemBack.png" id="12_w0e1r"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lafka"]
+texture = ExtResource("1_r6uq1")
+
+[sub_resource type="FontVariation" id="FontVariation_bag"]
+base_font = ExtResource("9_font")
+
+[sub_resource type="Theme" id="Theme_bag_label"]
+default_font = SubResource("FontVariation_bag")
+default_font_size = 26
+
+[node name="BAG" type="Panel" unique_id=473099982]
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_lafka")
+script = ExtResource("2_lafka")
+
+[node name="Descripcion" type="RichTextLabel" parent="." unique_id=1659586264]
+layout_mode = 0
+offset_left = 91.0
+offset_top = 295.0
+offset_right = 467.0
+offset_bottom = 383.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+tab_size = 2
+script = ExtResource("10_labelhgss")
+
+[node name="Outline" type="RichTextLabel" parent="Descripcion" unique_id=596076211]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+
+[node name="Outline2" type="RichTextLabel" parent="Descripcion" unique_id=596076212]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+
+[node name="PocketLabel" type="RichTextLabel" parent="." unique_id=2100063741]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 183.0
+offset_right = 164.0
+offset_bottom = 215.0
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "Objetos"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+script = ExtResource("10_labelhgss")
+align = 1
+
+[node name="Outline" type="RichTextLabel" parent="PocketLabel" unique_id=1790540721]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Outline2" type="RichTextLabel" parent="PocketLabel" unique_id=1192932378]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ItemsViewport" type="Control" parent="." unique_id=325699638]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 200.0
+offset_top = 8.0
+offset_right = 465.0
+offset_bottom = 272.0
+
+[node name="ItemsContainer" type="VBoxContainer" parent="ItemsViewport" unique_id=1845251394]
+layout_mode = 1
+anchors_preset = -1
+offset_top = 20.0
+offset_right = 254.0
+offset_bottom = 264.0
+theme_override_constants/separation = 0
+
+[node name="ExitTemplate" type="HBoxContainer" parent="ItemsViewport/ItemsContainer" unique_id=1356186654]
+custom_minimum_size = Vector2(230, 32)
+layout_mode = 2
+
+[node name="Name" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1274286925]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "CERRAR LA MOCHILA"
+scroll_active = false
+script = ExtResource("10_labelhgss")
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=567001477]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "CERRAR LA MOCHILA"
+scroll_active = false
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=305166836]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "CERRAR LA MOCHILA"
+scroll_active = false
+
+[node name="Quantity" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=393232243]
+custom_minimum_size = Vector2(48, 32)
+layout_mode = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+scroll_active = false
+script = ExtResource("10_labelhgss")
+align = 2
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=1942661653]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=455254522]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_bag_label")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+
+[node name="Mochila_Sprite" type="Sprite2D" parent="." unique_id=82672573]
+position = Vector2(88.7812, 83.8941)
+texture = ExtResource("2_x1jmc")
+
+[node name="Slider" type="Sprite2D" parent="." unique_id=58243385]
+position = Vector2(488, 83)
+texture = ExtResource("3_v6tpc")
+
+[node name="U_Arrow" type="Sprite2D" parent="." unique_id=1110364181]
+position = Vector2(322, 14)
+texture = ExtResource("7_w0e1r")
+hframes = 8
+
+[node name="L_Arrow" type="Sprite2D" parent="." unique_id=268225152]
+position = Vector2(17.3984, 88.8973)
+texture = ExtResource("4_lafka")
+vframes = 8
+
+[node name="R_Arrow" type="Sprite2D" parent="." unique_id=925902872]
+position = Vector2(159.122, 88.8973)
+texture = ExtResource("5_yp7op")
+vframes = 8
+
+[node name="D_Arrow" type="Sprite2D" parent="." unique_id=895889823]
+position = Vector2(322, 266)
+texture = ExtResource("10_apetd")
+hframes = 8
+
+[node name="Select" type="Sprite2D" parent="." unique_id=487614267]
+position = Vector2(325, 40)
+texture = ExtResource("4_k55d4")
+
+[node name="Item_Sprite" type="Sprite2D" parent="." unique_id=937051493]
+position = Vector2(48, 337)
+texture = ExtResource("12_w0e1r")
+

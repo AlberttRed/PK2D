@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://ff6qesqd3v1q"]
+
+[ext_resource type="Texture2D" uid="uid://mkrmvgqrk8nn" path="res://Sprites/UI/Choices Skins/choice 1.png" id="1_io1od"]
+
+[resource]
+texture = ExtResource("1_io1od")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+region_rect = Rect2(2, 2, 44, 44)
