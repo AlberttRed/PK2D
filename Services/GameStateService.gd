@@ -62,6 +62,33 @@ func _seed_test_bag_items() -> void:
 	player_bag.add_item(3, 10)   # Super Ball (Balls)
 	player_bag.add_item(77, 2)   # Repelente Máximo (Items)
 	player_bag.add_item(132, 3)  # Baya Aranja (Berries)
+	# Muchas Poké Ball distintas para probar scroll/overflow en BagUI (bolsillo BALLS).
+	player_bag.add_item(1, 1)    # Master Ball
+	player_bag.add_item(2, 12)   # Ultra Ball
+	player_bag.add_item(4, 8)    # Poké Ball
+	player_bag.add_item(5, 6)    # Safari Ball
+	player_bag.add_item(6, 5)    # Malla Ball
+	player_bag.add_item(7, 5)    # Buceo Ball
+	player_bag.add_item(8, 5)    # Nido Ball
+	player_bag.add_item(9, 5)    # Acopio Ball
+	player_bag.add_item(10, 5)   # Turno Ball
+	player_bag.add_item(11, 5)   # Lujo Ball
+	player_bag.add_item(12, 5)   # Honor Ball
+	player_bag.add_item(13, 5)   # Ocaso Ball
+	player_bag.add_item(14, 5)   # Sana Ball
+	player_bag.add_item(15, 5)   # Veloz Ball
+	player_bag.add_item(16, 5)   # Gloria Ball
+	player_bag.add_item(449, 4)  # Cebo Ball
+	player_bag.add_item(450, 4)  # Nivel Ball
+	player_bag.add_item(451, 4)  # Luna Ball
+	player_bag.add_item(452, 4)  # Peso Ball
+	player_bag.add_item(453, 4)  # Rapid Ball
+	player_bag.add_item(454, 4)  # Amigo Ball
+	player_bag.add_item(455, 4)  # Amor Ball
+	player_bag.add_item(456, 4)  # Parque Ball
+	player_bag.add_item(457, 4)  # Competi Ball
+	player_bag.add_item(617, 3)  # Ensueño Ball
+	player_bag.add_item(887, 2)  # Ente Ball
 	print("GameStateService: Bag de prueba inicializado con %d entradas." % get_bag_save_data().size())
 
 ## Carga un estado guardado (placeholder para futuro)

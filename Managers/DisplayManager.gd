@@ -40,6 +40,9 @@ var choices_options = null
 var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
 var _bag_controller = null
+var _bag_dialog_layout_saved: bool = false
+var _bag_dialog_saved_msg_layout: Dictionary = {}
+var _bag_dialog_saved_choice_layout: Dictionary = {}
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -781,17 +784,179 @@ func _on_bag_closed() -> void:
 	_on_ui_visibility_changed()
 
 func _on_bag_use_requested(item_id: int) -> void:
-	if _bag_controller == null:
+	await _run_bag_item_use_flow(item_id)
+
+func _run_bag_item_use_flow(item_id: int) -> void:
+	if _bag_controller == null or _bag_ui == null:
+		return
+	if not _bag_ui.visible:
 		return
 
+	_push_bag_item_dialog_layout()
+
+	var restore_bag_input := false
+	if _bag_ui.has_method("set_input_enabled"):
+		restore_bag_input = true
+		_bag_ui.set_input_enabled(false)
+
 	var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
-	print(
-		"BagUI[Placeholder]: seleccionado '%s' (id=%d) cantidad=%d" % [
-			str(debug_info.get("display_name", "Item")),
-			item_id,
-			int(debug_info.get("quantity", 0))
-		]
-	)
+	var item_name: String = str(debug_info.get("display_name", "Objeto"))
+	var message_text := "Has seleccionado %s." % item_name
+	var options: Array[String] = ["Usar", "Tirar", "Salir"]
+
+	if msg.visible:
+		_close_message()
+
+	# Mostrar el texto en el MessageBox global y, encima, el ChoiceBox (misma UX que eventos).
+	await msg.show_custom(message_text, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": "instant"
+	})
+
+	var choice_index := await _show_choices(options)
+
+	match choice_index:
+		0:
+			var use_result: Dictionary = _bag_controller.request_use_item(item_id)
+			if bool(use_result.get("ok", false)):
+				await _show_message_with_config(str(use_result.get("message", "")), {
+					"waitInput": false,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+					"typingMode": "instant"
+				})
+			else:
+				await _show_message_with_config(str(use_result.get("message", "No se puede usar.")), {
+					"waitInput": false,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+					"typingMode": "instant"
+				})
+		1:
+			await _show_message_with_config("Tirar: pendiente de implementar.", {
+				"waitInput": false,
+				"closeAtEnd": true,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"typingMode": "instant"
+			})
+		2:
+			pass
+		_:
+			pass
+
+	_close_message()
+
+	if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(true)
+
+	_pop_bag_item_dialog_layout()
+
+func _push_bag_item_dialog_layout() -> void:
+	if _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		return
+
+	_bag_dialog_saved_msg_layout = {
+		"anchor_left": msg.anchor_left,
+		"anchor_top": msg.anchor_top,
+		"anchor_right": msg.anchor_right,
+		"anchor_bottom": msg.anchor_bottom,
+		"offset_left": msg.offset_left,
+		"offset_top": msg.offset_top,
+		"offset_right": msg.offset_right,
+		"offset_bottom": msg.offset_bottom,
+		"grow_horizontal": msg.grow_horizontal,
+		"grow_vertical": msg.grow_vertical,
+		"custom_minimum_size": msg.custom_minimum_size,
+	}
+
+	_bag_dialog_saved_choice_layout = {
+		"anchors_preset": choice_box.anchors_preset,
+		"anchor_left": choice_box.anchor_left,
+		"anchor_top": choice_box.anchor_top,
+		"anchor_right": choice_box.anchor_right,
+		"anchor_bottom": choice_box.anchor_bottom,
+		"offset_left": choice_box.offset_left,
+		"offset_top": choice_box.offset_top,
+		"offset_right": choice_box.offset_right,
+		"offset_bottom": choice_box.offset_bottom,
+		"grow_horizontal": choice_box.grow_horizontal,
+		"grow_vertical": choice_box.grow_vertical,
+	}
+
+	msg.apply_bag_dialog_text_layout(true)
+
+	# MessageBox: mitad de ancho, posición fija en pantalla (viewport base 512×384).
+	const BAG_MSG_POS := Vector2(2.0, 285.0)
+	var half_w := 256.0
+	var h := 96.0
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(half_w, h)
+	msg.offset_left = BAG_MSG_POS.x
+	msg.offset_top = BAG_MSG_POS.y
+	msg.offset_right = BAG_MSG_POS.x + half_w
+	msg.offset_bottom = BAG_MSG_POS.y + h
+
+	# ChoiceBox: esquina superior izquierda fija; tamaño lo calcula `_adjust_panel_size`.
+	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	choice_box.set_fixed_top_left_position(true, Vector2(400.0, 254.0))
+
+	_bag_dialog_layout_saved = true
+
+func _pop_bag_item_dialog_layout() -> void:
+	if not _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		_bag_dialog_layout_saved = false
+		return
+
+	msg.anchor_left = float(_bag_dialog_saved_msg_layout.get("anchor_left", 0.0))
+	msg.anchor_top = float(_bag_dialog_saved_msg_layout.get("anchor_top", 1.0))
+	msg.anchor_right = float(_bag_dialog_saved_msg_layout.get("anchor_right", 1.0))
+	msg.anchor_bottom = float(_bag_dialog_saved_msg_layout.get("anchor_bottom", 1.0))
+	msg.offset_left = float(_bag_dialog_saved_msg_layout.get("offset_left", 0.0))
+	msg.offset_top = float(_bag_dialog_saved_msg_layout.get("offset_top", -96.0))
+	msg.offset_right = float(_bag_dialog_saved_msg_layout.get("offset_right", 512.0))
+	msg.offset_bottom = float(_bag_dialog_saved_msg_layout.get("offset_bottom", 0.0))
+	msg.grow_horizontal = _bag_dialog_saved_msg_layout.get("grow_horizontal", Control.GROW_DIRECTION_BOTH)
+	msg.grow_vertical = _bag_dialog_saved_msg_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	msg.custom_minimum_size = _bag_dialog_saved_msg_layout.get("custom_minimum_size", Vector2(512, 96))
+
+	msg.apply_bag_dialog_text_layout(false)
+
+	choice_box.set_fixed_top_left_position(false)
+	choice_box.anchor_left = float(_bag_dialog_saved_choice_layout.get("anchor_left", 0.0))
+	choice_box.anchor_top = float(_bag_dialog_saved_choice_layout.get("anchor_top", 0.5))
+	choice_box.anchor_right = float(_bag_dialog_saved_choice_layout.get("anchor_right", 0.0))
+	choice_box.anchor_bottom = float(_bag_dialog_saved_choice_layout.get("anchor_bottom", 0.5))
+	choice_box.offset_left = float(_bag_dialog_saved_choice_layout.get("offset_left", -144.0))
+	choice_box.offset_top = float(_bag_dialog_saved_choice_layout.get("offset_top", 70.0))
+	choice_box.offset_right = float(_bag_dialog_saved_choice_layout.get("offset_right", 0.0))
+	choice_box.offset_bottom = float(_bag_dialog_saved_choice_layout.get("offset_bottom", 98.0))
+	choice_box.grow_horizontal = _bag_dialog_saved_choice_layout.get("grow_horizontal", Control.GROW_DIRECTION_BEGIN)
+	choice_box.grow_vertical = _bag_dialog_saved_choice_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	choice_box.set("anchors_preset", int(_bag_dialog_saved_choice_layout.get("anchors_preset", 6)))
+	_sync_choice_box_base_offsets_from_current()
+
+	_bag_dialog_layout_saved = false
+
+func _sync_choice_box_base_offsets_from_current() -> void:
+	if choice_box == null:
+		return
+	# ChoiceBox._adjust_panel_size() ancla el tamaño a estos valores (se fijan en _ready()).
+	choice_box._base_offset_right = choice_box.offset_right
+	choice_box._base_offset_bottom = choice_box.offset_bottom
 
 func _resolve_overworld_context() -> OverworldContext:
 	var nodes := get_tree().root.find_children("*", "OverworldCoordinator", true, false)

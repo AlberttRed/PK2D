@@ -1,17 +1,9 @@
 [gd_resource type="Resource" script_class="MessageBoxTheme" format=3 uid="uid://biuggiktsxlr7"]
 
 [ext_resource type="Script" uid="uid://dnqu4apuujlwo" path="res://Scripts/UI/MessageBox/MessageBoxTheme.gd" id="1_2jbts"]
-[ext_resource type="Texture2D" uid="uid://mkrmvgqrk8nn" path="res://Sprites/UI/Choices Skins/choice 1.png" id="1_55vyl"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fmodc"]
-texture = ExtResource("1_55vyl")
-texture_margin_left = 12.0
-texture_margin_top = 12.0
-texture_margin_right = 12.0
-texture_margin_bottom = 12.0
-region_rect = Rect2(2, 2, 44, 44)
+[ext_resource type="StyleBox" uid="uid://ff6qesqd3v1q" path="res://Resources/UI/MessageBox/Message Styles/FireRed_MessageBox_Style.tres" id="1_55vyl"]
 
 [resource]
 script = ExtResource("1_2jbts")
-frame_stylebox = SubResource("StyleBoxTexture_fmodc")
+frame_stylebox = ExtResource("1_55vyl")
 metadata/_custom_type_script = "uid://dnqu4apuujlwo"

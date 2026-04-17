@@ -10,20 +10,20 @@ const _POCKET_ORDER: Array[int] = [
 	ItemEnums.Pocket.BALLS,
 	ItemEnums.Pocket.TM_HM,
 	ItemEnums.Pocket.BERRIES,
-	ItemEnums.Pocket.KEY_ITEMS,
 	ItemEnums.Pocket.MACHINES,
-	ItemEnums.Pocket.BATTLE_ITEMS
+	ItemEnums.Pocket.BATTLE_ITEMS,
+	ItemEnums.Pocket.KEY_ITEMS
 ]
 
 const _POCKET_NAMES := {
 	ItemEnums.Pocket.ITEMS: "Objetos",
-	ItemEnums.Pocket.MEDICINE: "Medicina",
-	ItemEnums.Pocket.BALLS: "Pokeballs",
-	ItemEnums.Pocket.TM_HM: "MT/MO",
+	ItemEnums.Pocket.MEDICINE: "Medicinas",
+	ItemEnums.Pocket.BALLS: "Poké Balls",
+	ItemEnums.Pocket.TM_HM: "MTs / MOs",
 	ItemEnums.Pocket.BERRIES: "Bayas",
-	ItemEnums.Pocket.KEY_ITEMS: "Obj. clave",
-	ItemEnums.Pocket.MACHINES: "Maquinas",
-	ItemEnums.Pocket.BATTLE_ITEMS: "Combate"
+	ItemEnums.Pocket.KEY_ITEMS: "Obj. Claves",
+	ItemEnums.Pocket.MACHINES: "Cartas",
+	ItemEnums.Pocket.BATTLE_ITEMS: "Obj. Batallas"
 }
 
 func _init(context: OverworldContext = null) -> void:
@@ -37,8 +37,9 @@ func get_pocket_name(pocket: int) -> String:
 
 func get_items_in_pocket(pocket: int) -> Array:
 	var bag = GameStateService.get_bag()
-	var ui_items: Array = [BAG_LIST_ENTRY_SCRIPT.create_exit_entry()]
+	var ui_items: Array = []
 	if bag == null:
+		ui_items.append(BAG_LIST_ENTRY_SCRIPT.create_exit_entry())
 		return ui_items
 
 	var entries: Array = bag.get_items_in_pocket(pocket)
@@ -75,6 +76,7 @@ func get_items_in_pocket(pocket: int) -> Array:
 	)
 
 	ui_items.append_array(item_entries)
+	ui_items.append(BAG_LIST_ENTRY_SCRIPT.create_exit_entry())
 	return ui_items
 
 func get_item_description(item_id: int) -> String:

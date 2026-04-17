@@ -12,7 +12,7 @@ var is_usable_overworld: bool = false
 static func create_exit_entry() -> BagListEntry:
 	var entry := BagListEntry.new()
 	entry.is_exit = true
-	entry.display_name = "SALIR"
+	entry.display_name = "CERRAR LA MOCHILA"
 	entry.description = "Cerrar mochila."
 	return entry
 

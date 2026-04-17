@@ -2,6 +2,12 @@ extends Panel
 
 class_name MessageBox
 
+## Cómo revelar el texto al mostrar un mensaje (ver `typingMode` en `show_custom`).
+enum TypingMode {
+	TYPING,
+	INSTANT,
+}
+
 signal resume
 signal finsihedTyping
 signal finishedMessage
@@ -30,6 +36,11 @@ var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aun
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var _current_theme: MessageBoxTheme = null  ## Tema actualmente aplicado
+var _typing_mode: TypingMode = TypingMode.TYPING
+var _bag_dialog_text_layout_saved: bool = false
+var _bag_dialog_saved_scroll: Dictionary = {}
+var _bag_dialog_saved_rtl_states: Array[Dictionary] = []
+var _bag_saved_container_min_size: Vector2 = Vector2.ZERO
 var typing:bool:
 	get:
 		return label.visible_ratio > 0 and is_physics_processing()# $AnimationPlayer.is_playing() and $AnimationPlayer.current_animation == "Typing"
@@ -60,6 +71,20 @@ func show_custom(text: String, config := {}):
 	closeAtEnd = config.get("closeAtEnd", true)
 	waitTime = config.get("waitTime", 0.0)
 	showIconAtEnd = config.get("showIconAtEnd", false)
+
+	var tm: Variant = config.get("typingMode", TypingMode.TYPING)
+	if tm is TypingMode:
+		_typing_mode = tm
+	elif tm is int:
+		_typing_mode = clampi(tm, 0, TypingMode.INSTANT) as TypingMode
+	elif tm is String:
+		match String(tm).strip_edges().to_lower():
+			"instant":
+				_typing_mode = TypingMode.INSTANT
+			_:
+				_typing_mode = TypingMode.TYPING
+	else:
+		_typing_mode = TypingMode.TYPING
 
 	# Aplicar tema (por defecto HGSS si no se especifica)
 	var frame_style = config.get("frameStyle", MessageBoxFrameStyle.Values.HGSS)
@@ -240,11 +265,78 @@ func _update_wait_indicator_inline(messagebox_theme: MessageBoxTheme) -> void:
 	var last_line_y = scroll_pos.y + (last_char_line * line_height) - scroll_offset + (line_height / 2.0) - (indicator_height / 2.0) + 10
 
 	# Calcular posición X: inicio del área de texto + ancho del texto hasta el último carácter visible de la línea
-	var text_margin_left = 32  # Margen izquierdo del ScrollContainer
+	var text_margin_left: int = int(round(scroll.offset_left))
 	var text_start_x = scroll_pos.x + text_margin_left
 	var text_end_x = text_start_x + text_width - 16  # Ajuste para posicionar correctamente
 
 	wait_indicator.position = Vector2(text_end_x, last_line_y) + messagebox_theme.wait_indicator_offset
+
+## Fuerza el ancho real del área de texto al interior del ScrollContainer (los RTL de la escena fijan ~433px y rompen el autowrap).
+func _bag_apply_inner_text_width() -> void:
+	if not _bag_dialog_text_layout_saved:
+		return
+	if scroll == null or container == null or label == null:
+		return
+	var inner_w: float = maxf(1.0, scroll.offset_right - scroll.offset_left)
+	container.custom_minimum_size.x = inner_w
+	for rtl: RichTextLabel in [label, label2, label3]:
+		rtl.offset_left = 0.0
+		rtl.offset_right = inner_w
+		rtl.custom_minimum_size.x = inner_w
+	label.queue_redraw()
+
+## Layout de texto para diálogo estrecho (p. ej. mochila): margen izquierdo 16 y mitad de ancho útil + autowrap.
+func apply_bag_dialog_text_layout(enabled: bool) -> void:
+	if enabled:
+		if _bag_dialog_text_layout_saved or not is_node_ready():
+			return
+		_bag_saved_container_min_size = container.custom_minimum_size
+		_bag_dialog_saved_scroll = {
+			"left": scroll.offset_left,
+			"right": scroll.offset_right,
+			"top": scroll.offset_top,
+			"bottom": scroll.offset_bottom,
+		}
+		var content_w: float = scroll.offset_right - scroll.offset_left
+		var half_content_w: float = round(content_w / 2.0)
+		scroll.offset_left = 16.0
+		scroll.offset_right = 16.0 + half_content_w
+
+		_bag_dialog_saved_rtl_states.clear()
+		for rtl: RichTextLabel in [label, label2, label3]:
+			_bag_dialog_saved_rtl_states.append({
+				"node": rtl,
+				"fit_content": rtl.fit_content,
+				"autowrap_mode": rtl.autowrap_mode,
+				"offset_left": rtl.offset_left,
+				"offset_right": rtl.offset_right,
+				"custom_minimum_size": rtl.custom_minimum_size,
+			})
+			rtl.fit_content = false
+			rtl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+		_bag_dialog_text_layout_saved = true
+		_bag_apply_inner_text_width()
+	else:
+		if not _bag_dialog_text_layout_saved:
+			return
+		scroll.offset_left = float(_bag_dialog_saved_scroll.get("left", 32.0))
+		scroll.offset_right = float(_bag_dialog_saved_scroll.get("right", 465.0))
+		scroll.offset_top = float(_bag_dialog_saved_scroll.get("top", 16.0))
+		scroll.offset_bottom = float(_bag_dialog_saved_scroll.get("bottom", 79.0))
+
+		container.custom_minimum_size = _bag_saved_container_min_size
+
+		for entry: Dictionary in _bag_dialog_saved_rtl_states:
+			var n: RichTextLabel = entry["node"]
+			n.fit_content = bool(entry["fit_content"])
+			n.autowrap_mode = entry["autowrap_mode"] as TextServer.AutowrapMode
+			n.offset_left = float(entry.get("offset_left", 0.0))
+			n.offset_right = float(entry.get("offset_right", 433.0))
+			n.custom_minimum_size = entry["custom_minimum_size"] as Vector2
+
+		_bag_dialog_saved_rtl_states.clear()
+		_bag_dialog_text_layout_saved = false
 
 ## Cambia el estilo de marco del MessageBox (método legacy, ahora usa temas)
 ## @param style: El estilo de marco (MessageBoxFrameStyle.Values)
@@ -255,6 +347,11 @@ func set_frame_style(style: MessageBoxFrameStyle.Values) -> void:
 
 func writeText():
 	set_physics_process(true)
+	if _typing_mode == TypingMode.INSTANT:
+		label.visible_characters = -1
+		set_physics_process(false)
+		finsihedTyping.emit()
+		return
 	while label.visible_characters < label.get_total_character_count():
 		if _stop:
 			_stop = false
@@ -546,6 +643,7 @@ func clear():
 	closeAtEnd = true
 	waitInput = true
 	showIconAtEnd = false  # Resetear a valor por defecto
+	_typing_mode = TypingMode.TYPING
 	_stop = false
 	actualMessageIndex = 0
 	_is_processing_message = false  ## CRÍTICO: Resetear flag
@@ -587,6 +685,8 @@ func _adjust_container_size() -> void:
 
 	label3.custom_minimum_size.y = required_height
 	label3.size.y = required_height
+
+	_bag_apply_inner_text_width()
 
 func updateScroll(startingPosition:int, finalPosition:int):
 #### Sprite:position

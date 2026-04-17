@@ -25,11 +25,25 @@ var _input_enabled: bool = false
 var _base_offset_right: float = 0
 var _base_offset_bottom: float = 0
 
+## Si está activo, la esquina superior izquierda queda en `_fixed_top_left` (ancho/alto siguen calculándose).
+var _fixed_top_left_mode: bool = false
+var _fixed_top_left: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
 	# Guardar los offsets configurados en la escena
 	_base_offset_right = offset_right
 	_base_offset_bottom = offset_bottom
 	hide()
+
+## Ancla el panel por esquina superior izquierda (p. ej. mochila). Desactivar al volver al layout por defecto.
+func set_fixed_top_left_position(enabled: bool, top_left: Vector2 = Vector2.ZERO) -> void:
+	_fixed_top_left_mode = enabled
+	_fixed_top_left = top_left
+	if enabled:
+		anchor_left = 0.0
+		anchor_top = 0.0
+		anchor_right = 0.0
+		anchor_bottom = 0.0
 
 ## Muestra el ChoiceBox con las opciones especificadas
 func show_choices(choice_options: Array[String]) -> int:
@@ -170,12 +184,20 @@ func _adjust_panel_size() -> void:
 	custom_minimum_size = Vector2(calculated_width, calculated_height)
 	size = custom_minimum_size
 
-	# Ajustar offsets para que crezca hacia arriba y hacia la izquierda
-	# Mantener fijos los valores configurados en la escena
-	offset_right = _base_offset_right
-	offset_bottom = _base_offset_bottom
-	offset_left = offset_right - calculated_width
-	offset_top = offset_bottom - calculated_height
+	if _fixed_top_left_mode:
+		offset_left = _fixed_top_left.x
+		offset_top = _fixed_top_left.y
+		offset_right = _fixed_top_left.x + calculated_width
+		offset_bottom = _fixed_top_left.y + calculated_height
+		_base_offset_right = offset_right
+		_base_offset_bottom = offset_bottom
+	else:
+		# Ajustar offsets para que crezca hacia arriba y hacia la izquierda
+		# Mantener fijos los valores configurados en la escena
+		offset_right = _base_offset_right
+		offset_bottom = _base_offset_bottom
+		offset_left = offset_right - calculated_width
+		offset_top = offset_bottom - calculated_height
 
 	# Forzar actualización del layout
 	await get_tree().process_frame
