@@ -120,14 +120,33 @@ func _init(
 	# Cargar PokemonData
 	if pokemon_data is int:
 		pokemon_id = pokemon_data as PokemonsEnum.Values
-		# Solo usar DatabaseService si está disponible (no en editor)
-		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		# Autoloads NO cuentan para Engine.has_singleton(); en ejecución usar DatabaseService.
+		if not Engine.is_editor_hint():
 			base = DatabaseService.get_pokemon(pokemon_data)
 		else:
-			# En editor, cargar directamente desde archivo
-			var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_data
+			# En editor (herramientas / inspector): cargar desde disco sin depender del autoload.
+			var pid: int = int(pokemon_data)
+			var pokemon_path := "res://Resources/Data/Pokemon/%03d.tres" % pid
 			if ResourceLoader.exists(pokemon_path):
 				base = load(pokemon_path) as PokemonData
+			if base == null:
+				var dir := DirAccess.open("res://Resources/Data/Pokemon")
+				if dir:
+					dir.list_dir_begin()
+					var file_name := dir.get_next()
+					while file_name != "":
+						if not dir.current_is_dir() and file_name.ends_with(".tres"):
+							var file_base := file_name.get_basename()
+							var parts := file_base.split(" - ", false, 1)
+							if parts.size() > 0:
+								var id_str := parts[0].strip_edges()
+								if id_str.is_valid_int() and int(id_str) == pid:
+									var full_path := "res://Resources/Data/Pokemon/" + file_name
+									base = load(full_path) as PokemonData
+									if base:
+										break
+						file_name = dir.get_next()
+					dir.list_dir_end()
 	elif pokemon_data is PokemonData:
 		base = pokemon_data
 		pokemon_id = base.id as PokemonsEnum.Values
@@ -162,8 +181,7 @@ func _init(
 	else:
 		ability_id = pokemon_ability as AbilitiesEnum.Values
 
-	# Solo cargar ability si DatabaseService está disponible (no en editor)
-	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+	if not Engine.is_editor_hint():
 		ability = DatabaseService.get_ability(ability_id)
 
 	# Configurar naturaleza
@@ -175,8 +193,7 @@ func _init(
 	else:
 		nature_id = pokemon_nature as NaturesEnum.Values
 
-	# Solo cargar nature si DatabaseService está disponible (no en editor)
-	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+	if not Engine.is_editor_hint():
 		nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
 
 	# Inicializar stats (IVs, EVs, base_stats)
@@ -202,8 +219,7 @@ func _post_init() -> void:
 		return
 
 	# Cargar PokemonData desde el enum pokemon_id
-	# Intentar primero con DatabaseService si está disponible
-	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+	if not Engine.is_editor_hint():
 		base = DatabaseService.get_pokemon(pokemon_id)
 
 	# Si DatabaseService no funcionó o no está disponible, cargar directamente desde archivo
@@ -244,12 +260,10 @@ func _post_init() -> void:
 	if ability_id == AbilitiesEnum.Values.NONE:
 		ability_id = _calculate_ability() as AbilitiesEnum.Values
 
-	# Solo cargar ability si DatabaseService está disponible (no en editor)
-	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+	if not Engine.is_editor_hint():
 		ability = DatabaseService.get_ability(ability_id)
 
-	# Solo cargar nature si DatabaseService está disponible (no en editor)
-	if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+	if not Engine.is_editor_hint():
 		nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
 
 	# Inicializar stats (NO aleatorizar, usar valores @export)
@@ -498,7 +512,7 @@ func get_display_name() -> String:
 func get_type1() -> TypeData:
 	# Usar type_a_id para cargar el TypeData solo cuando sea necesario
 	if base.type_a_id > 0:
-		if Engine.has_singleton("DatabaseService"):
+		if not Engine.is_editor_hint():
 			return DatabaseService.get_type(base.type_a_id) as TypeData
 	# Compatibilidad: si type_a_id es 0 pero existe type_a (Resource), usarlo
 	if base.type_a != null:
@@ -508,7 +522,7 @@ func get_type1() -> TypeData:
 func get_type2() -> TypeData:
 	# Usar type_b_id para cargar el TypeData solo cuando sea necesario
 	if base.type_b_id > 0:
-		if Engine.has_singleton("DatabaseService"):
+		if not Engine.is_editor_hint():
 			return DatabaseService.get_type(base.type_b_id) as TypeData
 	# Compatibilidad: si type_b_id es 0 pero existe type_b (Resource), usarlo
 	if base.type_b != null:
@@ -548,6 +562,51 @@ func has_full_health() -> bool:
 
 func hasItemEquipped(item_id: int) -> bool:
 	return held_item_id == item_id
+
+
+const SERIALIZE_VERSION: int = 1
+
+
+## Snapshot plano para guardado / Party (sin rutas de recursos).
+func to_serializable_state() -> Dictionary:
+	var move_ids: Array[int] = []
+	for m in custom_move_ids:
+		move_ids.append(int(m))
+	return {
+		"v": SERIALIZE_VERSION,
+		"pokemon_id": int(pokemon_id),
+		"nickname": nickname,
+		"level": level,
+		"gender": gender,
+		"is_wild": is_wild,
+		"shiny": shiny,
+		"hp_IVs": hp_IVs,
+		"attack_IVs": attack_IVs,
+		"defense_IVs": defense_IVs,
+		"spAttack_IVs": spAttack_IVs,
+		"spDefense_IVs": spDefense_IVs,
+		"speed_IVs": speed_IVs,
+		"hp_EVs": hp_EVs,
+		"attack_EVs": attack_EVs,
+		"defense_EVs": defense_EVs,
+		"spAttack_EVs": spAttack_EVs,
+		"spDefense_EVs": spDefense_EVs,
+		"speed_EVs": speed_EVs,
+		"nature_id": int(nature_id),
+		"ability_id": int(ability_id),
+		"ability_slot": ability_slot,
+		"held_item_id": held_item_id,
+		"custom_move_ids": move_ids,
+		"hp_actual": hp_actual,
+		"totalExp": totalExp,
+		"trainer_id": trainer_id,
+		"original_trainer": original_trainer,
+		"capture_date": capture_date,
+		"capture_route": capture_route,
+		"capture_level": capture_level,
+		"personality": personality,
+	}
+
 
 func _to_string() -> String:
 	return get_display_name()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cjyn725u2m23r"]
+[gd_scene format=3 uid="uid://cjyn725u2m23r"]
 
 [ext_resource type="Texture2D" uid="uid://c5g2lfbt533lw" path="res://Sprites/UI/Bag/bagbg1.png" id="1_r6uq1"]
 [ext_resource type="Script" uid="uid://bxfeili7om0r2" path="res://Scripts/UI/BagUI.gd" id="2_lafka"]
@@ -28,6 +28,7 @@ offset_right = 512.0
 offset_bottom = 384.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_lafka")
 script = ExtResource("2_lafka")
+metadata/_edit_lock_ = true
 
 [node name="Descripcion" type="RichTextLabel" parent="." unique_id=1659586264]
 layout_mode = 0
@@ -49,6 +50,7 @@ text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla n
 scroll_active = false
 tab_size = 2
 script = ExtResource("10_labelhgss")
+metadata/_edit_lock_ = true
 
 [node name="Outline" type="RichTextLabel" parent="Descripcion" unique_id=596076211]
 layout_mode = 1
@@ -66,6 +68,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="Descripcion" unique_id=596076212]
 layout_mode = 1
@@ -83,6 +86,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="PocketLabel" type="RichTextLabel" parent="." unique_id=2100063741]
 layout_mode = 0
@@ -103,6 +107,7 @@ scroll_active = false
 horizontal_alignment = 1
 script = ExtResource("10_labelhgss")
 align = 1
+metadata/_edit_lock_ = true
 
 [node name="Outline" type="RichTextLabel" parent="PocketLabel" unique_id=1790540721]
 layout_mode = 1
@@ -120,6 +125,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="PocketLabel" unique_id=1192932378]
 layout_mode = 1
@@ -137,6 +143,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="ItemsViewport" type="Control" parent="." unique_id=325699638]
 clip_contents = true
@@ -146,6 +153,7 @@ offset_left = 200.0
 offset_top = 8.0
 offset_right = 465.0
 offset_bottom = 272.0
+metadata/_edit_lock_ = true
 
 [node name="ItemsContainer" type="VBoxContainer" parent="ItemsViewport" unique_id=1845251394]
 layout_mode = 1
@@ -154,10 +162,12 @@ offset_top = 20.0
 offset_right = 254.0
 offset_bottom = 264.0
 theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
 
 [node name="ExitTemplate" type="HBoxContainer" parent="ItemsViewport/ItemsContainer" unique_id=1356186654]
 custom_minimum_size = Vector2(230, 32)
 layout_mode = 2
+metadata/_edit_lock_ = true
 
 [node name="Name" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1274286925]
 custom_minimum_size = Vector2(0, 32)
@@ -173,6 +183,7 @@ bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
 scroll_active = false
 script = ExtResource("10_labelhgss")
+metadata/_edit_lock_ = true
 
 [node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=567001477]
 layout_mode = 1
@@ -190,6 +201,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=305166836]
 layout_mode = 1
@@ -207,6 +219,7 @@ theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Quantity" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=393232243]
 custom_minimum_size = Vector2(48, 32)
@@ -221,6 +234,7 @@ bbcode_enabled = true
 scroll_active = false
 script = ExtResource("10_labelhgss")
 align = 2
+metadata/_edit_lock_ = true
 
 [node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=1942661653]
 layout_mode = 1
@@ -237,6 +251,7 @@ theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=455254522]
 layout_mode = 1
@@ -253,40 +268,48 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 scroll_active = false
+metadata/_edit_lock_ = true
 
 [node name="Mochila_Sprite" type="Sprite2D" parent="." unique_id=82672573]
 position = Vector2(88.7812, 83.8941)
 texture = ExtResource("2_x1jmc")
+metadata/_edit_lock_ = true
 
 [node name="Slider" type="Sprite2D" parent="." unique_id=58243385]
 position = Vector2(488, 83)
 texture = ExtResource("3_v6tpc")
+metadata/_edit_lock_ = true
 
 [node name="U_Arrow" type="Sprite2D" parent="." unique_id=1110364181]
 position = Vector2(322, 14)
 texture = ExtResource("7_w0e1r")
 hframes = 8
+metadata/_edit_lock_ = true
 
 [node name="L_Arrow" type="Sprite2D" parent="." unique_id=268225152]
 position = Vector2(17.3984, 88.8973)
 texture = ExtResource("4_lafka")
 vframes = 8
+metadata/_edit_lock_ = true
 
 [node name="R_Arrow" type="Sprite2D" parent="." unique_id=925902872]
 position = Vector2(159.122, 88.8973)
 texture = ExtResource("5_yp7op")
 vframes = 8
+metadata/_edit_lock_ = true
 
 [node name="D_Arrow" type="Sprite2D" parent="." unique_id=895889823]
 position = Vector2(322, 266)
 texture = ExtResource("10_apetd")
 hframes = 8
+metadata/_edit_lock_ = true
 
 [node name="Select" type="Sprite2D" parent="." unique_id=487614267]
 position = Vector2(325, 40)
 texture = ExtResource("4_k55d4")
+metadata/_edit_lock_ = true
 
 [node name="Item_Sprite" type="Sprite2D" parent="." unique_id=937051493]
 position = Vector2(48, 337)
 texture = ExtResource("12_w0e1r")
-
+metadata/_edit_lock_ = true

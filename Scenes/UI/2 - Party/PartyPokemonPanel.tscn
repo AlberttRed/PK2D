@@ -1,0 +1,212 @@
+[gd_scene format=3 uid="uid://b6bvq2kmkv5sh"]
+
+[ext_resource type="Texture2D" uid="uid://dhhhrgpxjqs0m" path="res://Sprites/UI/Party/partyPanelRound.png" id="1_ltqyh"]
+[ext_resource type="Script" uid="uid://tnsuggorgj6d" path="res://Scripts/UI/2 - Party/PartyPokemonPanel.gd" id="1_yj2sw"]
+[ext_resource type="Texture2D" uid="uid://br1wcbty0sihu" path="res://Sprites/UI/Party/partyPanelRoundSel.png" id="3_xf4p8"]
+[ext_resource type="Texture2D" uid="uid://cb4742i6bpsod" path="res://Sprites/Pictures/statuses.PNG" id="4_m8t2i"]
+[ext_resource type="Texture2D" uid="uid://ngraee8t1sem" path="res://Sprites/UI/Party/partyPanelRoundFnt.png" id="4_xi400"]
+[ext_resource type="Script" path="res://Resources/Party OLD (Delete)/health_bar.gd" id="5_40ocy"]
+[ext_resource type="Texture2D" uid="uid://ddwbe6qsu8yqo" path="res://Sprites/UI/Party/partyPanelRoundSelFnt.png" id="5_otvqm"]
+[ext_resource type="Texture2D" uid="uid://dw310s5r40tdc" path="res://Sprites/Pictures/HPparty_background.png" id="6_fdxfp"]
+[ext_resource type="Texture2D" uid="uid://bytcw8mm87lsx" path="res://Sprites/UI/Party/partyPanelRoundSwap.png" id="6_uai6d"]
+[ext_resource type="Texture2D" uid="uid://bhwpv71rjuehm" path="res://Sprites/UI/Party/partyPanelRoundSelSwap.png" id="7_oc040"]
+[ext_resource type="Texture2D" uid="uid://dt2w621eta5m7" path="res://Sprites/Pictures/HPparty_overlay.png" id="7_r12j0"]
+[ext_resource type="Texture2D" uid="uid://c63bjwkcpr1fj" path="res://Sprites/UI/Party/partyPanelRect.png" id="8_8oxb1"]
+[ext_resource type="Texture2D" uid="uid://d05721wngo58s" path="res://Sprites/Pictures/HPparty_progress.png" id="8_oskxo"]
+[ext_resource type="Texture2D" uid="uid://xw4mbww10chu" path="res://Sprites/UI/Party/partyBall.PNG" id="9_7q7ow"]
+[ext_resource type="Texture2D" uid="uid://cn07e1bn3xx4r" path="res://Sprites/UI/Party/partyPanelRectSel.png" id="9_wbjtc"]
+[ext_resource type="Texture2D" uid="uid://duw780vwf4a0g" path="res://Sprites/UI/Party/partyPanelBlank.png" id="10_ajyug"]
+[ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="10_ow7jw"]
+[ext_resource type="Texture2D" uid="uid://v58562kai84n" path="res://Sprites/UI/Party/female_icon.png" id="11_1yp18"]
+[ext_resource type="Texture2D" uid="uid://drsjnxwsw1303" path="res://Sprites/UI/Party/partyPanelRectFnt.png" id="11_2oryc"]
+[ext_resource type="AnimationLibrary" uid="uid://bw3dmb8wuj58f" path="res://Resources/UI/Party/party_animations.res" id="12_2dkci"]
+[ext_resource type="Texture2D" uid="uid://ch6utj8qsdwjd" path="res://Sprites/UI/Party/partyPanelRectSelFnt.png" id="12_erbtu"]
+[ext_resource type="Texture2D" uid="uid://bpxsiqqkol2sm" path="res://Sprites/UI/Party/partyPanelRectSwap.png" id="13_q38f5"]
+[ext_resource type="Texture2D" uid="uid://bvsra5kkr6mfw" path="res://Sprites/UI/Party/partyPanelRectSelSwap.png" id="14_iirr2"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="15_60258"]
+[ext_resource type="Texture2D" uid="uid://b8fyoc1ue03hn" path="res://Sprites/Pictures/Nv_icon_white.png" id="16_hfvma"]
+[ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="17_ltvh3"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2c3cv"]
+texture = ExtResource("1_ltqyh")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="2"]
+texture = ExtResource("1_ltqyh")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="3"]
+texture = ExtResource("3_xf4p8")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="4"]
+texture = ExtResource("4_xi400")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="5"]
+texture = ExtResource("5_otvqm")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="6"]
+texture = ExtResource("6_uai6d")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="7"]
+texture = ExtResource("7_oc040")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="8"]
+texture = ExtResource("8_8oxb1")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="9"]
+texture = ExtResource("9_wbjtc")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="10"]
+texture = ExtResource("10_ajyug")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="11"]
+texture = ExtResource("11_2oryc")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="12"]
+texture = ExtResource("12_erbtu")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="13"]
+texture = ExtResource("13_q38f5")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="StyleBoxTexture" id="14"]
+texture = ExtResource("14_iirr2")
+region_rect = Rect2(0, 0, 256, 98)
+
+[sub_resource type="FontVariation" id="FontVariation_hc0lt"]
+base_font = ExtResource("17_ltvh3")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_j2fwe"]
+default_font = SubResource("FontVariation_hc0lt")
+default_font_size = 16
+
+[node name="PKMN_0" type="Panel"]
+offset_left = -260.0
+offset_right = -4.0
+offset_bottom = 98.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_2c3cv")
+script = ExtResource("1_yj2sw")
+style_rounded_normal = SubResource("2")
+style_rounded_normal_sel = SubResource("3")
+style_rounded_fainted = SubResource("4")
+style_rounded_fainted_sel = SubResource("5")
+style_rounded_swap = SubResource("6")
+style_rounded_swap_sel = SubResource("7")
+style_square_normal = SubResource("8")
+style_square_normal_sel = SubResource("9")
+style_square_empty = SubResource("10")
+style_square_fainted = SubResource("11")
+style_square_fainted_sel = SubResource("12")
+style_square_swap = SubResource("13")
+style_square_swap_sel = SubResource("14")
+metadata/_edit_vertical_guides_ = [-245.0]
+metadata/_edit_horizontal_guides_ = [84.0]
+metadata/_edit_lock_ = true
+
+[node name="Nombre" parent="." instance=ExtResource("15_60258")]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 16.0
+offset_right = 266.0
+offset_bottom = 48.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "Pikachu"
+metadata/_edit_lock_ = true
+
+[node name="lNv" type="Sprite2D" parent="."]
+position = Vector2(27.5, 77)
+texture = ExtResource("16_hfvma")
+region_rect = Rect2(0, 16, 44, 16)
+metadata/_edit_lock_ = true
+
+[node name="dNv" parent="." instance=ExtResource("15_60258")]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 66.0
+offset_right = 99.0
+offset_bottom = 98.0
+theme = SubResource("Theme_j2fwe")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "25"
+metadata/_edit_lock_ = true
+
+[node name="Status" type="Sprite2D" parent="."]
+position = Vector2(107, 76)
+texture = ExtResource("4_m8t2i")
+region_enabled = true
+region_rect = Rect2(0, 16, 44, 16)
+metadata/_edit_lock_ = true
+
+[node name="health_bar" type="Node2D" parent="."]
+position = Vector2(64, 8)
+script = ExtResource("5_40ocy")
+metadata/_edit_vertical_guides_ = [-205.084]
+metadata/_edit_lock_ = true
+
+[node name="lblHP" parent="health_bar" instance=ExtResource("15_60258")]
+offset_left = 63.0
+offset_top = 58.0
+offset_right = 175.0
+offset_bottom = 90.0
+theme = SubResource("Theme_j2fwe")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "[right]23/23"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="health_bar"]
+offset_left = 39.2088
+offset_top = 43.4241
+offset_right = 171.209
+offset_bottom = 83.4241
+step = 0.1
+value = 100.0
+stretch_margin_left = 1
+texture_under = ExtResource("6_fdxfp")
+texture_over = ExtResource("7_r12j0")
+texture_progress = ExtResource("8_oskxo")
+tint_progress = Color(0.0941176, 0.752941, 0.12549, 1)
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="health_bar"]
+
+[node name="ball" type="Sprite2D" parent="."]
+position = Vector2(31.6, 28)
+texture = ExtResource("9_7q7ow")
+metadata/_edit_lock_ = true
+
+[node name="pkmn" type="Sprite2D" parent="."]
+position = Vector2(59.6, 36)
+texture = ExtResource("10_ow7jw")
+hframes = 2
+frame = 1
+metadata/_edit_lock_ = true
+
+[node name="gender" type="Sprite2D" parent="."]
+position = Vector2(229, 32)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("11_1yp18")
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+libraries = {
+"party_animations": ExtResource("12_2dkci")
+}
+
+[connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]

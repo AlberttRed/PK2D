@@ -1,0 +1,1102 @@
+[gd_scene format=3 uid="uid://gdxd2a726tc0"]
+
+[ext_resource type="Script" uid="uid://ijai45vsjrfk" path="res://Scripts/UI/2 - Party/PartySummary.gd" id="1_re5et"]
+[ext_resource type="Texture2D" uid="uid://c8kpj8jre1qao" path="res://Sprites/UI/Party/male_icon.png" id="3_h6xl0"]
+[ext_resource type="Texture2D" uid="uid://b6hiwscxkv33j" path="res://Sprites/UI/Party/summaryball00.png" id="4_tua3y"]
+[ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="6_q0ixx"]
+[ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="7_li5g0"]
+[ext_resource type="Texture2D" uid="uid://danwumq4xmbxq" path="res://Sprites/UI/Party/summary1.png" id="8_omywj"]
+[ext_resource type="Texture2D" uid="uid://bwtv36mb8w2lm" path="res://Sprites/UI/Party/types.png" id="9_wfs1f"]
+[ext_resource type="Script" uid="uid://ctekppkhn8687" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryData.gd" id="10_ix7fs"]
+[ext_resource type="Script" uid="uid://dfv3s00wux7oq" path="res://Resources/Party OLD (Delete)/exp_bar.gd" id="10_uruff"]
+[ext_resource type="Texture2D" uid="uid://ctb1tglyrhv47" path="res://Sprites/Pictures/EXPsummary_background.png" id="11_3cqe8"]
+[ext_resource type="Texture2D" uid="uid://bnp7k1duyp2cd" path="res://Sprites/Pictures/EXPsummary_overlay.png" id="12_dqai2"]
+[ext_resource type="Texture2D" uid="uid://dn5d4urhqf5j7" path="res://Sprites/Pictures/EXPsummary_progress.png" id="13_pxepm"]
+[ext_resource type="Texture2D" uid="uid://ccbva4mg5505l" path="res://Sprites/UI/Party/summary2.PNG" id="14_k8371"]
+[ext_resource type="Texture2D" uid="uid://vp3788sffcg4" path="res://Sprites/UI/Party/summary3.PNG" id="15_nad7y"]
+[ext_resource type="Script" uid="uid://dx600553jbv3d" path="res://Resources/Party OLD (Delete)/health_bar.gd" id="16_p6hxq"]
+[ext_resource type="Script" uid="uid://bqj4s4iu56v1c" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryTrainer.gd" id="17_c1vnc"]
+[ext_resource type="Texture2D" uid="uid://bv5uvumjpm0cm" path="res://Sprites/Pictures/HPsummary_background.png" id="18_0pyjn"]
+[ext_resource type="Script" uid="uid://c2pblwkir2i64" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryStats.gd" id="19_pigrk"]
+[ext_resource type="Texture2D" uid="uid://dhv33438foalm" path="res://Sprites/Pictures/HPsummary_overlay.png" id="19_qbgrh"]
+[ext_resource type="Texture2D" uid="uid://cryk8igw3ux5x" path="res://Sprites/Pictures/HPsummary_progress.png" id="20_tvqbh"]
+[ext_resource type="Texture2D" uid="uid://bqy27j631k2qe" path="res://Sprites/UI/Party/summary4.png" id="21_8os2p"]
+[ext_resource type="Texture2D" uid="uid://cj41hphayr3y0" path="res://Sprites/UI/Party/summary5.png" id="22_aoprn"]
+[ext_resource type="Script" uid="uid://cuhfjinj4nw2f" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryMoves.gd" id="26_sqdml"]
+[ext_resource type="Texture2D" uid="uid://bfnh1nj2ki6ko" path="res://Sprites/UI/Party/summary4details.PNG" id="27_xptfv"]
+[ext_resource type="Texture2D" uid="uid://d33k03vpir2lu" path="res://Sprites/UI/Party/summary4learning.PNG" id="28_a5s0k"]
+[ext_resource type="Script" uid="uid://qun0epgjusjb" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryRibbons.gd" id="28_iwvnf"]
+[ext_resource type="Texture2D" uid="uid://bpu214w54ts7t" path="res://Sprites/UI/Party/summarymovesel.PNG" id="29_u3yho"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="30_vhko7"]
+[ext_resource type="Texture2D" uid="uid://tynlh4mi2kj1" path="res://Sprites/UI/Party/category.png" id="31_fp2wg"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ev6ym"]
+texture = ExtResource("8_omywj")
+region_rect = Rect2(0, 0, 512, 384)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fk2ns"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_slrel"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_amjfa"]
+texture = ExtResource("14_k8371")
+region_rect = Rect2(0, 0, 512, 384)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8itae"]
+texture = ExtResource("15_nad7y")
+region_rect = Rect2(0, 0, 512, 384)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p3amy"]
+texture = ExtResource("28_a5s0k")
+region_rect = Rect2(0, 0, 512, 384)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_r3vod"]
+region_rect = Rect2(0, 74, 252, 74)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vsqvo"]
+region_rect = Rect2(0, 74, 252, 74)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f56w3"]
+region_rect = Rect2(0, 74, 252, 74)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8t666"]
+region_rect = Rect2(0, 74, 252, 74)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tv22y"]
+region_rect = Rect2(0, 74, 252, 74)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u2ecf"]
+texture = ExtResource("22_aoprn")
+region_rect = Rect2(0, 0, 512, 384)
+
+[node name="SUMMARY" type="Control" unique_id=1369600203]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_re5et")
+metadata/_edit_vertical_guides_ = [236.0, 402.0]
+
+[node name="GENERAL" type="Control" parent="." unique_id=1682807591]
+z_index = 1
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Nombre" parent="GENERAL" unique_id=364158071 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 0
+offset_left = 45.0
+offset_top = 61.0
+offset_right = 196.0
+offset_bottom = 91.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Pikachu"
+
+[node name="Genero" type="Sprite2D" parent="GENERAL" unique_id=676724347]
+position = Vector2(183, 77)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("3_h6xl0")
+
+[node name="Pokeball" type="Sprite2D" parent="GENERAL" unique_id=1859378202]
+position = Vector2(29, 76)
+texture = ExtResource("4_tua3y")
+
+[node name="Nivel" parent="GENERAL" unique_id=1500180204 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 46.0
+offset_top = 92.0
+offset_right = 131.0
+offset_bottom = 122.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "63"
+
+[node name="Status" type="Sprite2D" parent="GENERAL" unique_id=409606133]
+position = Vector2(145, 107)
+texture = ExtResource("6_q0ixx")
+region_enabled = true
+region_rect = Rect2(0, 16, 44, 16)
+
+[node name="Sprite" type="Sprite2D" parent="GENERAL" unique_id=175255774]
+position = Vector2(99.7798, 204.815)
+texture = ExtResource("7_li5g0")
+
+[node name="lObjeto" parent="GENERAL" unique_id=291205644 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 0
+offset_left = 19.0
+offset_top = 320.0
+offset_right = 170.0
+offset_bottom = 350.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Objeto"
+
+[node name="dObjeto" parent="GENERAL" unique_id=2054934585 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 0
+offset_left = 19.0
+offset_top = 353.0
+offset_right = 170.0
+offset_bottom = 383.0
+theme_override_colors/default_color = Color(0.690196, 0.690196, 0.690196, 1)
+theme_override_colors/font_shadow_color = Color(0.815686, 0.815686, 0.784314, 1)
+text = "Ninguno"
+
+[node name="PAGES" type="Control" parent="." unique_id=1497526484]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DATA" type="Panel" parent="PAGES" unique_id=1935676458]
+visible = false
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_ev6ym")
+script = ExtResource("10_ix7fs")
+metadata/_edit_lock_ = true
+
+[node name="Título" parent="PAGES/DATA" unique_id=927724666 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 16.0
+offset_right = 229.0
+offset_bottom = 48.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "DATOS"
+metadata/_edit_lock_ = true
+
+[node name="Labels" type="VBoxContainer" parent="PAGES/DATA" unique_id=1618175759]
+layout_mode = 0
+offset_left = 236.0
+offset_top = 80.0
+offset_right = 476.0
+offset_bottom = 270.0
+theme_override_constants/separation = 2
+metadata/_edit_lock_ = true
+
+[node name="lNumDex" parent="PAGES/DATA/Labels" unique_id=1645216717 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "N.º Pokedex"
+metadata/_edit_lock_ = true
+
+[node name="lEspecie" parent="PAGES/DATA/Labels" unique_id=2104446637 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Nombre"
+metadata/_edit_lock_ = true
+
+[node name="lTipo" parent="PAGES/DATA/Labels" unique_id=75382368 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Tipo"
+metadata/_edit_lock_ = true
+
+[node name="lEO" parent="PAGES/DATA/Labels" unique_id=1211119750 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "EO"
+metadata/_edit_lock_ = true
+
+[node name="lID" parent="PAGES/DATA/Labels" unique_id=1926550136 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "N.º ID"
+metadata/_edit_lock_ = true
+
+[node name="lExperiencia" parent="PAGES/DATA/Labels" unique_id=544861777 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Ptos. Exp."
+metadata/_edit_lock_ = true
+
+[node name="dNumDex" parent="PAGES/DATA" unique_id=913467475 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 392.0
+offset_top = 80.0
+offset_right = 477.0
+offset_bottom = 110.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]025"
+align = 1
+
+[node name="dEspecie" parent="PAGES/DATA" unique_id=1440419965 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 368.0
+offset_top = 112.0
+offset_right = 500.0
+offset_bottom = 140.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]KRABBY"
+align = 1
+
+[node name="Tipos" type="HBoxContainer" parent="PAGES/DATA" unique_id=2118033302]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 368.0
+offset_top = 146.0
+offset_right = -11.0
+offset_bottom = -209.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="pTipo1" type="Panel" parent="PAGES/DATA/Tipos" unique_id=1529938496]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_styles/panel = SubResource("StyleBoxEmpty_fk2ns")
+metadata/_edit_lock_ = true
+
+[node name="dTipo1" type="Sprite2D" parent="PAGES/DATA/Tipos/pTipo1" unique_id=954033755]
+position = Vector2(32, 14)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 11
+metadata/_edit_lock_ = true
+
+[node name="pTipo2" type="Panel" parent="PAGES/DATA/Tipos" unique_id=541897127]
+visible = false
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_styles/panel = SubResource("StyleBoxEmpty_slrel")
+metadata/_edit_lock_ = true
+
+[node name="dTipo2" type="Sprite2D" parent="PAGES/DATA/Tipos/pTipo2" unique_id=1489059649]
+position = Vector2(32, 14)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+metadata/_edit_lock_ = true
+
+[node name="dEO" parent="PAGES/DATA" unique_id=1425581564 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 373.0
+offset_top = 176.0
+offset_right = 493.0
+offset_bottom = 206.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]Kevin"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="dID" parent="PAGES/DATA" unique_id=996340173 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 380.0
+offset_top = 208.0
+offset_right = 488.0
+offset_bottom = 238.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]14645"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="dExperiencia" parent="PAGES/DATA" unique_id=1402257446 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 350.0
+offset_top = 272.0
+offset_right = 490.0
+offset_bottom = 302.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]17576"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="lSigNivel" parent="PAGES/DATA" unique_id=1041108298 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 236.0
+offset_top = 304.0
+offset_right = 476.0
+offset_bottom = 334.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "Nivel siguiente"
+metadata/_edit_lock_ = true
+
+[node name="dSigNivel" parent="PAGES/DATA" unique_id=175786964 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 323.0
+offset_top = 336.0
+offset_right = 490.0
+offset_bottom = 366.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]12097
+"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="exp_bar" type="Node2D" parent="PAGES/DATA" unique_id=78574871]
+position = Vector2(357, 377)
+script = ExtResource("10_uruff")
+metadata/_edit_vertical_guides_ = [-205.084]
+metadata/_edit_lock_ = true
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="PAGES/DATA/exp_bar" unique_id=1618516871]
+offset_left = 1.0
+offset_top = -9.0
+offset_right = 179.0
+offset_bottom = 8.0
+scale = Vector2(1, 0.960005)
+min_value = 314.0
+max_value = 419.0
+step = 0.1
+value = 314.0
+stretch_margin_left = 1
+texture_under = ExtResource("11_3cqe8")
+texture_over = ExtResource("12_dqai2")
+texture_progress = ExtResource("13_pxepm")
+tint_progress = Color(0.27451, 0.552941, 0.960784, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PAGES/DATA/exp_bar" unique_id=325760287]
+
+[node name="TRAINER" type="Panel" parent="PAGES" unique_id=751071490]
+visible = false
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_amjfa")
+script = ExtResource("17_c1vnc")
+metadata/_edit_lock_ = true
+
+[node name="Título" parent="PAGES/TRAINER" unique_id=2034433742 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 16.0
+offset_right = 229.0
+offset_bottom = 48.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "NOTAS ENTRENADOR"
+metadata/_edit_lock_ = true
+
+[node name="Labels" type="VBoxContainer" parent="PAGES/TRAINER" unique_id=245990358]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 78.0
+offset_right = 490.0
+offset_bottom = 202.0
+metadata/_edit_lock_ = true
+
+[node name="LabelNaturaleza" parent="PAGES/TRAINER/Labels" unique_id=1161208953 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "Naturaleza"
+metadata/_edit_lock_ = true
+
+[node name="FechaCaptura" parent="PAGES/TRAINER/Labels" unique_id=1785058466 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "18 de Nov. de 2018"
+
+[node name="RutaCaptura" parent="PAGES/TRAINER/Labels" unique_id=424009290 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.972549, 0.219608, 0.12549, 1)
+theme_override_colors/font_shadow_color = Color(0.878431, 0.596078, 0.564706, 1)
+text = "Ruta 1"
+metadata/_edit_lock_ = true
+
+[node name="NivelCaptura" parent="PAGES/TRAINER/Labels" unique_id=1562652837 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "Encontrado con Nv. 63."
+metadata/_edit_lock_ = true
+
+[node name="DescNaturaleza" parent="PAGES/TRAINER" unique_id=1943196029 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 238.0
+offset_right = 490.0
+offset_bottom = 363.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "Siempre tiene el oído alerta."
+metadata/_edit_lock_ = true
+
+[node name="Naturaleza" parent="PAGES/TRAINER" unique_id=2086428619 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 356.0
+offset_top = 78.0
+offset_right = 614.0
+offset_bottom = 111.0
+theme_override_colors/default_color = Color(0.972549, 0.219608, 0.12549, 1)
+theme_override_colors/font_shadow_color = Color(0.878431, 0.596078, 0.564706, 1)
+text = "Agitada."
+metadata/_edit_lock_ = true
+
+[node name="STATS" type="Panel" parent="PAGES" unique_id=600717921]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_8itae")
+script = ExtResource("19_pigrk")
+metadata/_edit_lock_ = true
+
+[node name="Título" parent="PAGES/STATS" unique_id=1903707884 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 17.0
+offset_right = 228.0
+offset_bottom = 49.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "CARACTERÍSTICAS"
+metadata/_edit_lock_ = true
+
+[node name="lPS" parent="PAGES/STATS" unique_id=2045492220 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 76.0
+offset_right = 351.0
+offset_bottom = 108.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "PS"
+metadata/_edit_lock_ = true
+
+[node name="dPS" parent="PAGES/STATS" unique_id=1061293611 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 369.0
+offset_top = 76.0
+offset_right = 474.0
+offset_bottom = 108.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]235/235"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="health_bar" type="Node2D" parent="PAGES/STATS" unique_id=677879542]
+position = Vector2(289, 63)
+script = ExtResource("16_p6hxq")
+metadata/_edit_vertical_guides_ = [-205.084]
+metadata/_edit_lock_ = true
+
+[node name="lblHP" parent="PAGES/STATS/health_bar" unique_id=495347378 instance=ExtResource("30_vhko7")]
+visible = false
+offset_right = 73.0
+offset_bottom = 32.0
+text = "45/45"
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="PAGES/STATS/health_bar" unique_id=1068845265]
+offset_left = 39.2088
+offset_top = 43.4241
+offset_right = 171.209
+offset_bottom = 83.4241
+step = 0.1
+value = 100.0
+stretch_margin_left = 1
+texture_under = ExtResource("18_0pyjn")
+texture_over = ExtResource("19_qbgrh")
+texture_progress = ExtResource("20_tvqbh")
+tint_progress = Color(0.0941176, 0.752941, 0.12549, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PAGES/STATS/health_bar" unique_id=325729336]
+
+[node name="LabelStats" type="VBoxContainer" parent="PAGES/STATS" unique_id=2041662347]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 120.0
+offset_right = 355.0
+offset_bottom = 246.0
+theme_override_constants/separation = 2
+metadata/_edit_lock_ = true
+
+[node name="lAtaque" parent="PAGES/STATS/LabelStats" unique_id=1402146352 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "Ataque"
+metadata/_edit_lock_ = true
+
+[node name="lDefensa" parent="PAGES/STATS/LabelStats" unique_id=771979592 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "Defensa"
+metadata/_edit_lock_ = true
+
+[node name="lAtEsp" parent="PAGES/STATS/LabelStats" unique_id=1031795298 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "At. Esp."
+metadata/_edit_lock_ = true
+
+[node name="lDefEsp" parent="PAGES/STATS/LabelStats" unique_id=469466893 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "Def. Esp."
+metadata/_edit_lock_ = true
+
+[node name="lVelocidad" parent="PAGES/STATS/LabelStats" unique_id=1015590048 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "Velocidad"
+metadata/_edit_lock_ = true
+
+[node name="ValueStats" type="VBoxContainer" parent="PAGES/STATS" unique_id=954273050]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 120.0
+offset_right = 456.0
+offset_bottom = 262.0
+theme_override_constants/separation = 2
+metadata/_edit_lock_ = true
+
+[node name="dAtaque" parent="PAGES/STATS/ValueStats" unique_id=1203743512 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]63"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="dDefensa" parent="PAGES/STATS/ValueStats" unique_id=167807597 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]63"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="dAtEsp" parent="PAGES/STATS/ValueStats" unique_id=2084006285 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]63"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="dDefEsp" parent="PAGES/STATS/ValueStats" unique_id=277961983 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]63"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="dVelocidad" parent="PAGES/STATS/ValueStats" unique_id=623298851 instance=ExtResource("30_vhko7")]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[right]63"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="lHabilidad" parent="PAGES/STATS" unique_id=1552293842 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 222.0
+offset_top = 284.0
+offset_right = 327.0
+offset_bottom = 316.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.411765, 0.411765, 0.411765, 1)
+text = "Habilidad"
+metadata/_edit_lock_ = true
+
+[node name="dHabilidad" parent="PAGES/STATS" unique_id=1218865160 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 284.0
+offset_right = 534.0
+offset_bottom = 316.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "Entusiasmo"
+metadata/_edit_lock_ = true
+
+[node name="DescHabilidad" parent="PAGES/STATS" unique_id=102159458 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 222.0
+offset_top = 316.0
+offset_right = 510.0
+offset_bottom = 380.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "Aumenta el Ataque, pero reduce la precisión."
+metadata/_edit_lock_ = true
+
+[node name="MOVES" type="Panel" parent="PAGES" unique_id=933815897]
+visible = false
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_p3amy")
+script = ExtResource("26_sqdml")
+normalBackground = ExtResource("21_8os2p")
+detailedBackground = ExtResource("27_xptfv")
+learningBackground = ExtResource("28_a5s0k")
+moveSelMark = ExtResource("29_u3yho")
+metadata/_edit_lock_ = true
+
+[node name="Titulo" parent="PAGES/MOVES" unique_id=478114633 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 16.0
+offset_right = 204.0
+offset_bottom = 46.0
+theme_override_colors/default_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.407843, 0.407843, 0.407843, 1)
+text = "MOVIMIENTOS"
+
+[node name="MoveInfo" type="Control" parent="PAGES/MOVES" unique_id=1016158036]
+anchors_preset = 0
+offset_top = 60.0
+offset_right = 240.0
+offset_bottom = 380.0
+metadata/_edit_lock_ = true
+
+[node name="Sprite" type="Sprite2D" parent="PAGES/MOVES/MoveInfo" unique_id=160402112]
+position = Vector2(52, 30)
+texture = ExtResource("7_li5g0")
+flip_h = true
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="Type1" type="Sprite2D" parent="PAGES/MOVES/MoveInfo" unique_id=1477358802]
+position = Vector2(132, 46)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Type2" type="Sprite2D" parent="PAGES/MOVES/MoveInfo" unique_id=1519906596]
+position = Vector2(200, 46)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="lCategory" parent="PAGES/MOVES/MoveInfo" unique_id=137014217 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 62.0
+offset_right = 159.0
+offset_bottom = 94.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "CATEG."
+metadata/_edit_lock_ = true
+
+[node name="lPower" parent="PAGES/MOVES/MoveInfo" unique_id=410980811 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 94.0
+offset_right = 158.0
+offset_bottom = 123.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+text = "POTENCIA"
+metadata/_edit_lock_ = true
+
+[node name="lAccuracy" parent="PAGES/MOVES/MoveInfo" unique_id=1249937461 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 126.0
+offset_right = 156.0
+offset_bottom = 157.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.419608, 0.419608, 0.419608, 1)
+metadata/_edit_lock_ = true
+
+[node name="dCategory" type="Sprite2D" parent="PAGES/MOVES/MoveInfo" unique_id=474042463]
+position = Vector2(198, 78)
+texture = ExtResource("31_fp2wg")
+vframes = 3
+metadata/_edit_lock_ = true
+
+[node name="dPower" parent="PAGES/MOVES/MoveInfo" unique_id=1513184421 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 169.0
+offset_top = 94.0
+offset_right = 214.0
+offset_bottom = 125.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]20"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="dAccuracy" parent="PAGES/MOVES/MoveInfo" unique_id=1511616886 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 126.0
+offset_right = 214.0
+offset_bottom = 157.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]20"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="lDescription" parent="PAGES/MOVES/MoveInfo" unique_id=1189422001 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 160.0
+offset_right = 230.0
+offset_bottom = 317.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Un voraz bocado que puede hacer retroceder al rival."
+metadata/_edit_lock_ = true
+
+[node name="MovePanels" type="VBoxContainer" parent="PAGES/MOVES" unique_id=1968445626]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 240.0
+offset_top = 16.0
+offset_right = 492.0
+offset_bottom = 282.0
+theme_override_constants/separation = -10
+metadata/_edit_lock_ = true
+
+[node name="Move1" type="Panel" parent="PAGES/MOVES/MovePanels" unique_id=799367652]
+custom_minimum_size = Vector2(252, 74)
+layout_mode = 2
+focus_neighbor_bottom = NodePath("../Move2")
+theme_override_styles/panel = SubResource("StyleBoxTexture_r3vod")
+metadata/_edit_lock_ = true
+
+[node name="Tipo" type="Sprite2D" parent="PAGES/MOVES/MovePanels/Move1" unique_id=1844204491]
+position = Vector2(38, 22)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Ataque" parent="PAGES/MOVES/MovePanels/Move1" unique_id=1104366710 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 10.0
+offset_right = 243.0
+offset_bottom = 43.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Garra Dragón"
+metadata/_edit_lock_ = true
+
+[node name="lPP" parent="PAGES/MOVES/MovePanels/Move1" unique_id=587746732 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 40.0
+offset_right = 133.0
+offset_bottom = 70.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "PP"
+metadata/_edit_lock_ = true
+
+[node name="dPP" parent="PAGES/MOVES/MovePanels/Move1" unique_id=896092873 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 132.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 71.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]24/24"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Move2" type="Panel" parent="PAGES/MOVES/MovePanels" unique_id=1577540530]
+custom_minimum_size = Vector2(252, 74)
+layout_mode = 2
+focus_neighbor_top = NodePath("../Move1")
+focus_neighbor_bottom = NodePath("../Move3")
+theme_override_styles/panel = SubResource("StyleBoxTexture_vsqvo")
+metadata/_edit_lock_ = true
+
+[node name="Tipo" type="Sprite2D" parent="PAGES/MOVES/MovePanels/Move2" unique_id=265547132]
+position = Vector2(38, 22)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Ataque" parent="PAGES/MOVES/MovePanels/Move2" unique_id=1458254844 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 10.0
+offset_right = 243.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Garra Dragón"
+metadata/_edit_lock_ = true
+
+[node name="lPP" parent="PAGES/MOVES/MovePanels/Move2" unique_id=527391500 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 40.0
+offset_right = 134.0
+offset_bottom = 69.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "PP"
+metadata/_edit_lock_ = true
+
+[node name="dPP" parent="PAGES/MOVES/MovePanels/Move2" unique_id=1828305979 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 131.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 72.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]24/24"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Move3" type="Panel" parent="PAGES/MOVES/MovePanels" unique_id=909815072]
+custom_minimum_size = Vector2(252, 74)
+layout_mode = 2
+focus_neighbor_top = NodePath("../Move2")
+focus_neighbor_bottom = NodePath("../Move4")
+theme_override_styles/panel = SubResource("StyleBoxTexture_f56w3")
+metadata/_edit_lock_ = true
+
+[node name="Tipo" type="Sprite2D" parent="PAGES/MOVES/MovePanels/Move3" unique_id=1069677613]
+position = Vector2(38, 22)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Ataque" parent="PAGES/MOVES/MovePanels/Move3" unique_id=338766201 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 10.0
+offset_right = 245.0
+offset_bottom = 43.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Garra Dragón"
+metadata/_edit_lock_ = true
+
+[node name="lPP" parent="PAGES/MOVES/MovePanels/Move3" unique_id=1447580215 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 40.0
+offset_right = 135.0
+offset_bottom = 68.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "PP"
+metadata/_edit_lock_ = true
+
+[node name="dPP" parent="PAGES/MOVES/MovePanels/Move3" unique_id=466012303 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 72.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]24/24"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Move4" type="Panel" parent="PAGES/MOVES/MovePanels" unique_id=652802841]
+custom_minimum_size = Vector2(252, 74)
+layout_mode = 2
+focus_neighbor_top = NodePath("../Move3")
+theme_override_styles/panel = SubResource("StyleBoxTexture_8t666")
+metadata/_edit_lock_ = true
+
+[node name="Tipo" type="Sprite2D" parent="PAGES/MOVES/MovePanels/Move4" unique_id=142143356]
+position = Vector2(38, 22)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Ataque" parent="PAGES/MOVES/MovePanels/Move4" unique_id=1580652373 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 10.0
+offset_right = 247.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Garra Dragón"
+metadata/_edit_lock_ = true
+
+[node name="lPP" parent="PAGES/MOVES/MovePanels/Move4" unique_id=568008601 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 40.0
+offset_right = 131.0
+offset_bottom = 71.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "PP"
+metadata/_edit_lock_ = true
+
+[node name="dPP" parent="PAGES/MOVES/MovePanels/Move4" unique_id=77342943 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 135.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 71.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]24/24"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Move0" type="Panel" parent="PAGES/MOVES" unique_id=1985507198]
+custom_minimum_size = Vector2(252, 74)
+layout_mode = 0
+offset_left = 240.0
+offset_top = 292.0
+offset_right = 492.0
+offset_bottom = 366.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_tv22y")
+metadata/_edit_lock_ = true
+
+[node name="Tipo" type="Sprite2D" parent="PAGES/MOVES/Move0" unique_id=649397357]
+position = Vector2(38, 22)
+texture = ExtResource("9_wfs1f")
+vframes = 24
+frame = 14
+metadata/_edit_lock_ = true
+
+[node name="Ataque" parent="PAGES/MOVES/Move0" unique_id=505154115 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 10.0
+offset_right = 246.0
+offset_bottom = 43.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "Garra Dragón"
+metadata/_edit_lock_ = true
+
+[node name="lPP" parent="PAGES/MOVES/Move0" unique_id=726938358 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 40.0
+offset_right = 135.0
+offset_bottom = 70.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "PP"
+metadata/_edit_lock_ = true
+
+[node name="dPP" parent="PAGES/MOVES/Move0" unique_id=2059689617 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 71.0
+theme_override_colors/default_color = Color(0.258824, 0.258824, 0.258824, 1)
+theme_override_colors/font_shadow_color = Color(0.709804, 0.709804, 0.709804, 1)
+text = "[right]24/24"
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="RIBBONS" type="Panel" parent="PAGES" unique_id=1836260919]
+visible = false
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 384.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_u2ecf")
+script = ExtResource("28_iwvnf")
+metadata/_edit_lock_ = true
+
+[node name="Titulo" parent="PAGES/RIBBONS" unique_id=1951304145 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 16.0
+offset_right = 204.0
+offset_bottom = 46.0
+theme_override_colors/default_color = Color(0.972549, 0.972549, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.407843, 0.407843, 0.407843, 1)
+text = "CINTAS"
+metadata/_edit_lock_ = true
+
+[node name="lCintas" parent="PAGES/RIBBONS" unique_id=714022470 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 341.0
+offset_right = 414.0
+offset_bottom = 371.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "N.º de Cintas:"
+metadata/_edit_lock_ = true
+
+[node name="dCintas" parent="PAGES/RIBBONS" unique_id=133558702 instance=ExtResource("30_vhko7")]
+layout_mode = 0
+offset_left = 437.0
+offset_top = 341.0
+offset_right = 480.0
+offset_bottom = 371.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "0"
+metadata/_edit_lock_ = true
+
+[connection signal="value_changed" from="PAGES/DATA/exp_bar/TextureProgressBar" to="PAGES/DATA/exp_bar" method="_on_value_changed"]
+[connection signal="hidden" from="PAGES/MOVES" to="PAGES/MOVES" method="_on_hidden"]
+[connection signal="focus_entered" from="PAGES/MOVES/MovePanels/Move1" to="PAGES/MOVES" method="_on_move_focus_entered"]
+[connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move1" to="PAGES/MOVES" method="_on_move_focus_exited"]
+[connection signal="focus_entered" from="PAGES/MOVES/MovePanels/Move2" to="PAGES/MOVES" method="_on_move_focus_entered"]
+[connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move2" to="PAGES/MOVES" method="_on_move_focus_exited"]
+[connection signal="focus_entered" from="PAGES/MOVES/MovePanels/Move3" to="PAGES/MOVES" method="_on_move_focus_entered"]
+[connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move3" to="PAGES/MOVES" method="_on_move_focus_exited"]
+[connection signal="focus_entered" from="PAGES/MOVES/MovePanels/Move4" to="PAGES/MOVES" method="_on_move_focus_entered"]
+[connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move4" to="PAGES/MOVES" method="_on_move_focus_exited"]
+[connection signal="focus_entered" from="PAGES/MOVES/Move0" to="PAGES/MOVES" method="_on_move_focus_entered"]
+[connection signal="focus_exited" from="PAGES/MOVES/Move0" to="PAGES/MOVES" method="_on_move_focus_exited"]

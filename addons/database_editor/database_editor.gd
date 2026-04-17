@@ -1563,7 +1563,7 @@ func _on_move_item_selected(index: int, tab_node: Control) -> void:
 	if move_data.type_id > 0:
 		var type_data: TypeData = null
 		# En runtime, usar DatabaseService
-		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		if not Engine.is_editor_hint():
 			type_data = DatabaseService.get_type(move_data.type_id) as TypeData
 		# En editor, cargar directamente desde archivo
 		else:

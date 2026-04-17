@@ -1,6 +1,7 @@
 extends Node
 
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
+const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
 
 ## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
@@ -35,6 +36,9 @@ var defeated_trainers: Dictionary = {}
 # Inventario global del jugador
 var bag = BAG_SCRIPT.new()
 
+# Equipo del jugador (máx. 6 Pokémon); sin dependencia de UI
+var party = PARTY_SCRIPT.new()
+
 # Cola de cambios diferidos que se aplicarán en el próximo warp
 # Cada cambio es un Dictionary con "type" y "params"
 var deferred_changes: Array[Dictionary] = []
@@ -49,7 +53,9 @@ func initialize_new_game() -> void:
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
 	bag = BAG_SCRIPT.new()
+	party = PARTY_SCRIPT.new()
 	_seed_test_bag_items()
+	_seed_test_party_placeholder()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
@@ -90,6 +96,38 @@ func _seed_test_bag_items() -> void:
 	player_bag.add_item(617, 3)  # Ensueño Ball
 	player_bag.add_item(887, 2)  # Ente Ball
 	print("GameStateService: Bag de prueba inicializado con %d entradas." % get_bag_save_data().size())
+
+
+## Añade un Pokémon de prueba al equipo para validar PartyUI / resumen HGSS.
+## TODO: sustituir por starter real o carga de partida guardada.
+func _seed_test_party_placeholder() -> void:
+	var player_party: Party = get_party()
+	if player_party.count() > 0:
+		return
+	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee, Snorlax (slots 0–5).
+	var test_mons: Array[Vector2i] = [
+		Vector2i(1, 14), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10), Vector2i(143, 9)
+	]
+	var added := 0
+	for spec: Vector2i in test_mons:
+		var species_id := spec.x
+		var lvl := spec.y
+		if DatabaseService.get_pokemon(species_id) == null:
+			push_warning("GameStateService: species_id=%d no existe; se omite esa entrada de prueba." % species_id)
+			continue
+		var mon := Pokemon.new(species_id, lvl, 0, 0, 0, true)
+		if mon == null or mon.base == null:
+			push_warning("GameStateService: no se pudo instanciar Pokémon de prueba (species_id=%d)." % species_id)
+			continue
+		mon.is_wild = false
+		mon.original_trainer = "Debug"
+		if player_party.add_pokemon(mon):
+			added += 1
+		else:
+			push_warning("GameStateService: add_pokemon falló (species_id=%d)." % species_id)
+	if added > 0:
+		print("GameStateService: Party de prueba con %d Pokémon." % added)
+
 
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
@@ -145,6 +183,13 @@ func get_bag():
 	if bag == null:
 		bag = BAG_SCRIPT.new()
 	return bag
+
+
+## Equipo Pokémon del jugador (estado global de sesión)
+func get_party():
+	if party == null:
+		party = PARTY_SCRIPT.new()
+	return party
 
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
@@ -289,6 +334,16 @@ func get_bag_save_data() -> Array[Dictionary]:
 func load_bag_save_data(entries: Array[Dictionary]) -> void:
 	get_bag().load_serializable_data(entries)
 
+
+## Serializa la party para guardado futuro (datos planos por Pokémon)
+func get_party_save_data() -> Array[Dictionary]:
+	return get_party().to_serializable_data()
+
+
+## Restaura la party desde datos serializados
+func load_party_save_data(entries: Array[Dictionary]) -> void:
+	get_party().load_serializable_data(entries)
+
 ## Retorna un resumen del estado actual
 func get_state_summary() -> String:
 	var summary = "=== ESTADO DEL JUEGO ===\n"
@@ -299,4 +354,5 @@ func get_state_summary() -> String:
 	summary += "Variables: %s\n" % game_variables
 	summary += "Self-switches: %s\n" % event_self_flags
 	summary += "Bag entries: %d\n" % get_bag_save_data().size()
+	summary += "Party Pokémon: %d\n" % get_party().count()
 	return summary

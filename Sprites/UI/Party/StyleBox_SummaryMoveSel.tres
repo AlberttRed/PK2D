@@ -1,0 +1,7 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://bhinw2i2adikv"]
+
+[ext_resource type="Texture2D" uid="uid://bpu214w54ts7t" path="res://Escenas/UI/Menus/Resources/summarymovesel.PNG" id="1_5wj2x"]
+
+[resource]
+texture = ExtResource("1_5wj2x")
+region_rect = Rect2(0, 74, 252, 74)

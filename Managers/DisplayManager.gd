@@ -30,6 +30,7 @@ signal portrait_box_closed
 const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
 const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
 const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
+const PARTY_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PartyController.gd")
 
 # === VARIABLES ===
 var fading: bool = false
@@ -40,6 +41,7 @@ var choices_options = null
 var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede haber múltiples simultáneas)
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
 var _bag_controller = null
+var _party_controller = null
 var _bag_dialog_layout_saved: bool = false
 var _bag_dialog_saved_msg_layout: Dictionary = {}
 var _bag_dialog_saved_choice_layout: Dictionary = {}
@@ -50,6 +52,7 @@ var _bag_dialog_saved_choice_layout: Dictionary = {}
 @onready var BattleNew: BattleScene = $BattleNew
 @onready var pause_menu = $PauseMenu
 @onready var _bag_ui = $BagUI
+@onready var _party_ui = $PartyUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -73,6 +76,8 @@ func _ready() -> void:
 		pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _bag_ui:
 		_bag_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _party_ui:
+		_party_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -104,6 +109,12 @@ func _ready() -> void:
 		_bag_ui.closed.connect(_on_bag_closed)
 		if _bag_ui.has_signal("visibility_changed"):
 			_bag_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _party_ui:
+		_party_ui.back_requested.connect(_on_party_back_requested)
+		_party_ui.closed.connect(_on_party_closed)
+		if _party_ui.has_signal("visibility_changed"):
+			_party_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -378,7 +389,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible)
 
 ## Método privado para iniciar batalla
 ## from_event: true si el combate fue iniciado desde un evento (no desbloquear control al terminar)
@@ -666,7 +677,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible:
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -694,7 +705,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -738,7 +749,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or battle_message_box_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or battle_message_box_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -746,12 +757,50 @@ func _on_pause_pokedex_requested() -> void:
 	print("PauseMenu: Pokédex solicitado (placeholder)")
 
 func _on_pause_party_requested() -> void:
-	print("PauseMenu: Party solicitado (placeholder)")
+	_open_party_ui()
 
 func _on_pause_bag_requested() -> void:
 	_open_bag_ui()
 
+func _open_party_ui() -> void:
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _party_ui == null:
+		push_error("DisplayManager: Nodo PartyUI no disponible en la escena.")
+		return
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	var context := _resolve_overworld_context()
+	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
+	_party_ui.setup(_party_controller)
+	_party_ui.open()
+	_on_ui_visibility_changed()
+
+
+func _close_party_ui() -> void:
+	if _party_ui == null:
+		return
+	_party_ui.close()
+
+
+func _on_party_back_requested() -> void:
+	_close_party_ui()
+
+
+func _on_party_closed() -> void:
+	_party_controller = null
+	if pause_menu and not pause_menu.visible:
+		pause_menu.open(1)
+	_on_ui_visibility_changed()
+
+
 func _open_bag_ui() -> void:
+	if _party_ui != null and _party_ui.visible:
+		return
 	if _bag_ui != null and _bag_ui.visible:
 		return
 
@@ -991,6 +1040,7 @@ func _update_game_pause_state() -> void:
 		choice_box.visible or
 		(pause_menu != null && pause_menu.visible) or
 		(_bag_ui != null and _bag_ui.visible) or
+		(_party_ui != null and _party_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)
