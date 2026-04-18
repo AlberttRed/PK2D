@@ -61,7 +61,13 @@ func get_slot_view(slot: int) -> Dictionary:
 		return {"occupied": false}
 
 	var max_hp := mon.get_final_stat(StatsEnum.Values.HP)
-	var status := "Debilitado" if mon.fainted else "—"
+	var status := "—"
+	if mon.fainted:
+		status = "Debilitado"
+	elif mon.major_status == CONST.STATUS.POISON:
+		status = "Envenenado"
+	elif mon.major_status != CONST.STATUS.OK:
+		status = "Estado"
 
 	return {
 		"occupied": true,
@@ -93,15 +99,30 @@ func can_show_use_item_option() -> bool:
 func build_action_menu_entries(slot: int) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	if not is_slot_occupied(slot):
-		out.append({"id": &"cancel", "label": "Cancelar"})
+		out.append({"id": &"cancel", "label": "Salir"})
 		return out
-	out.append({"id": &"summary", "label": "Resumen"})
+	out.append({"id": &"summary", "label": "Datos"})
 	if can_show_switch_option():
-		out.append({"id": &"switch", "label": "Cambiar orden"})
+		out.append({"id": &"switch", "label": "Mover"})
 	if can_show_use_item_option():
-		out.append({"id": &"use_item", "label": "Usar objeto"})
-	out.append({"id": &"cancel", "label": "Cancelar"})
+		out.append({"id": &"use_item", "label": "Objeto"})
+	out.append({"id": &"cancel", "label": "Salir"})
 	return out
+
+
+## Comprueba si el intercambio es válido (sin mutar el modelo).
+func can_swap_slots(slot_a: int, slot_b: int) -> bool:
+	if slot_a < 0 or slot_a >= SLOT_COUNT or slot_b < 0 or slot_b >= SLOT_COUNT:
+		return false
+	if slot_a == slot_b:
+		return true
+	if not is_slot_occupied(slot_a) or not is_slot_occupied(slot_b):
+		return false
+	var party = _party_model()
+	var n: int = party.count()
+	if slot_a >= n or slot_b >= n:
+		return false
+	return true
 
 
 ## Intercambia dos slots ocupados en el modelo Party (AC-03, AC-06).

@@ -122,6 +122,15 @@ func set_input_enabled(value: bool) -> void:
 	else:
 		_disable_input()
 
+
+## Tras mutar el Bag (p. ej. consumir ítem); sin señales globales.
+func refresh_from_controller() -> void:
+	if _controller == null or not visible:
+		return
+	_track_current_pocket_selection()
+	_refresh_current_pocket()
+
+
 func _refresh_current_pocket() -> void:
 	if _controller == null or _pockets.is_empty():
 		_current_items = [BAG_LIST_ENTRY_SCRIPT.create_exit_entry()]

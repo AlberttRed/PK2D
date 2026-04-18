@@ -65,6 +65,7 @@ func initialize_new_game() -> void:
 func _seed_test_bag_items() -> void:
 	var player_bag = get_bag()
 	player_bag.add_item(17, 5)   # Poción (Medicine)
+	player_bag.add_item(18, 8)   # Antídoto (Medicine)
 	player_bag.add_item(3, 10)   # Super Ball (Balls)
 	player_bag.add_item(77, 2)   # Repelente Máximo (Items)
 	player_bag.add_item(132, 3)  # Baya Aranja (Berries)
@@ -104,9 +105,10 @@ func _seed_test_party_placeholder() -> void:
 	var player_party: Party = get_party()
 	if player_party.count() > 0:
 		return
-	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee, Snorlax (slots 0–5).
+	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
 	var test_mons: Array[Vector2i] = [
-		Vector2i(1, 14), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10), Vector2i(143, 9)
+		Vector2i(1, 14), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
+		# Vector2i(143, 9),  # Snorlax (último añadido; descomentar para 6º slot)
 	]
 	var added := 0
 	for spec: Vector2i in test_mons:
@@ -127,6 +129,14 @@ func _seed_test_party_placeholder() -> void:
 			push_warning("GameStateService: add_pokemon falló (species_id=%d)." % species_id)
 	if added > 0:
 		print("GameStateService: Party de prueba con %d Pokémon." % added)
+		# Debug: Bulbasaur con pocos PS (Poción) y Pikachu envenenado (Antídoto).
+		var bulba: Pokemon = player_party.get_pokemon(0)
+		if bulba != null and bulba.hp_actual > 0:
+			var max_hp: int = int(bulba.get_final_stat(StatsEnum.Values.HP))
+			bulba.hp_actual = clampi(10, 1, max_hp)
+		var pika: Pokemon = player_party.get_pokemon(3)
+		if pika != null and pika.hp_actual > 0:
+			pika.major_status = CONST.STATUS.POISON
 
 
 ## Carga un estado guardado (placeholder para futuro)

@@ -112,6 +112,9 @@ func moveRight() -> void:
 
 
 func moveUp() -> void:
+	if activePage != null and activePage.name == "MOVES" and activePage.mode == activePage.Modes.DETAILED:
+		activePage.call("navigate_move_focus", -1)
+		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
 		return
 	if visible and movingIndex > 0:
@@ -120,6 +123,9 @@ func moveUp() -> void:
 
 
 func moveDown() -> void:
+	if activePage != null and activePage.name == "MOVES" and activePage.mode == activePage.Modes.DETAILED:
+		activePage.call("navigate_move_focus", 1)
+		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
 		return
 	if loadedParty.is_empty():

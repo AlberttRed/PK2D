@@ -31,7 +31,6 @@ const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverla
 const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
 const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 const PARTY_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PartyController.gd")
-
 # === VARIABLES ===
 var fading: bool = false
 var next = false
@@ -43,11 +42,29 @@ var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actua
 var _bag_controller = null
 var _party_controller = null
 ## Flujo party → mochila (Usar objeto) y vuelta al party.
-var _opening_bag_from_party_use_item: bool = false
 var _resume_party_focus_slot: int = -1
+## Mientras cerramos el party para abrir la mochila «Usar objeto»: no reabrir menú pausa en _on_party_closed.
+var _closing_party_to_open_bag_for_item: bool = false
 var _bag_dialog_layout_saved: bool = false
 var _bag_dialog_saved_msg_layout: Dictionary = {}
 var _bag_dialog_saved_choice_layout: Dictionary = {}
+var _party_action_choice_layout_saved: bool = false
+var _party_action_saved_choice_layout: Dictionary = {}
+## Mochila (pausa) → «Usar» ítem que requiere Pokémon: id pendiente hasta elegir objetivo en party.
+var _pending_bag_item_id: int = -1
+## Party cerrado bajo fundido para reabrir mochila: no abrir menú pausa en _on_party_closed.
+var _skip_pause_open_on_party_close: bool = false
+## Party → bolsa → usar ítem: cerramos bolsa y mostramos feedback con party visible (no reapertura diferida duplicada).
+var _suppress_party_resume_after_bag_close: bool = false
+## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
+var _item_feedback_msg_layout_saved: bool = false
+var _item_feedback_saved_msg_layout: Dictionary = {}
+
+## Viewport base del UI overworld/pausa (MessageBox anclado en píxeles de escena).
+const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
+const _MSG_BAR_SAFE_MARGIN_PX := 2.0
+const _MSG_BAR_HEIGHT_PX := 96.0
+const _UI_SCREEN_FADE_DURATION: float = 0.2
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -117,6 +134,8 @@ func _ready() -> void:
 		_party_ui.back_requested.connect(_on_party_back_requested)
 		_party_ui.closed.connect(_on_party_closed)
 		_party_ui.use_item_requested.connect(_on_party_use_item_requested)
+		_party_ui.bag_item_target_selected.connect(_on_party_bag_item_pick_slot)
+		_party_ui.bag_item_target_cancelled.connect(_on_party_bag_item_target_cancelled)
 		if _party_ui.has_signal("visibility_changed"):
 			_party_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
@@ -147,6 +166,38 @@ static func show_choices(options: Array[String]) -> int:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
 	return await instance._show_choices(options)
+
+
+## Menú de acciones del party: borde derecho alineado al viewport (diseño 512×384), crece hacia la izquierda.
+static func show_party_action_choices(options: Array[String]) -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	instance._push_party_action_choice_layout()
+	var idx: int = await instance._show_choices(options)
+	instance._pop_party_action_choice_layout()
+	return idx
+
+
+## Opciones con anclaje a una esquina del viewport (`ChoiceBox.ChoiceAnchor`; PARTY_MENU/BAG tienen flujo propio).
+static func show_choices_corner(options: Array[String], anchor: ChoiceBox.ChoiceAnchor) -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	if anchor == ChoiceBox.ChoiceAnchor.SCENE_DEFAULT:
+		return await instance._show_choices(options)
+	if anchor == ChoiceBox.ChoiceAnchor.PARTY_MENU or anchor == ChoiceBox.ChoiceAnchor.BAG_TOP_LEFT:
+		push_error("DisplayManager.show_choices_corner: usa show_party_action_choices o el flujo de mochila.")
+		return -1
+	var saved: Dictionary = instance._snapshot_choice_box_layout()
+	instance.choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	instance.choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	instance.choice_box.set_corner_anchor(anchor)
+	var idx: int = await instance._show_choices(options)
+	instance._restore_choice_box_layout(saved)
+	instance.choice_box.clear_corner_anchor()
+	return idx
+
 
 ## Muestra un mensaje seguido de opciones
 ## close_at_end: Si true, cierra el MessageBox después de la selección. Si false, lo mantiene visible.
@@ -761,12 +812,20 @@ func _on_pause_pokedex_requested() -> void:
 	print("PauseMenu: Pokédex solicitado (placeholder)")
 
 func _on_pause_party_requested() -> void:
-	_open_party_ui()
+	await _open_party_ui()
 
 func _on_pause_bag_requested() -> void:
-	_open_bag_ui()
+	await _open_bag_ui()
 
-func _open_party_ui() -> void:
+
+func _await_ui_control_hidden(ctrl: Control) -> void:
+	if ctrl == null:
+		return
+	while ctrl.visible:
+		await get_tree().process_frame
+
+
+func _open_party_ui(with_screen_fade: bool = true) -> void:
 	if _bag_ui != null and _bag_ui.visible:
 		return
 	if _party_ui != null and _party_ui.visible:
@@ -774,6 +833,9 @@ func _open_party_ui() -> void:
 	if _party_ui == null:
 		push_error("DisplayManager: Nodo PartyUI no disponible en la escena.")
 		return
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
 		pause_menu.close()
@@ -784,6 +846,9 @@ func _open_party_ui() -> void:
 	_party_ui.open()
 	_on_ui_visibility_changed()
 
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
 
 func _close_party_ui() -> void:
 	if _party_ui == null:
@@ -792,50 +857,80 @@ func _close_party_ui() -> void:
 
 
 func _on_party_back_requested() -> void:
+	await _transition_fade_party_to_pause_menu()
+
+
+func _transition_fade_party_to_pause_menu() -> void:
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	_close_party_ui()
+	await _await_ui_control_hidden(_party_ui)
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 
 func _on_party_closed() -> void:
-	_party_controller = null
-	if _opening_bag_from_party_use_item:
-		_opening_bag_from_party_use_item = false
-		var slot := _resume_party_focus_slot
-		call_deferred("_deferred_open_bag_after_party_item_request", slot)
+	if _skip_pause_open_on_party_close:
+		_party_controller = null
+		_resume_party_focus_slot = -1
 		_on_ui_visibility_changed()
 		return
+
+	if _closing_party_to_open_bag_for_item:
+		_party_controller = null
+		_resume_party_focus_slot = -1
+		_on_ui_visibility_changed()
+		return
+
+	_party_controller = null
 	_resume_party_focus_slot = -1
 	if pause_menu and not pause_menu.visible:
 		pause_menu.open(1)
 	_on_ui_visibility_changed()
 
 
+## Party → mochila (cancelar objetivo o fin de sesión ítem): negro con party aún montado, cerrar, abrir bolsa, descubrir.
+func _fade_close_party_reopen_bag_overworld() -> void:
+	_skip_pause_open_on_party_close = true
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	_close_party_ui()
+	await _await_ui_control_hidden(_party_ui)
+	_skip_pause_open_on_party_close = false
+	_open_bag_ui(false)
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+
 func _on_party_use_item_requested(slot_index: int) -> void:
 	_resume_party_focus_slot = slot_index
-	_opening_bag_from_party_use_item = true
+	await _transition_fade_party_to_bag_for_use_item()
+
+
+func _transition_fade_party_to_bag_for_use_item() -> void:
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	# Leer slot antes de _close_party_ui: _on_party_closed pone _resume_party_focus_slot en -1.
+	var slot := _resume_party_focus_slot
+	_closing_party_to_open_bag_for_item = true
 	_close_party_ui()
-
-
-func _deferred_open_bag_after_party_item_request(target_slot: int) -> void:
-	if _bag_ui != null and _bag_ui.visible:
-		return
-	if _party_ui != null and _party_ui.visible:
-		return
+	await _await_ui_control_hidden(_party_ui)
+	_closing_party_to_open_bag_for_item = false
 	if pause_menu and pause_menu.visible:
 		pause_menu.close()
 	var context := _resolve_overworld_context()
 	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
-	_bag_controller.configure_party_item_flow(target_slot)
+	_bag_controller.configure_party_item_flow(slot)
 	_bag_ui.setup(_bag_controller)
 	_bag_ui.open()
 	_on_ui_visibility_changed()
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 
 func _deferred_reopen_party_after_bag() -> void:
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	var slot := _resume_party_focus_slot
 	_resume_party_focus_slot = -1
 	if _party_ui != null and _party_ui.visible:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 		return
 	if _bag_ui != null and _bag_ui.visible:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 		return
 	if pause_menu and pause_menu.visible:
 		pause_menu.close()
@@ -844,9 +939,10 @@ func _deferred_reopen_party_after_bag() -> void:
 	_party_ui.setup(_party_controller)
 	_party_ui.open(slot)
 	_on_ui_visibility_changed()
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 
-func _open_bag_ui() -> void:
+func _open_bag_ui(with_screen_fade: bool = true) -> void:
 	if _party_ui != null and _party_ui.visible:
 		return
 	if _bag_ui != null and _bag_ui.visible:
@@ -855,6 +951,9 @@ func _open_bag_ui() -> void:
 	if _bag_ui == null:
 		push_error("DisplayManager: Nodo BagUI no disponible en la escena.")
 		return
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
 		pause_menu.close()
@@ -867,20 +966,37 @@ func _open_bag_ui() -> void:
 	_bag_ui.open()
 	_on_ui_visibility_changed()
 
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
 func _close_bag_ui() -> void:
 	if _bag_ui == null:
 		return
 	_bag_ui.close()
 
 func _on_bag_back_requested() -> void:
+	await _transition_fade_bag_to_pause_menu()
+
+
+func _transition_fade_bag_to_pause_menu() -> void:
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	_close_bag_ui()
+	await _await_ui_control_hidden(_bag_ui)
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
 	var resume_party_slot := -1
 	if _bag_controller != null and _bag_controller.party_target_slot >= 0:
 		resume_party_slot = _bag_controller.party_target_slot
 	_bag_controller = null
+	if _pending_bag_item_id > 0:
+		# La apertura del party con fundido la hace _run_bag_item_use_flow (evita 1 frame a juego con bolsa ya cerrada).
+		_on_ui_visibility_changed()
+		return
 	if resume_party_slot >= 0:
+		if _suppress_party_resume_after_bag_close:
+			_on_ui_visibility_changed()
+			return
 		_resume_party_focus_slot = resume_party_slot
 		call_deferred("_deferred_reopen_party_after_bag")
 		_on_ui_visibility_changed()
@@ -892,11 +1008,169 @@ func _on_bag_closed() -> void:
 func _on_bag_use_requested(item_id: int) -> void:
 	await _run_bag_item_use_flow(item_id)
 
+
+## Tras cerrar la bolsa bajo negro: abre party (mochila → party) y descubre. Sin fade_in previo (ya estamos a negro).
+func _open_party_for_pending_bag_item_after_bag_close() -> void:
+	if _pending_bag_item_id <= 0:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _bag_ui != null and _bag_ui.visible:
+		return
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	var context := _resolve_overworld_context()
+	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
+	_party_ui.setup(_party_controller)
+	_party_ui.open_for_bag_item_target_pick(-1)
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+
+func _on_party_bag_item_target_cancelled() -> void:
+	if _party_ui == null or not _party_ui.visible:
+		return
+	if _pending_bag_item_id <= 0:
+		return
+	if _party_ui.has_method("set_input_enabled"):
+		_party_ui.set_input_enabled(false)
+	_pending_bag_item_id = -1
+	await _fade_close_party_reopen_bag_overworld()
+
+
+func _on_party_bag_item_pick_slot(slot_index: int) -> void:
+	await _finish_pending_bag_item_use(slot_index)
+
+
+func _finish_pending_bag_item_use(slot_index: int) -> void:
+	var item_id := _pending_bag_item_id
+	if item_id <= 0:
+		return
+	if _party_ui != null:
+		_party_ui.set_input_enabled(false)
+
+	var bag = GameStateService.get_bag()
+	if bag == null or bag.get_quantity(item_id) <= 0:
+		await _finish_pending_bag_party_out_of_units()
+		return
+
+	var context := _resolve_overworld_context()
+	var bc = BAG_CONTROLLER_SCRIPT.new(context)
+	bc.configure_party_item_flow(slot_index)
+	var use_result: Dictionary = bc.request_use_item(item_id)
+
+	if _party_ui != null:
+		_party_ui.refresh_slots_display()
+
+	await _await_bag_use_feedback_messages(use_result)
+
+	var qty_after: int = GameStateService.get_bag().get_quantity(item_id) if GameStateService.get_bag() != null else 0
+	if qty_after <= 0:
+		await _await_bag_use_feedback_messages({
+			"message": "Ya no quedan más unidades.",
+			"ok": true,
+		})
+		await _finish_pending_bag_party_session()
+		return
+
+	# Evitar que el mismo ui_accept que cierra el MSG dispare party/Choice en el frame siguiente.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if _party_ui != null:
+		_party_ui.set_input_enabled(true)
+
+
+func _finish_pending_bag_party_out_of_units() -> void:
+	await _await_bag_use_feedback_messages({
+		"message": "Ya no quedan más unidades.",
+		"ok": false,
+	})
+	await _finish_pending_bag_party_session()
+
+
+func _finish_pending_bag_party_session() -> void:
+	_pending_bag_item_id = -1
+	await _fade_close_party_reopen_bag_overworld()
+
+
+func _await_bag_use_feedback_messages(use_result: Dictionary) -> void:
+	var feedback: String = str(use_result.get("message", "No se puede usar."))
+	var popped_item_layout := false
+	if not _bag_dialog_layout_saved:
+		_push_item_feedback_msg_layout()
+		popped_item_layout = true
+	## Mismo comportamiento que diálogos de campo: typing + confirmar con input antes de seguir.
+	await _show_message_with_config(feedback, {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": "typing",
+	})
+	if popped_item_layout:
+		_pop_item_feedback_msg_layout()
+
+
+func _execute_bag_item_use_with_controller(item_id: int) -> void:
+	var use_result: Dictionary = _bag_controller.request_use_item(item_id)
+	if _bag_ui != null and _bag_ui.has_method("refresh_from_controller"):
+		_bag_ui.refresh_from_controller()
+	await _await_bag_use_feedback_messages(use_result)
+
+
+## Party → bolsa → elegir objeto: resultado sobre el party (cierra bolsa antes del MessageBox).
+func _party_bag_flow_use_item_show_feedback_on_party(item_id: int, restore_bag_input: bool) -> void:
+	var use_result: Dictionary = _bag_controller.request_use_item(item_id)
+	if _bag_ui != null and _bag_ui.has_method("refresh_from_controller"):
+		_bag_ui.refresh_from_controller()
+
+	var resume_slot: int = -1
+	if _bag_controller != null:
+		resume_slot = _bag_controller.party_target_slot
+
+	if msg.visible:
+		_close_message()
+
+	if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(true)
+
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	_pop_bag_item_dialog_layout()
+
+	_suppress_party_resume_after_bag_close = true
+	_close_bag_ui()
+	await _await_ui_control_hidden(_bag_ui)
+	_suppress_party_resume_after_bag_close = false
+
+	if resume_slot >= 0:
+		if pause_menu and pause_menu.visible:
+			pause_menu.close()
+		var context_pb := _resolve_overworld_context()
+		_party_controller = PARTY_CONTROLLER_SCRIPT.new(context_pb)
+		_party_ui.setup(_party_controller)
+		_party_ui.open(resume_slot)
+
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	await get_tree().process_frame
+
+	if _party_ui != null:
+		_party_ui.refresh_slots_display()
+
+	await _await_bag_use_feedback_messages(use_result)
+
+
 func _run_bag_item_use_flow(item_id: int) -> void:
 	if _bag_controller == null or _bag_ui == null:
 		return
 	if not _bag_ui.visible:
 		return
+
+	var from_party_flow: bool = _bag_controller.party_target_slot >= 0
 
 	_push_bag_item_dialog_layout()
 
@@ -905,43 +1179,50 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 		restore_bag_input = true
 		_bag_ui.set_input_enabled(false)
 
-	var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
-	var item_name: String = str(debug_info.get("display_name", "Objeto"))
-	var message_text := "Has seleccionado %s." % item_name
-	var options: Array[String] = ["Usar", "Tirar", "Salir"]
-
 	if msg.visible:
 		_close_message()
 
-	# Mostrar el texto en el MessageBox global y, encima, el ChoiceBox (misma UX que eventos).
-	await msg.show_custom(message_text, {
-		"waitInput": false,
-		"closeAtEnd": false,
-		"waitTime": 0.0,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-		"typingMode": "instant"
-	})
+	var choice_index := 0
+	if not from_party_flow:
+		var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
+		var item_name: String = str(debug_info.get("display_name", "Objeto"))
+		var message_text := "Has seleccionado %s." % item_name
+		var options: Array[String] = ["Usar", "Tirar", "Salir"]
+		choice_box.begin_coordinated_choice(options)
+		await msg.show_custom(message_text, {
+			"waitInput": false,
+			"closeAtEnd": false,
+			"waitTime": 0.0,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": "instant",
+			"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
+		})
+		choice_index = await choice_box.await_coordinated_choice_result()
+	else:
+		choice_index = 0
 
-	var choice_index := await _show_choices(options)
-
+	var did_party_bag_feedback: bool = false
 	match choice_index:
 		0:
-			var use_result: Dictionary = _bag_controller.request_use_item(item_id)
-			if bool(use_result.get("ok", false)):
-				await _show_message_with_config(str(use_result.get("message", "")), {
-					"waitInput": false,
-					"closeAtEnd": true,
-					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-					"typingMode": "instant"
-				})
+			var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
+			if not from_party_flow and item_data != null and item_data.requires_target():
+				_pending_bag_item_id = item_id
+				_close_message()
+				if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
+					_bag_ui.set_input_enabled(true)
+				# Fundir a negro con la bolsa aún visible; luego cerrar y abrir party (evita un frame a juego desnudo).
+				await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+				_pop_bag_item_dialog_layout()
+				_close_bag_ui()
+				await _await_ui_control_hidden(_bag_ui)
+				await _open_party_for_pending_bag_item_after_bag_close()
+				return
+			if from_party_flow:
+				await _party_bag_flow_use_item_show_feedback_on_party(item_id, restore_bag_input)
+				did_party_bag_feedback = true
 			else:
-				await _show_message_with_config(str(use_result.get("message", "No se puede usar.")), {
-					"waitInput": false,
-					"closeAtEnd": true,
-					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-					"typingMode": "instant"
-				})
+				await _execute_bag_item_use_with_controller(item_id)
 		1:
 			await _show_message_with_config("Tirar: pendiente de implementar.", {
 				"waitInput": false,
@@ -959,15 +1240,11 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 	if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
 		_bag_ui.set_input_enabled(true)
 
-	_pop_bag_item_dialog_layout()
+	if not did_party_bag_feedback:
+		_pop_bag_item_dialog_layout()
 
-func _push_bag_item_dialog_layout() -> void:
-	if _bag_dialog_layout_saved:
-		return
-	if msg == null or choice_box == null:
-		return
-
-	_bag_dialog_saved_msg_layout = {
+func _snapshot_msg_panel_layout() -> Dictionary:
+	return {
 		"anchor_left": msg.anchor_left,
 		"anchor_top": msg.anchor_top,
 		"anchor_right": msg.anchor_right,
@@ -981,7 +1258,104 @@ func _push_bag_item_dialog_layout() -> void:
 		"custom_minimum_size": msg.custom_minimum_size,
 	}
 
-	_bag_dialog_saved_choice_layout = {
+
+func _restore_msg_panel_layout(saved: Dictionary) -> void:
+	if msg == null:
+		return
+	msg.anchor_left = float(saved.get("anchor_left", 0.0))
+	msg.anchor_top = float(saved.get("anchor_top", 1.0))
+	msg.anchor_right = float(saved.get("anchor_right", 1.0))
+	msg.anchor_bottom = float(saved.get("anchor_bottom", 1.0))
+	msg.offset_left = float(saved.get("offset_left", 0.0))
+	msg.offset_top = float(saved.get("offset_top", -96.0))
+	msg.offset_right = float(saved.get("offset_right", 512.0))
+	msg.offset_bottom = float(saved.get("offset_bottom", 0.0))
+	msg.grow_horizontal = saved.get("grow_horizontal", Control.GROW_DIRECTION_BOTH)
+	msg.grow_vertical = saved.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	msg.custom_minimum_size = saved.get("custom_minimum_size", Vector2(512, 96))
+
+
+## Barra inferior de mensaje con margen respecto al borde del viewport (left / right / bottom).
+func _apply_msg_bottom_bar_viewport_inset() -> void:
+	if msg == null:
+		return
+	var vw: float = _MSG_VIEWPORT_BASE.x
+	var vh: float = _MSG_VIEWPORT_BASE.y
+	var m: float = _MSG_BAR_SAFE_MARGIN_PX
+	var bar_h: float = _MSG_BAR_HEIGHT_PX
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(vw - 2.0 * m, bar_h)
+	msg.offset_left = m
+	msg.offset_top = vh - m - bar_h
+	msg.offset_right = vw - m
+	msg.offset_bottom = vh - m
+
+
+func _push_item_feedback_msg_layout() -> void:
+	if _item_feedback_msg_layout_saved or msg == null:
+		return
+	_item_feedback_saved_msg_layout = _snapshot_msg_panel_layout()
+	_apply_msg_bottom_bar_viewport_inset()
+	_item_feedback_msg_layout_saved = true
+
+
+func _pop_item_feedback_msg_layout() -> void:
+	if not _item_feedback_msg_layout_saved or msg == null:
+		return
+	_restore_msg_panel_layout(_item_feedback_saved_msg_layout)
+	_item_feedback_msg_layout_saved = false
+
+
+func _push_bag_item_dialog_layout() -> void:
+	if _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		return
+
+	_bag_dialog_saved_msg_layout = _snapshot_msg_panel_layout()
+
+	_bag_dialog_saved_choice_layout = _snapshot_choice_box_layout()
+
+	# Texto a ancho útil del tema FireRed (sin columna estrecha “mitad interior” del MSG).
+	_apply_msg_bottom_bar_viewport_inset()
+
+	# ChoiceBox: esquina superior izquierda fija (Y alineado tras ajustes del contenedor de opciones).
+	const BAG_CHOICE_TOP_LEFT := Vector2(400.0, 244.0)
+	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	choice_box.set_fixed_top_left_position(true, BAG_CHOICE_TOP_LEFT)
+
+	_bag_dialog_layout_saved = true
+
+func _pop_bag_item_dialog_layout() -> void:
+	if not _bag_dialog_layout_saved:
+		return
+	if msg == null or choice_box == null:
+		_bag_dialog_layout_saved = false
+		return
+
+	_restore_msg_panel_layout(_bag_dialog_saved_msg_layout)
+
+	choice_box.set_fixed_top_left_position(false)
+	_restore_choice_box_layout(_bag_dialog_saved_choice_layout)
+
+	_bag_dialog_layout_saved = false
+
+func _sync_choice_box_base_offsets_from_current() -> void:
+	if choice_box == null:
+		return
+	# ChoiceBox._adjust_panel_size() ancla el tamaño a estos valores (se fijan en _ready()).
+	choice_box._base_offset_right = choice_box.offset_right
+	choice_box._base_offset_bottom = choice_box.offset_bottom
+
+
+func _snapshot_choice_box_layout() -> Dictionary:
+	return {
 		"anchors_preset": choice_box.anchors_preset,
 		"anchor_left": choice_box.anchor_left,
 		"anchor_top": choice_box.anchor_top,
@@ -995,74 +1369,46 @@ func _push_bag_item_dialog_layout() -> void:
 		"grow_vertical": choice_box.grow_vertical,
 	}
 
-	msg.apply_bag_dialog_text_layout(true)
 
-	# MessageBox: mitad de ancho, posición fija en pantalla (viewport base 512×384).
-	const BAG_MSG_POS := Vector2(2.0, 285.0)
-	var half_w := 256.0
-	var h := 96.0
-	msg.anchor_left = 0.0
-	msg.anchor_top = 0.0
-	msg.anchor_right = 0.0
-	msg.anchor_bottom = 0.0
-	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	msg.custom_minimum_size = Vector2(half_w, h)
-	msg.offset_left = BAG_MSG_POS.x
-	msg.offset_top = BAG_MSG_POS.y
-	msg.offset_right = BAG_MSG_POS.x + half_w
-	msg.offset_bottom = BAG_MSG_POS.y + h
-
-	# ChoiceBox: esquina superior izquierda fija; tamaño lo calcula `_adjust_panel_size`.
-	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	choice_box.set_fixed_top_left_position(true, Vector2(400.0, 254.0))
-
-	_bag_dialog_layout_saved = true
-
-func _pop_bag_item_dialog_layout() -> void:
-	if not _bag_dialog_layout_saved:
-		return
-	if msg == null or choice_box == null:
-		_bag_dialog_layout_saved = false
-		return
-
-	msg.anchor_left = float(_bag_dialog_saved_msg_layout.get("anchor_left", 0.0))
-	msg.anchor_top = float(_bag_dialog_saved_msg_layout.get("anchor_top", 1.0))
-	msg.anchor_right = float(_bag_dialog_saved_msg_layout.get("anchor_right", 1.0))
-	msg.anchor_bottom = float(_bag_dialog_saved_msg_layout.get("anchor_bottom", 1.0))
-	msg.offset_left = float(_bag_dialog_saved_msg_layout.get("offset_left", 0.0))
-	msg.offset_top = float(_bag_dialog_saved_msg_layout.get("offset_top", -96.0))
-	msg.offset_right = float(_bag_dialog_saved_msg_layout.get("offset_right", 512.0))
-	msg.offset_bottom = float(_bag_dialog_saved_msg_layout.get("offset_bottom", 0.0))
-	msg.grow_horizontal = _bag_dialog_saved_msg_layout.get("grow_horizontal", Control.GROW_DIRECTION_BOTH)
-	msg.grow_vertical = _bag_dialog_saved_msg_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
-	msg.custom_minimum_size = _bag_dialog_saved_msg_layout.get("custom_minimum_size", Vector2(512, 96))
-
-	msg.apply_bag_dialog_text_layout(false)
-
-	choice_box.set_fixed_top_left_position(false)
-	choice_box.anchor_left = float(_bag_dialog_saved_choice_layout.get("anchor_left", 0.0))
-	choice_box.anchor_top = float(_bag_dialog_saved_choice_layout.get("anchor_top", 0.5))
-	choice_box.anchor_right = float(_bag_dialog_saved_choice_layout.get("anchor_right", 0.0))
-	choice_box.anchor_bottom = float(_bag_dialog_saved_choice_layout.get("anchor_bottom", 0.5))
-	choice_box.offset_left = float(_bag_dialog_saved_choice_layout.get("offset_left", -144.0))
-	choice_box.offset_top = float(_bag_dialog_saved_choice_layout.get("offset_top", 70.0))
-	choice_box.offset_right = float(_bag_dialog_saved_choice_layout.get("offset_right", 0.0))
-	choice_box.offset_bottom = float(_bag_dialog_saved_choice_layout.get("offset_bottom", 98.0))
-	choice_box.grow_horizontal = _bag_dialog_saved_choice_layout.get("grow_horizontal", Control.GROW_DIRECTION_BEGIN)
-	choice_box.grow_vertical = _bag_dialog_saved_choice_layout.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
-	choice_box.set("anchors_preset", int(_bag_dialog_saved_choice_layout.get("anchors_preset", 6)))
-	_sync_choice_box_base_offsets_from_current()
-
-	_bag_dialog_layout_saved = false
-
-func _sync_choice_box_base_offsets_from_current() -> void:
+func _restore_choice_box_layout(saved: Dictionary) -> void:
 	if choice_box == null:
 		return
-	# ChoiceBox._adjust_panel_size() ancla el tamaño a estos valores (se fijan en _ready()).
-	choice_box._base_offset_right = choice_box.offset_right
-	choice_box._base_offset_bottom = choice_box.offset_bottom
+	choice_box.anchor_left = float(saved.get("anchor_left", 0.0))
+	choice_box.anchor_top = float(saved.get("anchor_top", 0.5))
+	choice_box.anchor_right = float(saved.get("anchor_right", 0.0))
+	choice_box.anchor_bottom = float(saved.get("anchor_bottom", 0.5))
+	choice_box.offset_left = float(saved.get("offset_left", -144.0))
+	choice_box.offset_top = float(saved.get("offset_top", 70.0))
+	choice_box.offset_right = float(saved.get("offset_right", 0.0))
+	choice_box.offset_bottom = float(saved.get("offset_bottom", 98.0))
+	choice_box.grow_horizontal = saved.get("grow_horizontal", Control.GROW_DIRECTION_BEGIN)
+	choice_box.grow_vertical = saved.get("grow_vertical", Control.GROW_DIRECTION_BEGIN)
+	choice_box.set("anchors_preset", int(saved.get("anchors_preset", 6)))
+	_sync_choice_box_base_offsets_from_current()
+
+
+func _push_party_action_choice_layout() -> void:
+	if _party_action_choice_layout_saved:
+		return
+	if choice_box == null:
+		return
+	_party_action_saved_choice_layout = _snapshot_choice_box_layout()
+	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	choice_box.enter_party_menu_layout()
+	_party_action_choice_layout_saved = true
+
+
+func _pop_party_action_choice_layout() -> void:
+	if not _party_action_choice_layout_saved:
+		return
+	if choice_box == null:
+		_party_action_choice_layout_saved = false
+		return
+	choice_box.exit_party_menu_layout()
+	_restore_choice_box_layout(_party_action_saved_choice_layout)
+	_party_action_choice_layout_saved = false
+
 
 func _resolve_overworld_context() -> OverworldContext:
 	var nodes := get_tree().root.find_children("*", "OverworldCoordinator", true, false)

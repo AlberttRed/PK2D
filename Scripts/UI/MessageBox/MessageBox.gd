@@ -37,10 +37,14 @@ var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var _current_theme: MessageBoxTheme = null  ## Tema actualmente aplicado
 var _typing_mode: TypingMode = TypingMode.TYPING
+## Tras `writeText()` (texto ya visible: instant o último carácter). p. ej. revelar ChoiceBox a la par.
+var _on_text_visible_ready: Callable = Callable()
 var _bag_dialog_text_layout_saved: bool = false
 var _bag_dialog_saved_scroll: Dictionary = {}
 var _bag_dialog_saved_rtl_states: Array[Dictionary] = []
 var _bag_saved_container_min_size: Vector2 = Vector2.ZERO
+## Valores iniciales del ScrollContainer de la escena (para restaurar márgenes cuando un tema usa −1).
+var _scene_scroll_defaults: Dictionary = {}
 var typing:bool:
 	get:
 		return label.visible_ratio > 0 and is_physics_processing()# $AnimationPlayer.is_playing() and $AnimationPlayer.current_animation == "Typing"
@@ -56,6 +60,13 @@ var isLastMessage:bool:
 # Called when the node entzers the scene tree for the first time.
 func _ready():
 	setText("")
+	if scroll != null:
+		_scene_scroll_defaults = {
+			"left": scroll.offset_left,
+			"right": scroll.offset_right,
+			"top": scroll.offset_top,
+			"bottom": scroll.offset_bottom,
+		}
 
 #func _physics_process(delta: float) -> void:
 	#if label.visible_ratio < 1:
@@ -93,7 +104,12 @@ func show_custom(text: String, config := {}):
 	elif frame_style is MessageBoxFrameStyle.Values:
 		set_frame_style(frame_style)
 
+	var cb: Variant = config.get("onTextVisibleReady", Callable())
+	_on_text_visible_ready = cb if cb is Callable else Callable()
+
 	await showMessage(text)
+
+	_on_text_visible_ready = Callable()
 
 func show_input(text: String, show_icon_at_end: bool = false):
 	await show_custom(text, {
@@ -142,8 +158,55 @@ func apply_theme(messagebox_theme: MessageBoxTheme) -> void:
 	if messagebox_theme.frame_stylebox:
 		add_theme_stylebox_override("panel", messagebox_theme.frame_stylebox)
 
+	_apply_scroll_margins_from_theme(messagebox_theme)
+
 	# Actualizar el WaitIndicator
 	_update_wait_indicator(messagebox_theme)
+
+
+func _apply_scroll_margins_from_theme(messagebox_theme: MessageBoxTheme) -> void:
+	if scroll == null or messagebox_theme == null:
+		return
+	if _scene_scroll_defaults.is_empty():
+		_scene_scroll_defaults = {
+			"left": scroll.offset_left,
+			"right": scroll.offset_right,
+			"top": scroll.offset_top,
+			"bottom": scroll.offset_bottom,
+		}
+	var dl: float = messagebox_theme.content_margin_left
+	var dr: float = messagebox_theme.content_margin_right
+	var dt: float = messagebox_theme.content_margin_top
+	var db: float = messagebox_theme.content_margin_bottom
+	if dl < 0.0:
+		dl = float(_scene_scroll_defaults.get("left", 32.0))
+	if dr < 0.0:
+		dr = float(_scene_scroll_defaults.get("right", 465.0))
+	if dt < 0.0:
+		dt = float(_scene_scroll_defaults.get("top", 16.0))
+	if db < 0.0:
+		db = float(_scene_scroll_defaults.get("bottom", 79.0))
+	scroll.offset_left = dl
+	scroll.offset_right = dr
+	scroll.offset_top = dt
+	scroll.offset_bottom = db
+	_sync_text_container_width_to_scroll()
+
+
+## Ancho útil del RTL según offsets actuales del ScrollContainer (tema o escena).
+func _sync_text_container_width_to_scroll() -> void:
+	if _bag_dialog_text_layout_saved:
+		_bag_apply_inner_text_width()
+		return
+	if scroll == null or container == null or label == null:
+		return
+	var inner_w: float = maxf(1.0, scroll.offset_right - scroll.offset_left)
+	container.custom_minimum_size.x = inner_w
+	for rtl: RichTextLabel in [label, label2, label3]:
+		rtl.offset_left = 0.0
+		rtl.offset_right = inner_w
+		rtl.custom_minimum_size.x = inner_w
+	label.queue_redraw()
 
 ## Actualiza el WaitIndicator según el tema
 ## @param messagebox_theme: El MessageBoxTheme con la configuración del indicador
@@ -384,6 +447,11 @@ func startText():
 
 	#$AnimationPlayer.play("Typing")
 	await writeText()
+
+	if _on_text_visible_ready.is_valid():
+		var cb := _on_text_visible_ready
+		_on_text_visible_ready = Callable()
+		cb.call()
 
 func selectOption(): #(ui_accept)
 	print("selected")
@@ -661,6 +729,7 @@ func clear():
 	_stop = false
 	actualMessageIndex = 0
 	_is_processing_message = false  ## CRÍTICO: Resetear flag
+	_on_text_visible_ready = Callable()
 
 ## Limpia y oculta el MessageBox (llamado después de una batalla)
 func cleanup_and_hide() -> void:

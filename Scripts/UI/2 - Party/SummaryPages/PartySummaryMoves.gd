@@ -1,4 +1,5 @@
 extends Panel
+class_name PartySummaryMoves
 
 signal moveSelected
 signal showGeneralInfo
@@ -249,6 +250,29 @@ func _on_hidden() -> void:
 
 func onFocusChanged(control: Control) -> void:
 	self.activePanel = control
+
+
+## Navegación vertical entre movimientos (DisplayManager consume ui_up/down con el party abierto, así que no llega el foco automático).
+func navigate_move_focus(delta: int) -> void:
+	if mode != Modes.DETAILED:
+		return
+	var indices: Array[int] = []
+	for i in range(movePanels.size()):
+		if movePanels[i].visible:
+			indices.append(i)
+	if indices.is_empty():
+		return
+	var pos_in_list: int = 0
+	if activePanel != null:
+		var panel_i: int = movePanels.find(activePanel)
+		if panel_i >= 0:
+			var found: int = indices.find(panel_i)
+			if found >= 0:
+				pos_in_list = found
+	var new_pos: int = clampi(pos_in_list + delta, 0, indices.size() - 1)
+	if new_pos == pos_in_list:
+		return
+	movePanels[indices[new_pos]].grab_focus()
 
 
 func setSelectedPanel() -> void:

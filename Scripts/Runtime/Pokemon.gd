@@ -88,6 +88,8 @@ var nextLevelExpBase: int:
 # Battle state
 var inBattle: bool = false
 var inBattleParty: bool = false
+## Estado mayor fuera de combate (veneno, sueño, etc.). `CONST.STATUS.OK` = sin estado problemático.
+var major_status: int = CONST.STATUS.OK
 var fainted: bool:
 	get:
 		return hp_actual == 0
@@ -598,6 +600,7 @@ func to_serializable_state() -> Dictionary:
 		"held_item_id": held_item_id,
 		"custom_move_ids": move_ids,
 		"hp_actual": hp_actual,
+		"major_status": major_status,
 		"totalExp": totalExp,
 		"trainer_id": trainer_id,
 		"original_trainer": original_trainer,

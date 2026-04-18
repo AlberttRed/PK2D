@@ -61,6 +61,8 @@ func deserialize(data: Dictionary) -> Pokemon:
 	else:
 		mon.hp_actual = max_hp
 
+	mon.major_status = int(data.get("major_status", int(CONST.STATUS.OK)))
+
 	mon.totalExp = int(data.get("totalExp", mon.actualLevelExpBase))
 	mon._update_resource_name()
 	return mon

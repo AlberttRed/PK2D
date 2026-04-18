@@ -1,16 +1,12 @@
-[gd_scene format=3 uid="uid://bpartyuihgsspk2d"]
+[gd_scene format=3 uid="uid://btgemydvaapwr"]
 
 [ext_resource type="Texture2D" uid="uid://d2i5gus8tvoi" path="res://Sprites/UI/Party/partybg.PNG" id="1_ew7hq"]
-[ext_resource type="Script" path="res://Scripts/UI/PartyUI.gd" id="2"]
+[ext_resource type="Script" uid="uid://x88s8xhm3nnm" path="res://Scripts/UI/PartyUI.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://c63bjwkcpr1fj" path="res://Sprites/UI/Party/partyPanelRect.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://cir5wh26i3pxl" path="res://Sprites/UI/Party/partyCancel.png" id="15"]
 [ext_resource type="Texture2D" uid="uid://dvk3qjfw5vfa5" path="res://Sprites/UI/Party/partyCancelSelNarrow.png" id="16"]
-[ext_resource type="Texture2D" uid="uid://dxjprukv0p71t" path="res://Sprites/UI/Party/selarrow.png" id="17"]
-[ext_resource type="FontFile" uid="uid://b5llvva0yujhb" path="res://Resources/UI/Fonts/Dynamic Fonts/df_party_lletraGran.tres" id="18_114xy"]
 [ext_resource type="PackedScene" uid="uid://b6bvq2kmkv5sh" path="res://Scenes/UI/2 - Party/PartyPokemonPanel.tscn" id="19_xxnex"]
 [ext_resource type="Texture2D" uid="uid://d0qqsw0yrr3cm" path="res://Sprites/UI/Party/choice 1_old.png" id="26_nib22"]
-[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="29"]
-[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="30"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="31"]
 [ext_resource type="PackedScene" uid="uid://gdxd2a726tc0" path="res://Scenes/UI/2 - Party/PartySummary.tscn" id="36_o5y3j"]
 
@@ -42,12 +38,7 @@ texture_margin_right = 14.0
 texture_margin_bottom = 14.0
 region_rect = Rect2(0, 0, 48, 48)
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_1eve6"]
-_data = {
-&"Idle": ExtResource("30")
-}
-
-[node name="PartyUI" type="Panel"]
+[node name="PartyUI" type="Panel" unique_id=208291322]
 offset_right = 512.0
 offset_bottom = 384.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_oj2bc")
@@ -56,14 +47,14 @@ style_salir = SubResource("15")
 style_salir_sel = SubResource("16")
 metadata/_edit_lock_ = true
 
-[node name="PKMN_0" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_0" parent="." unique_id=226990468 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 0.0
 offset_right = 256.0
 focus_neighbor_right = NodePath("../PKMN_1")
 focus_neighbor_bottom = NodePath("../PKMN_2")
 
-[node name="PKMN_1" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_1" parent="." unique_id=864991398 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 256.0
 offset_top = 16.0
@@ -73,7 +64,7 @@ focus_neighbor_left = NodePath("../PKMN_0")
 focus_neighbor_bottom = NodePath("../PKMN_3")
 theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
-[node name="PKMN_2" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_2" parent="." unique_id=1896983200 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 0.0
 offset_top = 96.0
@@ -84,7 +75,7 @@ focus_neighbor_right = NodePath("../PKMN_3")
 focus_neighbor_bottom = NodePath("../PKMN_4")
 theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
-[node name="PKMN_3" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_3" parent="." unique_id=2129764347 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 256.0
 offset_top = 112.0
@@ -95,7 +86,7 @@ focus_neighbor_top = NodePath("../PKMN_1")
 focus_neighbor_bottom = NodePath("../PKMN_5")
 theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
-[node name="PKMN_4" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_4" parent="." unique_id=1724224854 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 0.0
 offset_top = 192.0
@@ -105,7 +96,7 @@ focus_neighbor_top = NodePath("../PKMN_2")
 focus_neighbor_right = NodePath("../PKMN_5")
 theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
-[node name="PKMN_5" parent="." instance=ExtResource("19_xxnex")]
+[node name="PKMN_5" parent="." unique_id=1473048859 instance=ExtResource("19_xxnex")]
 layout_mode = 0
 offset_left = 256.0
 offset_top = 208.0
@@ -115,7 +106,7 @@ focus_neighbor_left = NodePath("../PKMN_4")
 focus_neighbor_top = NodePath("../PKMN_3")
 theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
-[node name="Salir" type="Panel" parent="."]
+[node name="Salir" type="Panel" parent="." unique_id=125012024]
 layout_mode = 0
 offset_left = 398.0
 offset_top = 325.0
@@ -125,32 +116,20 @@ focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_il6w1")
 metadata/_edit_lock_ = true
 
-[node name="Nombre2" type="Label" parent="Salir"]
+[node name="Nombre2" parent="Salir" unique_id=1552844581 instance=ExtResource("31")]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 14.0
+offset_left = 8.0
+offset_top = 10.0
 offset_right = 104.0
-offset_bottom = 44.0
+offset_bottom = 42.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("18_114xy")
-theme_override_font_sizes/font_size = 26
+theme_override_constants/paragraph_separation = 0
 text = "SALIR"
-horizontal_alignment = 1
+fit_content = true
+align = 1
 
-[node name="Outline" type="Label" parent="Salir/Nombre2"]
-layout_mode = 0
-offset_right = 94.0
-offset_bottom = 30.0
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_fonts/font = ExtResource("18_114xy")
-theme_override_font_sizes/font_size = 26
-text = "SALIR"
-horizontal_alignment = 1
-
-[node name="FIXED_MSG" type="Panel" parent="."]
+[node name="FIXED_MSG" type="Panel" parent="." unique_id=1627524951]
 layout_mode = 0
 offset_top = 313.0
 offset_right = 370.0
@@ -158,24 +137,7 @@ offset_bottom = 379.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_3m2bu")
 metadata/_edit_lock_ = true
 
-[node name="next" type="Sprite2D" parent="FIXED_MSG"]
-position = Vector2(491, 69)
-texture = ExtResource("29")
-hframes = 4
-frame = 3
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="FIXED_MSG/next"]
-reset_on_save = false
-root_node = NodePath("")
-libraries = {
-"": SubResource("AnimationLibrary_1eve6")
-}
-
-[node name="Timer 2" type="Timer" parent="FIXED_MSG"]
-wait_time = 0.05
-one_shot = true
-
-[node name="Label" parent="FIXED_MSG" instance=ExtResource("31")]
+[node name="Label" parent="FIXED_MSG" unique_id=1628729124 instance=ExtResource("31")]
 layout_mode = 0
 offset_left = 13.899
 offset_top = 16.848
@@ -183,8 +145,9 @@ offset_right = 521.899
 offset_bottom = 93.848
 text = "Elige a un Pokémon."
 
-[node name="SUMMARY" parent="." instance=ExtResource("36_o5y3j")]
+[node name="SUMMARY" parent="." unique_id=1556444328 instance=ExtResource("36_o5y3j")]
 visible = false
+layout_mode = 0
 metadata/_edit_lock_ = true
 
 [connection signal="focus_entered" from="Salir" to="." method="_on_Salir_focus_entered"]

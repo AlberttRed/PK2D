@@ -5,6 +5,9 @@ signal back_requested()
 signal closed()
 ## Hook AC-05: solicitud de abrir mochila en contexto PARTY_MENU para el slot indicado.
 signal use_item_requested(slot_index: int)
+## Flujo mochila → elegir Pokémon objetivo (sin menú de acciones).
+signal bag_item_target_selected(slot_index: int)
+signal bag_item_target_cancelled()
 
 const SLOT_COUNT: int = 6
 const CANCEL_INDEX: int = 6
@@ -26,7 +29,7 @@ var _choice_in_flight: bool = false
 var _in_hgss_summary: bool = false
 var _switch_mode: bool = false
 var _switch_origin_slot: int = -1
-var _open_focus_slot: int = -1
+var _bag_item_target_pick_mode: bool = false
 
 
 func _ready() -> void:
@@ -36,6 +39,24 @@ func _ready() -> void:
 	for panel: PartyPokemonPanel in pokemon_panels:
 		if not panel.selected.is_connected(_on_panel_selected):
 			panel.selected.connect(_on_panel_selected)
+	_disable_mouse_on_party_main_ui()
+
+
+## Solo mando/teclado (ui_*): el foco por clic en paneles desvirtúa el diseño tipo consola.
+func _disable_mouse_on_party_main_ui() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in get_children():
+		if child == summary:
+			continue
+		if child is Control:
+			_set_mouse_ignore_recursive(child as Control)
+
+
+func _set_mouse_ignore_recursive(ctrl: Control) -> void:
+	ctrl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for ch in ctrl.get_children():
+		if ch is Control:
+			_set_mouse_ignore_recursive(ch as Control)
 
 
 func setup(controller) -> void:
@@ -46,10 +67,20 @@ func setup(controller) -> void:
 
 
 func open(initial_focus_slot: int = -1) -> void:
+	_open_party_common(initial_focus_slot, false)
+
+
+## Tras elegir «Usar» en la mochila: solo elegir Pokémon objetivo (sin submenú Usar/Dar).
+func open_for_bag_item_target_pick(initial_focus_slot: int = -1) -> void:
+	_open_party_common(initial_focus_slot, true)
+
+
+func _open_party_common(initial_focus_slot: int, bag_item_pick: bool) -> void:
 	if _controller == null:
 		push_error("PartyUI: Abre con setup(controller) antes.")
 		return
-	_open_focus_slot = initial_focus_slot
+	_bag_item_target_pick_mode = bag_item_pick
+	var requested_focus_slot: int = initial_focus_slot
 	_exit_switch_mode()
 	_in_hgss_summary = false
 	summary.hide()
@@ -58,19 +89,24 @@ func open(initial_focus_slot: int = -1) -> void:
 	for panel: PartyPokemonPanel in pokemon_panels:
 		panel.enableFocus()
 	_wire_salir_neighbors()
-	_focus_first_occupied_or_salir()
-	if _open_focus_slot >= 0 and _open_focus_slot < SLOT_COUNT and _controller.is_slot_occupied(_open_focus_slot):
-		pokemon_panels[_open_focus_slot].grab_focus()
-	_open_focus_slot = -1
-	_set_help_text("Elige a un Pokémon.")
 	show()
 	_enable_input()
 	_block_player_control()
+	# Tras show(): si no, grab_focus con panel oculto no mantiene el slot (p. ej. vuelta mochila → party).
+	if requested_focus_slot >= 0 and requested_focus_slot < SLOT_COUNT and _controller.is_slot_occupied(requested_focus_slot):
+		pokemon_panels[requested_focus_slot].grab_focus()
+	else:
+		_focus_first_occupied_or_salir()
+	if _bag_item_target_pick_mode:
+		_set_help_text("¿Usar con qué Pokémon?")
+	else:
+		_set_help_text("Elige a un Pokémon.")
 
 
 func close() -> void:
 	if not visible:
 		return
+	_bag_item_target_pick_mode = false
 	if summary.visible:
 		summary.hide()
 	_disable_input()
@@ -86,6 +122,11 @@ func set_input_enabled(value: bool) -> void:
 		_enable_input()
 	else:
 		_disable_input()
+
+
+## Refresco tras mutar Pokémon (objetos, estado) con la pantalla abierta.
+func refresh_slots_display() -> void:
+	_refresh_slots()
 
 
 func _on_panel_selected(_order: int) -> void:
@@ -111,7 +152,7 @@ func _apply_menu_mode_all_panels() -> void:
 func _enter_switch_mode(origin_slot: int) -> void:
 	_switch_mode = true
 	_switch_origin_slot = origin_slot
-	_set_help_text("¿Con qué Pokémon quieres cambiar de lugar?")
+	_set_help_text("¿A qué posición mover?")
 	for i in SLOT_COUNT:
 		var p: PartyPokemonPanel = pokemon_panels[i]
 		p.setMode(PartyPanelModes.Modes.SWAP)
@@ -140,10 +181,14 @@ func _refresh_slots() -> void:
 
 
 func _wire_salir_neighbors() -> void:
-	if pokemon_panels.size() < 6:
+	if pokemon_panels.size() < 6 or _controller == null:
 		return
-	salir.set_focus_neighbor(SIDE_TOP, pokemon_panels[5].get_path())
-	pokemon_panels[5].set_focus_neighbor(SIDE_BOTTOM, salir.get_path())
+	var up_slot: int = _first_occupied_salir_up()
+	if up_slot < 0:
+		return
+	var top_path: NodePath = pokemon_panels[up_slot].get_path()
+	salir.set_focus_neighbor(SIDE_TOP, top_path)
+	pokemon_panels[up_slot].set_focus_neighbor(SIDE_BOTTOM, salir.get_path())
 
 
 func _focus_first_occupied_or_salir() -> void:
@@ -154,6 +199,15 @@ func _focus_first_occupied_or_salir() -> void:
 			pokemon_panels[i].grab_focus()
 			return
 	salir.grab_focus()
+
+
+func _grab_slot_focus(slot: int) -> void:
+	if _controller == null:
+		return
+	if slot >= 0 and slot < SLOT_COUNT and _controller.is_slot_occupied(slot):
+		pokemon_panels[slot].grab_focus()
+	else:
+		_focus_first_occupied_or_salir()
 
 
 func _get_party_slot_from_focus() -> int:
@@ -168,6 +222,30 @@ func _get_party_slot_from_focus() -> int:
 			return (cur as PartyPokemonPanel).order
 		cur = cur.get_parent()
 	return -1
+
+
+func _party_await_both_swapped_out(a: PartyPokemonPanel, b: PartyPokemonPanel) -> void:
+	var pending: Array[int] = [2]
+	var decr := func():
+		pending[0] -= 1
+	a.swappedOut.connect(decr, CONNECT_ONE_SHOT)
+	b.swappedOut.connect(decr, CONNECT_ONE_SHOT)
+	a.swapOut()
+	b.swapOut()
+	while pending[0] > 0:
+		await get_tree().process_frame
+
+
+func _party_await_both_swapped_in(a: PartyPokemonPanel, b: PartyPokemonPanel) -> void:
+	var pending: Array[int] = [2]
+	var decr := func():
+		pending[0] -= 1
+	a.swappedIn.connect(decr, CONNECT_ONE_SHOT)
+	b.swappedIn.connect(decr, CONNECT_ONE_SHOT)
+	a.swapIn()
+	b.swapIn()
+	while pending[0] > 0:
+		await get_tree().process_frame
 
 
 ## Rejilla HGSS (mismos enlaces que PartyUI.tscn). CANCEL_INDEX = Salir.
@@ -378,6 +456,9 @@ func _on_input_right() -> void:
 func _on_input_accept() -> void:
 	if not _input_enabled or not visible or _suppress_input:
 		return
+	var dm := DisplayManager.instance
+	if dm != null and dm.msg != null and dm.msg.visible:
+		return
 	if _in_hgss_summary:
 		return
 	if _choice_in_flight:
@@ -392,6 +473,10 @@ func _on_input_cancel() -> void:
 		return
 	if _suppress_input:
 		return
+	if _bag_item_target_pick_mode:
+		# DisplayManager funde a negro y cierra (evita un frame a juego desnudo).
+		bag_item_target_cancelled.emit()
+		return
 	if _switch_mode:
 		_exit_switch_mode()
 		_set_help_text("Elige a un Pokémon.")
@@ -400,6 +485,9 @@ func _on_input_cancel() -> void:
 
 
 func _on_input_start() -> void:
+	if _bag_item_target_pick_mode and _can_handle_party_input():
+		bag_item_target_cancelled.emit()
+		return
 	if _switch_mode and _can_handle_party_input():
 		_exit_switch_mode()
 		_set_help_text("Elige a un Pokémon.")
@@ -410,6 +498,17 @@ func _on_input_start() -> void:
 
 func _handle_accept_async() -> void:
 	var slot := _get_party_slot_from_focus()
+
+	if _bag_item_target_pick_mode:
+		if slot == CANCEL_INDEX:
+			bag_item_target_cancelled.emit()
+			return
+		if slot < 0 or slot >= SLOT_COUNT:
+			return
+		if not _controller.is_slot_occupied(slot):
+			return
+		bag_item_target_selected.emit(slot)
+		return
 
 	if _switch_mode:
 		if slot == CANCEL_INDEX:
@@ -424,16 +523,35 @@ func _handle_accept_async() -> void:
 			_exit_switch_mode()
 			_set_help_text("Elige a un Pokémon.")
 			return
-		var swap_res: Dictionary = _controller.try_swap_slots(_switch_origin_slot, slot)
+		var origin: int = _switch_origin_slot
+		var target: int = slot
+		if not _controller.can_swap_slots(origin, target):
+			_exit_switch_mode()
+			if not _controller.is_slot_occupied(origin) or not _controller.is_slot_occupied(target):
+				_set_help_text("No puedes reordenar con un hueco vacío.")
+			else:
+				_set_help_text("No se puede reordenar este Pokémon.")
+			_grab_slot_focus(target)
+			return
+		var pa: PartyPokemonPanel = pokemon_panels[origin]
+		var pb: PartyPokemonPanel = pokemon_panels[target]
+		_suppress_input = true
+		await _party_await_both_swapped_out(pa, pb)
+		var swap_res: Dictionary = _controller.try_swap_slots(origin, target)
 		if not swap_res.get("ok", false):
-			push_warning("PartyUI: %s" % str(swap_res.get("message", "No se pudo reordenar.")))
-		_exit_switch_mode()
+			await _party_await_both_swapped_in(pa, pb)
+			_refresh_slots()
+			_suppress_input = false
+			_exit_switch_mode()
+			_set_help_text(str(swap_res.get("message", "No se pudo reordenar.")))
+			_grab_slot_focus(target)
+			return
 		_refresh_slots()
+		await _party_await_both_swapped_in(pa, pb)
+		_suppress_input = false
+		_exit_switch_mode()
 		_set_help_text("Elige a un Pokémon.")
-		if _controller.is_slot_occupied(slot):
-			pokemon_panels[slot].grab_focus()
-		else:
-			_focus_first_occupied_or_salir()
+		_grab_slot_focus(target)
 		return
 
 	if slot == CANCEL_INDEX:
@@ -451,22 +569,53 @@ func _handle_accept_async() -> void:
 	for e: Dictionary in entries:
 		labels.append(str(e.get("label", "")))
 
+	var slot_view: Dictionary = _controller.get_slot_view(slot)
+	var mon_name: String = str(slot_view.get("display_name", "Pokémon"))
+	_set_help_text("¿Qué hacer con %s?" % mon_name)
+
 	_suppress_input = true
-	var idx: int = await DisplayManager.show_choices(labels)
+	var idx: int = await DisplayManager.show_party_action_choices(labels)
 	_suppress_input = false
 
 	if idx < 0 or idx >= entries.size():
+		_set_help_text("Elige a un Pokémon.")
 		return
 	var action: StringName = entries[idx].get("id", &"") as StringName
 	match action:
 		&"summary":
 			await _open_hgss_summary(slot)
+			return
 		&"switch":
 			_enter_switch_mode(slot)
+			return
 		&"use_item":
-			use_item_requested.emit(slot)
+			_set_help_text("¿Qué quieres hacer con él?")
+			_suppress_input = true
+			var item_sub: Array[String] = ["Usar", "Dar", "Salir"]
+			var sub_idx: int = await DisplayManager.show_party_action_choices(item_sub)
+			_suppress_input = false
+			if sub_idx < 0 or sub_idx >= item_sub.size():
+				_set_help_text("Elige a un Pokémon.")
+				return
+			match sub_idx:
+				0:
+					use_item_requested.emit(slot)
+				1:
+					_suppress_input = true
+					await DisplayManager.show_message("Dar: pendiente de implementar.", {
+						"waitInput": false,
+						"closeAtEnd": true,
+						"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+						"typingMode": "instant"
+					})
+					_suppress_input = false
+					_set_help_text("Elige a un Pokémon.")
+				2:
+					_set_help_text("Elige a un Pokémon.")
+			return
 		&"cancel":
 			pass
+	_set_help_text("Elige a un Pokémon.")
 
 
 func _open_hgss_summary(slot: int) -> void:
@@ -490,7 +639,10 @@ func _open_hgss_summary(slot: int) -> void:
 	_refresh_slots()
 	_apply_menu_mode_all_panels()
 	_enable_input()
-	_focus_first_occupied_or_salir()
+	if _controller != null and slot >= 0 and slot < SLOT_COUNT and _controller.is_slot_occupied(slot):
+		pokemon_panels[slot].grab_focus()
+	else:
+		_focus_first_occupied_or_salir()
 	_set_help_text("Elige a un Pokémon.")
 
 

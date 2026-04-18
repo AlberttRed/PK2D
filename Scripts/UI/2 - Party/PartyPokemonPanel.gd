@@ -32,21 +32,8 @@ func _ready() -> void:
 func apply_empty_slot(slot_order: int) -> void:
 	self.order = slot_order
 	self.pokemon = null
-	self.visible = true
 	focus_mode = FocusMode.FOCUS_NONE
-	$Nombre.setText("—")
-	$dNv.setText("")
-	$Status.visible = false
-	$health_bar.clear()
-	$pkmn.texture = null
-	$gender.texture = null
-	if order == 0:
-		add_theme_stylebox_override("panel", style_rounded_normal)
-	else:
-		add_theme_stylebox_override("panel", style_square_empty)
-	$ball.texture = preload("res://Sprites/UI/Party/partyBall.PNG")
-	if $AnimationPlayer:
-		$AnimationPlayer.play("party_animations/PARTY_pkmn_icon")
+	self.visible = false
 
 
 func loadPokemon(pokemon: Pokemon) -> void:
@@ -62,8 +49,12 @@ func loadPokemon(pokemon: Pokemon) -> void:
 		$Status.visible = true
 		$Status.region_enabled = true
 		$Status.region_rect = Rect2(0, 16 * (CONST.STATUS.FAINTED - 1), 44, 16)
+	elif pokemon.major_status != CONST.STATUS.OK:
+		$Status.visible = true
+		$Status.region_enabled = true
+		var row: int = maxi(0, pokemon.major_status - 1)
+		$Status.region_rect = Rect2(0, 16 * row, 44, 16)
 	else:
-		# Estados alterados en runtime: placeholder hasta sistema de status.
 		$Status.visible = false
 
 	$health_bar.init(pokemon)
@@ -88,17 +79,10 @@ func _play_party_icon_idle() -> void:
 
 
 func select():
+	if pokemon == null:
+		return
 	var form = ""
 	var type = ""
-
-	if pokemon == null:
-		if order == 0:
-			add_theme_stylebox_override("panel", style_rounded_normal_sel)
-		else:
-			add_theme_stylebox_override("panel", style_square_normal_sel)
-		$ball.texture = preload("res://Sprites/UI/Party/partyBallSel.PNG")
-		selected.emit(order)
-		return
 
 	if order == 0:
 		form = "rounded"
@@ -125,17 +109,10 @@ func setSwapMode() -> void:
 	self.mode = PartyPanelModes.Modes.SWAP
 
 func unselect():
+	if pokemon == null:
+		return
 	var form = ""
 	var type = ""
-
-	if pokemon == null:
-		if order == 0:
-			add_theme_stylebox_override("panel", style_rounded_normal)
-		else:
-			add_theme_stylebox_override("panel", style_square_empty)
-		$ball.texture = preload("res://Sprites/UI/Party/partyBall.PNG")
-		_play_party_icon_idle()
-		return
 
 	if order == 0:
 		form = "rounded"
@@ -174,28 +151,27 @@ func clear() -> void:
 
 
 func _on_focus_entered() -> void:
-	if not _dm_is_fading():
-		select()
+	# Aplicar siempre: durante fade_out el foco ya está en el panel pero is_fading() sigue true
+	# (p. ej. vuelta mochila → party) y si no, nunca se ve el estilo seleccionado.
+	select()
 
 
 func _on_focus_exited() -> void:
-	if not _dm_is_fading():
-		unselect()
-
-
-func _dm_is_fading() -> bool:
-	return DisplayManager.instance != null and DisplayManager.is_fading()
+	unselect()
 
 func enableFocus():
-	if !focus_entered.is_connected(_on_focus_entered):
+	if not focus_entered.is_connected(_on_focus_entered):
 		focus_entered.connect(_on_focus_entered)
-	if !focus_exited.is_connected(_on_focus_exited):
+	if not focus_exited.is_connected(_on_focus_exited):
 		focus_exited.connect(_on_focus_exited)
 	self.focus_mode = Control.FOCUS_ALL if pokemon != null else Control.FOCUS_NONE
-	
+
+
 func disableFocus():
-	focus_entered.disconnect(_on_focus_entered)
-	focus_exited.disconnect(_on_focus_exited)
+	if focus_entered.is_connected(_on_focus_entered):
+		focus_entered.disconnect(_on_focus_entered)
+	if focus_exited.is_connected(_on_focus_exited):
+		focus_exited.disconnect(_on_focus_exited)
 	self.focus_mode = Control.FOCUS_NONE
 
 func setMode(new_mode: PartyPanelModes.Modes) -> void:
@@ -207,31 +183,26 @@ func setSwapping(swapping:bool):
 	update()
 		
 func update():
+	if pokemon == null:
+		return
 	if has_focus():
 		select()
 	else:
 		unselect()
 		
-func swapOut():
-	var tween:Tween = create_tween()
-	if order == 0 or order == 2 or order == 4:
-		await tween.tween_property(self, "position", position+Vector2(-260,0), 0.5)
-		#$AnimationPlayer.play("party_animations/SwapOutLeft")
-	else:
-		await tween.tween_property(self, "position", position+Vector2(260,0), 0.5)
-		#$AnimationPlayer.play("party_animations/SwapOutRight")
-	await tween.finished
+func swapOut() -> void:
+	var tw := create_tween()
+	var delta := Vector2(-260, 0) if (order == 0 or order == 2 or order == 4) else Vector2(260, 0)
+	tw.tween_property(self, "position", position + delta, 0.5)
+	await tw.finished
 	swappedOut.emit()
 
-func swapIn():
-	var tween:Tween = create_tween()
-	if order == 0 or order == 2 or order == 4:
-		tween.tween_property(self, "position", position+Vector2(260,0), 0.5)
-		#$AnimationPlayer.play("party_animations/SwapInLeft")
-	else:
-		tween.tween_property(self, "position", position+Vector2(-260,0), 0.5)
-		#$AnimationPlayer.play("party_animations/SwapInRight")
-	await tween.finished
+
+func swapIn() -> void:
+	var tw := create_tween()
+	var delta := Vector2(260, 0) if (order == 0 or order == 2 or order == 4) else Vector2(-260, 0)
+	tw.tween_property(self, "position", position + delta, 0.5)
+	await tw.finished
 	swappedIn.emit()
 
 

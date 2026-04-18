@@ -3,6 +3,15 @@
 extends RefCounted
 class_name ItemUseResult
 
+## Clasificación para UI / feedback (similar en espíritu a efectos de batalla).
+enum Outcome {
+	NONE,
+	SUCCESS,
+	NO_EFFECT,
+	BLOCKED,
+	ERROR,
+}
+
 ## Si el uso fue exitoso
 var success: bool = false
 
@@ -15,6 +24,9 @@ var message: String = ""
 ## Código de mensaje para UI (opcional, para localización)
 var message_code: String = ""
 
+## Resultado semántico para capa de presentación (MessageBox, tono, etc.)
+var outcome: Outcome = Outcome.NONE
+
 ## Datos adicionales del efecto (opcional)
 ## Ejemplos: healed_amount, cured_status, etc.
 var effect_data: Dictionary = {}
@@ -25,19 +37,32 @@ func _init(
 	_consume_amount: int = 0,
 	_message: String = "",
 	_message_code: String = "",
-	_effect_data: Dictionary = {}
+	_effect_data: Dictionary = {},
+	_outcome: Outcome = Outcome.NONE
 ) -> void:
 	success = _success
 	consume_amount = _consume_amount
 	message = _message
 	message_code = _message_code
 	effect_data = _effect_data
+	outcome = _outcome
+	if outcome == Outcome.NONE:
+		outcome = Outcome.SUCCESS if success else Outcome.NO_EFFECT
 
 ## Helper para crear un resultado exitoso
 static func success_result(consume: int = 1, msg: String = "", data: Dictionary = {}) -> ItemUseResult:
-	return ItemUseResult.new(true, consume, msg, "", data)
+	return ItemUseResult.new(true, consume, msg, "", data, Outcome.SUCCESS)
 
-## Helper para crear un resultado fallido
+## Fallo genérico (suele tratarse como «sin efecto» en UI salvo que se indique otro helper).
 static func failure_result(msg: String = "", code: String = "") -> ItemUseResult:
-	return ItemUseResult.new(false, 0, msg, code, {})
+	return ItemUseResult.new(false, 0, msg, code, {}, Outcome.NO_EFFECT)
+
+static func failure_no_effect(msg: String = "", code: String = "") -> ItemUseResult:
+	return ItemUseResult.new(false, 0, msg, code, {}, Outcome.NO_EFFECT)
+
+static func failure_blocked(msg: String = "", code: String = "") -> ItemUseResult:
+	return ItemUseResult.new(false, 0, msg, code, {}, Outcome.BLOCKED)
+
+static func failure_error(msg: String = "", code: String = "") -> ItemUseResult:
+	return ItemUseResult.new(false, 0, msg, code, {}, Outcome.ERROR)
 
