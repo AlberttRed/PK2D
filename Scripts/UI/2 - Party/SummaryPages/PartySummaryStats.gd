@@ -9,7 +9,10 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 	if pokemon == null or pokemon.base == null:
 		return
 	var max_hp := pokemon.get_final_stat(StatsEnum.Values.HP)
-	$dPS.setText(str(pokemon.hp_actual) + "/" + str(max_hp))
+	var ps_line := str(pokemon.hp_actual) + "/" + str(max_hp)
+	if not pokemon.fainted and pokemon.major_status != CONST.STATUS.OK:
+		ps_line += "  (" + AilmentData.major_status_display_name(pokemon.major_status) + ")"
+	$dPS.setText(ps_line)
 
 	$health_bar.set_values(pokemon.hp_actual, max_hp)
 

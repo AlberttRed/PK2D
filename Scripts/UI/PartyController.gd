@@ -64,10 +64,8 @@ func get_slot_view(slot: int) -> Dictionary:
 	var status := "—"
 	if mon.fainted:
 		status = "Debilitado"
-	elif mon.major_status == CONST.STATUS.POISON:
-		status = "Envenenado"
 	elif mon.major_status != CONST.STATUS.OK:
-		status = "Estado"
+		status = AilmentData.major_status_display_name(mon.major_status)
 
 	return {
 		"occupied": true,

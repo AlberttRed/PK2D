@@ -1851,6 +1851,7 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_nsyxq"), SubResourc
 [node name="Start2" parent="OverworldGrid/Events" unique_id=672181804 instance=ExtResource("4_nocjb")]
 position = Vector2(368, -16)
 pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_fspqx"), SubResource("Resource_di0yv")])
+disabled = true
 
 [node name="Girl_Aviso1" parent="OverworldGrid/Events" unique_id=1829899905 instance=ExtResource("16_0876j")]
 position = Vector2(336, 16)

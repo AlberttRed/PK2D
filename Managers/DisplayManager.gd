@@ -365,7 +365,10 @@ static func request_hide_overworld_messagebox() -> void:
 ## Métodos internos (no llamar directamente, usar la API estática)
 
 func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
-	await msg.show_custom(text, config)
+	var cfg := config.duplicate()
+	if not "frameStyle" in cfg:
+		cfg["frameStyle"] = MessageBoxFrameStyle.Values.HGSS
+	await msg.show_custom(text, cfg)
 
 func _show_choices(options: Array[String]) -> int:
 	if options.is_empty():

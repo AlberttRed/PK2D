@@ -97,12 +97,13 @@ func show_custom(text: String, config := {}):
 	else:
 		_typing_mode = TypingMode.TYPING
 
-	# Aplicar tema (por defecto HGSS si no se especifica)
-	var frame_style = config.get("frameStyle", MessageBoxFrameStyle.Values.HGSS)
-	if frame_style is int:
-		set_frame_style(frame_style as MessageBoxFrameStyle.Values)
-	elif frame_style is MessageBoxFrameStyle.Values:
-		set_frame_style(frame_style)
+	# Solo aplicar tema si viene en config: si no, se conserva el marco definido en la escena (p. ej. batalla).
+	if "frameStyle" in config:
+		var frame_style_val: Variant = config["frameStyle"]
+		if frame_style_val is int:
+			set_frame_style(frame_style_val as MessageBoxFrameStyle.Values)
+		elif frame_style_val is MessageBoxFrameStyle.Values:
+			set_frame_style(frame_style_val)
 
 	var cb: Variant = config.get("onTextVisibleReady", Callable())
 	_on_text_visible_ready = cb if cb is Callable else Callable()

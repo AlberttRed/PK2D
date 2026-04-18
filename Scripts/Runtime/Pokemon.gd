@@ -574,6 +574,13 @@ func to_serializable_state() -> Dictionary:
 	var move_ids: Array[int] = []
 	for m in custom_move_ids:
 		move_ids.append(int(m))
+	var pp_snapshot: Array[int] = []
+	for mvar in movements:
+		var mv: Move = mvar as Move
+		if mv != null:
+			pp_snapshot.append(mv.pp_actual)
+		else:
+			pp_snapshot.append(0)
 	return {
 		"v": SERIALIZE_VERSION,
 		"pokemon_id": int(pokemon_id),
@@ -600,6 +607,7 @@ func to_serializable_state() -> Dictionary:
 		"held_item_id": held_item_id,
 		"custom_move_ids": move_ids,
 		"hp_actual": hp_actual,
+		"move_pp_actual": pp_snapshot,
 		"major_status": major_status,
 		"totalExp": totalExp,
 		"trainer_id": trainer_id,

@@ -201,6 +201,15 @@ func get_party():
 		party = PARTY_SCRIPT.new()
 	return party
 
+
+## Lista densa de Pokémon del equipo (fallback combate salvaje si no hay `Battler`).
+func get_player_party() -> Array:
+	var p: Party = get_party()
+	var out: Array = []
+	for i in range(p.count()):
+		out.append(p.get_pokemon(i))
+	return out
+
 # === MÉTODOS DE ESCRITURA ===
 ## Establece el ID del mapa actual
 func set_current_map_id(map_id: String) -> void:

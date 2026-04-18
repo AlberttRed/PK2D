@@ -60,6 +60,11 @@ func loadGeneralInfo(pokemon: Pokemon) -> void:
 		generalInfo.get_node("Status").visible = true
 		generalInfo.get_node("Status").region_enabled = true
 		generalInfo.get_node("Status").region_rect = Rect2(0, 16 * (CONST.STATUS.FAINTED - 1), 44, 16)
+	elif pokemon.major_status != CONST.STATUS.OK:
+		generalInfo.get_node("Status").visible = true
+		generalInfo.get_node("Status").region_enabled = true
+		var row: int = maxi(0, pokemon.major_status - 1)
+		generalInfo.get_node("Status").region_rect = Rect2(0, 16 * row, 44, 16)
 	else:
 		generalInfo.get_node("Status").visible = false
 

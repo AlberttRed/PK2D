@@ -161,6 +161,8 @@ func end_battle() -> void:
 	if rules.type == BattleRules.BattleTypes.TRAINER and not winner_side.is_empty() and winner_side != "draw":
 		_register_battle_result(winner_side)
 
+	_sync_player_runtime_from_battle()
+
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 
@@ -189,6 +191,48 @@ func _register_battle_result(winner_side: String) -> void:
 				GameStateService.register_trainer_battle_result(trainer_id, result)
 			else:
 				push_warning("BattleController: No se pudo registrar resultado - trainer_resource_id vacío para participante '%s'" % participant.name)
+
+func _sync_player_runtime_from_battle() -> void:
+	for participant in player_side.participants:
+		if participant == null or not participant.is_player:
+			continue
+		for bp in participant.pokemon_team:
+			if bp:
+				bp.write_persistent_state_to_runtime()
+		_mirror_player_party_to_gamestate(participant)
+
+
+## Party UI / guardado usan `GameStateService.party`; el combate usa el `Battler.party`.
+## Si no comparten la misma instancia de `Pokemon`, copiamos PS / estado / PP por slot.
+func _mirror_player_party_to_gamestate(participant: BattleParticipant) -> void:
+	if participant == null:
+		return
+	var gs_party = GameStateService.get_party()
+	if gs_party == null:
+		return
+	var team: Array[BattlePokemon] = participant.pokemon_team
+	for i in range(team.size()):
+		var bp: BattlePokemon = team[i]
+		if bp == null or bp.base_data == null:
+			continue
+		var runtime_mon: Pokemon = bp.base_data
+		if i >= gs_party.count():
+			break
+		var gs_mon: Pokemon = gs_party.get_pokemon(i)
+		if gs_mon == null:
+			continue
+		if gs_mon == runtime_mon:
+			continue
+		var max_hp: int = gs_mon.get_final_stat(StatsEnum.Values.HP)
+		gs_mon.hp_actual = clampi(runtime_mon.hp_actual, 0, max_hp)
+		gs_mon.major_status = runtime_mon.major_status
+		var n_moves: int = mini(gs_mon.movements.size(), runtime_mon.movements.size())
+		for j in range(n_moves):
+			var gs_mv: Move = gs_mon.movements[j] as Move
+			var rt_mv: Move = runtime_mon.movements[j] as Move
+			if gs_mv != null and rt_mv != null:
+				gs_mv.pp_actual = clampi(rt_mv.pp_actual, 0, gs_mv.pp)
+
 
 func _cleanup_battle_state():
 	# Resetear flags de control

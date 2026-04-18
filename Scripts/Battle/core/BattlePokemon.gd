@@ -63,12 +63,24 @@ func _init(_pokemon: Pokemon, _IA: BattleIA = null):
 	ability = base_data.ability
 	nature = base_data.nature
 
-	#status = base_data.status
-	#status_turns = base_data.status_turns
+	# Los estados persistentes fuera de combate viven en Pokemon.major_status → AilmentData aquí al entrar.
+	status = AilmentData.from_major_status(base_data.major_status)
 	fainted = base_data.hp_actual <= 0
 	
 
 	setIA(_IA)
+
+
+## Copia PS, estado mayor y PP (los Move del runtime ya comparten referencia con BattleMove) al Pokémon persistente del jugador.
+func write_persistent_state_to_runtime() -> void:
+	if base_data == null:
+		return
+	var max_hp := get_final_stat(StatsEnum.Values.HP)
+	base_data.hp_actual = clampi(hp, 0, max_hp)
+	if base_data.hp_actual <= 0:
+		base_data.major_status = CONST.STATUS.OK
+	else:
+		base_data.major_status = AilmentData.to_major_status(status)
 
 func set_battle_spot(spot: BattleSpot) -> void:
 	battle_spot = spot

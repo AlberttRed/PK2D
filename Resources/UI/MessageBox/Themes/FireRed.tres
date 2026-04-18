@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="MessageBoxTheme" load_steps=4 format=3 uid="uid://biuggiktsxlr7"]
+[gd_resource type="Resource" script_class="MessageBoxTheme" format=3 uid="uid://biuggiktsxlr7"]
 
 [ext_resource type="Script" uid="uid://dnqu4apuujlwo" path="res://Scripts/UI/MessageBox/MessageBoxTheme.gd" id="1_2jbts"]
 [ext_resource type="StyleBox" uid="uid://ff6qesqd3v1q" path="res://Resources/UI/MessageBox/Message Styles/FireRed_MessageBox_Style.tres" id="1_55vyl"]
@@ -7,6 +7,6 @@
 [resource]
 script = ExtResource("1_2jbts")
 frame_stylebox = ExtResource("1_55vyl")
-wait_indicator_texture = ExtResource("2_next")
 content_margin_left = 16.0
+wait_indicator_texture = ExtResource("2_next")
 metadata/_custom_type_script = "uid://dnqu4apuujlwo"
