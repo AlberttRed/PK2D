@@ -3,11 +3,16 @@ class_name PartyController
 
 const SLOT_COUNT: int = 6
 
+## Contexto del menú de party (AC-01). Por ahora solo overworld desde pausa.
+const MENU_CTX_OVERWORLD := &"overworld"
+
 var _context: OverworldContext = null
+var menu_context: StringName = MENU_CTX_OVERWORLD
 
 
-func _init(context: OverworldContext = null) -> void:
+func _init(context: OverworldContext = null, p_menu_context: StringName = MENU_CTX_OVERWORLD) -> void:
 	_context = context
+	menu_context = p_menu_context
 
 
 func get_context() -> OverworldContext:
@@ -74,6 +79,45 @@ func get_slot_view(slot: int) -> Dictionary:
 
 func is_slot_occupied(slot: int) -> bool:
 	return bool(get_slot_view(slot).get("occupied", false))
+
+
+func can_show_switch_option() -> bool:
+	return _party_model().count() >= 2
+
+
+func can_show_use_item_option() -> bool:
+	return menu_context == MENU_CTX_OVERWORLD
+
+
+## Etiquetas del menú contextual en orden (AC-01). El último índice siempre es cancelar.
+func build_action_menu_entries(slot: int) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if not is_slot_occupied(slot):
+		out.append({"id": &"cancel", "label": "Cancelar"})
+		return out
+	out.append({"id": &"summary", "label": "Resumen"})
+	if can_show_switch_option():
+		out.append({"id": &"switch", "label": "Cambiar orden"})
+	if can_show_use_item_option():
+		out.append({"id": &"use_item", "label": "Usar objeto"})
+	out.append({"id": &"cancel", "label": "Cancelar"})
+	return out
+
+
+## Intercambia dos slots ocupados en el modelo Party (AC-03, AC-06).
+func try_swap_slots(slot_a: int, slot_b: int) -> Dictionary:
+	if slot_a < 0 or slot_a >= SLOT_COUNT or slot_b < 0 or slot_b >= SLOT_COUNT:
+		return {"ok": false, "message": "Índice de slot inválido."}
+	if slot_a == slot_b:
+		return {"ok": true, "message": ""}
+	if not is_slot_occupied(slot_a) or not is_slot_occupied(slot_b):
+		return {"ok": false, "message": "No puedes reordenar con un hueco vacío."}
+	var party = _party_model()
+	var n: int = party.count()
+	if slot_a >= n or slot_b >= n:
+		return {"ok": false, "message": "No se puede reordenar este Pokémon."}
+	party.swap_slots(slot_a, slot_b)
+	return {"ok": true, "message": ""}
 
 
 func get_summary_bbcode(slot: int) -> String:

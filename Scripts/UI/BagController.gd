@@ -2,6 +2,11 @@ extends RefCounted
 class_name BagController
 
 var _context: OverworldContext = null
+## Filtro de lista: qué contexto debe cumplir cada item (AC-05 PARTY_MENU).
+var list_use_context: ItemEnums.UseContext = ItemEnums.UseContext.OVERWORLD
+## Slot del party desde el que se abrió “Usar objeto” (-1 = flujo normal de pausa).
+var party_target_slot: int = -1
+
 const BAG_LIST_ENTRY_SCRIPT = preload("res://Scripts/UI/BagListEntry.gd")
 
 const _POCKET_ORDER: Array[int] = [
@@ -28,6 +33,17 @@ const _POCKET_NAMES := {
 
 func _init(context: OverworldContext = null) -> void:
 	_context = context
+
+
+## Abre la mochila en contexto menú party: filtra objetos usables en PARTY_MENU y guarda el slot objetivo.
+func configure_party_item_flow(target_slot: int) -> void:
+	list_use_context = ItemEnums.UseContext.PARTY_MENU
+	party_target_slot = target_slot
+
+
+func reset_list_context_to_overworld() -> void:
+	list_use_context = ItemEnums.UseContext.OVERWORLD
+	party_target_slot = -1
 
 func get_pockets() -> Array[int]:
 	return _POCKET_ORDER.duplicate()
@@ -58,13 +74,17 @@ func get_items_in_pocket(pocket: int) -> Array:
 		if item_data == null:
 			continue
 
+		var usable_here := item_data.can_use_in_context(list_use_context)
+		# Hasta que los datos marquen PARTY_MENU en allowed_contexts, admitir también overworld en este flujo.
+		if list_use_context == ItemEnums.UseContext.PARTY_MENU and not usable_here:
+			usable_here = item_data.can_use_in_context(ItemEnums.UseContext.OVERWORLD)
 		item_entries.append(BAG_LIST_ENTRY_SCRIPT.create_item_entry(
 			item_id,
 			quantity,
 			item_data.get_display_name(),
 			item_data.description,
 			item_data.icon,
-			item_data.can_use_in_context(ItemEnums.UseContext.OVERWORLD)
+			usable_here
 		))
 
 	item_entries.sort_custom(func(a, b) -> bool:
@@ -124,13 +144,22 @@ func request_use_item(item_id: int) -> Dictionary:
 			"message": "El objeto seleccionado no existe en la base de datos."
 		}
 
-	if not item_data.can_use_in_context(ItemEnums.UseContext.OVERWORLD):
+	var allowed_here := item_data.can_use_in_context(list_use_context)
+	if list_use_context == ItemEnums.UseContext.PARTY_MENU and not allowed_here:
+		allowed_here = item_data.can_use_in_context(ItemEnums.UseContext.OVERWORLD)
+	if not allowed_here:
 		return {
 			"ok": false,
 			"message": "Este objeto no se puede usar aqui."
 		}
 
+	var ctx_note := "overworld"
+	if list_use_context == ItemEnums.UseContext.PARTY_MENU:
+		ctx_note = "party_menu"
+		if party_target_slot >= 0:
+			ctx_note += " (slot=%d)" % party_target_slot
+
 	return {
 		"ok": true,
-		"message": "El objeto es usable en overworld. La ejecucion del efecto se implementara en otro PBI."
+		"message": "Objeto usable en contexto %s. Efecto real en PBI posterior." % ctx_note
 	}

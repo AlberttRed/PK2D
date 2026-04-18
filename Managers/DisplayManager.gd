@@ -42,6 +42,9 @@ var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede ha
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
 var _bag_controller = null
 var _party_controller = null
+## Flujo party → mochila (Usar objeto) y vuelta al party.
+var _opening_bag_from_party_use_item: bool = false
+var _resume_party_focus_slot: int = -1
 var _bag_dialog_layout_saved: bool = false
 var _bag_dialog_saved_msg_layout: Dictionary = {}
 var _bag_dialog_saved_choice_layout: Dictionary = {}
@@ -113,6 +116,7 @@ func _ready() -> void:
 	if _party_ui:
 		_party_ui.back_requested.connect(_on_party_back_requested)
 		_party_ui.closed.connect(_on_party_closed)
+		_party_ui.use_item_requested.connect(_on_party_use_item_requested)
 		if _party_ui.has_signal("visibility_changed"):
 			_party_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
@@ -793,8 +797,52 @@ func _on_party_back_requested() -> void:
 
 func _on_party_closed() -> void:
 	_party_controller = null
+	if _opening_bag_from_party_use_item:
+		_opening_bag_from_party_use_item = false
+		var slot := _resume_party_focus_slot
+		call_deferred("_deferred_open_bag_after_party_item_request", slot)
+		_on_ui_visibility_changed()
+		return
+	_resume_party_focus_slot = -1
 	if pause_menu and not pause_menu.visible:
 		pause_menu.open(1)
+	_on_ui_visibility_changed()
+
+
+func _on_party_use_item_requested(slot_index: int) -> void:
+	_resume_party_focus_slot = slot_index
+	_opening_bag_from_party_use_item = true
+	_close_party_ui()
+
+
+func _deferred_open_bag_after_party_item_request(target_slot: int) -> void:
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.configure_party_item_flow(target_slot)
+	_bag_ui.setup(_bag_controller)
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+
+func _deferred_reopen_party_after_bag() -> void:
+	var slot := _resume_party_focus_slot
+	_resume_party_focus_slot = -1
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+	var context := _resolve_overworld_context()
+	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
+	_party_ui.setup(_party_controller)
+	_party_ui.open(slot)
 	_on_ui_visibility_changed()
 
 
@@ -813,6 +861,7 @@ func _open_bag_ui() -> void:
 
 	var context := _resolve_overworld_context()
 	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
 
 	_bag_ui.setup(_bag_controller)
 	_bag_ui.open()
@@ -827,7 +876,15 @@ func _on_bag_back_requested() -> void:
 	_close_bag_ui()
 
 func _on_bag_closed() -> void:
+	var resume_party_slot := -1
+	if _bag_controller != null and _bag_controller.party_target_slot >= 0:
+		resume_party_slot = _bag_controller.party_target_slot
 	_bag_controller = null
+	if resume_party_slot >= 0:
+		_resume_party_focus_slot = resume_party_slot
+		call_deferred("_deferred_reopen_party_after_bag")
+		_on_ui_visibility_changed()
+		return
 	if pause_menu and not pause_menu.visible:
 		pause_menu.open(2) # Mantener cursor en "MOCHILA"
 	_on_ui_visibility_changed()

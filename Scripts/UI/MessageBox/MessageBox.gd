@@ -486,7 +486,21 @@ func addMessage(message):
 
 func scrollText():
 	_is_scrolling = true
-	updateScroll(scroll.scroll_vertical, 32*(label.actualLine-1))
+	# No usar altura media por línea (content_h / n): acumula ~1px de error por scroll y “sube” el texto.
+	# get_line_offset(i) devuelve la Y real del borde superior de la línea i (0-based), alineada con el layout interno.
+	await get_tree().process_frame
+	var line_idx: int = maxi(0, label.actualLine - 1)
+	var target_scroll: int = 0
+	if label.has_method("get_line_offset"):
+		target_scroll = int(round(float(label.get_line_offset(line_idx))))
+	else:
+		var lc: int = maxi(1, label.get_line_count())
+		var content_h: float = label.get_content_height()
+		target_scroll = int(round((content_h / float(lc)) * float(line_idx)))
+	var vs: VScrollBar = scroll.get_v_scroll_bar()
+	if vs:
+		target_scroll = clampi(target_scroll, 0, int(ceil(vs.max_value)))
+	updateScroll(scroll.scroll_vertical, target_scroll)
 	$AnimationPlayer2.play("Scroll")
 	await $AnimationPlayer2.animation_finished
 	_is_scrolling = false
@@ -658,25 +672,27 @@ func show_clear_text():
 	label.text = ""
 	show()
 
-## Ajusta el tamaño del Container y los RichTextLabel según el número de líneas del texto
-## Cada línea ocupa 32px (altura de línea + separación)
+## Ajusta el tamaño del Container y los RichTextLabel según el texto real.
+## Godot 4.5+ cambió métricas/espaciado de RichTextLabel; evitar altura fija (32px/línea)
+## que desincroniza la primera línea con las siguientes y provoca saltos visuales intermitentes.
 func _adjust_container_size() -> void:
 	if not is_node_ready() or not container or not label:
 		return
 
-	# Obtener el número de líneas del texto
-	var line_count = label.get_line_count()
-	if line_count == 0:
-		line_count = 1  # Mínimo 1 línea
+	var line_count: int = label.get_line_count()
+	if line_count <= 0:
+		line_count = 1
 
-	# Calcular la altura necesaria: 32px por línea
-	var required_height = line_count * 32
+	var required_height: int = ceili(label.get_content_height())
+	if required_height < 12:
+		var fs: int = label.get_theme_font_size("normal_font")
+		if fs <= 0:
+			fs = 26
+		required_height = line_count * (fs + 8)
 
-	# Ajustar el tamaño del Container
 	container.custom_minimum_size.y = required_height
 	container.size.y = required_height
 
-	# Ajustar el tamaño de los 3 RichTextLabel
 	label.custom_minimum_size.y = required_height
 	label.size.y = required_height
 

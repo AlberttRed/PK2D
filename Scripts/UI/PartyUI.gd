@@ -3,6 +3,8 @@ class_name PartyUI
 
 signal back_requested()
 signal closed()
+## Hook AC-05: solicitud de abrir mochila en contexto PARTY_MENU para el slot indicado.
+signal use_item_requested(slot_index: int)
 
 const SLOT_COUNT: int = 6
 const CANCEL_INDEX: int = 6
@@ -22,6 +24,9 @@ var _input_enabled: bool = false
 var _suppress_input: bool = false
 var _choice_in_flight: bool = false
 var _in_hgss_summary: bool = false
+var _switch_mode: bool = false
+var _switch_origin_slot: int = -1
+var _open_focus_slot: int = -1
 
 
 func _ready() -> void:
@@ -40,17 +45,24 @@ func setup(controller) -> void:
 	_controller = controller
 
 
-func open() -> void:
+func open(initial_focus_slot: int = -1) -> void:
 	if _controller == null:
 		push_error("PartyUI: Abre con setup(controller) antes.")
 		return
+	_open_focus_slot = initial_focus_slot
+	_exit_switch_mode()
 	_in_hgss_summary = false
 	summary.hide()
 	_refresh_slots()
+	_apply_menu_mode_all_panels()
 	for panel: PartyPokemonPanel in pokemon_panels:
 		panel.enableFocus()
 	_wire_salir_neighbors()
 	_focus_first_occupied_or_salir()
+	if _open_focus_slot >= 0 and _open_focus_slot < SLOT_COUNT and _controller.is_slot_occupied(_open_focus_slot):
+		pokemon_panels[_open_focus_slot].grab_focus()
+	_open_focus_slot = -1
+	_set_help_text("Elige a un Pokémon.")
 	show()
 	_enable_input()
 	_block_player_control()
@@ -78,6 +90,38 @@ func set_input_enabled(value: bool) -> void:
 
 func _on_panel_selected(_order: int) -> void:
 	pass
+
+
+func _set_help_text(text: String) -> void:
+	var lbl := fixed_msg.get_node_or_null("Label") if fixed_msg else null
+	if lbl == null:
+		return
+	if lbl.has_method("setText"):
+		lbl.setText(text)
+	elif lbl is Label:
+		(lbl as Label).text = text
+
+
+func _apply_menu_mode_all_panels() -> void:
+	for p: PartyPokemonPanel in pokemon_panels:
+		p.setMode(PartyPanelModes.Modes.MENU)
+		p.setSwapping(false)
+
+
+func _enter_switch_mode(origin_slot: int) -> void:
+	_switch_mode = true
+	_switch_origin_slot = origin_slot
+	_set_help_text("¿Con qué Pokémon quieres cambiar de lugar?")
+	for i in SLOT_COUNT:
+		var p: PartyPokemonPanel = pokemon_panels[i]
+		p.setMode(PartyPanelModes.Modes.SWAP)
+		p.setSwapping(i == origin_slot)
+
+
+func _exit_switch_mode() -> void:
+	_switch_mode = false
+	_switch_origin_slot = -1
+	_apply_menu_mode_all_panels()
 
 
 func _refresh_slots() -> void:
@@ -348,17 +392,50 @@ func _on_input_cancel() -> void:
 		return
 	if _suppress_input:
 		return
-	back_requested.emit()
-
-
-func _on_input_start() -> void:
-	if not _can_handle_party_input():
+	if _switch_mode:
+		_exit_switch_mode()
+		_set_help_text("Elige a un Pokémon.")
 		return
 	back_requested.emit()
 
 
+func _on_input_start() -> void:
+	if _switch_mode and _can_handle_party_input():
+		_exit_switch_mode()
+		_set_help_text("Elige a un Pokémon.")
+		return
+	if _can_handle_party_input():
+		back_requested.emit()
+
+
 func _handle_accept_async() -> void:
 	var slot := _get_party_slot_from_focus()
+
+	if _switch_mode:
+		if slot == CANCEL_INDEX:
+			_exit_switch_mode()
+			_set_help_text("Elige a un Pokémon.")
+			return
+		if slot < 0 or slot >= SLOT_COUNT:
+			return
+		if not _controller.is_slot_occupied(slot):
+			return
+		if slot == _switch_origin_slot:
+			_exit_switch_mode()
+			_set_help_text("Elige a un Pokémon.")
+			return
+		var swap_res: Dictionary = _controller.try_swap_slots(_switch_origin_slot, slot)
+		if not swap_res.get("ok", false):
+			push_warning("PartyUI: %s" % str(swap_res.get("message", "No se pudo reordenar.")))
+		_exit_switch_mode()
+		_refresh_slots()
+		_set_help_text("Elige a un Pokémon.")
+		if _controller.is_slot_occupied(slot):
+			pokemon_panels[slot].grab_focus()
+		else:
+			_focus_first_occupied_or_salir()
+		return
+
 	if slot == CANCEL_INDEX:
 		back_requested.emit()
 		return
@@ -367,13 +444,29 @@ func _handle_accept_async() -> void:
 	if not _controller.is_slot_occupied(slot):
 		return
 
+	var entries: Array[Dictionary] = _controller.build_action_menu_entries(slot)
+	if entries.is_empty():
+		return
+	var labels: Array[String] = []
+	for e: Dictionary in entries:
+		labels.append(str(e.get("label", "")))
+
 	_suppress_input = true
-	var options: Array[String] = ["Resumen", "Atrás"]
-	var idx: int = await DisplayManager.show_choices(options)
+	var idx: int = await DisplayManager.show_choices(labels)
 	_suppress_input = false
 
-	if idx == 0:
-		await _open_hgss_summary(slot)
+	if idx < 0 or idx >= entries.size():
+		return
+	var action: StringName = entries[idx].get("id", &"") as StringName
+	match action:
+		&"summary":
+			await _open_hgss_summary(slot)
+		&"switch":
+			_enter_switch_mode(slot)
+		&"use_item":
+			use_item_requested.emit(slot)
+		&"cancel":
+			pass
 
 
 func _open_hgss_summary(slot: int) -> void:
@@ -395,8 +488,10 @@ func _open_hgss_summary(slot: int) -> void:
 	_in_hgss_summary = false
 	_suppress_input = false
 	_refresh_slots()
+	_apply_menu_mode_all_panels()
 	_enable_input()
 	_focus_first_occupied_or_salir()
+	_set_help_text("Elige a un Pokémon.")
 
 
 func _block_player_control() -> void:

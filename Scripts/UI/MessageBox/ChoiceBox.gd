@@ -18,6 +18,9 @@ var options: Array[String] = []
 @onready var options_container: VBoxContainer = $MarginContainer/OptionsContainer
 @onready var cursor: Sprite2D = $Cursor
 
+## Padding bajo la última opción (dentro del panel), además del margin_bottom del MarginContainer.
+const PANEL_EXTRA_BOTTOM_MARGIN := 4.0
+
 ## Flag para evitar múltiples inputs
 var _input_enabled: bool = false
 
@@ -33,6 +36,7 @@ func _ready() -> void:
 	# Guardar los offsets configurados en la escena
 	_base_offset_right = offset_right
 	_base_offset_bottom = offset_bottom
+	options_container.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	hide()
 
 ## Ancla el panel por esquina superior izquierda (p. ej. mochila). Desactivar al volver al layout por defecto.
@@ -64,19 +68,20 @@ func show_choices(choice_options: Array[String]) -> int:
 		label.name = "Option" + str(i)
 		options_container.add_child(label)
 
-	# Ajustar tamaño del panel según número de opciones
-	_adjust_panel_size()
+	_apply_panel_width_and_provisional_height()
 
-	# Mostrar el panel
+	modulate.a = 0.0
 	show()
 
-	# Posicionar cursor
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	_fit_panel_height_to_content()
 	_update_cursor_position()
 
-	# Habilitar input
+	modulate.a = 1.0
 	_enable_input()
 
-	# Esperar a que el jugador seleccione
 	var choice = await choice_made
 
 	# Deshabilitar input
@@ -88,6 +93,7 @@ func show_choices(choice_options: Array[String]) -> int:
 	await get_tree().process_frame
 
 	# Ocultar después de que el input se haya consumido
+	modulate.a = 1.0
 	hide()
 
 	return choice
@@ -106,7 +112,7 @@ func _create_label_hgss(text: String) -> LabelHGSS:
 	var font = load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf")
 	var font_variation = FontVariation.new()
 	font_variation.base_font = font
-	font_variation.spacing_top = 4
+	font_variation.spacing_top = 0
 
 	custom_theme.default_font = font_variation
 	custom_theme.default_font_size = 26
@@ -115,6 +121,7 @@ func _create_label_hgss(text: String) -> LabelHGSS:
 	label.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
 	label.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
 	label.add_theme_constant_override("line_separation", 8)
+	label.add_theme_constant_override("paragraph_separation", 0)
 	label.add_theme_constant_override("shadow_offset_x", 2)
 	label.add_theme_constant_override("shadow_offset_y", 0)
 
@@ -128,6 +135,7 @@ func _create_label_hgss(text: String) -> LabelHGSS:
 	outline1.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
 	outline1.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
 	outline1.add_theme_constant_override("line_separation", 8)
+	outline1.add_theme_constant_override("paragraph_separation", 0)
 	outline1.add_theme_constant_override("shadow_offset_x", 0)
 	outline1.add_theme_constant_override("shadow_offset_y", 2)
 
@@ -140,6 +148,7 @@ func _create_label_hgss(text: String) -> LabelHGSS:
 	outline2.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
 	outline2.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
 	outline2.add_theme_constant_override("line_separation", 8)
+	outline2.add_theme_constant_override("paragraph_separation", 0)
 	outline2.add_theme_constant_override("shadow_offset_x", 2)
 	outline2.add_theme_constant_override("shadow_offset_y", 2)
 
@@ -157,61 +166,89 @@ func _clear_options() -> void:
 	for child in options_container.get_children():
 		child.queue_free()
 
-## Ajusta el tamaño del panel según el número de opciones
-func _adjust_panel_size() -> void:
-	# Calcular el ancho real del texto más largo usando la fuente
-	var max_text_width = 0
-
-	# Cargar la fuente para medir el texto real
-	var font = load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf")
-	var font_size = 26
-
-	# Calcular el ancho real del texto más largo
+func _measure_options_max_text_width() -> float:
+	var max_text_width := 0.0
+	var font := load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf") as Font
 	for option_text in options:
-		# Usar get_string_size para obtener el ancho real del texto
-		var text_size = font.get_string_size(option_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
-		if text_size.x > max_text_width:
-			max_text_width = text_size.x
+		var text_size := font.get_string_size(option_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 26)
+		max_text_width = maxf(max_text_width, text_size.x)
+	return max_text_width
 
-	# Ancho total = texto más largo + márgenes (34 + 24 = 58)
-	# El cursor ya está dentro del margen izquierdo, no necesita espacio extra
-	var calculated_width = max_text_width + 58
 
-	# Altura: base 28 + (34px por opción)
-	var calculated_height = 28 + (options.size() * 34)
+func _apply_panel_width_and_provisional_height() -> void:
+	var calculated_width := _measure_options_max_text_width() + 58.0
+	var mc := $MarginContainer as MarginContainer
+	var mt := float(mc.get_theme_constant("margin_top"))
+	var mb := float(mc.get_theme_constant("margin_bottom"))
+	var provisional_height := mt + mb + float(options.size()) * 44.0
 
-	# Actualizar el tamaño del panel
-	custom_minimum_size = Vector2(calculated_width, calculated_height)
+	custom_minimum_size = Vector2(calculated_width, provisional_height)
 	size = custom_minimum_size
 
 	if _fixed_top_left_mode:
 		offset_left = _fixed_top_left.x
 		offset_top = _fixed_top_left.y
 		offset_right = _fixed_top_left.x + calculated_width
-		offset_bottom = _fixed_top_left.y + calculated_height
+		offset_bottom = _fixed_top_left.y + provisional_height
 		_base_offset_right = offset_right
 		_base_offset_bottom = offset_bottom
 	else:
-		# Ajustar offsets para que crezca hacia arriba y hacia la izquierda
-		# Mantener fijos los valores configurados en la escena
 		offset_right = _base_offset_right
 		offset_bottom = _base_offset_bottom
 		offset_left = offset_right - calculated_width
-		offset_top = offset_bottom - calculated_height
+		offset_top = offset_bottom - provisional_height
 
-	# Forzar actualización del layout
-	await get_tree().process_frame
 
-## Actualiza la posición del cursor según la opción seleccionada
-func _update_cursor_position() -> void:
+## Alto del bloque de opciones: suma de filas (no `VBox.size.y` cuando el panel es alto provisional: el VBox rellena y sobra banda blanca abajo).
+func _options_stack_content_height() -> float:
+	var sep := float(options_container.get_theme_constant("separation"))
+	var kids := options_container.get_children()
+	var sum_h := 0.0
+	for child in kids:
+		var ctl := child as Control
+		if ctl:
+			var h: float = ctl.get_combined_minimum_size().y
+			if h < 1.0:
+				h = ctl.size.y
+			sum_h += h
+	var n := kids.size()
+	if n > 1:
+		sum_h += sep * float(n - 1)
+	return sum_h
+
+
+func _fit_panel_height_to_content() -> void:
 	if options_container.get_child_count() == 0:
 		return
+	var mc := $MarginContainer as MarginContainer
+	var mt := float(mc.get_theme_constant("margin_top"))
+	var mb := float(mc.get_theme_constant("margin_bottom"))
+	var total_h := mt + mb + _options_stack_content_height() + PANEL_EXTRA_BOTTOM_MARGIN
 
-	# Cursor siempre en X=24 (fijo desde el borde izquierdo)
-	# Y = 30 (base) + 34 * índice de la opción (altura de cada opción)
-	var cursor_x = 24
-	var cursor_y = 30 + (selected_index * 34)
-	cursor.position = Vector2(cursor_x, cursor_y)
+	custom_minimum_size.y = total_h
+	size.y = total_h
+
+	if _fixed_top_left_mode:
+		offset_left = _fixed_top_left.x
+		offset_top = _fixed_top_left.y
+		offset_right = _fixed_top_left.x + custom_minimum_size.x
+		offset_bottom = _fixed_top_left.y + total_h
+		_base_offset_right = offset_right
+		_base_offset_bottom = offset_bottom
+	else:
+		offset_right = _base_offset_right
+		offset_bottom = _base_offset_bottom
+		offset_left = offset_right - custom_minimum_size.x
+		offset_top = offset_bottom - total_h
+
+
+func _update_cursor_position() -> void:
+	if selected_index < 0 or selected_index >= options_container.get_child_count():
+		return
+
+	var row := options_container.get_child(selected_index) as Control
+	var cursor_y := row.global_position.y + row.size.y * 0.5 - global_position.y + 2.0
+	cursor.position = Vector2(24.0, cursor_y)
 
 ## Navega hacia arriba en las opciones
 func _navigate_up() -> void:

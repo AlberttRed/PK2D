@@ -507,7 +507,6 @@ scroll_active = false
 tab_size = 2
 visible_characters = 0
 visible_characters_behavior = 1
-visible_ratio = 0.0
 script = ExtResource("60_mee08")
 metadata/_edit_lock_ = true
 
