@@ -11,7 +11,7 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 	var max_hp := pokemon.get_final_stat(StatsEnum.Values.HP)
 	$dPS.setText(str(pokemon.hp_actual) + "/" + str(max_hp))
 
-	$health_bar.init(pokemon)
+	$health_bar.set_values(pokemon.hp_actual, max_hp)
 
 	$ValueStats/dAtaque.setText(str(pokemon.get_final_stat(StatsEnum.Values.ATTACK)))
 

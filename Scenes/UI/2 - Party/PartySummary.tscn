@@ -8,13 +8,11 @@
 [ext_resource type="Texture2D" uid="uid://danwumq4xmbxq" path="res://Sprites/UI/Party/summary1.png" id="8_omywj"]
 [ext_resource type="Texture2D" uid="uid://bwtv36mb8w2lm" path="res://Sprites/UI/Party/types.png" id="9_wfs1f"]
 [ext_resource type="Script" uid="uid://ctekppkhn8687" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryData.gd" id="10_ix7fs"]
-[ext_resource type="Script" uid="uid://dfv3s00wux7oq" path="res://Resources/Party OLD (Delete)/exp_bar.gd" id="10_uruff"]
 [ext_resource type="Texture2D" uid="uid://ctb1tglyrhv47" path="res://Sprites/Pictures/EXPsummary_background.png" id="11_3cqe8"]
 [ext_resource type="Texture2D" uid="uid://bnp7k1duyp2cd" path="res://Sprites/Pictures/EXPsummary_overlay.png" id="12_dqai2"]
 [ext_resource type="Texture2D" uid="uid://dn5d4urhqf5j7" path="res://Sprites/Pictures/EXPsummary_progress.png" id="13_pxepm"]
 [ext_resource type="Texture2D" uid="uid://ccbva4mg5505l" path="res://Sprites/UI/Party/summary2.PNG" id="14_k8371"]
 [ext_resource type="Texture2D" uid="uid://vp3788sffcg4" path="res://Sprites/UI/Party/summary3.PNG" id="15_nad7y"]
-[ext_resource type="Script" uid="uid://dx600553jbv3d" path="res://Resources/Party OLD (Delete)/health_bar.gd" id="16_p6hxq"]
 [ext_resource type="Script" uid="uid://bqj4s4iu56v1c" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryTrainer.gd" id="17_c1vnc"]
 [ext_resource type="Texture2D" uid="uid://bv5uvumjpm0cm" path="res://Sprites/Pictures/HPsummary_background.png" id="18_0pyjn"]
 [ext_resource type="Script" uid="uid://c2pblwkir2i64" path="res://Scripts/UI/2 - Party/SummaryPages/PartySummaryStats.gd" id="19_pigrk"]
@@ -29,6 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://bpu214w54ts7t" path="res://Sprites/UI/Party/summarymovesel.PNG" id="29_u3yho"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="30_vhko7"]
 [ext_resource type="Texture2D" uid="uid://tynlh4mi2kj1" path="res://Sprites/UI/Party/category.png" id="31_fp2wg"]
+[ext_resource type="PackedScene" uid="uid://b0ajmrb8a7e0r" path="res://Scenes/Battle/ui/AnimatedProgressBar.tscn" id="apb_summary"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ev6ym"]
 texture = ExtResource("8_omywj")
@@ -150,7 +149,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="DATA" type="Panel" parent="PAGES" unique_id=1935676458]
-visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 384.0
@@ -357,29 +355,26 @@ text = "[right]12097
 align = 2
 metadata/_edit_lock_ = true
 
-[node name="exp_bar" type="Node2D" parent="PAGES/DATA" unique_id=78574871]
-position = Vector2(357, 377)
-script = ExtResource("10_uruff")
-metadata/_edit_vertical_guides_ = [-205.084]
-metadata/_edit_lock_ = true
+[node name="exp_bar" parent="PAGES/DATA" unique_id=1658494733 instance=ExtResource("apb_summary")]
+position = Vector2(315, 369)
+show_label = false
+use_hp_color_tiers = false
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="PAGES/DATA/exp_bar" unique_id=1618516871]
-offset_left = 1.0
-offset_top = -9.0
+[node name="Label" parent="PAGES/DATA/exp_bar" index="0"]
+visible = false
+
+[node name="TextureProgressBar" parent="PAGES/DATA/exp_bar" index="1"]
+offset_left = 43.0
+offset_top = -1.0
 offset_right = 179.0
-offset_bottom = 8.0
-scale = Vector2(1, 0.960005)
-min_value = 314.0
-max_value = 419.0
-step = 0.1
-value = 314.0
-stretch_margin_left = 1
+offset_bottom = 24.0
+max_value = 39.0
+value = 20.0
 texture_under = ExtResource("11_3cqe8")
 texture_over = ExtResource("12_dqai2")
 texture_progress = ExtResource("13_pxepm")
-tint_progress = Color(0.27451, 0.552941, 0.960784, 1)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PAGES/DATA/exp_bar" unique_id=325760287]
+texture_progress_offset = Vector2(0, 0)
+tint_progress = Color(0.27450982, 0.5529412, 0.9607843, 1)
 
 [node name="TRAINER" type="Panel" parent="PAGES" unique_id=751071490]
 visible = false
@@ -463,6 +458,7 @@ text = "Agitada."
 metadata/_edit_lock_ = true
 
 [node name="STATS" type="Panel" parent="PAGES" unique_id=600717921]
+visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 384.0
@@ -504,32 +500,22 @@ text = "[right]235/235"
 align = 2
 metadata/_edit_lock_ = true
 
-[node name="health_bar" type="Node2D" parent="PAGES/STATS" unique_id=677879542]
-position = Vector2(289, 63)
-script = ExtResource("16_p6hxq")
-metadata/_edit_vertical_guides_ = [-205.084]
-metadata/_edit_lock_ = true
+[node name="health_bar" parent="PAGES/STATS" unique_id=91772436 instance=ExtResource("apb_summary")]
+position = Vector2(328, 106)
+show_label = false
 
-[node name="lblHP" parent="PAGES/STATS/health_bar" unique_id=495347378 instance=ExtResource("30_vhko7")]
+[node name="Label" parent="PAGES/STATS/health_bar" index="0"]
 visible = false
-offset_right = 73.0
-offset_bottom = 32.0
-text = "45/45"
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="PAGES/STATS/health_bar" unique_id=1068845265]
-offset_left = 39.2088
-offset_top = 43.4241
-offset_right = 171.209
-offset_bottom = 83.4241
-step = 0.1
-value = 100.0
-stretch_margin_left = 1
+[node name="TextureProgressBar" parent="PAGES/STATS/health_bar" index="1"]
+offset_right = 134.0
+size_flags_horizontal = 0
+size_flags_stretch_ratio = 0.5
+max_value = 39.0
+value = 39.0
 texture_under = ExtResource("18_0pyjn")
 texture_over = ExtResource("19_qbgrh")
 texture_progress = ExtResource("20_tvqbh")
-tint_progress = Color(0.0941176, 0.752941, 0.12549, 1)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PAGES/STATS/health_bar" unique_id=325729336]
 
 [node name="LabelStats" type="VBoxContainer" parent="PAGES/STATS" unique_id=2041662347]
 layout_mode = 0
@@ -1088,7 +1074,6 @@ theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
 text = "0"
 metadata/_edit_lock_ = true
 
-[connection signal="value_changed" from="PAGES/DATA/exp_bar/TextureProgressBar" to="PAGES/DATA/exp_bar" method="_on_value_changed"]
 [connection signal="hidden" from="PAGES/MOVES" to="PAGES/MOVES" method="_on_hidden"]
 [connection signal="focus_entered" from="PAGES/MOVES/MovePanels/Move1" to="PAGES/MOVES" method="_on_move_focus_entered"]
 [connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move1" to="PAGES/MOVES" method="_on_move_focus_exited"]
@@ -1100,3 +1085,6 @@ metadata/_edit_lock_ = true
 [connection signal="focus_exited" from="PAGES/MOVES/MovePanels/Move4" to="PAGES/MOVES" method="_on_move_focus_exited"]
 [connection signal="focus_entered" from="PAGES/MOVES/Move0" to="PAGES/MOVES" method="_on_move_focus_entered"]
 [connection signal="focus_exited" from="PAGES/MOVES/Move0" to="PAGES/MOVES" method="_on_move_focus_exited"]
+
+[editable path="PAGES/DATA/exp_bar"]
+[editable path="PAGES/STATS/health_bar"]

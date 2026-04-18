@@ -4,6 +4,8 @@ class_name AnimatedProgressBar
 signal updated
 
 @export var show_label: bool = true
+## Si es false (p. ej. barra de EXP), no aplica verde/amarillo/rojo de PS.
+@export var use_hp_color_tiers: bool = true
 @export var animate_duration := 1.0
 
 @onready var progress_bar: TextureProgressBar = $TextureProgressBar
@@ -14,7 +16,8 @@ var max_value: int = 0
 
 
 func _ready() -> void:
-	pass
+	if not show_label and lbl_value != null:
+		lbl_value.visible = false
 	#set_values(100, 100)  # HP actual, HP total
 	#await get_tree().create_timer(1.0).timeout  # Espera 1 segundo
 	#await animate_to(35)  # Baja a 35, con animación
@@ -31,6 +34,12 @@ func set_values(current: int, max: int) -> void:
 	update_color()
 
 func update_color() -> void:
+	if not use_hp_color_tiers:
+		progress_bar.tint_progress = Color(1, 1, 1, 1)
+		return
+	if progress_bar.max_value <= 0:
+		progress_bar.tint_progress = CONST.BATTLE.HPCOLORRED
+		return
 	var percentage = float(progress_bar.value) / float(progress_bar.max_value)
 	if percentage > 0.5:
 		progress_bar.tint_progress = CONST.BATTLE.HPCOLORGREEN

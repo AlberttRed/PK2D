@@ -32,7 +32,7 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 
 	$dSigNivel.setText(str(pokemon.nextLevelExpBase - pokemon.totalExp))
 
-	$exp_bar.init(pokemon)
+	$exp_bar.set_values(pokemon.totalExp, pokemon.nextLevelExpBase)
 
 
 func clear() -> void:

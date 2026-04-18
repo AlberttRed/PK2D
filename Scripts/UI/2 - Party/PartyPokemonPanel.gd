@@ -25,6 +25,8 @@ var order:int #Panel order inside Party
 var pokemon: Pokemon
 var swapping: bool = false
 
+@onready var health_bar: AnimatedProgressBar = $health_bar
+
 func _ready() -> void:
 	self.focus_mode = Control.FOCUS_NONE
 	self.visible = false
@@ -34,7 +36,8 @@ func apply_empty_slot(slot_order: int) -> void:
 	self.pokemon = null
 	focus_mode = FocusMode.FOCUS_NONE
 	self.visible = false
-
+	if health_bar:
+		health_bar.clear()
 
 func loadPokemon(pokemon: Pokemon) -> void:
 	self.visible = true
@@ -57,7 +60,8 @@ func loadPokemon(pokemon: Pokemon) -> void:
 	else:
 		$Status.visible = false
 
-	$health_bar.init(pokemon)
+	var max_hp := pokemon.get_final_stat(StatsEnum.Values.HP)
+	health_bar.set_values(pokemon.hp_actual, max_hp)
 
 	var icon_tex := pokemon.get_icon_sprite()
 	$pkmn.texture = icon_tex
@@ -141,6 +145,8 @@ func update_styles():
 func clear() -> void:
 	if pokemon != null:
 		unselect()
+	if health_bar:
+		health_bar.clear()
 	self.order = 0
 	self.pokemon = null
 	for c in selected.get_connections():
