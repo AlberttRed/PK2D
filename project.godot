@@ -54,6 +54,11 @@ global_script_classes=[{
 "class": "ActorStyle",
 "language": "GDScript",
 "path": "res://Scripts/Resources/ActorStyle.gd"
+}, {
+"base": "Object",
+"class": "PartyPanelModes",
+"language": "GDScript",
+"path": "res://Scripts/UI/2 - Party/PartyPanelModes.gd"
 }]
 
 [input]

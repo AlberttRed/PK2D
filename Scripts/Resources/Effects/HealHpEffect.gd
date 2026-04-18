@@ -41,14 +41,14 @@ func can_use(context: ItemUseContext) -> bool:
 func apply(context: ItemUseContext) -> ItemUseResult:
 	var pokemon: Pokemon = require_pokemon_target(context)
 	if pokemon == null:
-		return ItemUseResult.failure_result("No hay Pokémon objetivo")
+		return ItemUseResult.failure_blocked("No hay Pokémon objetivo")
 
 	if not can_use(context):
 		if pokemon.hp_actual <= 0:
-			return ItemUseResult.failure_result("El Pokémon está debilitado")
-		var max_hp = pokemon.get_final_stat(StatsEnum.Values.HP)
-		if pokemon.hp_actual >= max_hp:
-			return ItemUseResult.failure_result("El Pokémon ya tiene el HP al máximo")
+			return ItemUseResult.failure_blocked("El Pokémon está debilitado")
+		var max_hp_check = pokemon.get_final_stat(StatsEnum.Values.HP)
+		if pokemon.hp_actual >= max_hp_check:
+			return ItemUseResult.failure_no_effect("El Pokémon ya tiene el HP al máximo")
 
 	var max_hp = pokemon.get_final_stat(StatsEnum.Values.HP)
 	var current_hp = pokemon.hp_actual
@@ -74,8 +74,7 @@ func apply(context: ItemUseContext) -> ItemUseResult:
 		message = "%s recuperó %d PS!" % [pokemon.get_display_name(), healed_amount]
 
 	return ItemUseResult.success_result(
-		1,  # consume_amount
+		1,
 		message,
 		{"healed_amount": healed_amount, "max_hp": max_hp, "current_hp": pokemon.hp_actual}
 	)
-

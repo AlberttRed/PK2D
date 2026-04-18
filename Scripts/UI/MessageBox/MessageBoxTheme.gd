@@ -6,6 +6,13 @@ class_name MessageBoxTheme
 
 @export var frame_stylebox: StyleBox  ## El StyleBox para el marco del mensaje
 
+## Márgenes del área de texto (`ScrollContainer` interior). **−1** = no cambiar (se usan los de la escena / tema previo).
+## Ajusta aquí el texto más a la izquierda/derecha sin tocar código (mismo `MessageBoxTheme` que cargan eventos vía `frameStyle`).
+@export_range(-1.0, 512.0) var content_margin_left: float = -1.0
+@export_range(-1.0, 512.0) var content_margin_right: float = -1.0
+@export_range(-1.0, 256.0) var content_margin_top: float = -1.0
+@export_range(-1.0, 256.0) var content_margin_bottom: float = -1.0
+
 @export var wait_indicator_texture: Texture2D  ## La textura del indicador de espera (flecha)
 
 @export var wait_indicator_mode: WaitIndicatorMode = WaitIndicatorMode.BOTTOM_RIGHT  ## Modo de posicionamiento del indicador

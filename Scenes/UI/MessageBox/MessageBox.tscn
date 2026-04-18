@@ -99,7 +99,7 @@ theme = SubResource("Theme_x4phv")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 8
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_outline_size = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 0
@@ -108,12 +108,11 @@ text = "Esta es la primera línea
 Esta es la segunda línea
 Esta es la tercera línea
 Esta es la cuarta línea"
-fit_content = true
+fit_content = false
 scroll_active = false
 tab_size = 2
 visible_characters = 0
 visible_characters_behavior = 1
-visible_ratio = 0.0
 script = ExtResource("4_icamg")
 metadata/_edit_lock_ = true
 
@@ -126,7 +125,7 @@ theme = SubResource("Theme_x4phv")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 8
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_outline_size = 0
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
@@ -138,7 +137,7 @@ Esta es la tercera línea
 Esta es la cuarta línea
 
 "
-fit_content = true
+fit_content = false
 scroll_active = false
 tab_size = 2
 visible_characters_behavior = 1
@@ -153,7 +152,7 @@ theme = SubResource("Theme_x4phv")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 8
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_outline_size = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
@@ -165,7 +164,7 @@ Esta es la tercera línea
 Esta es la cuarta línea
 
 "
-fit_content = true
+fit_content = false
 scroll_active = false
 tab_size = 2
 visible_characters_behavior = 1

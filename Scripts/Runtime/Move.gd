@@ -29,7 +29,7 @@ func _init(move_data = null) -> void:
 	# Cargar MoveData
 	if move_data is int:
 		# Solo usar DatabaseService si está disponible (no en editor)
-		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		if not Engine.is_editor_hint():
 			base = DatabaseService.get_move(move_data)
 		else:
 			# En editor, cargar directamente desde archivo
@@ -87,7 +87,7 @@ func get_description() -> String:
 func get_type() -> TypeData:
 	# Usar type_id para cargar el TypeData solo cuando sea necesario
 	if base.type_id > 0:
-		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		if not Engine.is_editor_hint():
 			return DatabaseService.get_type(base.type_id) as TypeData
 		else:
 			# En editor, cargar directamente desde archivo
@@ -133,7 +133,7 @@ func get_ailment_chance() -> int:
 func get_weather() -> WeatherData:
 	# Usar weather_id para cargar el WeatherData solo cuando sea necesario
 	if base.weather_id > 0:
-		if Engine.has_singleton("DatabaseService") and not Engine.is_editor_hint():
+		if not Engine.is_editor_hint():
 			return DatabaseService.get_weather(base.weather_id) as WeatherData
 		# En editor, no cargar weather por ahora (no es crítico)
 	# Compatibilidad: si weather_id es 0 pero existe weather (Resource), usarlo

@@ -15,7 +15,7 @@ func can_use(context: ItemUseContext) -> bool:
 ## @return: ItemUseResult con el resultado de la ejecución
 func apply(context: ItemUseContext) -> ItemUseResult:
 	push_error("ItemEffect.apply() no implementado en " + get_script().resource_path)
-	return ItemUseResult.failure_result("Efecto no implementado")
+	return ItemUseResult.failure_error("Efecto no implementado")
 
 ## Valida que el contexto tenga un Pokémon objetivo
 func require_pokemon_target(context: ItemUseContext) -> Pokemon:
