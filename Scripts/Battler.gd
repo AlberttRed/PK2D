@@ -156,10 +156,19 @@ func has_pokemon(pokemon) -> bool:  # pokemon: Pokemon
 	return party.has(pokemon)
 
 
+## Party de combate / UI: `GameStateService` si hay miembros; si no, `party` del nodo (p. ej. definición en escena).
+func get_combat_party() -> Array[Pokemon]:
+	if not is_player:
+		return party
+	if not Engine.is_editor_hint() and GameStateService and GameStateService.get_party().count() > 0:
+		return GameStateService.get_party().get_all()
+	return party
+
+
 ## Obtiene el número de Pokémon en el equipo
 func get_party_size() -> int:
 	if is_player:
-		return party.size()
+		return get_combat_party().size()
 	else:
 		# Para trainers, obtener desde PokemonDefinition
 		if trainer_data:
@@ -171,7 +180,7 @@ func get_party_size() -> int:
 ## NOTA: Para trainers, esto solo funciona durante el combate (cuando party está poblado temporalmente)
 func get_alive_pokemon_count() -> int:
 	var count := 0
-	for pokemon in party:
+	for pokemon in get_combat_party():
 		if pokemon and pokemon.hp_actual > 0:
 			count += 1
 	return count
@@ -246,13 +255,14 @@ func to_battle_participant() -> BattleParticipant:
 	var battle_pokemon_team: Array[BattlePokemon] = []
 
 	if is_player:
-		# Player: usar Pokemon persistentes del party
-		print("Battler.to_battle_participant(): Player tiene %d Pokemon en party" % party.size())
+		# Misma lista y orden que Party UI (`GameStateService`); si está vacío, fallback al `party` del Battler (escena).
+		var player_team: Array[Pokemon] = get_combat_party()
+		print("Battler.to_battle_participant(): Player tiene %d Pokemon en equipo de combate" % player_team.size())
 
-		if party.is_empty():
-			push_error("Battler.to_battle_participant(): Player party está vacío. Asegúrate de que el Battler del player tenga Pokemon en su party.")
+		if player_team.is_empty():
+			push_error("Battler.to_battle_participant(): Player sin Pokémon en equipo (GameStateService ni party del Battler).")
 		else:
-			for pokemon in party:
+			for pokemon in player_team:
 				if pokemon:
 					var battle_pokemon = pokemon.to_battle_pokemon()
 					battle_pokemon.controllable = true

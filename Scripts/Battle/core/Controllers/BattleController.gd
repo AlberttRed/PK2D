@@ -2,6 +2,9 @@ extends Node
 
 class_name BattleController
 
+const _BATTLE_EXPERIENCE := preload("res://Scripts/Battle/experience/ExperienceCalculator.gd")
+const _BATTLE_LEVEL_GROWTH := preload("res://Scripts/Battle/experience/PokemonLevelGrowth.gd")
+
 var ui: BattleUI
 @onready var turn_controller: BattleTurnController = $TurnController
 #var animation_controller: BattleAnimationControllerRefactor
@@ -17,8 +20,29 @@ var finished := false
 var winner_side: String = ""
 
 func _ready():
-	# Este método puede quedar vacío si se usa start_battle() desde BattleScene
 	pass
+
+
+## Pokémon del jugador que entra al terreno: enfrentamiento con todos los rivales vivos en campo.
+func notify_player_entered_field(player_bp: BattlePokemon) -> void:
+	if player_bp == null or not player_bp.controllable:
+		return
+	if enemy_side == null:
+		return
+	for spot in enemy_side.battle_spots:
+		var e: BattlePokemon = spot.pokemon
+		if e != null and not e.is_fainted():
+			e.register_player_exp_participant(player_bp)
+
+
+## Rival que entra al terreno: se asocian como participantes todos los aliados vivos en campo.
+func notify_enemy_entered_field(enemy_bp: BattlePokemon) -> void:
+	if enemy_bp == null or player_side == null:
+		return
+	for spot in player_side.battle_spots:
+		var p: BattlePokemon = spot.pokemon
+		if p != null and p.controllable and not p.is_fainted():
+			enemy_bp.register_player_exp_participant(p)
 
 # Configura los dos BattleSide con sus participantes y reglas
 func setup_sides(player_participants: Array[BattleParticipant], enemy_participants: Array[BattleParticipant], _rules: BattleRules):
@@ -41,8 +65,11 @@ func assign_active_pokemons_to_spots():
 	var player_actives = player_side.get_active_pokemons()
 	var enemy_actives = enemy_side.get_active_pokemons()
 
-	var player_spots:Array[BattleSpot] = ui.get_player_spots_for_mode(rules.mode)
-	var enemy_spots:Array[BattleSpot] = ui.get_enemy_spots_for_mode(rules.mode)
+	var player_spots: Array[BattleSpot] = ui.get_player_spots_for_mode(rules.mode)
+	var enemy_spots: Array[BattleSpot] = ui.get_enemy_spots_for_mode(rules.mode)
+
+	_connect_exp_signals_on_spots(player_spots)
+	_connect_exp_signals_on_spots(enemy_spots)
 
 	for i in player_actives.size():
 		var spot := player_spots[i]
@@ -58,6 +85,25 @@ func assign_active_pokemons_to_spots():
 
 	# Ajustar visualmente la posición de los spots
 	ui.position_battlespots_for_mode(rules.mode)
+
+
+func _connect_exp_signals_on_spots(spots: Array[BattleSpot]) -> void:
+	for spot in spots:
+		if spot == null:
+			continue
+		if spot.active_pokemon_loaded.is_connected(_on_battle_spot_active_pokemon_loaded):
+			continue
+		spot.active_pokemon_loaded.connect(_on_battle_spot_active_pokemon_loaded)
+
+
+func _on_battle_spot_active_pokemon_loaded(bp: BattlePokemon) -> void:
+	if bp == null:
+		return
+	if bp.controllable:
+		notify_player_entered_field(bp)
+	else:
+		notify_enemy_entered_field(bp)
+
 
 func start_battle() -> void:
 	# Configurar UI para el nuevo combate
@@ -161,6 +207,8 @@ func end_battle() -> void:
 	if rules.type == BattleRules.BattleTypes.TRAINER and not winner_side.is_empty() and winner_side != "draw":
 		_register_battle_result(winner_side)
 
+	_sync_player_runtime_from_battle()
+
 	# Limpiar estado del combate para el siguiente
 	_cleanup_battle_state()
 
@@ -175,10 +223,10 @@ func end_battle() -> void:
 		DisplayManager.instance._on_battle_finished(battle_winner)
 
 ## Registra el resultado del combate en GameStateService
-## winner_side: "player" o "enemy"
-func _register_battle_result(winner_side: String) -> void:
+## p_winner_side: "player" o "enemy"
+func _register_battle_result(p_winner_side: String) -> void:
 	# Determinar el resultado para cada entrenador enemigo
-	var result: String = "V" if winner_side == "player" else "D"
+	var result: String = "V" if p_winner_side == "player" else "D"
 
 	# Registrar resultado para cada participante enemigo que sea entrenador
 	for participant in enemy_side.participants:
@@ -189,6 +237,106 @@ func _register_battle_result(winner_side: String) -> void:
 				GameStateService.register_trainer_battle_result(trainer_id, result)
 			else:
 				push_warning("BattleController: No se pudo registrar resultado - trainer_resource_id vacío para participante '%s'" % participant.name)
+
+## Tras animación/mensaje de faint del rival; un KO → una llamada (multi-target puede ser 2 KOs seguidos).
+func grant_experience_after_enemy_ko(defeated_enemy: BattlePokemon, action_executor: BattlePokemon) -> void:
+	if defeated_enemy == null or rules == null:
+		return
+	var recipients: Array[BattlePokemon] = defeated_enemy.get_runtime_exp_recipient_battle_pokemon(action_executor)
+	if recipients.is_empty():
+		return
+	var is_trainer := rules.type == BattleRules.BattleTypes.TRAINER
+	var grant = _BATTLE_EXPERIENCE.grant_for_defeated_enemies([defeated_enemy], recipients, is_trainer)
+	print("BattleController: EXP tras KO de %s — receptores=%d resultados=%d" % [
+		defeated_enemy.get_name(), recipients.size(), grant.outcomes.size()
+	])
+	var level_ctx_by_bp: Dictionary = {}
+	for rec_bp in recipients:
+		if rec_bp == null or rec_bp.base_data == null:
+			continue
+		# PS del combate → runtime antes de subida de nivel (si no, hp_actual sigue el valor previo al combate).
+		rec_bp.write_persistent_state_to_runtime()
+		var lvl_result = _BATTLE_LEVEL_GROWTH.check_and_apply_level_up(rec_bp.base_data)
+		level_ctx_by_bp[rec_bp] = lvl_result
+		if lvl_result.levels_gained > 0:
+			rec_bp.refresh_derived_stats_from_base()
+			rec_bp.base_data._update_resource_name()
+
+	for outcome in grant.outcomes:
+		var po = outcome
+		if po == null or po.battle_pokemon == null:
+			continue
+		var bp: BattlePokemon = po.battle_pokemon
+		print("¡%s ha ganado %d Puntos de Experiencia!" % [bp.get_name(), po.gained_exp])
+		if ui == null:
+			continue
+		await ui.show_gained_exp_message(bp, po.gained_exp)
+		var lvl_res = level_ctx_by_bp.get(bp)
+		var lv_before: int = bp.base_data.level
+		var lv_gained: int = 0
+		if lvl_res != null:
+			lv_before = lvl_res.old_level
+			lv_gained = lvl_res.levels_gained
+		var spot: BattleSpot = bp.battle_spot
+		if spot != null and spot.hp_bar != null:
+			var old_total: int = po.new_total_exp - po.gained_exp
+			# Durante la animación EXP, el nivel en pantalla debe seguir siendo el de antes hasta llenar el trozo actual.
+			if lv_gained > 0:
+				spot.hp_bar.refresh_panel_labels(lv_before)
+			else:
+				spot.hp_bar.refresh_panel_labels()
+			var msg_cb := Callable()
+			if lv_gained > 0 and lvl_res != null:
+				msg_cb = func(cb_bp: BattlePokemon, reached_level: int) -> void:
+					await ui.show_level_up_dialog_for_single_level(cb_bp, reached_level, lvl_res)
+			await spot.hp_bar.animate_exp_bar_gain(old_total, po.new_total_exp, lv_before, lv_gained, msg_cb)
+		elif lv_gained > 0 and lvl_res != null:
+			await ui.show_level_up_dialog_sequence(bp, lvl_res)
+
+
+func _sync_player_runtime_from_battle() -> void:
+	for participant in player_side.participants:
+		if participant == null or not participant.is_player:
+			continue
+		for bp in participant.pokemon_team:
+			if bp:
+				bp.write_persistent_state_to_runtime()
+		_mirror_player_party_to_gamestate(participant)
+
+
+## Party UI / guardado usan `GameStateService.party`; el combate usa el `Battler.party`.
+## Si no comparten la misma instancia de `Pokemon`, copiamos PS / estado / PP por slot.
+func _mirror_player_party_to_gamestate(participant: BattleParticipant) -> void:
+	if participant == null:
+		return
+	var gs_party = GameStateService.get_party()
+	if gs_party == null:
+		return
+	var team: Array[BattlePokemon] = participant.pokemon_team
+	for i in range(team.size()):
+		var bp: BattlePokemon = team[i]
+		if bp == null or bp.base_data == null:
+			continue
+		var runtime_mon: Pokemon = bp.base_data
+		if i >= gs_party.count():
+			break
+		var gs_mon: Pokemon = gs_party.get_pokemon(i)
+		if gs_mon == null:
+			continue
+		if gs_mon == runtime_mon:
+			continue
+		var max_hp: int = gs_mon.get_final_stat(StatsEnum.Values.HP)
+		gs_mon.hp_actual = clampi(runtime_mon.hp_actual, 0, max_hp)
+		gs_mon.major_status = runtime_mon.major_status
+		gs_mon.level = runtime_mon.level
+		gs_mon.totalExp = runtime_mon.totalExp
+		var n_moves: int = mini(gs_mon.movements.size(), runtime_mon.movements.size())
+		for j in range(n_moves):
+			var gs_mv: Move = gs_mon.movements[j] as Move
+			var rt_mv: Move = runtime_mon.movements[j] as Move
+			if gs_mv != null and rt_mv != null:
+				gs_mv.pp_actual = clampi(rt_mv.pp_actual, 0, gs_mv.pp)
+
 
 func _cleanup_battle_state():
 	# Resetear flags de control

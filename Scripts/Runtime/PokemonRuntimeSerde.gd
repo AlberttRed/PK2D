@@ -55,6 +55,14 @@ func deserialize(data: Dictionary) -> Pokemon:
 	mon._load_learnable_moves()
 	mon._load_initial_moves()
 
+	var pp_arr: Variant = data.get("move_pp_actual", [])
+	if pp_arr is Array:
+		for i in range(mini(mon.movements.size(), pp_arr.size())):
+			var mv: Move = mon.movements[i] as Move
+			if mv == null:
+				continue
+			mv.pp_actual = clampi(int(pp_arr[i]), 0, mv.pp)
+
 	var max_hp := mon.get_final_stat(StatsEnum.Values.HP)
 	if data.has("hp_actual"):
 		mon.hp_actual = clampi(int(data.get("hp_actual", max_hp)), 0, max_hp)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://djqyc10nosdl"]
+[gd_scene format=3 uid="uid://djqyc10nosdl"]
 
 [ext_resource type="Script" uid="uid://fue81u7lotyd" path="res://Scripts/Battle/ui/BattleUI.gd" id="1_cwigb"]
 [ext_resource type="Script" uid="uid://ciwn5vywclehe" path="res://Scripts/Battle/ui/BattleMessageController.gd" id="2_gtgo1"]
@@ -15,7 +15,7 @@
 texture = SubResource("CanvasTexture_8fm4l")
 modulate_color = Color(0, 0, 0, 1)
 
-[node name="BattleUI" type="Control"]
+[node name="BattleUI" type="Control" unique_id=466069066]
 custom_minimum_size = Vector2(512, 384)
 layout_mode = 3
 anchors_preset = 15
@@ -25,30 +25,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cwigb")
 
-[node name="MessageController" type="Node" parent="."]
+[node name="MessageController" type="Node" parent="." unique_id=1310026868]
 script = ExtResource("2_gtgo1")
 
-[node name="TargetSelectorUI" parent="." instance=ExtResource("3_0scdk")]
+[node name="TargetSelectorUI" parent="." unique_id=1871729584 instance=ExtResource("3_0scdk")]
 visible = false
 layout_mode = 1
 
-[node name="FieldUI" parent="." instance=ExtResource("2_yxxch")]
+[node name="FieldUI" parent="." unique_id=1038844757 instance=ExtResource("2_yxxch")]
 layout_mode = 1
 
-[node name="ActionsMenu" parent="." instance=ExtResource("4_hkwg8")]
+[node name="ActionsMenu" parent="." unique_id=391308948 instance=ExtResource("4_hkwg8")]
 visible = false
 layout_mode = 1
 
-[node name="MessageBox" parent="." instance=ExtResource("5_alpup")]
+[node name="MessageBox" parent="." unique_id=1554236884 instance=ExtResource("5_alpup")]
 z_index = 6
 layout_mode = 1
 theme_override_styles/panel = ExtResource("7_f6frr")
 
-[node name="MovesMenu" parent="." instance=ExtResource("6_x8cud")]
+[node name="MovesMenu" parent="." unique_id=1305048248 instance=ExtResource("6_x8cud")]
 visible = false
 layout_mode = 1
 
-[node name="back" type="Panel" parent="."]
+[node name="back" type="Panel" parent="." unique_id=1566079503]
 visible = false
 layout_mode = 0
 offset_top = 288.0

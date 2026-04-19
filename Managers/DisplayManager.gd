@@ -365,7 +365,10 @@ static func request_hide_overworld_messagebox() -> void:
 ## Métodos internos (no llamar directamente, usar la API estática)
 
 func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
-	await msg.show_custom(text, config)
+	var cfg := config.duplicate()
+	if not "frameStyle" in cfg:
+		cfg["frameStyle"] = MessageBoxFrameStyle.Values.HGSS
+	await msg.show_custom(text, cfg)
 
 func _show_choices(options: Array[String]) -> int:
 	if options.is_empty():
@@ -714,7 +717,10 @@ func _input(event: InputEvent) -> void:
 	if $BattleNew.visible:
 		var focus_owner = get_viewport().gui_get_focus_owner()
 		var battle_ui = $BattleNew/BattleUI
-		if battle_ui != null and focus_owner != null and battle_ui.is_ancestor_of(focus_owner):
+		var focused_battle_modal_visible := false
+		if battle_ui and battle_ui.has_method("has_modal_ui_visible"):
+			focused_battle_modal_visible = bool(battle_ui.call("has_modal_ui_visible"))
+		if battle_ui != null and focus_owner != null and battle_ui.is_ancestor_of(focus_owner) and not focused_battle_modal_visible:
 			return
 
 	# Procesar ui_start ANTES del check de isVisible() para poder abrir el menú
@@ -751,16 +757,19 @@ func _input(event: InputEvent) -> void:
 
 	# Verificar si el MessageBox de batalla está visible
 	var battle_message_box_visible = false
+	var battle_modal_ui_visible = false
 	if BattleNew.visible:
 		var battle_ui = BattleNew.get_node_or_null("BattleUI")
 		if battle_ui and battle_ui.has_node("MessageBox"):
 			var battle_msg = battle_ui.get_node("MessageBox")
 			if battle_msg and battle_msg.visible:
 				battle_message_box_visible = true
+		if battle_ui and battle_ui.has_method("has_modal_ui_visible"):
+			battle_modal_ui_visible = bool(battle_ui.call("has_modal_ui_visible"))
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -804,7 +813,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or battle_message_box_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===

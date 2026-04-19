@@ -39,6 +39,9 @@ var stat_stages := StatStages.new()
 # Recordar el último movimiento seleccionado por este Pokémon
 var last_move_index: int = 0
 
+## Pokémon del jugador que han estado en campo frente a este rival (EXP; no requiere daño).
+var _player_exp_participants: Array[BattlePokemon] = []
+
 var _selectedBattleChoice: BattleChoice
 
 # Setter para selectedBattleChoice que automáticamente asigna el pokemon al choice
@@ -63,12 +66,24 @@ func _init(_pokemon: Pokemon, _IA: BattleIA = null):
 	ability = base_data.ability
 	nature = base_data.nature
 
-	#status = base_data.status
-	#status_turns = base_data.status_turns
+	# Los estados persistentes fuera de combate viven en Pokemon.major_status → AilmentData aquí al entrar.
+	status = AilmentData.from_major_status(base_data.major_status)
 	fainted = base_data.hp_actual <= 0
 	
 
 	setIA(_IA)
+
+
+## Copia PS, estado mayor y PP (los Move del runtime ya comparten referencia con BattleMove) al Pokémon persistente del jugador.
+func write_persistent_state_to_runtime() -> void:
+	if base_data == null:
+		return
+	var max_hp := get_final_stat(StatsEnum.Values.HP)
+	base_data.hp_actual = clampi(hp, 0, max_hp)
+	if base_data.hp_actual <= 0:
+		base_data.major_status = CONST.STATUS.OK
+	else:
+		base_data.major_status = AilmentData.to_major_status(status)
 
 func set_battle_spot(spot: BattleSpot) -> void:
 	battle_spot = spot
@@ -78,10 +93,45 @@ func setIA(_IA:BattleIA):
 		# Duplicar la IA para que cada Pokémon tenga su propia instancia
 		self.ai_controller = _IA.duplicate()
 
+
+## Recalcula PS máximos y stats de combate desde `base_data`; mantiene PS actuales coherentes con el runtime.
+func refresh_derived_stats_from_base() -> void:
+	if base_data == null:
+		return
+	total_hp = get_final_stat(StatsEnum.Values.HP)
+	attack = get_final_stat(StatsEnum.Values.ATTACK)
+	defense = get_final_stat(StatsEnum.Values.DEFENSE)
+	sp_attack = get_final_stat(StatsEnum.Values.SP_ATTACK)
+	sp_defense = get_final_stat(StatsEnum.Values.SP_DEFENSE)
+	speed = get_final_stat(StatsEnum.Values.SPEED)
+	hp = clampi(base_data.hp_actual, 0, total_hp)
+	fainted = hp <= 0
+
+
 func init_turn() -> void:
 	selectedBattleChoice = null
 	can_act_this_turn = true
 	# Si más adelante agregas efectos temporales, pueden resetearse aquí
+
+
+func register_player_exp_participant(player_bp: BattlePokemon) -> void:
+	if player_bp == null or not player_bp.controllable or player_bp.fainted:
+		return
+	if _player_exp_participants.has(player_bp):
+		return
+	_player_exp_participants.append(player_bp)
+
+
+## Receptores de EXP por este KO (`BattlePokemon` en campo); si no hay lista (caso raro), `fallback_executor`.
+func get_runtime_exp_recipient_battle_pokemon(fallback_executor: BattlePokemon) -> Array[BattlePokemon]:
+	var out: Array[BattlePokemon] = []
+	for bp in _player_exp_participants:
+		if bp != null and not bp.fainted and bp.base_data != null:
+			out.append(bp)
+	if out.is_empty() and fallback_executor != null and fallback_executor.controllable \
+			and not fallback_executor.fainted and fallback_executor.base_data != null:
+		out.append(fallback_executor)
+	return out
 	
 func _to_string() -> String:
 	return "patata"

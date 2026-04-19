@@ -1,6 +1,9 @@
 extends Node2D
 class_name BattleSpot
 
+## Se emite al asignar un Pokémon al terreno (`load_active_pokemon`). Escucha `BattleController` (u otro orquestador), no lógica de EXP aquí.
+signal active_pokemon_loaded(pokemon: BattlePokemon)
+
 var index = null
 var pokemon: BattlePokemon = null
 var side: BattleSide
@@ -15,7 +18,7 @@ var tween: Tween
 
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
-	
+
 func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	self.pokemon = _pokemon
 	self.pokemon.set_battle_spot(self)
@@ -50,9 +53,31 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 		var effect = pokemon.ability.effect_resource.new(_pokemon.ability)
 		BattleEffectController.add_pokemon_effect(_pokemon, effect)
 
+	_register_persistent_ailment_effect_if_needed(_pokemon)
+
+	active_pokemon_loaded.emit(_pokemon)
+
+
 func get_active_pokemon() -> BattlePokemon:
 	return pokemon
-	
+
+
+## Registra Poison/Burn/etc. en el controlador de efectos al entrar en campo (estado ya cargado desde `Pokemon.major_status`).
+## Sin esto solo existía `BattlePokemon.status` visualmente y el daño por veneno no corría en turnos.
+func _register_persistent_ailment_effect_if_needed(bp: BattlePokemon) -> void:
+	if bp == null or bp.status == null:
+		return
+	if not bp.status.is_persistent or bp.status.effect == null:
+		return
+
+	var inst: PersistentBattleEffect = bp.status.get_effect() as PersistentBattleEffect
+	if inst == null:
+		return
+	if BattleEffectController.has_effect_for(bp, inst):
+		return
+	BattleEffectController.add_pokemon_effect(bp, inst)
+
+
 func clear() -> void:
 	sprite.texture = null
 	hide()
@@ -91,14 +116,14 @@ func highlight(active: bool) -> void:
 
 func get_opponent_side() -> BattleSide:
 	return side.opponent_side
-	
+
 func has_active_pokemon() -> bool:
 	return pokemon != null and not pokemon.is_fainted()
 
 func apply_damage(decrease_value = null) -> void:
 	if get_active_pokemon() == null:
 		return
-	
+
 	if hp_bar:
 		if decrease_value:
 			await hp_bar.reduce_hp_by(decrease_value)
@@ -108,7 +133,7 @@ func apply_damage(decrease_value = null) -> void:
 func apply_heal(increase_value = null) -> void:
 	if get_active_pokemon() == null:
 		return
-	
+
 	if hp_bar:
 		if increase_value:
 			await hp_bar.increase_hp_by(increase_value)
@@ -120,7 +145,7 @@ func has_previous_controllable_pokemon() -> bool:
 	# Si no tenemos índice o side, no podemos verificar
 	if index <= 1 or side == null:
 		return false
-	
+
 	# Buscar en los spots anteriores del mismo equipo
 	for i in range(index - 1):
 		var previous_spot = side.battle_spots[i]
@@ -128,7 +153,7 @@ func has_previous_controllable_pokemon() -> bool:
 			var previous_pokemon = previous_spot.get_active_pokemon()
 			if previous_pokemon.controllable and not previous_pokemon.is_fainted():
 				return true
-	
+
 	return false
 
 
@@ -150,7 +175,7 @@ func play_hit_animation() -> void:
 func play_heal_animation() -> void:
 	if not is_visible():
 		return
-	
+
 	# Overlay verde que baja (como RPG Maker)
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayHeal.png",
@@ -161,7 +186,7 @@ func play_heal_animation() -> void:
 func play_stat_up_animation() -> void:
 	if not is_visible():
 		return
-	
+
 	# Overlay rojo que sube
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayStatUp.png",
@@ -172,7 +197,7 @@ func play_stat_up_animation() -> void:
 func play_stat_down_animation() -> void:
 	if not is_visible():
 		return
-	
+
 	# Overlay azul que baja
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayStatDown.png",
@@ -186,7 +211,7 @@ func _play_overlay_animation(overlay_path: String, animate_up: bool, duration: f
 	var shader = load("res://Shaders/Battle/overlay_animation.gdshader")
 	var shader_material = ShaderMaterial.new()
 	shader_material.shader = shader
-	
+
 	# Configurar parámetros del shader
 	shader_material.set_shader_parameter("overlay_texture", load(overlay_path))
 	shader_material.set_shader_parameter("animate_up", animate_up)
@@ -194,10 +219,10 @@ func _play_overlay_animation(overlay_path: String, animate_up: bool, duration: f
 	shader_material.set_shader_parameter("overlay_alpha", 0.7)
 	shader_material.set_shader_parameter("scroll_speed", 2)
 	shader_material.set_shader_parameter("overlay_scale", 2.0)
-	
+
 	# Asignar material al sprite
 	sprite.material = shader_material
-	
+
 	# Animar el parámetro progress con tween
 	var overlay_tween := create_tween()
 	overlay_tween.tween_method(
@@ -206,9 +231,9 @@ func _play_overlay_animation(overlay_path: String, animate_up: bool, duration: f
 		1.0,
 		duration
 	)
-	
+
 	await overlay_tween.finished
-	
+
 	# Limpiar material
 	sprite.material = null
 	await get_tree().create_timer(0.1).timeout
@@ -216,32 +241,32 @@ func _play_overlay_animation(overlay_path: String, animate_up: bool, duration: f
 func play_faint_animation() -> void:
 	if not is_visible():
 		return
-	
+
 	# Guardar valores originales
 	var original_position = sprite.position
 	var original_region_enabled = sprite.region_enabled
 	var original_region = sprite.region_rect
-	
+
 	# Obtener el tamaño del sprite
 	var sprite_height = sprite.texture.get_height() if sprite.texture else 96
-	
+
 	# Activar región si no está activa
 	if not sprite.region_enabled:
 		sprite.region_enabled = true
 		sprite.region_rect = Rect2(0, 0, sprite.texture.get_width(), sprite_height)
-	
+
 	var duration = 0.5
-	
+
 	# Crear tween para hundimiento
 	var faint_tween := create_tween()
 	faint_tween.set_parallel(false)
-	
+
 	# Animar posición Y y altura de región simultáneamente
 	faint_tween.tween_method(
 		func(progress: float):
 			# Mover sprite hacia abajo
 			sprite.position.y = original_position.y + (progress * 40)
-			
+
 			# Recortar región desde abajo hacia arriba
 			var new_height = sprite_height * (1.0 - progress)
 			sprite.region_rect = Rect2(
@@ -254,41 +279,41 @@ func play_faint_animation() -> void:
 		1.0,
 		duration
 	)
-	
+
 	await faint_tween.finished
-	
+
 	# Ocultar completamente el sprite
 	sprite.visible = false
-	
+
 	# Ocultar la sombra si existe y es visible
 	if shadow and shadow.visible:
 		shadow.visible = false
-	
+
 	# Restaurar valores originales
 	sprite.position = original_position
 	sprite.region_enabled = original_region_enabled
 	sprite.region_rect = original_region
-	
+
 	# Animar HP bar retirándose
 	await play_hp_bar_slide_out()
 
 func play_hp_bar_slide_out() -> void:
 	if not hp_bar or not hp_bar.visible:
 		return
-	
+
 	# Determinar dirección según el tipo de lado
 	var is_player = pokemon.side.type == BattleSide.Types.PLAYER
 	var slide_distance = 300  # Píxeles a desplazar
 	var direction = 1 if is_player else -1  # Derecha (+) para player, izquierda (-) para enemy
-	
+
 	# Guardar posición original
 	var original_hp_position = hp_bar.global_position
-	
+
 	# Crear tween para deslizar el HP bar
 	var hp_tween := create_tween()
 	hp_tween.set_ease(Tween.EASE_IN)
 	hp_tween.set_trans(Tween.TRANS_CUBIC)
-	
+
 	# Deslizar hacia la dirección correspondiente
 	hp_tween.tween_property(
 		hp_bar,
@@ -296,12 +321,12 @@ func play_hp_bar_slide_out() -> void:
 		original_hp_position.x + (direction * slide_distance),
 		0.3
 	)
-	
+
 	await hp_tween.finished
-	
+
 	# Ocultar HP bar
 	hp_bar.visible = false
-	
+
 	# Restaurar posición (para futuras batallas)
 	hp_bar.global_position = original_hp_position
 

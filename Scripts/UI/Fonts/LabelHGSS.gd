@@ -93,6 +93,17 @@ func _draw() -> void:
 		o.custom_minimum_size = size
 
 
+## Normaliza `\n` → `[br]` y copia el mismo BBCode al RTL principal y a Outline/Outline2.
+## Solo lo usa `setText()`: algunas rutas del motor no disparan `_set()` al escribir `text` directamente.
+func _apply_full_richtext(raw: String) -> void:
+	var normalized: String = _bbcode_normalize_newlines(raw)
+	text = normalized
+	for o in _outline_layers():
+		o.text = normalized
+	_sync_outline_layout_from_parent()
+	queue_redraw()
+
+
 func setText(_text):
 	var prefix := "[left]"
 	match align:
@@ -100,7 +111,7 @@ func setText(_text):
 			prefix = "[center]"
 		2:
 			prefix = "[right]"
-	self.text = prefix + str(_text)
+	_apply_full_richtext(prefix + str(_text))
 
 
 func updateNextLine():

@@ -1,6 +1,15 @@
 class_name SleepAilmentEffect
 extends PersistentBattleEffect
 
+
+## Sin turnos desde el movimiento (p. ej. estado persistente al entrar), duración típica gen 3.
+func _init(src, min_turns = null, max_turns = null) -> void:
+	if min_turns == null and max_turns == null:
+		super(src, 2, 5)
+	else:
+		super(src, min_turns, max_turns)
+
+
 func apply_phase(pokemon, phase: Phases) -> void: 
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return

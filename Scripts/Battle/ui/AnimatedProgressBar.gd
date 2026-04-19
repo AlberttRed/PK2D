@@ -34,8 +34,8 @@ func set_values(current: int, max: int) -> void:
 	update_color()
 
 func update_color() -> void:
+	# Sin tramos de PS: no tocar tint_progress (la escena puede fijar color, p. ej. EXP del summary).
 	if not use_hp_color_tiers:
-		progress_bar.tint_progress = Color(1, 1, 1, 1)
 		return
 	if progress_bar.max_value <= 0:
 		progress_bar.tint_progress = CONST.BATTLE.HPCOLORRED

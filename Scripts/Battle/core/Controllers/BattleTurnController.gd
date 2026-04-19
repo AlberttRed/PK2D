@@ -325,6 +325,7 @@ func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
 		if spot.pokemon and spot.pokemon.is_fainted():
 			await spot.play_faint_animation()
 			await battle_controller.ui.show_faint_message(spot.pokemon)
+			await battle_controller.grant_experience_after_enemy_ko(spot.pokemon, action_executor)
 			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
 
 	# 2. Luego los del lado del ejecutor

@@ -60,6 +60,11 @@ func loadGeneralInfo(pokemon: Pokemon) -> void:
 		generalInfo.get_node("Status").visible = true
 		generalInfo.get_node("Status").region_enabled = true
 		generalInfo.get_node("Status").region_rect = Rect2(0, 16 * (CONST.STATUS.FAINTED - 1), 44, 16)
+	elif pokemon.major_status != CONST.STATUS.OK:
+		generalInfo.get_node("Status").visible = true
+		generalInfo.get_node("Status").region_enabled = true
+		var row: int = maxi(0, pokemon.major_status - 1)
+		generalInfo.get_node("Status").region_rect = Rect2(0, 16 * row, 44, 16)
 	else:
 		generalInfo.get_node("Status").visible = false
 
@@ -112,7 +117,7 @@ func moveRight() -> void:
 
 
 func moveUp() -> void:
-	if activePage != null and activePage.name == "MOVES" and activePage.mode == activePage.Modes.DETAILED:
+	if activePage != null and activePage.name == "MOVES" and (activePage.mode == activePage.Modes.DETAILED or activePage.mode == activePage.Modes.LEARNING):
 		activePage.call("navigate_move_focus", -1)
 		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
@@ -123,7 +128,7 @@ func moveUp() -> void:
 
 
 func moveDown() -> void:
-	if activePage != null and activePage.name == "MOVES" and activePage.mode == activePage.Modes.DETAILED:
+	if activePage != null and activePage.name == "MOVES" and (activePage.mode == activePage.Modes.DETAILED or activePage.mode == activePage.Modes.LEARNING):
 		activePage.call("navigate_move_focus", 1)
 		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
