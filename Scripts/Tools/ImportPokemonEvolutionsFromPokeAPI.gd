@@ -80,9 +80,10 @@ func _run() -> void:
 			continue
 
 		var pd := res as PokemonData
-		pd.evolutions.clear()
+		var new_evolutions: Array = []
 		for r in bundle.evolutions:
-			pd.evolutions.append(r.duplicate(true) as EvoRow)
+			new_evolutions.append(r.duplicate(true) as EvoRow)
+		pd.evolutions = new_evolutions
 
 		var err := ResourceSaver.save(pd, tres_path)
 		if err != OK:

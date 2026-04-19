@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_igts1"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_0icqv"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_tbmm7"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_vcpug"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_eej1m"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="5_x5xmy"]
@@ -26,6 +27,12 @@ margin = Rect2(46, 46, 92, 90)
 atlas = ExtResource("1_igts1")
 region = Rect2(772, 6552, 68, 70)
 margin = Rect2(46, 46, 92, 90)
+
+[sub_resource type="Resource" id="Resource_88l4f"]
+script = ExtResource("2_tbmm7")
+target_species_id = 44
+trigger_raw = "level-up"
+min_level = 21
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_awfjq"]
 atlas = ExtResource("2_0icqv")
@@ -68,6 +75,7 @@ capture_rate = 255
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_88l4f")]
 description = "Durante el día, se agazapa en el frío subsuelo
 huyendo del sol. La luz de la luna le hace crecer."
 icon_sprite = SubResource("AtlasTexture_ud7v7")

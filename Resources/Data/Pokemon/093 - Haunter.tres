@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bkgfi8puxfrb"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_m6s5q"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_01fs2"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_wyd53"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_7a7al"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_7x4ay"]
@@ -26,6 +27,12 @@ margin = Rect2(18, 32, 38, 64)
 atlas = ExtResource("1_m6s5q")
 region = Rect2(136, 5376, 122, 96)
 margin = Rect2(18, 32, 38, 64)
+
+[sub_resource type="Resource" id="Resource_e7sj1"]
+script = ExtResource("2_01fs2")
+method = 1
+target_species_id = 94
+trigger_raw = "trade"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a4rfn"]
 atlas = ExtResource("2_wyd53")
@@ -68,6 +75,7 @@ capture_rate = 90
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_e7sj1")]
 description = "Cuando se tiene la sensación de ser observado
 en la oscuridad sin que haya nadie alrededor,
 seguro que es porque un Haunter anda cerca."

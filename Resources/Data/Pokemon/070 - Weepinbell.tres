@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_kpe1b"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_3k5yi"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_wf6jy"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_bxyh7"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_37623"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="5_1uiv0"]
@@ -26,6 +27,13 @@ margin = Rect2(32, 38, 64, 74)
 atlas = ExtResource("1_kpe1b")
 region = Rect2(672, 6236, 96, 86)
 margin = Rect2(32, 38, 64, 74)
+
+[sub_resource type="Resource" id="Resource_yhvnh"]
+script = ExtResource("2_wf6jy")
+method = 2
+target_species_id = 71
+trigger_raw = "use-item"
+item_id = 85
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bmv5e"]
 atlas = ExtResource("2_3k5yi")
@@ -66,6 +74,7 @@ capture_rate = 120
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_yhvnh")]
 description = "Cuando tiene hambre, engulle a todo lo que
 se mueve. La pobre presa acaba disuelta en
 sus ácidos."

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ntaeb"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_jx2q7"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_xgmq3"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_j28ji"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_0u08k"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="5_ym4cb"]
@@ -25,6 +26,13 @@ margin = Rect2(28, 32, 54, 62)
 atlas = ExtResource("1_ntaeb")
 region = Rect2(1832, 5744, 106, 98)
 margin = Rect2(28, 32, 54, 62)
+
+[sub_resource type="Resource" id="Resource_qkxbu"]
+script = ExtResource("2_xgmq3")
+method = 2
+target_species_id = 34
+trigger_raw = "use-item"
+item_id = 81
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ltyja"]
 atlas = ExtResource("2_jx2q7")
@@ -62,6 +70,7 @@ capture_rate = 120
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_qkxbu")]
 description = "Es nervioso y agresivo por naturaleza. Cuando
 suben sus niveles de adrenalina, la concentración
 de toxinas en su veneno aumenta."

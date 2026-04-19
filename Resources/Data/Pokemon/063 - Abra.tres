@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_v6wyg"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_euswn"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_npmls"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_woy6p"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_hygbu"]
 [ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="5_0lbh4"]
@@ -25,6 +26,12 @@ margin = Rect2(24, 36, 52, 72)
 atlas = ExtResource("1_v6wyg")
 region = Rect2(1664, 6060, 108, 88)
 margin = Rect2(24, 36, 52, 72)
+
+[sub_resource type="Resource" id="Resource_c2pr4"]
+script = ExtResource("2_npmls")
+target_species_id = 64
+trigger_raw = "level-up"
+min_level = 16
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ptfel"]
 atlas = ExtResource("2_euswn")
@@ -65,6 +72,7 @@ capture_rate = 200
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_c2pr4")]
 description = "Puede teletransportarse mientras duerme. Se
 dice que, cuanto más profundo sea su sueño,
 mayor será la distancia a la que se desplace."

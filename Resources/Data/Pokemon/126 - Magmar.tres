@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_eqklr"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_awpy6"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_kxp3p"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_dlwwt"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_dy2ju"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="5_658gj"]
@@ -25,6 +26,13 @@ margin = Rect2(18, 18, 36, 36)
 atlas = ExtResource("1_eqklr")
 region = Rect2(1832, 4344, 124, 124)
 margin = Rect2(18, 18, 36, 36)
+
+[sub_resource type="Resource" id="Resource_cd7t7"]
+script = ExtResource("2_kxp3p")
+method = 1
+target_species_id = 467
+trigger_raw = "trade"
+held_item_id = 300
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b72q4"]
 atlas = ExtResource("2_awpy6")
@@ -65,6 +73,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
+evolutions = [SubResource("Resource_cd7t7")]
 description = "Un Pokémon cuyo cuerpo está siempre envuelto
 en llamas. Es temido porque se lo considera un
 causante potencial de incendios."

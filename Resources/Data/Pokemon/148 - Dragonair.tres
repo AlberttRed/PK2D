@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://27kup60y5gd0"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_qbx2f"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_r8iuu"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_ufpj4"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_u85v8"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_7ky0k"]
@@ -25,6 +26,12 @@ margin = Rect2(20, 10, 40, 22)
 atlas = ExtResource("1_qbx2f")
 region = Rect2(448, 3728, 120, 138)
 margin = Rect2(20, 10, 40, 22)
+
+[sub_resource type="Resource" id="Resource_dssl8"]
+script = ExtResource("2_r8iuu")
+target_species_id = 149
+trigger_raw = "level-up"
+min_level = 55
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j4bqf"]
 atlas = ExtResource("2_ufpj4")
@@ -64,6 +71,7 @@ gender_rate = 4
 capture_rate = 45
 base_happiness = 35
 hatch_counter = 40
+evolutions = [SubResource("Resource_dssl8")]
 description = "Acumula energía en las esferas de la cola para
 controlar el clima. La sutil aura que lo rodea le
 confiere un aspecto misterioso y místico."

@@ -476,11 +476,9 @@ func _start_evolution_impl(pokemon: Pokemon, target_species_id: int, origin_cont
 	add_child(ui_layer)
 	# Debajo del MessageBox global (MSG z_index 200) para que los textos HGSS queden visibles encima.
 	ui_layer.z_index = 100
-	var prev_locked := input_locked
-	input_locked = true
+	# No usar input_locked aquí: bloquea la ruta _input de DisplayManager y el MessageBox no recibe ui_accept (se queda colgado).
 	var ctrl = EvolutionControllerScr.new()
 	await ctrl.run(ui_layer, pokemon, target_species_id, origin_context)
-	input_locked = prev_locked
 	if is_instance_valid(ui_layer):
 		ui_layer.queue_free()
 
@@ -636,16 +634,15 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Guardar el ganador
 	_battle_winner = _winner_side
 
-	# Hacer fade in (a negro) para ocultar la batalla
+	# Fundido a negro: oculta la batalla; mantenemos pantalla negra hasta evoluciones (si hay).
 	await fade_layer.fade_in(0.3)
 
-	# Ocultar la escena de batalla
 	BattleNew.cleanup_battle()
 
-	# Hacer fade out para revelar el overworld
-	await fade_layer.fade_out(0.3)
-
 	await _run_pending_evolutions_post_battle()
+
+	# Revelar overworld solo cuando ya no hay evolución pendiente ni UI encima del negro.
+	await fade_layer.fade_out(0.3)
 
 	# Emitir señal de batalla terminada (señal de DisplayManager)
 	battle_finished.emit(_winner_side)

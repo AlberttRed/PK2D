@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_73dvl"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_c0jc3"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_idi1a"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_3lquy"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_8fwll"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_iipfd"]
@@ -25,6 +26,105 @@ margin = Rect2(32, 40, 64, 76)
 atlas = ExtResource("1_73dvl")
 region = Rect2(1664, 6288, 96, 84)
 margin = Rect2(32, 40, 64, 76)
+
+[sub_resource type="Resource" id="Resource_cax5y"]
+script = ExtResource("2_idi1a")
+method = 2
+target_species_id = 134
+trigger_raw = "use-item"
+item_id = 84
+
+[sub_resource type="Resource" id="Resource_8ia2g"]
+script = ExtResource("2_idi1a")
+method = 2
+target_species_id = 135
+trigger_raw = "use-item"
+item_id = 83
+
+[sub_resource type="Resource" id="Resource_pdt3p"]
+script = ExtResource("2_idi1a")
+method = 2
+target_species_id = 136
+trigger_raw = "use-item"
+item_id = 82
+
+[sub_resource type="Resource" id="Resource_hcdwr"]
+script = ExtResource("2_idi1a")
+target_species_id = 196
+trigger_raw = "level-up"
+min_happiness = 160
+time_of_day = "day"
+
+[sub_resource type="Resource" id="Resource_1ld0v"]
+script = ExtResource("2_idi1a")
+target_species_id = 197
+trigger_raw = "level-up"
+min_happiness = 160
+time_of_day = "night"
+
+[sub_resource type="Resource" id="Resource_nrw0p"]
+script = ExtResource("2_idi1a")
+target_species_id = 470
+trigger_raw = "level-up"
+location_id = 8
+
+[sub_resource type="Resource" id="Resource_f3tix"]
+script = ExtResource("2_idi1a")
+target_species_id = 470
+trigger_raw = "level-up"
+location_id = 375
+
+[sub_resource type="Resource" id="Resource_13t6v"]
+script = ExtResource("2_idi1a")
+target_species_id = 470
+trigger_raw = "level-up"
+location_id = 650
+
+[sub_resource type="Resource" id="Resource_1c48u"]
+script = ExtResource("2_idi1a")
+method = 2
+target_species_id = 470
+trigger_raw = "use-item"
+item_id = 85
+
+[sub_resource type="Resource" id="Resource_shuhc"]
+script = ExtResource("2_idi1a")
+target_species_id = 471
+trigger_raw = "level-up"
+location_id = 48
+
+[sub_resource type="Resource" id="Resource_r5nrl"]
+script = ExtResource("2_idi1a")
+target_species_id = 471
+trigger_raw = "level-up"
+location_id = 380
+
+[sub_resource type="Resource" id="Resource_iymjw"]
+script = ExtResource("2_idi1a")
+target_species_id = 471
+trigger_raw = "level-up"
+location_id = 640
+
+[sub_resource type="Resource" id="Resource_mmdbu"]
+script = ExtResource("2_idi1a")
+method = 2
+target_species_id = 471
+trigger_raw = "use-item"
+item_id = 885
+
+[sub_resource type="Resource" id="Resource_vyeci"]
+script = ExtResource("2_idi1a")
+target_species_id = 700
+trigger_raw = "level-up"
+min_affection = 2
+known_move_type_id = 18
+
+[sub_resource type="Resource" id="Resource_xn2n7"]
+script = ExtResource("2_idi1a")
+target_species_id = 700
+trigger_raw = "level-up"
+min_happiness = 160
+known_move_type_id = 18
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x1s00"]
 atlas = ExtResource("2_c0jc3")
@@ -64,6 +164,7 @@ base_happiness = 50
 hatch_counter = 35
 has_gender_differences = true
 growth_rate_id = 2
+evolutions = [SubResource("Resource_cax5y"), SubResource("Resource_8ia2g"), SubResource("Resource_pdt3p"), SubResource("Resource_hcdwr"), SubResource("Resource_1ld0v"), SubResource("Resource_nrw0p"), SubResource("Resource_f3tix"), SubResource("Resource_13t6v"), SubResource("Resource_1c48u"), SubResource("Resource_shuhc"), SubResource("Resource_r5nrl"), SubResource("Resource_iymjw"), SubResource("Resource_mmdbu"), SubResource("Resource_vyeci"), SubResource("Resource_xn2n7")]
 description = "Su irregular estructura genética alberga el secreto
 de la capacidad que posee este Pokémon tan
 especial para adoptar evoluciones muy variadas."

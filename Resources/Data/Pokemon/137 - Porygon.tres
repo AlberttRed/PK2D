@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_qklj1"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_a37pg"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_ya6qt"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_mrfqg"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_ap7cy"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_4dht6"]
@@ -25,6 +26,13 @@ margin = Rect2(40, 50, 82, 96)
 atlas = ExtResource("1_qklj1")
 region = Rect2(684, 6532, 78, 64)
 margin = Rect2(40, 50, 82, 96)
+
+[sub_resource type="Resource" id="Resource_t2ljt"]
+script = ExtResource("2_ya6qt")
+method = 1
+target_species_id = 233
+trigger_raw = "trade"
+held_item_id = 229
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sywdp"]
 atlas = ExtResource("2_a37pg")
@@ -63,6 +71,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_t2ljt")]
 description = "Durante los últimos años, ha estado muy activo
 en el ciberespacio comprobando que no haya
 datos sospechosos."

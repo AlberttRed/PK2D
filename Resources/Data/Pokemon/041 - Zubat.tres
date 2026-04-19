@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bqytvi5o73fdg"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_rwv7l"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_4kkxi"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_gd6vi"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_pku68"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_h74b6"]
@@ -26,6 +27,12 @@ margin = Rect2(24, 36, 46, 68)
 atlas = ExtResource("1_rwv7l")
 region = Rect2(1528, 5796, 114, 92)
 margin = Rect2(24, 36, 46, 68)
+
+[sub_resource type="Resource" id="Resource_1xcie"]
+script = ExtResource("2_4kkxi")
+target_species_id = 42
+trigger_raw = "level-up"
+min_level = 22
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lbsx2"]
 atlas = ExtResource("2_gd6vi")
@@ -67,6 +74,7 @@ base_happiness = 50
 hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
+evolutions = [SubResource("Resource_1xcie")]
 description = "Habitan en cuevas donde no llegan los rayos del
 sol. De día, se acurrucan unos junto a otros para
 entrar en calor mientras duermen."

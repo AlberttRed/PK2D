@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://cyp1kmee3sj6s"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_fgq0g"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_7gkko"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_63ggj"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_7h662"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_dc8vh"]
@@ -25,6 +26,12 @@ margin = Rect2(52, 46, 108, 90)
 atlas = ExtResource("1_fgq0g")
 region = Rect2(848, 6628, 52, 70)
 margin = Rect2(52, 46, 108, 90)
+
+[sub_resource type="Resource" id="Resource_0q27a"]
+script = ExtResource("2_7gkko")
+target_species_id = 117
+trigger_raw = "level-up"
+min_level = 32
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4i5ei"]
 atlas = ExtResource("2_63ggj")
@@ -65,6 +72,7 @@ capture_rate = 225
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_0q27a")]
 description = "Nada con la gracilidad de un bailarín, creando
 remolinos a su paso, y juega con sus congéneres
 a ver quién forma el más grande."

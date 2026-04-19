@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://cen7ym3ahykhg"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_a0sie"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_2x24p"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_dlnlf"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_5gfky"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_mollg"]
@@ -25,6 +26,12 @@ margin = Rect2(34, 46, 68, 92)
 atlas = ExtResource("1_a0sie")
 region = Rect2(1632, 6460, 92, 68)
 margin = Rect2(34, 46, 68, 92)
+
+[sub_resource type="Resource" id="Resource_oyue5"]
+script = ExtResource("2_2x24p")
+target_species_id = 61
+trigger_raw = "level-up"
+min_level = 25
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jfx6n"]
 atlas = ExtResource("2_dlnlf")
@@ -63,6 +70,7 @@ capture_rate = 255
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_oyue5")]
 description = "En ríos de aguas bravas, usa sus gruesos labios
 a modo de ventosa para adherirse a las rocas."
 icon_sprite = SubResource("AtlasTexture_eefgk")

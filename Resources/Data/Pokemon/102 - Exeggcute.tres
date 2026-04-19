@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bs8yn033xaj0j"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_sk36q"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_hdvln"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_l1jcn"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_xgr32"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_e3xtk"]
@@ -26,6 +27,13 @@ margin = Rect2(28, 42, 54, 84)
 atlas = ExtResource("1_sk36q")
 region = Rect2(892, 6284, 106, 76)
 margin = Rect2(28, 42, 54, 84)
+
+[sub_resource type="Resource" id="Resource_snloo"]
+script = ExtResource("2_hdvln")
+method = 2
+target_species_id = 103
+trigger_raw = "use-item"
+item_id = 85
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fmju1"]
 atlas = ExtResource("2_l1jcn")
@@ -67,6 +75,7 @@ gender_rate = 4
 capture_rate = 90
 base_happiness = 50
 hatch_counter = 20
+evolutions = [SubResource("Resource_snloo")]
 description = "Necesita contar con la totalidad de sus seis
 miembros para mantener la calma. Si desaparece
 uno siquiera, le entran ganas de salir huyendo."

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_8ld7y"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_6c0x3"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_mt2wv"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_tdlph"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_x5al0"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_t8x7e"]
@@ -25,6 +26,24 @@ margin = Rect2(40, 30, 74, 62)
 atlas = ExtResource("1_8ld7y")
 region = Rect2(1364, 6192, 86, 98)
 margin = Rect2(40, 30, 74, 62)
+
+[sub_resource type="Resource" id="Resource_mhbin"]
+script = ExtResource("2_mt2wv")
+target_species_id = 53
+trigger_raw = "level-up"
+min_level = 28
+
+[sub_resource type="Resource" id="Resource_byb7u"]
+script = ExtResource("2_mt2wv")
+target_species_id = 53
+trigger_raw = "level-up"
+min_happiness = 160
+
+[sub_resource type="Resource" id="Resource_bcdno"]
+script = ExtResource("2_mt2wv")
+target_species_id = 863
+trigger_raw = "level-up"
+min_level = 28
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5uuf1"]
 atlas = ExtResource("2_6c0x3")
@@ -65,6 +84,7 @@ capture_rate = 255
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_mhbin"), SubResource("Resource_byb7u"), SubResource("Resource_bcdno")]
 description = "Se lava cuidadosamente la cara para que no se le
 ensucie la moneda de oro que tiene en la frente.
 No se lleva nada bien con los Meowth de Galar."

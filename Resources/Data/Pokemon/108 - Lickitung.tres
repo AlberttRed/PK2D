@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2wspc"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_6l8qf"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_vwh6l"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_fn4rh"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_wsie4"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_833ps"]
@@ -25,6 +26,12 @@ margin = Rect2(18, 30, 36, 58)
 atlas = ExtResource("1_2wspc")
 region = Rect2(564, 5084, 124, 102)
 margin = Rect2(18, 30, 36, 58)
+
+[sub_resource type="Resource" id="Resource_b15rp"]
+script = ExtResource("2_vwh6l")
+target_species_id = 463
+trigger_raw = "level-up"
+known_move_id = 205
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e6wdv"]
 atlas = ExtResource("2_6l8qf")
@@ -65,6 +72,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_b15rp")]
 description = "Se nutre principalmente de Pokémon insecto,
 a los que paraliza primero lamiéndolos con su
 larga lengua y luego engulle de un bocado."
