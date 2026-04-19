@@ -5,6 +5,8 @@
 extends Resource
 class_name Pokemon
 
+const _LevelUpStatResult := preload("res://Scripts/Runtime/LevelUpStatResult.gd")
+
 signal newMoveLearned
 
 @export_group("Datos Base")
@@ -76,14 +78,35 @@ var experienceGroup: PokemonExperienceGroup:
 
 var actualLevelExpBase: int:
 	get:
-		return experienceGroup.calculateExp(level)
+		return experienceGroup.get_total_exp_for_level(level)
 
 var nextLevelExpBase: int:
 	get:
 		if level < 100:
-			return experienceGroup.calculateExp(level + 1)
+			return experienceGroup.get_total_exp_for_level(level + 1)
 		else:
 			return totalExp
+
+
+## Segmento de barra EXP como si el Pokémon estuviera en `bar_level` con `absolute_total_exp` de total acumulado.
+func get_exp_bar_segment_values_for_level(absolute_total_exp: int, bar_level: int) -> Vector2i:
+	var grp := PokemonExperienceGroup.new(base.growth_rate_id)
+	var floor_exp: int = grp.get_total_exp_for_level(bar_level)
+	var ceil_exp: int
+	if bar_level < 100:
+		ceil_exp = grp.get_total_exp_for_level(bar_level + 1)
+	else:
+		ceil_exp = maxi(absolute_total_exp, floor_exp)
+	var span: int = maxi(ceil_exp - floor_exp, 1)
+	var seg: int = clampi(absolute_total_exp - floor_exp, 0, span)
+	return Vector2i(seg, span)
+
+
+## Progreso y tramo de la barra EXP del nivel actual (`self.level`); si `absolute_total_exp` es negativo, usa `totalExp`.
+func get_exp_bar_segment_values(absolute_total_exp: int = -1) -> Vector2i:
+	var abs_total: int = totalExp if absolute_total_exp < 0 else absolute_total_exp
+	return get_exp_bar_segment_values_for_level(abs_total, level)
+
 
 # Battle state
 var inBattle: bool = false
@@ -432,21 +455,96 @@ func addMove(_move) -> void:  # _move: Move - evitamos referencia circular
 		return
 	movements.push_back(_move)
 
-## Obtiene un stat final calculado (con IVs, EVs y naturaleza)
-func get_final_stat(stat: StatsEnum.Values, _level: int = self.level) -> int:
-	var base_stat = base_stats.get(stat, 0)
-	var iv = ivs.get(stat, 0)
-	var ev = evs.get(stat, 0)
-
-	var total = ((2 * base_stat + iv + int(ev / 4)) * _level) / 100
+## Fórmula estándar (Gen 3+): base, IV, EV/4, nivel; naturaleza ×1.1/×0.9 en stats no-HP.
+func calculate_final_stat(stat: StatsEnum.Values, for_level: int) -> int:
+	if base == null:
+		return 0
+	var base_stat: int = base_stats.get(stat, 0)
+	var iv: int = ivs.get(stat, 0)
+	var ev: int = evs.get(stat, 0)
+	var ev_quarter: int = int(floor(float(ev) / 4.0))
+	var inner: int = int(floor(
+		(2.0 * float(base_stat) + float(iv) + float(ev_quarter)) * float(for_level) / 100.0
+	))
 
 	if stat == StatsEnum.Values.HP:
-		return int(total) + _level + 10
-	else:
-		var multiplier = 1.0
-		if nature:
-			multiplier = nature.get_stat_multiplier(stat)
-		return int((total + 5) * multiplier)
+		return inner + for_level + 10
+
+	var mult: float = 1.0
+	if nature != null:
+		mult = nature.get_stat_multiplier(stat)
+	return int(floor((inner + 5) * mult))
+
+
+## Delegación habitual usando el nivel actual del Pokémon (o uno indicado).
+func get_final_stat(stat: StatsEnum.Values, _level: int = self.level) -> int:
+	return calculate_final_stat(stat, _level)
+
+
+## Tras subir de nivel (campo `level` ya actualizado). Ajusta PS actuales por delta de PS máximos; no toca PP ni estado de combate.
+func apply_stats_after_level_up(old_level: int) -> RefCounted:
+	var r: RefCounted = _LevelUpStatResult.new()
+	r.old_level = old_level
+	r.new_level = level
+	var main_stats: Array[StatsEnum.Values] = [
+		StatsEnum.Values.HP,
+		StatsEnum.Values.ATTACK,
+		StatsEnum.Values.DEFENSE,
+		StatsEnum.Values.SP_ATTACK,
+		StatsEnum.Values.SP_DEFENSE,
+		StatsEnum.Values.SPEED,
+	]
+	for s: StatsEnum.Values in main_stats:
+		r.stats_before[s] = calculate_final_stat(s, old_level)
+		r.stats_after[s] = calculate_final_stat(s, level)
+
+	r.old_max_hp = int(r.stats_before.get(StatsEnum.Values.HP, 0))
+	r.new_max_hp = int(r.stats_after.get(StatsEnum.Values.HP, 0))
+	r.hp_actual_before = hp_actual
+	var delta_hp: int = r.new_max_hp - r.old_max_hp
+	hp_actual = clampi(hp_actual + delta_hp, 0, r.new_max_hp)
+	r.hp_actual_after = hp_actual
+
+	if OS.is_debug_build():
+		print("[LevelUp Stats] %s | Lv %d→%d | maxHP %d→%d | PS %d→%d (ΔmaxHP %+d)" % [
+			get_display_name(), old_level, level,
+			r.old_max_hp, r.new_max_hp, r.hp_actual_before, r.hp_actual_after, delta_hp,
+		])
+		print("  Atk %d→%d | Def %d→%d | SpA %d→%d | SpD %d→%d | Spe %d→%d" % [
+			r.stats_before.get(StatsEnum.Values.ATTACK, 0), r.stats_after.get(StatsEnum.Values.ATTACK, 0),
+			r.stats_before.get(StatsEnum.Values.DEFENSE, 0), r.stats_after.get(StatsEnum.Values.DEFENSE, 0),
+			r.stats_before.get(StatsEnum.Values.SP_ATTACK, 0), r.stats_after.get(StatsEnum.Values.SP_ATTACK, 0),
+			r.stats_before.get(StatsEnum.Values.SP_DEFENSE, 0), r.stats_after.get(StatsEnum.Values.SP_DEFENSE, 0),
+			r.stats_before.get(StatsEnum.Values.SPEED, 0), r.stats_after.get(StatsEnum.Values.SPEED, 0),
+		])
+
+	return r
+
+
+## Stats entre dos niveles consecutivos, sin mutar `level` (p. ej. diálogos de subida uno a uno con varios niveles de golpe).
+func level_up_stat_changes_between(from_level: int, to_level: int) -> RefCounted:
+	var r: RefCounted = _LevelUpStatResult.new()
+	if to_level != from_level + 1:
+		push_warning("Pokemon.level_up_stat_changes_between: se espera to_level == from_level + 1 (got %d, %d)" % [from_level, to_level])
+	r.old_level = from_level
+	r.new_level = to_level
+	var main_stats: Array[StatsEnum.Values] = [
+		StatsEnum.Values.HP,
+		StatsEnum.Values.ATTACK,
+		StatsEnum.Values.DEFENSE,
+		StatsEnum.Values.SP_ATTACK,
+		StatsEnum.Values.SP_DEFENSE,
+		StatsEnum.Values.SPEED,
+	]
+	for s: StatsEnum.Values in main_stats:
+		r.stats_before[s] = calculate_final_stat(s, from_level)
+		r.stats_after[s] = calculate_final_stat(s, to_level)
+	r.old_max_hp = int(r.stats_before.get(StatsEnum.Values.HP, 0))
+	r.new_max_hp = int(r.stats_after.get(StatsEnum.Values.HP, 0))
+	r.hp_actual_before = hp_actual
+	r.hp_actual_after = hp_actual
+	return r
+
 
 func get_base_stat(stat: StatsEnum.Values) -> int:
 	return base_stats.get(stat, 0)
@@ -457,14 +555,13 @@ func get_iv(stat: StatsEnum.Values) -> int:
 func get_ev(stat: StatsEnum.Values) -> int:
 	return evs.get(stat, 0)
 
-## Sube de nivel
+## Sube un nivel y recalcula stats (misma regla que subida por EXP).
 func levelUP() -> void:
-	var previousHP: float = get_final_stat(StatsEnum.Values.HP)
+	if level >= 100:
+		return
+	var old_level: int = level
 	level += 1
-	var newHP: float = get_final_stat(StatsEnum.Values.HP)
-	var incrHP: float = (newHP - previousHP) / previousHP * 100.0
-	var hpAdd = ceil(hp_actual * (incrHP / 100.0))
-	hp_actual = hp_actual + hpAdd
+	apply_stats_after_level_up(old_level)
 
 ## Verifica si aprendió un nuevo movimiento al subir de nivel
 func checkNewLevelMoveLearned() -> void:

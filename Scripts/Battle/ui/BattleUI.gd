@@ -2,6 +2,8 @@ extends Control
 
 class_name BattleUI
 
+const _LEVELUP_STATS_SCENE := preload("res://Scenes/UI/LevelUP/LEVELUP.tscn")
+
 @onready var message_controller:BattleMessageController = $MessageController
 @onready var field_ui:FieldUI = $FieldUI
 #@onready var party_ui = $PartyUI
@@ -11,11 +13,16 @@ class_name BattleUI
 @onready var target_selector_ui = $TargetSelectorUI
 var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
+var _level_up_stats_panel: Panel = null
 const FAMILY := MessageFamily.Values
 
 func _ready() -> void:
 	result_display.ui = self
 	visible = false
+	_level_up_stats_panel = _LEVELUP_STATS_SCENE.instantiate() as Panel
+	add_child(_level_up_stats_panel)
+	_level_up_stats_panel.visible = false
+	_level_up_stats_panel.z_index = 15
 
 func show_trainer_sprites():
 	$FieldUI/PlayerBase/TrainerA.visible = true
@@ -226,6 +233,41 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 # Mensaje de debilitamiento
 func show_faint_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_faint_message(pokemon))
+
+
+func show_gained_exp_message(battle_pokemon: BattlePokemon, exp_gained: int) -> void:
+	await show_message_from_dict(message_controller.get_gained_exp_message(battle_pokemon, exp_gained))
+	clear_message_box()
+
+
+func show_level_up_message(battle_pokemon: BattlePokemon, new_level: int) -> void:
+	print("¡%s subió al nivel %d!" % [battle_pokemon.get_name(), new_level])
+	await show_message_from_dict(message_controller.get_level_up_message(battle_pokemon, new_level))
+	clear_message_box()
+
+
+## Una sola subida (mensaje + paneles de stats para ese escalón `new_level - 1` → `new_level`).
+func show_level_up_dialog_for_single_level(bp: BattlePokemon, new_level: int) -> void:
+	if bp == null or bp.base_data == null:
+		return
+	var stat_changes: RefCounted = bp.base_data.level_up_stat_changes_between(new_level - 1, new_level)
+	await show_level_up_message(bp, new_level)
+	await show_level_up_stat_panels(stat_changes)
+
+
+## Resultado de `PokemonLevelGrowth.LevelUpResult` (campo `stat_changes`). Dos pantallas como en el proyecto antiguo.
+func show_level_up_stat_panels(stat_changes: Variant) -> void:
+	if stat_changes == null or _level_up_stats_panel == null:
+		return
+	await _level_up_stats_panel.show_stats_increment(stat_changes)
+	await _level_up_stats_panel.show_final_stats(stat_changes)
+
+
+func show_level_up_dialog_sequence(bp: BattlePokemon, lvl_res: Variant) -> void:
+	if lvl_res == null:
+		return
+	for lv: int in range(lvl_res.old_level + 1, lvl_res.new_level + 1):
+		await show_level_up_dialog_for_single_level(bp, lv)
 
 
 # API unificada por variante (source es SIEMPRE int id)

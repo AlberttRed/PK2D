@@ -333,6 +333,23 @@ func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
 		"showIconAtEnd": true
 	}
 
+
+func get_gained_exp_message(battle_pokemon: BattlePokemon, exp_gained: int) -> Dictionary:
+	return {
+		"type": "input",
+		"text": "¡%s ha ganado %d Puntos de Experiencia!" % [battle_pokemon.get_name(), exp_gained],
+		"showIconAtEnd": true
+	}
+
+
+func get_level_up_message(battle_pokemon: BattlePokemon, new_level: int) -> Dictionary:
+	return {
+		"type": "input",
+		"text": "¡%s subió al nivel %d!" % [battle_pokemon.get_name(), new_level],
+		"showIconAtEnd": true
+	}
+
+
 func get_no_target_message(user: BattlePokemon) -> Dictionary:
 	return {
 		"type": "wait",

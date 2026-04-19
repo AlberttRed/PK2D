@@ -1,6 +1,9 @@
 extends Node2D
 class_name BattleSpot
 
+## Se emite al asignar un Pokémon al terreno (`load_active_pokemon`). Escucha `BattleController` (u otro orquestador), no lógica de EXP aquí.
+signal active_pokemon_loaded(pokemon: BattlePokemon)
+
 var index = null
 var pokemon: BattlePokemon = null
 var side: BattleSide
@@ -51,6 +54,8 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 		BattleEffectController.add_pokemon_effect(_pokemon, effect)
 
 	_register_persistent_ailment_effect_if_needed(_pokemon)
+
+	active_pokemon_loaded.emit(_pokemon)
 
 
 func get_active_pokemon() -> BattlePokemon:

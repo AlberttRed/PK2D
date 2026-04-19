@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://bqjj24te0tb7r"]
+
+[ext_resource type="Texture2D" uid="uid://be0fc7g0fhr4s" path="res://Sprites/UI/Choices Skins/choice dp.png" id="1_pm1k3"]
+[ext_resource type="Script" uid="uid://d1tae7u7vjwa3" path="res://Scripts/UI/LevelUP/LEVELUP.gd" id="2_g4n0e"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="6_r050p"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3nmwb"]
+texture = ExtResource("1_pm1k3")
+texture_margin_left = 27.972
+texture_margin_top = 12.432
+texture_margin_right = 27.8369
+texture_margin_bottom = 12.0266
+region_rect = Rect2(4, 4, 40, 40)
+
+[node name="LEVELUP" type="Panel"]
+z_index = 2
+offset_left = 296.0
+offset_top = 86.0
+offset_right = 508.0
+offset_bottom = 300.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_3nmwb")
+script = ExtResource("2_g4n0e")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -20.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Stats" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.58
+
+[node name="HP" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "PS Máx."
+
+[node name="Attack" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "Ataque"
+
+[node name="Defense" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "Defensa"
+
+[node name="SpAttack" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "At. Esp."
+
+[node name="SpDefense" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "Def. Esp."
+
+[node name="Speed" parent="HBoxContainer/Stats" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = "Veloc."
+
+[node name="StatsValues" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HPValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"
+
+[node name="AttackValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"
+
+[node name="DefenseValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"
+
+[node name="SpAttackValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"
+
+[node name="SpDefenseValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"
+
+[node name="SpeedValue" parent="HBoxContainer/StatsValues" instance=ExtResource("6_r050p")]
+layout_mode = 2
+text = " + 2"

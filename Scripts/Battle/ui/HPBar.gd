@@ -17,20 +17,31 @@ const SPRITE_PLAYER_SINGLE = preload("res://Sprites/Pictures/battlePlayerBoxS.pn
 const SPRITE_PLAYER_DOUBLE = preload("res://Sprites/Pictures/battlePlayerBoxD.png")
 const SPRITE_ENEMY_SINGLE  = preload("res://Sprites/Pictures/battleFoeBoxS.png")
 const SPRITE_ENEMY_DOUBLE  = preload("res://Sprites/Pictures/battleFoeBoxD.png")
+const _PokemonExperienceGroup := preload("res://Scripts/Runtime/PokemonExperienceGroup.gd")
+
+func _ready() -> void:
+	# Misma escena que la barra de PS: no aplicar verde/amarillo/rojo al % (es trozo de EXP, no HP).
+	exp_bar.use_hp_color_tiers = false
 
 func init(_pokemon: BattlePokemon) -> void:
 	pokemon = _pokemon
 
 	# Inicializar barras
 	health_bar.set_values(pokemon.hp, pokemon.total_hp)
-	exp_bar.set_values(pokemon.base_data.totalExp, pokemon.base_data.nextLevelExpBase)
+	var seg: Vector2i = pokemon.base_data.get_exp_bar_segment_values()
+	exp_bar.set_values(seg.x, seg.y)
 
 	# Inicializar UI general
-	update_ui()
+	refresh_panel_labels()
 
-func update_ui() -> void:
+
+## `level_display_override`: si no es null, fija el número de nivel en caja (p. ej. animación EXP: aún el nivel antiguo).
+func refresh_panel_labels(level_display_override = null) -> void:
 	lbl_name.setText(pokemon.get_name())
-	lbl_level.setText(pokemon.get_level())
+	if level_display_override != null:
+		lbl_level.setText(str(level_display_override))
+	else:
+		lbl_level.setText(str(pokemon.get_level()))
 	print(pokemon.get_name() +":" + str(pokemon.base_data.gender))
 	match pokemon.base_data.gender:
 		CONST.GENEROS.HEMBRA:
@@ -43,6 +54,14 @@ func update_ui() -> void:
 			lbl_gender.text = ""
 
 	update_status_ui()
+
+
+## Alinea la barra de PS con `pokemon.hp` / `pokemon.total_hp` (p. ej. tras subir de nivel y `refresh_derived_stats_from_base`).
+func sync_health_bar_from_pokemon() -> void:
+	if pokemon == null:
+		return
+	health_bar.set_values(pokemon.hp, pokemon.total_hp)
+
 
 func update_status_ui() -> void:
 	# status está en BattlePokemon, no en Pokemon (base_data)
@@ -74,8 +93,62 @@ func increase_hp_by(hp: int) -> void:
 	updated.emit()
 
 func update_exp(exp_value: int) -> void:
-	await exp_bar.animate_to(exp_value)
 	pokemon.base_data.totalExp = exp_value
+	var seg: Vector2i = pokemon.base_data.get_exp_bar_segment_values(exp_value)
+	exp_bar.set_values(seg.x, seg.y)
+	updated.emit()
+
+
+## EXP final ya está aplicada en runtime. Si hay subida, `level_up_message_fn(battle_pokemon, nivel_alcanzado)` se invoca tras cada nivel; la barra ya está reiniciada para ese nivel (antes del trozo EXP restante).
+func animate_exp_bar_gain(
+	previous_total_exp: int,
+	new_total_exp: int,
+	level_before_gain: int,
+	levels_gained: int,
+	level_up_message_fn: Callable = Callable()
+) -> void:
+	var mon := pokemon.base_data
+	var target_level: int = mon.level
+
+	if levels_gained <= 0:
+		var from_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(previous_total_exp, level_before_gain)
+		var to_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(new_total_exp, level_before_gain)
+		exp_bar.set_values(from_seg.x, from_seg.y)
+		await exp_bar.animate_to(to_seg.x)
+		updated.emit()
+		return
+
+	var grp := _PokemonExperienceGroup.new(mon.base.growth_rate_id)
+	var L: int = level_before_gain
+	var e: int = previous_total_exp
+
+	while L < target_level:
+		var need: int = grp.get_total_exp_for_level(L + 1)
+		if new_total_exp < need:
+			break
+		if e < need:
+			var from_seg2: Vector2i = mon.get_exp_bar_segment_values_for_level(e, L)
+			var to_seg2: Vector2i = mon.get_exp_bar_segment_values_for_level(need, L)
+			exp_bar.set_values(from_seg2.x, from_seg2.y)
+			await exp_bar.animate_to(to_seg2.x)
+			e = need
+		var reached: int = L + 1
+		lbl_level.setText(str(reached))
+		if reached == target_level:
+			sync_health_bar_from_pokemon()
+		var start_new_lvl: Vector2i = mon.get_exp_bar_segment_values_for_level(e, reached)
+		exp_bar.set_values(start_new_lvl.x, start_new_lvl.y)
+		if level_up_message_fn.is_valid() and pokemon != null:
+			await level_up_message_fn.call(pokemon, reached)
+		L += 1
+
+	if e < new_total_exp:
+		var from_seg3: Vector2i = mon.get_exp_bar_segment_values_for_level(e, L)
+		var to_seg3: Vector2i = mon.get_exp_bar_segment_values_for_level(new_total_exp, L)
+		exp_bar.set_values(from_seg3.x, from_seg3.y)
+		await exp_bar.animate_to(to_seg3.x)
+
+	refresh_panel_labels()
 	updated.emit()
 
 func setup_for(side_type: int, mode: int) -> void:
