@@ -72,5 +72,10 @@ func deserialize(data: Dictionary) -> Pokemon:
 	mon.major_status = int(data.get("major_status", int(CONST.STATUS.OK)))
 
 	mon.totalExp = int(data.get("totalExp", mon.actualLevelExpBase))
+
+	var pe: Variant = data.get("pending_evolution", {})
+	if pe is Dictionary:
+		mon.pending_evolution = (pe as Dictionary).duplicate()
+
 	mon._update_resource_name()
 	return mon

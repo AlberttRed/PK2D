@@ -10,6 +10,9 @@ const _MoveLearnResult := preload("res://Scripts/Runtime/MoveLearnResult.gd")
 
 signal newMoveLearned
 
+const EvolutionCheckResult := preload("res://Scripts/Runtime/EvolutionCheckResult.gd")
+const PokemonEvolutionRowScr := preload("res://Scripts/Resources/Classes/PokemonEvolutionRow.gd")
+
 @export_group("Datos Base")
 ## ID del Pokémon (usa PokemonsEnum para ver la lista)
 ## Se cargará automáticamente el PokemonData desde DatabaseService
@@ -68,6 +71,8 @@ var newLearningMove = null  # Move
 ## Cola pendiente para resolver por UI cuando no hay hueco (4 movimientos).
 ## Cada entrada: { "move": Move, "level": int, "learn_type": int }
 var pending_move_learnings: Array[Dictionary] = []
+## Si hay evolución por nivel pendiente: `target_species_id`, `method`, `required_level` (clave acorde a PBI).
+var pending_evolution: Dictionary = {}
 var trainer_id: int = 1234
 var original_trainer: String = "Red"
 var capture_date: String = ""
@@ -635,6 +640,7 @@ func levelUP() -> void:
 	var old_level: int = level
 	level += 1
 	apply_stats_after_level_up(old_level)
+	check_level_evolution()
 
 ## Verifica/ejecuta aprendizaje al nivel actual y devuelve la lista de movimientos detectados en ese nivel.
 func checkNewLevelMoveLearned() -> Array[Move]:
@@ -685,6 +691,135 @@ func get_display_name() -> String:
 	if nickname != "":
 		return nickname
 	return base.Name
+
+
+func _coerce_evolution_int(value: Variant) -> int:
+	if value == null:
+		return 0
+	if typeof(value) == TYPE_INT:
+		return int(value)
+	var s := str(value).strip_edges()
+	if s.is_valid_int():
+		return int(s)
+	return 0
+
+
+func _parse_level_up_evolution_entries(data: PokemonData) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if data == null:
+		return out
+	var logical_i := 0
+	for row_any in data.evolutions:
+		var row := row_any as PokemonEvolutionRowScr
+		if row == null:
+			continue
+		if row.method != CONST.EVOL_LVL_UP:
+			continue
+		if row.min_level <= 0:
+			continue
+		if row.target_species_id <= 0:
+			push_warning(
+				"Pokemon._parse_level_up_evolution_entries: target_species_id inválido (%s)."
+				% [data.Name if data else "?"]
+			)
+			continue
+		out.append({
+			"index": logical_i,
+			"method": CONST.EVOL_LVL_UP,
+			"required_level": row.min_level,
+			"target_id": row.target_species_id,
+		})
+		logical_i += 1
+	return out
+
+
+## Evalúa evolución por nivel (LEVEL_UP) tras subida de nivel. No ejecuta cambio de especie.
+func check_level_evolution() -> EvolutionCheckResult:
+	var res: EvolutionCheckResult = EvolutionCheckResult.new()
+	pending_evolution.clear()
+	if base == null:
+		return res
+
+	var candidates: Array[Dictionary] = []
+	var entries := _parse_level_up_evolution_entries(base)
+	for e in entries:
+		if int(e.get("method", -1)) != CONST.EVOL_LVL_UP:
+			continue
+		var req: int = int(e.get("required_level", 0))
+		var tid: int = int(e.get("target_id", 0))
+		if level < req:
+			continue
+		if DatabaseService.get_pokemon(tid) == null:
+			push_warning(
+				"Pokemon.check_level_evolution: objetivo species_id=%d no existe en DatabaseService; entrada ignorada." % tid
+			)
+			continue
+		candidates.append(e)
+
+	if candidates.is_empty():
+		return res
+
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var la: int = int(a.get("required_level", 999))
+		var lb: int = int(b.get("required_level", 999))
+		if la != lb:
+			return la < lb
+		return int(a.get("index", 0)) < int(b.get("index", 0))
+	)
+
+	var pick: Dictionary = candidates[0]
+	res.can_evolve = true
+	res.target_species_id = int(pick.get("target_id", 0))
+	res.method = CONST.EVOL_LVL_UP
+	res.required_level = int(pick.get("required_level", 0))
+
+	pending_evolution = {
+		"target_species_id": res.target_species_id,
+		"method": res.method,
+		"required_level": res.required_level,
+	}
+	return res
+
+
+## Aplica cambio de especie, recalcula stats base y ajusta PS según delta de máximo (Gen 3+ habitual).
+func apply_species_evolution(target_species_id: int) -> bool:
+	var new_base: PokemonData = DatabaseService.get_pokemon(target_species_id)
+	if new_base == null:
+		push_warning("Pokemon.apply_species_evolution: species_id=%d no existe; no se modifica el Pokémon." % target_species_id)
+		return false
+
+	var old_max_hp: int = get_final_stat(StatsEnum.Values.HP)
+
+	pokemon_id = target_species_id as PokemonsEnum.Values
+	base = new_base
+	_refresh_base_stats_from_species()
+	_load_learnable_moves()
+
+	if not Engine.is_editor_hint():
+		ability_id = _calculate_ability() as AbilitiesEnum.Values
+		ability = DatabaseService.get_ability(ability_id)
+
+	var new_max_hp: int = get_final_stat(StatsEnum.Values.HP)
+	hp_actual = clampi(hp_actual + (new_max_hp - old_max_hp), 0, new_max_hp)
+
+	pending_evolution.clear()
+	_update_resource_name()
+	return true
+
+
+func _refresh_base_stats_from_species() -> void:
+	if base == null:
+		return
+	base_stats = {
+		StatsEnum.Values.HP: base.hp_base,
+		StatsEnum.Values.ATTACK: base.attack_base,
+		StatsEnum.Values.DEFENSE: base.defense_base,
+		StatsEnum.Values.SP_ATTACK: base.special_attack_base,
+		StatsEnum.Values.SP_DEFENSE: base.special_defense_base,
+		StatsEnum.Values.SPEED: base.speed_base,
+		StatsEnum.Values.ACCURACY: 100,
+		StatsEnum.Values.EVASION: 100,
+	}
 
 ## Helpers de acceso a propiedades base
 func get_type1() -> TypeData:
@@ -760,6 +895,7 @@ func to_serializable_state() -> Dictionary:
 	return {
 		"v": SERIALIZE_VERSION,
 		"pokemon_id": int(pokemon_id),
+		"pending_evolution": pending_evolution.duplicate(),
 		"nickname": nickname,
 		"level": level,
 		"gender": gender,

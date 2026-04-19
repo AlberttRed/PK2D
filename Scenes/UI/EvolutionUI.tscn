@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://c480jr7hvgjsg"]
+
+[ext_resource type="Texture2D" uid="uid://wpec058yl1qr" path="res://Sprites/UI/Others/evolutionbg.png" id="1_4mbmk"]
+[ext_resource type="Texture2D" uid="uid://c4llr0gst3evk" path="res://Sprites/Batalla/007.png" id="2_fe3v1"]
+[ext_resource type="Script" path="res://Scripts/UI/EvolutionUI.gd" id="3_evo"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fe3v1"]
+texture = ExtResource("1_4mbmk")
+
+[node name="EvolutionUI" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_fe3v1")
+script = ExtResource("3_evo")
+
+[node name="PokemonSprite" type="Sprite2D" parent="."]
+position = Vector2(256, 200)
+texture = ExtResource("2_fe3v1")

@@ -330,6 +330,7 @@ func _mirror_player_party_to_gamestate(participant: BattleParticipant) -> void:
 		gs_mon.major_status = runtime_mon.major_status
 		gs_mon.level = runtime_mon.level
 		gs_mon.totalExp = runtime_mon.totalExp
+		gs_mon.pending_evolution = runtime_mon.pending_evolution.duplicate()
 		var n_moves: int = mini(gs_mon.movements.size(), runtime_mon.movements.size())
 		for j in range(n_moves):
 			var gs_mv: Move = gs_mon.movements[j] as Move
