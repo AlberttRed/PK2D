@@ -11,6 +11,8 @@ class LevelUpResult extends RefCounted:
 	var exp_to_next_level: int = 0
 	## Recalculo de stats (HP + resto); null si no hubo subida. Ver `LevelUpStatResult.gd`.
 	var stat_changes: RefCounted = null
+	## int(level alcanzado) -> MoveLearnResult (ver `MoveLearnResult.gd`).
+	var move_learning_by_level: Dictionary = {}
 
 
 ## Sube `pokemon.level` en bucle mientras `totalExp` alcance los umbrales siguientes (máx. 100).
@@ -31,6 +33,8 @@ static func check_and_apply_level_up(pokemon: Pokemon) -> LevelUpResult:
 			break
 		pokemon.level += 1
 		res.levels_gained += 1
+		var move_res: RefCounted = pokemon.resolve_level_up_move_learning_for_level(pokemon.level)
+		res.move_learning_by_level[pokemon.level] = move_res
 
 	res.new_level = pokemon.level
 

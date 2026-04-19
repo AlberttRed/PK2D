@@ -287,8 +287,8 @@ func grant_experience_after_enemy_ko(defeated_enemy: BattlePokemon, action_execu
 				spot.hp_bar.refresh_panel_labels()
 			var msg_cb := Callable()
 			if lv_gained > 0 and lvl_res != null:
-				# Sin .bind: HPBar pasa (BattlePokemon, nivel) explícito (Callable.bind + call falla el orden de args en GDScript).
-				msg_cb = Callable(ui, "show_level_up_dialog_for_single_level")
+				msg_cb = func(cb_bp: BattlePokemon, reached_level: int) -> void:
+					await ui.show_level_up_dialog_for_single_level(cb_bp, reached_level, lvl_res)
 			await spot.hp_bar.animate_exp_bar_gain(old_total, po.new_total_exp, lv_before, lv_gained, msg_cb)
 		elif lv_gained > 0 and lvl_res != null:
 			await ui.show_level_up_dialog_sequence(bp, lvl_res)

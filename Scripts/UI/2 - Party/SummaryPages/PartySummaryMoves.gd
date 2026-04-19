@@ -66,6 +66,7 @@ func open(learningMode: bool = false):
 		dm.input_cancel.connect(cancelOption)
 	if learningMode:
 		self.mode = Modes.LEARNING
+		moveIndexSelected = -1
 	else:
 		self.mode = Modes.NORMAL
 	show()
@@ -199,8 +200,8 @@ func selectOption() -> void:
 				swapMoves(moves[originMoveIndexSelected], moves[targetMoveIndexSelected])
 				select()
 	elif mode == Modes.LEARNING:
-		if moveIndex != -1:
-			moveIndexSelected = moveIndex
+		# Move0 (índice -1) = "mantener movimientos actuales" (equivale a cancelar aprendizaje).
+		moveIndexSelected = moveIndex
 		moveSelected.emit()
 
 
@@ -212,6 +213,7 @@ func cancelOption() -> void:
 			unselect(movePanels[originMoveIndexSelected])
 			originMoveIndexSelected = null
 	elif mode == Modes.LEARNING:
+		moveIndexSelected = -1
 		moveSelected.emit()
 
 
@@ -254,25 +256,27 @@ func onFocusChanged(control: Control) -> void:
 
 ## Navegación vertical entre movimientos (DisplayManager consume ui_up/down con el party abierto, así que no llega el foco automático).
 func navigate_move_focus(delta: int) -> void:
-	if mode != Modes.DETAILED:
+	if mode != Modes.DETAILED and mode != Modes.LEARNING:
 		return
-	var indices: Array[int] = []
+	var panels: Array[Panel] = []
 	for i in range(movePanels.size()):
 		if movePanels[i].visible:
-			indices.append(i)
-	if indices.is_empty():
+			panels.append(movePanels[i])
+	# En aprendizaje, Move0 (nuevo) actúa como 5º slot: va al final de la lista.
+	if mode == Modes.LEARNING and learningMovePanel != null and learningMovePanel.visible:
+		panels.append(learningMovePanel)
+	if panels.is_empty():
 		return
 	var pos_in_list: int = 0
 	if activePanel != null:
-		var panel_i: int = movePanels.find(activePanel)
-		if panel_i >= 0:
-			var found: int = indices.find(panel_i)
-			if found >= 0:
-				pos_in_list = found
-	var new_pos: int = clampi(pos_in_list + delta, 0, indices.size() - 1)
+		var found_pos: int = panels.find(activePanel)
+		if found_pos >= 0:
+			pos_in_list = found_pos
+	var list_size: int = panels.size()
+	var new_pos: int = posmod(pos_in_list + delta, list_size)
 	if new_pos == pos_in_list:
 		return
-	movePanels[indices[new_pos]].grab_focus()
+	panels[new_pos].grab_focus()
 
 
 func setSelectedPanel() -> void:
@@ -301,7 +305,10 @@ func setLearningMode() -> void:
 	setLearningPanel(true)
 	$MovePanels.position = MOVEPANELS_LEARNING_POSITION
 	moveInfo.show()
-	movePanels[0].grab_focus()
+	if movePanels.size() > 0 and movePanels[0] != null and movePanels[0].visible:
+		movePanels[0].grab_focus()
+	elif learningMovePanel != null and learningMovePanel.visible:
+		learningMovePanel.grab_focus()
 
 
 func setLearningPanel(active: bool) -> void:

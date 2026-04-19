@@ -6,6 +6,7 @@ extends Resource
 class_name Pokemon
 
 const _LevelUpStatResult := preload("res://Scripts/Runtime/LevelUpStatResult.gd")
+const _MoveLearnResult := preload("res://Scripts/Runtime/MoveLearnResult.gd")
 
 signal newMoveLearned
 
@@ -64,6 +65,9 @@ var ability: AbilityData  # Se carga desde ability_id
 var ability_slot: int = 0
 var movements: Array = []  # Array[Move]
 var newLearningMove = null  # Move
+## Cola pendiente para resolver por UI cuando no hay hueco (4 movimientos).
+## Cada entrada: { "move": Move, "level": int, "learn_type": int }
+var pending_move_learnings: Array[Dictionary] = []
 var trainer_id: int = 1234
 var original_trainer: String = "Red"
 var capture_date: String = ""
@@ -406,7 +410,10 @@ func _calculate_ability() -> int:
 ## Carga la lista de movimientos aprendibles según el PokemonData
 func _load_learnable_moves() -> void:
 	learningMoves.clear()
-	for i in range(base.learn_move_id.size()):
+	var move_count: int = mini(base.learn_move_id.size(), mini(base.learn_type.size(), base.learn_lvl.size()))
+	if move_count < base.learn_move_id.size() and OS.is_debug_build():
+		push_warning("Pokemon._load_learnable_moves: arrays de learnset desalineados para %s" % get_display_name())
+	for i in range(move_count):
 		learningMoves.push_back(
 			PokemonLearningMove.new(
 				base.learn_move_id[i] as int,
@@ -454,6 +461,72 @@ func addMove(_move) -> void:  # _move: Move - evitamos referencia circular
 		push_warning("Pokemon ya tiene 4 movimientos")
 		return
 	movements.push_back(_move)
+
+
+func knows_move_id(move_id: int) -> bool:
+	for mvar in movements:
+		var mv: Move = mvar as Move
+		if mv != null and mv.base != null and mv.base.id == move_id:
+			return true
+	return false
+
+
+func replace_move_at(index: int, new_move: Move) -> Move:
+	if new_move == null or new_move.base == null:
+		return null
+	if index < 0 or index >= movements.size():
+		return null
+	var old_move: Move = movements[index] as Move
+	movements[index] = new_move
+	return old_move
+
+
+## Devuelve TODOS los movimientos aprendibles exactamente en `at_level` para un tipo de aprendizaje.
+func get_learnable_moves_at_level(at_level: int, learn_type: int = PokemonLearningMove.Type.LVL_UP) -> Array[PokemonLearningMove]:
+	var result: Array[PokemonLearningMove] = []
+	for lm in learningMoves:
+		if lm.learningType == learn_type and lm.learningLevel == at_level:
+			result.append(lm)
+	return result
+
+
+## Lógica de aprendizaje al llegar a un nivel concreto (sin UI). Si no hay hueco, deja pendiente.
+func resolve_level_up_move_learning_for_level(learned_level: int) -> RefCounted:
+	var res: RefCounted = _MoveLearnResult.new()
+	res.level = learned_level
+	var learnables := get_learnable_moves_at_level(learned_level, PokemonLearningMove.Type.LVL_UP)
+	for lm in learnables:
+		var mv: Move = lm.getMove()
+		if mv == null or mv.base == null:
+			continue
+		res.offered_moves.append(mv)
+		if knows_move_id(mv.base.id):
+			if OS.is_debug_build():
+				print("[MoveLearn] %s ya conoce %s (Lv %d)" % [get_display_name(), mv.get_move_name(), learned_level])
+			continue
+		if movements.size() < 4:
+			movements.append(mv)
+			res.learned_moves.append(mv)
+			if OS.is_debug_build():
+				print("[MoveLearn] %s aprendió %s (Lv %d)" % [get_display_name(), mv.get_move_name(), learned_level])
+		else:
+			var pending := {
+				"move": mv,
+				"level": learned_level,
+				"learn_type": int(PokemonLearningMove.Type.LVL_UP),
+			}
+			pending_move_learnings.append(pending)
+			res.pending_moves.append(mv)
+			res.requires_decision = true
+			if OS.is_debug_build():
+				print("[MoveLearn] %s pendiente de aprender %s (Lv %d, sin hueco)" % [get_display_name(), mv.get_move_name(), learned_level])
+	return res
+
+
+func pop_next_pending_move_learning() -> Dictionary:
+	if pending_move_learnings.is_empty():
+		return {}
+	return pending_move_learnings.pop_front()
 
 ## Fórmula estándar (Gen 3+): base, IV, EV/4, nivel; naturaleza ×1.1/×0.9 en stats no-HP.
 func calculate_final_stat(stat: StatsEnum.Values, for_level: int) -> int:
@@ -563,15 +636,21 @@ func levelUP() -> void:
 	level += 1
 	apply_stats_after_level_up(old_level)
 
-## Verifica si aprendió un nuevo movimiento al subir de nivel
-func checkNewLevelMoveLearned() -> void:
+## Verifica/ejecuta aprendizaje al nivel actual y devuelve la lista de movimientos detectados en ese nivel.
+func checkNewLevelMoveLearned() -> Array[Move]:
 	newLearningMove = null
-	var newMove: PokemonLearningMove = learningMoves.filter(
-		func(move: PokemonLearningMove):
-			return move.learningType == PokemonLearningMove.Type.LVL_UP and move.learningLevel == level
-	).pop_front()
-	if newMove != null:
-		newLearningMove = newMove.getMove()
+	var learn_result: RefCounted = resolve_level_up_move_learning_for_level(level)
+	if learn_result == null:
+		return []
+	var learned_now: Array = learn_result.learned_moves
+	if not learned_now.is_empty():
+		newLearningMove = learned_now[0]
+	var offered_now: Array[Move] = []
+	for mv_var in learn_result.offered_moves:
+		var mv: Move = mv_var as Move
+		if mv != null:
+			offered_now.append(mv)
+	return offered_now
 
 ## Obtiene el IV más alto
 func get_highest_IV() -> StatsEnum.Values:

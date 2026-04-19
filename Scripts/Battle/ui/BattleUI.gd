@@ -3,6 +3,8 @@ extends Control
 class_name BattleUI
 
 const _LEVELUP_STATS_SCENE := preload("res://Scenes/UI/LevelUP/LEVELUP.tscn")
+const _MOVE_LEARNING_FLOW := preload("res://Scripts/UI/MoveLearningFlowController.gd")
+const _PARTY_SUMMARY_SCENE := preload("res://Scenes/UI/2 - Party/PartySummary.tscn")
 
 @onready var message_controller:BattleMessageController = $MessageController
 @onready var field_ui:FieldUI = $FieldUI
@@ -14,15 +16,23 @@ const _LEVELUP_STATS_SCENE := preload("res://Scenes/UI/LevelUP/LEVELUP.tscn")
 var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
 var _level_up_stats_panel: Panel = null
+var _move_learning_flow: RefCounted = null
+var _battle_move_forget_summary: PartySummary = null
 const FAMILY := MessageFamily.Values
 
 func _ready() -> void:
 	result_display.ui = self
 	visible = false
+	_move_learning_flow = _MOVE_LEARNING_FLOW.new()
 	_level_up_stats_panel = _LEVELUP_STATS_SCENE.instantiate() as Panel
 	add_child(_level_up_stats_panel)
 	_level_up_stats_panel.visible = false
 	_level_up_stats_panel.z_index = 15
+	_battle_move_forget_summary = _PARTY_SUMMARY_SCENE.instantiate() as PartySummary
+	if _battle_move_forget_summary != null:
+		add_child(_battle_move_forget_summary)
+		_battle_move_forget_summary.hide()
+		_battle_move_forget_summary.z_index = 25
 
 func show_trainer_sprites():
 	$FieldUI/PlayerBase/TrainerA.visible = true
@@ -246,13 +256,14 @@ func show_level_up_message(battle_pokemon: BattlePokemon, new_level: int) -> voi
 	clear_message_box()
 
 
-## Una sola subida (mensaje + paneles de stats para ese escalón `new_level - 1` → `new_level`).
-func show_level_up_dialog_for_single_level(bp: BattlePokemon, new_level: int) -> void:
+## Una sola subida (mensaje + paneles de stats para ese escalón `new_level - 1` → `new_level` + aprendizaje de movimientos).
+func show_level_up_dialog_for_single_level(bp: BattlePokemon, new_level: int, lvl_res: Variant = null) -> void:
 	if bp == null or bp.base_data == null:
 		return
 	var stat_changes: RefCounted = bp.base_data.level_up_stat_changes_between(new_level - 1, new_level)
 	await show_level_up_message(bp, new_level)
 	await show_level_up_stat_panels(stat_changes)
+	await _run_move_learning_for_level(bp, new_level, lvl_res)
 
 
 ## Resultado de `PokemonLevelGrowth.LevelUpResult` (campo `stat_changes`). Dos pantallas como en el proyecto antiguo.
@@ -267,7 +278,94 @@ func show_level_up_dialog_sequence(bp: BattlePokemon, lvl_res: Variant) -> void:
 	if lvl_res == null:
 		return
 	for lv: int in range(lvl_res.old_level + 1, lvl_res.new_level + 1):
-		await show_level_up_dialog_for_single_level(bp, lv)
+		await show_level_up_dialog_for_single_level(bp, lv, lvl_res)
+
+
+func _run_move_learning_for_level(bp: BattlePokemon, level_reached: int, lvl_res: Variant) -> void:
+	if _move_learning_flow == null or bp == null or bp.base_data == null or lvl_res == null:
+		return
+	var by_level: Dictionary = lvl_res.move_learning_by_level if "move_learning_by_level" in lvl_res else {}
+	var move_res: RefCounted = by_level.get(level_reached, null)
+	if move_res == null:
+		return
+	for learned_var in move_res.learned_moves:
+		var learned_move: Move = learned_var as Move
+		if learned_move == null:
+			continue
+		await _show_runtime_message("¡%s aprendió %s!" % [bp.base_data.get_display_name(), learned_move.get_move_name()])
+	for mv_var in move_res.pending_moves:
+		var pending_move: Move = mv_var as Move
+		if pending_move == null:
+			continue
+		await _move_learning_flow.start_move_learning_flow(
+			bp.base_data,
+			pending_move,
+			_MOVE_LEARNING_FLOW.OriginContext.BATTLE,
+			Callable(self, "_show_runtime_message"),
+			Callable(self, "_show_runtime_choices"),
+			Callable(self, "_select_move_to_forget_via_summary")
+		)
+		_remove_pending_move_entry(bp.base_data, pending_move, level_reached)
+
+
+func _remove_pending_move_entry(mon: Pokemon, move: Move, learned_level: int) -> void:
+	if mon == null or move == null:
+		return
+	for i in range(mon.pending_move_learnings.size()):
+		var entry: Dictionary = mon.pending_move_learnings[i]
+		var entry_move: Move = entry.get("move", null)
+		var entry_level: int = int(entry.get("level", -1))
+		if entry_move != null and entry_move.base != null and move.base != null and entry_move.base.id == move.base.id and entry_level == learned_level:
+			mon.pending_move_learnings.remove_at(i)
+			return
+
+
+func _show_runtime_message(text: String) -> void:
+	await show_message_from_dict({
+		"type": "input",
+		"text": text,
+		"showIconAtEnd": true,
+	})
+	clear_message_box()
+
+
+func _show_runtime_choices(text: String, options: Array[String]) -> int:
+	await _show_runtime_message(text)
+	return await DisplayManager.show_choices(options)
+
+
+func _select_move_to_forget_via_summary(mon: Pokemon, learning_move: Move) -> int:
+	if _battle_move_forget_summary == null or mon == null or learning_move == null:
+		return -1
+	_in_hgss_summary_input_pause(true)
+	_battle_move_forget_summary.loadedParty = [mon]
+	_battle_move_forget_summary.movingIndex = 0
+	_battle_move_forget_summary.loadPokemonInfo(mon)
+	_battle_move_forget_summary.summaryIndex = PartySummary.MOVES
+	_battle_move_forget_summary.show()
+	var moves_page: PartySummaryMoves = _battle_move_forget_summary.pages[PartySummary.MOVES] as PartySummaryMoves
+	if moves_page == null:
+		_battle_move_forget_summary.close()
+		_in_hgss_summary_input_pause(false)
+		return -1
+	moves_page.learningMove = learning_move
+	var selected_raw: Variant = await moves_page.open(true)
+	var selected_idx: int = int(selected_raw) if typeof(selected_raw) == TYPE_INT else -1
+	_battle_move_forget_summary.close()
+	_in_hgss_summary_input_pause(false)
+	return selected_idx
+
+
+func _in_hgss_summary_input_pause(paused: bool) -> void:
+	if paused:
+		actions_menu.hide()
+		moves_menu.hide()
+		target_selector_ui.hide()
+
+
+## Modal UI propia de batalla que también debe habilitar el ruteo de input global (DisplayManager).
+func has_modal_ui_visible() -> bool:
+	return _battle_move_forget_summary != null and _battle_move_forget_summary.visible
 
 
 # API unificada por variante (source es SIEMPRE int id)

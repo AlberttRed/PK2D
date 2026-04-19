@@ -107,7 +107,7 @@ func _seed_test_party_placeholder() -> void:
 		return
 	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
 	var test_mons: Array[Vector2i] = [
-		Vector2i(1, 14), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
+		Vector2i(1, 19), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
 		# Vector2i(143, 9),  # Snorlax (último añadido; descomentar para 6º slot)
 	]
 	var added := 0
@@ -133,7 +133,7 @@ func _seed_test_party_placeholder() -> void:
 		var bulba: Pokemon = player_party.get_pokemon(0)
 		if bulba != null and bulba.hp_actual > 0:
 			var max_hp: int = int(bulba.get_final_stat(StatsEnum.Values.HP))
-			bulba.hp_actual = clampi(10, 1, max_hp)
+			bulba.hp_actual = max_hp
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON
