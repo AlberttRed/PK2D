@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_akm5x"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_275i3"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_gjugn"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_cii7f"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_niuyh"]
 [ext_resource type="Resource" uid="uid://dekni3p3d2804" path="res://Resources/Data/Types/12.tres" id="5_1qtmq"]
@@ -26,6 +27,20 @@ margin = Rect2(32, 38, 64, 78)
 atlas = ExtResource("1_akm5x")
 region = Rect2(1768, 6304, 96, 82)
 margin = Rect2(32, 38, 64, 78)
+
+[sub_resource type="Resource" id="Resource_svg0w"]
+script = ExtResource("2_gjugn")
+method = 2
+target_species_id = 45
+trigger_raw = "use-item"
+item_id = 85
+
+[sub_resource type="Resource" id="Resource_1vyf2"]
+script = ExtResource("2_gjugn")
+method = 2
+target_species_id = 182
+trigger_raw = "use-item"
+item_id = 80
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ffa4d"]
 atlas = ExtResource("2_275i3")
@@ -69,6 +84,7 @@ base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 4
+evolutions = [SubResource("Resource_svg0w"), SubResource("Resource_1vyf2")]
 description = "Lo que parece baba es realmente un néctar muy
 pegajoso que se adhiere sin remisión al tocarlo."
 icon_sprite = SubResource("AtlasTexture_74g36")

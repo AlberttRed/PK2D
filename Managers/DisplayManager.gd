@@ -29,6 +29,8 @@ signal portrait_box_closed
 # === CONSTANTES ===
 const MO_OVERLAY_SCENE: PackedScene = preload("res://Scenes/UI/Overlays/MOOverlay.tscn")
 const PORTRAIT_BOX_SCENE: PackedScene = preload("res://Scenes/UI/PortraitBox.tscn")
+const EvolutionOriginContext := preload("res://Scripts/Runtime/EvolutionOriginContext.gd")
+const EvolutionControllerScr := preload("res://Scripts/UI/EvolutionController.gd")
 const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 const PARTY_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PartyController.gd")
 # === VARIABLES ===
@@ -73,6 +75,7 @@ const _UI_SCREEN_FADE_DURATION: float = 0.2
 @onready var pause_menu = $PauseMenu
 @onready var _bag_ui = $BagUI
 @onready var _party_ui = $PartyUI
+@onready var _evolution_ui = $EvolutionUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -247,6 +250,19 @@ static func play_battle_transition(texture_path: String, duration: float = 1.5) 
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance.fade_layer.play_battle_transition(texture_path, duration)
+
+## Entrada única para el flujo de evolución (party / post-batalla / mundo).
+static func start_evolution(
+	pokemon: Pokemon,
+	target_species_id: int,
+	origin_context: EvolutionOriginContext.Kind,
+	evolution_method: int = CONST.EVOL_LVL_UP
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible para start_evolution")
+		return
+	await instance._start_evolution_impl(pokemon, target_species_id, origin_context, evolution_method)
+
 
 ## Revela la escena de batalla con efecto de transición inversa
 static func reveal_battle(duration: float = 0.4) -> void:
@@ -449,6 +465,41 @@ func _is_fading() -> bool:
 func _is_visible() -> bool:
 	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible)
 
+
+func _start_evolution_impl(
+	pokemon: Pokemon,
+	target_species_id: int,
+	origin_context: EvolutionOriginContext.Kind,
+	evolution_method: int = CONST.EVOL_LVL_UP
+) -> void:
+	if _evolution_ui == null:
+		push_warning("DisplayManager._start_evolution_impl: nodo EvolutionUI no disponible")
+		return
+
+	_evolution_ui.z_index = 100
+	var ctrl = EvolutionControllerScr.new()
+	await ctrl.call("run", _evolution_ui, pokemon, target_species_id, origin_context, evolution_method)
+
+
+func _run_pending_evolutions_post_battle() -> void:
+	if GameStateService == null:
+		return
+	var party: Party = GameStateService.get_party()
+	if party == null:
+		return
+	for i in range(party.count()):
+		var mon: Pokemon = party.get_pokemon(i)
+		if mon == null:
+			continue
+		while not mon.pending_evolution.is_empty():
+			var tid: int = int(mon.pending_evolution.get("target_species_id", 0))
+			var method: int = int(mon.pending_evolution.get("method", CONST.EVOL_LVL_UP))
+			if tid <= 0:
+				mon.pending_evolution.clear()
+				break
+			await _start_evolution_impl(mon, tid, EvolutionOriginContext.Kind.POST_BATTLE, method)
+
+
 ## Método privado para iniciar batalla
 ## from_event: true si el combate fue iniciado desde un evento (no desbloquear control al terminar)
 func _start_battle(participants: Array[BattleParticipant], rules: BattleRules, from_event: bool = false) -> String:
@@ -582,13 +633,14 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Guardar el ganador
 	_battle_winner = _winner_side
 
-	# Hacer fade in (a negro) para ocultar la batalla
+	# Fundido a negro: oculta la batalla; mantenemos pantalla negra hasta evoluciones (si hay).
 	await fade_layer.fade_in(0.3)
 
-	# Ocultar la escena de batalla
 	BattleNew.cleanup_battle()
 
-	# Hacer fade out para revelar el overworld
+	await _run_pending_evolutions_post_battle()
+
+	# Revelar overworld solo cuando ya no hay evolución pendiente ni UI encima del negro.
 	await fade_layer.fade_out(0.3)
 
 	# Emitir señal de batalla terminada (señal de DisplayManager)

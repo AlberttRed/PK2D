@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://cpcbhkiv02rb8"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_qww4w"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_hl16v"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_th3ye"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_j4b1h"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_hpwkd"]
@@ -26,6 +27,12 @@ margin = Rect2(32, 44, 64, 90)
 atlas = ExtResource("1_qww4w")
 region = Rect2(1648, 6380, 96, 70)
 margin = Rect2(32, 44, 64, 90)
+
+[sub_resource type="Resource" id="Resource_vlqr2"]
+script = ExtResource("2_hl16v")
+target_species_id = 47
+trigger_raw = "level-up"
+min_level = 24
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p0b0e"]
 atlas = ExtResource("2_th3ye")
@@ -68,6 +75,7 @@ capture_rate = 190
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_vlqr2")]
 description = "Escarba en el suelo para extraer nutrientes de
 las raíces de los árboles, que las setas del lomo
 absorben después casi por completo."

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://b3mf8ncow7p5a"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_uxw2k"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_21pcj"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_70e8g"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_h771j"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_cnfeu"]
@@ -26,6 +27,33 @@ margin = Rect2(24, 52, 44, 102)
 atlas = ExtResource("1_uxw2k")
 region = Rect2(984, 6380, 116, 58)
 margin = Rect2(24, 52, 44, 102)
+
+[sub_resource type="Resource" id="Resource_mwcur"]
+script = ExtResource("2_21pcj")
+target_species_id = 80
+trigger_raw = "level-up"
+min_level = 37
+
+[sub_resource type="Resource" id="Resource_cg4u1"]
+script = ExtResource("2_21pcj")
+method = 2
+target_species_id = 80
+trigger_raw = "use-item"
+item_id = 1633
+
+[sub_resource type="Resource" id="Resource_4tgcl"]
+script = ExtResource("2_21pcj")
+method = 1
+target_species_id = 199
+trigger_raw = "trade"
+held_item_id = 198
+
+[sub_resource type="Resource" id="Resource_nophi"]
+script = ExtResource("2_21pcj")
+method = 2
+target_species_id = 199
+trigger_raw = "use-item"
+item_id = 1643
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tju6i"]
 atlas = ExtResource("2_70e8g")
@@ -68,6 +96,7 @@ capture_rate = 190
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_mwcur"), SubResource("Resource_cg4u1"), SubResource("Resource_4tgcl"), SubResource("Resource_nophi")]
 description = "Hunde la cola en el agua y la usa cual caña de
 pescar. La sustancia dulce que secreta le sirve
 de cebo para atraer a sus presas."

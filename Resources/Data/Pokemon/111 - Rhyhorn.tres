@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bvvx83p6n4btb"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_bd08s"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_27t4y"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_aum3g"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_pu581"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_n0c71"]
@@ -26,6 +27,12 @@ margin = Rect2(16, 26, 32, 52)
 atlas = ExtResource("1_bd08s")
 region = Rect2(252, 4896, 128, 108)
 margin = Rect2(16, 26, 32, 52)
+
+[sub_resource type="Resource" id="Resource_jojw4"]
+script = ExtResource("2_27t4y")
+target_species_id = 112
+trigger_raw = "level-up"
+min_level = 42
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1j5b"]
 atlas = ExtResource("2_aum3g")
@@ -66,6 +73,7 @@ capture_rate = 120
 base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
+evolutions = [SubResource("Resource_jojw4")]
 description = "La cabeza no le da para retener más de una cosa.
 Si se pone a correr, se le olvida al instante por
 qué empezó a hacerlo."

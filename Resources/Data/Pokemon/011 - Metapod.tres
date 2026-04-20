@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ssw74"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_bsnuf"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_xvn6v"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_lq8iu"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_sy0jy"]
 [ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_ahhi8"]
@@ -25,6 +26,12 @@ margin = Rect2(44, 46, 88, 92)
 atlas = ExtResource("1_ssw74")
 region = Rect2(1440, 6568, 72, 68)
 margin = Rect2(44, 46, 88, 92)
+
+[sub_resource type="Resource" id="Resource_c54a5"]
+script = ExtResource("2_xvn6v")
+target_species_id = 12
+trigger_raw = "level-up"
+min_level = 10
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ahhi8"]
 atlas = ExtResource("2_bsnuf")
@@ -63,6 +70,7 @@ capture_rate = 120
 base_happiness = 50
 hatch_counter = 15
 growth_rate_id = 2
+evolutions = [SubResource("Resource_c54a5")]
 description = "Aunque cuenta con una coraza muy dura, tiene
 un cuerpo bastante blando. Un ataque violento
 puede acabar con él."

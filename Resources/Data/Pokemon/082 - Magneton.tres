@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://bi6vtiduh83lb"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_y47ml"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_mvgpk"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_v6x2h"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_hx1gi"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_w250t"]
@@ -26,6 +27,43 @@ margin = Rect2(18, 26, 34, 50)
 atlas = ExtResource("1_y47ml")
 region = Rect2(1000, 4672, 126, 110)
 margin = Rect2(18, 26, 34, 50)
+
+[sub_resource type="Resource" id="Resource_lajy4"]
+script = ExtResource("2_mvgpk")
+target_species_id = 462
+trigger_raw = "level-up"
+location_id = 10
+
+[sub_resource type="Resource" id="Resource_4s0si"]
+script = ExtResource("2_mvgpk")
+target_species_id = 462
+trigger_raw = "level-up"
+location_id = 379
+
+[sub_resource type="Resource" id="Resource_p0xme"]
+script = ExtResource("2_mvgpk")
+target_species_id = 462
+trigger_raw = "level-up"
+location_id = 629
+
+[sub_resource type="Resource" id="Resource_jg7jp"]
+script = ExtResource("2_mvgpk")
+target_species_id = 462
+trigger_raw = "level-up"
+location_id = 771
+
+[sub_resource type="Resource" id="Resource_ctyto"]
+script = ExtResource("2_mvgpk")
+target_species_id = 462
+trigger_raw = "level-up"
+location_id = 789
+
+[sub_resource type="Resource" id="Resource_vxw8l"]
+script = ExtResource("2_mvgpk")
+method = 2
+target_species_id = 462
+trigger_raw = "use-item"
+item_id = 83
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p1u4i"]
 atlas = ExtResource("2_v6x2h")
@@ -68,6 +106,7 @@ capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_lajy4"), SubResource("Resource_4s0si"), SubResource("Resource_p0xme"), SubResource("Resource_jg7jp"), SubResource("Resource_ctyto"), SubResource("Resource_vxw8l")]
 description = "Emite de forma constante una potente fuerza
 magnética que causa estragos en prácticamente
 cualquier ordenador al que se acerque."

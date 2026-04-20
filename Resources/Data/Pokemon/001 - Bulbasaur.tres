@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_uefem"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_fexyp"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="2_kh32u"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_xm5af"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_fh1oi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fexyp"]
@@ -24,6 +25,12 @@ margin = Rect2(44, 48, 90, 94)
 atlas = ExtResource("1_uefem")
 region = Rect2(1900, 6536, 70, 66)
 margin = Rect2(44, 48, 90, 94)
+
+[sub_resource type="Resource" id="Resource_w650j"]
+script = ExtResource("2_xm5af")
+target_species_id = 2
+trigger_raw = "level-up"
+min_level = 16
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_id7au"]
 atlas = ExtResource("2_fexyp")
@@ -63,6 +70,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_w650j")]
 description = "Desde que nace, crece alimentándose de los
 nutrientes que contiene la semilla de su lomo."
 icon_sprite = SubResource("AtlasTexture_2o7nj")

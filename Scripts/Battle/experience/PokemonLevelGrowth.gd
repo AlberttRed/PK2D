@@ -2,6 +2,8 @@ extends RefCounted
 
 class_name PokemonLevelGrowth
 
+const EvolutionCheckResult := preload("res://Scripts/Runtime/EvolutionCheckResult.gd")
+
 ## Resultado de evaluar subidas de nivel según EXP total (`totalExp`).
 class LevelUpResult extends RefCounted:
 	var old_level: int = 0
@@ -13,6 +15,8 @@ class LevelUpResult extends RefCounted:
 	var stat_changes: RefCounted = null
 	## int(level alcanzado) -> MoveLearnResult (ver `MoveLearnResult.gd`).
 	var move_learning_by_level: Dictionary = {}
+	## Evolución por nivel pendiente tras la subida (solo detección). Ver `EvolutionCheckResult.gd`.
+	var evolution_check: EvolutionCheckResult = null
 
 
 ## Sube `pokemon.level` en bucle mientras `totalExp` alcance los umbrales siguientes (máx. 100).
@@ -46,6 +50,7 @@ static func check_and_apply_level_up(pokemon: Pokemon) -> LevelUpResult:
 
 	if res.levels_gained > 0:
 		res.stat_changes = pokemon.apply_stats_after_level_up(res.old_level)
+		res.evolution_check = pokemon.check_level_evolution()
 		print("PokemonLevelGrowth: %s sube %d nivel(es): %d → %d | EXP siguiente umbral: %d" % [
 			pokemon.get_display_name(), res.levels_gained, res.old_level, res.new_level, res.exp_to_next_level
 		])

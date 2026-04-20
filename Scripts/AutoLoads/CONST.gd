@@ -12,6 +12,8 @@ const OPTION_TEXT_SLOW=2
 const EVOL_LVL_UP=0
 const EVOL_TRADE=1
 const EVOL_STONE=2
+## Evoluciones con disparadores no cubiertos arriba (shed, torres, daño, etc.). Ver `trigger_raw` en cada entrada.
+const EVOL_OTHER=10
 
 const OPTION_BATTLE_ANIM_ON=0
 const OPTION_BATTLE_ANIM_OFF=1

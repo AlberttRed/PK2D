@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2ahvw"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_67shr"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_o26yo"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_tdsfu"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_4gk6n"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="5_42xc5"]
@@ -25,6 +26,19 @@ margin = Rect2(44, 42, 86, 82)
 atlas = ExtResource("1_2ahvw")
 region = Rect2(1964, 6448, 74, 78)
 margin = Rect2(44, 42, 86, 82)
+
+[sub_resource type="Resource" id="Resource_0yovm"]
+script = ExtResource("2_o26yo")
+target_species_id = 20
+trigger_raw = "level-up"
+min_level = 20
+
+[sub_resource type="Resource" id="Resource_vmjxc"]
+script = ExtResource("2_o26yo")
+target_species_id = 20
+trigger_raw = "level-up"
+min_level = 20
+time_of_day = "night"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_42xc5"]
 atlas = ExtResource("2_67shr")
@@ -66,6 +80,7 @@ base_happiness = 70
 hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
+evolutions = [SubResource("Resource_0yovm"), SubResource("Resource_vmjxc")]
 description = "Es propenso a hincar los incisivos en cualquier
 cosa que se le ponga por delante. Si se ve
 alguno, seguramente haya cuarenta cerca."

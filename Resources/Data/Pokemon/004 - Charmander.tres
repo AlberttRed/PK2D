@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://uo6bmvtxr6s5"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_862yj"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_12opd"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_mdf03"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_ax3nu"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_8hq38"]
@@ -25,6 +26,12 @@ margin = Rect2(46, 38, 92, 76)
 atlas = ExtResource("1_862yj")
 region = Rect2(444, 6500, 68, 84)
 margin = Rect2(46, 38, 92, 76)
+
+[sub_resource type="Resource" id="Resource_2qe8f"]
+script = ExtResource("2_12opd")
+target_species_id = 5
+trigger_raw = "level-up"
+min_level = 16
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pb2ok"]
 atlas = ExtResource("2_mdf03")
@@ -63,6 +70,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_2qe8f")]
 description = "Este Pokémon nace con una llama en la punta de
 la cola. Si se le apagara, fallecería."
 icon_sprite = SubResource("AtlasTexture_y1hsa")

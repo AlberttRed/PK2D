@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://dsch35cqrfghd"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_lhu8m"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_5ksia"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_b003v"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_cnj6f"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_sj7ix"]
@@ -25,6 +26,12 @@ margin = Rect2(52, 28, 102, 54)
 atlas = ExtResource("1_lhu8m")
 region = Rect2(1476, 6392, 58, 106)
 margin = Rect2(52, 28, 102, 54)
+
+[sub_resource type="Resource" id="Resource_pl58w"]
+script = ExtResource("2_5ksia")
+target_species_id = 67
+trigger_raw = "level-up"
+min_level = 28
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e3mmm"]
 atlas = ExtResource("2_b003v")
@@ -65,6 +72,7 @@ capture_rate = 180
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_pl58w")]
 description = "Siempre rebosante de energía, pasa el tiempo
 levantando piedras para hacerse aún más fuerte."
 icon_sprite = SubResource("AtlasTexture_an143")

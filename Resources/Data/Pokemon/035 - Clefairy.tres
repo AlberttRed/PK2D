@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://edp46vtd4lgn"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_0armt"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_4ks1b"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_et1o4"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_axedn"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_irqlw"]
@@ -25,6 +26,13 @@ margin = Rect2(40, 42, 78, 88)
 atlas = ExtResource("1_0armt")
 region = Rect2(1364, 6464, 82, 72)
 margin = Rect2(40, 42, 78, 88)
+
+[sub_resource type="Resource" id="Resource_embaj"]
+script = ExtResource("2_4ks1b")
+method = 2
+target_species_id = 36
+trigger_raw = "use-item"
+item_id = 81
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_otifq"]
 atlas = ExtResource("2_et1o4")
@@ -65,6 +73,7 @@ capture_rate = 150
 base_happiness = 140
 hatch_counter = 10
 growth_rate_id = 3
+evolutions = [SubResource("Resource_embaj")]
 description = "Su adorable grito y comportamiento lo hacen
 muy popular. Sin embargo, raramente se avista."
 icon_sprite = SubResource("AtlasTexture_5jk1w")

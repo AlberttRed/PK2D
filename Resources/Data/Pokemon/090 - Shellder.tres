@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_qs5su"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_hqcw2"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_i5weo"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_fmdtp"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_7gof6"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="5_vxxgm"]
@@ -25,6 +26,13 @@ margin = Rect2(44, 50, 88, 98)
 atlas = ExtResource("1_qs5su")
 region = Rect2(660, 6604, 72, 62)
 margin = Rect2(44, 50, 88, 98)
+
+[sub_resource type="Resource" id="Resource_3g3ok"]
+script = ExtResource("2_i5weo")
+method = 2
+target_species_id = 91
+trigger_raw = "use-item"
+item_id = 84
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4tr51"]
 atlas = ExtResource("2_hqcw2")
@@ -64,6 +72,7 @@ gender_rate = 4
 capture_rate = 190
 base_happiness = 50
 hatch_counter = 20
+evolutions = [SubResource("Resource_3g3ok")]
 description = "La concha lo protege de cualquier tipo de
 ataque. Solo es vulnerable cuando se abre."
 icon_sprite = SubResource("AtlasTexture_kd2cg")

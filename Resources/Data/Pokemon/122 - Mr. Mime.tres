@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_hkamb"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_aj5cg"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_aniu7"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_4p4y7"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_6bcjm"]
 [ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="5_a4dsl"]
@@ -26,6 +27,12 @@ margin = Rect2(26, 28, 50, 52)
 atlas = ExtResource("1_hkamb")
 region = Rect2(896, 5284, 110, 108)
 margin = Rect2(26, 28, 50, 52)
+
+[sub_resource type="Resource" id="Resource_bx3fy"]
+script = ExtResource("2_aniu7")
+target_species_id = 866
+trigger_raw = "level-up"
+min_level = 42
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1eq45"]
 atlas = ExtResource("2_aj5cg")
@@ -68,6 +75,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
+evolutions = [SubResource("Resource_bx3fy")]
 description = "Domina con maestría la pantomima. La barrera
 generada con las ondas que emite por los dedos
 le permite protegerse de numerosos ataques."

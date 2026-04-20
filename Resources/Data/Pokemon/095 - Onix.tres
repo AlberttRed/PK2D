@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://c0x5ytk0payx2"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_fk1hr"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_4dth6"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_w2efu"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_cxhd5"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_a55yw"]
@@ -26,6 +27,13 @@ margin = Rect2(10, 6, 16, 14)
 atlas = ExtResource("1_fk1hr")
 region = Rect2(636, 1080, 144, 146)
 margin = Rect2(10, 6, 16, 14)
+
+[sub_resource type="Resource" id="Resource_7qd5b"]
+script = ExtResource("2_4dth6")
+method = 1
+target_species_id = 208
+trigger_raw = "trade"
+held_item_id = 210
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_psj3i"]
 atlas = ExtResource("2_w2efu")
@@ -68,6 +76,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
+evolutions = [SubResource("Resource_7qd5b")]
 description = "Perfora el suelo a una velocidad de 80 km/h
 girando y retorciendo su robusto y enorme
 cuerpo."

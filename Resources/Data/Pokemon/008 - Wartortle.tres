@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ao0op"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_ml8q0"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_xu3fk"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_xr75m"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_2pomf"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="5_15lbr"]
@@ -25,6 +26,12 @@ margin = Rect2(26, 28, 54, 54)
 atlas = ExtResource("1_ao0op")
 region = Rect2(1548, 5420, 106, 106)
 margin = Rect2(26, 28, 54, 54)
+
+[sub_resource type="Resource" id="Resource_fbtuh"]
+script = ExtResource("2_xu3fk")
+target_species_id = 9
+trigger_raw = "level-up"
+min_level = 36
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_15lbr"]
 atlas = ExtResource("2_ml8q0")
@@ -64,6 +71,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_fbtuh")]
 description = "Utiliza hábilmente sus peludas orejas y la cola
 para mantener el equilibrio al nadar."
 icon_sprite = SubResource("AtlasTexture_t1pw8")

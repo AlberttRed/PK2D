@@ -59,9 +59,8 @@ class_name PokemonData
 @export var egg_group_a_id = 0 #id del grupo huevo 1
 @export var egg_group_b_id = 0 #id del grupo huevo 2
 
-@export var evol_method = [] #TO DO #CONST.EVOL_LVL_UP
-@export var evol_lvl = [] #TO DO
-@export var evol_pokemon_id = [] #TO DO
+## Ramas de evolución desde esta especie (`PokemonEvolutionRow`, embebidas en este .tres).
+@export var evolutions: Array = []
 
 @export_multiline var description:String = ""
 

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://21abj3tnils6"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_2nbnl"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_43kdf"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_jn6se"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_gq2go"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_56en3"]
@@ -26,6 +27,12 @@ margin = Rect2(36, 32, 70, 64)
 atlas = ExtResource("1_2nbnl")
 region = Rect2(1164, 6188, 90, 96)
 margin = Rect2(36, 32, 70, 64)
+
+[sub_resource type="Resource" id="Resource_3hsg8"]
+script = ExtResource("2_43kdf")
+method = 10
+target_species_id = 865
+trigger_raw = "three-critical-hits"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6mhcp"]
 atlas = ExtResource("2_jn6se")
@@ -68,6 +75,7 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_3hsg8")]
 description = "Combate empuñando un puerro como arma. La
 forma de blandirlo es tan variada que ha llegado
 a generar sus propias escuelas."

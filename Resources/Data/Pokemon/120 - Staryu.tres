@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://d3somllqqx7jn"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ecyl3"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_lw7kl"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_yi4bc"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_em7uy"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_82lf4"]
@@ -25,6 +26,13 @@ margin = Rect2(40, 36, 80, 72)
 atlas = ExtResource("1_ecyl3")
 region = Rect2(100, 6376, 80, 88)
 margin = Rect2(40, 36, 80, 72)
+
+[sub_resource type="Resource" id="Resource_v8ji0"]
+script = ExtResource("2_lw7kl")
+method = 2
+target_species_id = 121
+trigger_raw = "use-item"
+item_id = 84
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ags8h"]
 atlas = ExtResource("2_yi4bc")
@@ -64,6 +72,7 @@ gender_rate = -1
 capture_rate = 225
 base_happiness = 50
 hatch_counter = 20
+evolutions = [SubResource("Resource_v8ji0")]
 description = "No le importa que le mordisqueen el cuerpo los
 Pokémon pez, ya que las partes desgarradas se
 regeneran casi al instante."

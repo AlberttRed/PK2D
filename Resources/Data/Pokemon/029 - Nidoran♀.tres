@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_kb64o"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_ak3ou"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_lw6ur"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_f3u17"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_xh4nd"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="5_mpqme"]
@@ -25,6 +26,12 @@ margin = Rect2(44, 48, 90, 94)
 atlas = ExtResource("1_kb64o")
 region = Rect2(80, 6560, 70, 66)
 margin = Rect2(44, 48, 90, 94)
+
+[sub_resource type="Resource" id="Resource_dcnw0"]
+script = ExtResource("2_lw6ur")
+target_species_id = 30
+trigger_raw = "level-up"
+min_level = 16
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3w1e7"]
 atlas = ExtResource("2_ak3ou")
@@ -63,6 +70,7 @@ capture_rate = 235
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+evolutions = [SubResource("Resource_dcnw0")]
 description = "Parte las bayas con sus duros incisivos para
 comérselas. La punta del cuerno de las hembras
 es más redondeada que la de los machos."

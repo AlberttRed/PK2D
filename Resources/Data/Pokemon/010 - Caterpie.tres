@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_ncfj3"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_0foxe"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_ax6mg"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_8n0ob"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_7impg"]
 [ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="5_ynh5g"]
@@ -25,6 +26,12 @@ margin = Rect2(48, 48, 94, 94)
 atlas = ExtResource("1_ncfj3")
 region = Rect2(584, 6600, 66, 66)
 margin = Rect2(48, 48, 94, 94)
+
+[sub_resource type="Resource" id="Resource_mle1y"]
+script = ExtResource("2_ax6mg")
+target_species_id = 11
+trigger_raw = "level-up"
+min_level = 7
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ynh5g"]
 atlas = ExtResource("2_0foxe")
@@ -63,6 +70,7 @@ capture_rate = 255
 base_happiness = 50
 hatch_counter = 15
 growth_rate_id = 2
+evolutions = [SubResource("Resource_mle1y")]
 description = "Sus cortas patas están recubiertas de ventosas
 que le permiten subir incansable por muros y
 cuestas."

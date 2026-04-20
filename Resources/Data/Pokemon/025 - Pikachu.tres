@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://fk84aa8bf2ac"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_li822"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_deaf1"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_qf6v0"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_y1rf8"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_0rp2l"]
@@ -25,6 +26,13 @@ margin = Rect2(30, 32, 64, 60)
 atlas = ExtResource("1_li822")
 region = Rect2(1560, 6016, 96, 100)
 margin = Rect2(30, 32, 64, 60)
+
+[sub_resource type="Resource" id="Resource_ruuw7"]
+script = ExtResource("2_deaf1")
+method = 2
+target_species_id = 26
+trigger_raw = "use-item"
+item_id = 83
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h14ol"]
 atlas = ExtResource("2_qf6v0")
@@ -66,6 +74,7 @@ base_happiness = 50
 hatch_counter = 10
 has_gender_differences = true
 growth_rate_id = 2
+evolutions = [SubResource("Resource_ruuw7")]
 description = "Los miembros de esta especie se saludan entre
 sí uniendo sus colas y transmitiéndose corriente
 eléctrica."

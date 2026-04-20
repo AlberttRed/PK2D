@@ -107,7 +107,7 @@ func _seed_test_party_placeholder() -> void:
 		return
 	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
 	var test_mons: Array[Vector2i] = [
-		Vector2i(1, 19), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
+		Vector2i(1, 15), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
 		# Vector2i(143, 9),  # Snorlax (último añadido; descomentar para 6º slot)
 	]
 	var added := 0

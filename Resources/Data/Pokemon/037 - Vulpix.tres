@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="PokemonData" format=3 uid="uid://103io5k3qr5x"]
 
 [ext_resource type="Texture2D" uid="uid://bfai4v8btgbto" path="res://Sprites/Batalla/BattlersAtlas/Gen1Atlas.png" id="1_a1ucq"]
+[ext_resource type="Script" uid="uid://c0u2jg8gvwk70" path="res://Scripts/Resources/Classes/PokemonEvolutionRow.gd" id="2_e0lq4"]
 [ext_resource type="Texture2D" uid="uid://1gfxsiey45yr" path="res://Sprites/Iconos/PokemonFootprintsAtlas.png" id="2_wvy1v"]
 [ext_resource type="Texture2D" uid="uid://cbqvsjlj42c6x" path="res://Sprites/Iconos/PokemonIconsAtlas.png" id="3_vvxos"]
 [ext_resource type="Script" uid="uid://b4b23d5ylqd41" path="res://Scripts/Resources/Classes/PokemonData.gd" id="4_bjy2g"]
@@ -25,6 +26,20 @@ margin = Rect2(28, 38, 56, 74)
 atlas = ExtResource("1_a1ucq")
 region = Rect2(340, 6124, 104, 86)
 margin = Rect2(28, 38, 56, 74)
+
+[sub_resource type="Resource" id="Resource_orvqu"]
+script = ExtResource("2_e0lq4")
+method = 2
+target_species_id = 38
+trigger_raw = "use-item"
+item_id = 82
+
+[sub_resource type="Resource" id="Resource_f870b"]
+script = ExtResource("2_e0lq4")
+method = 2
+target_species_id = 38
+trigger_raw = "use-item"
+item_id = 885
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pcf13"]
 atlas = ExtResource("2_wvy1v")
@@ -65,6 +80,7 @@ capture_rate = 190
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+evolutions = [SubResource("Resource_orvqu"), SubResource("Resource_f870b")]
 description = "Su pelaje se va volviendo más suave, lustroso
 y bello a medida que le crecen las seis colas.
 Al abrazarlo, emana una ligera calidez."
