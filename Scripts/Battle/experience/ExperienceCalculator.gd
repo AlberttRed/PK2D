@@ -2,8 +2,8 @@ extends RefCounted
 
 class_name ExperienceCalculator
 
-## PROVISIONAL — pruebas rápidas: si no es 0, cada receptor gana esta EXP por cada rival KO (ignora la fórmula). Poner a 0 para volver al comportamiento normal.
-const DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT: int = 1000
+## PROVISIONAL — pruebas rápidas: si no es 0, cada receptor gana esta EXP por cada rival KO (ignora la fórmula).
+const DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT: int = 0
 
 ## Resultado por Pokémon tras aplicar EXP (antes de la subida de nivel en otro paso).
 class ParticipantOutcome extends RefCounted:

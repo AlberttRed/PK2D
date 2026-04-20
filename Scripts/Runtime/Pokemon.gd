@@ -73,6 +73,8 @@ var newLearningMove = null  # Move
 var pending_move_learnings: Array[Dictionary] = []
 ## Si hay evolución por nivel pendiente: `target_species_id`, `method`, `required_level` (clave acorde a PBI).
 var pending_evolution: Dictionary = {}
+## Nivel en el que se canceló la evolución por nivel; evita re-dispararla inmediatamente en el mismo nivel.
+var cancelled_level_evolution_level: int = -1
 var trainer_id: int = 1234
 var original_trainer: String = "Red"
 var capture_date: String = ""
@@ -739,6 +741,10 @@ func check_level_evolution() -> EvolutionCheckResult:
 	pending_evolution.clear()
 	if base == null:
 		return res
+	if cancelled_level_evolution_level >= 0 and cancelled_level_evolution_level != level:
+		cancelled_level_evolution_level = -1
+	if cancelled_level_evolution_level == level:
+		return res
 
 	var candidates: Array[Dictionary] = []
 	var entries := _parse_level_up_evolution_entries(base)
@@ -803,8 +809,14 @@ func apply_species_evolution(target_species_id: int) -> bool:
 	hp_actual = clampi(hp_actual + (new_max_hp - old_max_hp), 0, new_max_hp)
 
 	pending_evolution.clear()
+	cancelled_level_evolution_level = -1
 	_update_resource_name()
 	return true
+
+
+func mark_level_evolution_cancelled() -> void:
+	cancelled_level_evolution_level = level
+	pending_evolution.clear()
 
 
 func _refresh_base_stats_from_species() -> void:

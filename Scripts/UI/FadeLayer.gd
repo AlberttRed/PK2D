@@ -50,6 +50,8 @@ func _setup_transition_overlay() -> void:
 	transition_overlay.color = Color.WHITE  # Color base para el shader
 	transition_overlay.visible = false
 	transition_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Debe quedar por debajo del MessageBox global (z_index 200) para no tapar textos.
+	transition_overlay.z_index = 150
 
 	# Cargar el shader
 	var shader = load("res://Shaders/transition.gdshader")
@@ -253,3 +255,170 @@ func reveal_battle(duration: float = 0.4) -> void:
 
 # func _on_battle_reveal_requested() -> void:
 # 	await reveal_battle(0.4)
+
+## Aplica una máscara de transición hasta un progreso parcial (ej. 0.5) y la mantiene visible.
+## Útil para efectos tipo "medio fade" sin cubrir totalmente la pantalla.
+func hold_mask_transition(texture_path: String, target_progress: float = 0.5, duration: float = 0.25) -> void:
+	if is_fading:
+		return
+	is_fading = true
+	visible = true
+
+	var texture = load(texture_path)
+	if texture == null:
+		push_error("FadeLayer: No se pudo cargar la textura de transición: " + texture_path)
+		is_fading = false
+		return
+
+	modulate.a = 1.0
+	color = Color.TRANSPARENT
+	transition_shader.set_shader_parameter("transition_mask", texture)
+	transition_shader.set_shader_parameter("smoothness", 0.01)
+	transition_shader.set_shader_parameter("progress", 0.0)
+	transition_overlay.modulate.a = 1.0
+	transition_overlay.visible = true
+
+	var clamped_target := clampf(target_progress, 0.0, 1.0)
+	var tween = create_tween()
+	tween.tween_method(
+		func(value: float): transition_shader.set_shader_parameter("progress", value),
+		0.0,
+		clamped_target,
+		duration
+	).set_trans(Tween.TRANS_LINEAR)
+	await tween.finished
+	is_fading = false
+
+
+## Revierte la máscara parcial (de `from_progress` a 0) y la oculta.
+func release_mask_transition(from_progress: float = 0.5, duration: float = 0.25) -> void:
+	if is_fading:
+		return
+	is_fading = true
+	visible = true
+
+	var start := clampf(from_progress, 0.0, 1.0)
+	transition_shader.set_shader_parameter("progress", start)
+	transition_overlay.modulate.a = 1.0
+	transition_overlay.visible = true
+
+	var tween = create_tween()
+	tween.tween_method(
+		func(value: float): transition_shader.set_shader_parameter("progress", value),
+		start,
+		0.0,
+		duration
+	).set_trans(Tween.TRANS_LINEAR)
+	await tween.finished
+
+	transition_overlay.visible = false
+	visible = false
+	color = Color.BLACK
+	is_fading = false
+
+
+## Flash blanco de pantalla completa (entrada + salida).
+func flash_white_screen(flash_in_duration: float = 0.08, flash_out_duration: float = 0.34) -> void:
+	if is_fading:
+		return
+	is_fading = true
+
+	var prev_z := z_index
+	var had_mask_active := transition_overlay != null and transition_overlay.visible
+	var prev_progress: float = 0.0
+	var prev_smoothness: float = 0.01
+	if had_mask_active and transition_shader != null:
+		prev_progress = float(transition_shader.get_shader_parameter("progress"))
+		prev_smoothness = float(transition_shader.get_shader_parameter("smoothness"))
+	z_index = 300
+	transition_overlay.visible = false
+	visible = true
+	color = Color.WHITE
+	modulate.a = 0.0
+
+	var tw_in := create_tween()
+	tw_in.tween_property(self, "modulate:a", 1.0, flash_in_duration)
+	await tw_in.finished
+
+	var tw_out := create_tween()
+	tw_out.tween_property(self, "modulate:a", 0.0, flash_out_duration)
+	await tw_out.finished
+
+	if had_mask_active and transition_shader != null:
+		# Restaurar el estado de la máscara parcial (si estaba activa antes del flash).
+		color = Color.TRANSPARENT
+		modulate.a = 1.0
+		transition_shader.set_shader_parameter("progress", prev_progress)
+		transition_shader.set_shader_parameter("smoothness", prev_smoothness)
+		transition_overlay.visible = true
+	else:
+		visible = false
+		color = Color.BLACK
+		modulate.a = 1.0
+	z_index = prev_z
+	is_fading = false
+
+
+## Combina en paralelo:
+## - Subida y bajada del flash blanco a pantalla completa (`self` ColorRect)
+## - Retirada de la máscara parcial en `transition_overlay`
+## Útil para evolución: mientras "sube" el flash, el wipe vertical se retira.
+func flash_white_and_release_mask(
+	from_progress: float = 0.5,
+	flash_in_duration: float = 0.08,
+	flash_out_duration: float = 0.34,
+	mask_release_duration: float = 0.25
+) -> void:
+	if is_fading:
+		return
+	is_fading = true
+
+	var prev_z := z_index
+	z_index = 300
+
+	var had_mask_active := transition_overlay != null and transition_overlay.visible and transition_shader != null
+	var start_progress := clampf(from_progress, 0.0, 1.0)
+
+	# Asegurar estado base para el flash blanco de pantalla completa.
+	visible = true
+	color = Color.WHITE
+	modulate.a = 0.0
+
+	# Si hay máscara activa, dejamos el overlay visible y lo retiramos en paralelo.
+	if had_mask_active:
+		transition_shader.set_shader_parameter("progress", start_progress)
+		transition_shader.set_shader_parameter("smoothness", 0.01)
+		transition_overlay.modulate.a = 1.0
+		transition_overlay.visible = true
+	else:
+		transition_overlay.visible = false
+
+	var flash_in_tween := create_tween()
+	flash_in_tween.tween_property(self, "modulate:a", 1.0, flash_in_duration)
+
+	var mask_release_tween: Tween = null
+	if had_mask_active:
+		mask_release_tween = create_tween()
+		mask_release_tween.tween_method(
+			func(value: float): transition_shader.set_shader_parameter("progress", value),
+			start_progress,
+			0.0,
+			mask_release_duration
+		).set_trans(Tween.TRANS_LINEAR)
+
+	await flash_in_tween.finished
+
+	var flash_out_tween := create_tween()
+	flash_out_tween.tween_property(self, "modulate:a", 0.0, flash_out_duration)
+	await flash_out_tween.finished
+
+	if mask_release_tween != null:
+		while mask_release_tween.is_running():
+			await get_tree().process_frame
+		transition_overlay.visible = false
+
+	visible = false
+	color = Color.BLACK
+	modulate.a = 1.0
+	z_index = prev_z
+	is_fading = false
