@@ -41,7 +41,6 @@ texture = ExtResource("5_76js3")
 texture = ExtResource("18_u2a38")
 
 [node name="PokedexUI" type="Panel" unique_id=444948421]
-z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -50,8 +49,116 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_f5coo")
 metadata/_edit_lock_ = true
 
+[node name="lVistos" parent="." unique_id=808518405 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 290.0
+offset_top = 120.0
+offset_right = 403.0
+offset_bottom = 150.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.66543823, 0.14267546, 0.14455312, 1)
+text = "VISTOS"
+
+[node name="lPropios" parent="." unique_id=813284830 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 379.0
+offset_top = 120.0
+offset_right = 492.0
+offset_bottom = 150.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.66543823, 0.14267546, 0.14455312, 1)
+text = "PROPIOS"
+
+[node name="PokedexRegions" type="VBoxContainer" parent="." unique_id=765071702]
+layout_mode = 0
+offset_left = 71.0
+offset_top = 168.0
+offset_right = 473.0
+offset_bottom = 378.0
+
+[node name="RegionRow" type="HBoxContainer" parent="PokedexRegions" unique_id=1271606862]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Nombre" parent="PokedexRegions/RegionRow" unique_id=209779734 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(233, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Pokédex Kanto"
+
+[node name="Vistos" parent="PokedexRegions/RegionRow" unique_id=2143582120 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "151"
+
+[node name="Propios" parent="PokedexRegions/RegionRow" unique_id=762726980 instance=ExtResource("3_53p15")]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "151"
+
+[node name="RegionRow2" type="HBoxContainer" parent="PokedexRegions" unique_id=415839492]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Nombre" parent="PokedexRegions/RegionRow2" unique_id=2022243623 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(233, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Pokédex Johto"
+
+[node name="Vistos" parent="PokedexRegions/RegionRow2" unique_id=793044398 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "256"
+
+[node name="Propios" parent="PokedexRegions/RegionRow2" unique_id=309410137 instance=ExtResource("3_53p15")]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "256"
+
+[node name="RegionRow3" type="HBoxContainer" parent="PokedexRegions" unique_id=1672170252]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Nombre" parent="PokedexRegions/RegionRow3" unique_id=1998796322 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(233, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Pokédex Nacional"
+
+[node name="Vistos" parent="PokedexRegions/RegionRow3" unique_id=1283052278 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "649"
+
+[node name="Propios" parent="PokedexRegions/RegionRow3" unique_id=1985188419 instance=ExtResource("3_53p15")]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "649"
+
+[node name="RegionRow4" type="HBoxContainer" parent="PokedexRegions" unique_id=2048953073]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Nombre" parent="PokedexRegions/RegionRow4" unique_id=1402377587 instance=ExtResource("3_53p15")]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Salir"
+
 [node name="PokedexList" type="Panel" parent="." unique_id=532332040]
-visible = false
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
@@ -287,6 +394,7 @@ texture = ExtResource("9_rsic0")
 hframes = 8
 
 [node name="PokedexSearch" type="Panel" parent="." unique_id=1211045924]
+z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
