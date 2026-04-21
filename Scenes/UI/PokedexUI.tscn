@@ -330,6 +330,16 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Nombre:"
 
+[node name="dNombre" parent="PokedexSearch/Busqueda" unique_id=979992474 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 80.0
+offset_right = 298.0
+offset_bottom = 108.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Sin especificar"
+
 [node name="lColor" parent="PokedexSearch/Busqueda" unique_id=1575055479 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 9.0
@@ -339,6 +349,16 @@ offset_bottom = 136.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Color:"
+
+[node name="dColor" parent="PokedexSearch/Busqueda" unique_id=1556373190 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 108.0
+offset_right = 298.0
+offset_bottom = 136.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Sin especificar"
 
 [node name="lTIpo1" parent="PokedexSearch/Busqueda" unique_id=1194711581 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -350,6 +370,16 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Tipo 1:"
 
+[node name="dTipo1" parent="PokedexSearch/Busqueda" unique_id=2066190037 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 136.0
+offset_right = 298.0
+offset_bottom = 164.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Ninguno"
+
 [node name="lTIpo2" parent="PokedexSearch/Busqueda" unique_id=733368000 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 9.0
@@ -360,6 +390,16 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Tipo 2:"
 
+[node name="dTIpo2" parent="PokedexSearch/Busqueda" unique_id=1393652773 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 164.0
+offset_right = 298.0
+offset_bottom = 192.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Ninguno"
+
 [node name="lOrden" parent="PokedexSearch/Busqueda" unique_id=1594685056 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 9.0
@@ -369,6 +409,16 @@ offset_bottom = 220.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Orden:"
+
+[node name="dOrden" parent="PokedexSearch/Busqueda" unique_id=2113069927 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 192.0
+offset_right = 298.0
+offset_bottom = 220.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Modo Numérico"
 
 [node name="IniciarBusqueda" parent="PokedexSearch/Busqueda" unique_id=2072011071 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -404,6 +454,16 @@ offset_bottom = 330.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Orden:"
+
+[node name="dOrden" parent="PokedexSearch/Ordenamiento" unique_id=1061111270 instance=ExtResource("3_53p15")]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 302.0
+offset_right = 298.0
+offset_bottom = 330.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Modo numérico"
 
 [node name="IniciarOrdenamiento" parent="PokedexSearch/Ordenamiento" unique_id=695974143 instance=ExtResource("3_53p15")]
 layout_mode = 0
