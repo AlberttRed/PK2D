@@ -67,6 +67,38 @@ base_happiness = 50
 hatch_counter = 5
 has_gender_differences = true
 forms_switchable = true
+pokedex_numbers = {
+"champions": 130,
+"conquest-gallery": 14,
+"crown-tundra": 63,
+"extended-sinnoh": 24,
+"galar": 145,
+"hisui": 81,
+"hoenn": 53,
+"isle-of-armor": 43,
+"kalos-central": 50,
+"kanto": 130,
+"kitakami": 44,
+"letsgo-kanto": 130,
+"lumiose-city": 33,
+"national": 130,
+"original-akala": 35,
+"original-alola": 92,
+"original-johto": 77,
+"original-melemele": 92,
+"original-poni": 42,
+"original-sinnoh": 24,
+"original-ulaula": 52,
+"paldea": 135,
+"updated-akala": 35,
+"updated-alola": 112,
+"updated-hoenn": 54,
+"updated-johto": 77,
+"updated-melemele": 112,
+"updated-poni": 54,
+"updated-ulaula": 55
+}
+category = "Pokémon Atrocidad"
 description = "Cuando monta en cólera, puede quemarlo todo,
 incluso en medio de la más violenta tormenta."
 icon_sprite = SubResource("AtlasTexture_yvgjh")

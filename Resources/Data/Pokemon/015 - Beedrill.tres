@@ -70,6 +70,18 @@ base_happiness = 70
 hatch_counter = 15
 forms_switchable = true
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 15,
+"conquest-gallery": 177,
+"kalos-central": 28,
+"kanto": 15,
+"letsgo-kanto": 15,
+"lumiose-city": 20,
+"national": 15,
+"original-johto": 29,
+"updated-johto": 29
+}
+category = "Pokémon Abeja Veneno"
 description = "Tiene tres aguijones venenosos, dos en las patas
 anteriores y uno en la parte baja del abdomen,
 con los que ataca a sus enemigos una y otra vez."

@@ -65,6 +65,16 @@ gender_rate = -1
 capture_rate = 3
 base_happiness = 35
 hatch_counter = 80
+pokedex_numbers = {
+"crown-tundra": 203,
+"kalos-coastal": 152,
+"kanto": 145,
+"letsgo-kanto": 145,
+"national": 145,
+"original-johto": 236,
+"updated-johto": 241
+}
+category = "Pokémon Eléctrico"
 description = "Una de las aves legendarias. Dicen que, cuando
 este Pokémon frota las alas, cae al instante un
 relámpago del cielo."

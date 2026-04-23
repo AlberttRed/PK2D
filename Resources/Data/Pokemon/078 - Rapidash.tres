@@ -65,6 +65,19 @@ capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"crown-tundra": 106,
+"extended-sinnoh": 91,
+"galar": 334,
+"hisui": 24,
+"kanto": 78,
+"letsgo-kanto": 78,
+"national": 78,
+"original-johto": 202,
+"original-sinnoh": 91,
+"updated-johto": 207
+}
+category = "Pokémon Caballo Fuego"
 description = "El ejemplar más rápido se convierte en el líder
 de la manada y decide tanto el ritmo de galope
 como su destino."

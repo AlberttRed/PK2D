@@ -72,6 +72,23 @@ capture_rate = 45
 base_happiness = 35
 hatch_counter = 40
 evolutions = [SubResource("Resource_dssl8")]
+pokedex_numbers = {
+"conquest-gallery": 77,
+"crown-tundra": 195,
+"kalos-mountain": 146,
+"kanto": 148,
+"letsgo-kanto": 148,
+"lumiose-city": 146,
+"national": 148,
+"original-alola": 282,
+"original-johto": 242,
+"original-poni": 97,
+"paldea": 348,
+"updated-alola": 380,
+"updated-johto": 247,
+"updated-poni": 127
+}
+category = "Pokémon Dragón"
 description = "Acumula energía en las esferas de la cola para
 controlar el clima. La sutil aura que lo rodea le
 confiere un aspecto misterioso y místico."

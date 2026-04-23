@@ -69,6 +69,26 @@ base_happiness = 50
 hatch_counter = 20
 forms_switchable = true
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 76,
+"champions": 80,
+"isle-of-armor": 2,
+"kalos-coastal": 134,
+"kanto": 80,
+"letsgo-kanto": 80,
+"lumiose-city": 138,
+"national": 80,
+"original-alola": 38,
+"original-johto": 81,
+"original-melemele": 38,
+"original-ulaula": 19,
+"paldea": 325,
+"updated-alola": 45,
+"updated-johto": 81,
+"updated-melemele": 45,
+"updated-ulaula": 19
+}
+category = "Pokémon Ermitaño"
 description = "Se volvió bípedo por el impacto que le causó la
 mordedura del Shellder. Si este se desprende,
 vuelve a convertirse en un Slowpoke."

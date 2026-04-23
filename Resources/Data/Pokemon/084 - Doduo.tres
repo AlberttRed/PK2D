@@ -77,6 +77,18 @@ hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_0krwo")]
+pokedex_numbers = {
+"blueberry": 1,
+"hoenn": 92,
+"kalos-central": 94,
+"kanto": 84,
+"letsgo-kanto": 84,
+"national": 84,
+"original-johto": 199,
+"updated-hoenn": 95,
+"updated-johto": 204
+}
+category = "Pokémon Ave Gemela"
 description = "Las diminutas alas apenas le permiten volar,
 pero puede correr a gran velocidad gracias a
 sus patas hiperdesarrolladas."

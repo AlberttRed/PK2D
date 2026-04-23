@@ -62,6 +62,12 @@ class_name PokemonData
 ## Ramas de evolución desde esta especie (`PokemonEvolutionRow`, embebidas en este .tres).
 @export var evolutions: Array = []
 
+## Nº por Pokédex (clave: id de pokedex, valor: entry_number), p.ej. {"kanto": 001, "national": 001}.
+@export var pokedex_numbers: Dictionary = {}
+
+## Categoría Pokédex (PokeAPI `genera`, idioma preferido ES; fallback EN), p.ej. "Pokémon Semilla".
+@export var category: String = ""
+
 @export_multiline var description:String = ""
 
 @export var habitat_id:int = 1

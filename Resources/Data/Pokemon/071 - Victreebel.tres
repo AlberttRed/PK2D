@@ -66,6 +66,18 @@ capture_rate = 45
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 4
+pokedex_numbers = {
+"champions": 71,
+"kalos-mountain": 28,
+"kanto": 71,
+"kitakami": 25,
+"letsgo-kanto": 71,
+"lumiose-city": 76,
+"national": 71,
+"original-johto": 66,
+"updated-johto": 66
+}
+category = "Pokémon Matamoscas"
 description = "Atrae a su presa con un dulce aroma a miel.
 Una vez atrapada en la boca, la disuelve en tan
 solo un día, huesos incluidos."

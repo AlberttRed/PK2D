@@ -74,6 +74,16 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 4
 evolutions = [SubResource("Resource_yfbl7")]
+pokedex_numbers = {
+"kalos-central": 18,
+"kanto": 17,
+"letsgo-kanto": 17,
+"lumiose-city": 22,
+"national": 17,
+"original-johto": 11,
+"updated-johto": 11
+}
+category = "Pokémon Pájaro"
 description = "Su extraordinaria vitalidad y resistencia le
 permiten cubrir grandes distancias del territorio
 que habita en busca de presas."

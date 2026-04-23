@@ -63,6 +63,33 @@ capture_rate = 75
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"extended-sinnoh": 44,
+"hisui": 69,
+"hoenn": 159,
+"isle-of-armor": 147,
+"kalos-central": 60,
+"kanto": 55,
+"letsgo-kanto": 55,
+"national": 55,
+"original-akala": 33,
+"original-alola": 90,
+"original-johto": 139,
+"original-melemele": 90,
+"original-poni": 40,
+"original-sinnoh": 44,
+"original-ulaula": 50,
+"paldea": 56,
+"updated-akala": 33,
+"updated-alola": 108,
+"updated-hoenn": 166,
+"updated-johto": 141,
+"updated-melemele": 108,
+"updated-poni": 52,
+"updated-ulaula": 53,
+"updated-unova": 29
+}
+category = "Pokémon Pato"
 description = "Cuenta una antigua leyenda que los Golduck
 arrastraban a quienes contaminaran sus ríos al
 fondo de las aguas."

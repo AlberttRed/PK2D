@@ -65,6 +65,16 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+pokedex_numbers = {
+"crown-tundra": 70,
+"kalos-coastal": 109,
+"kanto": 34,
+"letsgo-kanto": 34,
+"national": 34,
+"original-johto": 100,
+"updated-johto": 100
+}
+category = "Pokémon Taladro"
 description = "Presume de su hercúlea fuerza y combate
 vigorosamente con su robusta cola y su cuerno,
 con el que hasta puede pulverizar diamantes."

@@ -73,6 +73,22 @@ capture_rate = 190
 base_happiness = 50
 hatch_counter = 20
 evolutions = [SubResource("Resource_3g3ok")]
+pokedex_numbers = {
+"galar": 150,
+"isle-of-armor": 131,
+"kalos-coastal": 36,
+"kanto": 90,
+"letsgo-kanto": 90,
+"national": 90,
+"original-alola": 115,
+"original-johto": 169,
+"original-melemele": 115,
+"paldea": 329,
+"updated-alola": 138,
+"updated-johto": 171,
+"updated-melemele": 138
+}
+category = "Pokémon Bivalvo"
 description = "La concha lo protege de cualquier tipo de
 ataque. Solo es vulnerable cuando se abre."
 icon_sprite = SubResource("AtlasTexture_kd2cg")

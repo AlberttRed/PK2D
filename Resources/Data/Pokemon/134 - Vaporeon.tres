@@ -63,6 +63,28 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 35
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 134,
+"conquest-gallery": 2,
+"crown-tundra": 75,
+"extended-sinnoh": 164,
+"galar": 197,
+"hisui": 26,
+"kalos-coastal": 78,
+"kanto": 134,
+"letsgo-kanto": 134,
+"lumiose-city": 101,
+"national": 134,
+"original-akala": 51,
+"original-alola": 124,
+"original-johto": 181,
+"paldea": 180,
+"updated-akala": 55,
+"updated-alola": 154,
+"updated-johto": 185,
+"updated-unova": 92
+}
+category = "Pokémon Burbuja"
 description = "La composición celular de su cuerpo es tan
 similar a la estructura molecular del agua que
 se vuelve invisible al fundirse en ella."

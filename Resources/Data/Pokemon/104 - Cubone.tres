@@ -80,6 +80,21 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_kw45b"), SubResource("Resource_xt3pr")]
+pokedex_numbers = {
+"hyperspace": 9,
+"isle-of-armor": 170,
+"kalos-coastal": 60,
+"kanto": 104,
+"letsgo-kanto": 104,
+"national": 104,
+"original-akala": 90,
+"original-alola": 163,
+"original-johto": 203,
+"updated-akala": 98,
+"updated-alola": 197,
+"updated-johto": 208
+}
+category = "Pokémon Solitario"
 description = "Lleva puesto el cráneo de su difunta madre.
 A veces llora en sueños, pero cada lágrima
 vertida le hace más fuerte."

@@ -74,6 +74,27 @@ hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_pkgte")]
+pokedex_numbers = {
+"extended-sinnoh": 78,
+"galar": 146,
+"hoenn": 50,
+"isle-of-armor": 94,
+"kalos-central": 53,
+"kanto": 118,
+"letsgo-kanto": 118,
+"national": 118,
+"original-akala": 80,
+"original-alola": 153,
+"original-johto": 78,
+"original-sinnoh": 78,
+"original-ulaula": 72,
+"updated-akala": 87,
+"updated-alola": 186,
+"updated-hoenn": 51,
+"updated-johto": 78,
+"updated-ulaula": 78
+}
+category = "Pokémon Pez Color"
 description = "La aleta dorsal y las aletas pectorales están tan
 desarrolladas que actúan como músculos. Puede
 nadar a una velocidad de cinco nudos."

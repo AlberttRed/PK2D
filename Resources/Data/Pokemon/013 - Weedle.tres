@@ -74,6 +74,16 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 2
 evolutions = [SubResource("Resource_kl17h")]
+pokedex_numbers = {
+"kalos-central": 26,
+"kanto": 13,
+"letsgo-kanto": 13,
+"lumiose-city": 18,
+"national": 13,
+"original-johto": 27,
+"updated-johto": 27
+}
+category = "Pokémon Oruga"
 description = "El aguijón de la cabeza es muy puntiagudo.
 Se alimenta de hojas oculto en la espesura
 de bosques y praderas."

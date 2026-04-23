@@ -65,6 +65,30 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+pokedex_numbers = {
+"champions": 68,
+"conquest-gallery": 100,
+"extended-sinnoh": 42,
+"galar": 140,
+"hisui": 156,
+"hoenn": 75,
+"kalos-coastal": 59,
+"kanto": 68,
+"letsgo-kanto": 68,
+"lumiose-city": 127,
+"national": 68,
+"original-alola": 97,
+"original-johto": 142,
+"original-melemele": 97,
+"original-poni": 47,
+"original-sinnoh": 42,
+"updated-alola": 119,
+"updated-hoenn": 77,
+"updated-johto": 144,
+"updated-melemele": 119,
+"updated-poni": 59
+}
+category = "Pokémon Superpoder"
 description = "Puede dar varios puñetazos de una sola vez
 gracias a sus cuatro brazos. Golpea más rápido
 de lo que piensa."

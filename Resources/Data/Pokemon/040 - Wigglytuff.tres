@@ -68,6 +68,26 @@ capture_rate = 50
 base_happiness = 50
 hatch_counter = 10
 growth_rate_id = 3
+pokedex_numbers = {
+"conquest-gallery": 22,
+"hoenn": 139,
+"hyperspace": 78,
+"isle-of-armor": 13,
+"kalos-mountain": 121,
+"kanto": 40,
+"letsgo-kanto": 40,
+"national": 40,
+"original-akala": 63,
+"original-alola": 136,
+"original-johto": 45,
+"paldea": 61,
+"updated-akala": 70,
+"updated-alola": 169,
+"updated-hoenn": 144,
+"updated-johto": 45,
+"updated-unova": 283
+}
+category = "Pokémon Globo"
 description = "Se enorgullece de su pelaje fino y sedoso. El rizo
 de la frente, en especial, posee un tacto sublime."
 icon_sprite = SubResource("AtlasTexture_11aku")

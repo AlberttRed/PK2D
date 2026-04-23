@@ -66,6 +66,17 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 30
 growth_rate_id = 2
+pokedex_numbers = {
+"crown-tundra": 124,
+"kanto": 139,
+"letsgo-kanto": 139,
+"national": 139,
+"original-johto": 221,
+"updated-akala": 129,
+"updated-alola": 228,
+"updated-johto": 226
+}
+category = "Pokémon Espiral"
 description = "Posee unos colmillos afilados con los que puede
 partir piedras, pero solo ataca a presas que se
 hallan al alcance de sus tentáculos."

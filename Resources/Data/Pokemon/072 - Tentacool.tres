@@ -75,6 +75,32 @@ capture_rate = 190
 base_happiness = 50
 hatch_counter = 20
 evolutions = [SubResource("Resource_ru3rp")]
+pokedex_numbers = {
+"blueberry": 50,
+"extended-sinnoh": 136,
+"hisui": 170,
+"hoenn": 66,
+"isle-of-armor": 40,
+"kalos-coastal": 25,
+"kanto": 72,
+"letsgo-kanto": 72,
+"national": 72,
+"original-akala": 38,
+"original-alola": 106,
+"original-johto": 162,
+"original-melemele": 106,
+"original-poni": 55,
+"original-sinnoh": 136,
+"original-ulaula": 53,
+"updated-akala": 38,
+"updated-alola": 129,
+"updated-hoenn": 68,
+"updated-johto": 164,
+"updated-melemele": 129,
+"updated-poni": 67,
+"updated-ulaula": 56
+}
+category = "Pokémon Medusa"
 description = "Su cuerpo está compuesto casi por completo de
 agua, por lo que resulta muy difícil distinguirlo
 cuando está sumergido en el mar."

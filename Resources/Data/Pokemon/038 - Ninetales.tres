@@ -66,6 +66,26 @@ capture_rate = 75
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 158,
+"champions": 38,
+"galar": 69,
+"hisui": 169,
+"hoenn": 154,
+"kanto": 38,
+"kitakami": 38,
+"letsgo-kanto": 38,
+"national": 38,
+"original-alola": 254,
+"original-johto": 126,
+"original-ulaula": 126,
+"updated-alola": 331,
+"updated-hoenn": 161,
+"updated-johto": 128,
+"updated-ulaula": 152,
+"updated-unova": 249
+}
+category = "Pokémon Zorro"
 description = "Muy inteligente y vengativo. Agarrar una de sus
 colas podría traer 1000 años de mala suerte."
 icon_sprite = SubResource("AtlasTexture_x7dvk")

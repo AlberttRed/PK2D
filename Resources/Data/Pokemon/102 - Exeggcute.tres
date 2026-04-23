@@ -76,6 +76,21 @@ capture_rate = 90
 base_happiness = 50
 hatch_counter = 20
 evolutions = [SubResource("Resource_snloo")]
+pokedex_numbers = {
+"blueberry": 3,
+"isle-of-armor": 205,
+"kalos-coastal": 136,
+"kanto": 102,
+"letsgo-kanto": 102,
+"national": 102,
+"original-alola": 269,
+"original-johto": 104,
+"original-poni": 84,
+"updated-alola": 355,
+"updated-johto": 105,
+"updated-poni": 102
+}
+category = "Pokémon Huevo"
 description = "Necesita contar con la totalidad de sus seis
 miembros para mantener la calma. Si desaparece
 uno siquiera, le entran ganas de salir huyendo."

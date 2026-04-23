@@ -63,6 +63,28 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 35
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 136,
+"conquest-gallery": 4,
+"crown-tundra": 77,
+"extended-sinnoh": 166,
+"galar": 199,
+"hisui": 28,
+"kalos-coastal": 80,
+"kanto": 136,
+"letsgo-kanto": 136,
+"lumiose-city": 103,
+"national": 136,
+"original-akala": 53,
+"original-alola": 126,
+"original-johto": 183,
+"paldea": 182,
+"updated-akala": 57,
+"updated-alola": 156,
+"updated-johto": 187,
+"updated-unova": 94
+}
+category = "Pokémon Llama"
 description = "Almacena parte del aire que inhala en la saca de
 fuego de su interior, que llega a calentarse a más
 de 1700 °C."

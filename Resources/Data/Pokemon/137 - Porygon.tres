@@ -72,6 +72,23 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_t2ljt")]
+pokedex_numbers = {
+"blueberry": 129,
+"extended-sinnoh": 192,
+"hisui": 133,
+"hyperspace": 11,
+"isle-of-armor": 208,
+"kanto": 137,
+"letsgo-kanto": 137,
+"national": 137,
+"original-alola": 217,
+"original-johto": 215,
+"original-ulaula": 89,
+"updated-alola": 281,
+"updated-johto": 220,
+"updated-ulaula": 102
+}
+category = "Pokémon Virtual"
 description = "Durante los últimos años, ha estado muy activo
 en el ciberespacio comprobando que no haya
 datos sospechosos."

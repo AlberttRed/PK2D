@@ -83,6 +83,26 @@ hatch_counter = 25
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_m5fx5"), SubResource("Resource_jx5tm")]
+pokedex_numbers = {
+"blueberry": 19,
+"conquest-gallery": 188,
+"extended-sinnoh": 195,
+"hisui": 72,
+"isle-of-armor": 118,
+"kalos-mountain": 136,
+"kanto": 123,
+"letsgo-kanto": 123,
+"lumiose-city": 176,
+"national": 123,
+"original-alola": 275,
+"original-johto": 110,
+"original-poni": 90,
+"paldea": 260,
+"updated-alola": 365,
+"updated-johto": 111,
+"updated-poni": 112
+}
+category = "Pokémon Mantis"
 description = "El territorio de un Scyther se identifica fácilmente
 por el gran número de árboles talados de forma
 indiscriminada en una misma zona del bosque."

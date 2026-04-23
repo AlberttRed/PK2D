@@ -65,6 +65,21 @@ gender_rate = 4
 capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"blueberry": 4,
+"isle-of-armor": 206,
+"kalos-coastal": 137,
+"kanto": 103,
+"letsgo-kanto": 103,
+"national": 103,
+"original-alola": 270,
+"original-johto": 105,
+"original-poni": 85,
+"updated-alola": 356,
+"updated-johto": 106,
+"updated-poni": 103
+}
+category = "Pokémon Coco"
 description = "Puede lanzar ataques psíquicos de gran potencia
 si sus tres cabezas se ponen de acuerdo. Cuando
 se nubla el cielo, sus movimientos se ralentizan."

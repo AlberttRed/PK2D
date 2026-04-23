@@ -165,6 +165,27 @@ hatch_counter = 35
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_cax5y"), SubResource("Resource_8ia2g"), SubResource("Resource_pdt3p"), SubResource("Resource_hcdwr"), SubResource("Resource_1ld0v"), SubResource("Resource_nrw0p"), SubResource("Resource_f3tix"), SubResource("Resource_13t6v"), SubResource("Resource_1c48u"), SubResource("Resource_shuhc"), SubResource("Resource_r5nrl"), SubResource("Resource_iymjw"), SubResource("Resource_mmdbu"), SubResource("Resource_vyeci"), SubResource("Resource_xn2n7")]
+pokedex_numbers = {
+"conquest-gallery": 1,
+"crown-tundra": 74,
+"extended-sinnoh": 163,
+"galar": 196,
+"hisui": 25,
+"kalos-coastal": 77,
+"kanto": 133,
+"letsgo-kanto": 133,
+"lumiose-city": 100,
+"national": 133,
+"original-akala": 50,
+"original-alola": 123,
+"original-johto": 180,
+"paldea": 179,
+"updated-akala": 54,
+"updated-alola": 153,
+"updated-johto": 184,
+"updated-unova": 91
+}
+category = "Pokémon Evolución"
 description = "Su irregular estructura genética alberga el secreto
 de la capacidad que posee este Pokémon tan
 especial para adoptar evoluciones muy variadas."

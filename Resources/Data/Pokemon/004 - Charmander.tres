@@ -71,6 +71,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_2qe8f")]
+pokedex_numbers = {
+"blueberry": 167,
+"conquest-gallery": 109,
+"galar": 378,
+"kalos-central": 83,
+"kanto": 4,
+"letsgo-kanto": 4,
+"lumiose-city": 151,
+"national": 4,
+"original-johto": 229,
+"updated-johto": 234
+}
+category = "Pokémon Lagartija"
 description = "Este Pokémon nace con una llama en la punta de
 la cola. Si se le apagara, fallecería."
 icon_sprite = SubResource("AtlasTexture_y1hsa")

@@ -81,6 +81,25 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_orvqu"), SubResource("Resource_f870b")]
+pokedex_numbers = {
+"blueberry": 157,
+"galar": 68,
+"hisui": 168,
+"hoenn": 153,
+"kanto": 37,
+"kitakami": 37,
+"letsgo-kanto": 37,
+"national": 37,
+"original-alola": 253,
+"original-johto": 125,
+"original-ulaula": 125,
+"updated-alola": 330,
+"updated-hoenn": 160,
+"updated-johto": 127,
+"updated-ulaula": 151,
+"updated-unova": 248
+}
+category = "Pokémon Zorro"
 description = "Su pelaje se va volviendo más suave, lustroso
 y bello a medida que le crecen las seis colas.
 Al abrazarlo, emana una ligera calidez."

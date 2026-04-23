@@ -65,6 +65,21 @@ capture_rate = 90
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 24,
+"conquest-gallery": 55,
+"kalos-mountain": 38,
+"kanto": 24,
+"kitakami": 19,
+"letsgo-kanto": 24,
+"lumiose-city": 61,
+"national": 24,
+"original-johto": 51,
+"updated-alola": 62,
+"updated-johto": 51,
+"updated-melemele": 62
+}
+category = "Pokémon Cobra"
 description = "Se han llegado a identificar hasta seis
 variaciones distintas de los espeluznantes
 dibujos de su piel."

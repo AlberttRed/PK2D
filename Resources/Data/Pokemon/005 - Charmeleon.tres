@@ -72,6 +72,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_p2y3w")]
+pokedex_numbers = {
+"blueberry": 168,
+"conquest-gallery": 110,
+"galar": 379,
+"kalos-central": 84,
+"kanto": 5,
+"letsgo-kanto": 5,
+"lumiose-city": 152,
+"national": 5,
+"original-johto": 230,
+"updated-johto": 235
+}
+category = "Pokémon Llama"
 description = "Si se exalta en combate, expulsa intensas
 llamaradas que incineran todo a su alrededor."
 icon_sprite = SubResource("AtlasTexture_d4e21")

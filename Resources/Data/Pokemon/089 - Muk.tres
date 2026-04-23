@@ -66,6 +66,25 @@ capture_rate = 75
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 69,
+"hoenn": 107,
+"kanto": 89,
+"letsgo-kanto": 89,
+"national": 89,
+"original-alola": 51,
+"original-johto": 117,
+"original-melemele": 51,
+"original-ulaula": 29,
+"paldea": 195,
+"updated-alola": 58,
+"updated-hoenn": 112,
+"updated-johto": 118,
+"updated-melemele": 58,
+"updated-ulaula": 29,
+"updated-unova": 65
+}
+category = "Pokémon Lodo"
 description = "Huele tan mal que puede provocar desmayos.
 Su nariz se ha atrofiado de tal manera que
 ha perdido por completo el sentido del olfato."

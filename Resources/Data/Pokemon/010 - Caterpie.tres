@@ -71,6 +71,22 @@ base_happiness = 50
 hatch_counter = 15
 growth_rate_id = 2
 evolutions = [SubResource("Resource_mle1y")]
+pokedex_numbers = {
+"galar": 13,
+"kalos-central": 23,
+"kanto": 10,
+"letsgo-kanto": 10,
+"national": 10,
+"original-akala": 8,
+"original-alola": 17,
+"original-johto": 24,
+"original-melemele": 17,
+"updated-akala": 8,
+"updated-alola": 17,
+"updated-johto": 24,
+"updated-melemele": 17
+}
+category = "Pokémon Gusano"
 description = "Sus cortas patas están recubiertas de ventosas
 que le permiten subir incansable por muros y
 cuestas."

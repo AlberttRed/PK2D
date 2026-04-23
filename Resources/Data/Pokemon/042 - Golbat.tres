@@ -75,6 +75,34 @@ hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_lvv12")]
+pokedex_numbers = {
+"conquest-gallery": 24,
+"crown-tundra": 145,
+"extended-sinnoh": 29,
+"hisui": 35,
+"hoenn": 64,
+"hyperspace": 95,
+"kalos-central": 146,
+"kanto": 42,
+"letsgo-kanto": 42,
+"national": 42,
+"original-akala": 27,
+"original-alola": 69,
+"original-johto": 38,
+"original-melemele": 69,
+"original-poni": 20,
+"original-sinnoh": 29,
+"original-ulaula": 36,
+"updated-akala": 27,
+"updated-alola": 81,
+"updated-hoenn": 66,
+"updated-johto": 38,
+"updated-melemele": 81,
+"updated-poni": 27,
+"updated-ulaula": 36,
+"updated-unova": 62
+}
+category = "Pokémon Murciélago"
 description = "Camina con soltura sobre sus pequeñas patas. Se
 acerca con sigilo a su presa mientras esta duerme
 y le clava los colmillos para chuparle la sangre."

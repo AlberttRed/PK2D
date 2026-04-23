@@ -62,6 +62,17 @@ gender_rate = -1
 capture_rate = 3
 hatch_counter = 120
 forms_switchable = true
+pokedex_numbers = {
+"conquest-gallery": 196,
+"kalos-mountain": 151,
+"kanto": 150,
+"letsgo-kanto": 150,
+"lumiose-city": 232,
+"national": 150,
+"original-johto": 249,
+"updated-johto": 254
+}
+category = "Pokémon Genético"
 description = "Su ADN es casi el mismo que el de Mew.
 Sin embargo, su tamaño y carácter son muy
 diferentes."

@@ -74,6 +74,16 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_5t1ib")]
+pokedex_numbers = {
+"blueberry": 8,
+"kanto": 48,
+"letsgo-kanto": 48,
+"national": 48,
+"original-johto": 108,
+"paldea": 256,
+"updated-johto": 109
+}
+category = "Pokémon Insecto"
 description = "Sus grandes ojos actúan como radares. A plena
 luz se percibe que son, en realidad, grupos de
 ojos diminutos."

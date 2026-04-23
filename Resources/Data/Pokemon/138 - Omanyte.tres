@@ -74,6 +74,17 @@ base_happiness = 50
 hatch_counter = 30
 growth_rate_id = 2
 evolutions = [SubResource("Resource_x4b6p")]
+pokedex_numbers = {
+"crown-tundra": 123,
+"kanto": 138,
+"letsgo-kanto": 138,
+"national": 138,
+"original-johto": 220,
+"updated-akala": 128,
+"updated-alola": 227,
+"updated-johto": 225
+}
+category = "Pokémon Espiral"
 description = "Un Pokémon de la era prehistórica, ahora
 extinto. Solía nadar moviendo sus diez tentáculos
 para desplazarse por el agua como si flotara."

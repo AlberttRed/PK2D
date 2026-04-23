@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://b1mviu1kvw8cg"]
 
+[ext_resource type="Script" uid="uid://5ku60s0srb80" path="res://Scripts/UI/PokedexUI.gd" id="1_pokedexui"]
 [ext_resource type="Texture2D" uid="uid://d4h6ti3mahujt" path="res://Sprites/UI/Pokedex/pokedexMenubg.png" id="1_ulqeb"]
 [ext_resource type="Texture2D" uid="uid://2v1k46d5ltw5" path="res://Sprites/UI/Pokedex/pokedexbg.png" id="2_pue45"]
 [ext_resource type="Texture2D" uid="uid://y6i66gj763lv" path="res://Sprites/UI/Pokedex/pokedexSearchbg.png" id="3_7i1ih"]
@@ -14,10 +15,12 @@
 [ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="8_rswy0"]
 [ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="9_rsic0"]
 [ext_resource type="Texture2D" uid="uid://cmnkq88d0u22g" path="res://Sprites/UI/Pokedex/footprint001.png" id="12_rsic0"]
+[ext_resource type="Texture2D" uid="uid://8h52o7ms5gha" path="res://Sprites/Pictures/types.png" id="13_imavx"]
 [ext_resource type="Texture2D" uid="uid://bm3cxlnu0yn0x" path="res://Sprites/Batalla/007b.png" id="14_8bb4i"]
 [ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="15_25n8m"]
 [ext_resource type="Texture2D" uid="uid://fs10rdu7vo7b" path="res://Sprites/UI/Map/mapRegion0.PNG" id="17_8o6ca"]
 [ext_resource type="Texture2D" uid="uid://ccj16ouyhl4th" path="res://Sprites/UI/Pokedex/pokedexNestUnknown.png" id="18_u2a38"]
+[ext_resource type="Texture2D" uid="uid://btrq4ivmhgoui" path="res://Sprites/Pictures/arrowSpriteOK2_White.png" id="19_region_cursor"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f5coo"]
 texture = ExtResource("1_ulqeb")
@@ -30,6 +33,10 @@ texture = ExtResource("3_7i1ih")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7i1ih"]
 texture = ExtResource("3_22q6a")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wls8f"]
+atlas = ExtResource("13_imavx")
+region = Rect2(0, 28, 64, 28)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_53p15"]
 texture = ExtResource("4_76js3")
@@ -47,6 +54,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_f5coo")
+script = ExtResource("1_pokedexui")
 metadata/_edit_lock_ = true
 
 [node name="lVistos" parent="." unique_id=808518405 instance=ExtResource("3_53p15")]
@@ -158,6 +166,12 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Salir"
 
+[node name="RegionCursor" type="Sprite2D" parent="." unique_id=1896092204]
+texture_filter = 1
+position = Vector2(54, 183)
+texture = ExtResource("19_region_cursor")
+offset = Vector2(0, -2)
+
 [node name="PokedexList" type="Panel" parent="." unique_id=532332040]
 z_index = -1
 layout_mode = 1
@@ -178,6 +192,7 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Pokédex Kanto"
 align = 1
+metadata/_edit_lock_ = true
 
 [node name="Outline" parent="PokedexList/Titulo" index="2"]
 theme_override_colors/default_color = Color(1, 1, 1, 1)
@@ -189,53 +204,62 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 
 [node name="Nombre" parent="PokedexList" unique_id=460249137 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 32.0
-offset_top = 38.0
-offset_right = 224.0
+offset_left = 26.0
+offset_top = 39.0
+offset_right = 206.0
 offset_bottom = 67.10236
 text = "Bulbasaur"
+horizontal_alignment = 1
+align = 1
+metadata/_edit_lock_ = true
 
 [node name="lVistos" parent="PokedexList" unique_id=140510616 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 32.0
-offset_top = 257.0
+offset_top = 258.0
 offset_right = 224.0
 offset_bottom = 286.10236
 text = "Vistos:"
+metadata/_edit_lock_ = true
 
 [node name="dVistos" parent="PokedexList" unique_id=874514668 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 135.0
-offset_top = 257.0
+offset_top = 258.0
 offset_right = 195.0
 offset_bottom = 286.10236
 text = "151"
 align = 2
+metadata/_edit_lock_ = true
 
 [node name="lPropios" parent="PokedexList" unique_id=1274097187 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 32.0
-offset_top = 299.0
+offset_top = 298.0
 offset_right = 224.0
-offset_bottom = 328.10236
+offset_bottom = 327.10236
 text = "Propios:"
+metadata/_edit_lock_ = true
 
 [node name="dPropios" parent="PokedexList" unique_id=5999655 instance=ExtResource("3_53p15")]
 layout_mode = 0
 offset_left = 135.0
 offset_top = 298.0
 offset_right = 195.0
-offset_bottom = 327.10236
+offset_bottom = 326.10236
 text = "151"
 align = 2
+metadata/_edit_lock_ = true
 
 [node name="Sprite" type="Sprite2D" parent="PokedexList" unique_id=455784548]
-position = Vector2(110, 160)
+position = Vector2(115, 161)
 texture = ExtResource("4_blboe")
+metadata/_edit_lock_ = true
 
 [node name="Slider" type="Sprite2D" parent="PokedexList" unique_id=1888371054]
-position = Vector2(489, 122)
+position = Vector2(488, 90)
 texture = ExtResource("5_mhums")
+metadata/_edit_lock_ = true
 
 [node name="ListViewport" type="Control" parent="PokedexList" unique_id=467440655]
 anchors_preset = 0
@@ -243,158 +267,218 @@ offset_left = 232.0
 offset_top = 40.0
 offset_right = 464.0
 offset_bottom = 328.0
+metadata/_edit_lock_ = true
 
 [node name="ListConainer" type="VBoxContainer" parent="PokedexList/ListViewport" unique_id=829342235]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_right = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
 
 [node name="PokemonRow" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1824967933]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow" unique_id=682715560]
-position = Vector2(8, 2)
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow" unique_id=682715560]
+custom_minimum_size = Vector2(36, 16)
+layout_mode = 2
 texture = ExtResource("6_5ff8f")
-centered = false
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
 [node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow" unique_id=1897884244 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow9" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1046138157]
+[node name="PokemonRow2" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=688163281]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow9" unique_id=93546644]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow9" unique_id=1093019244 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow2" unique_id=926304507]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow2" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1389078097]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow2" unique_id=1192185008 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow3" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1299626638]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow2" unique_id=122430925]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow2" unique_id=1437970700 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow3" unique_id=617598885]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow3" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=2093266345]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow3" unique_id=136430308 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow4" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=543030356]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow3" unique_id=928847930]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow3" unique_id=1325297820 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow4" unique_id=943557637]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow4" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=564035639]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow4" unique_id=552799507 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow5" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=686606840]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow4" unique_id=168512158]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow4" unique_id=643032334 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow5" unique_id=1121950439]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow5" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1125069807]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow5" unique_id=112372050 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow6" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=342545850]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow5" unique_id=291911622]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow5" unique_id=1966110426 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow6" unique_id=1831078352]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow6" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=626897223]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow6" unique_id=1501837136 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow7" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=389185550]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow6" unique_id=1029766566]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow6" unique_id=2062778592 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow7" unique_id=1320348994]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow7" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1126998735]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow7" unique_id=38795788 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow8" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=9338318]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow7" unique_id=1660486113]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow7" unique_id=800512453 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow8" unique_id=134409642]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
 
-[node name="PokemonRow8" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=730255291]
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow8" unique_id=2084921055 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
+
+[node name="PokemonRow9" type="HBoxContainer" parent="PokedexList/ListViewport/ListConainer" unique_id=1126203770]
 custom_minimum_size = Vector2(232, 32)
 layout_mode = 2
+theme_override_constants/separation = 8
+metadata/_edit_lock_ = true
 
-[node name="Owned" type="Sprite2D" parent="PokedexList/ListViewport/ListConainer/PokemonRow8" unique_id=1341657012]
-position = Vector2(8, 2)
-texture = ExtResource("6_5ff8f")
-centered = false
-
-[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow8" unique_id=1560378809 instance=ExtResource("3_53p15")]
+[node name="OwnedIcon" type="TextureRect" parent="PokedexList/ListViewport/ListConainer/PokemonRow9" unique_id=1074462149]
+custom_minimum_size = Vector2(36, 16)
 layout_mode = 2
-text = "      001 Bulbasaur"
-align = 2
+texture = ExtResource("6_5ff8f")
+stretch_mode = 3
+metadata/_edit_lock_ = true
+
+[node name="Nombre" parent="PokedexList/ListViewport/ListConainer/PokemonRow9" unique_id=1901740693 instance=ExtResource("3_53p15")]
+custom_minimum_size = Vector2(188, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+text = "001 Bulbasaur"
+metadata/_edit_lock_ = true
 
 [node name="Selection" type="Sprite2D" parent="PokedexList" unique_id=477150776]
 position = Vector2(348, 56)
 texture = ExtResource("7_jc3qv")
+metadata/_edit_lock_ = true
 
 [node name="U_Arrow" type="Sprite2D" parent="PokedexList" unique_id=1969660777]
-position = Vector2(352, 26)
+position = Vector2(352, 34)
 texture = ExtResource("8_rswy0")
 hframes = 8
+metadata/_edit_lock_ = true
 
 [node name="D_Arrow" type="Sprite2D" parent="PokedexList" unique_id=1749627067]
 position = Vector2(352, 334)
 texture = ExtResource("9_rsic0")
 hframes = 8
+metadata/_edit_lock_ = true
 
 [node name="PokedexSearch" type="Panel" parent="." unique_id=1211045924]
-z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -403,6 +487,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_mhums")
 metadata/_edit_lock_ = true
+
+[node name="SearchCursor" type="Sprite2D" parent="PokedexSearch" unique_id=560291403]
+texture_filter = 1
+position = Vector2(11, 95)
+texture = ExtResource("19_region_cursor")
 
 [node name="Titulo" parent="PokedexSearch" unique_id=824078661 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -430,9 +519,9 @@ text = "Búsqueda"
 
 [node name="lNombre" parent="PokedexSearch/Busqueda" unique_id=1781763397 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 80.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 108.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -440,19 +529,19 @@ text = "Nombre:"
 
 [node name="dNombre" parent="PokedexSearch/Busqueda" unique_id=979992474 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 80.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 108.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "Sin especificar"
+text = "Sin espec."
 
 [node name="lColor" parent="PokedexSearch/Busqueda" unique_id=1575055479 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 108.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 136.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -460,19 +549,19 @@ text = "Color:"
 
 [node name="dColor" parent="PokedexSearch/Busqueda" unique_id=1556373190 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 108.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 136.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "Sin especificar"
+text = "Sin espec."
 
 [node name="lTIpo1" parent="PokedexSearch/Busqueda" unique_id=1194711581 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 136.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 164.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -480,9 +569,9 @@ text = "Tipo 1:"
 
 [node name="dTipo1" parent="PokedexSearch/Busqueda" unique_id=2066190037 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 136.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 164.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -490,9 +579,9 @@ text = "Ninguno"
 
 [node name="lTIpo2" parent="PokedexSearch/Busqueda" unique_id=733368000 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 164.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 192.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -500,9 +589,9 @@ text = "Tipo 2:"
 
 [node name="dTIpo2" parent="PokedexSearch/Busqueda" unique_id=1393652773 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 164.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 192.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -510,9 +599,9 @@ text = "Ninguno"
 
 [node name="lOrden" parent="PokedexSearch/Busqueda" unique_id=1594685056 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 192.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 220.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -520,19 +609,19 @@ text = "Orden:"
 
 [node name="dOrden" parent="PokedexSearch/Busqueda" unique_id=2113069927 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 192.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 220.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "Modo Numérico"
+text = "Modo num."
 
 [node name="IniciarBusqueda" parent="PokedexSearch/Busqueda" unique_id=2072011071 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 220.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 248.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -555,9 +644,9 @@ text = "Ordenamiento"
 
 [node name="lOrden2" parent="PokedexSearch/Ordenamiento" unique_id=1849317560 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 302.0
-offset_right = 213.0
+offset_right = 230.0
 offset_bottom = 330.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -565,19 +654,19 @@ text = "Orden:"
 
 [node name="dOrden" parent="PokedexSearch/Ordenamiento" unique_id=1061111270 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 94.0
+offset_left = 111.0
 offset_top = 302.0
-offset_right = 298.0
+offset_right = 315.0
 offset_bottom = 330.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "Modo numérico"
+text = "Modo num."
 
 [node name="IniciarOrdenamiento" parent="PokedexSearch/Ordenamiento" unique_id=695974143 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 9.0
+offset_left = 26.0
 offset_top = 333.0
-offset_right = 248.0
+offset_right = 265.0
 offset_bottom = 361.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -590,11 +679,18 @@ offset_top = 44.0
 offset_right = 512.0
 offset_bottom = 244.0
 
+[node name="DataCursor" type="Sprite2D" parent="PokedexSearch/Datos" unique_id=1752140919]
+texture_filter = 1
+position = Vector2(8, 17)
+texture = ExtResource("19_region_cursor")
+offset = Vector2(8, -2)
+
 [node name="ListDatos" type="VBoxContainer" parent="PokedexSearch/Datos" unique_id=1489754468]
 layout_mode = 0
-offset_left = 24.0
+offset_left = 27.0
 offset_right = 252.0
 offset_bottom = 200.0
+theme_override_constants/separation = 1
 
 [node name="RowDato" type="HBoxContainer" parent="PokedexSearch/Datos/ListDatos" unique_id=609090488]
 custom_minimum_size = Vector2(0, 32)
@@ -605,6 +701,16 @@ layout_mode = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Sin especificar"
+
+[node name="U_Arrow" type="Sprite2D" parent="PokedexSearch/Datos" unique_id=1233116290]
+position = Vector2(128, 9)
+texture = ExtResource("8_rswy0")
+hframes = 8
+
+[node name="D_Arrow" type="Sprite2D" parent="PokedexSearch/Datos" unique_id=1038713495]
+position = Vector2(128, 189)
+texture = ExtResource("9_rsic0")
+hframes = 8
 
 [node name="Descripcion" parent="PokedexSearch" unique_id=2002251028 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -633,9 +739,9 @@ texture = ExtResource("6_5ff8f")
 
 [node name="Nombre" parent="PokedexEntry" unique_id=447616955 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 247.0
+offset_left = 246.0
 offset_top = 41.0
-offset_right = 510.0
+offset_right = 509.0
 offset_bottom = 70.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -643,11 +749,21 @@ text = "Bulbasaur"
 
 [node name="Categoria" parent="PokedexEntry" unique_id=1050256223 instance=ExtResource("3_53p15")]
 layout_mode = 0
-offset_left = 222.0
-offset_top = 75.0
-offset_right = 485.0
-offset_bottom = 104.0
+offset_left = 246.0
+offset_top = 73.0
+offset_right = 509.0
+offset_bottom = 102.0
 text = "Pokémon Semilla"
+
+[node name="tipo1" type="Sprite2D" parent="PokedexEntry" unique_id=861979780]
+position = Vector2(344, 136)
+scale = Vector2(1.5, 1.1428571)
+texture = SubResource("AtlasTexture_wls8f")
+
+[node name="tipo2" type="Sprite2D" parent="PokedexEntry" unique_id=1253742463]
+position = Vector2(444, 136)
+scale = Vector2(1.5, 1.1428571)
+texture = SubResource("AtlasTexture_wls8f")
 
 [node name="Descripción" parent="PokedexEntry" unique_id=1422301069 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -717,12 +833,14 @@ text = "kg
 align = 2
 
 [node name="Footprint" type="Sprite2D" parent="PokedexEntry" unique_id=723937970]
-position = Vector2(241, 153)
+position = Vector2(240, 153)
 texture = ExtResource("12_rsic0")
+metadata/_edit_lock_ = true
 
 [node name="Sprite" type="Sprite2D" parent="PokedexEntry" unique_id=462632472]
-position = Vector2(105, 130)
+position = Vector2(104, 133)
 texture = ExtResource("4_blboe")
+metadata/_edit_lock_ = true
 
 [node name="PokedexForm" type="Panel" parent="." unique_id=927914684]
 z_index = -1
@@ -736,17 +854,20 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_53p15")
 metadata/_edit_lock_ = true
 
 [node name="front" type="Sprite2D" parent="PokedexForm" unique_id=107903112]
-position = Vector2(125, 150)
+position = Vector2(138, 160)
 texture = ExtResource("4_blboe")
+metadata/_edit_lock_ = true
 
 [node name="front2back" type="Sprite2D" parent="PokedexForm" unique_id=1396783504]
-position = Vector2(374, 147)
+position = Vector2(374, 177)
 texture = ExtResource("14_8bb4i")
+metadata/_edit_lock_ = true
 
 [node name="icono" type="Sprite2D" parent="PokedexForm" unique_id=1497823381]
 position = Vector2(110, 328)
 texture = ExtResource("15_25n8m")
 hframes = 2
+metadata/_edit_lock_ = true
 
 [node name="Nombre" parent="PokedexForm" unique_id=1487369060 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -757,6 +878,7 @@ offset_bottom = 335.0
 text = "Bulbasaur"
 horizontal_alignment = 1
 align = 1
+metadata/_edit_lock_ = true
 
 [node name="Genero" parent="PokedexForm" unique_id=2130664256 instance=ExtResource("3_53p15")]
 layout_mode = 0
@@ -767,6 +889,7 @@ offset_bottom = 367.0
 text = "Macho"
 horizontal_alignment = 1
 align = 1
+metadata/_edit_lock_ = true
 
 [node name="PokedexNest" type="Panel" parent="." unique_id=1535574164]
 z_index = -1

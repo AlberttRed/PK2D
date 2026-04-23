@@ -74,6 +74,23 @@ base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
 evolutions = [SubResource("Resource_cd7t7")]
+pokedex_numbers = {
+"blueberry": 14,
+"crown-tundra": 19,
+"extended-sinnoh": 201,
+"hisui": 175,
+"kanto": 126,
+"letsgo-kanto": 126,
+"national": 126,
+"original-akala": 94,
+"original-alola": 167,
+"original-johto": 151,
+"updated-akala": 102,
+"updated-alola": 201,
+"updated-johto": 153,
+"updated-unova": 54
+}
+category = "Pokémon Escupefuego"
 description = "Un Pokémon cuyo cuerpo está siempre envuelto
 en llamas. Es temido porque se lo considera un
 causante potencial de incendios."

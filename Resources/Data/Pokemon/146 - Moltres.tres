@@ -65,6 +65,16 @@ gender_rate = -1
 capture_rate = 3
 base_happiness = 35
 hatch_counter = 80
+pokedex_numbers = {
+"crown-tundra": 204,
+"kalos-coastal": 153,
+"kanto": 146,
+"letsgo-kanto": 146,
+"national": 146,
+"original-johto": 237,
+"updated-johto": 242
+}
+category = "Pokémon Llama"
 description = "Se cuenta que alguna vez ha iluminado el camino
 con sus alas flamígeras para rescatar a alguien
 que se había perdido en la montaña."

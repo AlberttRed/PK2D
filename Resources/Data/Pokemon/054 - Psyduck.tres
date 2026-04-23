@@ -71,6 +71,33 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_kptjr")]
+pokedex_numbers = {
+"extended-sinnoh": 43,
+"hisui": 68,
+"hoenn": 158,
+"isle-of-armor": 146,
+"kalos-central": 59,
+"kanto": 54,
+"letsgo-kanto": 54,
+"national": 54,
+"original-akala": 32,
+"original-alola": 89,
+"original-johto": 138,
+"original-melemele": 89,
+"original-poni": 39,
+"original-sinnoh": 43,
+"original-ulaula": 49,
+"paldea": 55,
+"updated-akala": 32,
+"updated-alola": 107,
+"updated-hoenn": 165,
+"updated-johto": 140,
+"updated-melemele": 107,
+"updated-poni": 51,
+"updated-ulaula": 52,
+"updated-unova": 28
+}
+category = "Pokémon Pato"
 description = "Sus dolores de cabeza empeoran a medida que
 aumenta su nivel de estrés. Su increíble poder
 psíquico puede causar estragos a su alrededor."

@@ -75,6 +75,23 @@ base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
 evolutions = [SubResource("Resource_rgao3")]
+pokedex_numbers = {
+"blueberry": 6,
+"conquest-gallery": 161,
+"extended-sinnoh": 187,
+"galar": 265,
+"hisui": 121,
+"hoenn": 170,
+"isle-of-armor": 184,
+"kalos-coastal": 51,
+"kanto": 112,
+"letsgo-kanto": 112,
+"national": 112,
+"original-johto": 207,
+"updated-hoenn": 177,
+"updated-johto": 212
+}
+category = "Pokémon Taladro"
 description = "La piel le sirve de escudo protector. Puede vivir
 en lava líquida a 2000 °C."
 icon_sprite = SubResource("AtlasTexture_ibshh")

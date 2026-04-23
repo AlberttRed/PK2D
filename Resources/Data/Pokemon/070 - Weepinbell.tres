@@ -75,6 +75,17 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_yhvnh")]
+pokedex_numbers = {
+"kalos-mountain": 27,
+"kanto": 70,
+"kitakami": 24,
+"letsgo-kanto": 70,
+"lumiose-city": 75,
+"national": 70,
+"original-johto": 65,
+"updated-johto": 65
+}
+category = "Pokémon Matamoscas"
 description = "Cuando tiene hambre, engulle a todo lo que
 se mueve. La pobre presa acaba disuelta en
 sus ácidos."

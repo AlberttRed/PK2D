@@ -74,6 +74,17 @@ base_happiness = 50
 hatch_counter = 30
 growth_rate_id = 2
 evolutions = [SubResource("Resource_xajbi")]
+pokedex_numbers = {
+"crown-tundra": 125,
+"kanto": 140,
+"letsgo-kanto": 140,
+"national": 140,
+"original-johto": 222,
+"updated-akala": 130,
+"updated-alola": 229,
+"updated-johto": 227
+}
+category = "Pokémon Armazón"
 description = "Se consideraba extinto, pero, al parecer, existen
 determinadas zonas en las que es posible hallar
 ejemplares con facilidad."

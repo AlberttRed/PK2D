@@ -107,6 +107,29 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_lajy4"), SubResource("Resource_4s0si"), SubResource("Resource_p0xme"), SubResource("Resource_jg7jp"), SubResource("Resource_ctyto"), SubResource("Resource_vxw8l")]
+pokedex_numbers = {
+"blueberry": 117,
+"extended-sinnoh": 179,
+"hisui": 178,
+"hoenn": 83,
+"isle-of-armor": 106,
+"kalos-mountain": 70,
+"kanto": 82,
+"letsgo-kanto": 82,
+"national": 82,
+"original-alola": 48,
+"original-johto": 119,
+"original-melemele": 48,
+"original-ulaula": 26,
+"paldea": 210,
+"updated-alola": 55,
+"updated-hoenn": 85,
+"updated-johto": 120,
+"updated-melemele": 55,
+"updated-ulaula": 26,
+"updated-unova": 49
+}
+category = "Pokémon Imán"
 description = "Emite de forma constante una potente fuerza
 magnética que causa estragos en prácticamente
 cualquier ordenador al que se acerque."

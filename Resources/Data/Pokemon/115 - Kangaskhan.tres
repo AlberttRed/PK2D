@@ -64,6 +64,22 @@ base_happiness = 50
 hatch_counter = 20
 forms_switchable = true
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 115,
+"isle-of-armor": 172,
+"kalos-coastal": 62,
+"kanto": 115,
+"letsgo-kanto": 115,
+"lumiose-city": 223,
+"national": 115,
+"original-akala": 92,
+"original-alola": 165,
+"original-johto": 205,
+"updated-akala": 100,
+"updated-alola": 199,
+"updated-johto": 210
+}
+category = "Pokémon Maternal"
 description = "Se han documentado casos de Kangaskhan sin
 crías que han adoptado bebés humanos cuyos
 padres habían sido víctimas de accidentes."

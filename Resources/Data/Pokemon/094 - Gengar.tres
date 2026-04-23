@@ -69,6 +69,32 @@ base_happiness = 50
 hatch_counter = 20
 forms_switchable = true
 growth_rate_id = 4
+pokedex_numbers = {
+"champions": 94,
+"conquest-gallery": 114,
+"extended-sinnoh": 71,
+"galar": 143,
+"hisui": 138,
+"kalos-mountain": 32,
+"kanto": 94,
+"kitakami": 120,
+"letsgo-kanto": 94,
+"lumiose-city": 67,
+"national": 94,
+"original-akala": 25,
+"original-alola": 63,
+"original-johto": 60,
+"original-melemele": 63,
+"original-sinnoh": 71,
+"original-ulaula": 34,
+"paldea": 70,
+"updated-akala": 25,
+"updated-alola": 75,
+"updated-johto": 60,
+"updated-melemele": 75,
+"updated-ulaula": 34
+}
+category = "Pokémon Sombra"
 description = "Dicen que sale de la oscuridad para robarles el
 alma a los que se pierden por las montañas."
 icon_sprite = SubResource("AtlasTexture_33ihl")

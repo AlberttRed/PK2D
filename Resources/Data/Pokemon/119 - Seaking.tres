@@ -66,6 +66,27 @@ base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"extended-sinnoh": 79,
+"galar": 147,
+"hoenn": 51,
+"isle-of-armor": 95,
+"kalos-central": 54,
+"kanto": 119,
+"letsgo-kanto": 119,
+"national": 119,
+"original-akala": 81,
+"original-alola": 154,
+"original-johto": 79,
+"original-sinnoh": 79,
+"original-ulaula": 73,
+"updated-akala": 88,
+"updated-alola": 187,
+"updated-hoenn": 52,
+"updated-johto": 79,
+"updated-ulaula": 79
+}
+category = "Pokémon Pez Color"
 description = "Perfora las piedras del lecho del río con su
 cuerno para hacer un nido y que la corriente
 no arrastre sus huevos."

@@ -71,6 +71,16 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_dcnw0")]
+pokedex_numbers = {
+"crown-tundra": 65,
+"kalos-coastal": 104,
+"kanto": 29,
+"letsgo-kanto": 29,
+"national": 29,
+"original-johto": 95,
+"updated-johto": 95
+}
+category = "Pokémon Pin Veneno"
 description = "Parte las bayas con sus duros incisivos para
 comérselas. La punta del cuerno de las hembras
 es más redondeada que la de los machos."

@@ -74,6 +74,17 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_nqnm1")]
+pokedex_numbers = {
+"kalos-mountain": 26,
+"kanto": 69,
+"kitakami": 23,
+"letsgo-kanto": 69,
+"lumiose-city": 74,
+"national": 69,
+"original-johto": 64,
+"updated-johto": 64
+}
+category = "Pokémon Flor"
 description = "Prefiere lugares cálidos y húmedos. Atrapa
 pequeños Pokémon insectos con sus lianas para
 devorarlos."

@@ -72,6 +72,23 @@ capture_rate = 45
 base_happiness = 35
 hatch_counter = 40
 evolutions = [SubResource("Resource_mw32a")]
+pokedex_numbers = {
+"conquest-gallery": 76,
+"crown-tundra": 194,
+"kalos-mountain": 145,
+"kanto": 147,
+"letsgo-kanto": 147,
+"lumiose-city": 145,
+"national": 147,
+"original-alola": 281,
+"original-johto": 241,
+"original-poni": 96,
+"paldea": 347,
+"updated-alola": 379,
+"updated-johto": 246,
+"updated-poni": 126
+}
+category = "Pokémon Dragón"
 description = "Durante mucho tiempo se dudó de su existencia.
 La pequeña protuberancia de la frente es en
 realidad un cuerno incipiente."

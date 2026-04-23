@@ -65,6 +65,24 @@ capture_rate = 35
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 132,
+"galar": 373,
+"isle-of-armor": 207,
+"kalos-mountain": 138,
+"kanto": 132,
+"letsgo-kanto": 132,
+"national": 132,
+"original-alola": 209,
+"original-johto": 92,
+"original-ulaula": 81,
+"paldea": 212,
+"updated-alola": 271,
+"updated-johto": 92,
+"updated-ulaula": 92,
+"updated-unova": 261
+}
+category = "Pokémon Transformación"
 description = "Cuando se encuentra con otro Ditto, se mueve
 más rápido de lo normal para intentar adoptar
 su aspecto."

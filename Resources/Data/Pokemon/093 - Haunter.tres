@@ -76,6 +76,31 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_e7sj1")]
+pokedex_numbers = {
+"conquest-gallery": 113,
+"extended-sinnoh": 70,
+"galar": 142,
+"hisui": 137,
+"kalos-mountain": 31,
+"kanto": 93,
+"kitakami": 119,
+"letsgo-kanto": 93,
+"lumiose-city": 66,
+"national": 93,
+"original-akala": 24,
+"original-alola": 62,
+"original-johto": 59,
+"original-melemele": 62,
+"original-sinnoh": 70,
+"original-ulaula": 33,
+"paldea": 69,
+"updated-akala": 24,
+"updated-alola": 74,
+"updated-johto": 59,
+"updated-melemele": 74,
+"updated-ulaula": 33
+}
+category = "Pokémon Gas"
 description = "Cuando se tiene la sensación de ser observado
 en la oscuridad sin que haya nadie alrededor,
 seguro que es porque un Haunter anda cerca."

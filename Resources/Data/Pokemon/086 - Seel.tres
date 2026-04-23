@@ -73,6 +73,18 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_jf2b2")]
+pokedex_numbers = {
+"blueberry": 143,
+"kanto": 86,
+"letsgo-kanto": 86,
+"national": 86,
+"original-johto": 176,
+"updated-alola": 115,
+"updated-johto": 178,
+"updated-melemele": 115,
+"updated-unova": 265
+}
+category = "Pokémon León Marino"
 description = "Le encantan los lugares gélidos y disfruta
 nadando en aguas a temperaturas en torno a
 los -10 °C."

@@ -71,6 +71,18 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_xqnhl")]
+pokedex_numbers = {
+"blueberry": 170,
+"isle-of-armor": 71,
+"kalos-central": 86,
+"kanto": 7,
+"letsgo-kanto": 7,
+"lumiose-city": 154,
+"national": 7,
+"original-johto": 232,
+"updated-johto": 237
+}
+category = "Pokémon Tortuguita"
 description = "Cuando se siente en peligro, se esconde en su
 caparazón y escupe chorros de agua por la boca."
 icon_sprite = SubResource("AtlasTexture_w27sx")

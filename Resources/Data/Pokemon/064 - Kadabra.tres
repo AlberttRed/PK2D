@@ -74,6 +74,27 @@ hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 4
 evolutions = [SubResource("Resource_ltyg2")]
+pokedex_numbers = {
+"conquest-gallery": 128,
+"extended-sinnoh": 21,
+"hisui": 59,
+"hoenn": 40,
+"isle-of-armor": 32,
+"kalos-central": 103,
+"kanto": 64,
+"letsgo-kanto": 64,
+"lumiose-city": 63,
+"national": 64,
+"original-alola": 43,
+"original-johto": 90,
+"original-melemele": 43,
+"original-sinnoh": 21,
+"updated-alola": 50,
+"updated-hoenn": 41,
+"updated-johto": 90,
+"updated-melemele": 50
+}
+category = "Pokémon Psi"
 description = "La potencia de su telequinesis es inmensa.
 Acumula poder psíquico en la estrella de la
 frente como preparativo de cara a su evolución."

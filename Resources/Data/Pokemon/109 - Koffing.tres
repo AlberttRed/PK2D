@@ -73,6 +73,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_dwoab")]
+pokedex_numbers = {
+"galar": 250,
+"hoenn": 108,
+"kanto": 109,
+"kitakami": 135,
+"letsgo-kanto": 109,
+"national": 109,
+"original-johto": 114,
+"updated-hoenn": 113,
+"updated-johto": 115,
+"updated-unova": 46
+}
+category = "Pokémon Gas Venenoso"
 description = "Se nutre de aire contaminado. Al parecer, antaño
 eran mucho más numerosos en Galar."
 icon_sprite = SubResource("AtlasTexture_gxrxl")

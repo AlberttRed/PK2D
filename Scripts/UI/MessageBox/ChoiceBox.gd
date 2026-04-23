@@ -19,6 +19,7 @@ enum ChoiceAnchor {
 
 signal choice_made(index: int)
 signal choice_cancelled()
+signal selection_changed(index: int)
 
 ## Índice de la opción actualmente seleccionada
 var selected_index: int = 0
@@ -39,8 +40,8 @@ const DESIGN_VIEWPORT := Vector2(512.0, 384.0)
 ## Con ~12px el panel de 4 opciones quedaba con top ≈196; con 4px el borde superior cae ≈204 (viewport base).
 const PARTY_MENU_BOTTOM_INSET := 4.0
 ## En `Scenes/UI/GUI.tscn` el ChoiceBox tiene offset_right = 0 (pegado al borde derecho del viewport), no el inset de ChoiceBox.tscn.
-const CORNER_INSET_RIGHT := 368.0
-const CORNER_INSET_BOTTOM := 322.0
+const CORNER_INSET_RIGHT := 4.0
+const CORNER_INSET_BOTTOM := 4.0
 const CORNER_INSET_LEFT := 0.0
 const CORNER_INSET_TOP := 14.0
 
@@ -60,6 +61,7 @@ var _bag_top_left: Vector2 = Vector2.ZERO
 
 ## Sesión bolsa/diálogo: UI montada antes del mensaje; se revela en `MessageBox.onTextVisibleReady`.
 var _coordinated_choice_session: bool = false
+var _next_initial_index: int = 0
 
 func _ready() -> void:
 	# Guardar los offsets configurados en la escena
@@ -233,13 +235,19 @@ func _setup_choice_rows(choice_options: Array[String]) -> bool:
 		return false
 	_clear_options()
 	options = choice_options
-	selected_index = 0
+	selected_index = clampi(_next_initial_index, 0, options.size() - 1)
+	_next_initial_index = 0
 	for i in range(options.size()):
 		var row := _create_label_hgss(options[i])
 		row.name = "Option" + str(i)
 		options_container.add_child(row)
 	_apply_panel_width_and_provisional_height()
+	selection_changed.emit(selected_index)
 	return true
+
+
+func set_next_initial_index(index: int) -> void:
+	_next_initial_index = maxi(index, 0)
 
 
 func _complete_choice_session() -> int:
@@ -386,6 +394,7 @@ func _navigate_up() -> void:
 	if selected_index < 0:
 		selected_index = options.size() - 1
 	_update_cursor_position()
+	selection_changed.emit(selected_index)
 	_play_cursor_sound()
 
 ## Navega hacia abajo en las opciones
@@ -394,6 +403,7 @@ func _navigate_down() -> void:
 	if selected_index >= options.size():
 		selected_index = 0
 	_update_cursor_position()
+	selection_changed.emit(selected_index)
 	_play_cursor_sound()
 
 ## Confirma la selección actual

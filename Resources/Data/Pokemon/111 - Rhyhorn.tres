@@ -74,6 +74,23 @@ base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
 evolutions = [SubResource("Resource_jojw4")]
+pokedex_numbers = {
+"blueberry": 5,
+"conquest-gallery": 160,
+"extended-sinnoh": 186,
+"galar": 264,
+"hisui": 120,
+"hoenn": 169,
+"isle-of-armor": 183,
+"kalos-coastal": 50,
+"kanto": 111,
+"letsgo-kanto": 111,
+"national": 111,
+"original-johto": 206,
+"updated-hoenn": 176,
+"updated-johto": 211
+}
+category = "Pokémon Clavos"
 description = "La cabeza no le da para retener más de una cosa.
 Si se pone a correr, se le olvida al instante por
 qué empezó a hacerlo."

@@ -64,6 +64,19 @@ base_happiness = 50
 hatch_counter = 20
 forms_switchable = true
 growth_rate_id = 4
+pokedex_numbers = {
+"blueberry": 172,
+"champions": 9,
+"isle-of-armor": 73,
+"kalos-central": 88,
+"kanto": 9,
+"letsgo-kanto": 9,
+"lumiose-city": 156,
+"national": 9,
+"original-johto": 234,
+"updated-johto": 239
+}
+category = "Pokémon Armazón"
 description = "Dispara chorros de agua a través de los cañones
 de su caparazón, capaces de agujerear incluso el
 acero."

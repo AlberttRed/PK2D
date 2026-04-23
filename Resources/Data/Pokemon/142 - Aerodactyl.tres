@@ -66,6 +66,22 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 35
 forms_switchable = true
+pokedex_numbers = {
+"champions": 142,
+"crown-tundra": 127,
+"kalos-coastal": 68,
+"kanto": 142,
+"letsgo-kanto": 142,
+"lumiose-city": 192,
+"national": 142,
+"original-alola": 284,
+"original-johto": 224,
+"original-poni": 99,
+"updated-alola": 382,
+"updated-johto": 229,
+"updated-poni": 129
+}
+category = "Pokémon Fósil"
 description = "Sus colmillos, afilados como sierras, pueden
 hacer trizas incluso la piel de Pokémon de tipo
 Acero."

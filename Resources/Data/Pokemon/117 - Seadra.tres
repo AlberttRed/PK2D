@@ -75,6 +75,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_ph5eb")]
+pokedex_numbers = {
+"blueberry": 53,
+"hoenn": 185,
+"isle-of-armor": 199,
+"kalos-coastal": 40,
+"kanto": 117,
+"letsgo-kanto": 117,
+"national": 117,
+"original-johto": 187,
+"updated-hoenn": 194,
+"updated-johto": 191
+}
+category = "Pokémon Dragón"
 description = "Su estrecho morro posee tal fuerza de succión
 que es capaz de aspirar presas de mayor tamaño
 y engullirlas enteras."

@@ -73,6 +73,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_6ddro")]
+pokedex_numbers = {
+"crown-tundra": 105,
+"extended-sinnoh": 90,
+"galar": 333,
+"hisui": 23,
+"kanto": 77,
+"letsgo-kanto": 77,
+"national": 77,
+"original-johto": 201,
+"original-sinnoh": 90,
+"updated-johto": 206
+}
+category = "Pokémon Caballo Fuego"
 description = "Por extraño que parezca, una vez que alguien
 se ha hecho merecedor de su confianza, puede
 tocarle la ardiente crin sin quemarse."

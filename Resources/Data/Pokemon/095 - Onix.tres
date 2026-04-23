@@ -77,6 +77,22 @@ base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
 evolutions = [SubResource("Resource_7qd5b")]
+pokedex_numbers = {
+"conquest-gallery": 175,
+"extended-sinnoh": 34,
+"galar": 178,
+"hisui": 118,
+"kalos-coastal": 53,
+"kanto": 95,
+"letsgo-kanto": 95,
+"lumiose-city": 197,
+"national": 95,
+"original-johto": 62,
+"original-sinnoh": 34,
+"updated-johto": 62,
+"updated-unova": 71
+}
+category = "Pokémon Serpiente Roca"
 description = "Perfora el suelo a una velocidad de 80 km/h
 girando y retorciendo su robusto y enorme
 cuerpo."

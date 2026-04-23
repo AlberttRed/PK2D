@@ -66,6 +66,31 @@ base_happiness = 50
 hatch_counter = 10
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 26,
+"conquest-gallery": 17,
+"extended-sinnoh": 105,
+"galar": 195,
+"hisui": 57,
+"hoenn": 157,
+"isle-of-armor": 86,
+"kalos-central": 37,
+"kanto": 26,
+"kitakami": 22,
+"letsgo-kanto": 26,
+"lumiose-city": 54,
+"national": 26,
+"original-alola": 26,
+"original-johto": 23,
+"original-melemele": 26,
+"original-sinnoh": 105,
+"paldea": 75,
+"updated-alola": 33,
+"updated-hoenn": 164,
+"updated-johto": 23,
+"updated-melemele": 33
+}
+category = "Pokémon Ratón"
 description = "Cuando ha descargado las bolsas de las mejillas,
 levanta la cola y absorbe la carga eléctrica que
 hay en el ambiente."

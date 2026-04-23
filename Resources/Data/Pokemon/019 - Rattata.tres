@@ -81,6 +81,25 @@ hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_0yovm"), SubResource("Resource_vmjxc")]
+pokedex_numbers = {
+"kanto": 19,
+"letsgo-kanto": 19,
+"national": 19,
+"original-akala": 6,
+"original-alola": 15,
+"original-johto": 17,
+"original-melemele": 15,
+"original-poni": 6,
+"original-ulaula": 6,
+"updated-akala": 6,
+"updated-alola": 15,
+"updated-johto": 17,
+"updated-melemele": 15,
+"updated-poni": 6,
+"updated-ulaula": 6,
+"updated-unova": 59
+}
+category = "Pokémon Ratón"
 description = "Es propenso a hincar los incisivos en cualquier
 cosa que se le ponga por delante. Si se ve
 alguno, seguramente haya cuarenta cerca."

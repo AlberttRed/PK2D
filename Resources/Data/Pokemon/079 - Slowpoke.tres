@@ -97,6 +97,25 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_mwcur"), SubResource("Resource_cg4u1"), SubResource("Resource_4tgcl"), SubResource("Resource_nophi")]
+pokedex_numbers = {
+"blueberry": 75,
+"isle-of-armor": 1,
+"kalos-coastal": 133,
+"kanto": 79,
+"letsgo-kanto": 79,
+"lumiose-city": 137,
+"national": 79,
+"original-alola": 37,
+"original-johto": 80,
+"original-melemele": 37,
+"original-ulaula": 18,
+"paldea": 324,
+"updated-alola": 44,
+"updated-johto": 80,
+"updated-melemele": 44,
+"updated-ulaula": 18
+}
+category = "Pokémon Atontado"
 description = "Hunde la cola en el agua y la usa cual caña de
 pescar. La sustancia dulce que secreta le sirve
 de cebo para atraer a sus presas."

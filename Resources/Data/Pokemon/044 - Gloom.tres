@@ -85,6 +85,19 @@ hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 4
 evolutions = [SubResource("Resource_svg0w"), SubResource("Resource_1vyf2")]
+pokedex_numbers = {
+"blueberry": 63,
+"galar": 56,
+"hoenn": 89,
+"kalos-central": 106,
+"kanto": 44,
+"letsgo-kanto": 44,
+"national": 44,
+"original-johto": 84,
+"updated-hoenn": 92,
+"updated-johto": 84
+}
+category = "Pokémon Hierbajo"
 description = "Lo que parece baba es realmente un néctar muy
 pegajoso que se adhiere sin remisión al tocarlo."
 icon_sprite = SubResource("AtlasTexture_74g36")

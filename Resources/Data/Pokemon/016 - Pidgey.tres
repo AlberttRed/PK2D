@@ -74,6 +74,16 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 4
 evolutions = [SubResource("Resource_2le5s")]
+pokedex_numbers = {
+"kalos-central": 17,
+"kanto": 16,
+"letsgo-kanto": 16,
+"lumiose-city": 21,
+"national": 16,
+"original-johto": 10,
+"updated-johto": 10
+}
+category = "Pokémon Pajarito"
 description = "Su docilidad es tal que suelen defenderse
 levantando arena en lugar de contraatacar."
 icon_sprite = SubResource("AtlasTexture_5x14k")

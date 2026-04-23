@@ -67,6 +67,32 @@ gender_rate = 4
 capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"blueberry": 51,
+"extended-sinnoh": 137,
+"hisui": 171,
+"hoenn": 67,
+"isle-of-armor": 41,
+"kalos-coastal": 26,
+"kanto": 73,
+"letsgo-kanto": 73,
+"national": 73,
+"original-akala": 39,
+"original-alola": 107,
+"original-johto": 163,
+"original-melemele": 107,
+"original-poni": 56,
+"original-sinnoh": 137,
+"original-ulaula": 54,
+"updated-akala": 39,
+"updated-alola": 130,
+"updated-hoenn": 69,
+"updated-johto": 165,
+"updated-melemele": 130,
+"updated-poni": 68,
+"updated-ulaula": 57
+}
+category = "Pokémon Medusa"
 description = "Puede estirar y contraer con total libertad sus
 80 tentáculos. Con ellos atrapa a sus presas y
 les inyecta un veneno debilitante."

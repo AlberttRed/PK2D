@@ -63,6 +63,16 @@ capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"galar": 99,
+"isle-of-armor": 39,
+"kanto": 99,
+"letsgo-kanto": 99,
+"national": 99,
+"original-johto": 165,
+"updated-johto": 167
+}
+category = "Pokémon Tenaza"
 description = "Su gran pinza posee una potencia devastadora,
 pero su peso excesivo la convierte en un estorbo
 fuera del terreno de combate."

@@ -62,6 +62,16 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 94,
+"galar": 109,
+"kanto": 107,
+"letsgo-kanto": 107,
+"national": 107,
+"original-johto": 145,
+"updated-johto": 147
+}
+category = "Pokémon Puñetazo"
 description = "Sus puñetazos son capaces incluso de cortar el
 aire, aunque parece necesitar un descanso tras
 estar luchando durante 3 min."

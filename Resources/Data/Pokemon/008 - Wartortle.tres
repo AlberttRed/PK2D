@@ -72,6 +72,18 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_fbtuh")]
+pokedex_numbers = {
+"blueberry": 171,
+"isle-of-armor": 72,
+"kalos-central": 87,
+"kanto": 8,
+"letsgo-kanto": 8,
+"lumiose-city": 155,
+"national": 8,
+"original-johto": 233,
+"updated-johto": 238
+}
+category = "Pokémon Tortuga"
 description = "Utiliza hábilmente sus peludas orejas y la cola
 para mantener el equilibrio al nadar."
 icon_sprite = SubResource("AtlasTexture_t1pw8")

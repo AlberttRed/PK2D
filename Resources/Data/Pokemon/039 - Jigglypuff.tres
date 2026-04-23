@@ -77,6 +77,26 @@ base_happiness = 50
 hatch_counter = 10
 growth_rate_id = 3
 evolutions = [SubResource("Resource_a0bwn")]
+pokedex_numbers = {
+"conquest-gallery": 21,
+"hoenn": 138,
+"hyperspace": 77,
+"isle-of-armor": 12,
+"kalos-mountain": 120,
+"kanto": 39,
+"letsgo-kanto": 39,
+"national": 39,
+"original-akala": 62,
+"original-alola": 135,
+"original-johto": 44,
+"paldea": 60,
+"updated-akala": 69,
+"updated-alola": 168,
+"updated-hoenn": 143,
+"updated-johto": 44,
+"updated-unova": 282
+}
+category = "Pokémon Globo"
 description = "Posee la capacidad de modular su voz a voluntad
 cambiando la longitud de onda para entonar una
 melodía misteriosa que provoca adormecimiento."

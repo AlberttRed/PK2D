@@ -67,6 +67,28 @@ hatch_counter = 20
 has_gender_differences = true
 forms_switchable = true
 growth_rate_id = 4
+pokedex_numbers = {
+"champions": 65,
+"conquest-gallery": 129,
+"extended-sinnoh": 22,
+"hisui": 60,
+"hoenn": 41,
+"isle-of-armor": 33,
+"kalos-central": 104,
+"kanto": 65,
+"letsgo-kanto": 65,
+"lumiose-city": 64,
+"national": 65,
+"original-alola": 44,
+"original-johto": 91,
+"original-melemele": 44,
+"original-sinnoh": 22,
+"updated-alola": 51,
+"updated-hoenn": 42,
+"updated-johto": 91,
+"updated-melemele": 51
+}
+category = "Pokémon Psi"
 description = "Posee unos poderes psíquicos extraordinarios
 con los que, según se dice, creó las cucharas
 que lleva en las manos."

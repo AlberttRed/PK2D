@@ -68,6 +68,23 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+pokedex_numbers = {
+"isle-of-armor": 144,
+"kalos-mountain": 35,
+"kanto": 62,
+"kitakami": 41,
+"letsgo-kanto": 62,
+"national": 62,
+"original-akala": 78,
+"original-alola": 151,
+"original-johto": 74,
+"original-ulaula": 70,
+"updated-akala": 85,
+"updated-alola": 184,
+"updated-johto": 74,
+"updated-ulaula": 76
+}
+category = "Pokémon Renacuajo"
 description = "No solo es un experto nadador, sino que también
 domina las artes marciales. Propina enérgicos
 puñetazos gracias a sus musculosos brazos."

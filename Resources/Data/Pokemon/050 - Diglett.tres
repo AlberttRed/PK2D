@@ -73,6 +73,28 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_tt5bm")]
+pokedex_numbers = {
+"blueberry": 66,
+"galar": 164,
+"kalos-mountain": 1,
+"kanto": 50,
+"letsgo-kanto": 50,
+"national": 50,
+"original-akala": 29,
+"original-alola": 71,
+"original-johto": 132,
+"original-melemele": 71,
+"original-poni": 22,
+"original-ulaula": 38,
+"paldea": 148,
+"updated-akala": 29,
+"updated-alola": 85,
+"updated-johto": 134,
+"updated-melemele": 85,
+"updated-poni": 31,
+"updated-ulaula": 38
+}
+category = "Pokémon Topo"
 description = "Este Pokémon avanza horadando la tierra a poca
 profundidad. Resulta fácil localizarlo por los
 montículos que deja como rastro."

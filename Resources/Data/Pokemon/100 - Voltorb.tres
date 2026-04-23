@@ -71,6 +71,19 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_cl853")]
+pokedex_numbers = {
+"hisui": 192,
+"hoenn": 84,
+"kalos-mountain": 72,
+"kanto": 100,
+"letsgo-kanto": 100,
+"national": 100,
+"original-johto": 120,
+"paldea": 207,
+"updated-hoenn": 87,
+"updated-johto": 121
+}
+category = "Pokémon Bola"
 description = "Se dice que se camufla como una Poké Ball.
 Al más mínimo estímulo se autodestruirá."
 icon_sprite = SubResource("AtlasTexture_ded43")

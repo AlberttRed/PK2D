@@ -74,6 +74,31 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_ouq2f")]
+pokedex_numbers = {
+"conquest-gallery": 112,
+"extended-sinnoh": 69,
+"galar": 141,
+"hisui": 136,
+"kalos-mountain": 30,
+"kanto": 92,
+"kitakami": 118,
+"letsgo-kanto": 92,
+"lumiose-city": 65,
+"national": 92,
+"original-akala": 23,
+"original-alola": 61,
+"original-johto": 58,
+"original-melemele": 61,
+"original-sinnoh": 69,
+"original-ulaula": 32,
+"paldea": 68,
+"updated-akala": 23,
+"updated-alola": 73,
+"updated-johto": 58,
+"updated-melemele": 73,
+"updated-ulaula": 32
+}
+category = "Pokémon Gas"
 description = "Con su cuerpo gaseoso puede colarse por donde
 quiera, aunque con un golpe de viento sale
 despedido."

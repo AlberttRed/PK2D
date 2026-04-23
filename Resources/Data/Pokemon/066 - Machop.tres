@@ -73,6 +73,29 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_pl58w")]
+pokedex_numbers = {
+"conquest-gallery": 98,
+"extended-sinnoh": 40,
+"galar": 138,
+"hisui": 154,
+"hoenn": 73,
+"kalos-coastal": 57,
+"kanto": 66,
+"letsgo-kanto": 66,
+"lumiose-city": 125,
+"national": 66,
+"original-alola": 95,
+"original-johto": 140,
+"original-melemele": 95,
+"original-poni": 45,
+"original-sinnoh": 40,
+"updated-alola": 117,
+"updated-hoenn": 75,
+"updated-johto": 142,
+"updated-melemele": 117,
+"updated-poni": 57
+}
+category = "Pokémon Superpoder"
 description = "Siempre rebosante de energía, pasa el tiempo
 levantando piedras para hacerse aún más fuerte."
 icon_sprite = SubResource("AtlasTexture_an143")

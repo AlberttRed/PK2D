@@ -80,6 +80,25 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_roupc"), SubResource("Resource_5t5u6")]
+pokedex_numbers = {
+"blueberry": 155,
+"hoenn": 112,
+"isle-of-armor": 168,
+"kalos-mountain": 97,
+"kanto": 27,
+"kitakami": 116,
+"letsgo-kanto": 27,
+"national": 27,
+"original-alola": 251,
+"original-johto": 48,
+"original-ulaula": 123,
+"updated-alola": 328,
+"updated-hoenn": 117,
+"updated-johto": 48,
+"updated-ulaula": 149,
+"updated-unova": 113
+}
+category = "Pokémon Ratón"
 description = "Excava madrigueras profundas en las que vive.
 Parte con sus afiladas garras cualquier roca, por
 dura que sea, que le entorpezca el camino."

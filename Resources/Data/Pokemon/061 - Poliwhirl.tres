@@ -81,6 +81,23 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_06a5n"), SubResource("Resource_1w5lu")]
+pokedex_numbers = {
+"isle-of-armor": 143,
+"kalos-mountain": 34,
+"kanto": 61,
+"kitakami": 40,
+"letsgo-kanto": 61,
+"national": 61,
+"original-akala": 77,
+"original-alola": 150,
+"original-johto": 73,
+"original-ulaula": 69,
+"updated-akala": 84,
+"updated-alola": 183,
+"updated-johto": 73,
+"updated-ulaula": 75
+}
+category = "Pokémon Renacuajo"
 description = "Secreta un sudor viscoso que le sirve para
 escurrirse y escapar del agarre de sus enemigos."
 icon_sprite = SubResource("AtlasTexture_60fh0")

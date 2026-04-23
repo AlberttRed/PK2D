@@ -73,6 +73,23 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_e75mo")]
+pokedex_numbers = {
+"hyperspace": 2,
+"kanto": 57,
+"kitakami": 100,
+"letsgo-kanto": 57,
+"national": 57,
+"original-alola": 80,
+"original-johto": 135,
+"original-melemele": 80,
+"original-poni": 31,
+"paldea": 159,
+"updated-alola": 94,
+"updated-johto": 137,
+"updated-melemele": 94,
+"updated-poni": 40
+}
+category = "Pokémon Mono Cerdo"
 description = "Solo se calma cuando no hay nadie cerca,
 por lo que llegar a ver ese momento resulta
 verdaderamente difícil."
