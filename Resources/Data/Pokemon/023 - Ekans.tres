@@ -71,6 +71,20 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_2qwrr")]
+pokedex_numbers = {
+"conquest-gallery": 54,
+"kalos-mountain": 37,
+"kanto": 23,
+"kitakami": 18,
+"letsgo-kanto": 23,
+"lumiose-city": 60,
+"national": 23,
+"original-johto": 50,
+"updated-alola": 61,
+"updated-johto": 50,
+"updated-melemele": 61
+}
+category = "Pokémon Serpiente"
 description = "La longitud de este Pokémon aumenta con el
 tiempo. Por la noche, se enrosca en las ramas
 de los árboles para descansar."

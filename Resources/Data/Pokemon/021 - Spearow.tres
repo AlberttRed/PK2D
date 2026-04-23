@@ -76,6 +76,23 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 2
 evolutions = [SubResource("Resource_mex4y")]
+pokedex_numbers = {
+"kalos-mountain": 109,
+"kanto": 21,
+"letsgo-kanto": 21,
+"national": 21,
+"original-alola": 73,
+"original-johto": 13,
+"original-melemele": 73,
+"original-poni": 24,
+"original-ulaula": 40,
+"updated-alola": 87,
+"updated-johto": 13,
+"updated-melemele": 87,
+"updated-poni": 33,
+"updated-ulaula": 40
+}
+category = "Pokémon Pajarito"
 description = "A la hora de proteger su territorio, compensa su
 incapacidad para volar a gran altura con una
 increíble velocidad."

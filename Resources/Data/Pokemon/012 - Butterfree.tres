@@ -70,6 +70,22 @@ base_happiness = 50
 hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"galar": 15,
+"kalos-central": 25,
+"kanto": 12,
+"letsgo-kanto": 12,
+"national": 12,
+"original-akala": 10,
+"original-alola": 19,
+"original-johto": 26,
+"original-melemele": 19,
+"updated-akala": 10,
+"updated-alola": 19,
+"updated-johto": 26,
+"updated-melemele": 19
+}
+category = "Pokémon Mariposa"
 description = "Recoge néctar a diario y se lo adhiere al pelo de
 las patas para llevarlo a su nido."
 icon_sprite = SubResource("AtlasTexture_4ex48")

@@ -65,6 +65,28 @@ capture_rate = 50
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 67,
+"galar": 165,
+"kalos-mountain": 2,
+"kanto": 51,
+"letsgo-kanto": 51,
+"national": 51,
+"original-akala": 30,
+"original-alola": 72,
+"original-johto": 133,
+"original-melemele": 72,
+"original-poni": 23,
+"original-ulaula": 39,
+"paldea": 149,
+"updated-akala": 30,
+"updated-alola": 86,
+"updated-johto": 135,
+"updated-melemele": 86,
+"updated-poni": 32,
+"updated-ulaula": 39
+}
+category = "Pokémon Topo"
 description = "Estos trillizos cavan a una profundidad de hasta
 100 km. Se desconoce el aspecto de la parte de
 sus cuerpos que se oculta bajo tierra."

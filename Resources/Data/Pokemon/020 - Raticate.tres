@@ -66,6 +66,25 @@ base_happiness = 70
 hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"kanto": 20,
+"letsgo-kanto": 20,
+"national": 20,
+"original-akala": 7,
+"original-alola": 16,
+"original-johto": 18,
+"original-melemele": 16,
+"original-poni": 7,
+"original-ulaula": 7,
+"updated-akala": 7,
+"updated-alola": 16,
+"updated-johto": 18,
+"updated-melemele": 16,
+"updated-poni": 7,
+"updated-ulaula": 7,
+"updated-unova": 60
+}
+category = "Pokémon Ratón"
 description = "Gracias a las pequeñas membranas de las patas
 traseras, puede nadar por los ríos para capturar
 presas."

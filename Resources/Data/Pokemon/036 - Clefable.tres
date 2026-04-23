@@ -65,6 +65,27 @@ capture_rate = 25
 base_happiness = 140
 hatch_counter = 10
 growth_rate_id = 3
+pokedex_numbers = {
+"champions": 36,
+"crown-tundra": 45,
+"extended-sinnoh": 101,
+"galar": 256,
+"hisui": 201,
+"kanto": 36,
+"kitakami": 153,
+"letsgo-kanto": 36,
+"lumiose-city": 57,
+"national": 36,
+"original-alola": 212,
+"original-johto": 42,
+"original-sinnoh": 101,
+"original-ulaula": 84,
+"updated-alola": 274,
+"updated-johto": 42,
+"updated-ulaula": 95,
+"updated-unova": 90
+}
+category = "Pokémon Hada"
 description = "Su oído es tan fino que puede percibir cómo cae
 una aguja a 1 km de distancia. Por eso suele
 habitar en lugares tranquilos."

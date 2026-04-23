@@ -76,6 +76,23 @@ base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
 evolutions = [SubResource("Resource_bx3fy")]
+pokedex_numbers = {
+"crown-tundra": 11,
+"extended-sinnoh": 95,
+"galar": 365,
+"hisui": 77,
+"hyperspace": 109,
+"kalos-coastal": 114,
+"kanto": 122,
+"letsgo-kanto": 122,
+"national": 122,
+"original-johto": 156,
+"original-sinnoh": 95,
+"updated-alola": 60,
+"updated-johto": 158,
+"updated-melemele": 60
+}
+category = "Pokémon Barrera"
 description = "Domina con maestría la pantomima. La barrera
 generada con las ondas que emite por los dedos
 le permite protegerse de numerosos ataques."

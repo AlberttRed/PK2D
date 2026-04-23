@@ -65,6 +65,19 @@ capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"galar": 251,
+"hoenn": 109,
+"kanto": 110,
+"kitakami": 136,
+"letsgo-kanto": 110,
+"national": 110,
+"original-johto": 115,
+"updated-hoenn": 114,
+"updated-johto": 116,
+"updated-unova": 47
+}
+category = "Pokémon Gas Venenoso"
 description = "Posee una capacidad de succión inferior a la del
 Weezing de Galar, pero las toxinas que genera
 son más potentes."

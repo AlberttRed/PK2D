@@ -76,6 +76,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_88l4f")]
+pokedex_numbers = {
+"blueberry": 62,
+"galar": 55,
+"hoenn": 88,
+"kalos-central": 105,
+"kanto": 43,
+"letsgo-kanto": 43,
+"national": 43,
+"original-johto": 83,
+"updated-hoenn": 91,
+"updated-johto": 83
+}
+category = "Pokémon Hierbajo"
 description = "Durante el día, se agazapa en el frío subsuelo
 huyendo del sol. La luz de la luna le hace crecer."
 icon_sprite = SubResource("AtlasTexture_ud7v7")

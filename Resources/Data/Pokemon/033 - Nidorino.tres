@@ -71,6 +71,16 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_qkxbu")]
+pokedex_numbers = {
+"crown-tundra": 69,
+"kalos-coastal": 108,
+"kanto": 33,
+"letsgo-kanto": 33,
+"national": 33,
+"original-johto": 99,
+"updated-johto": 99
+}
+category = "Pokémon Pin Veneno"
 description = "Es nervioso y agresivo por naturaleza. Cuando
 suben sus niveles de adrenalina, la concentración
 de toxinas en su veneno aumenta."

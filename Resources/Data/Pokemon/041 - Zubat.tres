@@ -75,6 +75,34 @@ hatch_counter = 15
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_1xcie")]
+pokedex_numbers = {
+"conquest-gallery": 23,
+"crown-tundra": 144,
+"extended-sinnoh": 28,
+"hisui": 34,
+"hoenn": 63,
+"hyperspace": 94,
+"kalos-central": 145,
+"kanto": 41,
+"letsgo-kanto": 41,
+"national": 41,
+"original-akala": 26,
+"original-alola": 68,
+"original-johto": 37,
+"original-melemele": 68,
+"original-poni": 19,
+"original-sinnoh": 28,
+"original-ulaula": 35,
+"updated-akala": 26,
+"updated-alola": 80,
+"updated-hoenn": 65,
+"updated-johto": 37,
+"updated-melemele": 80,
+"updated-poni": 26,
+"updated-ulaula": 35,
+"updated-unova": 61
+}
+category = "Pokémon Murciélago"
 description = "Habitan en cuevas donde no llegan los rayos del
 sol. De día, se acurrucan unos junto a otros para
 entrar en calor mientras duermen."

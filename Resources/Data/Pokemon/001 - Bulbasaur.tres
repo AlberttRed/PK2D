@@ -71,6 +71,18 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_w650j")]
+pokedex_numbers = {
+"blueberry": 164,
+"isle-of-armor": 68,
+"kalos-central": 80,
+"kanto": 1,
+"letsgo-kanto": 1,
+"lumiose-city": 148,
+"national": 1,
+"original-johto": 226,
+"updated-johto": 231
+}
+category = "Pokémon Semilla"
 description = "Desde que nace, crece alimentándose de los
 nutrientes que contiene la semilla de su lomo."
 icon_sprite = SubResource("AtlasTexture_2o7nj")

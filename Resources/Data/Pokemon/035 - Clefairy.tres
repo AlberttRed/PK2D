@@ -74,6 +74,26 @@ base_happiness = 140
 hatch_counter = 10
 growth_rate_id = 3
 evolutions = [SubResource("Resource_embaj")]
+pokedex_numbers = {
+"crown-tundra": 44,
+"extended-sinnoh": 100,
+"galar": 255,
+"hisui": 200,
+"kanto": 35,
+"kitakami": 152,
+"letsgo-kanto": 35,
+"lumiose-city": 56,
+"national": 35,
+"original-alola": 211,
+"original-johto": 41,
+"original-sinnoh": 100,
+"original-ulaula": 83,
+"updated-alola": 273,
+"updated-johto": 41,
+"updated-ulaula": 94,
+"updated-unova": 89
+}
+category = "Pokémon Hada"
 description = "Su adorable grito y comportamiento lo hacen
 muy popular. Sin embargo, raramente se avista."
 icon_sprite = SubResource("AtlasTexture_5jk1w")

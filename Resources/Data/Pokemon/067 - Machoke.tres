@@ -73,6 +73,29 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_28g5f")]
+pokedex_numbers = {
+"conquest-gallery": 99,
+"extended-sinnoh": 41,
+"galar": 139,
+"hisui": 155,
+"hoenn": 74,
+"kalos-coastal": 58,
+"kanto": 67,
+"letsgo-kanto": 67,
+"lumiose-city": 126,
+"national": 67,
+"original-alola": 96,
+"original-johto": 141,
+"original-melemele": 96,
+"original-poni": 46,
+"original-sinnoh": 41,
+"updated-alola": 118,
+"updated-hoenn": 76,
+"updated-johto": 143,
+"updated-melemele": 118,
+"updated-poni": 58
+}
+category = "Pokémon Superpoder"
 description = "Tiene una complexión tan fuerte que nunca se
 cansa. Suele ayudar a la gente a cargar objetos
 pesados."

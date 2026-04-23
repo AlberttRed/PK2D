@@ -67,6 +67,20 @@ base_happiness = 50
 hatch_counter = 20
 forms_switchable = true
 growth_rate_id = 4
+pokedex_numbers = {
+"blueberry": 169,
+"champions": 6,
+"conquest-gallery": 111,
+"galar": 380,
+"kalos-central": 85,
+"kanto": 6,
+"letsgo-kanto": 6,
+"lumiose-city": 153,
+"national": 6,
+"original-johto": 231,
+"updated-johto": 236
+}
+category = "Pokémon Llama"
 description = "Sus potentes alas le permiten volar a una altura
 de 1400 m. Escupe llamaradas que llegan a
 alcanzar temperaturas elevadísimas."

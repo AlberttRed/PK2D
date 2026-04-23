@@ -73,6 +73,24 @@ capture_rate = 225
 base_happiness = 50
 hatch_counter = 20
 evolutions = [SubResource("Resource_v8ji0")]
+pokedex_numbers = {
+"hoenn": 143,
+"isle-of-armor": 98,
+"kalos-coastal": 34,
+"kanto": 120,
+"letsgo-kanto": 120,
+"lumiose-city": 36,
+"national": 120,
+"original-akala": 111,
+"original-alola": 184,
+"original-johto": 167,
+"updated-akala": 124,
+"updated-alola": 223,
+"updated-hoenn": 148,
+"updated-johto": 169,
+"updated-unova": 238
+}
+category = "Pokémon Estrella"
 description = "No le importa que le mordisqueen el cuerpo los
 Pokémon pez, ya que las partes desgarradas se
 regeneran casi al instante."

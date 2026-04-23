@@ -72,6 +72,16 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_ogdo0")]
+pokedex_numbers = {
+"crown-tundra": 66,
+"kalos-coastal": 105,
+"kanto": 30,
+"letsgo-kanto": 30,
+"national": 30,
+"original-johto": 96,
+"updated-johto": 96
+}
+category = "Pokémon Pin Veneno"
 description = "Cuando el peligro se cierne sobre la manada,
 los miembros unen fuerzas para defenderse
 emitiendo un coro de ondas ultrasónicas."

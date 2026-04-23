@@ -63,6 +63,19 @@ capture_rate = 60
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"hisui": 193,
+"hoenn": 85,
+"kalos-mountain": 73,
+"kanto": 101,
+"letsgo-kanto": 101,
+"national": 101,
+"original-johto": 121,
+"paldea": 208,
+"updated-hoenn": 88,
+"updated-johto": 122
+}
+category = "Pokémon Bola"
 description = "Almacena tal cantidad de energía eléctrica en
 su cuerpo que el más leve impacto puede
 provocar una gran explosión."

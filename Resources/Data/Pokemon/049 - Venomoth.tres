@@ -69,6 +69,16 @@ capture_rate = 75
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 9,
+"kanto": 49,
+"letsgo-kanto": 49,
+"national": 49,
+"original-johto": 109,
+"paldea": 257,
+"updated-johto": 110
+}
+category = "Pokémon Polilla Ven."
 description = "Las alas desprenden un polvillo de escamas
 impregnado de toxinas que se adhiere al
 contacto y resulta difícil de quitar."

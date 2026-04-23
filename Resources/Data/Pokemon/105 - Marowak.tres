@@ -65,6 +65,21 @@ capture_rate = 75
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"hyperspace": 10,
+"isle-of-armor": 171,
+"kalos-coastal": 61,
+"kanto": 105,
+"letsgo-kanto": 105,
+"national": 105,
+"original-akala": 91,
+"original-alola": 164,
+"original-johto": 204,
+"updated-akala": 99,
+"updated-alola": 198,
+"updated-johto": 209
+}
+category = "Pokémon Apilahueso"
 description = "Al evolucionar, se ha fusionado con el cráneo de
 su madre y, además, ha adquirido un carácter
 agresivo."

@@ -64,6 +64,27 @@ gender_rate = 1
 capture_rate = 25
 base_happiness = 50
 hatch_counter = 40
+pokedex_numbers = {
+"champions": 143,
+"conquest-gallery": 179,
+"crown-tundra": 173,
+"extended-sinnoh": 113,
+"galar": 261,
+"hisui": 52,
+"kalos-central": 139,
+"kanto": 143,
+"kitakami": 103,
+"letsgo-kanto": 143,
+"national": 143,
+"original-alola": 36,
+"original-johto": 225,
+"original-melemele": 36,
+"original-sinnoh": 113,
+"updated-alola": 43,
+"updated-johto": 230,
+"updated-melemele": 43
+}
+category = "Pokémon Dormir"
 description = "Este Pokémon tiene un estómago a prueba de
 bomba, por lo que es capaz de ingerir incluso
 comida podrida o mohosa."

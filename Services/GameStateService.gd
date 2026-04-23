@@ -2,6 +2,7 @@ extends Node
 
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
 const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
+const POKEDEX_SCRIPT = preload("res://Scripts/Runtime/Pokedex.gd")
 
 ## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
@@ -39,6 +40,11 @@ var bag = BAG_SCRIPT.new()
 # Equipo del jugador (máx. 6 Pokémon); sin dependencia de UI
 var party = PARTY_SCRIPT.new()
 
+# Pokédex global del jugador (por species_id)
+var pokedex = POKEDEX_SCRIPT.new()
+var unlocked_pokedex_ids: Array[String] = []
+var active_pokedex_id: String = ""
+
 # Cola de cambios diferidos que se aplicarán en el próximo warp
 # Cada cambio es un Dictionary con "type" y "params"
 var deferred_changes: Array[Dictionary] = []
@@ -54,6 +60,10 @@ func initialize_new_game() -> void:
 	facing_dir = Vector2.DOWN
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
+	pokedex = POKEDEX_SCRIPT.new()
+	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
+	active_pokedex_id = "kanto"
+	_seed_test_pokedex_progress()
 	_seed_test_bag_items()
 	_seed_test_party_placeholder()
 	#global_flags = {}
@@ -139,6 +149,23 @@ func _seed_test_party_placeholder() -> void:
 			pika.major_status = CONST.STATUS.POISON
 
 
+## Rellena progreso de Pokédex de prueba (mezcla vistos/capturados) para validar UI.
+## Nota: "capturado" implica "visto" en el modelo.
+func _seed_test_pokedex_progress() -> void:
+	var pdx = get_pokedex()
+	# 20 especies aleatorias de Kanto para pruebas visuales.
+	var seen_only_species: Array[int] = [5, 8, 11, 14, 19, 23, 27, 32, 41, 54, 58, 66, 74, 92]
+	var caught_species: Array[int] = [1, 4, 7, 25, 39, 52]
+	for species_id in seen_only_species:
+		pdx.mark_seen(species_id)
+	for species_id in caught_species:
+		pdx.mark_caught(species_id)
+	print("GameStateService: Pokédex de prueba -> vistos=%d capturados=%d" % [
+		pdx.get_seen_count(),
+		pdx.get_caught_count()
+	])
+
+
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
 	# TODO: Implementar carga desde archivo de guardado
@@ -200,6 +227,46 @@ func get_party():
 	if party == null:
 		party = PARTY_SCRIPT.new()
 	return party
+
+
+## Pokédex global de sesión
+func get_pokedex():
+	if pokedex == null:
+		pokedex = POKEDEX_SCRIPT.new()
+	return pokedex
+
+
+func get_unlocked_pokedex_ids() -> Array[String]:
+	return unlocked_pokedex_ids.duplicate()
+
+
+func is_pokedex_unlocked(dex_id: String) -> bool:
+	return unlocked_pokedex_ids.has(dex_id)
+
+
+func unlock_pokedex(dex_id: String) -> void:
+	if dex_id.is_empty():
+		return
+	if unlocked_pokedex_ids.has(dex_id):
+		return
+	unlocked_pokedex_ids.append(dex_id)
+	if active_pokedex_id.is_empty():
+		active_pokedex_id = dex_id
+
+
+func get_active_pokedex_id() -> String:
+	if active_pokedex_id.is_empty() and not unlocked_pokedex_ids.is_empty():
+		active_pokedex_id = unlocked_pokedex_ids[0]
+	return active_pokedex_id
+
+
+func set_active_pokedex_id(dex_id: String) -> bool:
+	if dex_id.is_empty():
+		return false
+	if not unlocked_pokedex_ids.has(dex_id):
+		return false
+	active_pokedex_id = dex_id
+	return true
 
 
 ## Lista densa de Pokémon del equipo (fallback combate salvaje si no hay `Battler`).
@@ -363,6 +430,42 @@ func get_party_save_data() -> Array[Dictionary]:
 func load_party_save_data(entries: Array[Dictionary]) -> void:
 	get_party().load_serializable_data(entries)
 
+
+## Serializa la Pokédex para guardado futuro.
+func get_pokedex_save_data() -> Dictionary:
+	return get_pokedex().to_serializable_data()
+
+
+## Restaura la Pokédex desde datos serializados.
+func load_pokedex_save_data(data: Dictionary) -> void:
+	get_pokedex().load_serializable_data(data)
+
+
+func get_pokedex_registry_save_data() -> Dictionary:
+	return {
+		"unlocked_dex_ids": unlocked_pokedex_ids.duplicate(),
+		"active_dex_id": get_active_pokedex_id(),
+	}
+
+
+func load_pokedex_registry_save_data(data: Dictionary) -> void:
+	unlocked_pokedex_ids.clear()
+	var unlocked_any: Variant = data.get("unlocked_dex_ids", [])
+	if unlocked_any is Array:
+		for dex_any in unlocked_any:
+			var dex_id := str(dex_any)
+			if dex_id.is_empty():
+				continue
+			if not unlocked_pokedex_ids.has(dex_id):
+				unlocked_pokedex_ids.append(dex_id)
+	if unlocked_pokedex_ids.is_empty():
+		unlocked_pokedex_ids = ["kanto"]
+	var desired_active := str(data.get("active_dex_id", ""))
+	if desired_active.is_empty() or not unlocked_pokedex_ids.has(desired_active):
+		active_pokedex_id = unlocked_pokedex_ids[0]
+	else:
+		active_pokedex_id = desired_active
+
 ## Retorna un resumen del estado actual
 func get_state_summary() -> String:
 	var summary = "=== ESTADO DEL JUEGO ===\n"
@@ -374,4 +477,6 @@ func get_state_summary() -> String:
 	summary += "Self-switches: %s\n" % event_self_flags
 	summary += "Bag entries: %d\n" % get_bag_save_data().size()
 	summary += "Party Pokémon: %d\n" % get_party().count()
+	summary += "Pokédex vistos: %d\n" % get_pokedex().get_seen_count()
+	summary += "Pokédex capturados: %d\n" % get_pokedex().get_caught_count()
 	return summary

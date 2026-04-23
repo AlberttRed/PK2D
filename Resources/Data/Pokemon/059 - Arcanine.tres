@@ -64,6 +64,23 @@ gender_rate = 2
 capture_rate = 75
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"galar": 71,
+"hisui": 151,
+"kanto": 59,
+"kitakami": 79,
+"letsgo-kanto": 59,
+"national": 59,
+"original-alola": 53,
+"original-johto": 128,
+"original-melemele": 53,
+"paldea": 214,
+"updated-alola": 65,
+"updated-johto": 130,
+"updated-melemele": 65,
+"updated-unova": 52
+}
+category = "Pokémon Leyenda"
 description = "Muchos han quedado cautivados por su belleza
 desde la antigüedad. Corre ágilmente como si
 tuviera alas."

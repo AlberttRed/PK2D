@@ -67,6 +67,22 @@ gender_rate = 4
 capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"galar": 151,
+"isle-of-armor": 132,
+"kalos-coastal": 37,
+"kanto": 91,
+"letsgo-kanto": 91,
+"national": 91,
+"original-alola": 116,
+"original-johto": 170,
+"original-melemele": 116,
+"paldea": 330,
+"updated-alola": 139,
+"updated-johto": 172,
+"updated-melemele": 139
+}
+category = "Pokémon Bivalvo"
 description = "Una vez que ha cerrado la concha, es imposible
 abrirla, independientemente de la fuerza que se
 ejerza."

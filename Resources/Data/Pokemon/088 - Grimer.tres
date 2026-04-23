@@ -73,6 +73,25 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_ux6yq")]
+pokedex_numbers = {
+"blueberry": 68,
+"hoenn": 106,
+"kanto": 88,
+"letsgo-kanto": 88,
+"national": 88,
+"original-alola": 50,
+"original-johto": 116,
+"original-melemele": 50,
+"original-ulaula": 28,
+"paldea": 194,
+"updated-alola": 57,
+"updated-hoenn": 111,
+"updated-johto": 117,
+"updated-melemele": 57,
+"updated-ulaula": 28,
+"updated-unova": 64
+}
+category = "Pokémon Lodo"
 description = "Está hecho de lodo endurecido. Pocos se atreven
 a tocarlo debido a su pestilencia y composición
 nociva. Allá por donde pasa no crece la hierba."

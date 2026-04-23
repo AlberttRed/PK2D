@@ -74,6 +74,23 @@ base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
 evolutions = [SubResource("Resource_la34t")]
+pokedex_numbers = {
+"blueberry": 11,
+"crown-tundra": 16,
+"extended-sinnoh": 198,
+"hisui": 183,
+"kanto": 125,
+"letsgo-kanto": 125,
+"national": 125,
+"original-alola": 227,
+"original-johto": 155,
+"original-ulaula": 99,
+"updated-alola": 296,
+"updated-johto": 157,
+"updated-ulaula": 117,
+"updated-unova": 57
+}
+category = "Pokémon Eléctrico"
 description = "Al desatarse una tormenta, se reúnen en torno
 a los árboles de mayor altura y esperan inmóviles
 a que caiga algún rayo."

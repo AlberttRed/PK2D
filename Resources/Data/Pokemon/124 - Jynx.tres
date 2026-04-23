@@ -68,6 +68,18 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 growth_rate_id = 2
+pokedex_numbers = {
+"crown-tundra": 14,
+"kalos-mountain": 84,
+"kanto": 124,
+"letsgo-kanto": 124,
+"national": 124,
+"original-johto": 153,
+"updated-alola": 110,
+"updated-johto": 155,
+"updated-melemele": 110
+}
+category = "Pokémon Forma Humana"
 description = "Los ejemplares que habitan en Galar poseen
 una voz tan delicada y hermosa que incluso
 cuentan con su propio grupo de admiradores."

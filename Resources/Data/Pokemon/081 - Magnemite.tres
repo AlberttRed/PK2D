@@ -76,6 +76,29 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_ia4wa")]
+pokedex_numbers = {
+"blueberry": 116,
+"extended-sinnoh": 178,
+"hisui": 177,
+"hoenn": 82,
+"isle-of-armor": 105,
+"kalos-mountain": 69,
+"kanto": 81,
+"letsgo-kanto": 81,
+"national": 81,
+"original-alola": 47,
+"original-johto": 118,
+"original-melemele": 47,
+"original-ulaula": 25,
+"paldea": 209,
+"updated-alola": 54,
+"updated-hoenn": 84,
+"updated-johto": 119,
+"updated-melemele": 54,
+"updated-ulaula": 25,
+"updated-unova": 48
+}
+category = "Pokémon Imán"
 description = "Se nutre de electricidad. Puede flotar en el aire
 gracias a las ondas electromagnéticas que emite
 a través de las unidades de sus extremidades."

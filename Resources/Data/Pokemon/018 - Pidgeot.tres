@@ -67,6 +67,17 @@ base_happiness = 70
 hatch_counter = 15
 forms_switchable = true
 growth_rate_id = 4
+pokedex_numbers = {
+"champions": 18,
+"kalos-central": 19,
+"kanto": 18,
+"letsgo-kanto": 18,
+"lumiose-city": 23,
+"national": 18,
+"original-johto": 12,
+"updated-johto": 12
+}
+category = "Pokémon Pájaro"
 description = "Este Pokémon vuela a una velocidad de 2 mach
 en busca de presas. Sus grandes garras son armas
 muy peligrosas."

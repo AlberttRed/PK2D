@@ -68,6 +68,26 @@ capture_rate = 45
 base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 4
+pokedex_numbers = {
+"blueberry": 98,
+"extended-sinnoh": 33,
+"hisui": 48,
+"hoenn": 59,
+"kalos-mountain": 11,
+"kanto": 76,
+"kitakami": 82,
+"letsgo-kanto": 76,
+"national": 76,
+"original-alola": 231,
+"original-johto": 36,
+"original-sinnoh": 33,
+"original-ulaula": 103,
+"updated-alola": 300,
+"updated-hoenn": 60,
+"updated-johto": 36,
+"updated-ulaula": 121
+}
+category = "Pokémon Megatón"
 description = "Nada más mudar la piel, su cuerpo se vuelve
 blando y blanquecino, pero se endurece al poco
 tiempo de entrar en contacto con el aire."

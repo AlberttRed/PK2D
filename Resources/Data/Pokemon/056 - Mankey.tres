@@ -73,6 +73,23 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_8xadt")]
+pokedex_numbers = {
+"hyperspace": 1,
+"kanto": 56,
+"kitakami": 99,
+"letsgo-kanto": 56,
+"national": 56,
+"original-alola": 79,
+"original-johto": 134,
+"original-melemele": 79,
+"original-poni": 30,
+"paldea": 158,
+"updated-alola": 93,
+"updated-johto": 136,
+"updated-melemele": 93,
+"updated-poni": 39
+}
+category = "Pokémon Mono Cerdo"
 description = "Este ágil Pokémon vive en los árboles. Se enfada
 con facilidad y, cuando lo hace, se abalanza
 contra todo lo que se encuentre a su alrededor."

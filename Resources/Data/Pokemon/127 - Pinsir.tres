@@ -63,6 +63,27 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 25
 forms_switchable = true
+pokedex_numbers = {
+"champions": 127,
+"hoenn": 167,
+"isle-of-armor": 120,
+"kalos-coastal": 130,
+"kanto": 127,
+"letsgo-kanto": 127,
+"lumiose-city": 178,
+"national": 127,
+"original-akala": 102,
+"original-alola": 175,
+"original-johto": 112,
+"original-poni": 65,
+"updated-akala": 112,
+"updated-alola": 211,
+"updated-hoenn": 174,
+"updated-johto": 113,
+"updated-poni": 78,
+"updated-unova": 146
+}
+category = "Pokémon Escarabajo"
 description = "Usa la cornamenta a modo de pinza para atrapar
 a sus presas. Acto seguido, las parte por la mitad
 o las arroja lejos."

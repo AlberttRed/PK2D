@@ -112,9 +112,28 @@ func start_battle() -> void:
 	turn_controller.battle_controller = self
 	# Inyectar lógica de targeting en la UI
 	ui.target_selector = BattleTargetSelector.new()
+	_mark_enemy_species_as_seen()
 	print("Combate iniciado (test)")
 	await ui.play_intro_sequence(rules,player_side.get_active_pokemons(),enemy_side.get_active_pokemons(),player_side.get_trainer_names(),enemy_side.get_trainer_names())
 	await turn_controller.start_turn_loop()
+
+
+## Marca como vistas todas las especies rivales presentes en el encuentro.
+func _mark_enemy_species_as_seen() -> void:
+	var pokedex = GameStateService.get_pokedex()
+	if pokedex == null or enemy_side == null:
+		return
+	for participant in enemy_side.participants:
+		if participant == null:
+			continue
+		for bp in participant.pokemon_team:
+			if bp == null or bp.base_data == null:
+				continue
+			var species_id := int(bp.base_data.pokemon_id)
+			var was_seen: bool = pokedex.is_seen(species_id)
+			pokedex.mark_seen(species_id)
+			if OS.is_debug_build() and not was_seen:
+				print("Pokedex: especie %d vista por primera vez en combate." % species_id)
 
 
 func get_active_battle_spots() -> Array[BattleSpot]:

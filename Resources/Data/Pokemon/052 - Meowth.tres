@@ -85,6 +85,24 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_mhbin"), SubResource("Resource_byb7u"), SubResource("Resource_bcdno")]
+pokedex_numbers = {
+"conquest-gallery": 58,
+"galar": 182,
+"hyperspace": 4,
+"kanto": 52,
+"letsgo-kanto": 52,
+"national": 52,
+"original-alola": 45,
+"original-johto": 136,
+"original-melemele": 45,
+"original-ulaula": 23,
+"paldea": 141,
+"updated-alola": 52,
+"updated-johto": 138,
+"updated-melemele": 52,
+"updated-ulaula": 23
+}
+category = "Pokémon Gato Araña"
 description = "Se lava cuidadosamente la cara para que no se le
 ensucie la moneda de oro que tiene en la frente.
 No se lleva nada bien con los Meowth de Galar."

@@ -74,6 +74,16 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 2
 evolutions = [SubResource("Resource_3qo7l")]
+pokedex_numbers = {
+"kalos-central": 27,
+"kanto": 14,
+"letsgo-kanto": 14,
+"lumiose-city": 19,
+"national": 14,
+"original-johto": 28,
+"updated-johto": 28
+}
+category = "Pokémon Capullo"
 description = "Aunque es casi incapaz de moverse, en caso
 de sentirse amenazado puede envenenar a los
 enemigos con su aguijón."

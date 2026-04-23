@@ -63,6 +63,28 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 35
 growth_rate_id = 2
+pokedex_numbers = {
+"champions": 135,
+"conquest-gallery": 3,
+"crown-tundra": 76,
+"extended-sinnoh": 165,
+"galar": 198,
+"hisui": 27,
+"kalos-coastal": 79,
+"kanto": 135,
+"letsgo-kanto": 135,
+"lumiose-city": 102,
+"national": 135,
+"original-akala": 52,
+"original-alola": 125,
+"original-johto": 182,
+"paldea": 181,
+"updated-akala": 56,
+"updated-alola": 155,
+"updated-johto": 186,
+"updated-unova": 93
+}
+category = "Pokémon Relámpago"
 description = "Acumula iones negativos de la atmósfera para
 lanzar rayos de 10 000 V de potencia."
 icon_sprite = SubResource("AtlasTexture_havef")

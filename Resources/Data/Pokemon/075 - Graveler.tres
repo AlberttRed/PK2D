@@ -76,6 +76,26 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 4
 evolutions = [SubResource("Resource_fpkvm")]
+pokedex_numbers = {
+"blueberry": 97,
+"extended-sinnoh": 32,
+"hisui": 47,
+"hoenn": 58,
+"kalos-mountain": 10,
+"kanto": 75,
+"kitakami": 81,
+"letsgo-kanto": 75,
+"national": 75,
+"original-alola": 230,
+"original-johto": 35,
+"original-sinnoh": 32,
+"original-ulaula": 102,
+"updated-alola": 299,
+"updated-hoenn": 59,
+"updated-johto": 35,
+"updated-ulaula": 120
+}
+category = "Pokémon Roca"
 description = "Se le suele ver rodando montaña abajo. No evita
 los obstáculos, sino que los arrolla."
 icon_sprite = SubResource("AtlasTexture_wrn1e")

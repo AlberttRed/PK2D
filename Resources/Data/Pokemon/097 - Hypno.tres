@@ -64,6 +64,21 @@ base_happiness = 70
 hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"kanto": 97,
+"letsgo-kanto": 97,
+"national": 97,
+"original-alola": 55,
+"original-johto": 88,
+"original-melemele": 55,
+"original-poni": 14,
+"paldea": 67,
+"updated-alola": 67,
+"updated-johto": 88,
+"updated-melemele": 67,
+"updated-poni": 21
+}
+category = "Pokémon Hipnosis"
 description = "Conviene evitar el contacto visual en caso de
 encontrarse con este Pokémon, ya que puede
 hipnotizar con su péndulo."

@@ -62,6 +62,25 @@ speed_effort_EVs = 1
 capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"blueberry": 22,
+"champions": 128,
+"isle-of-armor": 116,
+"kalos-coastal": 125,
+"kanto": 128,
+"letsgo-kanto": 128,
+"national": 128,
+"original-akala": 64,
+"original-alola": 137,
+"original-johto": 148,
+"original-poni": 61,
+"paldea": 223,
+"updated-akala": 71,
+"updated-alola": 170,
+"updated-johto": 150,
+"updated-poni": 73
+}
+category = "Pokémon Toro Bravo"
 description = "Los Tauros que habitan en la región de Galar son
 de temperamento irascible y no permiten que los
 humanos monten en su lomo."

@@ -75,6 +75,18 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_6kum6")]
+pokedex_numbers = {
+"blueberry": 165,
+"isle-of-armor": 69,
+"kalos-central": 81,
+"kanto": 2,
+"letsgo-kanto": 2,
+"lumiose-city": 149,
+"national": 2,
+"original-johto": 227,
+"updated-johto": 232
+}
+category = "Pokémon Semilla"
 description = "La luz del sol lo fortalece y hace que le crezca el
 capullo que tiene en el lomo."
 icon_sprite = SubResource("AtlasTexture_rwgrd")

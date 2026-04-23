@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cjyn725u2m23r" path="res://Scenes/UI/BAG.tscn" id="10_bag"]
 [ext_resource type="PackedScene" uid="uid://btgemydvaapwr" path="res://Scenes/UI/PartyUI.tscn" id="11_partyui"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/EvolutionUI.tscn" id="12_evolutionui"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PokedexUI.tscn" id="13_pokedexui"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -134,6 +135,9 @@ anchors_preset = 1
 visible = false
 
 [node name="PartyUI" parent="." unique_id=1406011060 instance=ExtResource("11_partyui")]
+visible = false
+
+[node name="PokedexUI" parent="." instance=ExtResource("13_pokedexui")]
 visible = false
 
 [node name="EvolutionUI" parent="." instance=ExtResource("12_evolutionui")]

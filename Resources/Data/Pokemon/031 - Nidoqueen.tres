@@ -66,6 +66,16 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
+pokedex_numbers = {
+"crown-tundra": 67,
+"kalos-coastal": 106,
+"kanto": 31,
+"letsgo-kanto": 31,
+"national": 31,
+"original-johto": 97,
+"updated-johto": 97
+}
+category = "Pokémon Taladro"
 description = "Para mecer a sus crías, las coloca en los huecos
 que tiene entre las púas dorsales, momento
 durante el cual no secretan veneno."

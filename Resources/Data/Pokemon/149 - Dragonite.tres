@@ -67,6 +67,24 @@ gender_rate = 4
 capture_rate = 45
 base_happiness = 35
 hatch_counter = 40
+pokedex_numbers = {
+"champions": 149,
+"conquest-gallery": 78,
+"crown-tundra": 196,
+"kalos-mountain": 147,
+"kanto": 149,
+"letsgo-kanto": 149,
+"lumiose-city": 147,
+"national": 149,
+"original-alola": 283,
+"original-johto": 243,
+"original-poni": 98,
+"paldea": 349,
+"updated-alola": 381,
+"updated-johto": 248,
+"updated-poni": 128
+}
+category = "Pokémon Dragón"
 description = "Se lo conoce como el Avatar de la Mar. Muchos
 barcos lucen una talla de Dragonite como
 mascarón de proa."

@@ -69,6 +69,21 @@ capture_rate = 75
 base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
+pokedex_numbers = {
+"hisui": 54,
+"kanto": 47,
+"letsgo-kanto": 47,
+"national": 47,
+"original-akala": 75,
+"original-alola": 148,
+"original-johto": 71,
+"original-ulaula": 67,
+"updated-akala": 82,
+"updated-alola": 181,
+"updated-johto": 71,
+"updated-ulaula": 73
+}
+category = "Pokémon Hongo"
 description = "Tras largo tiempo absorbiendo la energía del
 huésped, la seta parásita del lomo es la que
 parece controlar la voluntad de este Pokémon."

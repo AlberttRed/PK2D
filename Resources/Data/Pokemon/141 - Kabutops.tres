@@ -66,6 +66,17 @@ capture_rate = 45
 base_happiness = 50
 hatch_counter = 30
 growth_rate_id = 2
+pokedex_numbers = {
+"crown-tundra": 126,
+"kanto": 141,
+"letsgo-kanto": 141,
+"national": 141,
+"original-johto": 223,
+"updated-akala": 131,
+"updated-alola": 230,
+"updated-johto": 228
+}
+category = "Pokémon Armazón"
 description = "Se desconoce el motivo de la extinción de este
 feroz Pokémon prehistórico que habitaba en los
 cálidos mares de antaño."

@@ -33,6 +33,7 @@ const EvolutionOriginContext := preload("res://Scripts/Runtime/EvolutionOriginCo
 const EvolutionControllerScr := preload("res://Scripts/UI/EvolutionController.gd")
 const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 const PARTY_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PartyController.gd")
+const POKEDEX_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PokedexController.gd")
 # === VARIABLES ===
 var fading: bool = false
 var next = false
@@ -43,6 +44,7 @@ var _mo_animation_count: int = 0  # Contador de animaciones MO activas (puede ha
 var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actual
 var _bag_controller = null
 var _party_controller = null
+var _pokedex_controller = null
 ## Flujo party → mochila (Usar objeto) y vuelta al party.
 var _resume_party_focus_slot: int = -1
 ## Mientras cerramos el party para abrir la mochila «Usar objeto»: no reabrir menú pausa en _on_party_closed.
@@ -75,6 +77,7 @@ const _UI_SCREEN_FADE_DURATION: float = 0.2
 @onready var pause_menu = $PauseMenu
 @onready var _bag_ui = $BagUI
 @onready var _party_ui = $PartyUI
+@onready var _pokedex_ui = $PokedexUI
 @onready var _evolution_ui = $EvolutionUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
@@ -101,6 +104,8 @@ func _ready() -> void:
 		_bag_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _party_ui:
 		_party_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _pokedex_ui:
+		_pokedex_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -141,6 +146,12 @@ func _ready() -> void:
 		_party_ui.bag_item_target_cancelled.connect(_on_party_bag_item_target_cancelled)
 		if _party_ui.has_signal("visibility_changed"):
 			_party_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _pokedex_ui:
+		_pokedex_ui.back_requested.connect(_on_pokedex_back_requested)
+		_pokedex_ui.closed.connect(_on_pokedex_closed)
+		if _pokedex_ui.has_signal("visibility_changed"):
+			_pokedex_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -463,7 +474,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible)
 
 
 func _start_evolution_impl(
@@ -790,7 +801,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible):
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -821,7 +832,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -865,15 +876,60 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
 func _on_pause_pokedex_requested() -> void:
-	print("PauseMenu: Pokédex solicitado (placeholder)")
+	await _open_pokedex_ui()
 
 func _on_pause_party_requested() -> void:
 	await _open_party_ui()
+
+func _open_pokedex_ui(with_screen_fade: bool = true) -> void:
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _pokedex_ui != null and _pokedex_ui.visible:
+		return
+	if _pokedex_ui == null:
+		push_error("DisplayManager: Nodo PokedexUI no disponible en la escena.")
+		return
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	_pokedex_controller = POKEDEX_CONTROLLER_SCRIPT.new()
+	_pokedex_ui.setup(_pokedex_controller)
+	_pokedex_ui.open()
+	_on_ui_visibility_changed()
+
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+func _close_pokedex_ui() -> void:
+	if _pokedex_ui == null:
+		return
+	_pokedex_ui.close()
+
+func _on_pokedex_back_requested() -> void:
+	await _transition_fade_pokedex_to_pause_menu()
+
+func _transition_fade_pokedex_to_pause_menu() -> void:
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	_close_pokedex_ui()
+	await _await_ui_control_hidden(_pokedex_ui)
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+func _on_pokedex_closed() -> void:
+	_pokedex_controller = null
+	if pause_menu and not pause_menu.visible:
+		pause_menu.open(0) # Mantener cursor en "POKéDEX"
+	_on_ui_visibility_changed()
 
 func _on_pause_bag_requested() -> void:
 	await _open_bag_ui()
@@ -1505,6 +1561,7 @@ func _update_game_pause_state() -> void:
 		(pause_menu != null && pause_menu.visible) or
 		(_bag_ui != null and _bag_ui.visible) or
 		(_party_ui != null and _party_ui.visible) or
+		(_pokedex_ui != null and _pokedex_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

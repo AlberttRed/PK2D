@@ -67,6 +67,25 @@ gender_rate = -1
 capture_rate = 60
 base_happiness = 50
 hatch_counter = 20
+pokedex_numbers = {
+"champions": 121,
+"hoenn": 144,
+"isle-of-armor": 99,
+"kalos-coastal": 35,
+"kanto": 121,
+"letsgo-kanto": 121,
+"lumiose-city": 37,
+"national": 121,
+"original-akala": 112,
+"original-alola": 185,
+"original-johto": 168,
+"updated-akala": 125,
+"updated-alola": 224,
+"updated-hoenn": 149,
+"updated-johto": 170,
+"updated-unova": 239
+}
+category = "Pokémon Misterioso"
 description = "Starmie absorbe plancton al tiempo que nada
 por el mar haciendo girar su cuerpo a gran
 velocidad."

@@ -76,6 +76,26 @@ base_happiness = 70
 hatch_counter = 15
 growth_rate_id = 4
 evolutions = [SubResource("Resource_bd036")]
+pokedex_numbers = {
+"blueberry": 96,
+"extended-sinnoh": 31,
+"hisui": 46,
+"hoenn": 57,
+"kalos-mountain": 9,
+"kanto": 74,
+"kitakami": 80,
+"letsgo-kanto": 74,
+"national": 74,
+"original-alola": 229,
+"original-johto": 34,
+"original-sinnoh": 31,
+"original-ulaula": 101,
+"updated-alola": 298,
+"updated-hoenn": 58,
+"updated-johto": 34,
+"updated-ulaula": 119
+}
+category = "Pokémon Roca"
 description = "Se suele encontrar en senderos de montaña y
 sitios parecidos. Conviene andar con cuidado
 para no pisarlo sin querer y provocar su enfado."

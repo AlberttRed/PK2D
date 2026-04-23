@@ -73,6 +73,21 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_b15rp")]
+pokedex_numbers = {
+"extended-sinnoh": 161,
+"hisui": 125,
+"isle-of-armor": 54,
+"kalos-mountain": 134,
+"kanto": 108,
+"letsgo-kanto": 108,
+"national": 108,
+"original-johto": 178,
+"updated-alola": 375,
+"updated-johto": 180,
+"updated-poni": 122,
+"updated-unova": 284
+}
+category = "Pokémon Lametazo"
 description = "Se nutre principalmente de Pokémon insecto,
 a los que paraliza primero lamiéndolos con su
 larga lengua y luego engulle de un bocado."

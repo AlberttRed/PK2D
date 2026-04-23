@@ -71,6 +71,21 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_4cpc3")]
+pokedex_numbers = {
+"kanto": 96,
+"letsgo-kanto": 96,
+"national": 96,
+"original-alola": 54,
+"original-johto": 87,
+"original-melemele": 54,
+"original-poni": 13,
+"paldea": 66,
+"updated-alola": 66,
+"updated-johto": 87,
+"updated-melemele": 66,
+"updated-poni": 20
+}
+category = "Pokémon Hipnosis"
 description = "Si se duerme siempre en compañía de un
 Pokémon de esta especie, puede mostrar
 sueños que haya ingerido con anterioridad."

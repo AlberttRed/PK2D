@@ -71,6 +71,37 @@ base_happiness = 50
 hatch_counter = 5
 has_gender_differences = true
 evolutions = [SubResource("Resource_lf1c0")]
+pokedex_numbers = {
+"conquest-gallery": 13,
+"crown-tundra": 62,
+"extended-sinnoh": 23,
+"galar": 144,
+"hisui": 80,
+"hoenn": 52,
+"isle-of-armor": 42,
+"kalos-central": 49,
+"kanto": 129,
+"kitakami": 43,
+"letsgo-kanto": 129,
+"lumiose-city": 32,
+"national": 129,
+"original-akala": 34,
+"original-alola": 91,
+"original-johto": 76,
+"original-melemele": 91,
+"original-poni": 41,
+"original-sinnoh": 23,
+"original-ulaula": 51,
+"paldea": 134,
+"updated-akala": 34,
+"updated-alola": 111,
+"updated-hoenn": 53,
+"updated-johto": 76,
+"updated-melemele": 111,
+"updated-poni": 53,
+"updated-ulaula": 54
+}
+category = "Pokémon Pez"
 description = "Este Pokémon débil y patético se limita a dejarse
 llevar por la corriente cuando esta tiene fuerza."
 icon_sprite = SubResource("AtlasTexture_2nnyq")

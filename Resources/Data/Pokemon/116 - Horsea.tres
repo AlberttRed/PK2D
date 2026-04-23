@@ -73,6 +73,19 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_0q27a")]
+pokedex_numbers = {
+"blueberry": 52,
+"hoenn": 184,
+"isle-of-armor": 198,
+"kalos-coastal": 39,
+"kanto": 116,
+"letsgo-kanto": 116,
+"national": 116,
+"original-johto": 186,
+"updated-hoenn": 193,
+"updated-johto": 190
+}
+category = "Pokémon Dragón"
 description = "Nada con la gracilidad de un bailarín, creando
 remolinos a su paso, y juega con sus congéneres
 a ver quién forma el más grande."

@@ -67,6 +67,24 @@ gender_rate = 4
 capture_rate = 45
 base_happiness = 50
 hatch_counter = 40
+pokedex_numbers = {
+"blueberry": 145,
+"conquest-gallery": 190,
+"crown-tundra": 190,
+"galar": 361,
+"kalos-coastal": 150,
+"kanto": 131,
+"letsgo-kanto": 131,
+"national": 131,
+"original-alola": 268,
+"original-johto": 219,
+"original-poni": 83,
+"updated-alola": 353,
+"updated-johto": 224,
+"updated-poni": 100,
+"updated-unova": 242
+}
+category = "Pokémon Transporte"
 description = "Nada sin problema en aguas heladas gracias a la
 soberbia resistencia al frío que posee. Su tersa
 piel es ligeramente fría al tacto."

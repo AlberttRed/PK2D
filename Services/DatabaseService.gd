@@ -353,6 +353,29 @@ func get_pokemon(name_or_id) -> Resource:
 		return _pokemon_by_id.get(int(key), null)
 	return _pokemon_by_name.get(key, null)
 
+
+## IDs de especies cargadas, en orden ascendente estable (Pokédex).
+func get_all_pokemon_species_ids() -> Array[int]:
+	var ids: Array[int] = []
+	for id_any in _pokemon_by_id.keys():
+		var species_id := int(id_any)
+		if species_id <= 0:
+			continue
+		ids.append(species_id)
+	ids.sort()
+	return ids
+
+
+## Dataset de especies ordenado por id.
+func get_all_pokemon_sorted() -> Array[PokemonData]:
+	var out: Array[PokemonData] = []
+	var ids := get_all_pokemon_species_ids()
+	for species_id in ids:
+		var data := _pokemon_by_id.get(species_id, null) as PokemonData
+		if data != null:
+			out.append(data)
+	return out
+
 func get_move(name_or_id) -> MoveData:
 	if typeof(name_or_id) == TYPE_INT:
 		return _moves_by_id.get(name_or_id, null)
@@ -368,6 +391,23 @@ func get_type(name_or_id) -> Resource:
 	if key.is_valid_int():
 		return _types_by_id.get(int(key), null)
 	return _types_by_name.get(key, null)
+
+
+## Dataset de tipos ordenado por id.
+func get_all_types_sorted() -> Array[TypeData]:
+	var out: Array[TypeData] = []
+	var ids: Array[int] = []
+	for id_any in _types_by_id.keys():
+		var type_id := int(id_any)
+		if type_id <= 0:
+			continue
+		ids.append(type_id)
+	ids.sort()
+	for type_id in ids:
+		var data := _types_by_id.get(type_id, null) as TypeData
+		if data != null:
+			out.append(data)
+	return out
 
 func get_ability(name_or_id) -> Resource:
 	if typeof(name_or_id) == TYPE_INT:

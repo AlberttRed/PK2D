@@ -69,6 +69,18 @@ base_happiness = 70
 hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 2
+pokedex_numbers = {
+"blueberry": 2,
+"hoenn": 93,
+"kalos-central": 95,
+"kanto": 85,
+"letsgo-kanto": 85,
+"national": 85,
+"original-johto": 200,
+"updated-hoenn": 96,
+"updated-johto": 205
+}
+category = "Pokémon Ave Triple"
 description = "Este Pokémon surge al dividirse una de las
 cabezas de Doduo. Es capaz de correr por
 las praderas a 60 km/h."

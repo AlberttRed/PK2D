@@ -71,6 +71,16 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_7ay73")]
+pokedex_numbers = {
+"galar": 98,
+"isle-of-armor": 38,
+"kanto": 98,
+"letsgo-kanto": 98,
+"national": 98,
+"original-johto": 164,
+"updated-johto": 166
+}
+category = "Pokémon Cangrejo"
 description = "Ante el peligro, se camufla con las burbujas que
 desprende por la boca para parecer más grande."
 icon_sprite = SubResource("AtlasTexture_rveoj")

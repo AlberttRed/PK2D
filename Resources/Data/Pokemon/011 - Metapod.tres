@@ -71,6 +71,22 @@ base_happiness = 50
 hatch_counter = 15
 growth_rate_id = 2
 evolutions = [SubResource("Resource_c54a5")]
+pokedex_numbers = {
+"galar": 14,
+"kalos-central": 24,
+"kanto": 11,
+"letsgo-kanto": 11,
+"national": 11,
+"original-akala": 9,
+"original-alola": 18,
+"original-johto": 25,
+"original-melemele": 18,
+"updated-akala": 9,
+"updated-alola": 18,
+"updated-johto": 25,
+"updated-melemele": 18
+}
+category = "Pokémon Capullo"
 description = "Aunque cuenta con una coraza muy dura, tiene
 un cuerpo bastante blando. Un ataque violento
 puede acabar con él."

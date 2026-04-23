@@ -76,6 +76,21 @@ base_happiness = 70
 hatch_counter = 20
 growth_rate_id = 2
 evolutions = [SubResource("Resource_vlqr2")]
+pokedex_numbers = {
+"hisui": 53,
+"kanto": 46,
+"letsgo-kanto": 46,
+"national": 46,
+"original-akala": 74,
+"original-alola": 147,
+"original-johto": 70,
+"original-ulaula": 66,
+"updated-akala": 81,
+"updated-alola": 180,
+"updated-johto": 70,
+"updated-ulaula": 72
+}
+category = "Pokémon Hongo"
 description = "Escarba en el suelo para extraer nutrientes de
 las raíces de los árboles, que las setas del lomo
 absorben después casi por completo."

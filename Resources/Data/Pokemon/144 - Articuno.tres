@@ -65,6 +65,17 @@ gender_rate = -1
 capture_rate = 3
 base_happiness = 35
 hatch_counter = 80
+pokedex_numbers = {
+"conquest-gallery": 192,
+"crown-tundra": 202,
+"kalos-coastal": 151,
+"kanto": 144,
+"letsgo-kanto": 144,
+"national": 144,
+"original-johto": 235,
+"updated-johto": 240
+}
+category = "Pokémon Congelar"
 description = "Posee el poder de controlar el hielo a su antojo.
 Se dice que este Pokémon habita en montañas
 de nieves perpetuas."

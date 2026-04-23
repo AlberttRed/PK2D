@@ -71,6 +71,23 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_oyue5")]
+pokedex_numbers = {
+"isle-of-armor": 142,
+"kalos-mountain": 33,
+"kanto": 60,
+"kitakami": 39,
+"letsgo-kanto": 60,
+"national": 60,
+"original-akala": 76,
+"original-alola": 149,
+"original-johto": 72,
+"original-ulaula": 68,
+"updated-akala": 83,
+"updated-alola": 182,
+"updated-johto": 72,
+"updated-ulaula": 74
+}
+category = "Pokémon Renacuajo"
 description = "En ríos de aguas bravas, usa sus gruesos labios
 a modo de ventosa para adherirse a las rocas."
 icon_sprite = SubResource("AtlasTexture_eefgk")

@@ -69,6 +69,19 @@ base_happiness = 50
 hatch_counter = 20
 has_gender_differences = true
 growth_rate_id = 4
+pokedex_numbers = {
+"blueberry": 64,
+"galar": 57,
+"hoenn": 90,
+"kalos-central": 107,
+"kanto": 45,
+"letsgo-kanto": 45,
+"national": 45,
+"original-johto": 85,
+"updated-hoenn": 93,
+"updated-johto": 85
+}
+category = "Pokémon Flor"
 description = "Cuanto mayores son sus pétalos, más tóxico es su
 polen. Le pesa la cabeza y le cuesta mantenerla
 erguida."

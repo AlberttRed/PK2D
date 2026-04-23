@@ -73,6 +73,30 @@ base_happiness = 140
 hatch_counter = 40
 growth_rate_id = 3
 evolutions = [SubResource("Resource_jx0kr")]
+pokedex_numbers = {
+"blueberry": 17,
+"extended-sinnoh": 97,
+"hisui": 87,
+"isle-of-armor": 7,
+"kanto": 113,
+"letsgo-kanto": 113,
+"national": 113,
+"original-akala": 17,
+"original-alola": 33,
+"original-johto": 217,
+"original-melemele": 33,
+"original-poni": 9,
+"original-sinnoh": 97,
+"original-ulaula": 16,
+"paldea": 44,
+"updated-akala": 17,
+"updated-alola": 40,
+"updated-johto": 222,
+"updated-melemele": 40,
+"updated-poni": 16,
+"updated-ulaula": 16
+}
+category = "Pokémon Huevo"
 description = "Este Pokémon solía ser lento de reflejos, pero
 ha desarrollado una gran velocidad para evitar
 que le roben sus preciados huevos."

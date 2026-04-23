@@ -75,6 +75,31 @@ hatch_counter = 10
 has_gender_differences = true
 growth_rate_id = 2
 evolutions = [SubResource("Resource_ruuw7")]
+pokedex_numbers = {
+"champions": 25,
+"conquest-gallery": 16,
+"extended-sinnoh": 104,
+"galar": 194,
+"hisui": 56,
+"hoenn": 156,
+"isle-of-armor": 85,
+"kalos-central": 36,
+"kanto": 25,
+"kitakami": 21,
+"letsgo-kanto": 25,
+"lumiose-city": 53,
+"national": 25,
+"original-alola": 25,
+"original-johto": 22,
+"original-melemele": 25,
+"original-sinnoh": 104,
+"paldea": 74,
+"updated-alola": 32,
+"updated-hoenn": 163,
+"updated-johto": 22,
+"updated-melemele": 32
+}
+category = "Pokémon Ratón"
 description = "Los miembros de esta especie se saludan entre
 sí uniendo sus colas y transmitiéndose corriente
 eléctrica."

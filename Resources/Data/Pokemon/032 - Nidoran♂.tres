@@ -70,6 +70,16 @@ base_happiness = 50
 hatch_counter = 20
 growth_rate_id = 4
 evolutions = [SubResource("Resource_kxw7x")]
+pokedex_numbers = {
+"crown-tundra": 68,
+"kalos-coastal": 107,
+"kanto": 32,
+"letsgo-kanto": 32,
+"national": 32,
+"original-johto": 98,
+"updated-johto": 98
+}
+category = "Pokémon Pin Veneno"
 description = "Pequeño pero valiente. Arriesgaría la vida en
 combate con tal de proteger a su compañera."
 icon_sprite = SubResource("AtlasTexture_lmrhs")

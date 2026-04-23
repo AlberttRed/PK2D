@@ -65,6 +65,14 @@ capture_rate = 45
 base_happiness = 100
 hatch_counter = 120
 growth_rate_id = 4
+pokedex_numbers = {
+"kanto": 151,
+"letsgo-kanto": 151,
+"national": 151,
+"original-johto": 250,
+"updated-johto": 255
+}
+category = "Pokémon Nueva Especie"
 description = "Si se observa a través de un microscopio, puede
 distinguirse cuán corto, fino y delicado es el
 pelaje de este Pokémon."
