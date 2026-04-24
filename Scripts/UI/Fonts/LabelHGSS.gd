@@ -26,6 +26,7 @@ var messageHasFinished: bool:
 #@export var outline_color : Color
 #@export var text_font :Font #DynamicFont
 #@export var block_outline : bool = true
+var _refresh_task_running: bool = false
 
 
 func _outline_layers() -> Array[RichTextLabel]:
@@ -45,6 +46,41 @@ func _sync_outline_layout_from_parent() -> void:
 		o.add_theme_constant_override("paragraph_separation", para_sep)
 		o.add_theme_font_size_override("normal_font_size", font_sz)
 		o.set("spacing_top", spacing_top_val)
+
+
+func _sync_outline_geometry_from_parent() -> void:
+	if not is_inside_tree():
+		return
+	for o in _outline_layers():
+		o.position = Vector2.ZERO
+		o.size = size
+		o.custom_minimum_size = size
+
+
+func _request_outline_visual_refresh() -> void:
+	if not is_inside_tree():
+		return
+	if _refresh_task_running:
+		return
+	_refresh_task_running = true
+	call_deferred("_deferred_outline_visual_refresh")
+
+
+func _deferred_outline_visual_refresh() -> void:
+	if not is_inside_tree():
+		_refresh_task_running = false
+		return
+	# Esperar un frame garantiza layout final cuando el control acaba de hacerse visible.
+	await get_tree().process_frame
+	if not is_inside_tree():
+		_refresh_task_running = false
+		return
+	_sync_outline_layout_from_parent()
+	_sync_outline_geometry_from_parent()
+	for o in _outline_layers():
+		o.queue_redraw()
+	queue_redraw()
+	_refresh_task_running = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -73,6 +109,8 @@ func _ready():
 	for o in _outline_layers():
 		o.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 
+	_request_outline_visual_refresh()
+
 
 ## RT con BBCode trata `\n` como párrafo nuevo. `[br]` mantiene una sola línea visual; `\n\n` sigue siendo hueco entre bloques.
 func _bbcode_normalize_newlines(s: String) -> String:
@@ -87,10 +125,7 @@ func _bbcode_normalize_newlines(s: String) -> String:
 
 
 func _draw() -> void:
-	for o in _outline_layers():
-		o.position = Vector2.ZERO
-		o.size = size
-		o.custom_minimum_size = size
+	_sync_outline_geometry_from_parent()
 
 
 ## Normaliza `\n` → `[br]` y copia el mismo BBCode al RTL principal y a Outline/Outline2.
@@ -155,3 +190,8 @@ func _set(_name, value):
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_THEME_CHANGED:
 		_sync_outline_layout_from_parent()
+		_request_outline_visual_refresh()
+	elif what == NOTIFICATION_RESIZED:
+		_request_outline_visual_refresh()
+	elif what == NOTIFICATION_VISIBILITY_CHANGED and visible:
+		_request_outline_visual_refresh()

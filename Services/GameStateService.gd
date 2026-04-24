@@ -3,10 +3,24 @@ extends Node
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
 const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
 const POKEDEX_SCRIPT = preload("res://Scripts/Runtime/Pokedex.gd")
+const POKEMON_RUNTIME_SERDE = preload("res://Scripts/Runtime/PokemonRuntimeSerde.gd")
+const SAVE_VERSION: int = 1
+const SAVE_DIR_PATH := "user://saves"
+const DEFAULT_SAVE_SLOT: int = 0
+## Último “Centro Pokémon” / punto de blanqueo por defecto (partidas antiguas sin `respawn_point` o dato inválido).
+const DEFAULT_RESPAWN_MAP_ID: String = "Pueblo_Paleta"
+const DEFAULT_RESPAWN_POSITION: Vector2i = Vector2i(1, 0)
 
 ## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
 ## Accesible globalmente como autoload: GameStateService
+##
+## Modo debug de contenido/arranque: lo fija `Main.debug_mode` en la primera
+## carga (export). Afecta p. ej. a `initialize_new_game` (seeds de prueba) y
+## al flujo (menú vs entrada directa). Cualquier script: `if GameStateService.debug_mode:`.
+## No confundir con `OS.is_debug_build()` (plantilla de export) ni con
+## `Engine.is_editor_hint()` (jugar desde el editor).
+var debug_mode: bool = false
 
 # === SEÑALES ===
 signal flag_changed(flag_name: String, new_value: bool)
@@ -18,6 +32,13 @@ signal trainer_battle_result_changed(trainer_id: String, result: String)
 var current_map_id: String = ""
 var current_position: Vector2i = Vector2i.ZERO
 var facing_dir: Vector2 = Vector2.DOWN
+var respawn_point: Dictionary = {
+	"map_id": "",
+	"position": Vector2i.ZERO,
+	"facing": Vector2.DOWN,
+}
+## Dinero del jugador (PBI 587). Solo modelo + save; sin tiendas aún.
+var money: int = 0
 
 # Flags globales (Dictionary: nombre -> bool)
 var global_flags: Dictionary = {	"CHOOSING_STARTER": false}
@@ -58,14 +79,17 @@ func initialize_new_game() -> void:
 	current_map_id = "Pueblo_Paleta"
 	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
 	facing_dir = Vector2.DOWN
+	money = 0
+	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
 	pokedex = POKEDEX_SCRIPT.new()
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
 	active_pokedex_id = "kanto"
-	_seed_test_pokedex_progress()
-	_seed_test_bag_items()
-	_seed_test_party_placeholder()
+	if debug_mode:
+		_seed_test_pokedex_progress()
+		_seed_test_bag_items()
+		_seed_test_party_placeholder()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
@@ -168,9 +192,7 @@ func _seed_test_pokedex_progress() -> void:
 
 ## Carga un estado guardado (placeholder para futuro)
 func load_saved_game() -> bool:
-	# TODO: Implementar carga desde archivo de guardado
-	# Por ahora, simular que no hay partida guardada
-	return false
+	return load_game(DEFAULT_SAVE_SLOT)
 
 # === MÉTODOS DE LECTURA ===
 ## Retorna el ID del mapa actual
@@ -184,6 +206,20 @@ func get_current_position() -> Vector2i:
 ## Retorna la dirección a la que mira el jugador
 func get_facing_direction() -> Vector2:
 	return facing_dir
+
+
+func get_respawn_point() -> Dictionary:
+	## Nunca devolver mapa vacío: el blanqueo siempre apunta a un sitio seguro.
+	var mid: String = str(respawn_point.get("map_id", ""))
+	if mid.is_empty():
+		mid = DEFAULT_RESPAWN_MAP_ID
+	var pos: Vector2i = _variant_to_vector2i(respawn_point.get("position", DEFAULT_RESPAWN_POSITION), DEFAULT_RESPAWN_POSITION)
+	var fac: Vector2 = _variant_to_vector2(respawn_point.get("facing", Vector2.DOWN), Vector2.DOWN)
+	return {
+		"map_id": mid,
+		"position": pos,
+		"facing": fac,
+	}
 
 ## Retorna el valor de un flag global
 func get_event_flag(flag_name: String) -> bool:
@@ -227,6 +263,27 @@ func get_party():
 	if party == null:
 		party = PARTY_SCRIPT.new()
 	return party
+
+
+## Equipo leído solo del JSON del slot (no modifica el party en memoria). Para UI, p. ej. iconos en «Continuar».
+func get_save_party_preview_pokemon(slot_id: int = DEFAULT_SAVE_SLOT) -> Array[Pokemon]:
+	var out: Array[Pokemon] = []
+	var save_data: Dictionary = _read_save_data(slot_id)
+	if save_data.is_empty():
+		return out
+	var party_any: Variant = save_data.get("party", [])
+	if not (party_any is Array):
+		return out
+	var serde: PokemonRuntimeSerde = POKEMON_RUNTIME_SERDE.new() as PokemonRuntimeSerde
+	for entry_any: Variant in party_any:
+		if not (entry_any is Dictionary):
+			continue
+		var mon: Pokemon = serde.deserialize(entry_any) as Pokemon
+		if mon != null and mon.base != null:
+			out.append(mon)
+		if out.size() >= 6:
+			break
+	return out
 
 
 ## Pokédex global de sesión
@@ -289,6 +346,72 @@ func set_current_position(position: Vector2i) -> void:
 ## Establece la dirección a la que mira el jugador
 func set_facing_direction(direction: Vector2) -> void:
 	facing_dir = direction
+
+
+func set_respawn_point(map_id: String, position: Vector2i, facing: Vector2 = Vector2.DOWN) -> void:
+	if map_id.is_empty():
+		push_warning("GameStateService.set_respawn_point: map_id vacío, se ignora")
+		return
+	respawn_point = {
+		"map_id": map_id,
+		"position": position,
+		"facing": facing,
+	}
+
+
+## Acepta diccionario con al menos `map_id`, `position` (Vector2i o {x,y}), `facing` opcional.
+func set_respawn_point_data(data: Dictionary) -> void:
+	var m := str(data.get("map_id", ""))
+	if m.is_empty():
+		push_warning("GameStateService.set_respawn_point_data: map_id vacío")
+		return
+	var p: Vector2i = _variant_to_vector2i(data.get("position", Vector2i.ZERO), Vector2i.ZERO)
+	var f: Vector2 = _variant_to_vector2(data.get("facing", Vector2.DOWN), Vector2.DOWN)
+	set_respawn_point(m, p, f)
+
+
+func get_money() -> int:
+	return money
+
+
+func can_afford(amount: int) -> bool:
+	return amount >= 0 and money >= amount
+
+
+## Añade dinero; `amount` debe ser >= 0.
+func add_money(amount: int) -> void:
+	if amount < 0:
+		push_warning("GameStateService.add_money: amount negativo ignorado")
+		return
+	money = mini(money + amount, 2147483647)
+
+
+## Quitar dinero. Devuelve false si no había suficiente (el saldo no cambia).
+func remove_money(amount: int) -> bool:
+	if amount < 0:
+		push_warning("GameStateService.remove_money: amount negativo rechazado")
+		return false
+	if money < amount:
+		return false
+	money -= amount
+	return true
+
+
+func _normalize_money_value(value: Variant) -> int:
+	var n: int = 0
+	if value is int:
+		n = int(value)
+	elif value is float:
+		n = int(floor(float(value)))
+	elif str(value).is_valid_int():
+		n = int(str(value))
+	else:
+		push_warning("GameStateService: money en save con tipo no numérico; se usa 0")
+		return 0
+	if n < 0:
+		push_warning("GameStateService: money negativo en save (%d); se normaliza a 0" % n)
+		return 0
+	return n
 
 ## Establece el valor de un flag global
 func set_event_flag(flag_name: String, value: bool) -> void:
@@ -465,6 +588,305 @@ func load_pokedex_registry_save_data(data: Dictionary) -> void:
 		active_pokedex_id = unlocked_pokedex_ids[0]
 	else:
 		active_pokedex_id = desired_active
+
+
+func get_save_path(slot_id: int = DEFAULT_SAVE_SLOT) -> String:
+	var safe_slot := maxi(0, slot_id)
+	return "%s/slot_%02d.save.json" % [SAVE_DIR_PATH, safe_slot]
+
+
+func has_save(slot_id: int = DEFAULT_SAVE_SLOT) -> bool:
+	var path := get_save_path(slot_id)
+	return FileAccess.file_exists(path)
+
+
+func has_valid_save(slot_id: int = DEFAULT_SAVE_SLOT) -> bool:
+	return not _read_save_data(slot_id).is_empty()
+
+
+func get_save_metadata(slot_id: int = DEFAULT_SAVE_SLOT) -> Dictionary:
+	var save_data := _read_save_data(slot_id)
+	if save_data.is_empty():
+		return {"ok": false}
+
+	var player_state_any: Variant = save_data.get("player_state", {})
+	var player_state: Dictionary = player_state_any if player_state_any is Dictionary else {}
+	var map_id := str(player_state.get("current_map_id", ""))
+	var route_text := map_id.replace("_", " ").strip_edges()
+	if route_text.is_empty():
+		route_text = "—"
+
+	var flags_any: Variant = save_data.get("flags", {})
+	var flags_data: Dictionary = flags_any if flags_any is Dictionary else {}
+	var vars_any: Variant = flags_data.get("game_variables", {})
+	var game_vars: Dictionary = vars_any if vars_any is Dictionary else {}
+	var player_name := str(game_vars.get("PLAYER_NAME", "PLAYER")).strip_edges()
+	if player_name.is_empty():
+		player_name = "PLAYER"
+	var badges := int(game_vars.get("BADGE_COUNT", 0))
+
+	var pokedex_any: Variant = save_data.get("pokedex", {})
+	var pokedex_data: Dictionary = pokedex_any if pokedex_any is Dictionary else {}
+	var entries_any: Variant = pokedex_data.get("entries", {})
+	var entries: Dictionary = entries_any if entries_any is Dictionary else {}
+	var caught_count := 0
+	for key in entries.keys():
+		var entry_any: Variant = entries.get(key, {})
+		if entry_any is Dictionary and bool((entry_any as Dictionary).get("caught", false)):
+			caught_count += 1
+
+	return {
+		"ok": true,
+		"slot_id": slot_id,
+		"route_text": route_text,
+		"player_name": player_name,
+		"badges": badges,
+		"pokedex_caught": caught_count,
+		# TODO: sustituir por tiempo real persistido cuando exista contador de juego global.
+		"play_time": "00:00",
+	}
+
+
+func save_game(slot_id: int = DEFAULT_SAVE_SLOT) -> Dictionary:
+	var path := get_save_path(slot_id)
+	var dir_path := path.get_base_dir()
+	var mk_err := DirAccess.make_dir_recursive_absolute(dir_path)
+	if mk_err != OK:
+		var mk_msg := "No se pudo crear directorio de guardado (%s). error=%d" % [dir_path, mk_err]
+		push_error("GameStateService.save_game: %s" % mk_msg)
+		return {"ok": false, "message": mk_msg, "path": path, "error_code": mk_err}
+
+	var payload := _build_save_payload()
+	var json_text := JSON.stringify(payload, "\t")
+	if json_text.is_empty():
+		var json_msg := "Error serializando payload de guardado."
+		push_error("GameStateService.save_game: %s" % json_msg)
+		return {"ok": false, "message": json_msg, "path": path}
+
+	var temp_path := "%s.tmp" % path
+	var file := FileAccess.open(temp_path, FileAccess.WRITE)
+	if file == null:
+		var open_err := FileAccess.get_open_error()
+		var open_msg := "No se pudo abrir temporal de guardado (%s). error=%d" % [temp_path, open_err]
+		push_error("GameStateService.save_game: %s" % open_msg)
+		return {"ok": false, "message": open_msg, "path": path, "error_code": open_err}
+	file.store_string(json_text)
+	file.flush()
+	file = null
+
+	if FileAccess.file_exists(path):
+		var rm_err := DirAccess.remove_absolute(path)
+		if rm_err != OK:
+			var rm_msg := "No se pudo reemplazar save previo (%s). error=%d" % [path, rm_err]
+			push_error("GameStateService.save_game: %s" % rm_msg)
+			DirAccess.remove_absolute(temp_path)
+			return {"ok": false, "message": rm_msg, "path": path, "error_code": rm_err}
+
+	var rename_err := DirAccess.rename_absolute(temp_path, path)
+	if rename_err != OK:
+		var rename_msg := "No se pudo finalizar guardado atómico (%s). error=%d" % [path, rename_err]
+		push_error("GameStateService.save_game: %s" % rename_msg)
+		DirAccess.remove_absolute(temp_path)
+		return {"ok": false, "message": rename_msg, "path": path, "error_code": rename_err}
+
+	print("GameStateService.save_game: slot=%d guardado en %s (party=%d, bag=%d, pokedex_seen=%d, pokedex_caught=%d, flags=%d)" % [
+		slot_id,
+		path,
+		get_party().count(),
+		get_bag_save_data().size(),
+		get_pokedex().get_seen_count(),
+		get_pokedex().get_caught_count(),
+		global_flags.size(),
+	])
+	return {"ok": true, "message": "Partida guardada.", "path": path, "slot_id": slot_id}
+
+
+func load_game(slot_id: int = DEFAULT_SAVE_SLOT) -> bool:
+	var save_data := _read_save_data(slot_id)
+	if save_data.is_empty():
+		return false
+	var save_version := int(save_data.get("save_version", 0))
+	_apply_save_payload(save_data)
+	var path := get_save_path(slot_id)
+	print("GameStateService.load_game: slot=%d cargado desde %s (save_version=%d)." % [slot_id, path, save_version])
+	return true
+
+
+func _build_save_payload() -> Dictionary:
+	var now_iso := Time.get_datetime_string_from_system(true, true)
+	var rp := get_respawn_point()
+	return {
+		"save_version": SAVE_VERSION,
+		"saved_at": now_iso,
+		"player_state": {
+			"current_map_id": current_map_id,
+			"current_position": _vector2i_to_dict(current_position),
+			"facing_dir": _vector2_to_dict(facing_dir),
+			"money": int(money),
+		},
+		"respawn_point": {
+			"map_id": str(rp.get("map_id", current_map_id)),
+			"position": _vector2i_to_dict(_variant_to_vector2i(rp.get("position", current_position), current_position)),
+			"facing": _vector2_to_dict(_variant_to_vector2(rp.get("facing", facing_dir), facing_dir)),
+		},
+		"party": get_party_save_data(),
+		"bag": get_bag_save_data(),
+		"pokedex": get_pokedex_save_data(),
+		"pokedex_registry": get_pokedex_registry_save_data(),
+		"flags": {
+			"global_flags": global_flags.duplicate(true),
+			"game_variables": game_variables.duplicate(true),
+			"event_self_flags": event_self_flags.duplicate(true),
+			"defeated_trainers": defeated_trainers.duplicate(true),
+		},
+	}
+
+
+func _apply_save_payload(save_data: Dictionary) -> void:
+	var player_state_any: Variant = save_data.get("player_state", {})
+	var player_state: Dictionary = player_state_any if player_state_any is Dictionary else {}
+	current_map_id = str(player_state.get("current_map_id", "Pueblo_Paleta"))
+	current_position = _variant_to_vector2i(player_state.get("current_position", Vector2i(1, 0)), Vector2i(1, 0))
+	facing_dir = _variant_to_vector2(player_state.get("facing_dir", Vector2.DOWN), Vector2.DOWN)
+	if player_state.has("money"):
+		money = _normalize_money_value(player_state.get("money", 0))
+	else:
+		money = 0
+
+	var respawn_any: Variant = save_data.get("respawn_point", null)
+	if respawn_any == null or (respawn_any is Dictionary and (respawn_any as Dictionary).is_empty()) or not (respawn_any is Dictionary):
+		set_respawn_point(DEFAULT_RESPAWN_MAP_ID, DEFAULT_RESPAWN_POSITION, Vector2.DOWN)
+	else:
+		var respawn_data: Dictionary = respawn_any as Dictionary
+		var rp_map := str(respawn_data.get("map_id", ""))
+		if rp_map.is_empty():
+			set_respawn_point(DEFAULT_RESPAWN_MAP_ID, DEFAULT_RESPAWN_POSITION, Vector2.DOWN)
+		else:
+			var rp_pos := _variant_to_vector2i(respawn_data.get("position", DEFAULT_RESPAWN_POSITION), DEFAULT_RESPAWN_POSITION)
+			var rp_facing := _variant_to_vector2(respawn_data.get("facing", Vector2.DOWN), Vector2.DOWN)
+			set_respawn_point(rp_map, rp_pos, rp_facing)
+
+	var bag_any: Variant = save_data.get("bag", [])
+	if bag_any is Array:
+		var safe_bag_entries: Array[Dictionary] = []
+		for entry_any in bag_any:
+			if entry_any is Dictionary:
+				safe_bag_entries.append(entry_any)
+		load_bag_save_data(safe_bag_entries)
+	else:
+		load_bag_save_data([])
+
+	var party_any: Variant = save_data.get("party", [])
+	if party_any is Array:
+		var safe_party_entries: Array[Dictionary] = []
+		for entry_any in party_any:
+			if entry_any is Dictionary:
+				safe_party_entries.append(entry_any)
+		load_party_save_data(safe_party_entries)
+	else:
+		load_party_save_data([])
+
+	var pokedex_any: Variant = save_data.get("pokedex", {})
+	var raw_pokedex: Dictionary = pokedex_any if pokedex_any is Dictionary else {}
+	load_pokedex_save_data(_sanitize_pokedex_save_data(raw_pokedex))
+
+	var pdx_registry_any: Variant = save_data.get("pokedex_registry", {})
+	if pdx_registry_any is Dictionary:
+		load_pokedex_registry_save_data(pdx_registry_any)
+	else:
+		load_pokedex_registry_save_data({})
+
+	var flags_any: Variant = save_data.get("flags", {})
+	var flags_data: Dictionary = flags_any if flags_any is Dictionary else {}
+	global_flags = _variant_to_dictionary(flags_data.get("global_flags", {}))
+	game_variables = _variant_to_dictionary(flags_data.get("game_variables", {}))
+	event_self_flags = _variant_to_dictionary(flags_data.get("event_self_flags", {}))
+	defeated_trainers = _variant_to_dictionary(flags_data.get("defeated_trainers", {}))
+
+
+func _read_save_data(slot_id: int) -> Dictionary:
+	var path := get_save_path(slot_id)
+	if not FileAccess.file_exists(path):
+		print("GameStateService: no existe save para slot=%d (%s)." % [slot_id, path])
+		return {}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("GameStateService: no se pudo abrir %s. error=%d" % [path, FileAccess.get_open_error()])
+		return {}
+	var raw_text := file.get_as_text()
+	file = null
+	if raw_text.is_empty():
+		push_error("GameStateService: archivo de save vacío en %s." % path)
+		return {}
+	var parsed: Variant = JSON.parse_string(raw_text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("GameStateService: JSON inválido en %s." % path)
+		return {}
+	return parsed
+
+
+func _sanitize_pokedex_save_data(data: Dictionary) -> Dictionary:
+	var safe: Dictionary = data.duplicate(true)
+	var entries_any: Variant = safe.get("entries", {})
+	if not (entries_any is Dictionary):
+		safe["entries"] = {}
+		return safe
+	var entries: Dictionary = entries_any
+	var filtered: Dictionary = {}
+	for species_key in entries.keys():
+		var id_text := str(species_key).strip_edges()
+		if not id_text.is_valid_int():
+			continue
+		var species_id := int(id_text)
+		if species_id <= 0:
+			continue
+		if DatabaseService.get_pokemon(species_id) == null:
+			push_warning("GameStateService.load_game: species_id=%d no existe en DB; se ignora entrada de Pokédex." % species_id)
+			continue
+		var value_any: Variant = entries.get(species_key, {})
+		if not (value_any is Dictionary):
+			continue
+		filtered[id_text] = value_any
+	safe["entries"] = filtered
+	return safe
+
+
+func _variant_to_dictionary(value: Variant) -> Dictionary:
+	if value is Dictionary:
+		return (value as Dictionary).duplicate(true)
+	return {}
+
+
+func _vector2i_to_dict(v: Vector2i) -> Dictionary:
+	return {"x": v.x, "y": v.y}
+
+
+func _vector2_to_dict(v: Vector2) -> Dictionary:
+	return {"x": v.x, "y": v.y}
+
+
+func _variant_to_vector2i(value: Variant, default_value: Vector2i = Vector2i.ZERO) -> Vector2i:
+	if value is Vector2i:
+		return value
+	if value is Vector2:
+		var v2: Vector2 = value
+		return Vector2i(int(v2.x), int(v2.y))
+	if value is Dictionary:
+		var d: Dictionary = value
+		return Vector2i(int(d.get("x", default_value.x)), int(d.get("y", default_value.y)))
+	return default_value
+
+
+func _variant_to_vector2(value: Variant, default_value: Vector2 = Vector2.ZERO) -> Vector2:
+	if value is Vector2:
+		return value
+	if value is Vector2i:
+		var v2i: Vector2i = value
+		return Vector2(float(v2i.x), float(v2i.y))
+	if value is Dictionary:
+		var d: Dictionary = value
+		return Vector2(float(d.get("x", default_value.x)), float(d.get("y", default_value.y)))
+	return default_value
 
 ## Retorna un resumen del estado actual
 func get_state_summary() -> String:

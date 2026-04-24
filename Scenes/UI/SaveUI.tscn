@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://d00ox4vsuch73"]
+
+[ext_resource type="Script" uid="uid://bljj3l8lm5x2" path="res://Scripts/UI/SaveUI.gd" id="1_smuj4"]
+[ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/Choice Styles/ChoicesBox_Style.tres" id="1_wh0ap"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_ufe7s"]
+
+[node name="SaveUI" type="Control" unique_id=1355763459]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_smuj4")
+
+[node name="Panel" type="Panel" parent="." unique_id=1579460866]
+layout_mode = 0
+offset_right = 216.0
+offset_bottom = 166.0
+theme_override_styles/panel = ExtResource("1_wh0ap")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=202269923]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -74.5
+offset_right = 90.0
+offset_bottom = 73.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsList" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=1101974254]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="Route" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=1561141777]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="LabelHGSS" parent="Panel/MarginContainer/StatsList/Route" unique_id=1015503900 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+theme_override_colors/default_color = Color(0.11764706, 0.5921569, 0.023529412, 1)
+theme_override_colors/font_shadow_color = Color(0.51190656, 0.9317889, 0.52149916, 1)
+text = "Ruta 3"
+horizontal_alignment = 1
+align = 1
+
+[node name="Player" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=779741031]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" parent="Panel/MarginContainer/StatsList/Player" unique_id=1172907091 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+text = "Jugador"
+
+[node name="Data" parent="Panel/MarginContainer/StatsList/Player" unique_id=1060541460 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
+text = "Rojo"
+horizontal_alignment = 2
+align = 2
+
+[node name="Time" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=1970746451]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" parent="Panel/MarginContainer/StatsList/Time" unique_id=594756960 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+text = "Tiempo"
+
+[node name="Data" parent="Panel/MarginContainer/StatsList/Time" unique_id=1441640625 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
+text = "00:00"
+horizontal_alignment = 2
+align = 2
+
+[node name="Medals" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=1403776559]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1995771410 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+text = "Medallas"
+
+[node name="Data" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1069626759 instance=ExtResource("2_ufe7s")]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
+theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
+text = "0"
+horizontal_alignment = 2
+align = 2
