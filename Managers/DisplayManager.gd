@@ -34,6 +34,7 @@ const EvolutionControllerScr := preload("res://Scripts/UI/EvolutionController.gd
 const BAG_CONTROLLER_SCRIPT = preload("res://Scripts/UI/BagController.gd")
 const PARTY_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PartyController.gd")
 const POKEDEX_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PokedexController.gd")
+const SAVE_MENU_CONTROLLER_SCRIPT = preload("res://Scripts/UI/SaveMenuController.gd")
 # === VARIABLES ===
 var fading: bool = false
 var next = false
@@ -45,6 +46,8 @@ var _current_portrait_box: PortraitBox = null  # Referencia al PortraitBox actua
 var _bag_controller = null
 var _party_controller = null
 var _pokedex_controller = null
+var _save_menu_controller = null
+var _reopen_pause_after_save_ui_close: bool = true
 ## Flujo party → mochila (Usar objeto) y vuelta al party.
 var _resume_party_focus_slot: int = -1
 ## Mientras cerramos el party para abrir la mochila «Usar objeto»: no reabrir menú pausa en _on_party_closed.
@@ -78,6 +81,7 @@ const _UI_SCREEN_FADE_DURATION: float = 0.2
 @onready var _bag_ui = $BagUI
 @onready var _party_ui = $PartyUI
 @onready var _pokedex_ui = $PokedexUI
+@onready var _save_ui = $SaveUI
 @onready var _evolution_ui = $EvolutionUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
@@ -106,6 +110,8 @@ func _ready() -> void:
 		_party_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _pokedex_ui:
 		_pokedex_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _save_ui:
+		_save_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -152,6 +158,11 @@ func _ready() -> void:
 		_pokedex_ui.closed.connect(_on_pokedex_closed)
 		if _pokedex_ui.has_signal("visibility_changed"):
 			_pokedex_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _save_ui:
+		_save_ui.closed.connect(_on_save_ui_closed)
+		if _save_ui.has_signal("visibility_changed"):
+			_save_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -474,7 +485,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible)
 
 
 func _start_evolution_impl(
@@ -649,6 +660,9 @@ func _on_battle_finished(_winner_side: String) -> void:
 
 	BattleNew.cleanup_battle()
 
+	if _winner_side == "enemy":
+		await _apply_defeat_respawn_warp()
+
 	await _run_pending_evolutions_post_battle()
 
 	# Revelar overworld solo cuando ya no hay evolución pendiente ni UI encima del negro.
@@ -667,6 +681,45 @@ func _on_battle_finished(_winner_side: String) -> void:
 
 	# Marcar cleanup como completado
 	_battle_cleanup_done = true
+
+
+## Blanqueo: warp al `respawn_point` del guardado (no recarga el save; solo alinear overworld con GameState).
+func _apply_defeat_respawn_warp() -> void:
+	if GameStateService == null:
+		return
+	var ctx := _resolve_overworld_context()
+	if ctx == null:
+		push_warning("DisplayManager._apply_defeat_respawn_warp: OverworldContext no disponible")
+		return
+	var rp: Dictionary = GameStateService.get_respawn_point()
+	var map_id: String = str(rp.get("map_id", ""))
+	if map_id.is_empty():
+		push_warning("DisplayManager._apply_defeat_respawn_warp: map_id vacío tras normalizar; se omite")
+		return
+	var pos_any: Variant = rp.get("position", null)
+	var tile: Vector2i
+	if pos_any is Vector2i:
+		tile = pos_any
+	else:
+		tile = Vector2i(1, 0)
+	var fac_any: Variant = rp.get("facing", null)
+	var fac: Vector2
+	if fac_any is Vector2:
+		fac = fac_any
+	else:
+		fac = Vector2.DOWN
+	print("DisplayManager: derrota — respawn a mapa=%s tile=%s facing=%s" % [map_id, tile, fac])
+	await ctx.request_warp(map_id, tile)
+	var ws: Node = ctx.get_world_system()
+	if ws == null:
+		return
+	var grid = ws.get_active_grid() if ws.has_method("get_active_grid") else null
+	var player: Node = ctx.get_player()
+	if grid and player and grid.has_method("set_player_facing_direction"):
+		grid.set_player_facing_direction(fac, player)
+	if ws.has_method("force_sync_to_gamestate"):
+		ws.force_sync_to_gamestate()
+
 
 func _play_mo_overlay(pokemon_visual: Variant) -> void:
 	if MO_OVERLAY_SCENE == null:
@@ -801,7 +854,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible):
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -876,7 +929,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -1541,7 +1594,118 @@ func _on_pause_player_requested() -> void:
 	print("PauseMenu: Player solicitado (placeholder)")
 
 func _on_pause_save_requested() -> void:
-	print("PauseMenu: Guardar solicitado (placeholder)")
+	await _open_save_ui()
+
+
+func _open_save_ui() -> void:
+	if _save_ui == null:
+		push_error("DisplayManager: Nodo SaveUI no disponible en la escena.")
+		return
+	if _save_ui.visible:
+		return
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _pokedex_ui != null and _pokedex_ui.visible:
+		return
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close()
+
+	var context := _resolve_overworld_context()
+	_save_menu_controller = SAVE_MENU_CONTROLLER_SCRIPT.new(context, 0)
+	_reopen_pause_after_save_ui_close = true
+	_save_ui.setup(_save_menu_controller)
+	_save_ui.open()
+	_on_ui_visibility_changed()
+
+	await _run_save_flow()
+
+
+func _close_save_ui() -> void:
+	if _save_ui == null:
+		return
+	_save_ui.close()
+
+
+func _run_save_flow() -> void:
+	if _save_menu_controller == null or _save_ui == null:
+		return
+	var first_save_choice := await _show_message_with_choices(
+		"¿Quieres guardar la partida?",
+		["SI", "NO"],
+		true
+	)
+	if first_save_choice != 0:
+		_return_from_save_ui_to_pause_menu()
+		return
+
+	if _save_menu_controller.has_existing_save():
+		var overwrite_choice := await _show_message_with_choices(
+			"Ya hay una partida guardada.\n¿Quieres sobrescribirla?",
+			["SI", "NO"],
+			true
+		)
+		if overwrite_choice != 0:
+			_return_from_save_ui_to_pause_menu()
+			return
+
+	if _save_menu_controller == null or _save_ui == null or not _save_ui.visible:
+		_return_from_save_ui_to_pause_menu()
+		return
+
+	var player_name: String = _save_menu_controller.get_player_name()
+	await _show_message_with_config("%s guardó la partida." % player_name, {
+		"waitInput": false,
+		"closeAtEnd": true,
+		"waitTime": 0.6,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+	})
+
+	var save_result: Dictionary = _save_menu_controller.save_game()
+	if bool(save_result.get("ok", false)):
+		_close_all_save_related_ui()
+		return
+	else:
+		var reason := str(save_result.get("message", "No se pudo guardar."))
+		await _show_message_with_config("No se pudo guardar.\n%s" % reason, {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"waitTime": 0.0,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		})
+	_return_from_save_ui_to_pause_menu()
+
+
+func _return_from_save_ui_to_pause_menu() -> void:
+	if choice_box != null and choice_box.visible:
+		choice_box.hide()
+	if msg != null and msg.visible:
+		_close_message()
+	_reopen_pause_after_save_ui_close = true
+	_close_save_ui()
+
+
+func _close_all_save_related_ui() -> void:
+	if choice_box != null and choice_box.visible:
+		choice_box.hide()
+	if msg != null and msg.visible:
+		_close_message()
+	_reopen_pause_after_save_ui_close = false
+	_close_save_ui()
+	if pause_menu != null and pause_menu.visible:
+		pause_menu.close()
+
+
+func _on_save_ui_closed() -> void:
+	_save_menu_controller = null
+	if _reopen_pause_after_save_ui_close and pause_menu and not pause_menu.visible:
+		pause_menu.open(4)
+	_reopen_pause_after_save_ui_close = true
+	_on_ui_visibility_changed()
 
 func _on_pause_options_requested() -> void:
 	print("PauseMenu: Opciones solicitado (placeholder)")
@@ -1562,6 +1726,7 @@ func _update_game_pause_state() -> void:
 		(_bag_ui != null and _bag_ui.visible) or
 		(_party_ui != null and _party_ui.visible) or
 		(_pokedex_ui != null and _pokedex_ui.visible) or
+		(_save_ui != null and _save_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

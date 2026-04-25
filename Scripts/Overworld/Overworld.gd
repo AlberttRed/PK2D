@@ -223,5 +223,16 @@ func configure_from_gamestate() -> bool:
 
 	grid.position_player_at_tile(position, player)
 	grid.set_player_facing_direction(facing_dir, player)
+	_sync_indoor_flag_from_active_map()
 
 	return true
+
+
+func _sync_indoor_flag_from_active_map() -> void:
+	var active_map := world_system.get_active_map()
+	if active_map == null:
+		return
+	var map_scene := active_map as MapScene
+	if map_scene == null:
+		return
+	GameStateService.set_event_flag("indoor", map_scene.is_indoor)

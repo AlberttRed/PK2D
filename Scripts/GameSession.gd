@@ -7,14 +7,20 @@ class_name GameSession
 
 # Referencias a escenas
 const OVERWORLD_SCENE = preload("res://Scenes/Overworld/Overworld.tscn")
+@export var load_existing_on_start: bool = false
 
 func _ready() -> void:
 	# Esperar un frame para asegurar que todos los sistemas estén inicializados
 	await get_tree().process_frame
 
 	# Decidir si cargar partida existente o nueva partida
-	if GameStateService.load_saved_game():
-		_load_overworld_scene()
+	if load_existing_on_start:
+		if GameStateService.load_saved_game():
+			_load_overworld_scene()
+		else:
+			push_warning("GameSession: Se solicitó continuar, pero no hay save válido. Iniciando nueva partida.")
+			GameStateService.initialize_new_game()
+			_load_overworld_scene()
 	else:
 		GameStateService.initialize_new_game()
 		_load_overworld_scene()

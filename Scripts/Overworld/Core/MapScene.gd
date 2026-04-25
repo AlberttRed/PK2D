@@ -13,6 +13,9 @@ class_name MapScene
 ## Posición del mapa en el mundo global (coordenadas en píxeles)
 ## Ejemplo: Ruta1 arriba de PuebloPaleta → Vector2(0, -480)
 @export var world_position: Vector2 = Vector2.ZERO
+## Si true, este mapa se considera interior (casa/cueva/edificio).
+## Se usa para sincronizar flags globales de estado (p.ej. `indoor`).
+@export var is_indoor: bool = false
 
 ## ID del mapa (se auto-detecta del nombre si está vacío)
 @export var map_id: String = ""

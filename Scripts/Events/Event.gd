@@ -270,8 +270,8 @@ func _set_initial_frame_deferred(sprite: AnimatedSprite2D, frame_index: int) -> 
 ## Intenta activar el evento con la señal dada
 ## Retorna true si el evento se activó, false en caso contrario
 func try_fire(signal_type: EventTriggerSignal.SignalType, instigator: Node) -> bool:
-	# Si el evento está deshabilitado, no se dispara
-	if disabled:
+	# `disabled` solo bloquea eventos en debug_mode.
+	if _is_runtime_disabled():
 		return false
 
 	if not current_page:
@@ -291,8 +291,8 @@ func try_fire(signal_type: EventTriggerSignal.SignalType, instigator: Node) -> b
 	return true
 
 func trigger() -> void:
-	# Si el evento está deshabilitado, no se dispara
-	if disabled:
+	# `disabled` solo bloquea eventos en debug_mode.
+	if _is_runtime_disabled():
 		return
 
 	if current_page:
@@ -389,12 +389,16 @@ func refresh_active_page() -> void:
 
 ## Dispara el autorun cuando la página se activa
 func _fire_autorun() -> void:
-	# Si el evento está deshabilitado, no se dispara
-	if disabled:
+	# `disabled` solo bloquea eventos en debug_mode.
+	if _is_runtime_disabled():
 		return
 
 	if current_page and overworld_context:
 		try_fire(EventTriggerSignal.SignalType.PAGE_ACTIVATED, self)
+
+
+func _is_runtime_disabled() -> bool:
+	return disabled and GameStateService.debug_mode
 
 ## Duplica todas las páginas para evitar modificar los Resources originales
 ## Esto permite que cada instancia del evento tenga sus propias copias que pueden modificarse

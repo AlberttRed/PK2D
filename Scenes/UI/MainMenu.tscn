@@ -1,0 +1,348 @@
+[gd_scene format=3 uid="uid://cy0ai64d7grf1"]
+
+[ext_resource type="Script" uid="uid://c42bvqno262a2" path="res://Scripts/UI/MainMenu.gd" id="1_mainmenu_script"]
+[ext_resource type="Texture2D" uid="uid://d11qm531jjlas" path="res://Sprites/UI/Main Menu/loadPanels_big.png" id="1_mjmdf"]
+[ext_resource type="Texture2D" uid="uid://bjndb4hxhlip5" path="res://Sprites/UI/Main Menu/loadPanels_small.png" id="2_72sra"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_t6w0q"]
+[ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/Red/red_walk.png" id="3_k8um8"]
+[ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="3_t6w0q"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_370kx"]
+load_path = "res://.godot/imported/loadbg.png-347a07ff1dfcbda385657f47fe602c04.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_g18y6"]
+texture = SubResource("CompressedTexture2D_370kx")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t6w0q"]
+texture = ExtResource("1_mjmdf")
+region_rect = Rect2(0, 0, 408, 222)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jex3y"]
+atlas = ExtResource("3_k8um8")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_744d7"]
+atlas = ExtResource("3_k8um8")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kl3t2"]
+atlas = ExtResource("3_k8um8")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ynupv"]
+atlas = ExtResource("3_k8um8")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m48tj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jex3y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_744d7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kl3t2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ynupv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_k8um8"]
+texture = ExtResource("2_72sra")
+region_rect = Rect2(0, 0, 408, 46)
+
+[node name="MainMenu" type="Panel" unique_id=240508541]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_g18y6")
+script = ExtResource("1_mainmenu_script")
+
+[node name="Control" type="Control" parent="." unique_id=771011886]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -192.0
+offset_right = 256.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuListViewport" type="Control" parent="Control" unique_id=1888123456]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MenuListViewport" unique_id=1557232039]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 0
+offset_top = 32.0
+offset_right = 512.0
+offset_bottom = 404.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 2
+
+[node name="Continue" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=2055019949]
+custom_minimum_size = Vector2(408, 222)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_t6w0q")
+metadata/_edit_lock_ = true
+
+[node name="Cont" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1300870979 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 9.0
+offset_right = 389.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Continuar"
+metadata/_edit_lock_ = true
+
+[node name="Route" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1755637314 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 9.0
+offset_right = 386.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Ruta 3"
+horizontal_alignment = 2
+justification_flags = 161
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Name" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=476510426 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 68.0
+offset_right = 463.0
+offset_bottom = 100.0
+theme_override_colors/default_color = Color(0.21960784, 0.6313726, 0.98039216, 1)
+theme_override_colors/font_shadow_color = Color(0.21960784, 0.40392157, 0.6509804, 1)
+text = "PLAYER"
+metadata/_edit_lock_ = true
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=66277008]
+position = Vector2(64, 79)
+sprite_frames = SubResource("SpriteFrames_m48tj")
+metadata/_edit_lock_ = true
+
+[node name="Stats" type="VBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1340334137]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 110.0
+offset_right = 215.0
+offset_bottom = 221.0
+theme_override_constants/separation = 2
+metadata/_edit_lock_ = true
+
+[node name="Medals" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats" unique_id=1949379369]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=123181972 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Medallas:"
+metadata/_edit_lock_ = true
+
+[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=1168312102 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "0"
+horizontal_alignment = 2
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Pokedex" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats" unique_id=2082712347]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1132156807 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Pokédex:"
+metadata/_edit_lock_ = true
+
+[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1042211921 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "0"
+horizontal_alignment = 2
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Time" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats" unique_id=1480154841]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=806339359 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Tiempo:"
+metadata/_edit_lock_ = true
+
+[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=1737998071 instance=ExtResource("2_t6w0q")]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "0m"
+horizontal_alignment = 2
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Party" type="VBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1518394070]
+layout_mode = 0
+offset_left = 252.0
+offset_top = 35.0
+offset_right = 380.0
+offset_bottom = 191.0
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+
+[node name="Row" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Party" unique_id=127750304]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn1" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row" unique_id=703704041]
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn2" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row" unique_id=1895217336]
+position = Vector2(70, 0)
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="Row2" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Party" unique_id=1213134720]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn3" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row2" unique_id=1693901370]
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn4" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row2" unique_id=357187098]
+position = Vector2(70, 0)
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="Row3" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Party" unique_id=1975034814]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn5" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row3" unique_id=585856819]
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="pkmn6" type="Sprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue/Party/Row3" unique_id=980988462]
+position = Vector2(70, 0)
+texture = ExtResource("3_t6w0q")
+centered = false
+hframes = 2
+metadata/_edit_lock_ = true
+
+[node name="New game" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=626756027]
+custom_minimum_size = Vector2(408, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
+metadata/_edit_lock_ = true
+
+[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/New game" unique_id=973013026 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 9.0
+offset_right = 389.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Partida Nueva"
+metadata/_edit_lock_ = true
+
+[node name="Options" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=1162825797]
+custom_minimum_size = Vector2(408, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
+metadata/_edit_lock_ = true
+
+[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/Options" unique_id=1100389873 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 9.0
+offset_right = 389.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Opciones"
+metadata/_edit_lock_ = true
+
+[node name="Quit" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=53193989]
+custom_minimum_size = Vector2(408, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
+metadata/_edit_lock_ = true
+
+[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/Quit" unique_id=1857106548 instance=ExtResource("2_t6w0q")]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 9.0
+offset_right = 389.0
+offset_bottom = 41.0
+theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+text = "Salir del juego"
+metadata/_edit_lock_ = true
