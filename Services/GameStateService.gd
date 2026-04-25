@@ -10,6 +10,8 @@ const DEFAULT_SAVE_SLOT: int = 0
 ## Último “Centro Pokémon” / punto de blanqueo por defecto (partidas antiguas sin `respawn_point` o dato inválido).
 const DEFAULT_RESPAWN_MAP_ID: String = "Pueblo_Paleta"
 const DEFAULT_RESPAWN_POSITION: Vector2i = Vector2i(1, 0)
+## Flag global: el jugador ya tiene la Pokédex (entradas de menú de pausa, etc.).
+const FLAG_HAS_POKEDEX: String = "HAS_POKEDEX"
 
 ## GameStateService - Gestiona el estado temporal del juego en memoria
 ## Almacena datos clave del progreso durante la sesión actual
@@ -76,9 +78,14 @@ func _ready() -> void:
 
 ## Inicializa el estado con valores por defecto para nueva partida
 func initialize_new_game() -> void:
-	current_map_id = "Pueblo_Paleta"
-	current_position = Vector2i(1, 0)  # Posición por defecto en el mapa
-	facing_dir = Vector2.DOWN
+	current_map_id = "Casa_Red"
+	current_position = Vector2i(27, 4)  # Posición por defecto en el mapa (coordenada de tile)
+	facing_dir = Vector2.UP
+	if debug_mode:
+		# Spawn clásico de debug para iterar rápido: Pueblo Paleta.
+		current_map_id = "Pueblo_Paleta"
+		current_position = Vector2i(1, 0)
+		facing_dir = Vector2.DOWN
 	money = 0
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
@@ -87,6 +94,7 @@ func initialize_new_game() -> void:
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
 	active_pokedex_id = "kanto"
 	if debug_mode:
+		set_event_flag(FLAG_HAS_POKEDEX, true)
 		_seed_test_pokedex_progress()
 		_seed_test_bag_items()
 		_seed_test_party_placeholder()

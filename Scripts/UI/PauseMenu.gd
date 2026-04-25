@@ -3,7 +3,7 @@ extends Panel
 class_name PauseMenu
 
 ## PauseMenu - Menú de pausa del Overworld estilo FireRed/LeafGreen
-## Muestra las opciones principales: Pokémon, Bolsa, Pokédex, Guardar, Opciones, Salir
+## «POKéDEX» solo si `HAS_POKEDEX`; «POKéMON» solo si hay Pokémon en el party.
 
 # Señales para cada opción del menú
 signal pokedex_requested()
@@ -15,11 +15,14 @@ signal options_requested()
 signal exit_requested()
 signal menu_closed()
 
-## Índice de la opción actualmente seleccionada
+## Índice de la fila actual en el menú **visible** (0..N-1).
 var selected_index: int = 0
 
-## Array de opciones del menú
-var menu_options: Array[String] = [
+## Orden fijo (índice canónico 0..6): etiqueta por línea.
+const FULL_MENU_OPTION_COUNT: int = 7
+const _POKEDEX_OPTION_INDEX: int = 0
+const _PARTY_OPTION_INDEX: int = 1
+const _FULL_MENU_OPTIONS: Array[String] = [
 	"POKéDEX",
 	"POKéMON",
 	"MOCHILA",
@@ -28,6 +31,9 @@ var menu_options: Array[String] = [
 	"OPCIONES",
 	"SALIR"
 ]
+
+## Filas abiertas en esta apertura (índices canónicos según desbloqueos).
+var _visible_indices: Array[int] = []
 
 ## Referencias a los nodos
 @onready var options_container: VBoxContainer = $MarginContainer/OptionsContainer
@@ -58,23 +64,58 @@ func _ready() -> void:
 	options_container.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	hide()
 
-## Abre el menú de pausa
+func _is_pokedex_line_active() -> bool:
+	return GameStateService.get_event_flag(GameStateService.FLAG_HAS_POKEDEX)
+
+
+func _is_party_line_active() -> bool:
+	return GameStateService.get_party().count() > 0
+
+
+func _rebuild_visible_indices() -> void:
+	_visible_indices.clear()
+	for c in range(FULL_MENU_OPTION_COUNT):
+		if c == _POKEDEX_OPTION_INDEX and not _is_pokedex_line_active():
+			continue
+		if c == _PARTY_OPTION_INDEX and not _is_party_line_active():
+			continue
+		_visible_indices.append(c)
+
+
+## Fila visible (0..) para un índice canónico; si se pide una opción oculta, fila 0.
+func _initial_row_index_for_canonical(canonical: int) -> int:
+	if canonical < 0 or canonical >= FULL_MENU_OPTION_COUNT:
+		return 0
+	if not _is_pokedex_line_active() and canonical == _POKEDEX_OPTION_INDEX:
+		return 0
+	if not _is_party_line_active() and canonical == _PARTY_OPTION_INDEX:
+		return 0
+	for i in range(_visible_indices.size()):
+		if _visible_indices[i] == canonical:
+			return i
+	return 0
+
+
+## Abre el menú de pausa. `initial_index` es el índice canónico (0=POKéDEX, 1=POKéMON, 2=MOCHILA…);
+## si POKéDEX o POKéMON no están en pantalla, se ajusta a la primera fila visible.
 func open(initial_index: int = -1) -> void:
 	if visible:
 		return
 
-	if initial_index >= 0 and initial_index < menu_options.size():
-		selected_index = initial_index
+	_rebuild_visible_indices()
+	if initial_index >= 0 and initial_index < FULL_MENU_OPTION_COUNT:
+		selected_index = _initial_row_index_for_canonical(initial_index)
 	else:
 		selected_index = 0
 
 	# Limpiar opciones previas
 	_clear_options()
 
-	# Crear labels para cada opción
-	for i in range(menu_options.size()):
-		var label = _create_label_hgss(menu_options[i])
-		label.name = "Option" + str(i)
+	# Crear una fila por opción visible
+	for r in range(_visible_indices.size()):
+		var canonical: int = _visible_indices[r]
+		var label = _create_label_hgss(_FULL_MENU_OPTIONS[canonical])
+		label.name = "Option" + str(r)
 		options_container.add_child(label)
 
 	# Ancho + altura provisional (el RTL real suele medir más que 34px/fila tras Godot 4.x / LabelHGSS)
@@ -98,6 +139,7 @@ func open(initial_index: int = -1) -> void:
 func close() -> void:
 	if not visible:
 		return
+	_visible_indices.clear()
 
 	# Deshabilitar input
 	_disable_input()
@@ -186,7 +228,7 @@ func _measure_menu_max_text_width() -> float:
 	var max_text_width := 0.0
 	var font := load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf") as Font
 	var font_size := 26
-	for option_text in menu_options:
+	for option_text in _FULL_MENU_OPTIONS:
 		var text_size := font.get_string_size(option_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
 		max_text_width = maxf(max_text_width, text_size.x)
 	return max_text_width
@@ -200,7 +242,8 @@ func _apply_panel_width_and_provisional_height() -> void:
 	var mb := float(mc.get_theme_constant("margin_bottom"))
 	# Estimación holgada por fila (tras cambios de métricas RTL / fuente).
 	var provisional_row := 44.0
-	var provisional_height := mt + mb + float(menu_options.size()) * provisional_row
+	var row_n := int(_visible_indices.size()) if not _visible_indices.is_empty() else FULL_MENU_OPTION_COUNT
+	var provisional_height := mt + mb + float(row_n) * provisional_row
 
 	custom_minimum_size = Vector2(calculated_width, provisional_height)
 	size = custom_minimum_size
@@ -255,39 +298,42 @@ func _update_cursor_position() -> void:
 
 ## Navega hacia arriba en las opciones
 func _navigate_up() -> void:
-	selected_index -= 1
-	if selected_index < 0:
-		selected_index = menu_options.size() - 1
+	var n: int = _visible_indices.size()
+	if n <= 0:
+		return
+	selected_index = (selected_index - 1 + n) % n
 	_update_cursor_position()
 	_play_cursor_sound()
 
 ## Navega hacia abajo en las opciones
 func _navigate_down() -> void:
-	selected_index += 1
-	if selected_index >= menu_options.size():
-		selected_index = 0
+	var n: int = _visible_indices.size()
+	if n <= 0:
+		return
+	selected_index = (selected_index + 1) % n
 	_update_cursor_position()
 	_play_cursor_sound()
 
 ## Confirma la selección actual
 func _confirm_selection() -> void:
 	_play_select_sound()
-
-	# Emitir la señal correspondiente según la opción seleccionada
-	match selected_index:
-		0:  # POKéDEX
+	if selected_index < 0 or selected_index >= _visible_indices.size():
+		return
+	var c: int = _visible_indices[selected_index]
+	match c:
+		0:
 			pokedex_requested.emit()
-		1:  # POKéMON
+		1:
 			party_requested.emit()
-		2:  # MOCHILA
+		2:
 			bag_requested.emit()
-		3:  # PLAYER
+		3:
 			player_requested.emit()
-		4:  # GUARDAR
+		4:
 			save_requested.emit()
-		5:  # OPCIONES
+		5:
 			options_requested.emit()
-		6:  # SALIR
+		6:
 			exit_requested.emit()
 			close()
 
