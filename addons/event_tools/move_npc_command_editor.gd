@@ -241,8 +241,10 @@ func _create_button_grid(buttons_data: Array, columns: int = 4) -> GridContainer
 
 	for button_data in buttons_data:
 		var button = Button.new()
-		button.text = button_data.text
-		button.pressed.connect(func(): _on_action_button_pressed(button_data.action))
+		button.text = str(button_data.get("text", ""))
+		var action_value: int = int(button_data.get("action", DirectionEnum.Type.UP))
+		button.set_meta("action_id", action_value)
+		button.pressed.connect(Callable(self, "_on_action_button_pressed_from_button").bind(button))
 		grid.add_child(button)
 
 	return grid
@@ -320,6 +322,12 @@ func _on_action_button_pressed(action: int) -> void:
 	actions_list.select(_actions_cache.size() - 1)
 	_update_buttons_state()
 	_update_accept_button_state()
+
+func _on_action_button_pressed_from_button(button: Button) -> void:
+	if button == null:
+		return
+	var action_value: int = int(button.get_meta("action_id", DirectionEnum.Type.UP))
+	_on_action_button_pressed(action_value)
 
 ## Se llama cuando se selecciona una acción en la lista
 func _on_action_selected(index: int) -> void:

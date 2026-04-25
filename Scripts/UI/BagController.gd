@@ -108,6 +108,30 @@ func get_item_description(item_id: int) -> String:
 		return ""
 	return item_data.description
 
+## Añade un item al inventario global y devuelve la cantidad realmente añadida.
+func add_item(item_id: int, quantity: int = 1) -> int:
+	if item_id <= 0:
+		push_warning("BagController.add_item: item_id inválido (%d)" % item_id)
+		return 0
+	var safe_quantity := maxi(1, quantity)
+	var bag = GameStateService.get_bag()
+	if bag == null:
+		push_warning("BagController.add_item: Bag no disponible")
+		return 0
+	return bag.add_item(item_id, safe_quantity)
+
+## Quita un item del inventario global y devuelve la cantidad realmente retirada.
+func remove_item(item_id: int, quantity: int = 1) -> int:
+	if item_id <= 0:
+		push_warning("BagController.remove_item: item_id inválido (%d)" % item_id)
+		return 0
+	var safe_quantity := maxi(1, quantity)
+	var bag = GameStateService.get_bag()
+	if bag == null:
+		push_warning("BagController.remove_item: Bag no disponible")
+		return 0
+	return bag.remove_item(item_id, safe_quantity)
+
 func get_item_selection_debug(item_id: int) -> Dictionary:
 	if item_id <= 0:
 		return {

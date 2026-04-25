@@ -427,9 +427,9 @@ func writeText():
 
 func startText():
 	enable_input_handling()
-	label.line_displayed.connect(newLine)
-	finsihedTyping.connect(_finishedMessage)
-	finished.connect(onFinish)
+	_connect_once(label.line_displayed, Callable(self, "newLine"))
+	_connect_once(finsihedTyping, Callable(self, "_finishedMessage"))
+	_connect_once(finished, Callable(self, "onFinish"))
 
 	# Asegurar scroll en 0 antes de empezar
 	scroll.scroll_vertical = 0
@@ -442,7 +442,7 @@ func startText():
 
 	#$AnimationPlayer.animation_finished.connect(_finishedMessage)
 	if !waitInput:#waitTime > 0.0:
-		finishedAllText.connect(close)
+		_connect_once(finishedAllText, Callable(self, "close"))
 	#if !closeAtEnd:
 		#finishedAllText.connect(func(): finished.emit())
 
@@ -785,6 +785,11 @@ func updateScroll(startingPosition:int, finalPosition:int):
 
 func onFinish():
 	clear()
+
+func _connect_once(signal_ref: Signal, callable_ref: Callable) -> void:
+	if signal_ref.is_connected(callable_ref):
+		return
+	signal_ref.connect(callable_ref)
 
 func enable_input_handling():
 	var dm := DisplayManager.instance

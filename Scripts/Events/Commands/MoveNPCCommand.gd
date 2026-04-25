@@ -19,10 +19,6 @@ class_name MoveNPCCommand
 func execute(context: Node) -> void:
 	var actor: Node2D = null
 
-	# Detectar si estamos siendo ejecutados desde un ShowChoicesCommand
-	# Revisando el stack de llamadas para ver si hay un ShowChoicesCommand en ejecución
-	var is_in_branch = _is_executing_in_branch(context)
-
 	# Si no se especificó nombre, usar el evento actual
 	if target_name.is_empty():
 		if context is EventController and context.current_page:
@@ -32,13 +28,11 @@ func execute(context: Node) -> void:
 				print("MoveNPCCommand: Usando evento actual '%s' (no se especificó nombre)" % source_event.name)
 			else:
 				push_warning("MoveNPCCommand: No se pudo obtener el evento actual (source_event es nulo)")
-				if not is_in_branch:
-					context.continue_execution()
+				context.continue_execution()
 				return
 		else:
 			push_warning("MoveNPCCommand: No se especificó target_name y no se pudo obtener el evento actual")
-			if not is_in_branch:
-				context.continue_execution()
+			context.continue_execution()
 			return
 	else:
 		print("MoveNPCCommand: Iniciando movimiento para '%s'" % target_name)
@@ -46,8 +40,7 @@ func execute(context: Node) -> void:
 		actor = _find_actor(context, target_name)
 		if not actor:
 			push_warning("MoveNPCCommand: No se encontró el actor '%s'" % target_name)
-			if not is_in_branch:
-				context.continue_execution()
+			context.continue_execution()
 			return
 
 	# Verificar que tiene GridMotion
@@ -61,61 +54,27 @@ func execute(context: Node) -> void:
 		else:
 			actor_name = "desconocido"
 		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % actor_name)
-		if not is_in_branch:
-			context.continue_execution()
+		context.continue_execution()
 		return
 
 	# Verificar que el path no esté vacío
 	if path.is_empty():
 		push_warning("MoveNPCCommand: El path está vacío")
-		if not is_in_branch:
-			context.continue_execution()
+		context.continue_execution()
 		return
 
 	print("MoveNPCCommand: Ejecutando path con %d direcciones" % path.size())
 
 	# Ejecutar el movimiento
 	if wait_until_finished:
-		# Marcar como running y ejecutar con await para esperar correctamente
 		set_state(CommandState.RUNNING)
-		await _execute_async(motion, context, is_in_branch)
+		await _execute_path(motion, context)
+		set_state(CommandState.IDLE)
+		context.continue_execution()
 	else:
 		# No espera: ejecuta en background
 		# Como is_async() = false, el EventController continuará automáticamente
 		_execute_path_background(motion, context)
-
-## Ejecuta el movimiento de forma asíncrona
-func _execute_async(motion: GridMotion, context: Node, is_in_branch: bool = false) -> void:
-	await _execute_path(motion, context)
-	set_state(CommandState.IDLE)
-	# Solo llamar continue_execution si NO estamos en un branch
-	# Si estamos en un branch, ShowChoicesCommand ya está esperando con await
-	if not is_in_branch:
-		context.continue_execution()
-
-## Detecta si este comando está siendo ejecutado dentro de un branch de ShowChoicesCommand
-## Esto es necesario porque ShowChoicesCommand ejecuta los comandos del branch directamente
-## con await, y no queremos que MoveNPCCommand llame a continue_execution() dos veces
-func _is_executing_in_branch(context: Node) -> bool:
-	# Cuando ShowChoicesCommand ejecuta comandos del branch, pasa el EventController como contexto
-	# pero el comando actual no está en la cola del EventController, está siendo ejecutado directamente
-	# por ShowChoicesCommand.
-	#
-	# La forma más confiable de detectar esto es verificar si el comando actual NO está en la cola
-	# del EventController en la posición esperada. Si estamos siendo ejecutados desde un branch,
-	# este comando no estará en command_queue[current_command_index].
-	if context is EventController:
-		var controller = context as EventController
-		# Verificar si este comando está en la posición actual de la cola
-		if controller.current_command_index < controller.command_queue.size():
-			var current_cmd = controller.command_queue[controller.current_command_index]
-			# Si el comando actual en la cola NO es este comando, probablemente estamos en un branch
-			if current_cmd != self:
-				return true
-		else:
-			# Si el índice está fuera de rango, probablemente estamos en un branch
-			return true
-	return false
 
 ## Busca un actor (NPC o Player) por nombre en la escena
 func _find_actor(context: Node, name: String) -> Node2D:
@@ -163,6 +122,7 @@ func _execute_path(motion: GridMotion, context: Node) -> void:
 ## Ejecuta el path internamente (separado para facilitar manejo de errores)
 func _execute_path_internal(motion: GridMotion, context: Node) -> void:
 	for dir_enum in path:
+		print("MoveNPCCommand: Acción=%d (%s), target='%s'" % [int(dir_enum), _action_name(int(dir_enum)), target_name if not target_name.is_empty() else "<evento_actual>"])
 		# Determinar el tipo de comando primero
 		var is_movement = DirectionEnum.is_movement(dir_enum)
 		var is_wait = DirectionEnum.is_wait(dir_enum)
@@ -383,3 +343,29 @@ func _get_overworld_context(context: Node) -> OverworldContext:
 		if event_system and event_system.context:
 			return event_system.context
 	return null
+
+func _action_name(action: int) -> String:
+	match action:
+		DirectionEnum.Type.UP: return "UP"
+		DirectionEnum.Type.DOWN: return "DOWN"
+		DirectionEnum.Type.LEFT: return "LEFT"
+		DirectionEnum.Type.RIGHT: return "RIGHT"
+		DirectionEnum.Type.LOOK_UP: return "LOOK_UP"
+		DirectionEnum.Type.LOOK_DOWN: return "LOOK_DOWN"
+		DirectionEnum.Type.LOOK_LEFT: return "LOOK_LEFT"
+		DirectionEnum.Type.LOOK_RIGHT: return "LOOK_RIGHT"
+		DirectionEnum.Type.TURN_UP: return "TURN_UP"
+		DirectionEnum.Type.TURN_DOWN: return "TURN_DOWN"
+		DirectionEnum.Type.TURN_LEFT: return "TURN_LEFT"
+		DirectionEnum.Type.TURN_RIGHT: return "TURN_RIGHT"
+		DirectionEnum.Type.LOOK_PLAYER: return "LOOK_PLAYER"
+		DirectionEnum.Type.WAIT_025: return "WAIT_025"
+		DirectionEnum.Type.WAIT_050: return "WAIT_050"
+		DirectionEnum.Type.WAIT_100: return "WAIT_100"
+		DirectionEnum.Type.SPEED_SLOWEST: return "SPEED_SLOWEST"
+		DirectionEnum.Type.SPEED_SLOWER: return "SPEED_SLOWER"
+		DirectionEnum.Type.SPEED_NORMAL: return "SPEED_NORMAL"
+		DirectionEnum.Type.SPEED_FASTER: return "SPEED_FASTER"
+		DirectionEnum.Type.SPEED_FASTEST: return "SPEED_FASTEST"
+		DirectionEnum.Type.EXCLAMATION_ANIM: return "EXCLAMATION_ANIM"
+		_: return "UNKNOWN"

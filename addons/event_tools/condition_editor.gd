@@ -41,6 +41,11 @@ var not_edit_button: Button = null
 var actor_position_name_edit: LineEdit = null
 var actor_position_direction_option: OptionButton = null
 
+var has_item_option: OptionButton = null
+var has_item_picker_button: Button = null
+var has_item_quantity_spin: SpinBox = null
+var _has_item_ids_by_index: Array[int] = []
+
 func _ready() -> void:
 	title = "Editar Condición"
 	size = Vector2(800, 600)
@@ -178,6 +183,11 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 		if trainer_cond.flag_name.is_empty():
 			return "Trainer Defeated: (sin flag)"
 		return "Trainer Defeated: flag '%s'" % trainer_cond.flag_name
+
+	if _is_condition_type(cond, "HasItemCondition"):
+		var item_cond = cond
+		var item_name := _get_item_name_for_editor(int(item_cond.item_id))
+		return "Tiene item: %s x%d" % [item_name, maxi(1, int(item_cond.quantity))]
 
 	return "Condición desconocida"
 
@@ -551,6 +561,52 @@ func _show_trainer_defeated_properties(trainer_cond: TrainerDefeatedCondition) -
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	properties_panel.add_child(desc_label)
 
+## Muestra las propiedades de HasItemCondition
+func _show_has_item_properties(item_cond: EventCondition) -> void:
+	_clear_properties_panel()
+
+	var info_label = Label.new()
+	info_label.text = "Condición: Has Item"
+	info_label.add_theme_font_size_override("font_size", 14)
+	properties_panel.add_child(info_label)
+	properties_panel.add_child(HSeparator.new())
+
+	var item_container = HBoxContainer.new()
+	var item_label = Label.new()
+	item_label.text = "Ítem:"
+	item_label.custom_minimum_size.x = 150
+	item_container.add_child(item_label)
+
+	has_item_option = OptionButton.new()
+	has_item_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	has_item_option.item_selected.connect(_on_has_item_item_selected)
+	item_container.add_child(has_item_option)
+
+	has_item_picker_button = Button.new()
+	has_item_picker_button.text = "Picker..."
+	has_item_picker_button.pressed.connect(_on_has_item_picker_pressed)
+	item_container.add_child(has_item_picker_button)
+	properties_panel.add_child(item_container)
+
+	var qty_container = HBoxContainer.new()
+	var qty_label = Label.new()
+	qty_label.text = "Cantidad mínima:"
+	qty_label.custom_minimum_size.x = 150
+	qty_container.add_child(qty_label)
+
+	has_item_quantity_spin = SpinBox.new()
+	has_item_quantity_spin.min_value = 1
+	has_item_quantity_spin.max_value = 999
+	has_item_quantity_spin.step = 1
+	has_item_quantity_spin.value = maxi(1, int(item_cond.quantity))
+	has_item_quantity_spin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	has_item_quantity_spin.value_changed.connect(_on_has_item_quantity_changed)
+	qty_container.add_child(has_item_quantity_spin)
+	properties_panel.add_child(qty_container)
+
+	_populate_has_item_options()
+	_select_has_item_id(int(item_cond.item_id))
+
 ## Se llama cuando se selecciona una condición en el árbol
 func _on_condition_selected() -> void:
 	var selected_item = condition_tree.get_selected()
@@ -588,6 +644,8 @@ func _on_condition_selected() -> void:
 		_show_actor_position_properties(cond as ActorPositionCondition)
 	elif cond is TrainerDefeatedCondition or script_path.ends_with("TrainerDefeatedCondition.gd"):
 		_show_trainer_defeated_properties(cond as TrainerDefeatedCondition)
+	elif _is_condition_type(cond, "HasItemCondition") or script_path.ends_with("HasItemCondition.gd"):
+		_show_has_item_properties(cond)
 	else:
 		_clear_properties_panel()
 		# Debug: mostrar información sobre el tipo de condición
@@ -649,6 +707,7 @@ func _on_add_condition_pressed() -> void:
 	popup.add_item("NOT")
 	popup.add_item("Actor Position")
 	popup.add_item("Trainer Defeated")
+	popup.add_item("Has Item")
 
 	add_child(popup)
 	popup.id_pressed.connect(func(id: int):
@@ -674,6 +733,8 @@ func _on_condition_type_selected(id: int) -> void:
 			new_cond = ActorPositionCondition.new()
 		5:  # Trainer Defeated
 			new_cond = TrainerDefeatedCondition.new()
+		6:  # Has Item
+			new_cond = _new_has_item_condition()
 
 	if not new_cond:
 		return
@@ -1051,6 +1112,7 @@ func _on_not_edit_child_pressed() -> void:
 		popup.add_item("NOT")
 		popup.add_item("Actor Position")
 		popup.add_item("Trainer Defeated")
+		popup.add_item("Has Item")
 
 		add_child(popup)
 		popup.id_pressed.connect(func(id: int):
@@ -1083,11 +1145,156 @@ func _on_not_child_type_selected(not_cond: NotCondition, id: int) -> void:
 			new_cond = ActorPositionCondition.new()
 		5:  # Trainer Defeated
 			new_cond = TrainerDefeatedCondition.new()
+		6:  # Has Item
+			new_cond = _new_has_item_condition()
 
 	if new_cond:
 		not_cond.child = new_cond
 		_refresh_condition_tree()
 		_select_condition_in_tree(new_cond)
+
+func _on_has_item_item_selected(index: int) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+	var cond = metadata.get("condition")
+	if not _is_condition_type(cond, "HasItemCondition"):
+		return
+	if index < 0 or index >= _has_item_ids_by_index.size():
+		return
+	var item_cond = cond
+	item_cond.item_id = int(_has_item_ids_by_index[index])
+	selected_item.set_text(0, _get_condition_display_text(item_cond))
+
+func _on_has_item_quantity_changed(value: float) -> void:
+	var selected_item = condition_tree.get_selected()
+	if not selected_item:
+		return
+	var metadata = selected_item.get_metadata(0)
+	if not metadata or not metadata.has("condition"):
+		return
+	var cond = metadata.get("condition")
+	if not _is_condition_type(cond, "HasItemCondition"):
+		return
+	var item_cond = cond
+	item_cond.quantity = maxi(1, int(value))
+	selected_item.set_text(0, _get_condition_display_text(item_cond))
+
+func _on_has_item_picker_pressed() -> void:
+	if not Engine.is_editor_hint():
+		return
+	var initial_item_id := 0
+	if has_item_option != null and has_item_option.selected >= 0 and has_item_option.selected < _has_item_ids_by_index.size():
+		initial_item_id = int(_has_item_ids_by_index[has_item_option.selected])
+	var picker = ResourcePickerAPI.open_item_picker(initial_item_id, _on_has_item_picker_selected, _on_has_item_picker_cancelled)
+	if picker == null:
+		push_warning("ConditionEditor: No se pudo abrir el selector de ítems.")
+
+func _on_has_item_picker_selected(result) -> void:
+	if result == null:
+		return
+	var picked_item_id := int(result.resource_id)
+	if picked_item_id <= 0 and result.resource != null:
+		picked_item_id = int(result.resource.get("id"))
+	if picked_item_id <= 0:
+		return
+	_select_has_item_id(picked_item_id)
+	_on_has_item_item_selected(has_item_option.selected)
+
+func _on_has_item_picker_cancelled() -> void:
+	pass
+
+func _populate_has_item_options() -> void:
+	if has_item_option == null:
+		return
+	has_item_option.clear()
+	_has_item_ids_by_index.clear()
+	var entries := _collect_item_entries_for_editor()
+	if entries.is_empty():
+		has_item_option.add_item("(Sin ítems disponibles)")
+		_has_item_ids_by_index.append(0)
+		has_item_option.disabled = true
+		return
+	has_item_option.disabled = false
+	for e in entries:
+		var label := "%03d - %s" % [int(e.id), str(e.name)]
+		has_item_option.add_item(label)
+		_has_item_ids_by_index.append(int(e.id))
+
+func _select_has_item_id(target_item_id: int) -> void:
+	if has_item_option == null:
+		return
+	var target := target_item_id
+	if target <= 0 and not _has_item_ids_by_index.is_empty():
+		target = int(_has_item_ids_by_index[0])
+	for i in range(_has_item_ids_by_index.size()):
+		if int(_has_item_ids_by_index[i]) == target:
+			has_item_option.selected = i
+			return
+	if has_item_option.item_count > 0:
+		has_item_option.selected = 0
+
+func _collect_item_entries_for_editor() -> Array:
+	var out: Array = []
+	var dir_path := "res://Resources/Data/Items"
+	var dir := DirAccess.open(ProjectSettings.globalize_path(dir_path))
+	if dir == null:
+		return out
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with(".tres"):
+			var file_base := file_name.get_basename()
+			var parts := file_base.split(" - ", false, 1)
+			if not parts.is_empty():
+				var id_str := str(parts[0]).strip_edges()
+				if id_str.is_valid_int():
+					var iid := int(id_str)
+					if iid > 0:
+						var display := ""
+						if parts.size() > 1:
+							display = str(parts[1]).strip_edges()
+						if display.is_empty():
+							display = "Item #%d" % iid
+						out.append({"id": iid, "name": display})
+		file_name = dir.get_next()
+	dir.list_dir_end()
+	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.id) < int(b.id)
+	)
+	return out
+
+func _get_item_name_for_editor(item_id: int) -> String:
+	if item_id <= 0:
+		return "Item #%d" % item_id
+	var entries := _collect_item_entries_for_editor()
+	for e in entries:
+		if int(e.id) == item_id:
+			return str(e.name)
+	return "Item #%d" % item_id
+
+func _is_condition_type(cond: EventCondition, type_name: String) -> bool:
+	if cond == null:
+		return false
+	var script = cond.get_script()
+	if script == null:
+		return false
+	var script_path: String = str(script.get_path())
+	return script_path.ends_with("%s.gd" % type_name)
+
+func _new_has_item_condition() -> EventCondition:
+	var script: Script = load("res://Scripts/Events/Conditions/HasItemCondition.gd")
+	if script == null:
+		push_warning("ConditionEditor: no se pudo cargar HasItemCondition.gd")
+		return null
+	var instance = script.new()
+	if instance == null:
+		push_warning("ConditionEditor: no se pudo instanciar HasItemCondition")
+		return null
+	return instance as EventCondition
 
 ## Intenta parsear un string a un valor
 func _parse_value(text: String) -> Variant:

@@ -20,6 +20,7 @@ var move_mode_active: Dictionary = {}  # page_index -> bool
 var command_to_move: Dictionary = {}  # page_index -> {type: String, metadata: Dictionary, item: TreeItem, nested_command_index: int}
 var move_source_page_index: int = -1  # Página de origen cuando se está moviendo entre páginas
 var move_backup: Dictionary = {}  # Guarda copias de seguridad de las páginas antes de mover
+var _item_name_cache: Dictionary = {}  # item_id -> nombre mostrado (solo editor, por filename)
 
 # Constantes para triggers
 const TRIGGER_CONFIGS = {
@@ -856,6 +857,30 @@ func _get_command_detail_text(command: EventCommand) -> String:
 		var action_str = "START" if follow_cmd.action == 0 else "STOP"
 		return "%s → %s (%s)" % [follower_str, leader_str, action_str]
 
+	# GiveItemCommand: mostrar item y cantidad
+	if _is_command_type(command, "GiveItemCommand"):
+		var item_id := int(command.item_id)
+		var item_name := _get_item_name_for_editor(item_id)
+		var qty := maxi(1, int(command.quantity))
+		return "%s x%d" % [item_name, qty]
+
+	# TakeItemCommand: mostrar item y cantidad
+	if _is_command_type(command, "TakeItemCommand"):
+		var item_id_take := int(command.item_id)
+		var item_name_take := _get_item_name_for_editor(item_id_take)
+		var qty_take := maxi(1, int(command.quantity))
+		return "%s x%d" % [item_name_take, qty_take]
+
+	# GivePokemonCommand: mostrar especie y nivel
+	if _is_command_type(command, "GivePokemonCommand"):
+		var pokemon_def: PokemonDefinition = command.pokemon_def
+		if pokemon_def == null:
+			return "(sin PokemonDefinition)"
+		var species_name := PokemonsEnum.get_display_name(int(pokemon_def.pokemon_id))
+		if species_name.strip_edges().is_empty():
+			species_name = "Pokemon #%d" % int(pokemon_def.pokemon_id)
+		return "%s - Nv.%d" % [species_name, int(pokemon_def.level)]
+
 	# FadeCommand: mostrar IN/OUT y tiempo
 	if command is FadeCommand:
 		var fade_cmd = command as FadeCommand
@@ -949,6 +974,13 @@ func _get_condition_display_text(cond: EventCondition) -> String:
 		if trainer_cond.flag_name.is_empty():
 			return "Trainer Defeated: (sin flag)"
 		return "Trainer Defeated: flag '%s'" % trainer_cond.flag_name
+
+	var cond_script = cond.get_script()
+	var cond_script_path: String = cond_script.get_path() if cond_script != null else ""
+	if cond_script_path.ends_with("HasItemCondition.gd"):
+		var item_cond = cond
+		var item_name := _get_item_name_for_editor(int(item_cond.item_id))
+		return "Has Item: %s x%d" % [item_name, maxi(1, int(item_cond.quantity))]
 
 	return "Condición desconocida"
 
@@ -2662,6 +2694,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_show_portrait_editor(command, page_index, false, -1)
 	elif command is FollowActorCommand:
 		_open_follow_actor_editor(command, page_index, false, -1)
+	elif _is_command_type(command, "GiveItemCommand"):
+		_open_give_item_editor(command, page_index, false, -1)
+	elif _is_command_type(command, "TakeItemCommand"):
+		_open_take_item_editor(command, page_index, false, -1)
+	elif _is_command_type(command, "GivePokemonCommand"):
+		_open_give_pokemon_editor(command, page_index, false, -1)
 	elif command is UseMOCommand:
 		_open_use_mo_editor(command, page_index, false, -1)
 	elif command is PlayAnimationCommand:
@@ -4073,7 +4111,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"StartBattleEvent", "Warp", "ShowChoices", "Conditional",
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
-		"MoveNPC", "PlayAnimation", "SetActorVisibility", "ShowPortrait",
+		"MoveNPC", "PlayAnimation", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
 		"ClosePortrait", "FollowActor", "UseMO", "SetTrigger"
 	]
 
@@ -4417,6 +4455,12 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 					_open_show_portrait_editor(target_command, page_index, true, command_index)
 				elif target_command is FollowActorCommand:
 					_open_follow_actor_editor(target_command, page_index, true, command_index)
+				elif _is_command_type(target_command, "GiveItemCommand"):
+					_open_give_item_editor(target_command, page_index, true, command_index)
+				elif _is_command_type(target_command, "TakeItemCommand"):
+					_open_take_item_editor(target_command, page_index, true, command_index)
+				elif _is_command_type(target_command, "GivePokemonCommand"):
+					_open_give_pokemon_editor(target_command, page_index, true, command_index)
 				elif target_command is UseMOCommand:
 					_open_use_mo_editor(target_command, page_index, true, command_index)
 				elif target_command is PlayAnimationCommand:
@@ -6966,6 +7010,223 @@ func _on_follow_actor_command_edited(command: FollowActorCommand, page_index: in
 			commands_tree.deselect_all()
 			_update_buttons_state(page_index, false, false, false, false, false)
 	_refresh_inspector()
+
+## Abre el editor para GiveItemCommand
+func _open_give_item_editor(command: EventCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un GiveItemCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/give_item_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de GiveItemCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd): _on_give_item_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_give_item_command_edited(command: EventCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para TakeItemCommand
+func _open_take_item_editor(command: EventCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un TakeItemCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/take_item_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de TakeItemCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd): _on_take_item_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_take_item_command_edited(command: EventCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+## Abre el editor para GivePokemonCommand
+func _open_give_pokemon_editor(command: EventCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un GivePokemonCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/give_pokemon_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de GivePokemonCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd): _on_give_pokemon_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_give_pokemon_command_edited(command: EventCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+
+func _is_command_type(command: EventCommand, expected_global_name: String) -> bool:
+	if command == null:
+		return false
+	var script = command.get_script()
+	if script == null:
+		return false
+	return str(script.get_global_name()) == expected_global_name
+
+func _get_item_name_for_editor(item_id: int) -> String:
+	if item_id <= 0:
+		return "Item #%d" % item_id
+	if _item_name_cache.is_empty():
+		_rebuild_item_name_cache()
+	return str(_item_name_cache.get(item_id, "Item #%d" % item_id))
+
+func _rebuild_item_name_cache() -> void:
+	_item_name_cache.clear()
+	var items_dir := "res://Resources/Data/Items"
+	var dir := DirAccess.open(ProjectSettings.globalize_path(items_dir))
+	if dir == null:
+		return
+
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if dir.current_is_dir() or not file_name.ends_with(".tres"):
+			file_name = dir.get_next()
+			continue
+
+		var file_base := file_name.get_basename()
+		var parts := file_base.split(" - ", false, 1)
+		if parts.is_empty():
+			file_name = dir.get_next()
+			continue
+
+		var id_str := str(parts[0]).strip_edges()
+		if not id_str.is_valid_int():
+			file_name = dir.get_next()
+			continue
+
+		var parsed_id := int(id_str)
+		if parsed_id <= 0:
+			file_name = dir.get_next()
+			continue
+
+		var display_name := ""
+		if parts.size() > 1:
+			display_name = str(parts[1]).strip_edges()
+		if display_name.is_empty():
+			display_name = "Item #%d" % parsed_id
+
+		_item_name_cache[parsed_id] = display_name
+		file_name = dir.get_next()
+	dir.list_dir_end()
 
 ## Abre el editor para UseMOCommand
 func _open_use_mo_editor(command: UseMOCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:

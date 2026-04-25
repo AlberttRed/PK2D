@@ -78,23 +78,32 @@ func start_page(page: EventPage) -> bool:
 	return true
 
 func execute_next_command() -> void:
+	if current_state != State.RUNNING:
+		return
+	if waiting_async:
+		return
 	if current_command_index >= command_queue.size():
 		finish_page()
 		return
 
 	var command = command_queue[current_command_index]
+	var is_async = command and command.has_method("is_async") and command.is_async()
+
+	# IMPORTANTE: Marcar antes de ejecutar para evitar carreras cuando el comando
+	# asíncrono hace continue_execution() muy rápido (o en early-return).
+	if is_async:
+		waiting_async = true
+
 	# Ejecutar comando con este controlador como contexto
 	if command and command.has_method("execute"):
 		command.execute(self)
 
 	# Si el comando no es asíncrono, continuar inmediatamente
-	var is_async = command and command.has_method("is_async") and command.is_async()
-
 	if not is_async:
 		current_command_index += 1
 		call_deferred("execute_next_command")
-	# Para comandos asíncronos, NO incrementamos aquí
-	# El comando llamará a continue_execution() cuando termine
+	# Para comandos asíncronos, NO incrementamos aquí.
+	# El comando llamará a continue_execution() cuando termine.
 
 func continue_execution() -> void:
 	if current_state != State.RUNNING:
@@ -103,8 +112,8 @@ func continue_execution() -> void:
 	# El branch se encarga de ejecutar los comandos secuencialmente
 	if executing_branch:
 		return
+	waiting_async = false
 	if is_parallel:
-		waiting_async = false
 		current_command_index += 1
 	else:
 		# Incrementar el índice AHORA que el comando asíncrono terminó
