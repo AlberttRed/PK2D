@@ -118,7 +118,11 @@ flag_name = "A"
 scope = 1
 
 [sub_resource type="Resource" id="Resource_io34e"]
+script = ExtResource("15_57xhp")
+
+[sub_resource type="Resource" id="Resource_mj1lh"]
 script = ExtResource("5_n2obv")
+trigger = SubResource("Resource_io34e")
 commands = Array[ExtResource("6_4qtb2")]([SubResource("Resource_vjj8r")])
 root_condition = SubResource("Resource_teq0i")
 preserve_direction_on_sprite_match = true
@@ -209,7 +213,7 @@ pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_44lcn")])
 
 [node name="NPC_Tienda" parent="OverworldGrid/Events" unique_id=1702656809 instance=ExtResource("12_a7582")]
 position = Vector2(208, -16)
-pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_yawe0"), SubResource("Resource_io34e")])
+pages = Array[ExtResource("5_n2obv")]([SubResource("Resource_yawe0"), SubResource("Resource_mj1lh")])
 
 [node name="NPC_Hombre" parent="OverworldGrid/Events" unique_id=1770012337 instance=ExtResource("12_a7582")]
 position = Vector2(624, -400)
