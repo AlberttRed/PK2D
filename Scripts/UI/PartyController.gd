@@ -175,3 +175,21 @@ func get_summary_bbcode(slot: int) -> String:
 		lines.append("—")
 
 	return "\n".join(lines)
+
+
+## Añade un Pokémon al party global si hay hueco.
+func add_pokemon(pokemon: Pokemon) -> bool:
+	if pokemon == null:
+		push_warning("PartyController.add_pokemon: pokemon es null")
+		return false
+	_ensure_pokemon_ready(pokemon)
+	return _party_model().add_pokemon(pokemon)
+
+
+## Envía un Pokémon al PC.
+## Placeholder hasta implementar almacenamiento de cajas.
+func send_to_pc(pokemon: Pokemon) -> bool:
+	if pokemon == null:
+		return false
+	push_warning("PartyController.send_to_pc: PC no implementado todavía.")
+	return false

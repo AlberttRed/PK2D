@@ -28,8 +28,6 @@
 [ext_resource type="Texture2D" uid="uid://drdsledmb3gke" path="res://Sprites/Overworlds/Characters/phone001.png" id="19_7u2qs"]
 [ext_resource type="Script" uid="uid://bgcnb3pt4dxi7" path="res://Scripts/Events/Commands/SetSelfSwitchCommand.gd" id="20_qv1ht"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="22_05x7i"]
-[ext_resource type="Script" uid="uid://bjqvk1hxwtuvk" path="res://Scripts/Resources/DialoguePage.gd" id="22_rmtse"]
-[ext_resource type="Script" uid="uid://tww4lgkyxvju" path="res://Scripts/Events/Commands/DialogueCommand.gd" id="23_odi7m"]
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="26_05x7i"]
 [ext_resource type="Script" uid="uid://bprbbdhn4jhfb" path="res://Scripts/Events/Conditions/GroupCondition.gd" id="27_guue8"]
 [ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="28_snt5p"]
@@ -792,66 +790,45 @@ script = ExtResource("17_dr37c")
 message = "¡Cuando se hagan fuertes me protegerán!"
 metadata/_custom_type_script = "uid://badx4bswihslg"
 
-[sub_resource type="Resource" id="Resource_5x60x"]
-script = ExtResource("22_rmtse")
-text = "Estamos probando el command de tipo Dialogue."
-
-[sub_resource type="Resource" id="Resource_adc73"]
-script = ExtResource("22_rmtse")
-text = "Y eso sería todo."
-
-[sub_resource type="Resource" id="Resource_5wh01"]
-script = ExtResource("22_rmtse")
-text = "Esto es la segunda página y deberia haber empezado desde el inicio, sin cerrar la ventana."
-
-[sub_resource type="Resource" id="Resource_3n0kr"]
-script = ExtResource("22_rmtse")
-text = "sdsaf sdsds fsdfsd fsdfsd fsdfsfsd fsfdsd fsdfsdf sdfsfd sdf sdfsdfs dfs dfds fd sf dsf sf sfd sdfsdfsdfsdfsd fsdfsdf dsfds fsdfds f sdf sdf sdfsdf sdfsd fsdfs dfs dfsdfsd fsdfds fdfd sdfds fdsdfs dfsd fsdf."
-
-[sub_resource type="Resource" id="Resource_dxff4"]
-script = ExtResource("23_odi7m")
-pages = Array[ExtResource("22_rmtse")]([SubResource("Resource_5x60x"), SubResource("Resource_adc73"), SubResource("Resource_5wh01"), SubResource("Resource_3n0kr")])
-show_icon = true
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jeas5"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_upd1y"]
 load_path = "res://.godot/imported/trchar042.png-ac648df27b7631f8f4fdda8d741f26f8.ctex"
 
-[sub_resource type="Resource" id="Resource_cf58l"]
+[sub_resource type="Resource" id="Resource_5x60x"]
 script = ExtResource("22_05x7i")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_wuirv"]
+[sub_resource type="Resource" id="Resource_adc73"]
 script = ExtResource("5_u1wff")
-trigger = SubResource("Resource_cf58l")
-commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_in1o3"), SubResource("Resource_ahe6w"), SubResource("Resource_dxff4")])
+trigger = SubResource("Resource_5x60x")
+commands = Array[ExtResource("6_o2kon")]([SubResource("Resource_in1o3"), SubResource("Resource_ahe6w")])
 movement_type = 1
 random_movement_valid_tiles = Array[Vector2i]([Vector2i(1, 8), Vector2i(1, 7), Vector2i(1, 6), Vector2i(1, 5), Vector2i(0, 5), Vector2i(0, 6), Vector2i(0, 7), Vector2i(0, 8), Vector2i(0, 9), Vector2i(1, 9), Vector2i(2, 9), Vector2i(2, 8), Vector2i(2, 7), Vector2i(2, 6), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(0, 10), Vector2i(0, 11), Vector2i(1, 11), Vector2i(2, 11), Vector2i(2, 10), Vector2i(1, 10)])
-sprite_texture = SubResource("CompressedTexture2D_jeas5")
+sprite_texture = SubResource("CompressedTexture2D_upd1y")
 is_spritesheet = true
 has_water_reflection = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_flshw"]
+[sub_resource type="Resource" id="Resource_5wh01"]
 script = ExtResource("26_05x7i")
 variable_name = "STARTER"
 operator = 1
 metadata/_custom_type_script = "uid://dpmp7j5ersp8t"
 
-[sub_resource type="Resource" id="Resource_f0tfa"]
+[sub_resource type="Resource" id="Resource_3n0kr"]
 script = ExtResource("15_rwrw8")
 flag_name = "A"
 scope = 1
 expected_value = false
 metadata/_custom_type_script = "uid://cehl8pp7efus8"
 
-[sub_resource type="Resource" id="Resource_by6cr"]
+[sub_resource type="Resource" id="Resource_dxff4"]
 script = ExtResource("27_guue8")
-children = Array[ExtResource("14_ey1f0")]([SubResource("Resource_flshw"), SubResource("Resource_f0tfa")])
+children = Array[ExtResource("14_ey1f0")]([SubResource("Resource_5wh01"), SubResource("Resource_3n0kr")])
 metadata/_custom_type_script = "uid://bprbbdhn4jhfb"
 
-[sub_resource type="Resource" id="Resource_pbugg"]
+[sub_resource type="Resource" id="Resource_jeas5"]
 script = ExtResource("5_u1wff")
-root_condition = SubResource("Resource_by6cr")
+root_condition = SubResource("Resource_dxff4")
 through = true
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
@@ -1818,7 +1795,7 @@ pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_ln16y")])
 
 [node name="Girl_NPC" parent="OverworldGrid/Events" unique_id=1581155540 instance=ExtResource("16_0876j")]
 position = Vector2(48, 272)
-pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_wuirv"), SubResource("Resource_pbugg")])
+pages = Array[ExtResource("5_u1wff")]([SubResource("Resource_adc73"), SubResource("Resource_jeas5")])
 
 [node name="Oak" parent="OverworldGrid/Events" unique_id=2001733019 instance=ExtResource("16_0876j")]
 position = Vector2(-112, 16)

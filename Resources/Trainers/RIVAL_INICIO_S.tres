@@ -1,17 +1,17 @@
-[gd_resource type="Resource" script_class="TrainerData" format=3 uid="uid://bh30akwr2lc3o"]
+[gd_resource type="Resource" script_class="TrainerData" format=3 uid="uid://ddwqo7t6qcjf7"]
 
 [ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_0retp"]
-[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_56uki"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="2_0retp"]
+[ext_resource type="Script" uid="uid://cotgo4ccshywo" path="res://Scripts/Resources/Classes/PokemonDefinition.gd" id="2_joys3"]
 
 [sub_resource type="Resource" id="Resource_sgijj"]
 script = ExtResource("1_0retp")
+difficulty_name = "Easy"
 metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
-[sub_resource type="Resource" id="Resource_56uki"]
-script = ExtResource("1_56uki")
+[sub_resource type="Resource" id="Resource_fdwn8"]
+script = ExtResource("2_joys3")
 pokemon_id = 7
-metadata/_custom_type_script = "uid://d4mopscjx7rum"
 
 [resource]
 script = ExtResource("2_0retp")
@@ -23,5 +23,5 @@ intro_text = ""
 defeat_text = "¿QUÉ?
 ¡Increíble!
 ¡Tu POKéMON es mejor que el mío!"
-party_data = [SubResource("Resource_56uki")]
+party_data = [SubResource("Resource_fdwn8")]
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

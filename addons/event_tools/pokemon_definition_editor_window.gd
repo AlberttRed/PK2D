@@ -80,6 +80,7 @@ func _build_ui() -> void:
 	_gender_option = _add_gender_row(content)
 	_shiny_check = _add_check_row(content, "Shiny")
 	_is_wild_check = _add_check_row(content, "Es salvaje")
+	_is_wild_check.visible = false
 
 	content.add_child(_section_title("IVs"))
 	_randomize_ivs_check = _add_check_row(content, "Aleatorizar IVs")
@@ -157,6 +158,7 @@ func _add_pokemon_row(parent: VBoxContainer) -> OptionButton:
 	row.add_child(option)
 	parent.add_child(row)
 	_populate_pokemon_options(option)
+	option.item_selected.connect(_on_pokemon_species_changed)
 	return option
 
 func _add_item_row(parent: VBoxContainer) -> OptionButton:
@@ -298,14 +300,11 @@ func _add_gender_row(parent: VBoxContainer) -> OptionButton:
 	label.text = "Genero:"
 	label.custom_minimum_size = Vector2(170, 0)
 	var option := OptionButton.new()
-	option.add_item("Sin indicar", 0)
-	option.add_item("Macho", 1)
-	option.add_item("Hembra", 2)
-	option.add_item("Sin genero", 3)
 	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(label)
 	row.add_child(option)
 	parent.add_child(row)
+	_populate_gender_options_for_selected_species(CONST.GENEROS.NON_SELECTED)
 	return option
 
 func _add_nature_row(parent: VBoxContainer) -> OptionButton:
@@ -363,7 +362,7 @@ func _load_to_ui() -> void:
 	_select_pokemon_id(int(_definition.pokemon_id))
 	_level_spin.value = _definition.level
 	_nickname_edit.text = _definition.nickname
-	_gender_option.selected = _definition.gender
+	_populate_gender_options_for_selected_species(int(_definition.gender))
 	_shiny_check.button_pressed = _definition.shiny
 	_is_wild_check.button_pressed = _definition.is_wild
 
@@ -395,9 +394,9 @@ func _apply_from_ui() -> void:
 	_definition.pokemon_id = _get_selected_pokemon_id() as PokemonsEnum.Values
 	_definition.level = int(_level_spin.value)
 	_definition.nickname = _nickname_edit.text.strip_edges()
-	_definition.gender = _gender_option.selected
+	_definition.gender = _get_selected_option_id(_gender_option)
 	_definition.shiny = _shiny_check.button_pressed
-	_definition.is_wild = _is_wild_check.button_pressed
+	_definition.is_wild = false
 
 	_definition.randomize_ivs = _randomize_ivs_check.button_pressed
 	_definition.hp_IVs = int(_hp_ivs_spin.value)
@@ -451,6 +450,58 @@ func _get_selected_pokemon_id() -> int:
 	if selected < 0:
 		return 1
 	return _pokemon_id_option.get_item_id(selected)
+
+func _on_pokemon_species_changed(_index: int) -> void:
+	# Al cambiar de especie, ajustar opciones de género válidas.
+	_populate_gender_options_for_selected_species(CONST.GENEROS.NON_SELECTED)
+
+func _populate_gender_options_for_selected_species(preferred_gender: int) -> void:
+	if _gender_option == null:
+		return
+	_gender_option.clear()
+	var species_id := _get_selected_pokemon_id()
+	var gender_rate := _get_species_gender_rate(species_id)
+
+	if gender_rate < 0:
+		_gender_option.add_item("Sin genero", CONST.GENEROS.SIN_GENERO)
+	elif gender_rate == 0:
+		_gender_option.add_item("Macho", CONST.GENEROS.MACHO)
+	elif gender_rate >= 8:
+		_gender_option.add_item("Hembra", CONST.GENEROS.HEMBRA)
+	else:
+		_gender_option.add_item("Aleatorio", CONST.GENEROS.NON_SELECTED)
+		_gender_option.add_item("Macho", CONST.GENEROS.MACHO)
+		_gender_option.add_item("Hembra", CONST.GENEROS.HEMBRA)
+
+	_select_option_by_id(_gender_option, preferred_gender)
+
+func _get_species_gender_rate(species_id: int) -> int:
+	var dir_path := "res://Resources/Data/Pokemon"
+	var direct_path := "%s/%03d.tres" % [dir_path, species_id]
+	var data: PokemonData = null
+
+	if ResourceLoader.exists(direct_path):
+		data = load(direct_path) as PokemonData
+	else:
+		var dir := DirAccess.open(ProjectSettings.globalize_path(dir_path))
+		if dir != null:
+			dir.list_dir_begin()
+			var file_name := dir.get_next()
+			while file_name != "":
+				if not dir.current_is_dir() and file_name.ends_with(".tres"):
+					var file_base := file_name.get_basename()
+					var parts := file_base.split(" - ", false, 1)
+					if not parts.is_empty():
+						var id_str := str(parts[0]).strip_edges()
+						if id_str.is_valid_int() and int(id_str) == species_id:
+							data = load("%s/%s" % [dir_path, file_name]) as PokemonData
+							break
+				file_name = dir.get_next()
+			dir.list_dir_end()
+
+	if data == null:
+		return 0
+	return int(data.gender_rate)
 
 func _select_item_id(item_id: int) -> void:
 	var index := -1

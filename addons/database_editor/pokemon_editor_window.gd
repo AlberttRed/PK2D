@@ -44,6 +44,7 @@ var types_loaded: bool = false
 @onready var special_defense_base_spin_box: SpinBox = $VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpecialDefenseBaseContainer/SpecialDefenseBaseSpinBox
 @onready var speed_base_spin_box: SpinBox = $VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/SpeedBaseContainer/SpeedBaseSpinBox
 @onready var total_base_label_value: Label = $VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/BaseStatsSection/TotalBaseContainer/TotalBaseLabelValue
+@onready var evs_section: VBoxContainer = $VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection
 
 # Referencias UI - EVs
 @onready var hp_effort_evs_spin_box: SpinBox = $VBoxContainer/TabContainer/BaseStatsEVs/VBoxContainer/EVsSection/HpEffortEVsContainer/HpEffortEVsSpinBox
@@ -111,9 +112,13 @@ func _ready() -> void:
 	# Configurar nombres de pestañas
 	if tab_container:
 		tab_container.set_tab_title(0, "General")
-		tab_container.set_tab_title(1, "Base Stats / EVs")
+		tab_container.set_tab_title(1, "Base Stats")
 		tab_container.set_tab_title(2, "Otros")
 		tab_container.set_tab_title(3, "Sprites")
+
+	# En editor de especie solo mostramos stats base para evitar confusión con EVs de instancia.
+	if evs_section:
+		evs_section.visible = false
 
 	# Conectar señal de cierre
 	close_requested.connect(_on_close_requested)
