@@ -123,13 +123,18 @@ func _migrate_party_data() -> void:
 	if needs_migration:
 		party_data = migrated_party
 		_party_data_migrated = true
-		# Guardar automáticamente si hay resource_path
+		# Solo persistir en disco cuando sea posible: en exportación `res://` es solo lectura y las rutas
+		# embebidas (p. ej. escena.tscn::SubResource) no son guardables con ResourceSaver.
 		if not resource_path.is_empty():
-			var error = ResourceSaver.save(self, resource_path)
-			if error == OK:
-				print("TrainerData._migrate_party_data(): Guardado trainer migrado: %s" % resource_path)
-			else:
-				push_warning("TrainerData._migrate_party_data(): Error al guardar trainer migrado: %s (error: %d)" % [resource_path, error])
+			var can_save_to_path := true
+			if resource_path.begins_with("res://"):
+				can_save_to_path = Engine.is_editor_hint()
+			if can_save_to_path:
+				var error := ResourceSaver.save(self, resource_path)
+				if error == OK:
+					print("TrainerData._migrate_party_data(): Guardado trainer migrado: %s" % resource_path)
+				else:
+					push_warning("TrainerData._migrate_party_data(): Error al guardar trainer migrado: %s (error: %d)" % [resource_path, error])
 
 ## Carga el TrainerClassData desde el enum ID
 func _load_trainer_class() -> void:

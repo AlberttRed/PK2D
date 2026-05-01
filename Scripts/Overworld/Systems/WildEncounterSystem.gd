@@ -43,6 +43,8 @@ func initialize(overworld_context: OverworldContext) -> void:
 	# Conectar a señales de cambio de mapa
 	if context:
 		context.seamless_map_crossed.connect(_on_map_changed)
+		if not context.active_grid_changed.is_connected(_on_active_grid_changed):
+			context.active_grid_changed.connect(_on_active_grid_changed)
 		var warp_sys = context.get_warp_system()
 		if warp_sys:
 			warp_sys.warp_finished.connect(_on_map_changed_warp)
@@ -179,7 +181,7 @@ func _update_encounters_cache() -> void:
 	if not world_system:
 		return
 
-	var active_grid = world_system.get_active_grid()
+	var active_grid = world_system.try_get_active_grid()
 	if not active_grid:
 		return
 
@@ -204,6 +206,11 @@ func _update_encounters_cache() -> void:
 			return
 
 	print("WildEncounterSystem: Mapa '%s' → SIN encuentros" % current_map_name)
+
+
+func _on_active_grid_changed(_grid: OverworldGrid) -> void:
+	steps_since_last_encounter = 0
+	_update_encounters_cache()
 
 
 ## Callback cuando se cambia de mapa

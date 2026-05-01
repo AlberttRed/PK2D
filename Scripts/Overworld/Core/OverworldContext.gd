@@ -139,8 +139,7 @@ func validate() -> bool:
 			push_error("OverworldContext: Sistema crítico no registrado: %s" % sys_name)
 			all_ok = false
 
-	if not player:
-		push_warning("OverworldContext: Player no registrado (puede cargarse dinámicamente)")
+	# Player se registra cuando WorldSystem instancia al jugador (tras el primer mapa); es normal que falte aquí.
 
 	return all_ok
 

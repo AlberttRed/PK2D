@@ -67,6 +67,11 @@ func _load_all() -> void:
 	_load_trainer_classes()
 	_load_items()
 
+	if _pokemon_by_id.is_empty():
+		push_error(
+			"DatabaseService: no hay especies Pokémon cargadas. En exports suele deberse a no incluir `res://Resources/Data/Pokemon/` en el paquete; en Editor → Exportar → Recursos use «Exportar todos los recursos del proyecto» o filtros que incluyan esa carpeta."
+		)
+
 func _print_summary() -> void:
 	pass
 
@@ -346,12 +351,55 @@ func load_resources_from_dir(dir_path: String, on_loaded: Callable) -> void:
 # === API DE ACCESO ===
 
 func get_pokemon(name_or_id) -> Resource:
-	if typeof(name_or_id) == TYPE_INT:
-		return _pokemon_by_id.get(name_or_id, null)
+	var t := typeof(name_or_id)
+	if t == TYPE_INT or t == TYPE_FLOAT:
+		return _get_pokemon_by_species_id(int(name_or_id))
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
-		return _pokemon_by_id.get(int(key), null)
+		return _get_pokemon_by_species_id(int(key))
 	return _pokemon_by_name.get(key, null)
+
+
+func _get_pokemon_by_species_id(species_id: int) -> Resource:
+	if _pokemon_by_id.has(species_id):
+		return _pokemon_by_id[species_id]
+	var lazy := _lazy_load_pokemon_by_species_id(species_id)
+	if lazy != null:
+		_pokemon_by_id[species_id] = lazy
+		if typeof(lazy.internal_name) == TYPE_STRING and lazy.internal_name != "":
+			_pokemon_by_name[lazy.internal_name.to_lower()] = lazy
+		return lazy
+	return null
+
+
+func _lazy_load_pokemon_by_species_id(species_id: int) -> PokemonData:
+	if species_id < 0 or species_id > 151:
+		return null
+	var simple_path := "%s/%03d.tres" % [POKEMON_DIR, species_id]
+	if ResourceLoader.exists(simple_path):
+		var res_simple := load(simple_path) as PokemonData
+		if res_simple != null:
+			return res_simple
+	var scan_dir := DirAccess.open(POKEMON_DIR)
+	if scan_dir == null:
+		return null
+	scan_dir.list_dir_begin()
+	var file_name := scan_dir.get_next()
+	while file_name != "":
+		if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
+			file_name = scan_dir.get_next()
+			continue
+		var file_base := file_name.get_basename()
+		var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
+		if id_str.is_valid_int() and int(id_str) == species_id:
+			var path := POKEMON_DIR + "/" + file_name
+			if ResourceLoader.exists(path):
+				var res_named := load(path) as PokemonData
+				scan_dir.list_dir_end()
+				return res_named
+		file_name = scan_dir.get_next()
+	scan_dir.list_dir_end()
+	return null
 
 
 ## IDs de especies cargadas, en orden ascendente estable (Pokédex).
