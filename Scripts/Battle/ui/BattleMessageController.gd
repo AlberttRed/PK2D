@@ -368,7 +368,7 @@ func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dict
 	elif escape_succeeded:
 		return {
 			"type": "input",
-			"text": "¡Escapaste sin probemas!", #Validado HGSS
+			"text": "¡Escapaste sin problemas!", #Validado HGSS
 			"showIconAtEnd": true
 		}
 	else:

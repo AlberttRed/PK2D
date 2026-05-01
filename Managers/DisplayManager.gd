@@ -59,6 +59,8 @@ var _party_action_choice_layout_saved: bool = false
 var _party_action_saved_choice_layout: Dictionary = {}
 ## Mochila (pausa) → «Usar» ítem que requiere Pokémon: id pendiente hasta elegir objetivo en party.
 var _pending_bag_item_id: int = -1
+## Estado de navegación de mochila (bolsillo + índice) al pasar a selección de objetivo en Party.
+var _pending_bag_ui_navigation_state: Dictionary = {}
 ## Party cerrado bajo fundido para reabrir mochila: no abrir menú pausa en _on_party_closed.
 var _skip_pause_open_on_party_close: bool = false
 ## Party → bolsa → usar ítem: cerramos bolsa y mostramos feedback con party visible (no reapertura diferida duplicada).
@@ -1065,6 +1067,12 @@ func _fade_close_party_reopen_bag_overworld() -> void:
 	await _await_ui_control_hidden(_party_ui)
 	_skip_pause_open_on_party_close = false
 	_open_bag_ui(false)
+	if _bag_ui != null and _bag_ui.visible and not _pending_bag_ui_navigation_state.is_empty():
+		if _bag_ui.has_method("restore_navigation_state"):
+			_bag_ui.restore_navigation_state(_pending_bag_ui_navigation_state)
+			if _bag_ui.has_method("refresh_from_controller"):
+				_bag_ui.refresh_from_controller()
+	_pending_bag_ui_navigation_state.clear()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 
@@ -1378,6 +1386,9 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 			var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
 			if not from_party_flow and item_data != null and item_data.requires_target():
 				_pending_bag_item_id = item_id
+				_pending_bag_ui_navigation_state = {}
+				if _bag_ui != null and _bag_ui.has_method("get_navigation_state"):
+					_pending_bag_ui_navigation_state = _bag_ui.get_navigation_state()
 				_close_message()
 				if restore_bag_input and _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_input_enabled"):
 					_bag_ui.set_input_enabled(true)

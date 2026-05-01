@@ -12,6 +12,9 @@ const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
 const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
 const TRAINER_CLASSES_DIR := "res://Resources/Trainer Classes"
 const ITEMS_DIR := "res://Resources/Data/Items"
+const _POKEMON_INDEX := preload("res://Services/PokemonResourceIndex.gd")
+const _MOVE_INDEX := preload("res://Services/MoveResourceIndex.gd")
+const _ITEM_INDEX := preload("res://Services/ItemResourceIndex.gd")
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}
@@ -66,6 +69,21 @@ func _load_all() -> void:
 	_load_weathers()
 	_load_trainer_classes()
 	_load_items()
+
+	if _pokemon_by_id.is_empty():
+		push_error(
+			"DatabaseService: no hay especies Pokémon cargadas. En exports suele deberse a no incluir `res://Resources/Data/Pokemon/` en el paquete; en Editor → Exportar → Recursos use «Exportar todos los recursos del proyecto» o filtros que incluyan esa carpeta."
+		)
+
+	if _moves_by_id.is_empty():
+		push_error(
+			"DatabaseService: no hay movimientos cargados. Comprueba que `res://Resources/Data/Moves/` esté en el paquete de exportación."
+		)
+
+	if _items_by_id.is_empty():
+		push_error(
+			"DatabaseService: no hay items cargados. Comprueba que `res://Resources/Data/Items/` esté en el paquete de exportación."
+		)
 
 func _print_summary() -> void:
 	pass
@@ -198,65 +216,36 @@ func _load_items() -> void:
 ## Carga recursos usando ResourceLoader (funciona en debug y exports)
 ## Soporta tanto formato numérico simple ("001.tres") como con nombre ("001 - Bulbasaur.tres")
 func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
-	# Para Pokémon: buscar archivos que empiecen con 000-151
+	# Para Pokémon: usar índice estático id -> ruta para no depender de DirAccess en export.
 	if dir_path == POKEMON_DIR:
-		var scan_dir := DirAccess.open(dir_path)
-		if scan_dir != null:
-			scan_dir.list_dir_begin()
-			var file_name := scan_dir.get_next()
-
-			while file_name != "":
-				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
-					file_name = scan_dir.get_next()
-					continue
-
-				# Extraer ID del nombre del archivo
-				# Soporta tanto "001.tres" como "001 - Bulbasaur.tres"
-				var file_base := file_name.get_basename()
-				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
-
-				if id_str.is_valid_int():
-					var id := int(id_str)
-					if id >= 0 and id < 152:  # Rango válido para Pokémon
-						var path := dir_path + "/" + file_name
-						if ResourceLoader.exists(path):
-							var res := load(path)
-							if res != null:
-								on_loaded.call(res)
-
-				file_name = scan_dir.get_next()
-
-			scan_dir.list_dir_end()
+		var ids: Array[int] = []
+		for id_any in _POKEMON_INDEX.BY_ID.keys():
+			ids.append(int(id_any))
+		ids.sort()
+		for species_id in ids:
+			var path: String = _POKEMON_INDEX.BY_ID.get(species_id, "")
+			if path.is_empty():
+				continue
+			if ResourceLoader.exists(path):
+				var res := load(path)
+				if res != null:
+					on_loaded.call(res)
 		return
 
-	# Para Moves: escanear directorio y extraer ID del nombre del archivo
-	# Soporta tanto "001.tres" como "001 - Nombre.tres"
+	# Para Moves: índice estático id -> ruta (mismo motivo que Pokémon en export).
 	if dir_path == MOVES_DIR:
-		var scan_dir := DirAccess.open(dir_path)
-		if scan_dir != null:
-			scan_dir.list_dir_begin()
-			var file_name := scan_dir.get_next()
-
-			while file_name != "":
-				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
-					file_name = scan_dir.get_next()
-					continue
-
-				# Extraer ID del nombre del archivo
-				# Soporta tanto "001.tres" como "001 - Nombre.tres"
-				var file_base := file_name.get_basename()
-				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
-
-				if id_str.is_valid_int():
-					var path := dir_path + "/" + file_name
-					if ResourceLoader.exists(path):
-						var res := load(path)
-						if res != null:
-							on_loaded.call(res)
-
-				file_name = scan_dir.get_next()
-
-			scan_dir.list_dir_end()
+		var move_ids: Array[int] = []
+		for id_any in _MOVE_INDEX.BY_ID.keys():
+			move_ids.append(int(id_any))
+		move_ids.sort()
+		for move_id in move_ids:
+			var path_move: String = _MOVE_INDEX.BY_ID.get(move_id, "")
+			if path_move.is_empty():
+				continue
+			if ResourceLoader.exists(path_move):
+				var res_move := load(path_move)
+				if res_move != null:
+					on_loaded.call(res_move)
 		return
 
 	# Para Types: intentar cargar del 01 al 18 (rango conocido)
@@ -289,31 +278,20 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 					on_loaded.call(res)
 		return
 
-	# Para Items: escanear directorio y extraer ID del nombre del archivo
-	# Soporta tanto "017.tres" como "017 - Poción.tres"
+	# Para Items: índice estático id -> ruta (evita depender de DirAccess en export).
 	if dir_path == ITEMS_DIR:
-		var scan_dir := DirAccess.open(dir_path)
-		if scan_dir != null:
-			scan_dir.list_dir_begin()
-			var file_name := scan_dir.get_next()
-
-			while file_name != "":
-				if scan_dir.current_is_dir() or not file_name.ends_with(".tres"):
-					file_name = scan_dir.get_next()
-					continue
-
-				var file_base := file_name.get_basename()
-				var id_str := file_base.split(" - ")[0].split(" ")[0].strip_edges()
-				if id_str.is_valid_int():
-					var path := dir_path + "/" + file_name
-					if ResourceLoader.exists(path):
-						var res := load(path)
-						if res != null:
-							on_loaded.call(res)
-
-				file_name = scan_dir.get_next()
-
-			scan_dir.list_dir_end()
+		var item_ids: Array[int] = []
+		for id_any in _ITEM_INDEX.BY_ID.keys():
+			item_ids.append(int(id_any))
+		item_ids.sort()
+		for item_id in item_ids:
+			var path_item: String = _ITEM_INDEX.BY_ID.get(item_id, "")
+			if path_item.is_empty():
+				continue
+			if ResourceLoader.exists(path_item):
+				var res_item := load(path_item)
+				if res_item != null:
+					on_loaded.call(res_item)
 		return
 
 	# Para Trainer Classes: no hay un patrón numérico claro
@@ -346,12 +324,36 @@ func load_resources_from_dir(dir_path: String, on_loaded: Callable) -> void:
 # === API DE ACCESO ===
 
 func get_pokemon(name_or_id) -> Resource:
-	if typeof(name_or_id) == TYPE_INT:
-		return _pokemon_by_id.get(name_or_id, null)
+	var t := typeof(name_or_id)
+	if t == TYPE_INT or t == TYPE_FLOAT:
+		return _get_pokemon_by_species_id(int(name_or_id))
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
-		return _pokemon_by_id.get(int(key), null)
+		return _get_pokemon_by_species_id(int(key))
 	return _pokemon_by_name.get(key, null)
+
+
+func _get_pokemon_by_species_id(species_id: int) -> Resource:
+	if _pokemon_by_id.has(species_id):
+		return _pokemon_by_id[species_id]
+	var lazy := _lazy_load_pokemon_by_species_id(species_id)
+	if lazy != null:
+		_pokemon_by_id[species_id] = lazy
+		if typeof(lazy.internal_name) == TYPE_STRING and lazy.internal_name != "":
+			_pokemon_by_name[lazy.internal_name.to_lower()] = lazy
+		return lazy
+	return null
+
+
+func _lazy_load_pokemon_by_species_id(species_id: int) -> PokemonData:
+	if species_id < 0 or species_id > 151:
+		return null
+	var path: String = _POKEMON_INDEX.BY_ID.get(species_id, "")
+	if path.is_empty():
+		return null
+	if ResourceLoader.exists(path):
+		return load(path) as PokemonData
+	return null
 
 
 ## IDs de especies cargadas, en orden ascendente estable (Pokédex).
@@ -377,12 +379,34 @@ func get_all_pokemon_sorted() -> Array[PokemonData]:
 	return out
 
 func get_move(name_or_id) -> MoveData:
-	if typeof(name_or_id) == TYPE_INT:
-		return _moves_by_id.get(name_or_id, null)
+	var t := typeof(name_or_id)
+	if t == TYPE_INT or t == TYPE_FLOAT:
+		return _get_move_by_id(int(name_or_id))
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
-		return _moves_by_id.get(int(key), null)
+		return _get_move_by_id(int(key))
 	return _moves_by_name.get(key, null)
+
+
+func _get_move_by_id(move_id: int) -> MoveData:
+	if _moves_by_id.has(move_id):
+		return _moves_by_id[move_id]
+	var lazy_move := _lazy_load_move_by_id(move_id)
+	if lazy_move != null:
+		_moves_by_id[move_id] = lazy_move
+		if typeof(lazy_move.internal_name) == TYPE_STRING and lazy_move.internal_name != "":
+			_moves_by_name[lazy_move.internal_name.to_lower()] = lazy_move
+		return lazy_move
+	return null
+
+
+func _lazy_load_move_by_id(move_id: int) -> MoveData:
+	var path_move: String = _MOVE_INDEX.BY_ID.get(move_id, "")
+	if path_move.is_empty():
+		return null
+	if ResourceLoader.exists(path_move):
+		return load(path_move) as MoveData
+	return null
 
 func get_type(name_or_id) -> Resource:
 	if typeof(name_or_id) == TYPE_INT:
@@ -440,12 +464,13 @@ func get_trainer_class(name_or_id) -> TrainerClassData:
 func get_item(name_or_id) -> ItemData:
 	var result: ItemData = null
 
-	if typeof(name_or_id) == TYPE_INT:
-		result = _items_by_id.get(name_or_id, null)
+	var t := typeof(name_or_id)
+	if t == TYPE_INT or t == TYPE_FLOAT:
+		result = _get_item_by_id(int(name_or_id))
 	else:
 		var key := str(name_or_id).to_lower()
 		if key.is_valid_int():
-			result = _items_by_id.get(int(key), null)
+			result = _get_item_by_id(int(key))
 		else:
 			result = _items_by_name.get(key, null)
 
@@ -454,6 +479,27 @@ func get_item(name_or_id) -> ItemData:
 		push_warning("DatabaseService: Item no encontrado: %s (tipo: %s)" % [str(name_or_id), typeof(name_or_id)])
 
 	return result
+
+
+func _get_item_by_id(item_id: int) -> ItemData:
+	if _items_by_id.has(item_id):
+		return _items_by_id[item_id]
+	var lazy_item := _lazy_load_item_by_id(item_id)
+	if lazy_item != null:
+		_items_by_id[item_id] = lazy_item
+		if typeof(lazy_item.internal_name) == TYPE_STRING and lazy_item.internal_name != "":
+			_items_by_name[lazy_item.internal_name.to_lower()] = lazy_item
+		return lazy_item
+	return null
+
+
+func _lazy_load_item_by_id(item_id: int) -> ItemData:
+	var path_item: String = _ITEM_INDEX.BY_ID.get(item_id, "")
+	if path_item.is_empty():
+		return null
+	if ResourceLoader.exists(path_item):
+		return load(path_item) as ItemData
+	return null
 
 ## Verifica si existe un item por ID (AC-03)
 func has_item_id(id: int) -> bool:

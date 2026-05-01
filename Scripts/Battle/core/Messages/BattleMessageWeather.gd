@@ -89,5 +89,3 @@ func get_end_weather_message(weather_id: int) -> Dictionary:
 func get_already_active_weather_message() -> Dictionary:
 	return { "type": "wait", "text": "¡Pero falló!", "wait_time": 1.0 }
 	
-
-

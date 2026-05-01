@@ -93,6 +93,28 @@ func setup(controller) -> void:
 	_selected_item_index = 0
 	_pocket_list_index_by_pocket.clear()
 
+
+func get_navigation_state() -> Dictionary:
+	return {
+		"pocket_index": _current_pocket_index,
+		"selected_item_index": _selected_item_index,
+		"pocket_list_index_by_pocket": _pocket_list_index_by_pocket.duplicate(true),
+	}
+
+
+func restore_navigation_state(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	var pocket_count := _pockets.size()
+	var pocket_index := int(state.get("pocket_index", _current_pocket_index))
+	if pocket_count > 0:
+		_current_pocket_index = clampi(pocket_index, 0, pocket_count - 1)
+	else:
+		_current_pocket_index = 0
+	_selected_item_index = maxi(0, int(state.get("selected_item_index", 0)))
+	var remembered = state.get("pocket_list_index_by_pocket", {})
+	_pocket_list_index_by_pocket = remembered.duplicate(true) if remembered is Dictionary else {}
+
 func open() -> void:
 	if _controller == null:
 		push_error("BagUI: No se puede abrir sin controller. Llama setup(controller) primero.")

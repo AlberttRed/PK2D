@@ -85,6 +85,8 @@ var personality: String = ""
 # Experiencia
 var experienceGroup: PokemonExperienceGroup:
 	get:
+		if base == null:
+			return PokemonExperienceGroup.new()
 		return PokemonExperienceGroup.new(base.growth_rate_id)
 
 var actualLevelExpBase: int:
@@ -158,7 +160,7 @@ func _init(
 		pokemon_id = pokemon_data as PokemonsEnum.Values
 		# Autoloads NO cuentan para Engine.has_singleton(); en ejecución usar DatabaseService.
 		if not Engine.is_editor_hint():
-			base = DatabaseService.get_pokemon(pokemon_data)
+			base = DatabaseService.get_pokemon(int(pokemon_data))
 		else:
 			# En editor (herramientas / inspector): cargar desde disco sin depender del autoload.
 			var pid: int = int(pokemon_data)
@@ -254,14 +256,16 @@ func _post_init() -> void:
 	if base != null:
 		return
 
+	var pid: int = int(pokemon_id)
+
 	# Cargar PokemonData desde el enum pokemon_id
 	if not Engine.is_editor_hint():
-		base = DatabaseService.get_pokemon(pokemon_id)
+		base = DatabaseService.get_pokemon(pid)
 
 	# Si DatabaseService no funcionó o no está disponible, cargar directamente desde archivo
 	if base == null:
 		# Intentar primero con formato "007.tres"
-		var pokemon_path = "res://Resources/Data/Pokemon/%03d.tres" % pokemon_id
+		var pokemon_path := "res://Resources/Data/Pokemon/%03d.tres" % pid
 		if ResourceLoader.exists(pokemon_path):
 			base = load(pokemon_path) as PokemonData
 
@@ -277,7 +281,7 @@ func _post_init() -> void:
 						var parts = file_base.split(" - ", false, 1)
 						if parts.size() > 0:
 							var id_str = parts[0].strip_edges()
-							if id_str.is_valid_int() and int(id_str) == pokemon_id:
+							if id_str.is_valid_int() and int(id_str) == pid:
 								var full_path = "res://Resources/Data/Pokemon/" + file_name
 								base = load(full_path) as PokemonData
 								if base:
@@ -286,7 +290,7 @@ func _post_init() -> void:
 				dir.list_dir_end()
 
 	if base == null:
-		push_error("Pokemon._post_init: No se pudo cargar PokemonData para id %d" % pokemon_id)
+		push_error("Pokemon._post_init: No se pudo cargar PokemonData para id %d" % pid)
 		return
 
 	# Calcular valores automáticos si no están configurados
@@ -692,6 +696,8 @@ func to_battle_pokemon(ai = null):  # ai: BattleIA, return: BattlePokemon - evit
 func get_display_name() -> String:
 	if nickname != "":
 		return nickname
+	if base == null:
+		return "Pokémon (%d)" % int(pokemon_id)
 	return base.Name
 
 

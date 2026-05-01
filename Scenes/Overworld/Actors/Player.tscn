@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://clglgb2nchng0" path="res://Scripts/Overworld/Core/OverworldCamera.gd" id="5_0hlcb"]
 [ext_resource type="Shader" uid="uid://c0h3emoetcpno" path="res://Shaders/water_reflection.gdshader" id="6_x884u"]
 [ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="11_5yaag"]
-[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="12_x884u"]
+[ext_resource type="Script" uid="uid://cotgo4ccshywo" path="res://Scripts/Resources/Classes/PokemonDefinition.gd" id="12_x884u"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="13_5yaag"]
 [ext_resource type="Texture2D" uid="uid://cdck4xo6iqrah" path="res://Sprites/Others/Player_Shadow.png" id="14_p0ptx"]
 [ext_resource type="PackedScene" uid="uid://b6ccbitbcnnr1" path="res://Scenes/Overworld/Actors/ReflectionSprite.tscn" id="15_reflection"]
@@ -27,9 +27,10 @@ shader_parameter/alpha = 1.0
 [sub_resource type="Resource" id="Resource_5yaag"]
 script = ExtResource("12_x884u")
 pokemon_id = 7
+level = 5
 gender = 1
 custom_move_ids = Array[int]([148, 70, 57, 15])
-metadata/_custom_type_script = "uid://d4mopscjx7rum"
+metadata/_custom_type_script = "uid://cotgo4ccshywo"
 
 [sub_resource type="Resource" id="Resource_p0ptx"]
 script = ExtResource("13_5yaag")

@@ -48,13 +48,19 @@ func _sync_outline_layout_from_parent() -> void:
 		o.set("spacing_top", spacing_top_val)
 
 
+## Iguala Outline/Outline2 al rectángulo del RTL principal (sin PRESET_FULL_RECT: con `fit_content`
+## el tamaño efectivo del texto no coincide siempre con el rect de anclas stretch).
 func _sync_outline_geometry_from_parent() -> void:
 	if not is_inside_tree():
 		return
+	var sz := size
 	for o in _outline_layers():
-		o.position = Vector2.ZERO
-		o.size = size
-		o.custom_minimum_size = size
+		o.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		o.offset_left = 0.0
+		o.offset_top = 0.0
+		o.offset_right = sz.x
+		o.offset_bottom = sz.y
+		o.custom_minimum_size = sz
 
 
 func _request_outline_visual_refresh() -> void:
@@ -104,6 +110,7 @@ func _ready():
 		o.set("theme_override_fonts/normal_font", text_normal_font)
 
 	_sync_outline_layout_from_parent()
+	_sync_outline_geometry_from_parent()
 
 	vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	for o in _outline_layers():
@@ -124,10 +131,6 @@ func _bbcode_normalize_newlines(s: String) -> String:
 	return t
 
 
-func _draw() -> void:
-	_sync_outline_geometry_from_parent()
-
-
 ## Normaliza `\n` → `[br]` y copia el mismo BBCode al RTL principal y a Outline/Outline2.
 ## Solo lo usa `setText()`: algunas rutas del motor no disparan `_set()` al escribir `text` directamente.
 func _apply_full_richtext(raw: String) -> void:
@@ -136,7 +139,7 @@ func _apply_full_richtext(raw: String) -> void:
 	for o in _outline_layers():
 		o.text = normalized
 	_sync_outline_layout_from_parent()
-	queue_redraw()
+	_request_outline_visual_refresh()
 
 
 func setText(_text):
@@ -167,6 +170,7 @@ func _set(_name, value):
 			for o in _outline_layers():
 				o.text = normalized
 			_sync_outline_layout_from_parent()
+			_request_outline_visual_refresh()
 		"visible_characters":
 			var next_line = 0
 			visible_characters = value

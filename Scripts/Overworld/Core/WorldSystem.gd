@@ -1107,10 +1107,19 @@ func print_warp_history() -> void:
 func get_active_map() -> Node:
 	return active_map
 
-## Obtiene el OverworldGrid del mapa activo
+## Obtiene el OverworldGrid del mapa activo (advertencia si aún no hay mapa cargado).
 func get_active_grid() -> OverworldGrid:
+	return _resolve_active_grid(false)
+
+## Como `get_active_grid()`, pero sin warning cuando no hay mapa activo (p. ej. sistemas inicializados antes del primer `change_to_map`).
+func try_get_active_grid() -> OverworldGrid:
+	return _resolve_active_grid(true)
+
+
+func _resolve_active_grid(silent_if_missing_map: bool) -> OverworldGrid:
 	if not active_map:
-		push_warning("WorldSystem: No hay mapa activo")
+		if not silent_if_missing_map:
+			push_warning("WorldSystem: No hay mapa activo")
 		return null
 
 	var grid = active_map.get_node("OverworldGrid")
