@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_6yab3"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_b0ogl"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_q703k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7a0yo"]
 atlas = ExtResource("1_6yab3")
@@ -14,3 +15,5 @@ internal_name = "poke-doll"
 display_name = "Poké Muñeco"
 description = "Un muñeco que atrae a los Pokémon. Es útil para huir de un combate contra un Pokémon salvaje."
 icon = SubResource("AtlasTexture_7a0yo")
+item_category_id = 11
+category = ExtResource("1_q703k")

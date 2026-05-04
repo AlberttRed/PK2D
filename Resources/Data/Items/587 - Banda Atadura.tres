@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djkxeylwyls06"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_bh2to"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_m1ijj"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_x21bl"]
 
@@ -15,3 +16,5 @@ display_name = "Banda Atadura"
 description = "Joya de un solo uso que potencia los movimientos de tipo Acero. Debe llevarla un Pokémon."
 icon = SubResource("AtlasTexture_p5j4r")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_bh2to")

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3cm8wb8nevmw"]
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_2w3fk"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_db00v"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oddge"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rhowy"]
@@ -15,3 +16,5 @@ display_name = "Carta Gracias"
 description = "Los Pokémon pueden llevarla o usarla para recuperarse de problemas de estado."
 icon = SubResource("AtlasTexture_rhowy")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_db00v")

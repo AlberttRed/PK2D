@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cwd3toreu8gwg"]
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_607kb"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_imlnd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t8j5x"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fmiey"]
@@ -15,3 +16,5 @@ display_name = "Pase Concurso"
 description = "Llave que abre la puerta que hay en el Túnel Trigal."
 icon = SubResource("AtlasTexture_fmiey")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_imlnd")

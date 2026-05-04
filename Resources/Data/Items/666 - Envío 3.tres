@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_jokv0"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_owpom"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_vihgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fng2a"]
 atlas = ExtResource("1_jokv0")
@@ -16,5 +17,7 @@ description = "Tabla de piedra que potencia los movimientos de tipo Hada. Debe l
 icon = SubResource("AtlasTexture_fng2a")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_vihgy")
 is_consumable = false
 stack_limit = 1

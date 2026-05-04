@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_isqx4"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jcuxo"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_jyvs6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ys15r"]
 atlas = ExtResource("1_jcuxo")
@@ -16,5 +17,7 @@ description = "Aparato de precisión que reacciona con luz y sonido ante los obj
 icon = SubResource("AtlasTexture_ys15r")
 pocket = 6
 kind = 8
+item_category_id = 20
+category = ExtResource("1_jyvs6")
 is_consumable = false
 stack_limit = 1

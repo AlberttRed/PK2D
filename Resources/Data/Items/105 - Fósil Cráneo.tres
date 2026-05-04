@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3kp8tns4daoo"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ihr8s"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_mnjop"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_qnb4t"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_76kvd"]
@@ -14,3 +15,5 @@ internal_name = "skull-fossil"
 display_name = "Fósil Cráneo"
 description = "Fósil de un Pokémon prehistórico terrestre. Parece ser parte de una cabeza."
 icon = SubResource("AtlasTexture_76kvd")
+item_category_id = 35
+category = ExtResource("1_mnjop")

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4gcm6"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ameai"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_e01v3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ov3ol"]
 atlas = ExtResource("1_ameai")
@@ -14,3 +15,5 @@ internal_name = "seal-bag"
 display_name = "Bolsa Sellos"
 description = "Emite sonidos que no parecen de este mundo. Es de fabricante desconocido."
 icon = SubResource("AtlasTexture_ov3ol")
+item_category_id = 23
+category = ExtResource("1_e01v3")

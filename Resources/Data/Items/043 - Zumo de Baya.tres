@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_4jb5j"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_53hdi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_wfuoc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4jb5j"]
 atlas = ExtResource("1_4jb5j")
@@ -16,3 +17,5 @@ description = "Zumo de bayas 100% natural que restaura 20 PS de un Pokémon."
 icon = SubResource("AtlasTexture_4jb5j")
 pocket = 5
 kind = 12
+item_category_id = 27
+category = ExtResource("1_wfuoc")

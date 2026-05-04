@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6xkgh"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_vb8uj"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_yd41b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vb8uj"]
 atlas = ExtResource("1_vb8uj")
@@ -16,5 +17,7 @@ description = "Dispositivo con diseño capsular que atrapa Pokémon salvajes. Se
 icon = SubResource("AtlasTexture_vb8uj")
 pocket = 3
 kind = 5
+item_category_id = 34
+category = ExtResource("1_yd41b")
 allowed_contexts = 4
 target_type = 1

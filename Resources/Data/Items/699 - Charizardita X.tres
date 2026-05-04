@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c3fpx8vaetjol"]
 
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_gtkdv"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_lshry"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_mj1al"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1a4hx"]
@@ -14,3 +15,5 @@ internal_name = "charizardite-x"
 display_name = "Charizardita X"
 description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Alakazam en combate."
 icon = SubResource("AtlasTexture_1a4hx")
+item_category_id = 44
+category = ExtResource("1_lshry")

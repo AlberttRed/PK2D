@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b7ajby81j608o"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s02sv"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wcshb"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_xuege"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0oduo"]
@@ -15,3 +16,5 @@ display_name = "Carta Sueño"
 description = "MAIL featuring a sketch of the holding POKéMON."
 icon = SubResource("AtlasTexture_0oduo")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_wcshb")

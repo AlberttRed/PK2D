@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_a56lg"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_upby5"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_x3a3s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8tuvx"]
 atlas = ExtResource("1_a56lg")
@@ -16,3 +17,5 @@ description = "Bonguri de color rosa y aroma dulce."
 icon = SubResource("AtlasTexture_8tuvx")
 pocket = 5
 kind = 12
+item_category_id = 21
+category = ExtResource("1_x3a3s")

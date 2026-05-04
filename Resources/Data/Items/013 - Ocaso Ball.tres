@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_r0qha"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_s4bum"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_ww306"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s4bum"]
 atlas = ExtResource("1_s4bum")
@@ -16,5 +17,7 @@ description = "Es algo particular. Hace que sea más fácil capturar a los Poké
 icon = SubResource("AtlasTexture_s4bum")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_ww306")
 allowed_contexts = 4
 target_type = 1

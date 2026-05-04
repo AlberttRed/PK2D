@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5kb0q"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_pvesn"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_u5jtp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pvesn"]
 atlas = ExtResource("1_pvesn")
@@ -16,5 +17,7 @@ description = "Medicina en espray que cura heridas y restaura 200 PS de un Poké
 icon = SubResource("AtlasTexture_pvesn")
 pocket = 2
 kind = 1
+item_category_id = 27
+category = ExtResource("1_u5jtp")
 allowed_contexts = 3
 target_type = 1

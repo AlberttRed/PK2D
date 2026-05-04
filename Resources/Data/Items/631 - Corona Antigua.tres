@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://273jg8fh6kej"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_5rpb6"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_giwwd"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_h6psv"]
 
@@ -14,3 +15,5 @@ internal_name = "relic-crown"
 display_name = "Corona Antigua"
 description = "Aumenta mucho el Ataque en combate. Al cambiar de Pokémon, el efecto desaparece."
 icon = SubResource("AtlasTexture_1s7gc")
+item_category_id = 24
+category = ExtResource("1_5rpb6")

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b46rav1prdxro"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4dver"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_04hrl"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_7i30d"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3anlk"]
@@ -15,3 +16,5 @@ display_name = "Neceser"
 description = "Aumenta ligeramente el Ataque en combate. Al cambiar de Pokémon, el efecto desaparece."
 icon = SubResource("AtlasTexture_3anlk")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_04hrl")

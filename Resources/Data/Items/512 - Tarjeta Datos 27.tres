@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://5riomasaqoh8"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_gyas8"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lqdyg"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_stm3h"]
 
@@ -14,3 +15,5 @@ internal_name = "data-card-27"
 display_name = "Tarjeta Datos 27"
 description = "Joya de un solo uso que potencia los movimientos de tipo Eléctrico. Debe llevarla un Pokémon."
 icon = SubResource("AtlasTexture_r4ksy")
+item_category_id = 41
+category = ExtResource("1_gyas8")

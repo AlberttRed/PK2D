@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3dti3"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_nbfe5"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_vpyei"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fvai7"]
 atlas = ExtResource("1_nbfe5")
@@ -15,3 +16,5 @@ display_name = "Polvo Brillo"
 description = "El Pokémon que la lleva puede resistir un golpe que potencialmente lo dejaría K.O. y se queda con 1 PS."
 icon = SubResource("AtlasTexture_fvai7")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_vpyei")

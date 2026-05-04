@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cjupu8hmonl70"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1jjtw"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jrukx"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_p7jwo"]
 
@@ -16,5 +17,7 @@ description = "Un escudo que protege de problemas de estado, como el sueño o la
 icon = SubResource("AtlasTexture_jt0hw")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_1jjtw")
 allowed_contexts = 2
 target_type = 3

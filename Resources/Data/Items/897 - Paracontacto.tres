@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crrjmx3wkarm0"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_16hv0"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_fcyv6"]
 
 [resource]
 script = ExtResource("1_16hv0")
@@ -9,3 +10,5 @@ internal_name = "protective-pads"
 display_name = "Paracontacto"
 description = "Protege al Pokémon de los efectos que le produciría el contacto directo en combate."
 kind = 7
+item_category_id = 12
+category = ExtResource("1_fcyv6")

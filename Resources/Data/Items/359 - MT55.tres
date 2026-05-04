@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5m5e6"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_58j3x"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_tfg8q"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nmepl"]
 atlas = ExtResource("1_58j3x")
@@ -16,5 +17,7 @@ description = "Tras atacar, vuelve a toda prisa para dar paso a otro Pokémon de
 icon = SubResource("AtlasTexture_nmepl")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_tfg8q")
 allowed_contexts = 2
 target_type = 3

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_1f0fq"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6ooal"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yfw7n"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qdd73"]
 atlas = ExtResource("1_1f0fq")
@@ -16,5 +17,7 @@ description = "Llave de acceso a una de las habitaciones de Malvamar."
 icon = SubResource("AtlasTexture_qdd73")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_yfw7n")
 is_consumable = false
 stack_limit = 1

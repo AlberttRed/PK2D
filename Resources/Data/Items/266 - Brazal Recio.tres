@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0snl1"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_ad4yb"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_m4p8i"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v3u55"]
 atlas = ExtResource("1_ad4yb")
@@ -16,4 +17,6 @@ description = "Tabla de piedra que potencia los movimientos de tipo Volador. Deb
 icon = SubResource("AtlasTexture_v3u55")
 pocket = 8
 kind = 10
+item_category_id = 14
+category = ExtResource("1_m4p8i")
 allowed_contexts = 4

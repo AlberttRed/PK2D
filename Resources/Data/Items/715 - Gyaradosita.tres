@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://mccf6124y3pl"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4p0me"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_7ug0v"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_1412e"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l7d4t"]
@@ -14,3 +15,5 @@ internal_name = "gyaradosite"
 display_name = "Gyaradosita"
 description = "Documento de identificación necesario para acceder a la central eléctrica de la Ruta 13."
 icon = SubResource("AtlasTexture_l7d4t")
+item_category_id = 44
+category = ExtResource("1_7ug0v")

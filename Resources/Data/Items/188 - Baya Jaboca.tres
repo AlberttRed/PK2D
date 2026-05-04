@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://brvph2dnfx2nw"]
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_86qmc"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_jv453"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oo47e"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lvj6f"]
@@ -16,3 +17,5 @@ description = "Debe llevarla un Pokémon. Permite huir siempre de combates contr
 icon = SubResource("AtlasTexture_lvj6f")
 pocket = 5
 kind = 12
+item_category_id = 4
+category = ExtResource("1_jv453")

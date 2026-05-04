@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bt38rcekva07d"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_62wsd"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_krvth"]
 
 [resource]
 script = ExtResource("1_62wsd")
@@ -8,3 +9,5 @@ id = 827
 internal_name = "psychium-z--held"
 display_name = "Psicostal Z"
 description = "Cristal que confiere el Poder Z a los movimientos de tipo Psíquico."
+item_category_id = 46
+category = ExtResource("1_krvth")

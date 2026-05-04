@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aa8p3"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_tnsj7"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yg5fj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ygn73"]
 atlas = ExtResource("1_tnsj7")
@@ -15,3 +16,5 @@ display_name = "Amuleto Iris"
 description = "Una flauta con un timbre tan dulce y hermoso que despierta hasta el Pokémon más profundamente dormido."
 icon = SubResource("AtlasTexture_ygn73")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_yg5fj")

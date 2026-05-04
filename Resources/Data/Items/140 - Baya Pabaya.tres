@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ica5y"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_o6cjh"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_pkx12"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bg5i2"]
 atlas = ExtResource("1_o6cjh")
@@ -16,3 +17,5 @@ description = "Una baya muy rara en la región de Teselia."
 icon = SubResource("AtlasTexture_bg5i2")
 pocket = 5
 kind = 12
+item_category_id = 6
+category = ExtResource("1_pkx12")

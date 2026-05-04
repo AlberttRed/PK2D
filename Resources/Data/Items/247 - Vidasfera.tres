@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dj61pd8orub4a"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_8drbh"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_gn8h3"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_nmnyg"]
 
@@ -15,3 +16,5 @@ display_name = "Vidasfera"
 description = "Debe llevarlo un Pokémon. Potencia la Velocidad, pero solo permite usar un movimiento."
 icon = SubResource("AtlasTexture_lqthu")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_8drbh")

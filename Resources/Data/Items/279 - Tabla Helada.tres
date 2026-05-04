@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_jg23u"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jgdcl"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_moi01"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4kcvw"]
 atlas = ExtResource("1_jg23u")
@@ -14,3 +15,5 @@ internal_name = "icicle-plate"
 display_name = "Tabla Helada"
 description = "Si el Pokémon que lo lleva lucha en un combate, duplica las ganancias."
 icon = SubResource("AtlasTexture_4kcvw")
+item_category_id = 17
+category = ExtResource("1_moi01")

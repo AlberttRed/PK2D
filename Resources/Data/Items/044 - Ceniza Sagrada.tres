@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_l1hts"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_plxfx"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_wf001"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_plxfx"]
 atlas = ExtResource("1_plxfx")
@@ -15,3 +16,5 @@ display_name = "Ceniza Sagrada"
 description = "Reanima completamente a todos los Pokémon debilitados y restaura todos sus PS."
 icon = SubResource("AtlasTexture_plxfx")
 pocket = 2
+item_category_id = 29
+category = ExtResource("1_wf001")

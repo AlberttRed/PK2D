@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_dyuyy"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kxky7"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_y8lnk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a453f"]
 atlas = ExtResource("1_dyuyy")
@@ -15,3 +16,5 @@ display_name = "Botón Escape"
 description = "Pluma que aumenta un poco el Ataque de base de un Pokémon."
 icon = SubResource("AtlasTexture_a453f")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_y8lnk")

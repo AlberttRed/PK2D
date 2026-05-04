@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5sgsw"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_a1t5e"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ku14i"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pa6cm"]
 atlas = ExtResource("1_a1t5e")
@@ -16,5 +17,7 @@ description = "Ataca al objetivo con cuchillas o garras que se cruzan a modo de 
 icon = SubResource("AtlasTexture_pa6cm")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_ku14i")
 allowed_contexts = 2
 target_type = 3

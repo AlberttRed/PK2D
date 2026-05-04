@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b72nyma7dxm2p"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_epryk"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pk1cb"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_vqrno"]
 
@@ -15,3 +16,5 @@ display_name = "Hierro"
 description = "Nutritiva bebida que potencia la Defensa de base de un Pokémon."
 icon = SubResource("AtlasTexture_vqrno")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_epryk")

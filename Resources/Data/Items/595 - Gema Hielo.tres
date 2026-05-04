@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_5xd5f"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t45wu"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_x6bp8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ngsg7"]
 atlas = ExtResource("1_5xd5f")
@@ -14,3 +15,5 @@ internal_name = "ice-gem"
 display_name = "Gema Hielo"
 description = "Pluma normal y corriente. Muy bonita, pero no sirve para nada."
 icon = SubResource("AtlasTexture_ngsg7")
+item_category_id = 42
+category = ExtResource("1_x6bp8")

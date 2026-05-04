@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://vccjaevlmf50"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_3e178"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jvc0u"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_oty3g"]
 
@@ -15,3 +16,5 @@ display_name = "Carta Retro."
 description = "MAIL featuring the drawings of three POKéMON."
 icon = SubResource("AtlasTexture_bl2t7")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_3e178")

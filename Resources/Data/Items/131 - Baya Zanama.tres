@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://417e18l3tskm"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_g7a86"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_hemka"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jbokd"]
 
@@ -16,3 +17,5 @@ description = "Al usarla con un Pokémon, se gana su amistad, pero también redu
 icon = SubResource("AtlasTexture_rxsyq")
 pocket = 5
 kind = 12
+item_category_id = 3
+category = ExtResource("1_g7a86")

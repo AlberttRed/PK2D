@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0besn"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_1iljw"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_d7vlj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v1tv8"]
 atlas = ExtResource("1_1iljw")
@@ -16,5 +17,7 @@ description = "Impide que el objetivo utilice el objeto que lleve y que su Entre
 icon = SubResource("AtlasTexture_v1tv8")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_d7vlj")
 allowed_contexts = 2
 target_type = 3

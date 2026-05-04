@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2njuj"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_qlr01"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yr72f"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2o3mf"]
 atlas = ExtResource("1_qlr01")
@@ -14,3 +15,5 @@ internal_name = "alakazite"
 display_name = "Alakazamita"
 description = "Una piedra de aspecto normal que a algunos les puede parecer de gran valor."
 icon = SubResource("AtlasTexture_2o3mf")
+item_category_id = 44
+category = ExtResource("1_yr72f")

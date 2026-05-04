@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnek8r75yfs0w"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_gtdie"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pln4p"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_vvi0w"]
 
@@ -15,3 +16,5 @@ display_name = "Caña Vieja"
 description = "Fantástico medicamento vendido en la farmacia de Ciudad Orquídea. Cura completamente a un Pokémon."
 icon = SubResource("AtlasTexture_7ddjt")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_gtdie")

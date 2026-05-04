@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bh04vjexoh5k0"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_cad4a"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_d4iyn"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_uv601"]
 
@@ -16,5 +17,7 @@ description = "Quien lo usa concentra toda su energía lumínica y la libera de 
 icon = SubResource("AtlasTexture_o0jk4")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_cad4a")
 allowed_contexts = 2
 target_type = 3

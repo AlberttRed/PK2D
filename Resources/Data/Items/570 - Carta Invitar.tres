@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1sqeb"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_n6g15"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yrct8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5farc"]
 atlas = ExtResource("1_n6g15")
@@ -15,3 +16,5 @@ display_name = "Carta Invitar"
 description = "Los Pokémon pueden llevarla o usarla para librarse de la confusión."
 icon = SubResource("AtlasTexture_5farc")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_yrct8")

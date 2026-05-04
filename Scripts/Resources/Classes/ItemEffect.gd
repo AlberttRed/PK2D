@@ -31,3 +31,11 @@ func require_party_slot(context: ItemUseContext) -> int:
 		return -1
 	return context.target_party_slot
 
+
+## Valida extensión de combate (`battle_controller`, usuario en campo). Para efectos exclusivos de batalla, llamar al inicio de `apply`.
+func require_battle_runtime(context: ItemUseContext) -> ItemUseResult:
+	var outside: ItemUseResult = context.failure_if_not_battle_use()
+	if outside != null:
+		return outside
+	return context.validate_battle_binding_or_error()
+

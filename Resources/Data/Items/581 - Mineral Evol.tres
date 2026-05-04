@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://biqntufka71jl"]
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_krhtq"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_m5lm1"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ue8ex"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b2dpa"]
@@ -15,3 +16,5 @@ display_name = "Mineral Evol"
 description = "Joya de un solo uso que potencia los movimientos de tipo Psíquico. Debe llevarla un Pokémon."
 icon = SubResource("AtlasTexture_b2dpa")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_m5lm1")

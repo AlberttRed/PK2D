@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c5nu458p1wph"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_gouvy"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_q5v7d"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_tn4n0"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rq7qj"]
@@ -14,3 +15,5 @@ internal_name = "jaw-fossil"
 display_name = "Fósil Mandíbula"
 description = "A fossil from a prehistoric Pokémon that once lived on the land. It looks as if it could be a piece of a large jaw."
 icon = SubResource("AtlasTexture_rq7qj")
+item_category_id = 35
+category = ExtResource("1_q5v7d")

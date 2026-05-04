@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4msnl"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_08dcs"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_uervi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f2ax6"]
 atlas = ExtResource("1_08dcs")
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, le sube el Ataque Especial en un momento
 icon = SubResource("AtlasTexture_f2ax6")
 pocket = 5
 kind = 12
+item_category_id = 7
+category = ExtResource("1_uervi")

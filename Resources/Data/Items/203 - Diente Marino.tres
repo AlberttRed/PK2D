@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_7f15h"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_daxjk"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_i72j8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j3m65"]
 atlas = ExtResource("1_7f15h")
@@ -14,3 +15,5 @@ internal_name = "deep-sea-tooth"
 display_name = "Diente Marino"
 description = "Gema con forma de gota de agua que fortalece los movimientos de tipo Agua. Debe llevarla un Pokémon."
 icon = SubResource("AtlasTexture_j3m65")
+item_category_id = 18
+category = ExtResource("1_i72j8")

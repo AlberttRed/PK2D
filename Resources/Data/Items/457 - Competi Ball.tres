@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3cwup"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_4oy0j"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_h7ehf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7qwu5"]
 atlas = ExtResource("1_4oy0j")
@@ -16,5 +17,7 @@ description = "Contiene los datos del Pokéathlon con el número de placajes rea
 icon = SubResource("AtlasTexture_7qwu5")
 pocket = 3
 kind = 5
+item_category_id = 34
+category = ExtResource("1_h7ehf")
 allowed_contexts = 4
 target_type = 1

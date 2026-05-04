@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dtacrab4704xr"]
 
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_43r8s"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_x1inm"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_yuj05"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jct80"]
@@ -14,3 +15,5 @@ internal_name = "insect-plate"
 display_name = "Tabla Bicho"
 description = "Tela imbuida de una energía espiritual muy potente. Cierto Pokémon la adora."
 icon = SubResource("AtlasTexture_jct80")
+item_category_id = 17
+category = ExtResource("1_x1inm")

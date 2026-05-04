@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://berqcfypmx4q1"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_c4e60"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_ngiha"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_s51yj"]
 
@@ -16,5 +17,7 @@ description = "Ataca con un chillido desagradable que baja el Ataque Especial de
 icon = SubResource("AtlasTexture_n4f4d")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_c4e60")
 allowed_contexts = 2
 target_type = 3

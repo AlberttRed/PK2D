@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://kfnysb7ff5q4"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_46rhx"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_72i7m"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dvkn6"]
 
@@ -14,3 +15,5 @@ internal_name = "claw-fossil"
 display_name = "Fósil Garra"
 description = "Fósil de un Pokémon ancestral que vivió en el fondo del mar. Parece ser parte de una garra."
 icon = SubResource("AtlasTexture_fs3ss")
+item_category_id = 35
+category = ExtResource("1_46rhx")

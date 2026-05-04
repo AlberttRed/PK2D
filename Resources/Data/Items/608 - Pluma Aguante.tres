@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_553bm"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_aoj4m"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ncbr7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5bnid"]
 atlas = ExtResource("1_aoj4m")
@@ -15,3 +16,5 @@ display_name = "Pluma Aguante"
 description = "Moneda de oro de más de 3000 años de antigüedad. Muy valorada por los coleccionistas."
 icon = SubResource("AtlasTexture_5bnid")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_ncbr7")

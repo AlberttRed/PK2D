@@ -15,6 +15,10 @@ const _PARTY_SUMMARY_SCENE := preload("res://Scenes/UI/2 - Party/PartySummary.ts
 @onready var target_selector_ui = $TargetSelectorUI
 var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
+
+## Referencia al controlador de combate (asignada desde `BattleScene` al iniciar).
+var battle_controller: BattleController = null
+
 var _level_up_stats_panel: Panel = null
 var _move_learning_flow: RefCounted = null
 var _battle_move_forget_summary: PartySummary = null
@@ -90,6 +94,9 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 		return choice
 
 	choice.pokemon = pokemon  # Importante: establecer el Pokémon que realiza la acción
+
+	if choice is BattleBagChoice and battle_controller != null:
+		(choice as BattleBagChoice).battle_controller = battle_controller
 
 	# Si no es LUCHAR, devolvemos directamente
 	if choice is not BattleMoveChoice:

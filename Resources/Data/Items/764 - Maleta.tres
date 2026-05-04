@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_76cdx"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_lmt4y"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_necuh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4bwb8"]
 atlas = ExtResource("1_76cdx")
@@ -14,3 +15,5 @@ internal_name = "travel-trunk"
 display_name = "Maleta"
 description = "Maleta ligera de increíble capacidad donde podrás guardar todas las prendas de ropa que quieras."
 icon = SubResource("AtlasTexture_4bwb8")
+item_category_id = 23
+category = ExtResource("1_necuh")

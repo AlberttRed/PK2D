@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc2vflisxy4co"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_71j1l"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_fjllr"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_mj4xf"]
 
@@ -16,5 +17,7 @@ description = "Tarjeta para conseguir puntos con el programa de radio Las contra
 icon = SubResource("AtlasTexture_fd475")
 pocket = 6
 kind = 8
+item_category_id = 20
+category = ExtResource("1_71j1l")
 is_consumable = false
 stack_limit = 1

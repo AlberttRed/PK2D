@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_4jkdk"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_8qnj3"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_au845"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dh2f7"]
 atlas = ExtResource("1_8qnj3")
@@ -16,5 +17,7 @@ description = "Contiene los datos del Pokéathlon con el número de victorias en
 icon = SubResource("AtlasTexture_dh2f7")
 pocket = 3
 kind = 5
+item_category_id = 39
+category = ExtResource("1_au845")
 allowed_contexts = 4
 target_type = 1

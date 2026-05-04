@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdrew2nin4g13"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7uyus"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_fyvph"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_tfosr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tfosr"]
@@ -16,5 +17,7 @@ description = "Medicina en espray que cura las quemaduras a un Pokémon."
 icon = SubResource("AtlasTexture_tfosr")
 pocket = 2
 kind = 3
+item_category_id = 30
+category = ExtResource("1_fyvph")
 allowed_contexts = 3
 target_type = 1

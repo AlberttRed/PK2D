@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nothlmhpyghi"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1xl2p"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_5jqwf"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cyhhj"]
 
@@ -16,4 +17,6 @@ description = "Aumenta la Defensa en combate. Al cambiar de Pokémon, el efecto 
 icon = SubResource("AtlasTexture_mdm37")
 pocket = 8
 kind = 10
+item_category_id = 1
+category = ExtResource("1_1xl2p")
 allowed_contexts = 4

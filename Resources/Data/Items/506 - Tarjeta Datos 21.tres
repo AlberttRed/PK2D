@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_hgdvm"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_v7rj1"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_xfnpq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_va2t7"]
 atlas = ExtResource("1_hgdvm")
@@ -14,3 +15,5 @@ internal_name = "data-card-21"
 display_name = "Tarjeta Datos 21"
 description = "Banda que potencia los movimientos que estrujan al rival."
 icon = SubResource("AtlasTexture_va2t7")
+item_category_id = 41
+category = ExtResource("1_xfnpq")

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cuihu3c10gmil"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_4p013"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8cru2"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_wakmn"]
 
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, aumenta mucho una característica en un 
 icon = SubResource("AtlasTexture_362ig")
 pocket = 5
 kind = 12
+item_category_id = 7
+category = ExtResource("1_4p013")

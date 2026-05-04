@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_10wra"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_dg74x"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wa4ns"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x2hwy"]
 atlas = ExtResource("1_dg74x")
@@ -16,5 +17,7 @@ description = "Es necesario para participar en Concursos Pokémon. Tiene una Cin
 icon = SubResource("AtlasTexture_x2hwy")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_wa4ns")
 is_consumable = false
 stack_limit = 1

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dgj85vw7wvwah"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_0ojtv"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8x156"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_m3sr6"]
 
@@ -16,3 +17,5 @@ description = "Lanza un destello que baja la Precisión del enemigo. Debe llevar
 icon = SubResource("AtlasTexture_8l1ry")
 pocket = 5
 kind = 12
+item_category_id = 7
+category = ExtResource("1_0ojtv")

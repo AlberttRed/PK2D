@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c42njt7u6ns5s"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_8n4bq"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jy0ku"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_m7evs"]
 
@@ -15,3 +16,5 @@ display_name = "Pokochera"
 description = "Práctico recipiente que puede almacenar hasta 99 Bonguri de cada especie."
 icon = SubResource("AtlasTexture_gxoyx")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_8n4bq")

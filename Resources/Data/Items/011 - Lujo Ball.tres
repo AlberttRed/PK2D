@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cjabhmhw33u2o"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_et0b2"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_h7let"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_u35qo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u35qo"]
@@ -16,5 +17,7 @@ description = "Acogedora Poké Ball que hace más amistosos a los Pokémon salva
 icon = SubResource("AtlasTexture_u35qo")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_h7let")
 allowed_contexts = 4
 target_type = 1

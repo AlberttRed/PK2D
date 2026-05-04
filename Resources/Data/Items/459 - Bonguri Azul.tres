@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_ka5cd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ta4v5"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_tb1lu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0pah2"]
 atlas = ExtResource("1_ka5cd")
@@ -14,3 +15,5 @@ internal_name = "blue-apricorn"
 display_name = "Bonguri Azul"
 description = "Contiene los datos del Pokéathlon con el número de victorias."
 icon = SubResource("AtlasTexture_0pah2")
+item_category_id = 40
+category = ExtResource("1_tb1lu")

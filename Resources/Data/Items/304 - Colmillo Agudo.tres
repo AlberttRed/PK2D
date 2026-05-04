@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cpxegvbfp1ctu"]
 
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_5xwm3"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_b8e63"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bvgye"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eb2bl"]
@@ -15,3 +16,5 @@ display_name = "Colmillo Agudo"
 description = "Bloquea todos los ataques. Puede fallar si se usa repetidamente."
 icon = SubResource("AtlasTexture_eb2bl")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_b8e63")

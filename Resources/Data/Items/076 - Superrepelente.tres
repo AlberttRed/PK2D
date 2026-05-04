@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bcicl"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_qyuny"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ssw1n"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0vkn5"]
 atlas = ExtResource("1_qyuny")
@@ -15,3 +16,5 @@ display_name = "Superrepelente"
 description = "Repele Pokémon salvajes débiles en un recorrido de 200 pasos."
 icon = SubResource("AtlasTexture_0vkn5")
 kind = 11
+item_category_id = 11
+category = ExtResource("1_ssw1n")

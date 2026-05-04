@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_55los"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pytsk"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_qq5xe"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h7hfd"]
 atlas = ExtResource("1_55los")
@@ -15,3 +16,5 @@ display_name = "Diario"
 description = "Carta del Profesor Oak en la que se te pide que vayas a la Ruta 224."
 icon = SubResource("AtlasTexture_h7hfd")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_qq5xe")

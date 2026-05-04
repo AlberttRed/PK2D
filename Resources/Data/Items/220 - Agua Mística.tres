@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b2k6lg8h3rqsv"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_bp7v1"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cejxn"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_gxxwd"]
 
@@ -14,3 +15,5 @@ internal_name = "mystic-water"
 display_name = "Agua Mística"
 description = "Debe llevarlo un Pokémon. Aumenta el carisma en los concursos."
 icon = SubResource("AtlasTexture_8d8uu")
+item_category_id = 19
+category = ExtResource("1_bp7v1")

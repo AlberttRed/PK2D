@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3oit4"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_jid6y"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_xffk2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wkspo"]
 atlas = ExtResource("1_jid6y")
@@ -15,3 +16,5 @@ display_name = "Tarjeta Azul"
 description = "Bonguri de color negro y aroma indescriptible."
 icon = SubResource("AtlasTexture_wkspo")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_xffk2")

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cywwg8h2y8fpa"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_abrdi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_q3so2"]
 
 [resource]
 script = ExtResource("1_abrdi")
@@ -8,3 +9,5 @@ id = 904
 internal_name = "poison-memory"
 display_name = "Disco Veneno"
 description = "Disco de datos que contiene información relativa al tipo Veneno. Permite cambiar de tipo a cierto Pokémon."
+item_category_id = 45
+category = ExtResource("1_q3so2")

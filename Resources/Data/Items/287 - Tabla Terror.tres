@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ceau7ebhddy1n"]
 
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_4t724"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_njub7"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_shbwi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_agrlk"]
@@ -14,3 +15,5 @@ internal_name = "spooky-plate"
 display_name = "Tabla Terror"
 description = "Si lo lleva un Pokémon cuando inflige daño a otro, puede hacer retroceder a este último."
 icon = SubResource("AtlasTexture_agrlk")
+item_category_id = 17
+category = ExtResource("1_njub7")

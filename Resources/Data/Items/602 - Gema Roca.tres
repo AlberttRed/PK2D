@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_d25jk"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_dknh4"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_idqg2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4rr1r"]
 atlas = ExtResource("1_dknh4")
@@ -14,3 +15,5 @@ internal_name = "rock-gem"
 display_name = "Gema Roca"
 description = "Una bonita cajita donde guardar todos los Complementos para vestir a tus Pokémon en el Teatro Musical."
 icon = SubResource("AtlasTexture_4rr1r")
+item_category_id = 42
+category = ExtResource("1_idqg2")

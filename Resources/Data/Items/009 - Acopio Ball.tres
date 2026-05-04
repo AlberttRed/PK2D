@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c6l7ajplihkyi"]
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_a5jf3"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_i1g8w"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oqc0k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a5jf3"]
@@ -16,5 +17,7 @@ description = "Es algo distinta a las demás. Funciona especialmente bien con la
 icon = SubResource("AtlasTexture_a5jf3")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_i1g8w")
 allowed_contexts = 4
 target_type = 1

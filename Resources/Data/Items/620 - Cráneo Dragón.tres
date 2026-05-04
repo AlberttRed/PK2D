@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dk5ghv0g8n2b8"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_agn1m"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_mtm30"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_qmbev"]
 
@@ -16,5 +17,7 @@ description = "Aumenta ligeramente la Precisión en combate. Al cambiar de Poké
 icon = SubResource("AtlasTexture_ut7r2")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_agn1m")
 is_consumable = false
 stack_limit = 1

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjbx67561g0fi"]
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_1sg4h"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_80emn"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_b0xep"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uy7c4"]
@@ -14,3 +15,5 @@ internal_name = "griseous-orb"
 display_name = "Griseosfera"
 description = "Una esfera brillante que potencia los movimientos de tipo Dragón y Fantasma. Debe llevarla Giratina."
 icon = SubResource("AtlasTexture_uy7c4")
+item_category_id = 18
+category = ExtResource("1_80emn")

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dep771i30iqa8"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_ge5my"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ibej7"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_tlq0m"]
 
@@ -16,3 +17,5 @@ description = "Restaura completamente los PP de todos los movimientos aprendidos
 icon = SubResource("AtlasTexture_tlq0m")
 pocket = 2
 kind = 2
+item_category_id = 28
+category = ExtResource("1_ge5my")

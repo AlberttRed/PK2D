@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdde3ejc6rmbs"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_7rwww"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_cybfu"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ugnc0"]
 
@@ -15,3 +16,5 @@ display_name = "Cáps. Habilidad"
 description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Blaziken en combate."
 icon = SubResource("AtlasTexture_h2rar")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_7rwww")
