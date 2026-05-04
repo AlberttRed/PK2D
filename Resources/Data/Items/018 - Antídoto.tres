@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_co2fv"]
 [ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_dbbk7"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_x6ppb"]
-[ext_resource type="Script" uid="uid://dhbibljnma0cl" path="res://Scripts/Resources/Effects/CureStatusEffect.gd" id="2_cure"]
+[ext_resource type="Script" uid="uid://dhbibljnma0cl" path="res://Scripts/Resources/Effects/StatusHealItemEffect.gd" id="2_cure"]
 
 [sub_resource type="Resource" id="Resource_curefx"]
 script = ExtResource("2_cure")
