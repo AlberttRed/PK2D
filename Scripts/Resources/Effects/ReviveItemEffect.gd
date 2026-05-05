@@ -31,10 +31,10 @@ func compute_revived_hp_amount(pokemon: Pokemon) -> int:
 	return clampi(amt, 1, max_hp)
 
 
-func build_revive_success_message(pokemon: Pokemon, restored_hp: int) -> String:
+func build_revive_success_message(pokemon: Pokemon, _restored_hp: int) -> String:
 	if custom_message != "":
 		return custom_message
-	return "¡%s revive con %d PS!" % [pokemon.get_display_name(), restored_hp]
+	return BattleMessageItem.get_revive_success_text(pokemon)
 
 
 func apply(context: ItemUseContext) -> ItemUseResult:
@@ -43,7 +43,7 @@ func apply(context: ItemUseContext) -> ItemUseResult:
 		return ItemUseResult.failure_blocked("No hay Pokémon objetivo")
 
 	if pokemon.hp_actual > 0:
-		return ItemUseResult.failure_blocked("No tiene efecto en un Pokémon que no esté debilitado.")
+		return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
 
 	var restored: int = compute_revived_hp_amount(pokemon)
 	pokemon.hp_actual = restored

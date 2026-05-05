@@ -6,6 +6,7 @@
 
 [node name="Main" type="Node" unique_id=1470670327]
 script = ExtResource("1")
+debug_mode = true
 
 [node name="DisplayManager" parent="." unique_id=1614610019 instance=ExtResource("2")]
 

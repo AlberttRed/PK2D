@@ -234,6 +234,14 @@ static func show_message_with_choices(text: String, options: Array[String], clos
 		return -1
 	return await instance._show_message_with_choices(text, options, close_at_end)
 
+
+## Menú de acción de objeto de mochila (Usar/Tirar/Salir) con el mismo layout coordinado de overworld.
+static func show_bag_item_action_menu(item_name: String) -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	return await instance._show_bag_item_action_menu(item_name)
+
 ## Cierra el MessageBox del overworld si está visible
 static func close_message() -> void:
 	if instance == null:
@@ -1364,19 +1372,7 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 	if not from_party_flow:
 		var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
 		var item_name: String = str(debug_info.get("display_name", "Objeto"))
-		var message_text := "Has seleccionado %s." % item_name
-		var options: Array[String] = ["Usar", "Tirar", "Salir"]
-		choice_box.begin_coordinated_choice(options)
-		await msg.show_custom(message_text, {
-			"waitInput": false,
-			"closeAtEnd": false,
-			"waitTime": 0.0,
-			"showIconAtEnd": false,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-			"typingMode": "instant",
-			"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
-		})
-		choice_index = await choice_box.await_coordinated_choice_result()
+		choice_index = await _show_bag_item_action_menu(item_name)
 	else:
 		choice_index = 0
 
@@ -1423,6 +1419,22 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 
 	if not did_party_bag_feedback:
 		_pop_bag_item_dialog_layout()
+
+
+func _show_bag_item_action_menu(item_name: String) -> int:
+	var message_text := "Has seleccionado %s." % item_name
+	var options: Array[String] = ["Usar", "Tirar", "Salir"]
+	choice_box.begin_coordinated_choice(options)
+	await msg.show_custom(message_text, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": "instant",
+		"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
+	})
+	return await choice_box.await_coordinated_choice_result()
 
 func _snapshot_msg_panel_layout() -> Dictionary:
 	return {

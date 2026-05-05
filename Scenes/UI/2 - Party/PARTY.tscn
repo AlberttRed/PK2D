@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dkjekvml5fqpp"]
 
 [ext_resource type="Texture2D" uid="uid://d2i5gus8tvoi" path="res://Sprites/UI/Party/partybg.PNG" id="1_ew7hq"]
-[ext_resource type="Script" uid="uid://bc6ijbantqyn" path="res://Scripts/UI/2 - Party/PARTY.gd" id="2"]
+[ext_resource type="Script" uid="uid://x88s8xhm3nnm" path="res://Scripts/UI/PartyUI.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://c63bjwkcpr1fj" path="res://Sprites/UI/Party/partyPanelRect.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://cir5wh26i3pxl" path="res://Sprites/UI/Party/partyCancel.png" id="15"]
 [ext_resource type="Texture2D" uid="uid://dvk3qjfw5vfa5" path="res://Sprites/UI/Party/partyCancelSelNarrow.png" id="16"]
@@ -12,8 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="29"]
 [ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="30"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="31"]
-[ext_resource type="Script" path="res://Resources/Party OLD (Delete)/ChoicesContainer.gd" id="34_jh3e5"]
-[ext_resource type="Script" path="res://Resources/Party OLD (Delete)/ChoicePanel.gd" id="35_8iy16"]
 [ext_resource type="PackedScene" uid="uid://gdxd2a726tc0" path="res://Scenes/UI/2 - Party/PartySummary.tscn" id="36_o5y3j"]
 [ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="57_0h8r4"]
 [ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="58_foh34"]
@@ -273,7 +271,6 @@ offset_top = 351.0
 offset_right = 512.0
 offset_bottom = 379.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_12vyg")
-script = ExtResource("34_jh3e5")
 stylePanel = SubResource("StyleBoxTexture_12vyg")
 styleArrow = SubResource("StyleBoxTexture_enati")
 styleEmpty = SubResource("StyleBoxEmpty_d82kq")
@@ -291,7 +288,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_d82kq")
-script = ExtResource("35_8iy16")
 
 [node name="Arrow" type="Panel" parent="ACTIONS/VBoxContainer/DATOS"]
 layout_mode = 1
@@ -325,7 +321,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_d82kq")
-script = ExtResource("35_8iy16")
 
 [node name="Arrow" type="Panel" parent="ACTIONS/VBoxContainer/CAMBIO"]
 layout_mode = 1
@@ -359,7 +354,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_d82kq")
-script = ExtResource("35_8iy16")
 
 [node name="Arrow" type="Panel" parent="ACTIONS/VBoxContainer/MOVER"]
 layout_mode = 1
@@ -393,7 +387,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_d82kq")
-script = ExtResource("35_8iy16")
 
 [node name="Arrow" type="Panel" parent="ACTIONS/VBoxContainer/OBJETO"]
 layout_mode = 1
@@ -427,7 +420,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_d82kq")
-script = ExtResource("35_8iy16")
 
 [node name="Arrow" type="Panel" parent="ACTIONS/VBoxContainer/SALIR"]
 layout_mode = 1

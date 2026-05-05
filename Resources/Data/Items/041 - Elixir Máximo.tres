@@ -19,3 +19,5 @@ pocket = 2
 kind = 2
 item_category_id = 28
 category = ExtResource("1_ge5my")
+allowed_contexts = 3
+target_type = 1

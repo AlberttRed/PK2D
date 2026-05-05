@@ -3,6 +3,11 @@
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5kb0q"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_pvesn"]
 [ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_u5jtp"]
+[ext_resource type="Script" uid="uid://drblw62276nfq" path="res://Scripts/Resources/Effects/HealingItemEffect.gd" id="2_u4461"]
+
+[sub_resource type="Resource" id="Resource_632ws"]
+script = ExtResource("2_u4461")
+heal_amount = 200
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pvesn"]
 atlas = ExtResource("1_pvesn")
@@ -19,5 +24,6 @@ pocket = 2
 kind = 1
 item_category_id = 27
 category = ExtResource("1_u5jtp")
-allowed_contexts = 3
+allowed_contexts = 7
 target_type = 1
+effect = SubResource("Resource_632ws")

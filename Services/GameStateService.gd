@@ -108,6 +108,7 @@ func _seed_test_bag_items() -> void:
 	var player_bag = get_bag()
 	player_bag.add_item(17, 5)   # Poción (Medicine)
 	player_bag.add_item(18, 8)   # Antídoto (Medicine)
+	player_bag.add_item(28, 3)   # Revivir (Medicine)
 	player_bag.add_item(3, 10)   # Super Ball (Balls)
 	player_bag.add_item(77, 2)   # Repelente Máximo (Items)
 	player_bag.add_item(132, 3)  # Baya Aranja (Berries)
@@ -171,11 +172,11 @@ func _seed_test_party_placeholder() -> void:
 			push_warning("GameStateService: add_pokemon falló (species_id=%d)." % species_id)
 	if added > 0:
 		print("GameStateService: Party de prueba con %d Pokémon." % added)
-		# Debug: Bulbasaur con pocos PS (Poción) y Pikachu envenenado (Antídoto).
+		# Debug: un Pokémon debilitado (Revivir) y Pikachu envenenado (Antídoto).
 		var bulba: Pokemon = player_party.get_pokemon(0)
-		if bulba != null and bulba.hp_actual > 0:
-			var max_hp: int = int(bulba.get_final_stat(StatsEnum.Values.HP))
-			bulba.hp_actual = max_hp
+		if bulba != null:
+			bulba.hp_actual = 0
+			bulba.major_status = CONST.STATUS.OK
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON

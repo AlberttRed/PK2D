@@ -2,7 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1sayp"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_ewxim"]
-[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_ymfcj"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleReviveItemCategory.tres" id="1_ymfcj"]
+[ext_resource type="Script" uid="uid://cjrveitemfx01pk" path="res://Scripts/Resources/Effects/ReviveItemEffect.gd" id="2_revive"]
+
+[sub_resource type="Resource" id="Resource_revfx"]
+script = ExtResource("2_revive")
+revive_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ewxim"]
 atlas = ExtResource("1_ewxim")
@@ -16,5 +21,9 @@ display_name = "Hierba Revivir"
 description = "Hierba muy amarga que reanima a un Pokémon debilitado y restaura todos sus PS."
 icon = SubResource("AtlasTexture_ewxim")
 pocket = 2
+kind = 4
 item_category_id = 29
 category = ExtResource("1_ymfcj")
+allowed_contexts = 7
+target_type = 1
+effect = SubResource("Resource_revfx")

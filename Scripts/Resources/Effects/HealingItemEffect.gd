@@ -53,7 +53,7 @@ func compute_healed_amount(pokemon: Pokemon) -> int:
 func build_heal_success_message(pokemon: Pokemon, healed_amount: int) -> String:
 	if custom_message != "":
 		return custom_message
-	return "%s recuperó %d PS!" % [pokemon.get_display_name(), healed_amount]
+	return "%s ha recupera %d PS." % [pokemon.get_display_name(), healed_amount]
 
 
 func apply(context: ItemUseContext) -> ItemUseResult:
@@ -66,13 +66,13 @@ func apply(context: ItemUseContext) -> ItemUseResult:
 			return ItemUseResult.failure_blocked("El Pokémon está debilitado")
 		var max_hp_check: int = pokemon.get_final_stat(StatsEnum.Values.HP)
 		if pokemon.hp_actual >= max_hp_check:
-			return ItemUseResult.failure_no_effect("El Pokémon ya tiene el HP al máximo")
-		return ItemUseResult.failure_no_effect("No tendrá efecto.")
+			return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
+		return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
 
 	var max_hp: int = pokemon.get_final_stat(StatsEnum.Values.HP)
 	var healed_amount: int = compute_healed_amount(pokemon)
 	if healed_amount <= 0:
-		return ItemUseResult.failure_no_effect("No tendrá efecto.")
+		return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
 
 	pokemon.hp_actual = mini(pokemon.hp_actual + healed_amount, max_hp)
 

@@ -5,6 +5,7 @@ class_name BattleHealingItemHandler
 var _choice: BattleBagChoice = null
 var _item_data: ItemData = null
 var _runtime_heal: HealEffect = null
+var _target_bp: BattlePokemon = null
 
 
 func _init(choice: BattleBagChoice, item_data: ItemData) -> void:
@@ -14,6 +15,7 @@ func _init(choice: BattleBagChoice, item_data: ItemData) -> void:
 
 func _apply() -> void:
 	_runtime_heal = null
+	_target_bp = null
 	var bc: BattleController = _choice.battle_controller
 	var actor: BattlePokemon = _choice.pokemon
 	if bc == null or actor == null:
@@ -21,7 +23,12 @@ func _apply() -> void:
 		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
 		return
 
-	var target_bp: BattlePokemon = actor
+	var target_bp: BattlePokemon = _choice.resolve_item_target_battle_pokemon()
+	if target_bp == null or target_bp.base_data == null:
+		item_use_result = ItemUseResult.failure_error("Objetivo de curación inválido.")
+		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
+		return
+	_target_bp = target_bp
 	var ctx: ItemUseContext = BattleItemHandler.build_player_battle_item_context(_choice, target_bp)
 	var heal_eff: HealingItemEffect = _item_data.effect as HealingItemEffect
 	if heal_eff == null:
@@ -29,22 +36,19 @@ func _apply() -> void:
 		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
 		return
 
-	if not heal_eff.can_use(ctx):
-		var pokemon: Pokemon = target_bp.base_data
-		if pokemon.hp_actual <= 0:
-			item_use_result = ItemUseResult.failure_blocked("El Pokémon está debilitado")
-		else:
-			var max_hp: int = pokemon.get_final_stat(StatsEnum.Values.HP)
-			if pokemon.hp_actual >= max_hp:
-				item_use_result = ItemUseResult.failure_no_effect("El Pokémon ya tiene el HP al máximo")
-			else:
-				item_use_result = ItemUseResult.failure_no_effect("No tendrá efecto.")
+	item_use_result = heal_eff.apply(ctx)
+	if item_use_result == null:
+		item_use_result = ItemUseResult.failure_error("El efecto de curación devolvió un resultado inválido.")
 		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
 		return
 
-	var amount: int = heal_eff.compute_healed_amount(target_bp.base_data)
+	if not item_use_result.success:
+		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
+		return
+
+	var amount: int = int(item_use_result.effect_data.get("healed_amount", 0))
 	if amount <= 0:
-		item_use_result = ItemUseResult.failure_no_effect("No tendrá efecto.")
+		item_use_result = ItemUseResult.failure_error("Resultado de curación sin cantidad válida.")
 		item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
 		return
 
@@ -52,8 +56,6 @@ func _apply() -> void:
 	_runtime_heal.apply()
 	target_bp.write_persistent_state_to_runtime()
 
-	var msg: String = heal_eff.build_heal_success_message(target_bp.base_data, amount)
-	item_use_result = ItemUseResult.success_result(1, msg, {"healed_amount": amount})
 	item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
 	_consume_from_bag_if_needed(_item_data, item_use_result)
 
@@ -61,12 +63,11 @@ func _apply() -> void:
 func _visualize(ui: BattleUI) -> void:
 	if item_use_result == null:
 		return
-	if not item_use_result.message.is_empty():
-		await ui.show_message_from_dict({
-			"type": "display",
-			"text": item_use_result.message,
-			"wait_time": 0.8,
-		})
+	var target_is_active: bool = is_target_active_in_battle(_target_bp)
+	if not target_is_active:
+		await show_party_result_message_and_close(ui, item_use_result)
+		return
+	await show_item_used_battle_message(ui, _item_data)
 	if _runtime_heal != null:
 		await _runtime_heal.visualize(ui)
-		await ui.show_heal_message(_runtime_heal.target)
+	await show_battle_result_message(ui, item_use_result)

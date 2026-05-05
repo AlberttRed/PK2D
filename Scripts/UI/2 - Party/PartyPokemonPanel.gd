@@ -73,6 +73,8 @@ func loadPokemon(pokemon: Pokemon) -> void:
 	else:
 		$gender.texture = null
 	_play_party_icon_idle()
+	# Recalcular estilo tras refrescar datos (p. ej. revivir fuera de combate).
+	update()
 
 
 ## Animación suave del icono en tarjeta no seleccionada (misma que al quitar foco).

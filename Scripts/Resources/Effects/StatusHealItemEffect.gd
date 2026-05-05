@@ -32,13 +32,7 @@ func can_clear_major_status(major_status: int) -> bool:
 func build_success_message(pokemon: Pokemon, cured_prev: int) -> String:
 	if custom_message != "":
 		return custom_message
-	match cure_mode:
-		CureMode.ALL_STATUS:
-			return "%s se curó de todos los problemas de estado." % pokemon.get_display_name()
-		_:
-			if cured_prev == CONST.STATUS.POISON:
-				return "¡%s se curó del veneno!" % pokemon.get_display_name()
-			return "¡%s se curó!" % pokemon.get_display_name()
+	return BattleMessageItem.get_status_heal_success_text(pokemon, cure_mode, cured_prev)
 
 
 func apply(context: ItemUseContext) -> ItemUseResult:
@@ -51,16 +45,16 @@ func apply(context: ItemUseContext) -> ItemUseResult:
 	match cure_mode:
 		CureMode.SPECIFIC_STATUS:
 			if not pokemon.major_status in status_to_cure:
-				return ItemUseResult.failure_no_effect("No tendrá efecto.")
+				return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
 			var prev: int = pokemon.major_status
 			pokemon.major_status = CONST.STATUS.OK
 			return ItemUseResult.success_result(1, build_success_message(pokemon, prev), {"cured_status": prev})
 
 		CureMode.ALL_STATUS:
 			if pokemon.major_status == CONST.STATUS.OK:
-				return ItemUseResult.failure_no_effect("No tendrá efecto.")
+				return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
 			var prev_all: int = pokemon.major_status
 			pokemon.major_status = CONST.STATUS.OK
 			return ItemUseResult.success_result(1, build_success_message(pokemon, prev_all), {"cured_status": prev_all})
 
-	return ItemUseResult.failure_no_effect("No tendrá efecto.")
+	return ItemUseResult.failure_no_effect(BattleMessageItem.get_no_effect_text())
