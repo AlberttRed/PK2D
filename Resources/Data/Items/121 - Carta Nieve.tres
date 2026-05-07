@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dg3c3g5resg65"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_4cywf"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_51mxu"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_trl2k"]
 
@@ -15,3 +16,5 @@ display_name = "Carta Nieve"
 description = "Stationery featuring a print of a chilly, snow-covered world. Let a Pokémon hold it for delivery."
 icon = SubResource("AtlasTexture_uq8we")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_4cywf")

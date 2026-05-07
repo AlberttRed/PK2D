@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dddtl1nvta46g"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1beal"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_x2tpt"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 843
 internal_name = "marshadium-z--held"
 display_name = "Marshastal Z"
 description = "Cristal que confiere el Poder Z al movimiento Robasombra de Marshadow."
+item_category_id = 46
+category = ExtResource("1_1beal")

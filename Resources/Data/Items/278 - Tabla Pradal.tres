@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cpp1a"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_d6w5g"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_j6kib"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m4n00"]
 atlas = ExtResource("1_d6w5g")
@@ -14,3 +15,5 @@ internal_name = "meadow-plate"
 display_name = "Tabla Pradal"
 description = "Incienso de exótico aroma que fortalece los movimientos de tipo Planta. Debe llevarlo un Pokémon."
 icon = SubResource("AtlasTexture_m4n00")
+item_category_id = 17
+category = ExtResource("1_j6kib")

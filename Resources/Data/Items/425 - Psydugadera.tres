@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_6umii"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bfhl6"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_pybqg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_omd8j"]
 atlas = ExtResource("1_6umii")
@@ -15,3 +16,5 @@ display_name = "Psydugadera"
 description = "Una llave de alta tecnología que debe usarse en un lugar concreto. Emite una señal eléctrica que abre una puerta."
 icon = SubResource("AtlasTexture_omd8j")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_pybqg")

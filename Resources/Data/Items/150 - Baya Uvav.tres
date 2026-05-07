@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_2mmbi"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_n11yg"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yh7dy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j00g7"]
 atlas = ExtResource("1_2mmbi")
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo V
 icon = SubResource("AtlasTexture_j00g7")
 pocket = 5
 kind = 12
+item_category_id = 2
+category = ExtResource("1_yh7dy")

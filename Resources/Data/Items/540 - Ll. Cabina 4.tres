@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_2l3cw"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_eeqxy"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_q6g2l"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p3teo"]
 atlas = ExtResource("1_2l3cw")
@@ -16,5 +17,7 @@ description = "A key that opens a door inside the ABANDONED SHIP."
 icon = SubResource("AtlasTexture_p3teo")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_q6g2l")
 is_consumable = false
 stack_limit = 1

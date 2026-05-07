@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://4o0828kojg0y"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_8c7au"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_46wdn"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_rdxuf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c14p2"]
@@ -16,5 +17,7 @@ description = "Formada a partir de magma enfriado y endurecido. Aún hay magma l
 icon = SubResource("AtlasTexture_c14p2")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_46wdn")
 is_consumable = false
 stack_limit = 1

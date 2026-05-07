@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hoxik"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_k0pt5"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_x3mag"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yqx72"]
 atlas = ExtResource("1_k0pt5")
@@ -16,4 +17,6 @@ description = "Aumenta el Ataque Especial en combate. Al cambiar de Pokémon, el
 icon = SubResource("AtlasTexture_yqx72")
 pocket = 8
 kind = 10
+item_category_id = 1
+category = ExtResource("1_x3mag")
 allowed_contexts = 4

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bsbvguxtsraso"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5fstn"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_rede4"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_vxquk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_12mwe"]
@@ -14,3 +15,5 @@ internal_name = "grass-gem"
 display_name = "Gema Planta"
 description = "Pluma que aumenta un poco la Velocidad de base de un Pokémon."
 icon = SubResource("AtlasTexture_12mwe")
+item_category_id = 42
+category = ExtResource("1_rede4")

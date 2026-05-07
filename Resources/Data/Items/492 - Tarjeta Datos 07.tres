@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://hwtacbpnfsyi"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cwog5"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_e2ptg"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_q7xp7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_50v2s"]
@@ -14,3 +15,5 @@ internal_name = "data-card-07"
 display_name = "Tarjeta Datos 07"
 description = "Contiene los datos del Pokéathlon con el número de veces que tocaste con el lápiz a tus Pokémon."
 icon = SubResource("AtlasTexture_50v2s")
+item_category_id = 41
+category = ExtResource("1_e2ptg")

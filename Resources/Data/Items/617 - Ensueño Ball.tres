@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d32q32xlrd4b2"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_nfoxa"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_vwswb"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_wssyt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lydju"]
@@ -16,5 +17,7 @@ description = "Aumenta ligeramente la Defensa Especial en combate. Al cambiar de
 icon = SubResource("AtlasTexture_lydju")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_vwswb")
 allowed_contexts = 4
 target_type = 1

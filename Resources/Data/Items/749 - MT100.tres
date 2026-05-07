@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://beyhxuaghaxyh"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_15fiv"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_rwimm"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_yoxv7"]
 
@@ -16,5 +17,7 @@ description = "Bicicleta plegable con la que se va más rápido que corriendo."
 icon = SubResource("AtlasTexture_vdxau")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_15fiv")
 allowed_contexts = 2
 target_type = 3

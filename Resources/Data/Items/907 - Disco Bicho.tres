@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://hk1g584nnbsf"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_3fw8s"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6v3vu"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 907
 internal_name = "bug-memory"
 display_name = "Disco Bicho"
 description = "Disco de datos que contiene información relativa al tipo Bicho. Permite cambiar de tipo a cierto Pokémon."
+item_category_id = 45
+category = ExtResource("1_3fw8s")

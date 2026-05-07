@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_c6tay"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_q26e1"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_uua8t"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u7nr4"]
 atlas = ExtResource("1_c6tay")
@@ -15,3 +16,5 @@ display_name = "Carta Puerto"
 description = "A WINGULL-print MAIL to be held by a POKéMON."
 icon = SubResource("AtlasTexture_u7nr4")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_uua8t")

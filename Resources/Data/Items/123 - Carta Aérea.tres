@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://chyw6mlt560kq"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_rna16"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tvcv0"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ukujk"]
 
@@ -15,3 +16,5 @@ display_name = "Carta Aérea"
 description = "Stationery featuring a print of colorful letter sets. Let a Pokémon hold it for delivery."
 icon = SubResource("AtlasTexture_onvhd")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_rna16")

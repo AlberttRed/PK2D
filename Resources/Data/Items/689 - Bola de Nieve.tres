@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dehwngye1660a"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_jja87"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kjwru"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_s4atb"]
 
@@ -16,5 +17,7 @@ description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Ban
 icon = SubResource("AtlasTexture_57wcc")
 pocket = 3
 kind = 5
+item_category_id = 12
+category = ExtResource("1_jja87")
 allowed_contexts = 4
 target_type = 1

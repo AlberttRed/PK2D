@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3miaw"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_hj0p1"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_ma8di"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hj0p1"]
 atlas = ExtResource("1_hj0p1")
@@ -16,3 +17,7 @@ description = "Restaura 10 PP del movimiento elegido de un Pokémon."
 icon = SubResource("AtlasTexture_hj0p1")
 pocket = 2
 kind = 2
+item_category_id = 28
+category = ExtResource("1_ma8di")
+allowed_contexts = 3
+target_type = 3

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bd1fsxdwpg7ue"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dmx05"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_dpou5"]
 
 [resource]
 script = ExtResource("1_dmx05")
@@ -9,3 +10,5 @@ internal_name = "zygarde-cube"
 display_name = "Arca de Zygarde"
 description = "Dispositivo para almacenar células y núcleos de Zygarde. También es posible usarlo para enseñarle movimientos."
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_dpou5")

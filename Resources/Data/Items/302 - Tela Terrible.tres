@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bi4rgs62m8y4u"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_chtmm"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_k8mr7"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ylhsa"]
 
@@ -15,3 +16,5 @@ display_name = "Tela Terrible"
 description = "Ataca al objetivo con un potente rayo, pero quien lo usa debe descansar en el siguiente turno para reponer energía."
 icon = SubResource("AtlasTexture_ao064")
 kind = 9
+item_category_id = 10
+category = ExtResource("1_chtmm")

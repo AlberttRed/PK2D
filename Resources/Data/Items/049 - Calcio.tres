@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://by8o8llynqt52"]
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_0unl1"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1onef"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_magfr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0unl1"]
@@ -15,3 +16,5 @@ display_name = "Calcio"
 description = "Nutritiva bebida que potencia el Ataque Especial de base de un Pokémon."
 icon = SubResource("AtlasTexture_0unl1")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_1onef")

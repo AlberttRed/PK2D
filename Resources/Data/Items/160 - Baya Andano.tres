@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_28wwd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_51r8r"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_htpne"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1upty"]
 atlas = ExtResource("1_28wwd")
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, debilita un ataque de tipo Normal de un 
 icon = SubResource("AtlasTexture_1upty")
 pocket = 5
 kind = 12
+item_category_id = 8
+category = ExtResource("1_htpne")

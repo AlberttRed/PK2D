@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dt4xplws2pfgb"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bh80f"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_elya3"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_ibg0o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wf0gs"]
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, le sube la Defensa Especial en un moment
 icon = SubResource("AtlasTexture_wf0gs")
 pocket = 5
 kind = 12
+item_category_id = 7
+category = ExtResource("1_elya3")

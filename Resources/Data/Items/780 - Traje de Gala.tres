@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7xvqh"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_m14xu"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ytrht"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fh5yq"]
 atlas = ExtResource("1_m14xu")
@@ -15,3 +16,5 @@ display_name = "Traje de Gala"
 description = "Traje de lo más espectacular para lucir en el Gran Concurso."
 icon = SubResource("AtlasTexture_fh5yq")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_ytrht")

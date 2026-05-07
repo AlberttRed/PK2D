@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddly77cl5khof"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_jvdyx"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_o0o7g"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xew6l"]
 
@@ -16,5 +17,7 @@ description = "En combate, esta concha desechada sirve para que un Pokémon se c
 icon = SubResource("AtlasTexture_dnocd")
 pocket = 3
 kind = 5
+item_category_id = 15
+category = ExtResource("1_jvdyx")
 allowed_contexts = 4
 target_type = 1

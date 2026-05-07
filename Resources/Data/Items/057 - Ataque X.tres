@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://du515bksb8p17"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_50o0o"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_eyvlx"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_fw6a6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ep3d5"]
@@ -16,4 +17,6 @@ description = "Aumenta el Ataque en combate. Al cambiar de Pokémon, el efecto d
 icon = SubResource("AtlasTexture_ep3d5")
 pocket = 8
 kind = 10
+item_category_id = 1
+category = ExtResource("1_eyvlx")
 allowed_contexts = 4

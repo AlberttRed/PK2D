@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5lgsj"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_a7ujj"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_go15w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hv36f"]
 atlas = ExtResource("1_a7ujj")
@@ -16,5 +17,7 @@ description = "Debe llevarla un Pokémon. Cada vez que este inflige daño, recup
 icon = SubResource("AtlasTexture_hv36f")
 pocket = 3
 kind = 5
+item_category_id = 18
+category = ExtResource("1_go15w")
 allowed_contexts = 4
 target_type = 1

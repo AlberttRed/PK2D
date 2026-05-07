@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c64h6n57c3h5b"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_6uqkk"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_e4he0"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_yawmx"]
 
@@ -16,5 +17,7 @@ description = "Una carta sutilmente perfumada que el Profesor Ciprés le ha escr
 icon = SubResource("AtlasTexture_6iqak")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_6uqkk")
 is_consumable = false
 stack_limit = 1

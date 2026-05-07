@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://fo3uv8t3kjsp"]
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_giaej"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_lrx6y"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_w2udt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k5uix"]
@@ -15,3 +16,5 @@ display_name = "Caramelo Furia"
 description = "Contiene los datos del Pokéathlon con el número de victorias en conexión."
 icon = SubResource("AtlasTexture_k5uix")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_lrx6y")

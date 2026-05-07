@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cwqx3hu5u3vsn"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_1sfra"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_qpkr2"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_wjedr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ij4tk"]
@@ -14,3 +15,5 @@ internal_name = "normal-gem"
 display_name = "Gema Normal"
 description = "Fragmento de un cometa caído al suelo al atravesar la atmósfera. Muy valorado por los coleccionistas."
 icon = SubResource("AtlasTexture_ij4tk")
+item_category_id = 42
+category = ExtResource("1_qpkr2")

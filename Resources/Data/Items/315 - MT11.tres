@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_gdktq"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_qmqyi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wtmi8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dl81f"]
 atlas = ExtResource("1_qmqyi")
@@ -16,5 +17,7 @@ description = "Quien lo usa cava en el primer turno y ataca en el segundo. Tambi
 icon = SubResource("AtlasTexture_dl81f")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_wtmi8")
 allowed_contexts = 2
 target_type = 3

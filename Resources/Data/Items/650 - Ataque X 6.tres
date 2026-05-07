@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddbp5imp6ptv"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_2hum2"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_7hq33"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_gyodm"]
 
@@ -14,3 +15,5 @@ internal_name = "x-attack-6"
 display_name = "Ataque X 6"
 description = "Punta que permite fusionar a Kyurem con cierto Pokémon con el que, originariamente, formaba un solo ser."
 icon = SubResource("AtlasTexture_hehia")
+item_category_id = 43
+category = ExtResource("1_2hum2")

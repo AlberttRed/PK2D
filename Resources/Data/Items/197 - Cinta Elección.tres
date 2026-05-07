@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://jhnlqq6dq0ks"]
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_4sim6"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_48w6y"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_a71sx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_82by2"]
@@ -14,3 +15,5 @@ internal_name = "choice-band"
 display_name = "Cinta Elección"
 description = "Debe llevarla un Pokémon. La suavidad de la arena fortalece los movimientos de tipo Tierra."
 icon = SubResource("AtlasTexture_82by2")
+item_category_id = 13
+category = ExtResource("1_48w6y")

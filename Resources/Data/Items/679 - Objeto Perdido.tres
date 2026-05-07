@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_5nqon"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_adqmj"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_er0vm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n62ou"]
 atlas = ExtResource("1_5nqon")
@@ -16,5 +17,7 @@ description = "Un abono increíble, con todas las propiedades de los Abonos Fér
 icon = SubResource("AtlasTexture_n62ou")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_er0vm")
 is_consumable = false
 stack_limit = 1

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_35vu0"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_ga7bc"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_tj5o8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hngbt"]
 atlas = ExtResource("1_ga7bc")
@@ -16,5 +17,7 @@ description = "Onda de porquería que afecta a todos los Pokémon de alrededor y
 icon = SubResource("AtlasTexture_hngbt")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_tj5o8")
 allowed_contexts = 2
 target_type = 3

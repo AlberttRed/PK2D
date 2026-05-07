@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b1bmqbfa3gqqm"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ciaqi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_nlfej"]
 
 [resource]
 script = ExtResource("1_ciaqi")
@@ -8,3 +9,5 @@ id = 847
 internal_name = "mewnium-z--held"
 display_name = "Mewstal Z"
 description = "Cristal que confiere el Poder Z al movimiento Psíquico de Mew."
+item_category_id = 46
+category = ExtResource("1_nlfej")

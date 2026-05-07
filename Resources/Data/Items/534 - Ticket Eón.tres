@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://covntva44xily"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_0nhod"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_8ba07"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aul2j"]
 
@@ -16,5 +17,7 @@ description = "Billete de barco para viajar a Isla del Sur. Es posible que Norma
 icon = SubResource("AtlasTexture_4aik2")
 pocket = 6
 kind = 8
+item_category_id = 20
+category = ExtResource("1_0nhod")
 is_consumable = false
 stack_limit = 1

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cvcex4su74160"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_143p8"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_bro78"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_fednw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7cio"]
@@ -15,3 +16,5 @@ display_name = "Carta Puente P"
 description = "Una baya muy rara en la región de Teselia."
 icon = SubResource("AtlasTexture_t7cio")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_bro78")

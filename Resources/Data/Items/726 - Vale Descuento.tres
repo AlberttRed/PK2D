@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://o120utw86puc"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_2ft7x"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_qiyko"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xlfu1"]
 
@@ -14,3 +15,5 @@ internal_name = "discount-coupon"
 display_name = "Vale Descuento"
 description = "This special coupon allows you to buy items at a discount when you are shopping at a boutique."
 icon = SubResource("AtlasTexture_8aura")
+item_category_id = 24
+category = ExtResource("1_2ft7x")

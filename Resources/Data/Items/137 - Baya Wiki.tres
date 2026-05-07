@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://puu0c6xdur7e"]
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_0oqcs"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_32d4i"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_tiudw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_url70"]
@@ -16,3 +17,5 @@ description = "Una baya muy rara en la región de Teselia."
 icon = SubResource("AtlasTexture_url70")
 pocket = 5
 kind = 12
+item_category_id = 6
+category = ExtResource("1_32d4i")

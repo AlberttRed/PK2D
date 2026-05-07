@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://newjqpb051bd"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_aeo4o"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yltih"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_yvwk8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bbrda"]
@@ -16,4 +17,6 @@ description = "Aumenta el índice de golpe crítico en combate. Al cambiar de Po
 icon = SubResource("AtlasTexture_bbrda")
 pocket = 8
 kind = 10
+item_category_id = 1
+category = ExtResource("1_yltih")
 allowed_contexts = 4

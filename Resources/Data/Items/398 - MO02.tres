@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmgg0t1x5ccdl"]
 
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jsemu"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ka0xf"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t1660"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2kypn"]
@@ -16,5 +17,7 @@ description = "Desactiva los sistemas de seguridad de la Base Galaxia. Por lo vi
 icon = SubResource("AtlasTexture_2kypn")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_ka0xf")
 allowed_contexts = 2
 target_type = 3

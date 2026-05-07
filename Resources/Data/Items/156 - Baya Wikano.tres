@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_f1yj7"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_mma3s"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_tblrw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hxrij"]
 atlas = ExtResource("1_mma3s")
@@ -16,3 +17,5 @@ description = "Se utiliza en la producción de Pokécubos que potencian la dulzu
 icon = SubResource("AtlasTexture_hxrij")
 pocket = 5
 kind = 12
+item_category_id = 8
+category = ExtResource("1_tblrw")

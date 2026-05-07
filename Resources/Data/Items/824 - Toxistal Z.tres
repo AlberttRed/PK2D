@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d33lyw8oegs8f"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1paav"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hwycm"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 824
 internal_name = "poisonium-z--held"
 display_name = "Toxistal Z"
 description = "Cristal que confiere el Poder Z a los movimientos de tipo Veneno."
+item_category_id = 46
+category = ExtResource("1_1paav")

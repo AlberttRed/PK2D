@@ -234,6 +234,14 @@ static func show_message_with_choices(text: String, options: Array[String], clos
 		return -1
 	return await instance._show_message_with_choices(text, options, close_at_end)
 
+
+## Menú de acción de objeto de mochila (Usar/Tirar/Salir) con el mismo layout coordinado de overworld.
+static func show_bag_item_action_menu(item_name: String) -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	return await instance._show_bag_item_action_menu(item_name)
+
 ## Cierra el MessageBox del overworld si está visible
 static func close_message() -> void:
 	if instance == null:
@@ -1241,6 +1249,7 @@ func _finish_pending_bag_item_use(slot_index: int) -> void:
 	var use_result: Dictionary = bc.request_use_item(item_id)
 
 	if _party_ui != null:
+		await _party_ui.animate_item_hp_gain_for_slot(slot_index)
 		_party_ui.refresh_slots_display()
 
 	await _await_bag_use_feedback_messages(use_result)
@@ -1285,8 +1294,8 @@ func _await_bag_use_feedback_messages(use_result: Dictionary) -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"waitTime": 0.0,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"showIconAtEnd": true,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
 	if popped_item_layout:
@@ -1337,6 +1346,7 @@ func _party_bag_flow_use_item_show_feedback_on_party(item_id: int, restore_bag_i
 	await get_tree().process_frame
 
 	if _party_ui != null:
+		await _party_ui.animate_item_hp_gain_for_slot(resume_slot)
 		_party_ui.refresh_slots_display()
 
 	await _await_bag_use_feedback_messages(use_result)
@@ -1364,19 +1374,7 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 	if not from_party_flow:
 		var debug_info: Dictionary = _bag_controller.get_item_selection_debug(item_id)
 		var item_name: String = str(debug_info.get("display_name", "Objeto"))
-		var message_text := "Has seleccionado %s." % item_name
-		var options: Array[String] = ["Usar", "Tirar", "Salir"]
-		choice_box.begin_coordinated_choice(options)
-		await msg.show_custom(message_text, {
-			"waitInput": false,
-			"closeAtEnd": false,
-			"waitTime": 0.0,
-			"showIconAtEnd": false,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-			"typingMode": "instant",
-			"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
-		})
-		choice_index = await choice_box.await_coordinated_choice_result()
+		choice_index = await _show_bag_item_action_menu(item_name)
 	else:
 		choice_index = 0
 
@@ -1423,6 +1421,22 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 
 	if not did_party_bag_feedback:
 		_pop_bag_item_dialog_layout()
+
+
+func _show_bag_item_action_menu(item_name: String) -> int:
+	var message_text := "Has seleccionado %s." % item_name
+	var options: Array[String] = ["Usar", "Tirar", "Salir"]
+	choice_box.begin_coordinated_choice(options)
+	await msg.show_custom(message_text, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": "instant",
+		"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
+	})
+	return await choice_box.await_coordinated_choice_result()
 
 func _snapshot_msg_panel_layout() -> Dictionary:
 	return {

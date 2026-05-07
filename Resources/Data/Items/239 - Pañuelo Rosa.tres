@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d2wisfwra4ep0"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_fmme0"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_u4xhc"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_ucy4x"]
 
@@ -14,3 +15,5 @@ internal_name = "pink-scarf"
 display_name = "Pañuelo Rosa"
 description = "Es muy pesada y hace que el Pokémon que la lleva se mueva más lento de lo normal."
 icon = SubResource("AtlasTexture_x475h")
+item_category_id = 36
+category = ExtResource("1_fmme0")

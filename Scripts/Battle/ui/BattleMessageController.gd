@@ -5,6 +5,7 @@ var AilmentMessages = BattleMessageAilment.new()
 var AbilityMessages = BattleMessageAbility.new()
 var WeatherMessages = BattleMessageWeather.new()
 var FieldEffectMessages = BattleMessageFieldEffect.new()
+var ItemMessages = BattleMessageItem.new()
 const FAMILY := MessageFamily.Values
 
 func get_intro_messages(
@@ -134,6 +135,10 @@ func get_drain_message(target: BattlePokemon) -> Dictionary:
 		"text": "¡%s ha perdido energía!" % [target.get_battle_display_name(true)],
 		"wait_time": 1.0
 	}
+
+
+func get_used_item_message(item_data: ItemData) -> Dictionary:
+	return ItemMessages.get_used_item_message(item_data)
 
 func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 	return {

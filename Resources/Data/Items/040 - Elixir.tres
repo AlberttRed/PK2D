@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_8kxcn"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_cyxi2"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_fcsvw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8kxcn"]
 atlas = ExtResource("1_8kxcn")
@@ -16,3 +17,7 @@ description = "Restaura 10 PP de todos los movimientos aprendidos por el Pokémo
 icon = SubResource("AtlasTexture_8kxcn")
 pocket = 2
 kind = 2
+item_category_id = 28
+category = ExtResource("1_fcsvw")
+allowed_contexts = 3
+target_type = 1

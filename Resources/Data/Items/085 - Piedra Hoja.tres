@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_0jr7t"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_6vp1q"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_qu71s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bgnfk"]
 atlas = ExtResource("1_0jr7t")
@@ -15,3 +16,5 @@ display_name = "Piedra Hoja"
 description = "Curiosa piedra que hace evolucionar a determinadas especies de Pokémon. Tiene grabada una hoja."
 icon = SubResource("AtlasTexture_bgnfk")
 kind = 9
+item_category_id = 10
+category = ExtResource("1_qu71s")

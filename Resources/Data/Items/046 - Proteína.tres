@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_3i03q"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_ayrpy"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_pu56r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ayrpy"]
 atlas = ExtResource("1_ayrpy")
@@ -15,3 +16,5 @@ display_name = "Proteína"
 description = "Nutritiva bebida que potencia el Ataque de base de un Pokémon."
 icon = SubResource("AtlasTexture_ayrpy")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_pu56r")

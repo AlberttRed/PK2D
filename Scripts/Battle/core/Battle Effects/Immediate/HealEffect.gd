@@ -2,24 +2,24 @@ extends ImmediateBattleEffect
 
 class_name HealEffect
 
-var user: BattlePokemon
 var target: BattlePokemon
-var move: BattleMove
 var amount: int
+var show_heal_animation: bool
 
-func _init(_user: BattlePokemon, _target: BattlePokemon, _move: BattleMove, _amount: int):
-	user = _user
+
+func _init(_target: BattlePokemon, _amount: int, _show_heal_animation: bool = true) -> void:
 	target = _target
-	move = _move
-	amount = max(_amount, 1) # La curación siempre debe ser como mínimo 1
+	amount = maxi(_amount, 1)
+	show_heal_animation = _show_heal_animation
 
-func apply():
+
+func apply() -> void:
 	if amount > 0:
 		target.take_heal(self)
 
-func visualize(_ui: BattleUI):
-	if amount > 0:
-		# La animacion de heal solo se muestra en objetos (pociones etc). Aqui solo se aplica la animacion del move.
-		#await target.battle_spot.play_heal_animation()
+
+func visualize(_ui: BattleUI) -> void:
+	if amount <= 0 or target == null or target.battle_spot == null:
+		return
+	if show_heal_animation:
 		await target.battle_spot.apply_heal(amount)
-		# El mensaje se maneja en el handler específico

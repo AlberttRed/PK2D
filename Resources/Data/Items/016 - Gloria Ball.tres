@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bs1uiswk7ujnj"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_3y0vd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_fkgyu"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_t41xi"]
 
@@ -16,5 +17,7 @@ description = "Es una Poké Ball bastante singular que se creó para conmemorar 
 icon = SubResource("AtlasTexture_t41xi")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_3y0vd")
 allowed_contexts = 4
 target_type = 1

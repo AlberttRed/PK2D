@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dotrgat2hd2mx"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_0hmx5"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_je33j"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_qqb73"]
 
@@ -15,3 +16,5 @@ display_name = "Zahorí"
 description = "Bonguri de color blanco que no desprende aroma alguno."
 icon = SubResource("AtlasTexture_jekku")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_0hmx5")

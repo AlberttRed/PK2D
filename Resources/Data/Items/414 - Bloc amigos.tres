@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_spuf7"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_vr6vy"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wy0qp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5k2vo"]
 atlas = ExtResource("1_spuf7")
@@ -15,3 +16,5 @@ display_name = "Bloc amigos"
 description = "Es el billete válido para embarcar en el Ferry S.S. Aqua. Tiene dibujado un barco."
 icon = SubResource("AtlasTexture_5k2vo")
 pocket = 6
+item_category_id = 21
+category = ExtResource("1_wy0qp")

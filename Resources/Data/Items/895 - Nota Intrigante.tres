@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqq2s4of6lbwb"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_bexl0"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_oeues"]
 
 [resource]
@@ -10,5 +11,7 @@ display_name = "Nota Intrigante"
 description = "Misteriosa nota que reza: “Te espero en una habitación del motel de la Ruta 8 en Akala”."
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_bexl0")
 is_consumable = false
 stack_limit = 1

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3iaya3yxnyb6"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bo7r7"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_iy3fs"]
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_wpqct"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v3x2q"]
@@ -16,5 +17,7 @@ description = "Un ataque de gran potencia que resulta más fuerte cuanto menos l
 icon = SubResource("AtlasTexture_v3x2q")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_iy3fs")
 allowed_contexts = 2
 target_type = 3

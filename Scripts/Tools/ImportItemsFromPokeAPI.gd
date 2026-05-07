@@ -20,6 +20,7 @@ var items_without_icon: int = 0
 var items_created: int = 0
 var items_updated: int = 0
 var errors: Array[String] = []
+var _item_category_name_to_id: Dictionary = {}
 
 func _run() -> void:
 	print("========================================")
@@ -36,6 +37,7 @@ func _run() -> void:
 		return
 
 	print("[ImportItemsFromPokeAPI] Encontrados %d items en PokeAPI" % item_list.size())
+	_load_item_category_index()
 
 	# Limitar items para pruebas si está configurado
 	var items_to_process := item_list
@@ -139,6 +141,25 @@ func _fetch_item_list() -> Array[String]:
 func _fetch_item_data(item_id: int) -> Dictionary:
 	var url := POKEAPI_BASE_URL + "/item/" + str(item_id)
 	return _http_request(url)
+
+
+func _load_item_category_index() -> void:
+	_item_category_name_to_id.clear()
+	var url := POKEAPI_BASE_URL + "/item-category?limit=200"
+	var result := _http_request(url)
+	if result.is_empty():
+		push_warning("[ImportItemsFromPokeAPI] No se pudo cargar índice de item categories.")
+		return
+
+	for entry in result.get("results", []) as Array:
+		var d := entry as Dictionary
+		var cname := d.get("name", "") as String
+		var curl := d.get("url", "") as String
+		if cname.is_empty() or curl.is_empty():
+			continue
+		var cid := _extract_id_from_url(curl)
+		if cid > 0:
+			_item_category_name_to_id[cname] = cid
 
 func _http_request(url: String) -> Dictionary:
 	var http := HTTPClient.new()
@@ -321,6 +342,13 @@ func _create_or_update_item_data(item_id: int, item_data: Dictionary) -> Resourc
 	var kind := _map_item_to_kind(item_data, internal_name)
 	if kind >= 0:
 		item_resource.set("kind", kind)
+
+	# Guardar categoría original de PokeAPI para trazabilidad/mapeo.
+	var item_category_id := _extract_item_category_id(item_data)
+	item_resource.set("item_category_id", item_category_id)
+
+	# Resolver categoría de batalla (placeholder si aún no hay implementación funcional).
+	item_resource.set("category", _map_item_to_battle_category(item_data, internal_name, kind, item_category_id))
 
 	# Mapear contextos permitidos según el tipo de item
 	var allowed_contexts := _map_item_to_allowed_contexts(item_data, internal_name, kind)
@@ -688,6 +716,53 @@ func _map_item_consumable_info(item_data: Dictionary, internal_name: String, kin
 
 	# Por defecto: Consumible, stack 99
 	return result
+
+
+func _extract_item_category_id(item_data: Dictionary) -> int:
+	var category := item_data.get("category", {}) as Dictionary
+	var category_name := category.get("name", "") as String
+	var category_url := category.get("url", "") as String
+	var from_url := _extract_id_from_url(category_url) if not category_url.is_empty() else 0
+	if from_url > 0:
+		return from_url
+	if not category_name.is_empty() and _item_category_name_to_id.has(category_name):
+		return int(_item_category_name_to_id[category_name])
+	return 0
+
+
+func _map_item_to_battle_category(item_data: Dictionary, internal_name: String, kind: int, item_category_id: int) -> Resource:
+	var category := item_data.get("category", {}) as Dictionary
+	var category_name := category.get("name", "") as String
+	var name_lower := internal_name.to_lower()
+
+	if kind == ItemEnums.Kind.POKEBALL or category_name in ["standard-balls", "special-balls", "apricorn-balls"]:
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattlePokeballItemCategory.gd")
+	if kind == ItemEnums.Kind.HEAL_HP or category_name == "healing":
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleHealingItemCategory.gd")
+	if kind == ItemEnums.Kind.CURE_STATUS or category_name == "status-cures":
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleStatusHealItemCategory.gd")
+	if kind == ItemEnums.Kind.REVIVE or category_name == "revival" or name_lower.contains("revive"):
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleReviveItemCategory.gd")
+
+	# Soporte mínimo por IDs de categoría más comunes de PokeAPI.
+	if item_category_id in [27, 28]:
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleHealingItemCategory.gd")
+	if item_category_id == 29:
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleStatusHealItemCategory.gd")
+	if item_category_id == 30:
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleReviveItemCategory.gd")
+	if item_category_id in [34, 35]:
+		return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattlePokeballItemCategory.gd")
+
+	return _new_battle_item_category("res://Scripts/Battle/core/Categories/BattleUnsupportedItemCategory.gd")
+
+
+func _new_battle_item_category(script_path: String) -> Resource:
+	var script := load(script_path)
+	if script == null:
+		push_warning("[ImportItemsFromPokeAPI] No se pudo cargar categoría de batalla: %s" % script_path)
+		return null
+	return script.new()
 
 func _print_summary() -> void:
 	print("\n========================================")

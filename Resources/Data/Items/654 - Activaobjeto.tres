@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_8aqic"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_77pka"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_x28sm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hvi2t"]
 atlas = ExtResource("1_8aqic")
@@ -14,3 +15,5 @@ internal_name = "item-urge"
 display_name = "Activaobjeto"
 description = "Misterioso amuleto brillante que aumenta la probabilidad de encontrar Pokémon variocolores."
 icon = SubResource("AtlasTexture_hvi2t")
+item_category_id = 43
+category = ExtResource("1_x28sm")

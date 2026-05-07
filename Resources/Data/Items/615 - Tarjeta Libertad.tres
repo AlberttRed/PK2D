@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cg2isknyiv88k"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_4mkqm"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_252oc"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_o1w6x"]
 
@@ -16,5 +17,7 @@ description = "Aumenta ligeramente la Velocidad en combate. Al cambiar de Pokém
 icon = SubResource("AtlasTexture_s5ne6")
 pocket = 6
 kind = 8
+item_category_id = 20
+category = ExtResource("1_4mkqm")
 is_consumable = false
 stack_limit = 1

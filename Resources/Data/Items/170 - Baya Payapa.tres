@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_apxdb"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_pio86"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_s7uu3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_11bu4"]
 atlas = ExtResource("1_apxdb")
@@ -16,3 +17,5 @@ description = "El Pokémon que la lleva puede actuar en primer lugar una vez cua
 icon = SubResource("AtlasTexture_11bu4")
 pocket = 5
 kind = 12
+item_category_id = 7
+category = ExtResource("1_s7uu3")

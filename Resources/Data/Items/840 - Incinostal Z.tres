@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cetc1uh6py7h3"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_gwq8h"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_xh5qm"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 840
 internal_name = "incinium-z--held"
 display_name = "Incinostal Z"
 description = "Cristal que confiere el Poder Z al movimiento Lariat Oscuro de Incineroar."
+item_category_id = 46
+category = ExtResource("1_gwq8h")

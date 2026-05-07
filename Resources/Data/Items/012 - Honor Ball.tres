@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_1br2e"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_maoht"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_rv5e2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1br2e"]
 atlas = ExtResource("1_1br2e")
@@ -16,5 +17,7 @@ description = "Es una Poké Ball algo singular que se creó para conmemorar alg�
 icon = SubResource("AtlasTexture_1br2e")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_rv5e2")
 allowed_contexts = 4
 target_type = 1

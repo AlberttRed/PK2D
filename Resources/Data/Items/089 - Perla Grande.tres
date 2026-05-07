@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0acob"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_4hyr0"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_w78nu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tgxy5"]
 atlas = ExtResource("1_4hyr0")
@@ -14,3 +15,5 @@ internal_name = "big-pearl"
 display_name = "Perla Grande"
 description = "Brillante perla plateada de gran tamaño que puede venderse a buen precio en las tiendas."
 icon = SubResource("AtlasTexture_tgxy5")
+item_category_id = 24
+category = ExtResource("1_w78nu")

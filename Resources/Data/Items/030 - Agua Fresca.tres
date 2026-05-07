@@ -2,6 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_fx6mj"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_q7gtc"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_yds4p"]
+[ext_resource type="Script" uid="uid://drblw62276nfq" path="res://Scripts/Resources/Effects/HealingItemEffect.gd" id="2_mjpvq"]
+
+[sub_resource type="Resource" id="Resource_fyp0c"]
+script = ExtResource("2_mjpvq")
+heal_amount = 50
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q7gtc"]
 atlas = ExtResource("1_q7gtc")
@@ -16,5 +22,8 @@ description = "Agua de alto contenido mineral que restaura 50 PS de un Pokémon.
 icon = SubResource("AtlasTexture_q7gtc")
 pocket = 2
 kind = 3
-allowed_contexts = 3
+item_category_id = 27
+category = ExtResource("1_yds4p")
+allowed_contexts = 7
 target_type = 1
+effect = SubResource("Resource_fyp0c")

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cvqshhw3yevqh"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bvbo4"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_e7agk"]
 
 [resource]
 script = ExtResource("1_bvbo4")
@@ -10,5 +11,7 @@ display_name = "Piedra Brillante"
 description = "Piedra con un misterioso brillo entregada por un Pokémon considerado como uno de los espíritus guardianes de Alola."
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_e7agk")
 is_consumable = false
 stack_limit = 1

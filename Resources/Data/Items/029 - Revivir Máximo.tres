@@ -1,7 +1,13 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bfp248hrpgaoh"]
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_lqbnl"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleReviveItemCategory.tres" id="1_suqpe"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wkgcp"]
+[ext_resource type="Script" uid="uid://cjrveitemfx01pk" path="res://Scripts/Resources/Effects/ReviveItemEffect.gd" id="2_revive"]
+
+[sub_resource type="Resource" id="Resource_revfx"]
+script = ExtResource("2_revive")
+revive_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lqbnl"]
 atlas = ExtResource("1_lqbnl")
@@ -15,3 +21,9 @@ display_name = "Revivir Máximo"
 description = "Medicina que revive a un Pokémon debilitado y le devuelve todos sus PS."
 icon = SubResource("AtlasTexture_lqbnl")
 pocket = 2
+kind = 4
+item_category_id = 29
+category = ExtResource("1_suqpe")
+allowed_contexts = 7
+target_type = 1
+effect = SubResource("Resource_revfx")

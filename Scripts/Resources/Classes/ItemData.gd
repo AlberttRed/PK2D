@@ -35,6 +35,58 @@ class_name ItemData
 ## Tipo lógico del item
 @export_enum("Generic", "Heal HP", "Heal PP", "Cure Status", "Revive", "Poké Ball", "TM/HM", "Held", "Key", "Evolution", "Stat Boost", "Repel", "Berry") var kind: int = ItemEnums.Kind.GENERIC
 
+## ID de categoría de PokeAPI (`item-category/{id}`) para trazabilidad y mapeos automáticos.
+@export_enum(
+	"Unknown:0",
+	"Stat Boosts:1",
+	"Effort Drop:2",
+	"Medicine:3",
+	"Other:4",
+	"In a Pinch:5",
+	"Picky Healing:6",
+	"Type Protection:7",
+	"Baking Only:8",
+	"Collectibles:9",
+	"Evolution:10",
+	"Spelunking:11",
+	"Held Items:12",
+	"Choice:13",
+	"Effort Training:14",
+	"Bad Held Items:15",
+	"Training:16",
+	"Plates:17",
+	"Species Specific:18",
+	"Type Enhancement:19",
+	"Event Items:20",
+	"Gameplay:21",
+	"Plot Advancement:22",
+	"Unused:23",
+	"Loot:24",
+	"All Mail:25",
+	"Vitamins:26",
+	"Healing:27",
+	"PP Recovery:28",
+	"Status Cures:29",
+	"Revival:30",
+	"Mulch:31",
+	"Special Balls:32",
+	"Standard Balls:33",
+	"Dex Completion:34",
+	"Scarves:35",
+	"All Machines:36",
+	"Flutes:37",
+	"Apricorn Balls:38",
+	"Apricorn Box:39",
+	"Data Cards:40",
+	"Jewels:41",
+	"Miracle Shooter:42",
+	"Mega Stones:43",
+	"Memories:44"
+) var item_category_id: int = 0
+
+## Categoría de batalla que resuelve qué `BattleItemHandler` usar para este ítem.
+@export var category: Resource = null
+
 # ============================================================================
 # AC-04: Reglas de uso por contexto
 # ============================================================================

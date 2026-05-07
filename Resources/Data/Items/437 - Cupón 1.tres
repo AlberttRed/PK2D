@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://vcr2f5o3ycyj"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_b7ha4"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_r64jr"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_u0v62"]
 
@@ -16,5 +17,7 @@ description = "El muñeco Mime Jr. que perdió la Copiona."
 icon = SubResource("AtlasTexture_xw6n1")
 pocket = 6
 kind = 8
+item_category_id = 22
+category = ExtResource("1_b7ha4")
 is_consumable = false
 stack_limit = 1

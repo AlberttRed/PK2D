@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2hva6"]
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_jhvea"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_rfoey"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dn5rf"]
 atlas = ExtResource("1_jhvea")
@@ -15,3 +16,5 @@ display_name = "Carta Hierba"
 description = "Stationery featuring a print of a refreshingly green field. Let a Pokémon hold it for delivery."
 icon = SubResource("AtlasTexture_dn5rf")
 pocket = 4
+item_category_id = 25
+category = ExtResource("1_rfoey")

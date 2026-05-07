@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_dh0dj"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jp0g4"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wu65l"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p3t75"]
 atlas = ExtResource("1_dh0dj")
@@ -16,5 +17,7 @@ description = "El usuario ataca lanzando una piedra o un proyectil. Puede estrel
 icon = SubResource("AtlasTexture_p3t75")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_wu65l")
 allowed_contexts = 2
 target_type = 3

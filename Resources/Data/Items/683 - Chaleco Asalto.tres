@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0l1yu"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_1d5f0"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_pa644"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cotoi"]
 atlas = ExtResource("1_1d5f0")
@@ -15,3 +16,5 @@ display_name = "Chaleco Asalto"
 description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Venusaur en combate."
 icon = SubResource("AtlasTexture_cotoi")
 kind = 7
+item_category_id = 12
+category = ExtResource("1_pa644")

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://blhrr5plnsrbx"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_78dfi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_01508"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_a3cy2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_84rh7"]
@@ -14,3 +15,5 @@ internal_name = "white-flute"
 display_name = "Flauta Blanca"
 description = "Una flauta de juguete de cristal blanco."
 icon = SubResource("AtlasTexture_84rh7")
+item_category_id = 11
+category = ExtResource("1_01508")

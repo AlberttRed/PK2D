@@ -1,6 +1,12 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://30uw6y1k7i3x"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleStatusHealItemCategory.tres" id="1_jut5t"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_t0wm5"]
+[ext_resource type="Script" uid="uid://dhbibljnma0cl" path="res://Scripts/Resources/Effects/StatusHealItemEffect.gd" id="2_8e2yh"]
+
+[sub_resource type="Resource" id="Resource_w8vtu"]
+script = ExtResource("2_8e2yh")
+cure_mode = 0
 
 [resource]
 script = ExtResource("1_t0wm5")
@@ -10,5 +16,8 @@ display_name = "Malasada Maxi"
 description = "Fritura típica de Alola que cura todos los problemas de estado de un Pokémon."
 pocket = 2
 kind = 3
-allowed_contexts = 3
+item_category_id = 30
+category = ExtResource("1_jut5t")
+allowed_contexts = 7
 target_type = 1
+effect = SubResource("Resource_w8vtu")

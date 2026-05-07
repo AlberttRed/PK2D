@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_22nfp"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o8l1l"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_r5uh7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_22nfp"]
 atlas = ExtResource("1_22nfp")
@@ -16,5 +17,7 @@ description = "Es algo distinta a las demás. Funciona especialmente bien con lo
 icon = SubResource("AtlasTexture_22nfp")
 pocket = 3
 kind = 5
+item_category_id = 33
+category = ExtResource("1_r5uh7")
 allowed_contexts = 4
 target_type = 1

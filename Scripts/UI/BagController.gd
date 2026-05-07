@@ -46,6 +46,46 @@ func reset_list_context_to_overworld() -> void:
 	list_use_context = ItemEnums.UseContext.OVERWORLD
 	party_target_slot = -1
 
+
+## Lista de mochila en combate: filtra por relevancia; no aplica efectos.
+func configure_battle_item_flow() -> void:
+	list_use_context = ItemEnums.UseContext.BATTLE
+	party_target_slot = -1
+
+
+func _is_item_relevant_in_battle_list(item_data: ItemData) -> bool:
+	if item_data == null:
+		return false
+	if item_data.can_use_in_context(ItemEnums.UseContext.BATTLE):
+		return true
+	# Datos antiguos sin flag BATTLE: detectar por kind/categoría/efecto.
+	return _is_legacy_battle_usable_item(item_data)
+
+
+func _is_item_usable_flag_for_battle_list(item_data: ItemData) -> bool:
+	if item_data.can_use_in_context(ItemEnums.UseContext.BATTLE):
+		return true
+	return _is_legacy_battle_usable_item(item_data)
+
+
+func _is_legacy_battle_usable_item(item_data: ItemData) -> bool:
+	if item_data == null:
+		return false
+	if item_data.kind in [
+		ItemEnums.Kind.HEAL_HP,
+		ItemEnums.Kind.CURE_STATUS,
+		ItemEnums.Kind.REVIVE,
+		ItemEnums.Kind.STAT_BOOST,
+		ItemEnums.Kind.POKEBALL,
+	]:
+		return true
+	# Fallback para recursos antiguos sin `kind` correcto (p. ej. Revivir importado).
+	if item_data.item_category_id == ItemEnums.PokeApiItemCategory.REVIVAL:
+		return true
+	if item_data.effect is ReviveItemEffect:
+		return true
+	return false
+
 func get_pockets() -> Array[int]:
 	return _POCKET_ORDER.duplicate()
 
@@ -75,9 +115,15 @@ func get_items_in_pocket(pocket: int) -> Array:
 		if item_data == null:
 			continue
 
+		if list_use_context == ItemEnums.UseContext.BATTLE:
+			if not _is_item_relevant_in_battle_list(item_data):
+				continue
+
 		var usable_here := item_data.can_use_in_context(list_use_context)
+		if list_use_context == ItemEnums.UseContext.BATTLE:
+			usable_here = _is_item_usable_flag_for_battle_list(item_data)
 		# Hasta que los datos marquen PARTY_MENU en allowed_contexts, admitir también overworld en este flujo.
-		if list_use_context == ItemEnums.UseContext.PARTY_MENU and not usable_here:
+		elif list_use_context == ItemEnums.UseContext.PARTY_MENU and not usable_here:
 			usable_here = item_data.can_use_in_context(ItemEnums.UseContext.OVERWORLD)
 		item_entries.append(BAG_LIST_ENTRY_SCRIPT.create_item_entry(
 			item_id,

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d4dhravkjyiqs"]
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_4yfw6"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_c2bqw"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jgh55"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jtxxh"]
@@ -16,3 +17,5 @@ description = "Si la lleva un Pokémon, debilita un ataque supereficaz de tipo A
 icon = SubResource("AtlasTexture_jtxxh")
 pocket = 5
 kind = 12
+item_category_id = 8
+category = ExtResource("1_c2bqw")

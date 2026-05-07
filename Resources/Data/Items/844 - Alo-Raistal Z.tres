@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bb2cmg5mwxv77"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_h3cjr"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_qtl74"]
 
 [resource]
 script = ExtResource("1_h3cjr")
@@ -8,3 +9,5 @@ id = 844
 internal_name = "aloraichium-z--held"
 display_name = "Alo-Raistal Z"
 description = "Cristal que confiere el Poder Z al movimiento Rayo de los Raichu de Alola."
+item_category_id = 46
+category = ExtResource("1_qtl74")

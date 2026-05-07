@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bhdipswirlnar" path="res://Sprites/Iconos/Items/items_atlas_001.png" id="1_cawrn"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_iipyl"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_yocjl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hexwm"]
 atlas = ExtResource("1_cawrn")
@@ -15,3 +16,5 @@ display_name = "Piedra Día"
 description = "Una piedra peculiar que hace evolucionar a algunos Pokémon. Tiene un brillo espectacular."
 icon = SubResource("AtlasTexture_hexwm")
 kind = 9
+item_category_id = 10
+category = ExtResource("1_yocjl")

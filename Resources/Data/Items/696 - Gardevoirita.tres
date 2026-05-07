@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2rd6l"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_md67b"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_mlras"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o3nxx"]
 atlas = ExtResource("1_md67b")
@@ -14,3 +15,5 @@ internal_name = "gardevoirite"
 display_name = "Gardevoirita"
 description = "Una de las misteriosas Megapiedras. Permite megaevolucionar a Gardevoir en combate."
 icon = SubResource("AtlasTexture_o3nxx")
+item_category_id = 44
+category = ExtResource("1_mlras")

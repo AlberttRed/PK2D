@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://qronanihktki"]
 
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_0f6jw"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_513xe"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jd5i2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4fgpv"]
@@ -15,3 +16,5 @@ display_name = "Piedra Fuego"
 description = "Curiosa piedra que hace evolucionar a determinadas especies de Pokémon. Es amarilla con una marca naranja."
 icon = SubResource("AtlasTexture_4fgpv")
 kind = 9
+item_category_id = 10
+category = ExtResource("1_513xe")

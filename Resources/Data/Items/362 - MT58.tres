@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_jbxe0"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_o4vjn"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_wjmbk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h6n1f"]
 atlas = ExtResource("1_jbxe0")
@@ -16,5 +17,7 @@ description = "Danza frenética que eleva el espíritu combativo. Aumenta mucho 
 icon = SubResource("AtlasTexture_h6n1f")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_wjmbk")
 allowed_contexts = 2
 target_type = 3

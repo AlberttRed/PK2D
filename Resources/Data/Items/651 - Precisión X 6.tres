@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dpfbev57xdn1u"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_5rc20"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_82ot8"]
 [ext_resource type="Texture2D" uid="uid://e78k16al2tv" path="res://Sprites/Iconos/Items/items_atlas_006.png" id="1_okbdd"]
 
@@ -14,3 +15,5 @@ internal_name = "x-accuracy-6"
 display_name = "Precisión X 6"
 description = "Punta que permite separar a Kyurem del Pokémon con el que se ha fusionado."
 icon = SubResource("AtlasTexture_e6bhg")
+item_category_id = 43
+category = ExtResource("1_5rc20")

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://df3x8j5tmhk1p"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_dc33p"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_dnr2e"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 911
 internal_name = "water-memory"
 display_name = "Disco Agua"
 description = "Disco de datos que contiene información relativa al tipo Agua. Permite cambiar de tipo a cierto Pokémon."
+item_category_id = 45
+category = ExtResource("1_dc33p")

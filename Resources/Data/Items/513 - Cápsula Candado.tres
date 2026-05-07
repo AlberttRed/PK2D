@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cawtrq4lxejd7"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_vd1mw"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_wbfj8"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_x1ucu"]
 
@@ -14,3 +15,5 @@ internal_name = "lock-capsule"
 display_name = "Cápsula Candado"
 description = "Joya de un solo uso que potencia los movimientos de tipo Hielo. Debe llevarla un Pokémon."
 icon = SubResource("AtlasTexture_muxp3")
+item_category_id = 23
+category = ExtResource("1_vd1mw")

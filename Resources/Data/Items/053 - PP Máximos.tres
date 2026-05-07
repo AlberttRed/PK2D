@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://tkjaijcb2qbl"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_kk4gi"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_p2s3t"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_tyw6w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t3yvx"]
@@ -15,3 +16,5 @@ display_name = "PP Máximos"
 description = "Aumenta hasta el límite los PP máximos del movimiento elegido de un Pokémon."
 icon = SubResource("AtlasTexture_t3yvx")
 pocket = 2
+item_category_id = 26
+category = ExtResource("1_p2s3t")

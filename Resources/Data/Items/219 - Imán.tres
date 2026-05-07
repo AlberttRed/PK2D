@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c0cgk164ovbmp"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_73oe1"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_puvcy"]
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_r1r1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1q68b"]
@@ -14,3 +15,5 @@ internal_name = "magnet"
 display_name = "Imán"
 description = "Es un puerro muy largo que debe llevar Farfetch’d. Aumenta mucho la probabilidad de que logre un golpe crítico."
 icon = SubResource("AtlasTexture_1q68b")
+item_category_id = 19
+category = ExtResource("1_puvcy")

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2481y"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_h1eco"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_ivhut"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_av3d4"]
 atlas = ExtResource("1_h1eco")
@@ -16,4 +17,6 @@ description = "Evita que bajen las características del equipo Pokémon durante 
 icon = SubResource("AtlasTexture_av3d4")
 pocket = 8
 kind = 10
+item_category_id = 1
+category = ExtResource("1_ivhut")
 allowed_contexts = 4

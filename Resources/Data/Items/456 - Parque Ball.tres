@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_hq3p7"]
 [ext_resource type="Texture2D" uid="uid://ds44eotvnp4jw" path="res://Sprites/Iconos/Items/items_atlas_004.png" id="1_r62it"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_ynrlb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3563a"]
 atlas = ExtResource("1_r62it")
@@ -16,5 +17,7 @@ description = "Poké Ball que se utiliza dentro del Parque Compi."
 icon = SubResource("AtlasTexture_3563a")
 pocket = 3
 kind = 5
+item_category_id = 34
+category = ExtResource("1_ynrlb")
 allowed_contexts = 4
 target_type = 1

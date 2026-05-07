@@ -424,6 +424,8 @@ func _confirm_selection() -> void:
 	if selected_item.is_exit:
 		_request_back()
 		return
+	if not selected_item.is_usable_overworld:
+		return
 	use_requested.emit(int(selected_item.item_id))
 
 func _request_back() -> void:

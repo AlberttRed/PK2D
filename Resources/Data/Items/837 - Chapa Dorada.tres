@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bauhocy4qj371"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_1yuxd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_jq4v4"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 837
 internal_name = "gold-bottle-cap"
 display_name = "Chapa Dorada"
 description = "Una bonita chapa de color dorado, menos común que su equivalente plateada. Hay gente que las aprecia mucho."
+item_category_id = 24
+category = ExtResource("1_1yuxd")

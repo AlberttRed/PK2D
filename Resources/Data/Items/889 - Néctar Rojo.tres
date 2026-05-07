@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dl6qewd0pvdnj"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_4kiqd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_5ixu1"]
 
 [resource]
@@ -8,3 +9,5 @@ id = 889
 internal_name = "red-nectar"
 display_name = "Néctar Rojo"
 description = "Néctar de ciertas flores de los Jardines de Ula-Ula, capaz de hacer cambiar de forma a una determinada especie de Pokémon."
+item_category_id = 18
+category = ExtResource("1_4kiqd")

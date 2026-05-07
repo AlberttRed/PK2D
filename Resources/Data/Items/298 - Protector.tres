@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1ca7n3khd7sx"]
 
 [ext_resource type="Texture2D" uid="uid://bkvoh2w6htnfl" path="res://Sprites/Iconos/Items/items_atlas_002.png" id="1_6ilo2"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_n4dhd"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_p05nn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_or65m"]
@@ -15,3 +16,5 @@ display_name = "Protector"
 description = "Quien lo usa intensifica el efecto del sol durante cinco turnos, lo que potencia los movimientos de tipo Fuego."
 icon = SubResource("AtlasTexture_or65m")
 kind = 9
+item_category_id = 10
+category = ExtResource("1_n4dhd")

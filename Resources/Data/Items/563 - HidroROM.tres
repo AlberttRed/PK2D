@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cnesywwqbp01p"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_2u5d8"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_255va"]
 [ext_resource type="Texture2D" uid="uid://chawfejh6snqr" path="res://Sprites/Iconos/Items/items_atlas_005.png" id="1_i4aiw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_76ffg"]
@@ -14,3 +15,5 @@ internal_name = "douse-drive"
 display_name = "HidroROM"
 description = "Cartucho que convierte Tecno Shock de Genesect en un movimiento de tipo Hielo."
 icon = SubResource("AtlasTexture_76ffg")
+item_category_id = 18
+category = ExtResource("1_255va")

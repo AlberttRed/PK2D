@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_0ajwo"]
 [ext_resource type="Texture2D" uid="uid://pt5wtvut23o3" path="res://Sprites/Iconos/Items/items_atlas_007.png" id="1_a3y1u"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_g0own"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w5406"]
 atlas = ExtResource("1_a3y1u")
@@ -14,3 +15,5 @@ internal_name = "icium-z--held"
 display_name = "Criostal Z"
 description = "Cristal que confiere el Poder Z a los movimientos de tipo Hielo."
 icon = SubResource("AtlasTexture_w5406")
+item_category_id = 46
+category = ExtResource("1_g0own")

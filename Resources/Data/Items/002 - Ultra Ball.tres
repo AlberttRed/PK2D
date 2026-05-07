@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxt0d1sysyjv7"]
 
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_bqocj"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattlePokeballItemCategory.tres" id="1_fqvnt"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_nc6dh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nc6dh"]
@@ -16,5 +17,7 @@ description = "Poké Ball de rendimiento superior. Tiene un índice de éxito ma
 icon = SubResource("AtlasTexture_nc6dh")
 pocket = 3
 kind = 5
+item_category_id = 34
+category = ExtResource("1_fqvnt")
 allowed_contexts = 4
 target_type = 1

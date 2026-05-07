@@ -1,7 +1,13 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c1xudtbas2a4f"]
 
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleHealingItemCategory.tres" id="1_lh70g"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_r5pm5"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_x1asg"]
+[ext_resource type="Script" uid="uid://drblw62276nfq" path="res://Scripts/Resources/Effects/HealingItemEffect.gd" id="2_x6gsd"]
+
+[sub_resource type="Resource" id="Resource_wc5mb"]
+script = ExtResource("2_x6gsd")
+heal_amount = 9999
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r5pm5"]
 atlas = ExtResource("1_r5pm5")
@@ -16,5 +22,8 @@ description = "Medicina en espray que cura heridas y restaura todos los PS de un
 icon = SubResource("AtlasTexture_r5pm5")
 pocket = 2
 kind = 1
-allowed_contexts = 3
+item_category_id = 27
+category = ExtResource("1_lh70g")
+allowed_contexts = 7
 target_type = 1
+effect = SubResource("Resource_wc5mb")

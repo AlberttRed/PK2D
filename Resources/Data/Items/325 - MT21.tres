@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cpar0klfimpii" path="res://Sprites/Iconos/Items/items_atlas_003.png" id="1_4crc2"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_i3e4g"]
+[ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleUnsupportedItemCategory.tres" id="1_pppih"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d5hnr"]
 atlas = ExtResource("1_4crc2")
@@ -16,5 +17,7 @@ description = "Ataca con una intensa ráfaga de fuego abrasador que puede causar
 icon = SubResource("AtlasTexture_d5hnr")
 pocket = 4
 kind = 6
+item_category_id = 37
+category = ExtResource("1_pppih")
 allowed_contexts = 2
 target_type = 3
