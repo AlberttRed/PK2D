@@ -1294,8 +1294,8 @@ func _await_bag_use_feedback_messages(use_result: Dictionary) -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"waitTime": 0.0,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"showIconAtEnd": true,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
 	if popped_item_layout:

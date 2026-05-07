@@ -146,7 +146,11 @@ func animate_item_hp_gain_for_slot(slot: int) -> void:
 	if max_hp > 0 and panel.health_bar.max_value != max_hp:
 		panel.health_bar.set_values(old_hp, max_hp)
 	if new_hp > old_hp:
+		# Ítems en Party: animación de PS más ágil (x2).
+		var original_duration: float = panel.health_bar.animate_duration
+		panel.health_bar.animate_duration = maxf(0.05, original_duration * 0.5)
 		await panel.health_bar.animate_to(new_hp)
+		panel.health_bar.animate_duration = original_duration
 	panel.loadPokemon(view.get("pokemon", null) as Pokemon)
 
 

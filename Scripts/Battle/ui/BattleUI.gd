@@ -364,8 +364,8 @@ func show_party_item_result_and_close(message_text: String, target_party_slot: i
 		"waitInput": true,
 		"closeAtEnd": true,
 		"waitTime": 0.0,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"showIconAtEnd": true,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
 	if _battle_party_ui != null and _battle_party_ui.visible:
@@ -399,8 +399,8 @@ func _show_no_effect_message_while_party_open() -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"waitTime": 0.0,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"showIconAtEnd": true,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
 	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("set_input_enabled"):
