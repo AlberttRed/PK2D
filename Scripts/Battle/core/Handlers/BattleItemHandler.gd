@@ -64,13 +64,19 @@ func show_overworld_style_result_message(result: ItemUseResult) -> void:
 	})
 
 
-func show_party_result_message_and_close(ui: BattleUI, result: ItemUseResult) -> void:
+func show_party_result_message_and_close(ui: BattleUI, result: ItemUseResult, target_party_slot: int = -1) -> void:
 	if result == null or result.message.is_empty():
 		if ui != null and ui.has_method("show_party_item_result_and_close"):
-			await ui.show_party_item_result_and_close("")
+			if target_party_slot >= 0:
+				await ui.callv("show_party_item_result_and_close", ["", target_party_slot])
+			else:
+				await ui.callv("show_party_item_result_and_close", [""])
 		return
 	if ui != null and ui.has_method("show_party_item_result_and_close"):
-		await ui.show_party_item_result_and_close(result.message)
+		if target_party_slot >= 0:
+			await ui.callv("show_party_item_result_and_close", [result.message, target_party_slot])
+		else:
+			await ui.callv("show_party_item_result_and_close", [result.message])
 		return
 	await show_overworld_style_result_message(result)
 

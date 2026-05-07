@@ -32,7 +32,7 @@ static func get_status_heal_success_text(pokemon: Pokemon, cure_mode: int, cured
 			if cured_prev == CONST.STATUS.PARALYSIS:
 				return "%s se ha curado de la parálisis." % pokemon.get_display_name()
 			if cured_prev == CONST.STATUS.SLEEP:
-				return "¡%s se despertó!" % pokemon.get_display_name()
+				return "%s se despertó." % pokemon.get_display_name()
 			if cured_prev == CONST.STATUS.POISON:
 				return "¡%s se curó del veneno!" % pokemon.get_display_name()
 			return "¡%s se curó!" % pokemon.get_display_name()

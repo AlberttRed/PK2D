@@ -75,7 +75,7 @@ func _visualize(ui: BattleUI) -> void:
 		return
 	var target_is_active: bool = is_target_active_in_battle(_target_bp)
 	if not target_is_active:
-		await show_party_result_message_and_close(ui, item_use_result)
+		await show_party_result_message_and_close(ui, item_use_result, _choice.target_party_slot)
 		return
 	await show_item_used_battle_message(ui, _item_data)
 	if _status_fx != null:

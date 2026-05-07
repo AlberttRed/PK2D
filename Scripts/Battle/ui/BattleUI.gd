@@ -350,8 +350,10 @@ func _await_menu_inputs_released() -> void:
 		await get_tree().process_frame
 
 
-func show_party_item_result_and_close(message_text: String) -> void:
+func show_party_item_result_and_close(message_text: String, target_party_slot: int = -1) -> void:
 	_sync_player_battle_party_to_persistent()
+	if _battle_party_ui != null and _battle_party_ui.visible and target_party_slot >= 0 and _battle_party_ui.has_method("animate_item_hp_gain_for_slot"):
+		await _battle_party_ui.animate_item_hp_gain_for_slot(target_party_slot)
 	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("refresh_slots_display"):
 		_battle_party_ui.refresh_slots_display()
 	if message_text.is_empty():

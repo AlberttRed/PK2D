@@ -1249,6 +1249,7 @@ func _finish_pending_bag_item_use(slot_index: int) -> void:
 	var use_result: Dictionary = bc.request_use_item(item_id)
 
 	if _party_ui != null:
+		await _party_ui.animate_item_hp_gain_for_slot(slot_index)
 		_party_ui.refresh_slots_display()
 
 	await _await_bag_use_feedback_messages(use_result)
@@ -1345,6 +1346,7 @@ func _party_bag_flow_use_item_show_feedback_on_party(item_id: int, restore_bag_i
 	await get_tree().process_frame
 
 	if _party_ui != null:
+		await _party_ui.animate_item_hp_gain_for_slot(resume_slot)
 		_party_ui.refresh_slots_display()
 
 	await _await_bag_use_feedback_messages(use_result)

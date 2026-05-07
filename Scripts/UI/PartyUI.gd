@@ -129,6 +129,27 @@ func refresh_slots_display() -> void:
 	_refresh_slots()
 
 
+func animate_item_hp_gain_for_slot(slot: int) -> void:
+	if _controller == null:
+		return
+	if slot < 0 or slot >= SLOT_COUNT:
+		return
+	if not _controller.is_slot_occupied(slot):
+		return
+	var panel: PartyPokemonPanel = pokemon_panels[slot]
+	if panel == null or panel.health_bar == null:
+		return
+	var view: Dictionary = _controller.get_slot_view(slot)
+	var max_hp: int = int(view.get("hp_max", panel.health_bar.max_value))
+	var new_hp: int = int(view.get("hp_current", panel.health_bar.current_value))
+	var old_hp: int = int(panel.health_bar.current_value)
+	if max_hp > 0 and panel.health_bar.max_value != max_hp:
+		panel.health_bar.set_values(old_hp, max_hp)
+	if new_hp > old_hp:
+		await panel.health_bar.animate_to(new_hp)
+	panel.loadPokemon(view.get("pokemon", null) as Pokemon)
+
+
 func _on_panel_selected(_order: int) -> void:
 	pass
 
