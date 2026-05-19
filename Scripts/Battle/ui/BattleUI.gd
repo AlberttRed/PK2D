@@ -9,11 +9,13 @@ const _BAG_SCENE := preload("res://Scenes/UI/BAG.tscn")
 const _BAG_CONTROLLER_SCRIPT := preload("res://Scripts/UI/BagController.gd")
 const _PARTY_SCENE := preload("res://Scenes/UI/2 - Party/PARTY.tscn")
 const _PARTY_CONTROLLER_SCRIPT := preload("res://Scripts/UI/PartyController.gd")
+const _BATTLE_PARTY_SWITCH_CONTROLLER := preload("res://Scripts/Battle/ui/BattlePartySwitchController.gd")
 
 @onready var message_controller:BattleMessageController = $MessageController
 @onready var field_ui:FieldUI = $FieldUI
 #@onready var party_ui = $PartyUI
 @onready var actions_menu = $ActionsMenu
+@onready var party_ui: PartyUI = $PartyUI
 @onready var message_box:MessageBox = $MessageBox
 @onready var moves_menu = $MovesMenu
 @onready var target_selector_ui = $TargetSelectorUI
@@ -35,6 +37,9 @@ const FAMILY := MessageFamily.Values
 func _ready() -> void:
 	result_display.ui = self
 	visible = false
+	if party_ui != null:
+		# Party en combate debe superponerse al campo (sprites/HPBars).
+		party_ui.z_index = 40
 	_move_learning_flow = _MOVE_LEARNING_FLOW.new()
 	_level_up_stats_panel = _LEVELUP_STATS_SCENE.instantiate() as Panel
 	add_child(_level_up_stats_panel)
@@ -108,6 +113,11 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 			(choice as BattleBagChoice).battle_controller = battle_controller
 		return await show_bag_item_selection(pokemon)
 
+	# Cambio de Pokémon requiere abrir Party UI y devolver un BattleSwitchChoice completo.
+	if choice is BattleSwitchChoice:
+		return await show_switch_selection(pokemon)
+
+	# Si no es LUCHAR, devolvemos directamente
 	if choice is not BattleMoveChoice:
 		return choice
 
@@ -215,6 +225,7 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 		out.item_id = picked_id
 		out.target_party_slot = -1
 		out.enemy_target_battle_pokemon = null
+		out.enemy_target_spot = null
 		if selected_item_data == null:
 			continue
 
@@ -239,12 +250,12 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 			continue
 		elif _battle_item_needs_enemy_target_pick(selected_item_data):
 			_battle_bag_ui.close()
-			var foe: BattlePokemon = await _pick_enemy_target_for_item(pokemon)
-			if foe == null:
+			var foe_spot: BattleSpot = await _pick_enemy_target_spot_for_item(pokemon)
+			if foe_spot == null:
 				if _battle_bag_ui != null and not _battle_bag_ui.visible:
 					_battle_bag_ui.open()
 				continue
-			out.enemy_target_battle_pokemon = foe
+			out.enemy_target_spot = foe_spot
 			return out
 		else:
 			_battle_bag_ui.close()
@@ -447,14 +458,67 @@ func _reset_bag_ui_after_party_cancel() -> void:
 		_battle_bag_ui.set_input_enabled(true)
 
 
-func _pick_enemy_target_for_item(actor: BattlePokemon) -> BattlePokemon:
+func _pick_enemy_target_spot_for_item(actor: BattlePokemon) -> BattleSpot:
 	var spot: BattleSpot = await show_target_selection(actor)
 	if spot == null:
 		return null
 	if not spot.has_active_pokemon():
 		return null
-	return spot.get_active_pokemon()
+	return spot
+func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
+	if party_ui == null:
+		push_error("BattleUI: PartyUI no está disponible en la escena de batalla.")
+		var canceled := BattleChoice.new()
+		canceled.canceled = true
+		return canceled
 
+	var switch_controller = _BATTLE_PARTY_SWITCH_CONTROLLER.new(pokemon.side, pokemon, false)
+	party_ui.setup(switch_controller)
+	actions_menu.hide()
+	moves_menu.hide()
+	target_selector_ui.hide()
+	message_box.hide()
+
+	var current_slot: int = switch_controller.find_slot_for_battle_pokemon(pokemon)
+	party_ui.open_for_battle_switch_pick(current_slot, false)
+
+	var selection_state := {
+		"selected_slot": -1,
+		"canceled": false,
+		"done": false
+	}
+
+	var on_selected := func(slot_index: int) -> void:
+		selection_state["selected_slot"] = slot_index
+		selection_state["done"] = true
+	var on_canceled := func() -> void:
+		selection_state["canceled"] = true
+		selection_state["done"] = true
+
+	party_ui.battle_switch_slot_selected.connect(on_selected, CONNECT_ONE_SHOT)
+	party_ui.battle_switch_cancelled.connect(on_canceled, CONNECT_ONE_SHOT)
+	while not bool(selection_state["done"]):
+		await get_tree().process_frame
+
+	party_ui.close()
+
+	if bool(selection_state["canceled"]):
+		return await show_action_selection(pokemon)
+
+	var selected_slot: int = int(selection_state["selected_slot"])
+	var incoming_bp: BattlePokemon = switch_controller.get_battle_pokemon_at(selected_slot)
+	if incoming_bp == null:
+		return await show_action_selection(pokemon)
+
+	var choice := BattleSwitchChoice.new()
+	choice.pokemon = pokemon
+	choice.side = pokemon.side
+	choice.target_index = selected_slot
+	choice.outgoing_pokemon = pokemon
+	choice.incoming_pokemon = incoming_bp
+	if pokemon.battle_spot != null:
+		choice.origin_spot_index = pokemon.battle_spot.index
+	return choice
 
 func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 	if pokemon.battle_spot.has_previous_controllable_pokemon():
@@ -482,19 +546,19 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
 	var move: BattleMove = move_choice.get_move()
 	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
-	
+
 	var selected_spot: BattleSpot = null
 	if target_selector != null and target_selector.requires_manual_selection(target_type, pokemon):
 		selected_spot = await show_target_selection(pokemon)
-		
+
 		if selected_spot == null:
 			# Usuario canceló la selección de target
 			return await show_move_selection(pokemon)
-	
+
 	# Generar los targets aquí usando la lógica y asignarlos al choice
 	if target_selector != null:
 		move_choice.targets = target_selector.resolve_targets(move, pokemon, selected_spot)
-	
+
 	moves_menu.hide()
 	return move_choice
 
@@ -509,15 +573,15 @@ func show_target_selection(user: BattlePokemon) -> BattleSpot:
 		return candidates[0]
 
 	target_selector_ui.show_targets(candidates)
-	
+
 	# Esperar a que se seleccione un target - await devuelve directamente el parámetro de la señal
 	var selected_spot: BattleSpot = await target_selector_ui.target_chosen
-	
+
 	return selected_spot
-	
+
 func hide_action_menu():
 	actions_menu.hide()
-	
+
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
 	var intro_messages = message_controller.get_intro_messages(
 		rules,
@@ -530,13 +594,13 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 	for msg in intro_messages:
 		await show_message_from_dict(msg)
 		print("escrito!")
-	
+
 	# Aquí podrías activar el menú o iniciar la siguiente fase del combate
 	actions_menu.show()
-	
+
 func show_used_move_message(user: BattlePokemon, move: BattleMove) -> void:
 	await show_message_from_dict(message_controller.get_used_move_message(user, move))
-	
+
 func show_failed_move_message(user: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_failed_move_message(user))
 	clear_message_box()
@@ -559,7 +623,7 @@ func show_no_target_message(user: BattlePokemon) -> void:
 
 func show_heal_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon))
-	
+
 
 func show_drain_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_drain_message(pokemon))
@@ -585,7 +649,7 @@ func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
 func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> void:
 	# Mostrar mensaje de victoria
 	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
-	
+
 	# Si el jugador ganó contra un entrenador, mostrar mensaje de derrota del trainer
 	if winner_side == "player" and rules.type == BattleRules.BattleTypes.TRAINER:
 		for participant in enemy_participants:
@@ -725,7 +789,9 @@ func has_modal_ui_visible() -> bool:
 		return true
 	if _battle_bag_ui != null and _battle_bag_ui.visible:
 		return true
-	return _battle_party_ui != null and _battle_party_ui.visible
+	if _battle_party_ui != null and _battle_party_ui.visible:
+		return true
+	return party_ui != null and party_ui.visible
 
 
 # API unificada por variante (source es SIEMPRE int id)

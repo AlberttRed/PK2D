@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://brvsn2vfev6ng" path="res://Scenes/UI/MessageBox/MessageBox.tscn" id="5_alpup"]
 [ext_resource type="PackedScene" uid="uid://dauokklht8873" path="res://Scenes/Battle/ui/MoveMenu.tscn" id="6_x8cud"]
 [ext_resource type="StyleBox" uid="uid://ci1q4xtpco246" path="res://Resources/UI/MessageBox/Battle Styles/HGSS_BattleMessageBox_Style.tres" id="7_f6frr"]
+[ext_resource type="PackedScene" uid="uid://btgemydvaapwr" path="res://Scenes/UI/PartyUI.tscn" id="11_partyui"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fm4l"]
 
@@ -45,6 +46,10 @@ layout_mode = 1
 theme_override_styles/panel = ExtResource("7_f6frr")
 
 [node name="MovesMenu" parent="." unique_id=1305048248 instance=ExtResource("6_x8cud")]
+visible = false
+layout_mode = 1
+
+[node name="PartyUI" parent="." unique_id=1668194001 instance=ExtResource("11_partyui")]
 visible = false
 layout_mode = 1
 

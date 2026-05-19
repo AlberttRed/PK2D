@@ -1,7 +1,12 @@
 class_name BattleChoice
 extends RefCounted
 
-var pokemon: BattlePokemon = null
+var battle_spot: BattleSpot = null
+var pokemon: BattlePokemon:
+	get:
+		return battle_spot.get_active_pokemon() if battle_spot != null else null
+	set(value):
+		battle_spot = value.battle_spot if value != null else null
 var canceled: bool = false
 
 func get_priority() -> int:

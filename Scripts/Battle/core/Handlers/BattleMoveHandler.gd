@@ -52,12 +52,12 @@ func ensure_valid_single_enemy_target_or_null() -> bool:
 		return true
 
 	var tp: BattlePokemon = target.get_pokemon()
-	if tp != null and not tp.is_fainted() and tp.battle_spot != null:
+	if tp != null and tp.in_battle and not tp.is_fainted() and tp.battle_spot != null:
 		return true
 	
 	var candidates: Array[BattlePokemon] = user.get_opponent_side().get_active_pokemons()
 	candidates = candidates.filter(func(p): return p != tp and not p.is_fainted() and p.battle_spot != null)
 	if candidates.is_empty():
 		return false
-	target = BattleTarget.new(candidates[0], target.selection_type)
+	target = BattleTarget.new(candidates[0].battle_spot, target.selection_type)
 	return true

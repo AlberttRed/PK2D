@@ -7,6 +7,7 @@ extends RefCounted
 ## Scope: Tipo de objetivo (Pokémon individual, Side o Field completo)
 enum Scope {
 	POKEMON,  # Target es un BattlePokemon
+	SPOT,     # Target es un BattleSpot (resuelve al activo dinámicamente)
 	SIDE,     # Target es un BattleSide
 	FIELD     # Target es el campo completo (sin objeto específico)
 }
@@ -29,6 +30,9 @@ func _init(target = null, _selection_type: TYPE = TYPE.NONE):
 	if target is BattlePokemon:
 		scope = Scope.POKEMON
 		_target_object = target
+	elif target is BattleSpot:
+		scope = Scope.SPOT
+		_target_object = target
 	elif target is BattleSide:
 		scope = Scope.SIDE
 		_target_object = target
@@ -49,6 +53,12 @@ func get_name() -> String:
 			if _target_object:
 				return _target_object.get_name()
 			return "Unknown Pokémon"
+		Scope.SPOT:
+			var sp: BattleSpot = _target_object as BattleSpot
+			if sp == null:
+				return "Unknown Spot"
+			var active := sp.get_active_pokemon()
+			return active.get_name() if active != null else "Empty Spot"
 		Scope.SIDE:
 			if _target_object:
 				return _target_object.to_string()
@@ -60,7 +70,11 @@ func get_name() -> String:
 
 ## Verifica si este target es de tipo Pokémon
 func is_pokemon() -> bool:
-	return scope == Scope.POKEMON
+	return scope == Scope.POKEMON or scope == Scope.SPOT
+
+## Verifica si este target es de tipo Spot
+func is_spot() -> bool:
+	return scope == Scope.SPOT
 
 ## Verifica si este target es de tipo Side
 func is_side() -> bool:
@@ -78,7 +92,18 @@ func is_single_enemy_selection_type() -> bool:
 func get_pokemon() -> BattlePokemon:
 	if scope == Scope.POKEMON:
 		return _target_object as BattlePokemon
+	if scope == Scope.SPOT:
+		var spot: BattleSpot = _target_object as BattleSpot
+		if spot != null:
+			return spot.get_active_pokemon()
 	return null
+
+## Obtiene el Spot si el scope es SPOT, sino null
+func get_spot() -> BattleSpot:
+	if scope == Scope.SPOT:
+		return _target_object as BattleSpot
+	var p := get_pokemon()
+	return p.battle_spot if p != null else null
 
 ## Obtiene el Side si el scope es SIDE, sino null
 func get_side() -> BattleSide:
@@ -87,7 +112,8 @@ func get_side() -> BattleSide:
 	return null
 
 func is_valid_pokemon() -> bool:
-	return get_pokemon() and !get_pokemon().is_fainted()
+	var p := get_pokemon()
+	return p != null and p.in_battle and not p.is_fainted()
 
 func is_valid_side() -> bool:
 	return get_side() != null

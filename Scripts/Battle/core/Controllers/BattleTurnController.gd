@@ -166,8 +166,6 @@ func handle_result(choice: BattleChoice, handlers: Array[BattleHandler]) -> void
 	else:
 		push_warning("handle_result: tipo de choice no reconocido o aún no implementado.")
 
-	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_END_POKEMON_TURN)
-
 #
 func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]) -> void:
 
