@@ -84,7 +84,7 @@ func execute_turn():
 
 	#Calculamos y resolvemos las acciones seleccionadas por cada pokémon activo
 	for choice:BattleChoice in ordered_choices:
-		if choice.pokemon.is_fainted():
+		if _should_skip_choice(choice):
 			continue
 		results[choice] = choice.resolve()
 
@@ -93,14 +93,13 @@ func execute_turn():
 	# Mostrar animaciones y efectos tras resolver todo
 	for choice in ordered_choices:
 		if results.has(choice):
-			# Verificar si el Pokémon sigue vivo antes de ejecutar su acción
-			# Esto previene que un Pokémon debilitado ejecute su movimiento
-			if not choice.pokemon.is_fainted():
+			var actor: BattlePokemon = choice.pokemon
+			# El rival puede haber caído antes de su turno (más rápido que él): no ejecutar ni revisar KO con actor nulo.
+			if actor != null and not actor.is_fainted():
 				await handle_result(choice, results[choice])
 
-			# Verificar y mostrar mensajes de debilitamiento después de cada acción
-			# Pasamos el pokemon que ejecutó la acción para mostrar primero los del rival
-			await check_and_show_fainted_pokemon(choice.pokemon)
+			if actor != null:
+				await check_and_show_fainted_pokemon(actor)
 
 			# Verificar si el combate ha terminado después de cada acción
 			if battle_controller.battle_finished():
@@ -114,8 +113,11 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	battle_choices.sort_custom(_sort_choices)
 	print(">>> Orden de ejecución:")
 	for choice:BattleChoice in battle_choices:
-		var pkmn_name = choice.pokemon.get_name()
-		var speed = choice.pokemon.get_speed()
+		var actor: BattlePokemon = choice.pokemon
+		if actor == null:
+			continue
+		var pkmn_name = actor.get_name()
+		var speed = actor.get_speed()
 		var action_desc := ""
 		if choice is BattleMoveChoice and choice.get_move() != null:
 			action_desc = "usará %s" % choice.get_move().get_name()
@@ -134,14 +136,19 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 
 
 
+func _should_skip_choice(choice: BattleChoice) -> bool:
+	var actor: BattlePokemon = choice.pokemon
+	return actor == null or actor.is_fainted()
+
+
 func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 	# 1. Prioridad
 	if a.get_priority() != b.get_priority():
 		return a.get_priority() > b.get_priority()
 
 	# 2. Velocidad
-	var speed_a = a.pokemon.get_speed()
-	var speed_b = b.pokemon.get_speed()
+	var speed_a: int = a.pokemon.get_speed() if a.pokemon != null else 0
+	var speed_b: int = b.pokemon.get_speed() if b.pokemon != null else 0
 
 	if speed_a != speed_b:
 		return speed_a > speed_b
@@ -165,8 +172,6 @@ func handle_result(choice: BattleChoice, handlers: Array[BattleHandler]) -> void
 		await handle_run_result(choice, handlers)
 	else:
 		push_warning("handle_result: tipo de choice no reconocido o aún no implementado.")
-
-	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_END_POKEMON_TURN)
 
 #
 func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]) -> void:

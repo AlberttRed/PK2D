@@ -3,7 +3,7 @@ extends PersistentBattleEffect
 
 
 func apply_phase(pokemon, phase: Phases) -> void: 
-	if phase != BattleEffect.Phases.ON_END_POKEMON_TURN:
+	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 	var dmg:int = ceil(pokemon.total_hp / 8.0)
 	var effect := DamageEffect.new(null, pokemon, null, dmg)
@@ -11,7 +11,7 @@ func apply_phase(pokemon, phase: Phases) -> void:
 
 
 func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases):
-	if phase != BattleEffect.Phases.ON_END_POKEMON_TURN:
+	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 
 	await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)

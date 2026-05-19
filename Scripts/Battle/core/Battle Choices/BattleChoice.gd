@@ -1,8 +1,14 @@
 class_name BattleChoice
 extends RefCounted
 
-var pokemon: BattlePokemon = null
+var battle_spot: BattleSpot = null
+## Pokémon que declaró la acción (fijado al elegir; no revalidar desde el spot tras un KO).
+var pokemon: BattlePokemon = null:
+	set(pkmn):
+		pokemon = pkmn
+		battle_spot = pkmn.battle_spot if pkmn != null else null
 var canceled: bool = false
+
 
 func get_priority() -> int:
 	return 0 # Por defecto, prioridad base

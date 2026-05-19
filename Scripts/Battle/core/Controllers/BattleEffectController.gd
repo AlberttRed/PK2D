@@ -19,6 +19,9 @@ static func add_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 static func remove_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 	get_instance()._remove_pokemon_effect(pokemon, effect)
 
+static func clear_pokemon_effects(pokemon):
+	get_instance()._clear_pokemon_effects(pokemon)
+
 static func add_side_effect(side: String, effect: PersistentBattleEffect):
 	get_instance()._add_side_effect(side, effect)
 
@@ -30,7 +33,7 @@ static func add_field_effect(effect: PersistentBattleEffect):
 
 static func remove_field_effect(effect: PersistentBattleEffect):
 	get_instance()._remove_field_effect(effect)
-	
+
 static func has_effect_for(pokemon, effect_instance: PersistentBattleEffect) -> bool:
 	return effect_instance != null and get_instance()._has_effect_for(pokemon, effect_instance)
 
@@ -110,6 +113,12 @@ func _remove_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 	if pokemon_effects[pokemon].is_empty():
 		pokemon_effects.erase(pokemon)
 
+func _clear_pokemon_effects(pokemon) -> void:
+	if pokemon == null:
+		return
+	if pokemon_effects.has(pokemon):
+		pokemon_effects.erase(pokemon)
+
 func _add_side_effect(side: String, effect: PersistentBattleEffect):
 	if not side_effects.has(side):
 		side_effects[side] = []
@@ -129,7 +138,7 @@ func _add_field_effect(effect: PersistentBattleEffect):
 func _remove_field_effect(effect: PersistentBattleEffect):
 	var target_class = effect.get_script().get_global_name()
 	field_effects = field_effects.filter(func(e): return e.get_script().get_global_name() != target_class)
-	
+
 func _has_effect_for(pokemon, effect: PersistentBattleEffect) -> bool:
 	var target_class = effect.get_script().get_global_name()
 	var all = _get_all_effects_for(pokemon)
@@ -179,7 +188,7 @@ func _get_all_active_effects() -> Array[PersistentBattleEffect]:
 func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
 	apply_phase(pokemon, phase)
 	await visualize_phase(pokemon, phase)
-	
+
 func _process_global_phase(phase: BattleEffect.Phases):
 	for effect in field_effects:
 		effect.apply_phase(null, phase)
@@ -192,7 +201,18 @@ func _process_global_phase(phase: BattleEffect.Phases):
 		for effect in side_effects[side]:
 			await effect.visualize_phase(null, ui, phase)
 			if effect.has_finished(): remove_side_effect(side, effect)
-			
+	# Efectos persistentes ligados a Pokémon (veneno/quemadura/etc.) en fase global de fin de turno.
+	for bp in pokemon_effects.keys():
+		var pokemon: BattlePokemon = bp as BattlePokemon
+		if pokemon == null:
+			continue
+		for effect in _get_pokemon_effects(pokemon):
+			effect.apply_phase(pokemon, phase)
+		for effect in _get_pokemon_effects(pokemon):
+			await effect.visualize_phase(pokemon, ui, phase)
+			if effect.has_finished():
+				remove_pokemon_effect(pokemon, effect)
+
 func _apply_phase(pokemon, phase):
 	for effect in _get_all_effects_for(pokemon):
 		effect.apply_phase(pokemon, phase)
@@ -201,7 +221,7 @@ func _visualize_phase(pokemon, phase):
 	for effect in _get_all_effects_for(pokemon):
 		await effect.visualize_phase(pokemon, ui, phase)
 		if effect.has_finished(): remove_pokemon_effect(pokemon, effect)
-			
+
 
 func _apply_global_phase(phase: BattleEffect.Phases) -> void:
 	for effect in field_effects:

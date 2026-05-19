@@ -15,17 +15,20 @@ func resolve_targets(move: BattleMove, user: BattlePokemon, manual_target: Battl
 			
 		BattleTarget.TYPE.YO_PRIMERO, BattleTarget.TYPE.USER:
 			# El usuario se apunta a sí mismo
-			targets.append(BattleTarget.new(user, target_type))
+			if user.battle_spot != null:
+				targets.append(BattleTarget.new(user.battle_spot, target_type))
 			
 		BattleTarget.TYPE.ALIADO:
-			var ally := _get_ally_pokemon(user)
-			if ally:
-				targets.append(BattleTarget.new(ally, target_type))
+			var ally_spot := _get_ally_spot(user)
+			if ally_spot:
+				targets.append(BattleTarget.new(ally_spot, target_type))
 				
 		BattleTarget.TYPE.USER_OR_ALLY:
-			var ally := _get_ally_pokemon(user)
-			var target_pokemon = ally if ally else user
-			targets.append(BattleTarget.new(target_pokemon, target_type))
+			var target_spot: BattleSpot = _get_ally_spot(user)
+			if target_spot == null:
+				target_spot = user.battle_spot
+			if target_spot != null:
+				targets.append(BattleTarget.new(target_spot, target_type))
 			
 		BattleTarget.TYPE.BASE_PLAYER:
 			# Target es el lado del jugador
@@ -36,42 +39,42 @@ func resolve_targets(move: BattleMove, user: BattlePokemon, manual_target: Battl
 			targets.append(BattleTarget.new(user.get_opponent_side(), target_type))
 			
 		BattleTarget.TYPE.RANDOM_ENEMY:
-			var random_enemy := _get_random_enemy_pokemon(user)
-			if random_enemy:
-				targets.append(BattleTarget.new(random_enemy, target_type))
+			var random_enemy_spot := _get_random_enemy_spot(user)
+			if random_enemy_spot:
+				targets.append(BattleTarget.new(random_enemy_spot, target_type))
 				
 		BattleTarget.TYPE.SELECCIONAR:
 			# Si hay un target manual, usarlo; sino seleccionar enemigo aleatorio
 			if manual_target and manual_target.has_active_pokemon():
-				targets.append(BattleTarget.new(manual_target.get_active_pokemon(), target_type))
+				targets.append(BattleTarget.new(manual_target, target_type))
 			else:
-				var random_enemy2 := _get_random_enemy_pokemon(user)
+				var random_enemy2 := _get_random_enemy_spot(user)
 				if random_enemy2:
 					targets.append(BattleTarget.new(random_enemy2, target_type))
 					
 		BattleTarget.TYPE.ENEMIES:
 			# Todos los enemigos activos como targets individuales
-			var enemies := _get_enemy_pokemons(user)
-			for enemy in enemies:
-				targets.append(BattleTarget.new(enemy, target_type))
+			var enemy_spots := _get_enemy_spots(user)
+			for spot in enemy_spots:
+				targets.append(BattleTarget.new(spot, target_type))
 				
 		BattleTarget.TYPE.PLAYERS:
 			# Todos los aliados activos como targets individuales
-			var allies := _get_ally_side_pokemons(user)
-			for ally in allies:
-				targets.append(BattleTarget.new(ally, target_type))
+			var ally_spots := _get_ally_spots(user)
+			for ally_spot in ally_spots:
+				targets.append(BattleTarget.new(ally_spot, target_type))
 				
 		BattleTarget.TYPE.ALL_OTHER:
 			# Todos los pokémon excepto el usuario
-			var all_others := _get_all_other_pokemons(user)
-			for pokemon in all_others:
-				targets.append(BattleTarget.new(pokemon, target_type))
+			var other_spots := _get_all_other_spots(user)
+			for other_spot in other_spots:
+				targets.append(BattleTarget.new(other_spot, target_type))
 				
 		BattleTarget.TYPE.ALL_POKEMON:
 			# Todos los pokémon en el campo
-			var all_pokemon := _get_all_active_pokemons(user)
-			for pokemon in all_pokemon:
-				targets.append(BattleTarget.new(pokemon, target_type))
+			var all_spots := _get_all_active_spots(user)
+			for active_spot in all_spots:
+				targets.append(BattleTarget.new(active_spot, target_type))
 				
 		BattleTarget.TYPE.ALL_FIELD:
 			# El campo completo - un único target de tipo FIELD
@@ -118,6 +121,16 @@ func _get_all_other_pokemons(user: BattlePokemon) -> Array[BattlePokemon]:
 	var all := _get_all_active_pokemons(user)
 	return all.filter(func(p): return p != user)
 
+func _get_all_active_spots(user: BattlePokemon) -> Array[BattleSpot]:
+	var spots: Array[BattleSpot] = []
+	spots.append_array(_get_ally_spots(user))
+	spots.append_array(_get_enemy_spots(user))
+	return spots
+
+func _get_all_other_spots(user: BattlePokemon) -> Array[BattleSpot]:
+	var all_spots := _get_all_active_spots(user)
+	return all_spots.filter(func(s): return s != user.battle_spot)
+
 func _get_enemy_spots(user: BattlePokemon) -> Array[BattleSpot]:
 	return user.get_opponent_side().battle_spots.filter(
 		func(s): return s.has_active_pokemon()
@@ -133,6 +146,18 @@ func _get_random_enemy_pokemon(user: BattlePokemon) -> BattlePokemon:
 	if enemies.is_empty():
 		return null
 	return enemies[randi() % enemies.size()]
+
+func _get_random_enemy_spot(user: BattlePokemon) -> BattleSpot:
+	var enemy_spots := _get_enemy_spots(user)
+	if enemy_spots.is_empty():
+		return null
+	return enemy_spots[randi() % enemy_spots.size()]
+
+func _get_ally_spot(user: BattlePokemon) -> BattleSpot:
+	for spot in _get_ally_spots(user):
+		if spot != user.battle_spot:
+			return spot
+	return null
 
 func _get_ally_pokemon(user: BattlePokemon) -> BattlePokemon:
 	# Devuelve el compañero del usuario si existe

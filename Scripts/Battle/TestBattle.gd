@@ -1,5 +1,19 @@
 extends Node2D
 
+const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
+
+@export_group("Equipos de prueba")
+## Tamaño del party del jugador (1–6). En doble solo 2 salen al campo; el resto queda en banca para cambios.
+@export_range(1, 6) var test_player_party_size: int = 6
+## Tamaño del party del entrenador rival (1–6) cuando se use singleTrainerBattle / trainers en escena.
+@export_range(1, 6) var test_trainer_party_size: int = 6
+
+const WILD_PARTY_SINGLE: int = 1
+const WILD_PARTY_DOUBLE: int = 2
+
+# Instanciado solo al ejecutar esta escena en solitario (F6); en juego normal ya existe vía Main.
+var _bootstrapped_display_manager: DisplayManager = null
+
 #Battlers
 @onready var player: Battler = $Player
 @onready var singleTrainer: Battler = $SingleTrainer
@@ -8,6 +22,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if not await _ensure_display_manager():
+		return
+	_setup_test_battler_parties()
 	# Lanzar combates en bucle para testing continuo
 	while true:
 		if randi() % 2 == 0:
@@ -19,6 +36,26 @@ func _ready() -> void:
 		# Pequeña pausa entre combates
 		await get_tree().create_timer(0.5).timeout
 	#get_tree().quit()
+
+
+## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
+func _ensure_display_manager() -> bool:
+	if DisplayManager.instance != null:
+		return true
+	_bootstrapped_display_manager = _DISPLAY_MANAGER_SCENE.instantiate() as DisplayManager
+	if _bootstrapped_display_manager == null:
+		push_error("TestBattle: no se pudo instanciar DisplayManager.tscn")
+		return false
+	# No se puede add_child() durante _ready() del árbol; diferir y esperar su _ready().
+	get_tree().root.add_child.call_deferred(_bootstrapped_display_manager)
+	if not _bootstrapped_display_manager.is_node_ready():
+		await _bootstrapped_display_manager.ready
+	if DisplayManager.instance == null:
+		push_error("TestBattle: DisplayManager no registró singleton tras _ready")
+		return false
+	print("TestBattle: DisplayManager de prueba inicializado (escena ejecutada en solitario).")
+	return true
+
 
 func wildSingleBattle():
 	# Usar equipo del jugador (configurado en Player Battler)
@@ -71,8 +108,8 @@ func wildDoubleBattle():
 
 func wildRandomSingleBattle():
 	# Generar equipos completamente aleatorios para jugador y salvaje
-	var playerParticipant: BattleParticipant = _create_random_player_participant(1)
-	var wildParticipant: BattleParticipant = _create_random_wild_participant(1)
+	var playerParticipant: BattleParticipant = _create_random_player_participant(test_player_party_size)
+	var wildParticipant: BattleParticipant = _create_random_wild_participant(WILD_PARTY_SINGLE)
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
@@ -85,9 +122,9 @@ func wildRandomSingleBattle():
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildRandomDoubleBattle():
-	# Generar equipos completamente aleatorios para jugador (2) y salvajes (2)
-	var playerParticipant: BattleParticipant = _create_random_player_participant(2)
-	var wildParticipant: BattleParticipant = _create_random_wild_participant(2)
+	# Generar equipos aleatorios: en doble salen 2 activos; el party completo permite cambios.
+	var playerParticipant: BattleParticipant = _create_random_player_participant(test_player_party_size)
+	var wildParticipant: BattleParticipant = _create_random_wild_participant(WILD_PARTY_DOUBLE)
 
 	var rules = BattleRules.new(
 		BattleRules.BattleTypes.WILD,
@@ -114,20 +151,49 @@ func singleTrainerBattle():
 	var winner = await DisplayManager.start_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
-# Helper: genera un Pokémon aleatorio
-func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:
+## Rellena los Battler de escena para pruebas con party configurado en inspector.
+func _setup_test_battler_parties() -> void:
+	_fill_battler_random_party(player, test_player_party_size, false)
+	# Salvajes: máx. 2 (single usa el primero; doble los dos). Sin banca rival.
+	_trim_battler_party(wildPokemons, WILD_PARTY_DOUBLE)
+	_fill_battler_random_party(wildPokemons, WILD_PARTY_DOUBLE, true)
+	if singleTrainer != null and singleTrainer.party.is_empty():
+		_fill_battler_random_party(singleTrainer, test_trainer_party_size, false)
+
+
+func _fill_battler_random_party(battler: Battler, target_size: int, as_wild: bool) -> void:
+	if battler == null or target_size <= 0:
+		return
+	while battler.party.size() < target_size:
+		battler.add_pokemon_to_party(_create_random_pokemon_instance(as_wild))
+
+
+func _trim_battler_party(battler: Battler, max_size: int) -> void:
+	if battler == null or max_size < 0:
+		return
+	while battler.party.size() > max_size:
+		battler.party.pop_back()
+
+
+# Helper: genera un Pokémon aleatorio (instancia persistente / party)
+func _create_random_pokemon_instance(is_wild: bool = false) -> Pokemon:
 	var random_id = randi_range(1, 151)
 	var pokemon_data = DatabaseService.get_pokemon(random_id)
 	var pkmn := Pokemon.new(
-		pokemon_data,         # pokemon_data
-		randi_range(1, 100),  # pokemon_level
-		0,                    # pokemon_gender (0 = aleatorio)
-		0,                    # pokemon_ability (0 = aleatorio)
-		0,                    # pokemon_nature (0 = aleatorio)
-		true                  # randomize_stats
+		pokemon_data,
+		randi_range(1, 100),
+		0,
+		0,
+		0,
+		true
 	)
 	pkmn.is_wild = is_wild
-	return pkmn.to_battle_pokemon()
+	return pkmn
+
+
+# Helper: genera un BattlePokemon aleatorio
+func _create_random_pokemon(is_wild: bool = false) -> BattlePokemon:
+	return _create_random_pokemon_instance(is_wild).to_battle_pokemon()
 
 # Helper: genera participante salvaje con N Pokémon aleatorios
 func _create_random_wild_participant(num_pokemon: int = 1) -> BattleParticipant:

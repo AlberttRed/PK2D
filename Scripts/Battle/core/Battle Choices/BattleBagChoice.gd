@@ -12,10 +12,13 @@ var target_party_slot: int = -1
 
 ## Objetivo enemigo en runtime (p. ej. Poké Ball); opcional.
 var enemy_target_battle_pokemon: BattlePokemon = null
+var enemy_target_spot: BattleSpot = null
 
 
 ## Pokémon al que aplica el efecto en combate (aliado u oponente según el ítem).
 func resolve_item_target_battle_pokemon() -> BattlePokemon:
+	if enemy_target_spot != null:
+		return enemy_target_spot.get_active_pokemon()
 	if enemy_target_battle_pokemon != null:
 		return enemy_target_battle_pokemon
 	if battle_controller == null:

@@ -48,10 +48,10 @@ func resolve() -> Array[BattleHandler]:
 # Retorna el target válido si existe; en caso contrario devuelve null
 func _get_valid_single_enemy_target_or_null(original_target: BattleTarget) -> BattleTarget:
 	var tp := original_target.get_pokemon()
-	if tp != null and not tp.is_fainted() and tp.battle_spot != null:
+	if tp != null and tp.in_battle and not tp.is_fainted() and tp.battle_spot != null:
 		return original_target
 	var candidates := pokemon.get_opponent_side().get_active_pokemons()
 	candidates = candidates.filter(func(p): return p != tp and not p.is_fainted() and p.battle_spot != null)
 	if candidates.is_empty():
 		return null
-	return BattleTarget.new(candidates[0], original_target.selection_type)
+	return BattleTarget.new(candidates[0].battle_spot, original_target.selection_type)
