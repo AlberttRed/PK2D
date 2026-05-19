@@ -541,7 +541,7 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 		# Si el usuario cancela el menú de movimientos, se vuelve a mostrar el menú de acciones
 		return await show_action_selection(pokemon)
 
-	move_choice.pokemon = pokemon  # también aquí, por seguridad
+	move_choice.pokemon = pokemon
 
 	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
 	var move: BattleMove = move_choice.get_move()
@@ -572,6 +572,10 @@ func show_target_selection(user: BattlePokemon) -> BattleSpot:
 	if candidates.size() == 1:
 		return candidates[0]
 
+	# El menú de movimientos puede conservar foco; sin modal visible DisplayManager no emite input.
+	moves_menu.hide()
+	message_box.hide()
+	get_viewport().gui_release_focus()
 	target_selector_ui.show_targets(candidates)
 
 	# Esperar a que se seleccione un target - await devuelve directamente el parámetro de la señal
@@ -785,6 +789,8 @@ func _in_hgss_summary_input_pause(paused: bool) -> void:
 
 ## Modal UI propia de batalla que también debe habilitar el ruteo de input global (DisplayManager).
 func has_modal_ui_visible() -> bool:
+	if target_selector_ui != null and target_selector_ui.visible:
+		return true
 	if _battle_move_forget_summary != null and _battle_move_forget_summary.visible:
 		return true
 	if _battle_bag_ui != null and _battle_bag_ui.visible:
