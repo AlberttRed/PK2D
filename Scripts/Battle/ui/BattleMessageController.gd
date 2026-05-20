@@ -394,6 +394,8 @@ func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionar
 # Mensajes de final de combate
 func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> Dictionary:
 	match winner_side:
+		"capture":
+			return {}
 		"player":
 			# En combates salvajes, no se muestra mensaje al ganar
 			if rules.type == BattleRules.BattleTypes.WILD:

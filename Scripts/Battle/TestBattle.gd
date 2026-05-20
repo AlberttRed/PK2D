@@ -25,6 +25,7 @@ func _ready() -> void:
 	if not await _ensure_display_manager():
 		return
 	_setup_test_battler_parties()
+	_seed_test_capture_items()
 	# Lanzar combates en bucle para testing continuo
 	while true:
 		if randi() % 2 == 0:
@@ -173,6 +174,19 @@ func _trim_battler_party(battler: Battler, max_size: int) -> void:
 		return
 	while battler.party.size() > max_size:
 		battler.party.pop_back()
+
+
+## Poké Balls para probar captura desde la mochila de combate (usa `GameStateService.bag`).
+func _seed_test_capture_items() -> void:
+	if GameStateService == null:
+		return
+	var bag = GameStateService.get_bag()
+	if bag == null:
+		return
+	bag.add_item(4, 10)  # Poké Ball
+	bag.add_item(3, 10)  # Super Ball
+	bag.add_item(2, 10)  # Ultra Ball
+	print("TestBattle: bolas de prueba añadidas (Poké x10, Super x10, Ultra x10).")
 
 
 # Helper: genera un Pokémon aleatorio (instancia persistente / party)

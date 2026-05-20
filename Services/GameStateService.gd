@@ -63,6 +63,9 @@ var bag = BAG_SCRIPT.new()
 # Equipo del jugador (máx. 6 Pokémon); sin dependencia de UI
 var party = PARTY_SCRIPT.new()
 
+## Pokémon capturados en espera de PC (fallback cuando el almacenamiento no está listo).
+var pending_pc_pokemon: Array[Dictionary] = []
+
 # Pokédex global del jugador (por species_id)
 var pokedex = POKEDEX_SCRIPT.new()
 var unlocked_pokedex_ids: Array[String] = []
@@ -90,6 +93,7 @@ func initialize_new_game() -> void:
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
+	pending_pc_pokemon.clear()
 	pokedex = POKEDEX_SCRIPT.new()
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
 	active_pokedex_id = "kanto"
@@ -563,6 +567,28 @@ func load_party_save_data(entries: Array[Dictionary]) -> void:
 	get_party().load_serializable_data(entries)
 
 
+func add_pending_pc_pokemon(pokemon: Pokemon) -> void:
+	if pokemon == null:
+		return
+	pending_pc_pokemon.append(pokemon.to_serializable_state())
+	print("GameStateService: Pokémon en cola de PC pendiente (total=%d)." % pending_pc_pokemon.size())
+
+
+func get_pending_pc_pokemon_count() -> int:
+	return pending_pc_pokemon.size()
+
+
+func get_pending_pc_pokemon_save_data() -> Array[Dictionary]:
+	return pending_pc_pokemon.duplicate(true)
+
+
+func load_pending_pc_pokemon_save_data(entries: Array[Dictionary]) -> void:
+	pending_pc_pokemon.clear()
+	for entry in entries:
+		if entry is Dictionary:
+			pending_pc_pokemon.append(entry)
+
+
 ## Serializa la Pokédex para guardado futuro.
 func get_pokedex_save_data() -> Dictionary:
 	return get_pokedex().to_serializable_data()
@@ -739,6 +765,7 @@ func _build_save_payload() -> Dictionary:
 			"facing": _vector2_to_dict(_variant_to_vector2(rp.get("facing", facing_dir), facing_dir)),
 		},
 		"party": get_party_save_data(),
+		"pending_pc_pokemon": get_pending_pc_pokemon_save_data(),
 		"bag": get_bag_save_data(),
 		"pokedex": get_pokedex_save_data(),
 		"pokedex_registry": get_pokedex_registry_save_data(),
@@ -794,6 +821,16 @@ func _apply_save_payload(save_data: Dictionary) -> void:
 		load_party_save_data(safe_party_entries)
 	else:
 		load_party_save_data([])
+
+	var pending_pc_any: Variant = save_data.get("pending_pc_pokemon", [])
+	if pending_pc_any is Array:
+		var safe_pending: Array[Dictionary] = []
+		for entry_any in pending_pc_any:
+			if entry_any is Dictionary:
+				safe_pending.append(entry_any)
+		load_pending_pc_pokemon_save_data(safe_pending)
+	else:
+		load_pending_pc_pokemon_save_data([])
 
 	var pokedex_any: Variant = save_data.get("pokedex", {})
 	var raw_pokedex: Dictionary = pokedex_any if pokedex_any is Dictionary else {}
