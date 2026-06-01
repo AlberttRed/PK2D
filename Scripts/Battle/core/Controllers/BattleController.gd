@@ -18,6 +18,8 @@ var sides: Array[BattleSide]
 
 var finished := false
 var winner_side: String = ""
+## Resultado de captura exitosa (persistencia al cerrar combate).
+var successful_capture: CaptureResult = null
 
 func _ready():
 	pass
@@ -168,6 +170,32 @@ func assign_opponent_sides():
 	sides[0].opponent_side = sides[1]
 	sides[1].opponent_side = sides[0]
 
+func register_successful_capture(capture_result: CaptureResult, target_bp: BattlePokemon = null) -> void:
+	if capture_result == null or not capture_result.success:
+		return
+	successful_capture = capture_result
+	finished = true
+	winner_side = "capture"
+	# La limpieza visual del rival se aplaza a tras la secuencia de captura (véase `apply_capture_field_cleanup`).
+
+
+## Retira al salvaje del campo tras la animación/mensajes de captura (no en `apply()` del handler).
+func apply_capture_field_cleanup(target_bp: BattlePokemon = null) -> void:
+	_remove_captured_wild_from_field(target_bp)
+
+
+func _remove_captured_wild_from_field(target_bp: BattlePokemon) -> void:
+	if target_bp != null and target_bp.battle_spot != null:
+		target_bp.battle_spot.remove_pokemon()
+		return
+	if enemy_side == null:
+		return
+	for spot in enemy_side.battle_spots:
+		if spot != null and spot.pokemon != null and spot.pokemon.is_wild:
+			spot.remove_pokemon()
+			return
+
+
 func battle_finished() -> bool:
 	# Si ya se determinó el fin, no recalcular
 	if finished:
@@ -201,6 +229,9 @@ func end_battle() -> void:
 	if not finished:
 		battle_finished()
 
+	if winner_side == "capture" and successful_capture != null:
+		await _finalize_successful_capture()
+
 	if !winner_side.is_empty():
 		# Mostrar mensaje de final de combate
 		await ui.show_battle_end_message(winner_side, rules, enemy_side.participants)
@@ -217,6 +248,8 @@ func end_battle() -> void:
 			result_msg = "Resultado del combate: gana Enemy"
 		"draw":
 			result_msg = "Resultado del combate: empate"
+		"capture":
+			result_msg = "Resultado del combate: captura exitosa"
 	print(result_msg)
 
 	# Guardar el ganador antes de limpiar el estado
@@ -360,10 +393,28 @@ func _mirror_player_party_to_gamestate(participant: BattleParticipant) -> void:
 				gs_mv.pp_actual = clampi(rt_mv.pp_actual, 0, gs_mv.pp)
 
 
+func _finalize_successful_capture() -> void:
+	if successful_capture == null or successful_capture.captured_pokemon == null:
+		return
+	var registration: Dictionary = CaptureRegistrationService.register_captured_pokemon(
+		successful_capture.captured_pokemon
+	)
+	var message: String = str(registration.get("message", ""))
+	if message.is_empty():
+		return
+	await ui.show_message_from_dict({
+		"type": "input",
+		"text": message,
+		"wait_time": 0.0,
+		"showIconAtEnd": true,
+	})
+
+
 func _cleanup_battle_state():
 	# Resetear flags de control
 	finished = false
 	winner_side = ""
+	successful_capture = null
 
 	# Resetear controlador de turnos
 	turn_controller.reset()

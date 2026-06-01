@@ -3,6 +3,8 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
+## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 (jugador) vs Gastly Nv.20 (rival).
+@export var use_fixed_rattata_vs_gastly: bool = true
 ## Tamaño del party del jugador (1–6). En doble solo 2 salen al campo; el resto queda en banca para cambios.
 @export_range(1, 6) var test_player_party_size: int = 6
 ## Tamaño del party del entrenador rival (1–6) cuando se use singleTrainerBattle / trainers en escena.
@@ -24,7 +26,15 @@ var _bootstrapped_display_manager: DisplayManager = null
 func _ready() -> void:
 	if not await _ensure_display_manager():
 		return
-	_setup_test_battler_parties()
+	if use_fixed_rattata_vs_gastly:
+		_setup_fixed_rattata_gastly_parties()
+	else:
+		_setup_test_battler_parties()
+	_seed_test_capture_items()
+	if use_fixed_rattata_vs_gastly:
+		print(">>> Combate fijo: Rattata Nv.20 vs Gastly salvaje Nv.20")
+		await wildFixedRattataGastlyBattle()
+		return
 	# Lanzar combates en bucle para testing continuo
 	while true:
 		if randi() % 2 == 0:
@@ -33,9 +43,7 @@ func _ready() -> void:
 		else:
 			print(">>> Iniciando Double Wild Battle (Random)")
 			await wildRandomDoubleBattle()
-		# Pequeña pausa entre combates
 		await get_tree().create_timer(0.5).timeout
-	#get_tree().quit()
 
 
 ## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
@@ -106,6 +114,18 @@ func wildDoubleBattle():
 	var winner = await DisplayManager.start_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
+func wildFixedRattataGastlyBattle() -> void:
+	var player_participant: BattleParticipant = _create_fixed_player_participant(
+		PokemonsEnum.Values.RATTATA, 20
+	)
+	var wild_participant: BattleParticipant = _create_fixed_wild_participant(
+		PokemonsEnum.Values.GASTLY, 20
+	)
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var winner = await DisplayManager.start_battle([player_participant, wild_participant], rules)
+	print(">>> Batalla Rattata vs Gastly terminada. Ganador: %s" % winner)
+
+
 func wildRandomSingleBattle():
 	# Generar equipos completamente aleatorios para jugador y salvaje
 	var playerParticipant: BattleParticipant = _create_random_player_participant(test_player_party_size)
@@ -151,6 +171,16 @@ func singleTrainerBattle():
 	var winner = await DisplayManager.start_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
+## Party en escena para `player` / `wildPokemons` (combate fijo por battler opcional).
+func _setup_fixed_rattata_gastly_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.RATTATA, 20, false))
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.GASTLY, 100, true))
+
+
 ## Rellena los Battler de escena para pruebas con party configurado en inspector.
 func _setup_test_battler_parties() -> void:
 	_fill_battler_random_party(player, test_player_party_size, false)
@@ -175,20 +205,44 @@ func _trim_battler_party(battler: Battler, max_size: int) -> void:
 		battler.party.pop_back()
 
 
-# Helper: genera un Pokémon aleatorio (instancia persistente / party)
-func _create_random_pokemon_instance(is_wild: bool = false) -> Pokemon:
-	var random_id = randi_range(1, 151)
-	var pokemon_data = DatabaseService.get_pokemon(random_id)
-	var pkmn := Pokemon.new(
-		pokemon_data,
-		randi_range(1, 100),
-		0,
-		0,
-		0,
-		true
-	)
+## Poké Balls para probar captura desde la mochila de combate (usa `GameStateService.bag`).
+func _seed_test_capture_items() -> void:
+	if GameStateService == null:
+		return
+	var bag = GameStateService.get_bag()
+	if bag == null:
+		return
+	bag.add_item(4, 10)  # Poké Ball
+	bag.add_item(3, 10)  # Super Ball
+	bag.add_item(2, 10)  # Ultra Ball
+	bag.add_item(17, 10)  # Poción
+	print("TestBattle: ítems de prueba en mochila (bolas x10, Poción x10).")
+
+
+func _create_pokemon_instance(species_id: int, level: int, is_wild: bool) -> Pokemon:
+	var pokemon_data = DatabaseService.get_pokemon(species_id)
+	var pkmn := Pokemon.new(pokemon_data, level, 0, 0, 0, true)
 	pkmn.is_wild = is_wild
 	return pkmn
+
+
+func _create_fixed_player_participant(species_id: int, level: int) -> BattleParticipant:
+	var team: Array[BattlePokemon] = [_create_pokemon_instance(species_id, level, false).to_battle_pokemon()]
+	var participant := BattleParticipant.new(team)
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_fixed_wild_participant(species_id: int, level: int) -> BattleParticipant:
+	var bp: BattlePokemon = _create_pokemon_instance(species_id, level, true).to_battle_pokemon()
+	bp.is_wild = true
+	return BattleParticipantWild.new([bp])
+
+
+# Helper: genera un Pokémon aleatorio (instancia persistente / party)
+func _create_random_pokemon_instance(is_wild: bool = false) -> Pokemon:
+	return _create_pokemon_instance(randi_range(1, 151), randi_range(1, 100), is_wild)
 
 
 # Helper: genera un BattlePokemon aleatorio

@@ -229,6 +229,16 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 		if selected_item_data == null:
 			continue
 
+		if selected_item_data.kind == ItemEnums.Kind.POKEBALL:
+			if battle_controller.rules == null or battle_controller.rules.type != BattleRules.BattleTypes.WILD:
+				await DisplayManager.show_message("¡No puedes capturar el Pokémon de otro entrenador!", {
+					"waitInput": true,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+					"typingMode": "typing",
+				})
+				continue
+
 		if _battle_item_needs_ally_party_pick(selected_item_data):
 			var last_party_focus_slot: int = -1
 			while true:
@@ -256,6 +266,10 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 					_battle_bag_ui.open()
 				continue
 			out.enemy_target_spot = foe_spot
+			if not await _is_pokeball_choice_usable(pokemon, selected_item_data, out):
+				if _battle_bag_ui != null and not _battle_bag_ui.visible:
+					_battle_bag_ui.open()
+				continue
 			return out
 		else:
 			_battle_bag_ui.close()
@@ -385,6 +399,33 @@ func show_party_item_result_and_close(message_text: String, target_party_slot: i
 		_battle_bag_ui.set_input_enabled(true)
 
 
+func _is_pokeball_choice_usable(_actor: BattlePokemon, item_data: ItemData, choice: BattleBagChoice) -> bool:
+	if item_data == null or item_data.kind != ItemEnums.Kind.POKEBALL:
+		return true
+	var ball_eff: PokeballItemEffect = PokeballItemEffect.resolve_for_item(item_data)
+	if ball_eff == null:
+		return false
+	var target_bp: BattlePokemon = choice.resolve_item_target_battle_pokemon()
+	if target_bp == null:
+		await DisplayManager.show_message("No hay un Pokémon salvaje capturable.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+			"typingMode": "typing",
+		})
+		return false
+	var ctx: ItemUseContext = BattleItemHandler.build_player_battle_item_context(choice, target_bp)
+	if ball_eff.can_use(ctx):
+		return true
+	await DisplayManager.show_message("No hay un Pokémon salvaje capturable.", {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"typingMode": "typing",
+	})
+	return false
+
+
 func _is_item_usable_on_party_slot_in_battle(actor: BattlePokemon, item_data: ItemData, item_id: int, slot: int) -> bool:
 	if item_data == null:
 		return false
@@ -459,7 +500,7 @@ func _reset_bag_ui_after_party_cancel() -> void:
 
 
 func _pick_enemy_target_spot_for_item(actor: BattlePokemon) -> BattleSpot:
-	var spot: BattleSpot = await show_target_selection(actor)
+	var spot: BattleSpot = await show_target_selection(actor, true)
 	if spot == null:
 		return null
 	if not spot.has_active_pokemon():
@@ -563,20 +604,17 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 	return move_choice
 
 
-func show_target_selection(user: BattlePokemon) -> BattleSpot:
-	# Obtener los spots seleccionables con la lógica
-	var candidates: Array[BattleSpot] = []
-	if target_selector != null:
-		candidates = target_selector.get_selectable_spots(user)
-
+func show_target_selection(user: BattlePokemon, enemies_only: bool = false) -> BattleSpot:
+	if target_selector == null:
+		return null
+	var grid: TargetSelectionGrid = target_selector.build_selection_grid(user, enemies_only)
+	var candidates: Array[BattleSpot] = grid.all_spots()
 	if candidates.size() == 1:
 		return candidates[0]
 
-	# El menú de movimientos puede conservar foco; sin modal visible DisplayManager no emite input.
-	moves_menu.hide()
 	message_box.hide()
 	get_viewport().gui_release_focus()
-	target_selector_ui.show_targets(candidates)
+	target_selector_ui.show_selection(grid)
 
 	# Esperar a que se seleccione un target - await devuelve directamente el parámetro de la señal
 	var selected_spot: BattleSpot = await target_selector_ui.target_chosen

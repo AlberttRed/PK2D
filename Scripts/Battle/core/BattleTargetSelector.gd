@@ -89,9 +89,31 @@ func resolve_targets(move: BattleMove, user: BattlePokemon, manual_target: Battl
 func requires_manual_selection(target_type: BattleTarget.TYPE, user: BattlePokemon) -> bool:
 	return target_type == BattleTarget.TYPE.SELECCIONAR and user.controllable
 
-## Obtiene los candidatos para selección manual (como BattleSpot para la UI)
-func get_selectable_spots(user: BattlePokemon) -> Array[BattleSpot]:
-	return _get_enemy_spots(user)
+## Cuadrícula para la UI: fila 0 = rivales, fila 1 = aliado (sin el usuario).
+func build_selection_grid(user: BattlePokemon, enemies_only: bool = false) -> TargetSelectionGrid:
+	var rows: Array = [_spots_sorted_by_index(_get_enemy_spots(user))]
+	if not enemies_only:
+		var allies: Array[BattleSpot] = []
+		for spot in _get_ally_spots(user):
+			if spot != user.battle_spot:
+				allies.append(spot)
+		allies = _spots_sorted_by_index(allies)
+		if not allies.is_empty():
+			rows.append(allies)
+	return TargetSelectionGrid.new(rows)
+
+
+## Lista plana de candidatos (auto-target 1 candidato, resolve_targets, etc.).
+func get_selectable_spots(user: BattlePokemon, enemies_only: bool = false) -> Array[BattleSpot]:
+	return build_selection_grid(user, enemies_only).all_spots()
+
+
+func _spots_sorted_by_index(spots: Array[BattleSpot]) -> Array[BattleSpot]:
+	var sorted := spots.duplicate()
+	sorted.sort_custom(func(a: BattleSpot, b: BattleSpot) -> bool:
+		return int(a.index) < int(b.index)
+	)
+	return sorted
 
 # ============================================================================
 # Métodos auxiliares privados (sin UI)

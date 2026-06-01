@@ -123,3 +123,16 @@ static func build_player_battle_item_context(choice: BattleBagChoice, target_bat
 		choice.pokemon,
 		target_battle_pokemon
 	)
+
+
+static func get_player_trainer_display_name(choice: BattleBagChoice) -> String:
+	if choice != null and choice.battle_controller != null and choice.battle_controller.player_side != null:
+		var trainer_names: Array[String] = choice.battle_controller.player_side.get_trainer_names()
+		if not trainer_names.is_empty():
+			var from_side := str(trainer_names[0]).strip_edges()
+			if not from_side.is_empty():
+				return from_side
+	var player_name := str(GameStateService.get_variable("PLAYER_NAME", "")).strip_edges()
+	if not player_name.is_empty():
+		return player_name
+	return "El jugador"

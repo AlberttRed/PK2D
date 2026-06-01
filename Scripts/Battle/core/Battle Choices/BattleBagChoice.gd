@@ -43,9 +43,10 @@ func get_priority() -> int:
 	return 6
 
 func is_blocking_action() -> bool:
-	# Por defecto, usar objetos NO bloquea (pociones, bayas, etc.)
-	# TODO: Poké Balls → true (bloquean secuencia de turno).
-	return false
+	if item_id <= 0:
+		return false
+	var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
+	return item_data != null and item_data.kind == ItemEnums.Kind.POKEBALL
 
 func resolve() -> Array[BattleHandler]:
 	var item_data: ItemData = DatabaseService.get_item_by_id(item_id)

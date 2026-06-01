@@ -13,5 +13,6 @@ script = ExtResource("2_niwsb")
 internal_name = "normal"
 Name = "Normal"
 id = 1
+no_effect_to = Array[int]([8])
 panelMove_y = null
 image = SubResource("AtlasTexture_fdbi1")
