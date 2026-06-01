@@ -64,6 +64,8 @@ var _arrow_anim_time: float = 0.0
 var _item_icon_back_texture: Texture2D = null
 ## Índice seleccionado recordado por bolsillo (clave = ItemEnums.Pocket). -1 = aún no visitado.
 var _pocket_list_index_by_pocket: Dictionary = {}
+## Última posición de la mochila (bolsillo + cursor por bolsillo) entre aperturas en la misma sesión.
+static var _session_navigation: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -89,9 +91,6 @@ func setup(controller) -> void:
 		return
 	_controller = controller
 	_pockets = _controller.get_pockets() if _controller else []
-	_current_pocket_index = 0
-	_selected_item_index = 0
-	_pocket_list_index_by_pocket.clear()
 
 
 func get_navigation_state() -> Dictionary:
@@ -115,6 +114,20 @@ func restore_navigation_state(state: Dictionary) -> void:
 	var remembered = state.get("pocket_list_index_by_pocket", {})
 	_pocket_list_index_by_pocket = remembered.duplicate(true) if remembered is Dictionary else {}
 
+
+func _apply_session_navigation() -> void:
+	if _session_navigation.is_empty():
+		_current_pocket_index = 0
+		_selected_item_index = 0
+		_pocket_list_index_by_pocket.clear()
+		return
+	restore_navigation_state(_session_navigation)
+
+
+func _persist_session_navigation() -> void:
+	_track_current_pocket_selection()
+	_session_navigation = get_navigation_state()
+
 func open() -> void:
 	if _controller == null:
 		push_error("BagUI: No se puede abrir sin controller. Llama setup(controller) primero.")
@@ -123,6 +136,7 @@ func open() -> void:
 	show()
 	_arrow_anim_time = 0.0
 	set_process(true)
+	_apply_session_navigation()
 	_refresh_current_pocket()
 	_enable_input()
 	_block_player_control()
@@ -131,6 +145,7 @@ func close() -> void:
 	if not visible:
 		return
 
+	_persist_session_navigation()
 	_disable_input()
 	set_process(false)
 	_reset_arrow_frames()

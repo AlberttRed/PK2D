@@ -6,7 +6,11 @@ static func get_multiplier(attack_type: TypeData, def_type1: TypeData, def_type2
 	return mult1 * mult2
 
 static func _get_vs(attack_type: TypeData, defense_type: TypeData) -> float:
-	return attack_type.get_effectiveness_against(defense_type)
+	if attack_type == null or defense_type == null:
+		return 1.0
+	var outgoing := attack_type.get_effectiveness_against(defense_type)
+	var incoming := defense_type.get_effectiveness_from(attack_type)
+	return outgoing * incoming
 	#if defense_type in attack_type.no_effect_to:
 		#return 0.0
 	#if defense_type in attack_type.super_effective:

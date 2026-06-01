@@ -86,53 +86,19 @@ func visualize(ui: BattleUI) -> void:
 	if ui == null or result == null:
 		return
 
-	await ui.show_message_from_dict({
-		"type": "display",
-		"text": "¡%s lanzó una %s!" % [_actor_name(), _ball_name],
-		"wait_time": 0.9,
-	})
+	await _show_dialogue_line(ui, "¡%s usó %s!" % [_actor_name(), _ball_name], 0.9)
 
+	var shake_count := result.shakes
 	if ball_effect != null and ball_effect.guaranteed_capture:
-		await _show_shake_message(ui, 1)
-		await _show_shake_message(ui, 2)
-		await _show_shake_message(ui, 3)
-		await ui.show_message_from_dict({
-			"type": "display",
-			"text": "¡Ya está! ¡%s fue capturado!" % result.target_display_name,
-			"wait_time": 1.2,
-		})
-		return
+		shake_count = MAX_VISIBLE_SHAKES
+
+	await _show_shake_pauses(ui, shake_count)
 
 	if result.success:
-		for i in range(result.shakes):
-			await _show_shake_message(ui, i + 1)
-		await ui.show_message_from_dict({
-			"type": "display",
-			"text": "¡Ya está! ¡%s fue capturado!" % result.target_display_name,
-			"wait_time": 1.2,
-		})
+		await _show_success_dialogue(ui)
 		return
 
-	if result.is_early_fail():
-		await ui.show_message_from_dict({
-			"type": "display",
-			"text": "¡Oh no! El Pokémon se escapó de la %s." % _ball_name,
-			"wait_time": 1.0,
-		})
-		return
-
-	for i in range(result.shakes):
-		await _show_shake_message(ui, i + 1)
-	var fail_text: String
-	if result.failed_shake_index >= MAX_VISIBLE_SHAKES:
-		fail_text = "¡Oh! ¡%s estuvo a punto de atraparse!" % result.target_display_name
-	else:
-		fail_text = "¡Vaya! ¡%s se escapó!" % result.target_display_name
-	await ui.show_message_from_dict({
-		"type": "display",
-		"text": fail_text,
-		"wait_time": 1.0,
-	})
+	await _show_failure_dialogue(ui, result.shakes)
 
 
 func _actor_name() -> String:
@@ -144,14 +110,56 @@ func _actor_name() -> String:
 	return "El jugador"
 
 
-func _show_shake_message(ui: BattleUI, shake_number: int) -> void:
-	var text := "¡La %s se balancea %d vez!" % [_ball_name, shake_number]
-	if shake_number != 1:
-		text = "¡La %s se balancea %d veces!" % [_ball_name, shake_number]
+func _show_success_dialogue(ui: BattleUI) -> void:
+	var lines: Array[String] = ["¡Ya está!", "¡%s atrapado!" % result.target_display_name]
+	await _show_multiline_dialogue(ui, lines, 1.2)
+
+
+func _show_failure_dialogue(ui: BattleUI, completed_shakes: int) -> void:
+	await _show_multiline_dialogue(ui, _get_failure_lines(completed_shakes), 1.1)
+
+
+func _get_failure_lines(completed_shakes: int) -> Array[String]:
+	match completed_shakes:
+		0:
+			return ["¡Oh, no!", "¡El Pokémon se ha escapado!"]
+		1:
+			return ["¡Vaya!", "¡Parecía que lo habías atrapado!"]
+		2:
+			return ["¡Qué pena!", "¡Te faltó poco!"]
+		3:
+			return ["¡Huy!", "¡Casi lo consigues!"]
+		_:
+			return ["¡Oh, no!", "¡El Pokémon se ha escapado!"]
+
+
+func _show_shake_pauses(ui: BattleUI, shake_count: int) -> void:
+	for i in range(shake_count):
+		await _show_shake_pause(ui, i + 1)
+
+
+func _show_shake_pause(ui: BattleUI, shake_number: int) -> void:
+	print(_get_shake_log_text(shake_number))
+	await ui.get_tree().create_timer(0.85).timeout
+
+
+func _get_shake_log_text(shake_number: int) -> String:
+	if shake_number == 1:
+		return "¡La %s se balancea 1 vez!" % _ball_name
+	return "¡La %s se balancea %d veces!" % [_ball_name, shake_number]
+
+
+func _show_multiline_dialogue(ui: BattleUI, lines: Array[String], wait_time: float) -> void:
+	if lines.is_empty():
+		return
+	await _show_dialogue_line(ui, "\n".join(lines), wait_time)
+
+
+func _show_dialogue_line(ui: BattleUI, text: String, wait_time: float) -> void:
 	await ui.show_message_from_dict({
 		"type": "display",
 		"text": text,
-		"wait_time": 0.85,
+		"wait_time": wait_time,
 	})
 
 

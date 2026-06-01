@@ -53,7 +53,7 @@ func _apply() -> void:
 		return
 
 	var ball_name: String = _item_data.get_display_name()
-	var thrower_name: String = _choice.pokemon.get_display_name() if _choice.pokemon != null else ""
+	var thrower_name: String = BattleItemHandler.get_player_trainer_display_name(_choice)
 	_runtime_capture = CaptureEffect.new(target_bp, ball_eff, ball_name, thrower_name)
 	_runtime_capture.apply()
 	var capture_result: CaptureResult = _runtime_capture.result
@@ -73,7 +73,6 @@ func _visualize(ui: BattleUI) -> void:
 	if item_use_result == null:
 		return
 	if _runtime_capture != null:
-		await show_item_used_battle_message(ui, _item_data)
 		await _runtime_capture.visualize(ui)
 		if item_use_result.battle_continuation == ItemUseResult.BattleContinuation.BLOCKING_SEQUENCE:
 			_choice.battle_controller.apply_capture_field_cleanup(_target_bp)
