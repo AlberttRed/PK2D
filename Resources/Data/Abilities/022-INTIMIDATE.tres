@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://ddhhye5l5wyr3"]
+[gd_resource type="Resource" script_class="AbilityData" load_steps=3 format=3 uid="uid://ddhhye5l5wyr3"]
 
 [ext_resource type="Script" uid="uid://poe0b2kpocvg" path="res://Scripts/Resources/Classes/AbilityData.gd" id="1_ability"]
+[ext_resource type="Script" uid="uid://b2tjovb8drlwf" path="res://Scripts/Battle/core/Battle Effects/Persistent/Abilities/IntimidateAbilityEffect.gd" id="2_effect"]
 
 [resource]
 script = ExtResource("1_ability")
@@ -8,3 +9,4 @@ id = 22
 internal_name = "intimidate"
 display_name = "Intimidación"
 description = "Reduce el Ataque del rival al entrar en combate."
+effect_resource = ExtResource("2_effect")

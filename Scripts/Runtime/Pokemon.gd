@@ -209,18 +209,7 @@ func _init(
 	else:
 		gender = pokemon_gender
 
-	# Configurar habilidad
-	if pokemon_ability == null:
-		# Mantener valor @export o calcular si es NONE
-		if ability_id == AbilitiesEnum.Values.NONE:
-			ability_id = _calculate_ability() as AbilitiesEnum.Values
-	elif pokemon_ability == 0:
-		ability_id = _calculate_ability() as AbilitiesEnum.Values
-	else:
-		ability_id = pokemon_ability as AbilitiesEnum.Values
-
-	if not Engine.is_editor_hint():
-		ability = DatabaseService.get_ability(ability_id)
+	_configure_ability(pokemon_ability)
 
 	# Configurar naturaleza
 	if pokemon_nature == null:
@@ -297,11 +286,7 @@ func _post_init() -> void:
 	if gender == 0:  # "Sin indicar"
 		gender = _calculate_gender()
 
-	if ability_id == AbilitiesEnum.Values.NONE:
-		ability_id = _calculate_ability() as AbilitiesEnum.Values
-
-	if not Engine.is_editor_hint():
-		ability = DatabaseService.get_ability(ability_id)
+	_configure_ability()
 
 	if not Engine.is_editor_hint():
 		nature = DatabaseService.get_nature(NaturesEnum.get_id(nature_id))
@@ -402,6 +387,37 @@ func _calculate_gender() -> int:
 			return CONST.GENEROS.HEMBRA
 		else:
 			return CONST.GENEROS.MACHO
+
+## Resuelve ability_id (forzado, @export o aleatorio por especie). No asigna AbilityData.
+func _resolve_ability_id(forced_ability: Variant = null) -> void:
+	if forced_ability != null:
+		if int(forced_ability) == 0:
+			ability_id = _calculate_ability() as AbilitiesEnum.Values
+		else:
+			ability_id = int(forced_ability) as AbilitiesEnum.Values
+	elif ability_id == AbilitiesEnum.Values.NONE:
+		ability_id = _calculate_ability() as AbilitiesEnum.Values
+
+
+## Único punto que asigna `ability` desde DatabaseService.
+func _apply_ability_from_database() -> void:
+	if ability_id == AbilitiesEnum.Values.NONE:
+		ability = null
+		return
+	if Engine.is_editor_hint() and base == null:
+		return
+	ability = DatabaseService.get_ability(int(ability_id))
+	if ability == null:
+		push_warning(
+			"Pokemon: no se encontró AbilityData para id %d (%s)"
+			% [int(ability_id), get_display_name() if base != null else "?"]
+		)
+
+
+func _configure_ability(forced_ability: Variant = null) -> void:
+	_resolve_ability_id(forced_ability)
+	_apply_ability_from_database()
+
 
 ## Calcula la habilidad aleatoria según las disponibles para la especie
 func _calculate_ability() -> int:
@@ -807,9 +823,7 @@ func apply_species_evolution(target_species_id: int) -> bool:
 	_refresh_base_stats_from_species()
 	_load_learnable_moves()
 
-	if not Engine.is_editor_hint():
-		ability_id = _calculate_ability() as AbilitiesEnum.Values
-		ability = DatabaseService.get_ability(ability_id)
+	_configure_ability()
 
 	var new_max_hp: int = get_final_stat(StatsEnum.Values.HP)
 	hp_actual = clampi(hp_actual + (new_max_hp - old_max_hp), 0, new_max_hp)

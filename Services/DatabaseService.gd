@@ -8,7 +8,6 @@ const POKEMON_DIR := "res://Resources/Data/Pokemon"
 const MOVES_DIR := "res://Resources/Data/Moves"
 const TYPES_DIR := "res://Resources/Data/Types"
 const ABILITIES_DIR := "res://Resources/Data/Abilities"
-const NATURES_DIR := "res://Resources/Data/Natures" # opcional, si existe
 const WEATHERS_DIR := "res://Resources/Data/Weather" # opcional, si existe
 const TRAINER_CLASSES_DIR := "res://Resources/Trainer Classes"
 const ITEMS_DIR := "res://Resources/Data/Items"
@@ -85,6 +84,11 @@ func _load_all() -> void:
 			"DatabaseService: no hay items cargados. Comprueba que `res://Resources/Data/Items/` esté en el paquete de exportación."
 		)
 
+	if _weathers_by_id.is_empty():
+		push_error(
+			"DatabaseService: no hay climas cargados. Comprueba que `res://Resources/Data/Weather/` contenga .tres (p. ej. RAIN.tres) y esté en el paquete de exportación."
+		)
+
 func _print_summary() -> void:
 	pass
 
@@ -107,38 +111,30 @@ func _load_types() -> void:
 	)
 
 func _load_abilities() -> void:
+	var loaded := [0]
 	load_resources_from_dir(ABILITIES_DIR, func(res):
-		if res == null: return
-		if not (res is AbilityData): return
-		_abilities_by_id[res.id] = res
+		if res == null:
+			return
+		if not (res is AbilityData):
+			return
+		_abilities_by_id[int(res.id)] = res
 		if typeof(res.internal_name) == TYPE_STRING and res.internal_name != "":
 			_abilities_by_name[res.internal_name.to_lower()] = res
+		loaded[0] += 1
 	)
+	if loaded[0] == 0:
+		push_error("DatabaseService: no se cargaron habilidades desde %s" % ABILITIES_DIR)
 
 func _load_natures() -> void:
-	var natures_loaded := false
-	var dir := DirAccess.open(NATURES_DIR)
-	if dir != null:
-		load_resources_from_dir(NATURES_DIR, func(res):
-			if res == null: return
-			if not (res is NatureData): return
-			_natures_by_id[res.id] = res
-			var key := str(res.id).to_lower()
-			_natures_by_name[key] = res
-		)
-		natures_loaded = _natures_by_id.size() > 0
-
-	if not natures_loaded:
-		# Construye naturalezas en memoria a partir de NaturesEnum si no hay .tres
-		for i in NaturesEnum.Values.size():
-			var nat_id := NaturesEnum.get_id(i)
-			if nat_id == "NONE":
-				continue
-			var nat := NatureData.new()
-			nat.id = nat_id.to_lower()
-			nat.display_name = nat_id.capitalize()
-			_natures_by_id[nat.id] = nat
-			_natures_by_name[nat.id] = nat
+	for i in NaturesEnum.Values.size():
+		var nat_id := NaturesEnum.get_id(i)
+		if nat_id == "NONE":
+			continue
+		var nat := NatureData.new()
+		nat.id = nat_id.to_lower()
+		nat.display_name = nat_id.capitalize()
+		_natures_by_id[nat.id] = nat
+		_natures_by_name[nat.id] = nat
 
 func _load_weathers() -> void:
 	var dir := DirAccess.open(WEATHERS_DIR)
@@ -258,25 +254,7 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 					on_loaded.call(res)
 		return
 
-	# Para Abilities: intentar cargar del 001 al 232 (rango típico de Gen 1-3)
-	if dir_path == ABILITIES_DIR:
-		for i in range(1, 233):
-			var path := "%s/%03d.tres" % [dir_path, i]
-			if ResourceLoader.exists(path):
-				var res := load(path)
-				if res != null:
-					on_loaded.call(res)
-		return
-
-	# Para Weather: intentar cargar del 01 al 10
-	if dir_path == WEATHERS_DIR:
-		for i in range(1, 11):
-			var path := "%s/%02d.tres" % [dir_path, i]
-			if ResourceLoader.exists(path):
-				var res := load(path)
-				if res != null:
-					on_loaded.call(res)
-		return
+	# Habilidades y climas: archivos con nombre (022-INTIMIDATE.tres, RAIN.tres, …) → DirAccess más abajo.
 
 	# Para Items: índice estático id -> ruta (evita depender de DirAccess en export).
 	if dir_path == ITEMS_DIR:
@@ -434,8 +412,11 @@ func get_all_types_sorted() -> Array[TypeData]:
 	return out
 
 func get_ability(name_or_id) -> Resource:
-	if typeof(name_or_id) == TYPE_INT:
-		return _abilities_by_id.get(name_or_id, null)
+	if name_or_id == null:
+		return null
+	var t := typeof(name_or_id)
+	if t == TYPE_INT or t == TYPE_FLOAT:
+		return _abilities_by_id.get(int(name_or_id), null)
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
 		return _abilities_by_id.get(int(key), null)
