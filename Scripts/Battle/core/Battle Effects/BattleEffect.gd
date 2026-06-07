@@ -2,7 +2,7 @@ class_name BattleEffect
 extends RefCounted
 
 enum Phases {
-	ON_ENTRY,
+	ON_BATTLE_START,
 	ON_INIT_BATTLE_TURN,
 	ON_INIT_POKEMON_TURN,
 	ON_BEFORE_MOVE,

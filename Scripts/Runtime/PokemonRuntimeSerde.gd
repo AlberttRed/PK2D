@@ -47,8 +47,8 @@ func deserialize(data: Dictionary) -> Pokemon:
 	mon.capture_level = int(data.get("capture_level", mon.capture_level))
 	mon.personality = str(data.get("personality", mon.personality))
 
+	mon._apply_ability_from_database()
 	if not Engine.is_editor_hint():
-		mon.ability = DatabaseService.get_ability(mon.ability_id)
 		mon.nature = DatabaseService.get_nature(NaturesEnum.get_id(mon.nature_id))
 
 	mon._initialize_stats(false)

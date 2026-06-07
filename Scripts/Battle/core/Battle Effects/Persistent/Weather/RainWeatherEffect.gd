@@ -14,7 +14,7 @@ func apply_phase(_pokemon: BattlePokemon, phase: Phases) -> void:
 		# No eliminamos aquí: el BattleEffectController lo hace después de visualize_phase()
 
 func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> void:
-	if phase == Phases.ON_ENTRY:
+	if phase == Phases.ON_BATTLE_START:
 		await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(source.id))
 	elif phase == Phases.ON_END_BATTLE_TURN:
 		if has_finished():

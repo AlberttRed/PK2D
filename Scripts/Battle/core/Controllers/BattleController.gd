@@ -110,6 +110,7 @@ func _on_battle_spot_active_pokemon_loaded(bp: BattlePokemon) -> void:
 func start_battle() -> void:
 	# Configurar UI para el nuevo combate
 	BattleEffectController.set_ui(ui)
+	BattleDebugEffectSeeder.try_apply(self)
 
 	turn_controller.battle_controller = self
 	# Inyectar lógica de targeting en la UI

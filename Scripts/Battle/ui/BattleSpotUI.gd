@@ -50,7 +50,7 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	# Mostrar el spot completo
 	self.visible = true
 	if _pokemon.ability and _pokemon.ability.effect_resource:
-		var effect = pokemon.ability.effect_resource.new(_pokemon.ability)
+		var effect = _pokemon.ability.effect_resource.new(_pokemon.ability)
 		BattleEffectController.add_pokemon_effect(_pokemon, effect)
 
 	_register_persistent_ailment_effect_if_needed(_pokemon)

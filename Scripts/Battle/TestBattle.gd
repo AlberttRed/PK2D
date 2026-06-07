@@ -3,8 +3,13 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 (jugador) vs Gastly Nv.20 (rival).
+## Si true, lanza un 1vs1 salvaje fijo: Growlithe (Intimidación) + Ekans en banca vs Gastly Nv.20.
 @export var use_fixed_rattata_vs_gastly: bool = true
+
+@export_group("Debug efectos persistentes")
+## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
+## Sirve para probar el orden de mensajes al final del turno (Reflejo → Lluvia → Veneno).
+@export var debug_seed_persistent_effects: bool = false
 ## Tamaño del party del jugador (1–6). En doble solo 2 salen al campo; el resto queda en banca para cambios.
 @export_range(1, 6) var test_player_party_size: int = 6
 ## Tamaño del party del entrenador rival (1–6) cuando se use singleTrainerBattle / trainers en escena.
@@ -32,7 +37,7 @@ func _ready() -> void:
 		_setup_test_battler_parties()
 	_seed_test_capture_items()
 	if use_fixed_rattata_vs_gastly:
-		print(">>> Combate fijo: Rattata Nv.20 vs Gastly salvaje Nv.20")
+		print(">>> Combate fijo: Growlithe (Intimidación) + Ekans (Intimidación) vs Gastly Nv.20")
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -85,7 +90,7 @@ func wildSingleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	var winner = await DisplayManager.start_battle(participants, rules)
+	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 
@@ -111,19 +116,18 @@ func wildDoubleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	var winner = await DisplayManager.start_battle(participants, rules)
+	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildFixedRattataGastlyBattle() -> void:
-	var player_participant: BattleParticipant = _create_fixed_player_participant(
-		PokemonsEnum.Values.RATTATA, 20
-	)
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
 	var wild_participant: BattleParticipant = _create_fixed_wild_participant(
 		PokemonsEnum.Values.GASTLY, 20
 	)
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
-	var winner = await DisplayManager.start_battle([player_participant, wild_participant], rules)
-	print(">>> Batalla Rattata vs Gastly terminada. Ganador: %s" % winner)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Growlithe/Ekans vs Gastly terminada. Ganador: %s" % winner)
 
 
 func wildRandomSingleBattle():
@@ -138,7 +142,7 @@ func wildRandomSingleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	var winner = await DisplayManager.start_battle(participants, rules)
+	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildRandomDoubleBattle():
@@ -153,7 +157,7 @@ func wildRandomDoubleBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
 
-	var winner = await DisplayManager.start_battle(participants, rules)
+	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func singleTrainerBattle():
@@ -168,17 +172,30 @@ func singleTrainerBattle():
 
 	var participants:Array[BattleParticipant] = [playerParticipant, trainerParticipant]
 
-	var winner = await DisplayManager.start_battle(participants, rules)
+	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
+	if debug_seed_persistent_effects:
+		BattleDebugEffectSeeder.enable()
+	return await DisplayManager.start_battle(participants, rules)
+
 
 ## Party en escena para `player` / `wildPokemons` (combate fijo por battler opcional).
 func _setup_fixed_rattata_gastly_parties() -> void:
 	if player != null:
 		player.party.clear()
+		player.add_pokemon_to_party(
+			_create_pokemon_instance(PokemonsEnum.Values.GROWLITHE, 20, false, AbilitiesEnum.Values.INTIMIDATE)
+		)
+		player.add_pokemon_to_party(
+			_create_pokemon_instance(PokemonsEnum.Values.EKANS, 20, false, AbilitiesEnum.Values.INTIMIDATE)
+		)
 		player.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.RATTATA, 20, false))
 	if wildPokemons != null:
 		wildPokemons.party.clear()
-		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.GASTLY, 100, true))
+		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.GASTLY, 20, true))
 
 
 ## Rellena los Battler de escena para pruebas con party configurado en inspector.
@@ -219,15 +236,26 @@ func _seed_test_capture_items() -> void:
 	print("TestBattle: ítems de prueba en mochila (bolas x10, Poción x10).")
 
 
-func _create_pokemon_instance(species_id: int, level: int, is_wild: bool) -> Pokemon:
-	var pokemon_data = DatabaseService.get_pokemon(species_id)
-	var pkmn := Pokemon.new(pokemon_data, level, 0, 0, 0, true)
+func _create_pokemon_instance(
+	species_id: int, level: int, is_wild: bool, forced_ability = null
+) -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = species_id as PokemonsEnum.Values
+	pkmn.level = level
 	pkmn.is_wild = is_wild
+	if forced_ability != null:
+		pkmn.ability_id = int(forced_ability) as AbilitiesEnum.Values
+	pkmn._post_init()
 	return pkmn
 
 
-func _create_fixed_player_participant(species_id: int, level: int) -> BattleParticipant:
-	var team: Array[BattlePokemon] = [_create_pokemon_instance(species_id, level, false).to_battle_pokemon()]
+func _create_fixed_player_participant() -> BattleParticipant:
+	var team: Array[BattlePokemon] = []
+	if player == null or player.party.is_empty():
+		push_error("TestBattle: el Battler Player no tiene party configurado.")
+		return BattleParticipant.new(team)
+	for p: Pokemon in player.party:
+		team.append(p.to_battle_pokemon())
 	var participant := BattleParticipant.new(team)
 	participant.is_player = true
 	participant.name = "Jugador"

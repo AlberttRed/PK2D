@@ -14,8 +14,7 @@ func _ready():
 	randomize()
 
 func start_turn_loop():
-	for pokemon in battle_controller.get_all_active_pokemon():
-		await BattleEffectController.process_phase(pokemon, BattleEffect.Phases.ON_ENTRY)
+	await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_BATTLE_START)
 	while not battle_controller.battle_finished():
 		await new_turn()
 		await select_actions()
@@ -26,8 +25,8 @@ func start_turn_loop():
 
 func new_turn():
 	current_turn += 1
-	#battle_controller.new_turn.emit()
-	#battle_ui.actions_menu.hide()  # o mostrar algo específico si lo necesitas
+	if not battle_controller.finished:
+		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_INIT_BATTLE_TURN)
 
 func select_actions():
 	collected_choices.clear()
@@ -90,24 +89,24 @@ func execute_turn():
 
 	print_turn_debug_log(ordered_choices, results)
 
-	# Mostrar animaciones y efectos tras resolver todo
+	# Mostrar animaciones y efectos tras resolver todo (orden de velocidad)
 	for choice in ordered_choices:
-		if results.has(choice):
-			var actor: BattlePokemon = choice.pokemon
-			# El rival puede haber caído antes de su turno (más rápido que él): no ejecutar ni revisar KO con actor nulo.
-			if actor != null and not actor.is_fainted():
-				await handle_result(choice, results[choice])
+		if not results.has(choice):
+			continue
+		var actor: BattlePokemon = choice.pokemon
+		# El rival puede haber caído antes de su turno (más rápido que él): no ejecutar ni revisar KO con actor nulo.
+		if actor == null or actor.is_fainted():
+			continue
 
-			if actor != null:
-				await check_and_show_fainted_pokemon(actor)
+		await BattleEffectController.process_phase(actor, BattleEffect.Phases.ON_INIT_POKEMON_TURN)
+		await handle_result(choice, results[choice])
 
-			# Verificar si el combate ha terminado después de cada acción
-			if battle_controller.battle_finished():
-				break
+		await check_and_show_fainted_pokemon(actor)
 
-	# Aplicar efectos de fin de turno solo si el combate no ha terminado
-	if not battle_controller.finished:
-		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
+		if battle_controller.battle_finished():
+			break
+		else:
+			await BattleEffectController.process_phase(actor, BattleEffect.Phases.ON_END_POKEMON_TURN)
 
 func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 	battle_choices.sort_custom(_sort_choices)
@@ -197,11 +196,9 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 		await h.visualize(battle_controller.ui)
 
 func handle_switch_result(_choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
-	# Aplicar todos los handlers
 	for handler in handlers:
 		handler.apply()
 
-	# Visualizar todos los handlers
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
 
@@ -224,9 +221,9 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 		await handler.visualize(battle_controller.ui)
 
 func end_turn():
+	if not battle_controller.finished:
+		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
 	turn_finished.emit(current_turn)
-	# Aquí iría lógica futura de efectos, clima, estados...
-	#await battle_controller.end_turn()
 
 func reset():
 	# Limpiar estado del controlador de turnos para el siguiente combate
