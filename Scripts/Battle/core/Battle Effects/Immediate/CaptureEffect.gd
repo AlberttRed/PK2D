@@ -4,7 +4,6 @@ class_name CaptureEffect
 ## Balanceos mostrados al jugador (checks 0–2). El check 3 solo determina captura.
 const MAX_VISIBLE_SHAKES := 3
 
-var target: BattlePokemon
 var ball_effect: PokeballItemEffect
 var result: CaptureResult = null
 

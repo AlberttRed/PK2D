@@ -1,9 +1,6 @@
 class_name MissEffect
 extends ImmediateBattleEffect
 
-var user
-var target
-
 func _init(u):
 	user = u
 

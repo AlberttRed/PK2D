@@ -861,8 +861,15 @@ func show_already_effect_message(family: MessageFamily.Values, user: BattlePokem
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
-	var msg: Dictionary = message_controller.get_previous_effect_message(family, user, source_id)
+func show_previous_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source_id: int = 0,
+	related_pokemon: BattlePokemon = null
+) -> void:
+	var msg: Dictionary = message_controller.get_previous_effect_message(
+		family, user, source_id, related_pokemon
+	)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 

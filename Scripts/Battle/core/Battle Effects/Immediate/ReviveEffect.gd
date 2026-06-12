@@ -2,7 +2,6 @@ extends ImmediateBattleEffect
 
 class_name ReviveEffect
 
-var target: BattlePokemon
 var amount: int
 var show_heal_animation: bool
 

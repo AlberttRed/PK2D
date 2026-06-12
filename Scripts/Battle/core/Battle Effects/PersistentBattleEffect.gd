@@ -56,6 +56,12 @@ static func get_visual_order(src: EffectSource) -> int:
 		EffectSource.ITEM: return 4
 		_: return 5
 
+func can_apply() -> int:
+	if target != null and BattleEffectController.has_effect_for(target, self):
+		return ApplyFailReason.Values.ALREADY_ACTIVE
+	return ApplyFailReason.Values.OK
+
+
 func apply_phase(_pokemon, _phase: Phases) -> void: return
 func visualize_phase(_pokemon, _ui, _phase: Phases) -> void: return
 

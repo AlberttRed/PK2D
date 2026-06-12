@@ -167,10 +167,14 @@ func get_ailment_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Val
 		return {}
 	return AilmentMessages.get_ailment_effect_message(user, ailment_id)
 
-func get_ailment_previous_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+func get_ailment_previous_effect_message(
+	user: BattlePokemon,
+	ailment_id: AilmentsEnum.Values,
+	related_pokemon: BattlePokemon = null
+) -> Dictionary:
 	if user == null:
 		return {}
-	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id)
+	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id, related_pokemon)
 
 func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
 	if user == null or target == null:
@@ -272,10 +276,15 @@ func get_already_effect_message(family: MessageFamily.Values, user: BattlePokemo
 		_:
 			return {}
 
-func get_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> Dictionary:
+func get_previous_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source: int = 0,
+	related_pokemon: BattlePokemon = null
+) -> Dictionary:
 	match family:
 		FAMILY.AILMENT:
-			return get_ailment_previous_effect_message(user, source)
+			return get_ailment_previous_effect_message(user, source, related_pokemon)
 		_:
 			return {}
 

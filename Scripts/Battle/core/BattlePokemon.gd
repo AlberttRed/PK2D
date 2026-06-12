@@ -260,6 +260,8 @@ func set_status(new_status: AilmentData):
 		return
 
 	status = new_status
+	if base_data != null:
+		base_data.major_status = AilmentData.to_major_status(new_status) if new_status else CONST.STATUS.OK
 
 func get_base_stat(stat: StatsEnum.Values) -> int:
 	return base_data.get_base_stat(stat)

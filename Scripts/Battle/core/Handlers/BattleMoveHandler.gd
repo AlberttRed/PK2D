@@ -61,3 +61,49 @@ func ensure_valid_single_enemy_target_or_null() -> bool:
 		return false
 	target = BattleTarget.new(candidates[0].battle_spot, target.selection_type)
 	return true
+
+
+func _bind_effect_context(effect: PersistentBattleEffect) -> void:
+	if effect == null:
+		return
+	effect.user = user
+	effect.target = target.get_pokemon() if target != null else null
+
+
+func _validate_ailment_apply(ailment: AilmentData, effect_instance: PersistentBattleEffect) -> int:
+	var pokemon: BattlePokemon = target.get_pokemon() if target != null else null
+	if ailment == null or pokemon == null:
+		return ApplyFailReason.Values.OK
+
+	if ailment.is_persistent:
+		var current_status := _get_current_major_ailment(pokemon)
+		if current_status != null:
+			if _ailments_match(current_status, ailment):
+				return ApplyFailReason.Values.ALREADY_ACTIVE
+			return ApplyFailReason.Values.GENERIC_FAIL
+
+	if effect_instance != null:
+		return effect_instance.can_apply()
+	return ApplyFailReason.Values.OK
+
+
+func _get_current_major_ailment(pokemon: BattlePokemon) -> AilmentData:
+	if pokemon.status != null:
+		return pokemon.status
+	if pokemon.base_data != null:
+		return AilmentData.from_major_status(pokemon.base_data.major_status)
+	return null
+
+
+func _ailments_match(current: AilmentData, incoming: AilmentData) -> bool:
+	if current == null or incoming == null:
+		return false
+	var current_enum := current.get_enum_value()
+	var incoming_enum := incoming.get_enum_value()
+	if current_enum != AilmentsEnum.Values.NONE and current_enum == incoming_enum:
+		return true
+	if not current.internal_name.is_empty() and current.internal_name == incoming.internal_name:
+		return true
+	var current_major := AilmentData.to_major_status(current)
+	var incoming_major := AilmentData.to_major_status(incoming)
+	return current_major != CONST.STATUS.OK and current_major == incoming_major
