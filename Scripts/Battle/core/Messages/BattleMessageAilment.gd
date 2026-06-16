@@ -19,6 +19,8 @@ func get_start_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Valu
 			msg = "¡%s se encuentra confuso!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.INFATUATION:
 			msg = "¡%s se ha enamorado!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.FLINCH:
+			return {}
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -109,6 +111,8 @@ func get_ailment_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Val
 			msg = "¡Está tan confuso que se hirió a si mismo!"
 		AilmentsEnum.Values.INFATUATION:
 			msg = "¡El amor impide que %s ataque!" % [user.get_battle_display_name(false)]
+		AilmentsEnum.Values.FLINCH:
+			msg = "¡%s retrocedió!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}

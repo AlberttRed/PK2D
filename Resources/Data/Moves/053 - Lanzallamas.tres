@@ -3,7 +3,13 @@
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_4s3nc"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_i44m0"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_ee50i"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_hebik"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_n0mwx"]
+
+[sub_resource type="Resource" id="Resource_68lxf"]
+script = ExtResource("2_hebik")
+ailment = ExtResource("1_4s3nc")
+chance = 10
 
 [resource]
 resource_name = "53 - Lanzallamas"
@@ -25,6 +31,7 @@ target_id = 10
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_hebik")]([SubResource("Resource_68lxf")])
 ailment_id = 4
 ailment = ExtResource("1_4s3nc")
 category = ExtResource("2_ee50i")

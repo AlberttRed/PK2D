@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_xno2b"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_csop6"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_jfph4"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_r8wvx"]
+
+[sub_resource type="Resource" id="Resource_xo1w5"]
+script = ExtResource("2_r8wvx")
+ailment = ExtResource("1_xno2b")
+chance = 100
 
 [resource]
 resource_name = "517 - Infierno"
@@ -25,6 +31,7 @@ target_id = 10
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_r8wvx")]([SubResource("Resource_xo1w5")])
 ailment_id = 4
 ailment = ExtResource("1_xno2b")
 category = ExtResource("2_csop6")

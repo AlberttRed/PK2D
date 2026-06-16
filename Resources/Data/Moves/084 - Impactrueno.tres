@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_sypdn"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_1jk6j"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_iqn3b"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_pb6dx"]
+
+[sub_resource type="Resource" id="Resource_vk1xt"]
+script = ExtResource("2_pb6dx")
+ailment = ExtResource("1_sypdn")
+chance = 10
 
 [resource]
 resource_name = "84 - Impactrueno"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 1
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_pb6dx")]([SubResource("Resource_vk1xt")])
 ailment_id = 1
 ailment = ExtResource("1_sypdn")
 category = ExtResource("2_iqn3b")

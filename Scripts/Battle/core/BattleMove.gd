@@ -4,7 +4,7 @@ extends RefCounted
 enum DamageClass {
 	STATUS = 1,
 	PHYSIC = 2,
-	SPECIAL = 3	
+	SPECIAL = 3
 }
 
 ## Deprecated: se usaba para mapear categorías de pokapi
@@ -37,7 +37,7 @@ func is_physic_category():
 
 func is_special_category():
 	return get_damage_class() == DamageClass.SPECIAL
-	
+
 func is_status_category():
 	return get_damage_class() == DamageClass.STATUS
 
@@ -58,10 +58,10 @@ func is_depleted() -> bool:
 
 func get_priority() -> int:
 	return base_data.get_priority()
-	
+
 func get_category_id() -> int:
 	return base_data.get_category_id()
-	
+
 func get_drain_percentage() -> int:
 	return base_data.get_drain_percentage()
 
@@ -92,7 +92,7 @@ func get_number_of_hits() -> int:
 
 func is_multi_hit() -> bool:
 	return base_data.get_max_hits() > 1
-	
+
 func get_max_hits() -> int:
 	return base_data.get_max_hits()
 
@@ -104,17 +104,21 @@ func get_max_turns() -> int:
 
 func get_min_turns() -> int:
 	return base_data.get_min_turns()
-	
+
 func get_critical_rate() -> int:
 	return base_data.get_critical_rate()
-	
+
 func get_category() -> BattleMoveCategory:
 	return base_data.get_category()
 
 func get_ailment() -> AilmentData:
 	return base_data.get_ailment()
 
-	
+
+func get_ailment_entries() -> Array[MoveAilmentEntry]:
+	return base_data.get_ailment_entries()
+
+
 func get_ailment_chance() -> float:
 	return 100.0 if base_data.get_ailment_chance() == 0 else (float(base_data.get_ailment_chance()) / 100.0)
 

@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2hfb7"]
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_kistg"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_lo6rl"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_rdjvg"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_unwn2"]
+
+[sub_resource type="Resource" id="Resource_g0wcw"]
+script = ExtResource("2_rdjvg")
+ailment = ExtResource("1_kistg")
+chance = 100
 
 [resource]
 resource_name = "328 - Bucle Arena"
@@ -31,6 +37,7 @@ meta_category_id = 4
 meta_min_turns = 5
 meta_max_turns = 6
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_rdjvg")]([SubResource("Resource_g0wcw")])
 ailment_id = 8
 ailment = ExtResource("1_kistg")
 category = ExtResource("2_lo6rl")

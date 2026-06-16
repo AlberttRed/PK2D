@@ -46,7 +46,7 @@ func _visualize(_ui: BattleUI) -> void:
 func ensure_valid_single_enemy_target_or_null() -> bool:
 	if move == null or target == null:
 		return true
-	
+
 	var is_single: bool = target.is_pokemon() and target.is_single_enemy_selection_type()
 	if not is_single:
 		return true
@@ -54,7 +54,7 @@ func ensure_valid_single_enemy_target_or_null() -> bool:
 	var tp: BattlePokemon = target.get_pokemon()
 	if tp != null and tp.in_battle and not tp.is_fainted() and tp.battle_spot != null:
 		return true
-	
+
 	var candidates: Array[BattlePokemon] = user.get_opponent_side().get_active_pokemons()
 	candidates = candidates.filter(func(p): return p != tp and not p.is_fainted() and p.battle_spot != null)
 	if candidates.is_empty():
@@ -107,3 +107,86 @@ func _ailments_match(current: AilmentData, incoming: AilmentData) -> bool:
 	var current_major := AilmentData.to_major_status(current)
 	var incoming_major := AilmentData.to_major_status(incoming)
 	return current_major != CONST.STATUS.OK and current_major == incoming_major
+
+
+func _ailment_check_passed(chance_percent: int) -> bool:
+	if chance_percent <= 0:
+		return false
+	if BattleDebugAilmentTest.force_ailment_apply:
+		return true
+	return randf() < float(chance_percent) / 100.0
+
+
+func _try_apply_ailment_entry(entry: MoveAilmentEntry) -> Dictionary:
+	var empty := {
+		"entry": entry,
+		"result": ApplyFailReason.Values.SKIPPED,
+		"effect": null,
+	}
+	if entry == null or entry.ailment == null:
+		return empty
+
+	var pokemon: BattlePokemon = target.get_pokemon() if target != null else null
+	if pokemon == null or pokemon.is_fainted():
+		return empty
+
+	if not _ailment_check_passed(entry.chance):
+		return empty
+
+	var effect_instance: PersistentBattleEffect = null
+	if entry.ailment.effect != null:
+		effect_instance = entry.ailment.get_effect(
+			move.get_min_turns(),
+			move.get_max_turns(),
+			entry.chance
+		)
+		_bind_effect_context(effect_instance)
+
+	var apply_result := _validate_ailment_apply(entry.ailment, effect_instance)
+	if not ApplyFailReason.is_success(apply_result):
+		return {
+			"entry": entry,
+			"result": apply_result,
+			"effect": effect_instance,
+		}
+
+	if effect_instance != null:
+		BattleEffectController.add_pokemon_effect(pokemon, effect_instance)
+	if entry.ailment.is_persistent:
+		pokemon.set_status(entry.ailment)
+
+	return {
+		"entry": entry,
+		"result": ApplyFailReason.Values.OK,
+		"effect": effect_instance,
+	}
+
+
+func _visualize_ailment_entry_result(ui: BattleUI, apply_data: Dictionary, show_fail_messages: bool) -> void:
+	var entry: MoveAilmentEntry = apply_data.get("entry")
+	var result: int = apply_data.get("result", ApplyFailReason.Values.SKIPPED)
+	var pokemon: BattlePokemon = target.get_pokemon() if target != null else null
+	if entry == null or entry.ailment == null or pokemon == null:
+		return
+	if result == ApplyFailReason.Values.SKIPPED:
+		return
+
+	if not ApplyFailReason.is_success(result):
+		if show_fail_messages:
+			await ui.show_already_effect_message(
+				MessageFamily.Values.AILMENT,
+				pokemon,
+				entry.ailment.get_enum_value(),
+				ApplyFailReason.uses_generic_fail_message(result)
+			)
+		return
+
+	if entry.ailment.get_enum_value() == AilmentsEnum.Values.FLINCH:
+		return
+
+	await ui.show_start_effect_message(
+		MessageFamily.Values.AILMENT,
+		pokemon,
+		entry.ailment.get_enum_value()
+	)
+	pokemon.status_changed.emit()

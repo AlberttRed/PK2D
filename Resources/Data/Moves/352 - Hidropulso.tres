@@ -3,7 +3,13 @@
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_2a8m5"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_im3te"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_0iygg"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_gpk0e"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_guwk1"]
+
+[sub_resource type="Resource" id="Resource_slyqo"]
+script = ExtResource("2_gpk0e")
+ailment = ExtResource("1_2a8m5")
+chance = 20
 
 [resource]
 resource_name = "352 - Hidropulso"
@@ -27,6 +33,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 20
+ailment_entries = Array[ExtResource("2_gpk0e")]([SubResource("Resource_slyqo")])
 ailment_id = 6
 ailment = ExtResource("1_2a8m5")
 category = ExtResource("2_guwk1")

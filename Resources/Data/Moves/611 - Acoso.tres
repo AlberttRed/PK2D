@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_11sat"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_rbtp1"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_frpdl"]
 [ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_poi8v"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_uu3c0"]
+
+[sub_resource type="Resource" id="Resource_b4e5o"]
+script = ExtResource("2_frpdl")
+ailment = ExtResource("1_11sat")
+chance = 100
 
 [resource]
 resource_name = "611 - Acoso"
@@ -31,6 +37,7 @@ meta_category_id = 4
 meta_min_turns = 5
 meta_max_turns = 6
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_frpdl")]([SubResource("Resource_b4e5o")])
 ailment_id = 8
 ailment = ExtResource("1_11sat")
 category = ExtResource("2_uu3c0")

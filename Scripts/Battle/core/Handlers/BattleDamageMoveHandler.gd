@@ -12,7 +12,7 @@ func _apply() -> void:
 	var target_pokemon: BattlePokemon = target.get_pokemon()
 	if target_pokemon == null:
 		return
-	
+
 	# Calcular y aplicar daño
 	damage = move.calculate_damage(target_pokemon)
 	show_effectiveness = (damage.effectiveness != 1.0)
@@ -24,7 +24,7 @@ func _visualize(ui: BattleUI) -> void:
 	await damage.visualize(ui)
 	if damage.is_critical:
 		await ui.show_critical_hit_message()
-	
+
 	# Evitar mostrar efectividad por golpe en multi-hit (se mostrará al final en MultiHitHandler)
 	if not move.is_multi_hit() and show_effectiveness:
 		await ui.show_effectiveness_message(damage)

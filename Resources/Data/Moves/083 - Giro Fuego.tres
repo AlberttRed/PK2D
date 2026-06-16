@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_egkgw"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_h3to7"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_0o5nk"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_hq3ek"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_xisg2"]
+
+[sub_resource type="Resource" id="Resource_ss7jl"]
+script = ExtResource("2_0o5nk")
+ailment = ExtResource("1_egkgw")
+chance = 100
 
 [resource]
 resource_name = "83 - Giro Fuego"
@@ -31,6 +37,7 @@ meta_category_id = 4
 meta_min_turns = 5
 meta_max_turns = 6
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_0o5nk")]([SubResource("Resource_ss7jl")])
 ailment_id = 8
 ailment = ExtResource("1_egkgw")
 category = ExtResource("2_hq3ek")

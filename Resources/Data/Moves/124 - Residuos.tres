@@ -4,6 +4,12 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_vajmk"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_ewj2s"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_jx5av"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_se4cw"]
+
+[sub_resource type="Resource" id="Resource_ah5uj"]
+script = ExtResource("2_se4cw")
+ailment = ExtResource("1_kxym3")
+chance = 30
 
 [resource]
 resource_name = "124 - Residuos"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 5
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_se4cw")]([SubResource("Resource_ah5uj")])
 ailment_id = 5
 ailment = ExtResource("1_kxym3")
 category = ExtResource("2_jx5av")

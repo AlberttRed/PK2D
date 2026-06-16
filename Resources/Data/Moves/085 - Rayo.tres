@@ -3,7 +3,13 @@
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_aaf63"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_uymp6"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_6thmr"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_nf5jp"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_p6sjf"]
+
+[sub_resource type="Resource" id="Resource_irg0a"]
+script = ExtResource("2_nf5jp")
+ailment = ExtResource("1_aaf63")
+chance = 10
 
 [resource]
 resource_name = "85 - Rayo"
@@ -25,6 +31,7 @@ target_id = 10
 meta_ailment_id = 1
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_nf5jp")]([SubResource("Resource_irg0a")])
 ailment_id = 1
 ailment = ExtResource("1_aaf63")
 category = ExtResource("2_6thmr")

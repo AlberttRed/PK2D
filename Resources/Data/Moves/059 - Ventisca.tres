@@ -3,7 +3,13 @@
 [ext_resource type="Resource" uid="uid://djlu5d7nxiwrg" path="res://Resources/Data/Ailments/FREEZE.tres" id="1_0pv8g"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_xwj3m"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_kifdf"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_wll0g"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_xrgbq"]
+
+[sub_resource type="Resource" id="Resource_7l7xt"]
+script = ExtResource("2_wll0g")
+ailment = ExtResource("1_0pv8g")
+chance = 10
 
 [resource]
 resource_name = "59 - Ventisca"
@@ -26,6 +32,7 @@ target_id = 11
 meta_ailment_id = 3
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_wll0g")]([SubResource("Resource_7l7xt")])
 ailment_id = 3
 ailment = ExtResource("1_0pv8g")
 category = ExtResource("2_xrgbq")

@@ -21,6 +21,7 @@ enum Values {
 	EMBARGO = 19,
 	PERISH_SONG = 20,
 	INGRAIN = 21,
+	FLINCH = 22,
 }
 
 static func from_string(id: String) -> int:
@@ -44,13 +45,14 @@ static func from_string(id: String) -> int:
 		"embargo": return Values.EMBARGO
 		"perish-song": return Values.PERISH_SONG
 		"ingrain": return Values.INGRAIN
+		"flinch": return Values.FLINCH
 		_:
 			return Values.NONE
 
 static func from_id(numeric_id: int) -> int:
 	# Mapea IDs de PokeAPI -> enum interno
 	match numeric_id:
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21:
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22:
 			return numeric_id
 		_:
 			return Values.NONE
@@ -76,6 +78,7 @@ static func get_string(val: int) -> String:
 		Values.EMBARGO: return "embargo"
 		Values.PERISH_SONG: return "perish-song"
 		Values.INGRAIN: return "ingrain"
+		Values.FLINCH: return "flinch"
 		_:
 			return "none"
 

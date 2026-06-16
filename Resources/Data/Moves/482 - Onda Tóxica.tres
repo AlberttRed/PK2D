@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_3irnw"]
 [ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_iu42j"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_a05i6"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_kqi36"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_oo617"]
+
+[sub_resource type="Resource" id="Resource_jdyso"]
+script = ExtResource("2_a05i6")
+ailment = ExtResource("1_iu42j")
+chance = 10
 
 [resource]
 resource_name = "482 - Onda Tóxica"
@@ -25,6 +31,7 @@ target_id = 9
 meta_ailment_id = 5
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_a05i6")]([SubResource("Resource_jdyso")])
 ailment_id = 5
 ailment = ExtResource("1_iu42j")
 category = ExtResource("2_kqi36")

@@ -8,9 +8,11 @@ var effect_source: EffectSource = EffectSource.OTHER
 var effect_success:bool
 var turns_left:int
 var applied:bool = false
+var application_chance: int = 100
 
-func _init(_source, _min_turns = null, _max_turns = null) -> void:
+func _init(_source, _min_turns = null, _max_turns = null, _application_chance: int = 100) -> void:
 	source = _source
+	application_chance = _application_chance
 	if _min_turns and _max_turns:
 		turns_left = randi_range(_min_turns, _max_turns)
 

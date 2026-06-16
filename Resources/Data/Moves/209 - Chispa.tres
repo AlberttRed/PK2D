@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_god8l"]
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_porvg"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_a8y20"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_jefk7"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_te88m"]
+
+[sub_resource type="Resource" id="Resource_cufj7"]
+script = ExtResource("2_jefk7")
+ailment = ExtResource("1_porvg")
+chance = 30
 
 [resource]
 resource_name = "209 - Chispa"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 1
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_jefk7")]([SubResource("Resource_cufj7")])
 ailment_id = 1
 ailment = ExtResource("1_porvg")
 category = ExtResource("2_a8y20")

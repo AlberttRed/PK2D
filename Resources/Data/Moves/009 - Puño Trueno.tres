@@ -4,6 +4,12 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_yb0d6"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_t1dvf"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="2_tm61m"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_w457x"]
+
+[sub_resource type="Resource" id="Resource_jkpw1"]
+script = ExtResource("2_w457x")
+ailment = ExtResource("1_twqvu")
+chance = 10
 
 [resource]
 resource_name = "9 - Puño Trueno"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 1
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_w457x")]([SubResource("Resource_jkpw1")])
 ailment_id = 1
 ailment = ExtResource("1_twqvu")
 category = ExtResource("2_t1dvf")

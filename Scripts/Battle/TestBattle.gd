@@ -3,10 +3,12 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Gastly Nv.20.
+## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20.
 @export var use_fixed_rattata_vs_gastly: bool = true
-## Temporal: Rattata con Picotazo Veneno y 100% de probabilidad de envenenar.
-@export var debug_rattata_poison_sting_always_poison: bool = true
+## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
+@export var debug_rattata_test_bite: bool = true
+## Si true, el ailment del movimiento de prueba siempre se aplica (omite el %).
+@export var debug_force_ailment_apply: bool = false
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -39,7 +41,9 @@ func _ready() -> void:
 		_setup_test_battler_parties()
 	_seed_test_capture_items()
 	if use_fixed_rattata_vs_gastly:
-		print(">>> Combate fijo: Rattata (Picotazo Veneno, veneno garantizado) vs Gastly Nv.20")
+		var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
+		var chance_note := " (ailment garantizado)" if debug_force_ailment_apply else ""
+		print(">>> Combate fijo: Rattata (%s%s) vs Pidgey Nv.20" % [move_label, chance_note])
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -125,12 +129,12 @@ func wildFixedRattataGastlyBattle() -> void:
 	_setup_fixed_rattata_gastly_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
 	var wild_participant: BattleParticipant = _create_fixed_wild_participant(
-		PokemonsEnum.Values.GASTLY, 20
+		PokemonsEnum.Values.PIDGEY, 20
 	)
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
-	print(">>> Batalla Rattata vs Gastly terminada. Ganador: %s" % winner)
+	print(">>> Batalla Rattata vs Pidgey terminada. Ganador: %s" % winner)
 
 
 ## 1vs1 salvaje: Pikachu♂ vs Clefairy♀ con Atracción; ambos equipos tienen banca para probar cambios.
@@ -244,20 +248,22 @@ func singleTrainerBattle():
 func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
 	if debug_seed_persistent_effects:
 		BattleDebugEffectSeeder.enable()
-	BattleDebugAilmentTest.force_ailment_apply = (
-		use_fixed_rattata_vs_gastly and debug_rattata_poison_sting_always_poison
-	)
+	BattleDebugAilmentTest.force_ailment_apply = debug_force_ailment_apply
 	var winner: String = await DisplayManager.start_battle(participants, rules)
 	BattleDebugAilmentTest.force_ailment_apply = false
 	return winner
 
 
-func _create_rattata_poison_sting_test_instance() -> Pokemon:
+func _create_rattata_ailment_test_instance() -> Pokemon:
 	var pkmn := Pokemon.new()
 	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	pkmn.level = 20
 	pkmn.is_wild = false
-	pkmn.custom_move_ids = [MovesEnum.Values.POISON_STING]
+	var move_id: MovesEnum.Values = (
+		MovesEnum.Values.BITE if debug_rattata_test_bite
+		else MovesEnum.Values.POISON_STING
+	)
+	pkmn.custom_move_ids = [move_id]
 	pkmn._post_init()
 	return pkmn
 
@@ -266,10 +272,10 @@ func _create_rattata_poison_sting_test_instance() -> Pokemon:
 func _setup_fixed_rattata_gastly_parties() -> void:
 	if player != null:
 		player.party.clear()
-		player.add_pokemon_to_party(_create_rattata_poison_sting_test_instance())
+		player.add_pokemon_to_party(_create_rattata_ailment_test_instance())
 	if wildPokemons != null:
 		wildPokemons.party.clear()
-		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.GASTLY, 20, true))
+		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.PIDGEY, 20, true))
 
 
 ## Rellena los Battler de escena para pruebas con party configurado en inspector.
