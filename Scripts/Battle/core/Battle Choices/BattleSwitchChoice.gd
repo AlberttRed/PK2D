@@ -21,6 +21,9 @@ func resolve() -> Array[BattleHandler]:
 		print("[SWITCH] Spot de origen inválido")
 		return []
 	var current := outgoing_pokemon if outgoing_pokemon != null else spot.get_active_pokemon()
+	if TrapAilmentEffect.is_trapped(current):
+		print("[SWITCH] Pokémon atrapado, no puede cambiar")
+		return []
 	var target_idx := target_index
 	var party := side_ref.pokemonParty
 

@@ -8,7 +8,6 @@ const _PARTY_SUMMARY_SCENE := preload("res://Scenes/UI/2 - Party/PartySummary.ts
 const _BAG_SCENE := preload("res://Scenes/UI/BAG.tscn")
 const _BAG_CONTROLLER_SCRIPT := preload("res://Scripts/UI/BagController.gd")
 const _PARTY_SCENE := preload("res://Scenes/UI/2 - Party/PARTY.tscn")
-const _PARTY_CONTROLLER_SCRIPT := preload("res://Scripts/UI/PartyController.gd")
 const _BATTLE_PARTY_SWITCH_CONTROLLER := preload("res://Scripts/Battle/ui/BattlePartySwitchController.gd")
 
 @onready var message_controller:BattleMessageController = $MessageController
@@ -119,6 +118,9 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 
 	# Si no es LUCHAR, devolvemos directamente
 	if choice is not BattleMoveChoice:
+		if choice is BattleRunChoice and TrapAilmentEffect.is_trapped(pokemon):
+			await show_escape_message(false, false)
+			return await show_action_selection(pokemon)
 		return choice
 
 	var move_choice: BattleMoveChoice = await show_move_selection(pokemon)
@@ -312,8 +314,8 @@ func _battle_item_needs_enemy_target_pick(item_data: ItemData) -> bool:
 	return item_data.kind == ItemEnums.Kind.POKEBALL
 
 
-func _pick_ally_party_slot_for_item(_actor: BattlePokemon, _item_data: ItemData, initial_focus_slot: int = -1) -> int:
-	if battle_controller == null or battle_controller.player_side == null:
+func _pick_ally_party_slot_for_item(actor: BattlePokemon, _item_data: ItemData, initial_focus_slot: int = -1) -> int:
+	if battle_controller == null or battle_controller.player_side == null or actor == null:
 		return -1
 	_sync_player_battle_party_to_persistent()
 	# Evita heredar input del ChoiceBox (accept/cancel/direcciones) al abrir Party.
@@ -322,7 +324,9 @@ func _pick_ally_party_slot_for_item(_actor: BattlePokemon, _item_data: ItemData,
 	if _battle_party_ui == null:
 		return -1
 
-	var party_ctrl: PartyController = _PARTY_CONTROLLER_SCRIPT.new(null, &"battle")
+	var party_ctrl = _BATTLE_PARTY_SWITCH_CONTROLLER.new(
+		battle_controller.player_side, actor, false
+	)
 	_battle_party_ui.setup(party_ctrl)
 	if _battle_bag_ui != null and _battle_bag_ui.visible and _battle_bag_ui.has_method("set_input_enabled"):
 		_battle_bag_ui.set_input_enabled(false)
@@ -526,7 +530,8 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 	var selection_state := {
 		"selected_slot": -1,
 		"canceled": false,
-		"done": false
+		"done": false,
+		"rejected_message": {},
 	}
 
 	var on_selected := func(slot_index: int) -> void:
@@ -535,11 +540,21 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 	var on_canceled := func() -> void:
 		selection_state["canceled"] = true
 		selection_state["done"] = true
+	var on_rejected := func(message: Dictionary) -> void:
+		selection_state["rejected_message"] = message
 
 	party_ui.battle_switch_slot_selected.connect(on_selected, CONNECT_ONE_SHOT)
 	party_ui.battle_switch_cancelled.connect(on_canceled, CONNECT_ONE_SHOT)
+	party_ui.battle_switch_rejected.connect(on_rejected)
 	while not bool(selection_state["done"]):
+		var rejected: Dictionary = selection_state["rejected_message"]
+		if not rejected.is_empty():
+			selection_state["rejected_message"] = {}
+			await _show_party_switch_rejection_message(rejected)
 		await get_tree().process_frame
+
+	if party_ui.battle_switch_rejected.is_connected(on_rejected):
+		party_ui.battle_switch_rejected.disconnect(on_rejected)
 
 	party_ui.close()
 
@@ -560,6 +575,19 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 	if pokemon.battle_spot != null:
 		choice.origin_spot_index = pokemon.battle_spot.index
 	return choice
+
+func _show_party_switch_rejection_message(message: Dictionary) -> void:
+	if message == null or message.is_empty():
+		return
+	if party_ui.visible:
+		party_ui.set_input_enabled(false)
+	var prev_z: int = message_box.z_index
+	message_box.z_index = party_ui.z_index + 1
+	await show_message_from_dict(message)
+	message_box.z_index = prev_z
+	if party_ui.visible:
+		party_ui.set_input_enabled(true)
+	await _await_menu_inputs_released()
 
 func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 	if pokemon.battle_spot.has_previous_controllable_pokemon():
@@ -839,20 +867,42 @@ func has_modal_ui_visible() -> bool:
 
 
 # API unificada por variante (source es SIEMPRE int id)
-func show_start_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
-	var side: BattleSide = user.side if user != null else null
-	var msg: Dictionary = message_controller.get_start_effect_message(family, user, source_id, side)
+func show_start_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source_id: int = 0,
+	side: BattleSide = null,
+	related_pokemon: BattlePokemon = null,
+	causing_move_id: int = 0
+) -> void:
+	var resolved_side: BattleSide = side if side != null else (user.side if user != null else null)
+	var msg: Dictionary = message_controller.get_start_effect_message(
+		family, user, source_id, resolved_side, related_pokemon, causing_move_id
+	)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
-	var msg: Dictionary = message_controller.get_effect_message(family, user, source_id)
+func show_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source_id: int = 0,
+	causing_move_id: int = 0
+) -> void:
+	var msg: Dictionary = message_controller.get_effect_message(family, user, source_id, causing_move_id)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 
-func show_end_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source_id: int = 0) -> void:
-	var side: BattleSide = user.side if user != null else null
-	var msg: Dictionary = message_controller.get_end_effect_message(family, user, source_id, side)
+func show_end_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source_id: int = 0,
+	side: BattleSide = null,
+	causing_move_id: int = 0
+) -> void:
+	var resolved_side: BattleSide = side if side != null else (user.side if user != null else null)
+	var msg: Dictionary = message_controller.get_end_effect_message(
+		family, user, source_id, resolved_side, causing_move_id
+	)
 	if !msg or msg.is_empty(): return
 	await show_message_from_dict(msg)
 

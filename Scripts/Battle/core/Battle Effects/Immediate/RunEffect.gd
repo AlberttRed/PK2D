@@ -12,7 +12,11 @@ func _init(_pokemon: BattlePokemon, _can_escape: bool):
 func apply():
 	if not can_escape:
 		return
-	
+
+	if TrapAilmentEffect.is_trapped(pokemon):
+		succeeded = false
+		return
+
 	# Calcular probabilidad de escape basada en velocidad
 	succeeded = _calculate_escape_success()
 	

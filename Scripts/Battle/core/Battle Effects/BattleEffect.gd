@@ -4,6 +4,8 @@ extends RefCounted
 ## Quién aplica el efecto y sobre quién (rellenados por el handler al crear la instancia).
 var user: BattlePokemon = null
 var target: BattlePokemon = null
+## Movimiento que originó el efecto (0 = ninguno; clima, habilidad, etc.).
+var source_move_id: int = 0
 
 enum Phases {
 	ON_BATTLE_START,

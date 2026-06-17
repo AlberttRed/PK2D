@@ -128,9 +128,12 @@ func wildDoubleBattle():
 func wildFixedRattataGastlyBattle() -> void:
 	_setup_fixed_rattata_gastly_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
-	var wild_participant: BattleParticipant = _create_fixed_wild_participant(
-		PokemonsEnum.Values.PIDGEY, 20
-	)
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildFixedRattataGastlyBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
@@ -263,7 +266,17 @@ func _create_rattata_ailment_test_instance() -> Pokemon:
 		MovesEnum.Values.BITE if debug_rattata_test_bite
 		else MovesEnum.Values.POISON_STING
 	)
-	pkmn.custom_move_ids = [move_id]
+	pkmn.custom_move_ids = [move_id, MovesEnum.Values.TAIL_WHIP]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_pidgey_trap_test_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 20
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [MovesEnum.Values.FIRE_SPIN]
 	pkmn._post_init()
 	return pkmn
 
@@ -273,9 +286,12 @@ func _setup_fixed_rattata_gastly_parties() -> void:
 	if player != null:
 		player.party.clear()
 		player.add_pokemon_to_party(_create_rattata_ailment_test_instance())
+		player.add_pokemon_to_party(
+			_create_test_party_pokemon(PokemonsEnum.Values.BULBASAUR, CONST.GENEROS.MACHO, false)
+		)
 	if wildPokemons != null:
 		wildPokemons.party.clear()
-		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.PIDGEY, 20, true))
+		wildPokemons.add_pokemon_to_party(_create_pidgey_trap_test_instance())
 
 
 ## Rellena los Battler de escena para pruebas con party configurado en inspector.

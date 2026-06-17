@@ -68,6 +68,8 @@ func _bind_effect_context(effect: PersistentBattleEffect) -> void:
 		return
 	effect.user = user
 	effect.target = target.get_pokemon() if target != null else null
+	if move != null:
+		effect.source_move_id = move.get_id()
 
 
 func _validate_ailment_apply(ailment: AilmentData, effect_instance: PersistentBattleEffect) -> int:
@@ -184,9 +186,13 @@ func _visualize_ailment_entry_result(ui: BattleUI, apply_data: Dictionary, show_
 	if entry.ailment.get_enum_value() == AilmentsEnum.Values.FLINCH:
 		return
 
+	var effect_instance: PersistentBattleEffect = apply_data.get("effect")
 	await ui.show_start_effect_message(
 		MessageFamily.Values.AILMENT,
 		pokemon,
-		entry.ailment.get_enum_value()
+		entry.ailment.get_enum_value(),
+		null,
+		user,
+		effect_instance.source_move_id if effect_instance != null else move.get_id()
 	)
 	pokemon.status_changed.emit()

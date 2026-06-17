@@ -260,9 +260,8 @@ func _process_global_phase(phase: BattleEffect.Phases):
 		var pokemon: BattlePokemon = bp as BattlePokemon
 		if pokemon == null:
 			continue
-		for effect in _sort_effects_for_apply(_get_pokemon_effects(pokemon)):
-			effect.apply_phase(pokemon, phase)
 		for effect in _sort_effects_for_visualize(_get_pokemon_effects(pokemon)):
+			effect.apply_phase(pokemon, phase)
 			await effect.visualize_phase(pokemon, ui, phase)
 			if effect.has_finished():
 				remove_pokemon_effect(pokemon, effect)
