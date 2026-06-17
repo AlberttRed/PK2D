@@ -64,8 +64,11 @@ func can_apply() -> int:
 	return ApplyFailReason.Values.OK
 
 
-func apply_phase(_pokemon, _phase: Phases) -> void: return
-func visualize_phase(_pokemon, _ui, _phase: Phases) -> void: return
+func apply_phase(_pokemon, _phase: Phases, _ctx: BattlePhaseContext = null) -> void: return
+func visualize_phase(_pokemon, _ui, _phase: Phases, _ctx: BattlePhaseContext = null) -> void: return
+
+## Hook para filtrar movimientos elegibles (IA / decisión). No usa fases de turno ni UI.
+func apply_selectable_moves_filter(_pokemon: BattlePokemon, _filter: MoveSelectionFilter) -> void: return
 
 func has_finished(): return turns_left != null and turns_left < 0
 

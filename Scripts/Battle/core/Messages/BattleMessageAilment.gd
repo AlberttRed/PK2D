@@ -28,6 +28,8 @@ func get_start_ailment_message(
 			return {}
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_start_message(user, related_pokemon, causing_move_id)
+		AilmentsEnum.Values.TAUNT:
+			msg = "¡%s cae presa de la mofa!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -62,6 +64,8 @@ func get_end_ailment_message(
 			msg = "¡%s ya no está enamorado!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_end_message(user, causing_move_id)
+		AilmentsEnum.Values.TAUNT:
+			msg = "¡%s se liberó de la mofa!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_end_ailment_message()")
 			return {}
@@ -100,6 +104,8 @@ func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Va
 				msg = "¡%s ya está enamorado!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.TRAP:
 				msg = "¡%s ya está atrapado!" % [user.get_battle_display_name(true)]
+			AilmentsEnum.Values.TAUNT:
+				msg = "¡%s ya está bajo los efectos de la mofa!" % [user.get_battle_display_name(true)]
 			_:
 				push_warning("Invalid AIlment on get_already_ailment_message()")
 				return {}
@@ -135,6 +141,13 @@ func get_ailment_effect_message(
 			msg = "¡%s retrocedió!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_effect_message(user, causing_move_id)
+		AilmentsEnum.Values.TAUNT:
+			if causing_move_id <= 0:
+				return {}
+			msg = "¡%s no puede usar %s debido a la mofa!" % [
+				user.get_battle_display_name(true),
+				_get_move_display_name(causing_move_id),
+			]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}
@@ -170,6 +183,15 @@ func get_ailment_previous_effect_message(
 		"text": msg,
 		"wait_time": 2.0
 	}
+
+
+func _get_move_display_name(move_id: int) -> String:
+	if move_id <= 0:
+		return "ese movimiento"
+	var move_data: MoveData = DatabaseService.get_move(move_id) as MoveData
+	if move_data != null and not move_data.Name.is_empty():
+		return move_data.Name
+	return "ese movimiento"
 
 
 func get_trap_block_switch_message(user: BattlePokemon) -> Dictionary:

@@ -219,6 +219,10 @@ func get_available_moves() -> Array[BattleMove]:
 		prepare_battle_moves()
 	return battle_moves
 
+## Índices en get_available_moves() elegibles (PP, mofa, disable, etc.) vía efectos.
+func get_selectable_move_indices() -> Array[int]:
+	return BattleEffectController.get_selectable_move_indices(self)
+
 func prepare_battle_moves():
 	battle_moves.clear()
 	for move: Move in base_data.movements:
@@ -227,9 +231,13 @@ func prepare_battle_moves():
 func decide_random_action() -> BattleChoice:
 	var moves = get_available_moves()
 	if moves.is_empty():
-		return BattleChoice.new()  # fallback
+		return BattleChoice.new()
 
-	var index = randi() % moves.size()
+	var legal_indices := get_selectable_move_indices()
+	if legal_indices.is_empty():
+		return BattlePassChoice.new()
+
+	var index: int = legal_indices[randi() % legal_indices.size()]
 	var move = moves[index]
 
 	var choice = BattleMoveChoice.new()

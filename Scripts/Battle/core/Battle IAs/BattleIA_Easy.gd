@@ -20,20 +20,20 @@ func _init():
 ## Elige el mejor par (movimiento, objetivo) basado en efectividad de tipos.
 func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	var moves = pokemon.get_available_moves()
-	
-	# Si no hay movimientos disponibles, pasar turno
+
 	if moves.is_empty():
 		return BattlePassChoice.new()
-	
-	# Obtener enemigos activos
+
+	var legal_indices := get_selectable_move_indices(pokemon)
+	if legal_indices.is_empty():
+		return BattlePassChoice.new()
+
 	var enemies = pokemon.get_opponent_side().get_active_pokemons()
-	
-	# Si no hay enemigos (situación extraña), usar movimiento aleatorio
+
 	if enemies.is_empty():
-		return await _select_random_move(pokemon, moves)
-	
-	# Usar el método común de la clase base para evaluar combinaciones
-	var best_choice = evaluate_best_move_target_combination(moves, enemies)
+		return await _select_random_move(pokemon, moves, legal_indices)
+
+	var best_choice = evaluate_best_move_target_combination(moves, enemies, legal_indices)
 	
 	# Crear la elección de movimiento
 	var choice = BattleMoveChoice.new()
@@ -49,8 +49,17 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	return choice
 
 ## Selecciona un movimiento aleatorio como fallback.
-func _select_random_move(pokemon: BattlePokemon, moves: Array[BattleMove]) -> BattleChoice:
-	var index = randi() % moves.size()
+func _select_random_move(
+	pokemon: BattlePokemon,
+	moves: Array[BattleMove],
+	legal_indices: Array[int] = []
+) -> BattleChoice:
+	var indices := legal_indices
+	if indices.is_empty():
+		indices = get_selectable_move_indices(pokemon)
+	if indices.is_empty():
+		return BattlePassChoice.new()
+	var index: int = indices[randi() % indices.size()]
 	var move = moves[index]
 	
 	var choice = BattleMoveChoice.new()

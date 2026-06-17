@@ -3,8 +3,10 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20.
+## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas Mofa).
 @export var use_fixed_rattata_vs_gastly: bool = true
+## Si true, Pidgey solo lleva Látigo (fuerza bloqueo rival por mofa en ON_BEFORE_MOVE).
+@export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
 @export var debug_rattata_test_bite: bool = true
 ## Si true, el ailment del movimiento de prueba siempre se aplica (omite el %).
@@ -43,7 +45,9 @@ func _ready() -> void:
 	if use_fixed_rattata_vs_gastly:
 		var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
 		var chance_note := " (ailment garantizado)" if debug_force_ailment_apply else ""
-		print(">>> Combate fijo: Rattata (%s%s) vs Pidgey Nv.20" % [move_label, chance_note])
+		print(">>> Combate fijo: Rattata (Mofa + %s%s) vs Pidgey (Tornado + Látigo)" % [move_label, chance_note])
+		if debug_pidgey_status_only:
+			print(">>> debug_pidgey_status_only: Pidgey solo usará Látigo bajo mofa (ON_BEFORE_MOVE).")
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -266,7 +270,7 @@ func _create_rattata_ailment_test_instance() -> Pokemon:
 		MovesEnum.Values.BITE if debug_rattata_test_bite
 		else MovesEnum.Values.POISON_STING
 	)
-	pkmn.custom_move_ids = [move_id, MovesEnum.Values.TAIL_WHIP]
+	pkmn.custom_move_ids = [MovesEnum.Values.TAUNT, move_id, MovesEnum.Values.TAIL_WHIP]
 	pkmn._post_init()
 	return pkmn
 
@@ -276,7 +280,10 @@ func _create_pidgey_trap_test_instance() -> Pokemon:
 	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
 	pkmn.level = 20
 	pkmn.is_wild = true
-	pkmn.custom_move_ids = [MovesEnum.Values.FIRE_SPIN]
+	if debug_pidgey_status_only:
+		pkmn.custom_move_ids = [MovesEnum.Values.TAIL_WHIP]
+	else:
+		pkmn.custom_move_ids = [MovesEnum.Values.GUST, MovesEnum.Values.TAIL_WHIP]
 	pkmn._post_init()
 	return pkmn
 

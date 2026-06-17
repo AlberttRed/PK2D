@@ -118,9 +118,13 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 
 	# Si no es LUCHAR, devolvemos directamente
 	if choice is not BattleMoveChoice:
-		if choice is BattleRunChoice and TrapAilmentEffect.is_trapped(pokemon):
-			await show_escape_message(false, false)
-			return await show_action_selection(pokemon)
+		if choice is BattleRunChoice:
+			var run_ctx := BattlePhaseContext.for_choice(pokemon, choice)
+			await BattleEffectController.process_phase(
+				pokemon, BattleEffect.Phases.ON_VALIDATE_RUN, run_ctx
+			)
+			if run_ctx.rejected:
+				return await show_action_selection(pokemon)
 		return choice
 
 	var move_choice: BattleMoveChoice = await show_move_selection(pokemon)
@@ -529,30 +533,49 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 
 	var selection_state := {
 		"selected_slot": -1,
+		"pending_slot": -1,
 		"canceled": false,
 		"done": false,
 		"rejected_message": {},
 	}
 
 	var on_selected := func(slot_index: int) -> void:
-		selection_state["selected_slot"] = slot_index
-		selection_state["done"] = true
+		selection_state["pending_slot"] = slot_index
 	var on_canceled := func() -> void:
 		selection_state["canceled"] = true
 		selection_state["done"] = true
 	var on_rejected := func(message: Dictionary) -> void:
 		selection_state["rejected_message"] = message
 
-	party_ui.battle_switch_slot_selected.connect(on_selected, CONNECT_ONE_SHOT)
-	party_ui.battle_switch_cancelled.connect(on_canceled, CONNECT_ONE_SHOT)
+	party_ui.battle_switch_slot_selected.connect(on_selected)
+	party_ui.battle_switch_cancelled.connect(on_canceled)
 	party_ui.battle_switch_rejected.connect(on_rejected)
 	while not bool(selection_state["done"]):
+		var pending_slot: int = int(selection_state["pending_slot"])
+		if pending_slot >= 0:
+			selection_state["pending_slot"] = -1
+			var switch_ctx := BattlePhaseContext.for_choice(pokemon, BattleSwitchChoice.new())
+			await BattleEffectController.process_phase(
+				pokemon, BattleEffect.Phases.ON_VALIDATE_SWITCH, switch_ctx
+			)
+			if switch_ctx.rejected:
+				if not switch_ctx.rejection_message.is_empty():
+					await _show_party_switch_rejection_message(switch_ctx.rejection_message)
+				await _await_menu_inputs_released()
+				continue
+			selection_state["selected_slot"] = pending_slot
+			selection_state["done"] = true
+			continue
 		var rejected: Dictionary = selection_state["rejected_message"]
 		if not rejected.is_empty():
 			selection_state["rejected_message"] = {}
 			await _show_party_switch_rejection_message(rejected)
 		await get_tree().process_frame
 
+	if party_ui.battle_switch_slot_selected.is_connected(on_selected):
+		party_ui.battle_switch_slot_selected.disconnect(on_selected)
+	if party_ui.battle_switch_cancelled.is_connected(on_canceled):
+		party_ui.battle_switch_cancelled.disconnect(on_canceled)
 	if party_ui.battle_switch_rejected.is_connected(on_rejected):
 		party_ui.battle_switch_rejected.disconnect(on_rejected)
 
@@ -612,8 +635,21 @@ func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 
 	move_choice.pokemon = pokemon
 
-	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
+	# El menú tapa el MessageBox (mismo z_index); ocultarlo antes de validar/mostrar mensajes.
+	moves_menu.hide()
+	moves_menu.set_process_input(false)
+	moves_menu.unlock_visual_focus()
+
 	var move: BattleMove = move_choice.get_move()
+	var validate_ctx := BattlePhaseContext.for_move(pokemon, move_choice)
+	await BattleEffectController.process_phase(
+		pokemon, BattleEffect.Phases.ON_VALIDATE_MOVE, validate_ctx
+	)
+	if validate_ctx.rejected:
+		await _await_menu_inputs_released()
+		return await show_move_selection(pokemon)
+
+	# Verificar si necesita selección manual de target (usando la lógica, no la UI)
 	var target_type := move.base_data.get_target_id() as BattleTarget.TYPE
 
 	var selected_spot: BattleSpot = null

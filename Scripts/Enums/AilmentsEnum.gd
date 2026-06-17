@@ -12,6 +12,7 @@ enum Values {
 	INFATUATION = 7,
 	TRAP = 8,
 	NIGHTMARE = 9,
+	TAUNT = 11,
 	TORMENT = 12,
 	DISABLE = 13,
 	YAWN = 14,
@@ -36,6 +37,7 @@ static func from_string(id: String) -> int:
 		"infatuation": return Values.INFATUATION
 		"trap": return Values.TRAP
 		"nightmare": return Values.NIGHTMARE
+		"taunt": return Values.TAUNT
 		"torment": return Values.TORMENT
 		"disable": return Values.DISABLE
 		"yawn": return Values.YAWN
@@ -52,7 +54,7 @@ static func from_string(id: String) -> int:
 static func from_id(numeric_id: int) -> int:
 	# Mapea IDs de PokeAPI -> enum interno
 	match numeric_id:
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22:
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22:
 			return numeric_id
 		_:
 			return Values.NONE
@@ -69,6 +71,7 @@ static func get_string(val: int) -> String:
 		Values.INFATUATION: return "infatuation"
 		Values.TRAP: return "trap"
 		Values.NIGHTMARE: return "nightmare"
+		Values.TAUNT: return "taunt"
 		Values.TORMENT: return "torment"
 		Values.DISABLE: return "disable"
 		Values.YAWN: return "yawn"

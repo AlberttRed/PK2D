@@ -61,17 +61,20 @@ static func get_field_effects():
 static func get_all_active_effects() -> Array[PersistentBattleEffect]:
 	return get_instance()._get_all_active_effects()
 
-static func process_phase(pokemon, phase: BattleEffect.Phases):
-	await get_instance()._process_phase(pokemon, phase)
+static func process_phase(pokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	await get_instance()._process_phase(pokemon, phase, ctx)
+
+static func get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	return get_instance()._get_selectable_move_indices(pokemon)
 
 static func process_global_phase(phase: BattleEffect.Phases):
 	await get_instance()._process_global_phase(phase)
 
-static func apply_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	return await get_instance()._apply_phase(pokemon, phase)
+static func apply_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	return await get_instance()._apply_phase(pokemon, phase, ctx)
 
-static func visualize_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	return await get_instance()._visualize_phase(pokemon, phase)
+static func visualize_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	return await get_instance()._visualize_phase(pokemon, phase, ctx)
 
 static func apply_global_phase(phase: BattleEffect.Phases) -> void:
 	await get_instance()._apply_global_phase(phase)
@@ -241,9 +244,17 @@ func _get_all_active_effects() -> Array[PersistentBattleEffect]:
 		result.append_array(list)
 	return result
 
-func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	apply_phase(pokemon, phase)
-	await visualize_phase(pokemon, phase)
+func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	apply_phase(pokemon, phase, ctx)
+	await visualize_phase(pokemon, phase, ctx)
+
+func _get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	var filter := MoveSelectionFilter.from_pokemon(pokemon)
+	if filter.moves.is_empty():
+		return []
+	for effect in _get_all_effects_to_apply_for(pokemon):
+		effect.apply_selectable_moves_filter(pokemon, filter)
+	return filter.get_selectable_indices()
 
 func _process_global_phase(phase: BattleEffect.Phases):
 	var global_effects: Array[PersistentBattleEffect] = []
@@ -266,13 +277,13 @@ func _process_global_phase(phase: BattleEffect.Phases):
 			if effect.has_finished():
 				remove_pokemon_effect(pokemon, effect)
 
-func _apply_phase(pokemon, phase):
+func _apply_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	for effect in _get_all_effects_to_apply_for(pokemon):
-		effect.apply_phase(pokemon, phase)
+		effect.apply_phase(pokemon, phase, ctx)
 
-func _visualize_phase(pokemon, phase):
+func _visualize_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	for effect in _get_all_effects_to_visualize_for(pokemon):
-		await effect.visualize_phase(pokemon, ui, phase)
+		await effect.visualize_phase(pokemon, ui, phase, ctx)
 		if effect.has_finished():
 			_remove_pokemon_scoped_effect(pokemon, effect)
 

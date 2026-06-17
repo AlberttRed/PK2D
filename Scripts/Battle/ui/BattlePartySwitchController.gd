@@ -104,8 +104,6 @@ func get_invalid_switch_reason(slot: int) -> String:
 		return "%s ya está en el campo de batalla." % candidate.get_display_name()
 	if not candidate.inBattleParty:
 		return "%s no está disponible para este combate." % candidate.get_display_name()
-	if not _force_switch and TrapAilmentEffect.is_trapped(_active_pokemon):
-		return "¡%s está atrapado y no puede cambiar!" % _active_pokemon.get_battle_display_name(true)
 	return ""
 
 

@@ -8,12 +8,12 @@ func _init(_source = null, _duration: int = 5, _started_by_move: bool = false) -
 	turns_left = _duration
 	started_by_move = _started_by_move
 
-func apply_phase(_pokemon: BattlePokemon, phase: Phases) -> void:
+func apply_phase(_pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase == Phases.ON_END_BATTLE_TURN and started_by_move:
 		next_turn()
 		# No eliminamos aquí: el BattleEffectController lo hace después de visualize_phase()
 
-func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> void:
+func visualize_phase(_pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase == Phases.ON_BATTLE_START:
 		await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(source.id))
 	elif phase == Phases.ON_END_BATTLE_TURN:

@@ -35,7 +35,7 @@ func _should_end() -> bool:
 	return user == null or not user.in_battle or user.is_fainted()
 
 
-func apply_phase(pokemon: BattlePokemon, phase: Phases) -> void:
+func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE or not pokemon.can_act_this_turn:
 		return
 
@@ -51,7 +51,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases) -> void:
 		pokemon.can_act_this_turn = false
 
 
-func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases) -> void:
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE or not applied:
 		return
 

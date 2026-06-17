@@ -34,7 +34,16 @@ func _should_end() -> bool:
 	return user == null or not user.in_battle or user.is_fainted()
 
 
-func apply_phase(pokemon: BattlePokemon, phase: Phases) -> void:
+func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext = null) -> void:
+	if phase == BattleEffect.Phases.ON_VALIDATE_RUN or phase == BattleEffect.Phases.ON_VALIDATE_SWITCH:
+		if not is_active():
+			return
+		applied = true
+		effect_success = true
+		if ctx != null:
+			ctx.rejected = true
+		return
+
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 
@@ -59,7 +68,19 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases) -> void:
 		_finished = true
 
 
-func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases) -> void:
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, ctx: BattlePhaseContext = null) -> void:
+	if phase == BattleEffect.Phases.ON_VALIDATE_RUN:
+		if not applied or not effect_success:
+			return
+		await ui.show_escape_message(false, false)
+		return
+
+	if phase == BattleEffect.Phases.ON_VALIDATE_SWITCH:
+		if not applied or not effect_success or ctx == null:
+			return
+		ctx.rejection_message = ui.message_controller.get_trap_block_switch_message(pokemon)
+		return
+
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN or not applied:
 		return
 

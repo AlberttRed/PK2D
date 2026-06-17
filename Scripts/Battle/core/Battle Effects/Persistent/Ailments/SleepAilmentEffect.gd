@@ -10,7 +10,7 @@ func _init(src, min_turns = null, max_turns = null, _application_chance: int = 1
 		super(src, min_turns, max_turns, _application_chance)
 
 
-func apply_phase(pokemon, phase: Phases) -> void: 
+func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	
@@ -21,7 +21,7 @@ func apply_phase(pokemon, phase: Phases) -> void:
 	else:
 		pokemon.can_act_this_turn = false 
 
-func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases):
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	if has_finished():

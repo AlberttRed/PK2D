@@ -2,7 +2,7 @@ class_name BurnAilmentEffect
 extends PersistentBattleEffect
 
 
-func apply_phase(pokemon:BattlePokemon, phase: Phases) -> void: 
+func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 		
@@ -14,7 +14,7 @@ func apply_phase(pokemon:BattlePokemon, phase: Phases) -> void:
 
 	pokemon.take_damage(burn_effect)
 
-func visualize_phase(pokemon:BattlePokemon, ui: BattleUI, phase: Phases) -> void:
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 
