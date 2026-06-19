@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://dy1wimc4b5bun"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_gb86j"]
-[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_wxg3q"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/ENCORE.tres" id="1_encore"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_35j34"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="3_cat"]
+
+[sub_resource type="Resource" id="Resource_encore_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_encore")
+chance = 100
 
 [resource]
 resource_name = "227 - Otra Vez"
@@ -21,5 +28,11 @@ effect_entries = "Forces the target to repeat its last used move every turn for 
 
 If the target hasn't used a move since entering the field, if it tried to use a move this turn and failed, if it does not know the selected move, or if the selected move has 0 PP remaining, this move will fail.  If the target's last used move was encore, mimic, mirror move, sketch, struggle, or transform, this move will fail."
 target_id = 10
+meta_ailment_id = 10
 meta_category_id = 13
-category = ExtResource("1_wxg3q")
+meta_min_turns = 3
+meta_max_turns = 3
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_encore_entry")])
+ailment_id = 10
+ailment = ExtResource("1_encore")
+category = ExtResource("3_cat")

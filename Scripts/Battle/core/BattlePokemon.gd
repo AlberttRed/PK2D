@@ -38,6 +38,8 @@ var stat_stages := StatStages.new()
 
 # Recordar el último movimiento seleccionado por este Pokémon
 var last_move_index: int = 0
+## Último movimiento ejecutado con éxito en combate (id PokeAPI); 0 = ninguno.
+var last_used_move_id: int = 0
 
 ## Pokémon del jugador que han estado en campo frente a este rival (EXP; no requiere daño).
 var _player_exp_participants: Array[BattlePokemon] = []
@@ -112,6 +114,16 @@ func init_turn() -> void:
 	selectedBattleChoice = null
 	can_act_this_turn = true
 	# Si más adelante agregas efectos temporales, pueden resetearse aquí
+
+
+func commit_move_usage(move: BattleMove) -> void:
+	if move == null:
+		return
+	last_used_move_id = move.get_id()
+
+
+func clear_last_used_move() -> void:
+	last_used_move_id = 0
 
 
 func register_player_exp_participant(player_bp: BattlePokemon) -> void:

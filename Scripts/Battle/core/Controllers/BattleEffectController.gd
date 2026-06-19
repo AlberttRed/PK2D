@@ -67,6 +67,9 @@ static func process_phase(pokemon, phase: BattleEffect.Phases, ctx: BattlePhaseC
 static func get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
 	return get_instance()._get_selectable_move_indices(pokemon)
 
+static func get_move_selection_filter(pokemon: BattlePokemon) -> MoveSelectionFilter:
+	return get_instance()._build_move_selection_filter(pokemon)
+
 static func process_global_phase(phase: BattleEffect.Phases):
 	await get_instance()._process_global_phase(phase)
 
@@ -248,13 +251,17 @@ func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: Bat
 	apply_phase(pokemon, phase, ctx)
 	await visualize_phase(pokemon, phase, ctx)
 
-func _get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+func _build_move_selection_filter(pokemon: BattlePokemon) -> MoveSelectionFilter:
 	var filter := MoveSelectionFilter.from_pokemon(pokemon)
 	if filter.moves.is_empty():
-		return []
+		return filter
 	for effect in _get_all_effects_to_apply_for(pokemon):
 		effect.apply_selectable_moves_filter(pokemon, filter)
-	return filter.get_selectable_indices()
+	return filter
+
+
+func _get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	return _build_move_selection_filter(pokemon).get_selectable_indices()
 
 func _process_global_phase(phase: BattleEffect.Phases):
 	var global_effects: Array[PersistentBattleEffect] = []

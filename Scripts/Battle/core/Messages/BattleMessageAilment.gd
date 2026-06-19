@@ -28,6 +28,8 @@ func get_start_ailment_message(
 			return {}
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_start_message(user, related_pokemon, causing_move_id)
+		AilmentsEnum.Values.ENCORE:
+			msg = "¡%s debe repetir su movimiento!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TAUNT:
 			msg = "¡%s cae presa de la mofa!" % [user.get_battle_display_name(true)]
 		_:
@@ -64,6 +66,8 @@ func get_end_ailment_message(
 			msg = "¡%s ya no está enamorado!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_end_message(user, causing_move_id)
+		AilmentsEnum.Values.ENCORE:
+			msg = "¡%s se liberó del efecto Otra Vez!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TAUNT:
 			msg = "¡%s se liberó de la mofa!" % [user.get_battle_display_name(true)]
 		_:
@@ -104,6 +108,8 @@ func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Va
 				msg = "¡%s ya está enamorado!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.TRAP:
 				msg = "¡%s ya está atrapado!" % [user.get_battle_display_name(true)]
+			AilmentsEnum.Values.ENCORE:
+				msg = "¡%s ya está bajo los efectos de Otra Vez!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.TAUNT:
 				msg = "¡%s ya está bajo los efectos de la mofa!" % [user.get_battle_display_name(true)]
 			_:
@@ -141,6 +147,13 @@ func get_ailment_effect_message(
 			msg = "¡%s retrocedió!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_effect_message(user, causing_move_id)
+		AilmentsEnum.Values.ENCORE:
+			if causing_move_id <= 0:
+				return {}
+			msg = "¡%s solo puede usar %s!" % [
+				user.get_battle_display_name(true),
+				_get_move_display_name(causing_move_id),
+			]
 		AilmentsEnum.Values.TAUNT:
 			if causing_move_id <= 0:
 				return {}

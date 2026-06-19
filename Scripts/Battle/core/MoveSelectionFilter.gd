@@ -5,6 +5,8 @@ extends RefCounted
 var pokemon: BattlePokemon = null
 ## Copia alineada con `pokemon.get_available_moves()` (mismo orden de índices).
 var moves: Array[BattleMove] = []
+## Si >= 0, la UI debe saltar el menú al pulsar Luchar (p. ej. Encore Gen 3/4).
+var auto_submit_index: int = -1
 var _blocked_indices: Dictionary = {}
 
 
@@ -20,6 +22,14 @@ static func from_pokemon(actor: BattlePokemon) -> MoveSelectionFilter:
 
 func block_index(index: int) -> void:
 	_blocked_indices[index] = true
+	if auto_submit_index == index:
+		auto_submit_index = -1
+
+
+func request_auto_submit(index: int) -> void:
+	if index < 0 or index >= moves.size() or is_index_blocked(index):
+		return
+	auto_submit_index = index
 
 
 func is_index_blocked(index: int) -> bool:

@@ -194,6 +194,13 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 	for h in handlers:
 		await h.visualize(battle_controller.ui)
 
+	choice.pokemon.commit_move_usage(choice.get_move())
+	await BattleEffectController.process_phase(
+		choice.pokemon,
+		BattleEffect.Phases.ON_AFTER_MOVE,
+		BattlePhaseContext.for_move(choice.pokemon, choice)
+	)
+
 func handle_switch_result(_choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
 	for handler in handlers:
 		handler.apply()

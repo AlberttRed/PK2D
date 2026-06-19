@@ -627,12 +627,22 @@ func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 
 
 func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
+	var selection := BattleEffectController.get_move_selection_filter(pokemon)
+	if selection.auto_submit_index >= 0:
+		var forced_choice := BattleMoveChoice.new()
+		forced_choice.move_index = selection.auto_submit_index
+		return await _finish_move_selection(pokemon, forced_choice)
+
 	var move_choice = await show_moves_menu_for(pokemon)
 
 	if move_choice.canceled:
 		# Si el usuario cancela el menú de movimientos, se vuelve a mostrar el menú de acciones
 		return await show_action_selection(pokemon)
 
+	return await _finish_move_selection(pokemon, move_choice)
+
+
+func _finish_move_selection(pokemon: BattlePokemon, move_choice: BattleMoveChoice) -> BattleMoveChoice:
 	move_choice.pokemon = pokemon
 
 	# El menú tapa el MessageBox (mismo z_index); ocultarlo antes de validar/mostrar mensajes.
