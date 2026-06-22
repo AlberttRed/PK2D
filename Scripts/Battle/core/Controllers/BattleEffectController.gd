@@ -70,6 +70,17 @@ static func get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
 static func get_move_selection_filter(pokemon: BattlePokemon) -> MoveSelectionFilter:
 	return get_instance()._build_move_selection_filter(pokemon)
 
+## Comprueba si un índice es elegible (PP + restricciones de efectos), opcionalmente omitiendo uno.
+static func is_move_index_selectable(
+	pokemon: BattlePokemon,
+	index: int,
+	excluding: PersistentBattleEffect = null
+) -> bool:
+	if index < 0:
+		return false
+	var filter := get_instance()._build_move_selection_filter(pokemon, excluding)
+	return not filter.is_index_blocked(index)
+
 static func process_global_phase(phase: BattleEffect.Phases):
 	await get_instance()._process_global_phase(phase)
 
@@ -251,12 +262,17 @@ func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: Bat
 	apply_phase(pokemon, phase, ctx)
 	await visualize_phase(pokemon, phase, ctx)
 
-func _build_move_selection_filter(pokemon: BattlePokemon) -> MoveSelectionFilter:
+func _build_move_selection_filter(
+	pokemon: BattlePokemon,
+	excluding: PersistentBattleEffect = null
+) -> MoveSelectionFilter:
 	var filter := MoveSelectionFilter.from_pokemon(pokemon)
 	if filter.moves.is_empty():
 		return filter
 	for effect in _get_all_effects_to_apply_for(pokemon):
-		effect.apply_selectable_moves_filter(pokemon, filter)
+		if effect == excluding:
+			continue
+		effect.restrict_selectable_moves(pokemon, filter)
 	return filter
 
 

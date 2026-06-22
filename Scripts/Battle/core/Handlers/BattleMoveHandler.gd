@@ -187,12 +187,17 @@ func _visualize_ailment_entry_result(ui: BattleUI, apply_data: Dictionary, show_
 		return
 
 	var effect_instance: PersistentBattleEffect = apply_data.get("effect")
+	var display_move_id: int = (
+		effect_instance.get_start_causing_move_id()
+		if effect_instance != null
+		else move.get_id()
+	)
 	await ui.show_start_effect_message(
 		MessageFamily.Values.AILMENT,
 		pokemon,
 		entry.ailment.get_enum_value(),
 		null,
 		user,
-		effect_instance.source_move_id if effect_instance != null else move.get_id()
+		display_move_id
 	)
 	pokemon.status_changed.emit()

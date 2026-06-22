@@ -69,7 +69,7 @@ func visualize_phase(_pokemon, _ui, _phase: Phases, _ctx: BattlePhaseContext = n
 
 ## Hook para filtrar movimientos elegibles (IA / decisión). No usa fases de turno ni UI.
 ## Puede bloquear índices y solicitar auto-envío al pulsar Luchar vía `filter.request_auto_submit`.
-func apply_selectable_moves_filter(_pokemon: BattlePokemon, _filter: MoveSelectionFilter) -> void: return
+func restrict_selectable_moves(_pokemon: BattlePokemon, _filter: MoveSelectionFilter) -> void: return
 
 func has_finished(): return turns_left != null and turns_left < 0
 
@@ -85,3 +85,8 @@ func on_damage(_effect: DamageEffect) -> void: pass
 
 func get_priority() -> int:
 	return 0
+
+
+## Movimiento a citar en mensaje de inicio del ailment (p. ej. movimiento anulado).
+func get_start_causing_move_id() -> int:
+	return source_move_id

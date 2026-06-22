@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=2 format=3 uid="uid://3nf0h0chenc8"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://3nf0h0chenc8"]
 
-[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_dyyp4"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/DisableAilmentEffect.gd" id="1_disable"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="2_ailment"]
 
 [resource]
-script = ExtResource("1_dyyp4")
+script = ExtResource("2_ailment")
 id = 13
 internal_name = "disable"
 display_name = "Anulación"
 description = ""
 is_persistent = false
+effect = ExtResource("1_disable")

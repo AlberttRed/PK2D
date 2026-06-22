@@ -43,7 +43,7 @@ func is_active() -> bool:
 	return not has_finished()
 
 
-func apply_selectable_moves_filter(pokemon: BattlePokemon, filter: MoveSelectionFilter) -> void:
+func restrict_selectable_moves(pokemon: BattlePokemon, filter: MoveSelectionFilter) -> void:
 	for i in range(filter.moves.size()):
 		if blocks_status_move(pokemon, filter.moves[i]):
 			filter.block_index(i)

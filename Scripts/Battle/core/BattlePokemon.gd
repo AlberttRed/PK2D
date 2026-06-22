@@ -231,6 +231,23 @@ func get_available_moves() -> Array[BattleMove]:
 		prepare_battle_moves()
 	return battle_moves
 
+
+func find_move_index_by_id(move_id: int) -> int:
+	if move_id <= 0:
+		return -1
+	var moves := get_available_moves()
+	for i in range(moves.size()):
+		if moves[i].get_id() == move_id:
+			return i
+	return -1
+
+
+func get_move_by_id(move_id: int) -> BattleMove:
+	var idx := find_move_index_by_id(move_id)
+	if idx < 0:
+		return null
+	return get_available_moves()[idx]
+
 ## Índices en get_available_moves() elegibles (PP, mofa, disable, etc.) vía efectos.
 func get_selectable_move_indices() -> Array[int]:
 	return BattleEffectController.get_selectable_move_indices(self)

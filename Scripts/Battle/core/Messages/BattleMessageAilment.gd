@@ -32,6 +32,8 @@ func get_start_ailment_message(
 			msg = "¡%s debe repetir su movimiento!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TAUNT:
 			msg = "¡%s cae presa de la mofa!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.DISABLE:
+			msg = "¡Se anuló %s!" % [_get_move_display_name(causing_move_id)]
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -70,6 +72,8 @@ func get_end_ailment_message(
 			msg = "¡%s se liberó del efecto Otra Vez!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TAUNT:
 			msg = "¡%s se liberó de la mofa!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.DISABLE:
+			msg = "¡%s ya no está anulado!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_end_ailment_message()")
 			return {}
@@ -112,6 +116,8 @@ func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Va
 				msg = "¡%s ya está bajo los efectos de Otra Vez!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.TAUNT:
 				msg = "¡%s ya está bajo los efectos de la mofa!" % [user.get_battle_display_name(true)]
+			AilmentsEnum.Values.DISABLE:
+				msg = "¡%s ya tiene un movimiento anulado!" % [user.get_battle_display_name(true)]
 			_:
 				push_warning("Invalid AIlment on get_already_ailment_message()")
 				return {}
@@ -148,19 +154,17 @@ func get_ailment_effect_message(
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_effect_message(user, causing_move_id)
 		AilmentsEnum.Values.ENCORE:
-			if causing_move_id <= 0:
-				return {}
 			msg = "¡%s solo puede usar %s!" % [
 				user.get_battle_display_name(true),
 				_get_move_display_name(causing_move_id),
 			]
 		AilmentsEnum.Values.TAUNT:
-			if causing_move_id <= 0:
-				return {}
 			msg = "¡%s no puede usar %s debido a la mofa!" % [
 				user.get_battle_display_name(true),
 				_get_move_display_name(causing_move_id),
 			]
+		AilmentsEnum.Values.DISABLE:
+			msg = "¡%s está anulado!" % [_get_move_display_name(causing_move_id)]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}

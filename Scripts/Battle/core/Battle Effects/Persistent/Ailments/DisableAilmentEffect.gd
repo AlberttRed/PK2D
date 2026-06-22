@@ -1,21 +1,11 @@
-class_name EncoreAilmentEffect
+class_name DisableAilmentEffect
 extends PersistentBattleEffect
 
-const DEFAULT_DURATION: int = 3
-
-## Movimientos que no pueden quedar bloqueados por Otra vez (Gen 4).
-const UNENCOREABLE_MOVE_IDS: Array[int] = [
-	MovesEnum.Values.ENCORE,
-	MovesEnum.Values.MIMIC,
-	MovesEnum.Values.MIRROR_MOVE,
-	MovesEnum.Values.SKETCH,
-	MovesEnum.Values.STRUGGLE,
-	MovesEnum.Values.TRANSFORM,
-]
+const DEFAULT_DURATION: int = 4
 
 var _finished: bool = false
 var _turns_remaining: int = 0
-var _locked_move_id: int = 0
+var _disabled_move_id: int = 0
 var _rejected_move_id: int = 0
 
 
@@ -27,18 +17,14 @@ func _init(_source, _min_turns = null, _max_turns = null, _application_chance: i
 		_turns_remaining = DEFAULT_DURATION
 
 
-static func is_encored(pokemon: BattlePokemon) -> bool:
-	return get_active_effect(pokemon) != null
-
-
-static func get_active_effect(pokemon: BattlePokemon) -> EncoreAilmentEffect:
+static func get_active_effect(pokemon: BattlePokemon) -> DisableAilmentEffect:
 	if pokemon == null:
 		return null
 	for effect in BattleEffectController.get_pokemon_effects(pokemon):
-		if effect is EncoreAilmentEffect:
-			var encore := effect as EncoreAilmentEffect
-			if encore.is_active():
-				return encore
+		if effect is DisableAilmentEffect:
+			var disable := effect as DisableAilmentEffect
+			if disable.is_active():
+				return disable
 	return null
 
 
@@ -46,7 +32,7 @@ static func get_candidate_move_id(pokemon: BattlePokemon) -> int:
 	if pokemon == null:
 		return 0
 	var move_id: int = pokemon.last_used_move_id
-	if move_id <= 0 or move_id in UNENCOREABLE_MOVE_IDS:
+	if move_id <= 0 or move_id == MovesEnum.Values.STRUGGLE:
 		return 0
 	if pokemon.find_move_index_by_id(move_id) < 0:
 		return 0
@@ -54,6 +40,19 @@ static func get_candidate_move_id(pokemon: BattlePokemon) -> int:
 	if move == null or move.get_pp() <= 0:
 		return 0
 	return move_id
+
+
+static func blocks_move(pokemon: BattlePokemon, move: BattleMove) -> bool:
+	if pokemon == null or move == null:
+		return false
+	return blocks_move_id(pokemon, move.get_id())
+
+
+static func blocks_move_id(pokemon: BattlePokemon, move_id: int) -> bool:
+	var disable := get_active_effect(pokemon)
+	if disable == null or move_id <= 0:
+		return false
+	return move_id == disable._disabled_move_id
 
 
 func is_active() -> bool:
@@ -68,21 +67,20 @@ func can_apply() -> int:
 	var candidate := get_candidate_move_id(target)
 	if candidate <= 0:
 		return ApplyFailReason.Values.GENERIC_FAIL
-	_locked_move_id = candidate
+	_disabled_move_id = candidate
 	return ApplyFailReason.Values.OK
+
+
+func get_start_causing_move_id() -> int:
+	return _disabled_move_id if _disabled_move_id > 0 else source_move_id
 
 
 func restrict_selectable_moves(pokemon: BattlePokemon, filter: MoveSelectionFilter) -> void:
 	if not is_active() or pokemon != target:
 		return
-	var locked_index := pokemon.find_move_index_by_id(_locked_move_id)
-	if locked_index < 0 or not _is_locked_move_usable(pokemon):
-		_finish_early()
-		return
 	for i in range(filter.moves.size()):
-		if i != locked_index:
+		if filter.moves[i].get_id() == _disabled_move_id:
 			filter.block_index(i)
-	filter.request_auto_submit(locked_index)
 
 
 func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext = null) -> void:
@@ -94,7 +92,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 		effect_success = false
 		if not is_active():
 			return
-		if ctx.move.get_id() != _locked_move_id:
+		if blocks_move(pokemon, ctx.move):
 			effect_success = true
 			_rejected_move_id = ctx.move.get_id()
 			ctx.rejected = true
@@ -108,7 +106,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 			return
 		applied = true
 		effect_success = false
-		if move.get_id() != _locked_move_id or not _is_locked_move_usable(pokemon):
+		if blocks_move(pokemon, move):
 			effect_success = true
 			_rejected_move_id = move.get_id()
 			pokemon.can_act_this_turn = false
@@ -133,7 +131,7 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 		if not applied or not effect_success:
 			return
 		await ui.show_effect_message(
-			MessageFamily.Values.AILMENT, pokemon, source.id, _locked_move_id
+			MessageFamily.Values.AILMENT, pokemon, source.id, _rejected_move_id
 		)
 		return
 
@@ -141,7 +139,7 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 		if not applied or not effect_success or not pokemon.controllable:
 			return
 		await ui.show_effect_message(
-			MessageFamily.Values.AILMENT, pokemon, source.id, _locked_move_id
+			MessageFamily.Values.AILMENT, pokemon, source.id, _rejected_move_id
 		)
 		return
 
@@ -159,20 +157,11 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 11
+	return 9
 
 
-func get_locked_move_id() -> int:
-	return _locked_move_id
-
-
-func _is_locked_move_usable(pokemon: BattlePokemon) -> bool:
-	var locked_index := pokemon.find_move_index_by_id(_locked_move_id)
-	return BattleEffectController.is_move_index_selectable(pokemon, locked_index, self)
-
-
-func _finish_early() -> void:
-	_finished = true
+func get_disabled_move_id() -> int:
+	return _disabled_move_id
 
 
 static func _get_selected_move(pokemon: BattlePokemon) -> BattleMove:
