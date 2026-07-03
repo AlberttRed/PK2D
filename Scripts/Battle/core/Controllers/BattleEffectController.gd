@@ -16,6 +16,16 @@ static func add_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 static func remove_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 	get_instance()._remove_pokemon_effect(pokemon, effect)
 
+## Quita el efecto de combate asociado a un estado mayor (veneno, sueño, etc.).
+static func remove_major_status_ailment_effect(pokemon: BattlePokemon, ailment_enum: int) -> void:
+	var effect_class := _major_status_ailment_class_name(ailment_enum)
+	if pokemon == null or effect_class.is_empty():
+		return
+	for effect in get_pokemon_effects(pokemon):
+		if effect.get_script().get_global_name() == effect_class:
+			remove_pokemon_effect(pokemon, effect)
+			return
+
 static func clear_pokemon_effects(pokemon):
 	get_instance()._clear_pokemon_effects(pokemon)
 
@@ -347,3 +357,19 @@ func _visualize_global_phase(phase: BattleEffect.Phases) -> void:
 	for effect in _sort_effects_for_visualize(global_effects):
 		await effect.visualize_phase(null, ui, phase)
 		_remove_global_effect_if_finished(effect)
+
+
+static func _major_status_ailment_class_name(ailment_enum: int) -> String:
+	match ailment_enum:
+		AilmentsEnum.Values.POISON:
+			return "PoisonAilmentEffect"
+		AilmentsEnum.Values.BURN:
+			return "BurnAilmentEffect"
+		AilmentsEnum.Values.PARALYSIS:
+			return "ParalysisAilmentEffect"
+		AilmentsEnum.Values.SLEEP:
+			return "SleepAilmentEffect"
+		AilmentsEnum.Values.FREEZE:
+			return "FreezeAilmentEffect"
+		_:
+			return ""

@@ -296,6 +296,11 @@ func set_status(new_status: AilmentData):
 	if status == new_status:
 		return
 
+	if status != null and status.is_persistent:
+		BattleEffectController.remove_major_status_ailment_effect(
+			self, status.get_enum_value()
+		)
+
 	status = new_status
 	if base_data != null:
 		base_data.major_status = AilmentData.to_major_status(new_status) if new_status else CONST.STATUS.OK

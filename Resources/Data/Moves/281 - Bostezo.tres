@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_13lsj"]
 [ext_resource type="Resource" uid="uid://ba73lcc1e1247" path="res://Resources/Data/Ailments/YAWN.tres" id="1_kpscq"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_a2ict"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_xhra6"]
+
+[sub_resource type="Resource" id="Resource_yawn_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_kpscq")
+chance = 100
 
 [resource]
 resource_name = "281 - Bostezo"
@@ -26,6 +32,7 @@ target_id = 10
 meta_ailment_id = 14
 meta_min_turns = 2
 meta_max_turns = 2
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_yawn_entry")])
 ailment_id = 14
 ailment = ExtResource("1_kpscq")
 category = ExtResource("2_xhra6")

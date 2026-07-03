@@ -13,19 +13,19 @@ func _init(src, min_turns = null, max_turns = null, _application_chance: int = 1
 func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
-	
+
 	next_turn()
-	
-	if has_finished():
-		pokemon.set_status(null)
-	else:
-		pokemon.can_act_this_turn = false 
+
+	if not has_finished():
+		pokemon.can_act_this_turn = false
+
 
 func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	if has_finished():
 		await ui.show_end_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
+		pokemon.set_status(null)
 		pokemon.status_changed.emit()
 	else:
 		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)

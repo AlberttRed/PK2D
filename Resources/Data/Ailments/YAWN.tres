@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=2 format=3 uid="uid://ba73lcc1e1247"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://ba73lcc1e1247"]
 
-[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_70rnr"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/YawnAilmentEffect.gd" id="1_yawn"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="2_ailment"]
 
 [resource]
-script = ExtResource("1_70rnr")
+script = ExtResource("2_ailment")
 id = 14
 internal_name = "yawn"
 display_name = "Bostezo"
 description = ""
 is_persistent = false
+effect = ExtResource("1_yawn")
