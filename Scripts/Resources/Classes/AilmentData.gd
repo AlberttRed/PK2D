@@ -22,8 +22,8 @@ static var _major_status_ailment_cache: Dictionary = {}
 @export var is_persistent: bool = true  # Si persiste fuera de combate o al hacer switch
 @export var effect: Resource = null        # Script del PersistentBattleEffect asociado
 
-func get_effect(_min_turn = null, _max_turn = null):
-	return effect.new(self,_min_turn,_max_turn) if effect != null else null
+func get_effect(_min_turn = null, _max_turn = null, _application_chance: int = 100):
+	return effect.new(self, _min_turn, _max_turn, _application_chance) if effect != null else null
 
 # Helper para obtener el enum de mensajes de forma segura durante la transición
 func get_enum_value() -> int:

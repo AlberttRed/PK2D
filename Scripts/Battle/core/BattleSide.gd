@@ -32,7 +32,7 @@ func _init(_type: Types) -> void:
 func init_turn() -> void:
 	# Resetear flags al inicio de cada turno
 	has_blocking_action_this_turn = false
-	
+
 func add_participant(participant: BattleParticipant) -> void:
 	if participants.has(participant):
 		push_warning("Participant ya está en este BattleSide.")
@@ -44,7 +44,7 @@ func add_participant(participant: BattleParticipant) -> void:
 
 	participant.side = self
 	participants.append(participant)
-	
+
 func get_active_pokemons() -> Array[BattlePokemon]:
 	var actives:Array[BattlePokemon] = []
 	for p:BattleParticipant in participants:
@@ -71,7 +71,7 @@ func load_party():
 
 func is_controllable() -> bool:
 	return participants.any(func(p): return p.is_player)
-	
+
 # Devuelve el número máximo de Pokémon activos por side según el modo
 func get_max_active_per_side(rules: BattleRules) -> int:
 	match rules.mode:
@@ -83,7 +83,7 @@ func get_max_active_per_side(rules: BattleRules) -> int:
 			return 3
 		_:
 			return 1
-			
+
 # Distribuye los Pokémon activos entre los participantes
 func get_max_active_per_participant(rules: BattleRules) -> Dictionary:
 	var total_per_side:int = get_max_active_per_side(rules)
@@ -102,7 +102,7 @@ func get_max_active_per_participant(rules: BattleRules) -> Dictionary:
 			count += 1  # repartir el sobrante equitativamente
 		result[participants[i]] = count
 	return result
-	
+
 # Reparte los Pokémon activos entre los participantes.
 # Cada participante puede usar solo sus Pokémon, y solo si están en el pokemonParty.
 # Se asigna como 'inBattle' a los seleccionados según el modo (1vs1, 2vs2, etc.)
@@ -118,13 +118,13 @@ func assign_active_pokemons(rules: BattleRules) -> void:
 	for p in participants:
 		var assigned := 0
 		var max_allowed:int = max_per_participant.get(p, 0)
-		
+
 		for pk in p.pokemon_team:
 			if pk in allowed_pokemon and not pk.fainted and assigned < max_allowed:
 				pk.controllable = p.is_player
 				pk.in_battle = true
 				assigned += 1
-				
+
 # Prepara el BattleSide para el combate:
 # - Carga hasta 6 Pokémon repartidos entre los participantes
 # - Asigna cuáles comenzarán el combate en función del modo de batalla (SINGLE, DOUBLE, etc.)

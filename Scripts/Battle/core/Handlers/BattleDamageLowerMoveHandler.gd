@@ -15,7 +15,7 @@ func _apply() -> void:
 	damage = move.calculate_damage(target.get_pokemon())
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
-	
+
 	# 2) Bajar stats del objetivo solo si no se ha debilitado
 	if not target.get_pokemon().is_fainted():
 		var changes: Dictionary = move.get_stat_changes()

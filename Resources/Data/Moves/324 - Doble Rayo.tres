@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_2r13k"]
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_77e0d"]
 [ext_resource type="Resource" uid="uid://bwo42s77xcpqt" path="res://Resources/Data/Types/07.tres" id="2_2oa78"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_77kpm"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_dov45"]
+
+[sub_resource type="Resource" id="Resource_b2tti"]
+script = ExtResource("2_77kpm")
+ailment = ExtResource("1_77e0d")
+chance = 10
 
 [resource]
 resource_name = "324 - Doble Rayo"
@@ -28,6 +34,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_77kpm")]([SubResource("Resource_b2tti")])
 ailment_id = 6
 ailment = ExtResource("1_77e0d")
 category = ExtResource("2_dov45")

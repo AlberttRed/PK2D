@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_ey2vp"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_v1bom"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_8hym4"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_flryo"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_pf8e2"]
+
+[sub_resource type="Resource" id="Resource_3n06c"]
+script = ExtResource("2_8hym4")
+ailment = ExtResource("1_ey2vp")
+chance = 100
 
 [resource]
 resource_name = "463 - Lluvia Ígnea"
@@ -31,6 +37,7 @@ meta_category_id = 4
 meta_min_turns = 5
 meta_max_turns = 6
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_8hym4")]([SubResource("Resource_3n06c")])
 ailment_id = 8
 ailment = ExtResource("1_ey2vp")
 category = ExtResource("2_flryo")

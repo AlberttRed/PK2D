@@ -4,6 +4,12 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_h2lro"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_flpdb"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_i3mvs"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_oprtn"]
+
+[sub_resource type="Resource" id="Resource_msglx"]
+script = ExtResource("2_oprtn")
+ailment = ExtResource("1_4h4fs")
+chance = 10
 
 [resource]
 resource_name = "7 - Puño Fuego"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_oprtn")]([SubResource("Resource_msglx")])
 ailment_id = 4
 ailment = ExtResource("1_4h4fs")
 category = ExtResource("2_flpdb")

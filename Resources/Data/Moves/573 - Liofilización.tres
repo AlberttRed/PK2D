@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_e6loq"]
 [ext_resource type="Resource" uid="uid://djlu5d7nxiwrg" path="res://Resources/Data/Ailments/FREEZE.tres" id="1_qf5hp"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_62l3a"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_k7np2"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_r0ptl"]
+
+[sub_resource type="Resource" id="Resource_frdxw"]
+script = ExtResource("2_62l3a")
+ailment = ExtResource("1_qf5hp")
+chance = 10
 
 [resource]
 resource_name = "573 - Liofilización"
@@ -28,6 +34,7 @@ target_id = 10
 meta_ailment_id = 3
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_62l3a")]([SubResource("Resource_frdxw")])
 ailment_id = 3
 ailment = ExtResource("1_qf5hp")
 category = ExtResource("2_r0ptl")

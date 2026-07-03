@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_o5o5a"]
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_ue4mj"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_7la5l"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_vuay0"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_wpwk6"]
+
+[sub_resource type="Resource" id="Resource_taq8s"]
+script = ExtResource("2_7la5l")
+ailment = ExtResource("1_ue4mj")
+chance = 30
 
 [resource]
 resource_name = "592 - Chorro de Vapor"
@@ -26,6 +32,7 @@ target_id = 10
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_7la5l")]([SubResource("Resource_taq8s")])
 ailment_id = 4
 ailment = ExtResource("1_ue4mj")
 category = ExtResource("2_wpwk6")

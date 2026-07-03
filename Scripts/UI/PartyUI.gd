@@ -10,6 +10,7 @@ signal bag_item_target_selected(slot_index: int)
 signal bag_item_target_cancelled()
 signal battle_switch_slot_selected(slot_index: int)
 signal battle_switch_cancelled()
+signal battle_switch_rejected(message: Dictionary)
 
 const SLOT_COUNT: int = 6
 const CANCEL_INDEX: int = 6
@@ -698,11 +699,8 @@ func _handle_battle_switch_choice_menu(slot: int) -> void:
 
 	match idx:
 		0:
-			if _controller.has_method("is_selectable_switch_slot") and not _controller.is_selectable_switch_slot(slot):
-				var msg := "No puedes elegir ese Pokémon."
-				if _controller.has_method("get_invalid_switch_reason"):
-					msg = str(_controller.get_invalid_switch_reason(slot))
-				_set_help_text(msg)
+			if not _controller.is_selectable_switch_slot(slot):
+				battle_switch_rejected.emit(_controller.get_invalid_switch_message(slot))
 				return
 			battle_switch_slot_selected.emit(slot)
 			return

@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_4n7m0"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_rb5b5"]
 [ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_tuf7s"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_vyde6"]
+
+[sub_resource type="Resource" id="Resource_3gu1x"]
+script = ExtResource("2_vyde6")
+ailment = ExtResource("1_4n7m0")
+chance = 100
 
 [resource]
 resource_name = "448 - Cháchara"
@@ -29,6 +35,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_vyde6")]([SubResource("Resource_3gu1x")])
 ailment_id = 6
 ailment = ExtResource("1_4n7m0")
 category = ExtResource("2_rb5b5")

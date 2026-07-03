@@ -121,14 +121,21 @@ func get_category_id() -> int:
 	return base.meta_category_id
 
 func get_ailment() -> AilmentData:
-	# Por ahora, solo usar compatibilidad con Resource antiguo
-	# TODO: Agregar soporte para ailments en DatabaseService
-	if base.ailment != null:
-		return base.ailment as AilmentData
+	var entries := get_ailment_entries()
+	if not entries.is_empty() and entries[0].ailment != null:
+		return entries[0].ailment
 	return null
 
+
+func get_ailment_entries() -> Array[MoveAilmentEntry]:
+	return base.get_ailment_entries()
+
+
 func get_ailment_chance() -> int:
-	return base.meta_ailment_chance
+	var entries := get_ailment_entries()
+	if entries.is_empty():
+		return 0
+	return entries[0].chance
 
 func get_weather() -> WeatherData:
 	# Usar weather_id para cargar el WeatherData solo cuando sea necesario

@@ -61,17 +61,34 @@ static func get_field_effects():
 static func get_all_active_effects() -> Array[PersistentBattleEffect]:
 	return get_instance()._get_all_active_effects()
 
-static func process_phase(pokemon, phase: BattleEffect.Phases):
-	await get_instance()._process_phase(pokemon, phase)
+static func process_phase(pokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	await get_instance()._process_phase(pokemon, phase, ctx)
+
+static func get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	return get_instance()._get_selectable_move_indices(pokemon)
+
+static func get_move_selection_filter(pokemon: BattlePokemon) -> MoveSelectionFilter:
+	return get_instance()._build_move_selection_filter(pokemon)
+
+## Comprueba si un índice es elegible (PP + restricciones de efectos), opcionalmente omitiendo uno.
+static func is_move_index_selectable(
+	pokemon: BattlePokemon,
+	index: int,
+	excluding: PersistentBattleEffect = null
+) -> bool:
+	if index < 0:
+		return false
+	var filter := get_instance()._build_move_selection_filter(pokemon, excluding)
+	return not filter.is_index_blocked(index)
 
 static func process_global_phase(phase: BattleEffect.Phases):
 	await get_instance()._process_global_phase(phase)
 
-static func apply_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	return await get_instance()._apply_phase(pokemon, phase)
+static func apply_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	return await get_instance()._apply_phase(pokemon, phase, ctx)
 
-static func visualize_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	return await get_instance()._visualize_phase(pokemon, phase)
+static func visualize_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	return await get_instance()._visualize_phase(pokemon, phase, ctx)
 
 static func apply_global_phase(phase: BattleEffect.Phases) -> void:
 	await get_instance()._apply_global_phase(phase)
@@ -241,9 +258,26 @@ func _get_all_active_effects() -> Array[PersistentBattleEffect]:
 		result.append_array(list)
 	return result
 
-func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases):
-	apply_phase(pokemon, phase)
-	await visualize_phase(pokemon, phase)
+func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
+	apply_phase(pokemon, phase, ctx)
+	await visualize_phase(pokemon, phase, ctx)
+
+func _build_move_selection_filter(
+	pokemon: BattlePokemon,
+	excluding: PersistentBattleEffect = null
+) -> MoveSelectionFilter:
+	var filter := MoveSelectionFilter.from_pokemon(pokemon)
+	if filter.moves.is_empty():
+		return filter
+	for effect in _get_all_effects_to_apply_for(pokemon):
+		if effect == excluding:
+			continue
+		effect.restrict_selectable_moves(pokemon, filter)
+	return filter
+
+
+func _get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	return _build_move_selection_filter(pokemon).get_selectable_indices()
 
 func _process_global_phase(phase: BattleEffect.Phases):
 	var global_effects: Array[PersistentBattleEffect] = []
@@ -260,20 +294,21 @@ func _process_global_phase(phase: BattleEffect.Phases):
 		var pokemon: BattlePokemon = bp as BattlePokemon
 		if pokemon == null:
 			continue
-		for effect in _sort_effects_for_apply(_get_pokemon_effects(pokemon)):
-			effect.apply_phase(pokemon, phase)
 		for effect in _sort_effects_for_visualize(_get_pokemon_effects(pokemon)):
+			effect.apply_phase(pokemon, phase)
 			await effect.visualize_phase(pokemon, ui, phase)
 			if effect.has_finished():
 				remove_pokemon_effect(pokemon, effect)
 
-func _apply_phase(pokemon, phase):
+func _apply_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	for effect in _get_all_effects_to_apply_for(pokemon):
-		effect.apply_phase(pokemon, phase)
+		if ctx != null and ctx.rejected:
+			break
+		effect.apply_phase(pokemon, phase, ctx)
 
-func _visualize_phase(pokemon, phase):
+func _visualize_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	for effect in _get_all_effects_to_visualize_for(pokemon):
-		await effect.visualize_phase(pokemon, ui, phase)
+		await effect.visualize_phase(pokemon, ui, phase, ctx)
 		if effect.has_finished():
 			_remove_pokemon_scoped_effect(pokemon, effect)
 

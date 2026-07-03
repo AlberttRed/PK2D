@@ -3,8 +3,14 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza un 1vs1 salvaje fijo: Growlithe (Intimidación) + Ekans en banca vs Gastly Nv.20.
+## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas Otra Vez).
 @export var use_fixed_rattata_vs_gastly: bool = true
+## Si true, Pidgey solo lleva Látigo (útil para probar fallback si el movimiento bloqueado no es usable).
+@export var debug_pidgey_status_only: bool = false
+## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
+@export var debug_rattata_test_bite: bool = true
+## Si true, el ailment del movimiento de prueba siempre se aplica (omite el %).
+@export var debug_force_ailment_apply: bool = false
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -37,7 +43,11 @@ func _ready() -> void:
 		_setup_test_battler_parties()
 	_seed_test_capture_items()
 	if use_fixed_rattata_vs_gastly:
-		print(">>> Combate fijo: Growlithe (Intimidación) + Ekans (Intimidación) vs Gastly Nv.20")
+		var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
+		var chance_note := " (ailment garantizado)" if debug_force_ailment_apply else ""
+		print(">>> Combate fijo: Rattata (Otra Vez + Tormento + %s%s) vs Pidgey (Anulación + Tormento + Tornado + Látigo)" % [move_label, chance_note])
+		if debug_pidgey_status_only:
+			print(">>> debug_pidgey_status_only: Pidgey solo lleva Anulación + Tormento + Látigo.")
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -120,14 +130,80 @@ func wildDoubleBattle():
 	print(">>> Batalla terminada. Ganador: %s" % winner)
 
 func wildFixedRattataGastlyBattle() -> void:
+	_setup_fixed_rattata_gastly_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
-	var wild_participant: BattleParticipant = _create_fixed_wild_participant(
-		PokemonsEnum.Values.GASTLY, 20
-	)
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildFixedRattataGastlyBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
-	print(">>> Batalla Growlithe/Ekans vs Gastly terminada. Ganador: %s" % winner)
+	print(">>> Batalla Rattata vs Pidgey terminada. Ganador: %s" % winner)
+
+
+## 1vs1 salvaje: Pikachu♂ vs Clefairy♀ con Atracción; ambos equipos tienen banca para probar cambios.
+func wildFixedAttractTestBattle() -> void:
+	_setup_fixed_attract_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildFixedAttractTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Atracción terminada. Ganador: %s" % winner)
+
+
+func _setup_fixed_attract_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(
+			_create_attract_test_pokemon(PokemonsEnum.Values.PIKACHU, CONST.GENEROS.MACHO, false)
+		)
+		player.add_pokemon_to_party(
+			_create_test_party_pokemon(PokemonsEnum.Values.BULBASAUR, CONST.GENEROS.MACHO, false)
+		)
+		player.add_pokemon_to_party(
+			_create_test_party_pokemon(PokemonsEnum.Values.CHARMANDER, CONST.GENEROS.MACHO, false)
+		)
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(
+			_create_attract_test_pokemon(PokemonsEnum.Values.CLEFAIRY, CONST.GENEROS.HEMBRA, true)
+		)
+		wildPokemons.add_pokemon_to_party(
+			_create_test_party_pokemon(PokemonsEnum.Values.VULPIX, CONST.GENEROS.HEMBRA, true)
+		)
+		wildPokemons.add_pokemon_to_party(
+			_create_test_party_pokemon(PokemonsEnum.Values.JIGGLYPUFF, CONST.GENEROS.HEMBRA, true)
+		)
+
+
+func _create_attract_test_pokemon(species_id: int, pokemon_gender: int, is_wild: bool) -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = species_id as PokemonsEnum.Values
+	pkmn.level = 20
+	pkmn.gender = pokemon_gender
+	pkmn.is_wild = is_wild
+	pkmn.custom_move_ids = [MovesEnum.Values.ATTRACT]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_test_party_pokemon(species_id: int, pokemon_gender: int, is_wild: bool) -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = species_id as PokemonsEnum.Values
+	pkmn.level = 20
+	pkmn.gender = pokemon_gender
+	pkmn.is_wild = is_wild
+	pkmn._post_init()
+	return pkmn
 
 
 func wildRandomSingleBattle():
@@ -179,23 +255,64 @@ func singleTrainerBattle():
 func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
 	if debug_seed_persistent_effects:
 		BattleDebugEffectSeeder.enable()
-	return await DisplayManager.start_battle(participants, rules)
+	BattleDebugAilmentTest.force_ailment_apply = debug_force_ailment_apply
+	var winner: String = await DisplayManager.start_battle(participants, rules)
+	BattleDebugAilmentTest.force_ailment_apply = false
+	return winner
+
+
+func _create_rattata_ailment_test_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	pkmn.level = 20
+	pkmn.is_wild = false
+	var move_id: MovesEnum.Values = (
+		MovesEnum.Values.BITE if debug_rattata_test_bite
+		else MovesEnum.Values.POISON_STING
+	)
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.ENCORE,
+		MovesEnum.Values.TORMENT,
+		move_id,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_pidgey_trap_test_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 20
+	pkmn.is_wild = true
+	if debug_pidgey_status_only:
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.DISABLE,
+			MovesEnum.Values.TORMENT,
+			MovesEnum.Values.TAIL_WHIP,
+		]
+	else:
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.DISABLE,
+			MovesEnum.Values.TORMENT,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.TAIL_WHIP,
+		]
+	pkmn._post_init()
+	return pkmn
 
 
 ## Party en escena para `player` / `wildPokemons` (combate fijo por battler opcional).
 func _setup_fixed_rattata_gastly_parties() -> void:
 	if player != null:
 		player.party.clear()
+		player.add_pokemon_to_party(_create_rattata_ailment_test_instance())
 		player.add_pokemon_to_party(
-			_create_pokemon_instance(PokemonsEnum.Values.GROWLITHE, 20, false, AbilitiesEnum.Values.INTIMIDATE)
+			_create_test_party_pokemon(PokemonsEnum.Values.BULBASAUR, CONST.GENEROS.MACHO, false)
 		)
-		player.add_pokemon_to_party(
-			_create_pokemon_instance(PokemonsEnum.Values.EKANS, 20, false, AbilitiesEnum.Values.INTIMIDATE)
-		)
-		player.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.RATTATA, 20, false))
 	if wildPokemons != null:
 		wildPokemons.party.clear()
-		wildPokemons.add_pokemon_to_party(_create_pokemon_instance(PokemonsEnum.Values.GASTLY, 20, true))
+		wildPokemons.add_pokemon_to_party(_create_pidgey_trap_test_instance())
 
 
 ## Rellena los Battler de escena para pruebas con party configurado en inspector.

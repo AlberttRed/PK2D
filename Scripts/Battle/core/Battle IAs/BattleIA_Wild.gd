@@ -19,13 +19,15 @@ func _init():
 ## Siempre elige un movimiento aleatorio de los disponibles.
 func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	var moves = pokemon.get_available_moves()
-	
-	# Si no hay movimientos disponibles, pasar turno
+
 	if moves.is_empty():
 		return BattlePassChoice.new()
-	
-	# Seleccionar un movimiento aleatorio
-	var index = randi() % moves.size()
+
+	var legal_indices := get_selectable_move_indices(pokemon)
+	if legal_indices.is_empty():
+		return BattlePassChoice.new()
+
+	var index: int = legal_indices[randi() % legal_indices.size()]
 	var move = moves[index]
 	
 	# Crear la elección de movimiento

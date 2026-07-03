@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=2 format=3 uid="uid://cph5xgmmwynox"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://cph5xgmmwynox"]
 
+[ext_resource type="Script" uid="uid://d8k2m5nfqatuation" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/InfatuationAilmentEffect.gd" id="1_infat"]
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_o05yv"]
 
 [resource]
@@ -9,3 +10,4 @@ internal_name = "infatuation"
 display_name = "Enamorar"
 description = ""
 is_persistent = false
+effect = ExtResource("1_infat")

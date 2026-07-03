@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7cjdo"]
 [ext_resource type="Resource" uid="uid://c74kascyu4hfe" path="res://Resources/Data/Ailments/PARALYSIS.tres" id="1_sehjk"]
 [ext_resource type="Resource" uid="uid://5oyw0rmfnaa5" path="res://Resources/Data/Types/02.tres" id="2_0mcgu"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_avtrb"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_u07en"]
+
+[sub_resource type="Resource" id="Resource_jwcgm"]
+script = ExtResource("2_avtrb")
+ailment = ExtResource("1_sehjk")
+chance = 30
 
 [resource]
 resource_name = "395 - Palmeo"
@@ -25,6 +31,7 @@ target_id = 10
 meta_ailment_id = 1
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_avtrb")]([SubResource("Resource_jwcgm")])
 ailment_id = 1
 ailment = ExtResource("1_sehjk")
 category = ExtResource("2_u07en")

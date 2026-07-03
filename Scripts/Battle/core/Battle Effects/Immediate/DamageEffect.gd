@@ -1,8 +1,6 @@
 class_name DamageEffect
 extends ImmediateBattleEffect
 
-var user: BattlePokemon
-var target: BattlePokemon
 var move: BattleMove
 var amount: int
 

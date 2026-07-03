@@ -1,6 +1,12 @@
 class_name BattleEffect
 extends RefCounted
 
+## Quién aplica el efecto y sobre quién (rellenados por el handler al crear la instancia).
+var user: BattlePokemon = null
+var target: BattlePokemon = null
+## Movimiento que originó el efecto (0 = ninguno; clima, habilidad, etc.).
+var source_move_id: int = 0
+
 enum Phases {
 	ON_BATTLE_START,
 	ON_INIT_BATTLE_TURN,
@@ -12,6 +18,9 @@ enum Phases {
 	ON_ENTRY_BEGIN,
 	ON_END_POKEMON_TURN,
 	ON_END_BATTLE_TURN,
+	ON_VALIDATE_MOVE,
+	ON_VALIDATE_RUN,
+	ON_VALIDATE_SWITCH,
 }
 
 
@@ -20,6 +29,10 @@ enum Modifiers {
 	MOVE_ACCURACY,
 	CRITICAL_CHANCE
 }
+
+## Comprueba si el efecto puede aplicarse. Sobrescribir en subclases con reglas propias.
+func can_apply() -> int:
+	return ApplyFailReason.Values.OK
 
 # Helper para mostrar mensajes desde efectos sin repetir diccionarios
 # Por defecto: tipo "wait" y wait_time 1.0

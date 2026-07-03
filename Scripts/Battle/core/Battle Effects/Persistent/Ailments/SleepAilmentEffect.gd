@@ -3,14 +3,14 @@ extends PersistentBattleEffect
 
 
 ## Sin turnos desde el movimiento (p. ej. estado persistente al entrar), duración típica gen 3.
-func _init(src, min_turns = null, max_turns = null) -> void:
+func _init(src, min_turns = null, max_turns = null, _application_chance: int = 100) -> void:
 	if min_turns == null and max_turns == null:
-		super(src, 2, 5)
+		super(src, 2, 5, _application_chance)
 	else:
-		super(src, min_turns, max_turns)
+		super(src, min_turns, max_turns, _application_chance)
 
 
-func apply_phase(pokemon, phase: Phases) -> void: 
+func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	
@@ -21,7 +21,7 @@ func apply_phase(pokemon, phase: Phases) -> void:
 	else:
 		pokemon.can_act_this_turn = false 
 
-func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases):
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
 	if has_finished():

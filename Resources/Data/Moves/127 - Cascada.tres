@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://d33d2avaei336"]
 
-[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_8jp7s"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qehyq"]
 [ext_resource type="Resource" uid="uid://dp2vqsim555sq" path="res://Resources/Data/Types/11.tres" id="2_dpo1a"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_q35id"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="dmg_ail_cat"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/FLINCH.tres" id="flinch_ail"]
+
+[sub_resource type="Resource" id="Resource_jkwxa"]
+script = ExtResource("2_q35id")
+ailment = ExtResource("flinch_ail")
+chance = 20
 
 [resource]
 resource_name = "127 - Cascada"
@@ -21,6 +28,11 @@ effect_chance = 20
 damage_class_id = 2
 effect_entries = "Has a $effect_chance% chance to make the target flinch. Inflicts regular damage.  Has a $effect_chance% chance to make the target flinch."
 target_id = 10
-meta_category_id = 0
+meta_ailment_id = 22
+meta_category_id = 4
+meta_ailment_chance = 20
 meta_flinch_chance = 20
-category = ExtResource("1_8jp7s")
+ailment_entries = Array[ExtResource("2_q35id")]([SubResource("Resource_jkwxa")])
+ailment_id = 22
+ailment = ExtResource("flinch_ail")
+category = ExtResource("dmg_ail_cat")

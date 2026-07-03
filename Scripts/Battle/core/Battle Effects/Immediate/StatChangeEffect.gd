@@ -1,7 +1,6 @@
 class_name StatChangeEffect
 extends ImmediateBattleEffect
 
-var target: BattlePokemon
 var stat_changes: Array[StatChange] = []
 
 var _has_stat_up: bool = false

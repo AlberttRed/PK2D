@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_yledw"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_2yspv"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_jnfy5"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_ombea"]
+
+[sub_resource type="Resource" id="Resource_7c3gh"]
+script = ExtResource("2_ombea")
+ailment = ExtResource("1_yledw")
+chance = 10
 
 [resource]
 resource_name = "342 - Cola Veneno"
@@ -25,6 +31,7 @@ meta_ailment_id = 5
 meta_category_id = 4
 meta_crit_rate = 1
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_ombea")]([SubResource("Resource_7c3gh")])
 ailment_id = 5
 ailment = ExtResource("1_yledw")
 category = ExtResource("2_jnfy5")

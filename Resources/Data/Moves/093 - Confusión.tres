@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_87t1t"]
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_uphta"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_emm1u"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_rgigg"]
 [ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_s5pxs"]
+
+[sub_resource type="Resource" id="Resource_q11vq"]
+script = ExtResource("2_emm1u")
+ailment = ExtResource("1_uphta")
+chance = 10
 
 [resource]
 resource_name = "93 - Confusión"
@@ -26,6 +32,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_emm1u")]([SubResource("Resource_q11vq")])
 ailment_id = 6
 ailment = ExtResource("1_uphta")
 category = ExtResource("2_rgigg")

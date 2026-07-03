@@ -8,9 +8,11 @@ var effect_source: EffectSource = EffectSource.OTHER
 var effect_success:bool
 var turns_left:int
 var applied:bool = false
+var application_chance: int = 100
 
-func _init(_source, _min_turns = null, _max_turns = null) -> void:
+func _init(_source, _min_turns = null, _max_turns = null, _application_chance: int = 100) -> void:
 	source = _source
+	application_chance = _application_chance
 	if _min_turns and _max_turns:
 		turns_left = randi_range(_min_turns, _max_turns)
 
@@ -56,8 +58,18 @@ static func get_visual_order(src: EffectSource) -> int:
 		EffectSource.ITEM: return 4
 		_: return 5
 
-func apply_phase(_pokemon, _phase: Phases) -> void: return
-func visualize_phase(_pokemon, _ui, _phase: Phases) -> void: return
+func can_apply() -> int:
+	if target != null and BattleEffectController.has_effect_for(target, self):
+		return ApplyFailReason.Values.ALREADY_ACTIVE
+	return ApplyFailReason.Values.OK
+
+
+func apply_phase(_pokemon, _phase: Phases, _ctx: BattlePhaseContext = null) -> void: return
+func visualize_phase(_pokemon, _ui, _phase: Phases, _ctx: BattlePhaseContext = null) -> void: return
+
+## Hook para filtrar movimientos elegibles (IA / decisión). No usa fases de turno ni UI.
+## Puede bloquear índices y solicitar auto-envío al pulsar Luchar vía `filter.request_auto_submit`.
+func restrict_selectable_moves(_pokemon: BattlePokemon, _filter: MoveSelectionFilter) -> void: return
 
 func has_finished(): return turns_left != null and turns_left < 0
 
@@ -73,3 +85,8 @@ func on_damage(_effect: DamageEffect) -> void: pass
 
 func get_priority() -> int:
 	return 0
+
+
+## Movimiento a citar en mensaje de inicio del ailment (p. ej. movimiento anulado).
+func get_start_causing_move_id() -> int:
+	return source_move_id

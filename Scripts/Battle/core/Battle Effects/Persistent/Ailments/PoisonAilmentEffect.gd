@@ -2,7 +2,7 @@ class_name PoisonAilmentEffect
 extends PersistentBattleEffect
 
 
-func apply_phase(pokemon, phase: Phases) -> void: 
+func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 	var dmg:int = ceil(pokemon.total_hp / 8.0)
@@ -10,7 +10,7 @@ func apply_phase(pokemon, phase: Phases) -> void:
 	pokemon.take_damage(effect)
 
 
-func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases):
+func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 

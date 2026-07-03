@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://cgmfhfx43byjx" path="res://Resources/Data/Ailments/CONFUSION.tres" id="1_sl6kp"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_86fie"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_351v8"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_mu5x5"]
+
+[sub_resource type="Resource" id="Resource_tdu6p"]
+script = ExtResource("2_mu5x5")
+ailment = ExtResource("1_sl6kp")
+chance = 20
 
 [resource]
 resource_name = "431 - Treparrocas"
@@ -28,6 +34,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 20
+ailment_entries = Array[ExtResource("2_mu5x5")]([SubResource("Resource_tdu6p")])
 ailment_id = 6
 ailment = ExtResource("1_sl6kp")
 category = ExtResource("2_86fie")

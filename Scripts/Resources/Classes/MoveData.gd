@@ -34,6 +34,7 @@ class_name MoveData
 @export var meta_flinch_chance : int = 0 # % de que un atac fagi retrocedir  al rival
 @export var meta_stat_chance : int = 0 # % de que un atac pugi o baixi els stats
 @export var contact_flag : bool = false
+@export var ailment_entries: Array[MoveAilmentEntry] = []
 @export var ailment_id : int = 0 # ID del ailment (optimización: usar ID en lugar de Resource)
 @export var ailment : AilmentData = null # DEPRECATED: Se mantiene para compatibilidad. Usar ailment_id en su lugar.
 @export var weather_id : int = 0 # ID del weather (optimización: usar ID en lugar de Resource)
@@ -101,6 +102,11 @@ func makeContact():
 
 func get_pp():
 	return pp
+
+
+func get_ailment_entries() -> Array[MoveAilmentEntry]:
+	return ailment_entries
+
 
 func print_info():
 	var title := "%s (ID %d)" % [Name, id]

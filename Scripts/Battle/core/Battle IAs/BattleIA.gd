@@ -32,6 +32,10 @@ func decide_action(_pokemon: BattlePokemon) -> BattleChoice:
 # MÉTODOS DE UTILIDAD COMUNES PARA TODAS LAS IAS
 # ============================================================================
 
+## Movimientos que la IA puede elegir (PP + reglas de efectos activos).
+func get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
+	return pokemon.get_selectable_move_indices()
+
 ## Evalúa todas las combinaciones posibles de (movimiento, objetivo) y retorna
 ## la mejor basándose en efectividad de tipos.
 ##
@@ -42,10 +46,21 @@ func decide_action(_pokemon: BattlePokemon) -> BattleChoice:
 ## - move_index: int - Índice del mejor movimiento
 ## - target_spot: BattleSpot o null - Objetivo específico (null para multi-objetivo)
 ## - effectiveness: float - Efectividad de la combinación elegida
-func evaluate_best_move_target_combination(moves: Array[BattleMove], enemies: Array[BattlePokemon]) -> Dictionary:
+func evaluate_best_move_target_combination(
+	moves: Array[BattleMove],
+	enemies: Array[BattlePokemon],
+	only_move_indices: Array[int] = []
+) -> Dictionary:
+	var indices: Array[int] = only_move_indices
+	if indices.is_empty():
+		for i in range(moves.size()):
+			indices.append(i)
+
 	var all_combinations: Array[Dictionary] = []
-	
-	for i in range(moves.size()):
+
+	for i in indices:
+		if i < 0 or i >= moves.size():
+			continue
 		var move := moves[i]
 		var target_type = move.base_data.get_target_id() as BattleTarget.TYPE
 		
@@ -79,9 +94,11 @@ func evaluate_best_move_target_combination(moves: Array[BattleMove], enemies: Ar
 					"effectiveness": avg_effectiveness
 				})
 	
-	# Si no hay combinaciones válidas, retornar una aleatoria
+	# Si no hay combinaciones válidas, retornar una aleatoria entre índices permitidos
 	if all_combinations.is_empty():
-		return {"move_index": randi() % moves.size(), "target_spot": null, "effectiveness": 0.0}
+		if indices.is_empty():
+			return {"move_index": 0, "target_spot": null, "effectiveness": 0.0}
+		return {"move_index": indices[randi() % indices.size()], "target_spot": null, "effectiveness": 0.0}
 	
 	# Encontrar y retornar la mejor combinación
 	return _select_best_combination(all_combinations)

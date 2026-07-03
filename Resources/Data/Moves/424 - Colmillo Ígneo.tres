@@ -4,6 +4,18 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_olm1r"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_7bjap"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_7o4xw"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_dsf8i"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/FLINCH.tres" id="3_lcg2n"]
+
+[sub_resource type="Resource" id="Resource_b10sc"]
+script = ExtResource("2_dsf8i")
+ailment = ExtResource("1_1lw6b")
+chance = 10
+
+[sub_resource type="Resource" id="Resource_gmo7n"]
+script = ExtResource("2_dsf8i")
+ailment = ExtResource("3_lcg2n")
+chance = 10
 
 [resource]
 resource_name = "424 - Colmillo Ígneo"
@@ -26,6 +38,7 @@ meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 10
 meta_flinch_chance = 10
+ailment_entries = Array[ExtResource("2_dsf8i")]([SubResource("Resource_b10sc"), SubResource("Resource_gmo7n")])
 ailment_id = 4
 ailment = ExtResource("1_1lw6b")
 category = ExtResource("2_7o4xw")

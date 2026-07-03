@@ -38,6 +38,8 @@ var stat_stages := StatStages.new()
 
 # Recordar el último movimiento seleccionado por este Pokémon
 var last_move_index: int = 0
+## Último movimiento ejecutado con éxito en combate (id PokeAPI); 0 = ninguno.
+var last_used_move_id: int = 0
 
 ## Pokémon del jugador que han estado en campo frente a este rival (EXP; no requiere daño).
 var _player_exp_participants: Array[BattlePokemon] = []
@@ -69,7 +71,7 @@ func _init(_pokemon: Pokemon, _IA: BattleIA = null):
 	# Los estados persistentes fuera de combate viven en Pokemon.major_status → AilmentData aquí al entrar.
 	status = AilmentData.from_major_status(base_data.major_status)
 	fainted = base_data.hp_actual <= 0
-	
+
 
 	setIA(_IA)
 
@@ -87,7 +89,7 @@ func write_persistent_state_to_runtime() -> void:
 
 func set_battle_spot(spot: BattleSpot) -> void:
 	battle_spot = spot
-	
+
 func setIA(_IA:BattleIA):
 	if _IA != null:
 		# Duplicar la IA para que cada Pokémon tenga su propia instancia
@@ -114,6 +116,16 @@ func init_turn() -> void:
 	# Si más adelante agregas efectos temporales, pueden resetearse aquí
 
 
+func commit_move_usage(move: BattleMove) -> void:
+	if move == null:
+		return
+	last_used_move_id = move.get_id()
+
+
+func clear_last_used_move() -> void:
+	last_used_move_id = 0
+
+
 func register_player_exp_participant(player_bp: BattlePokemon) -> void:
 	if player_bp == null or not player_bp.controllable or player_bp.fainted:
 		return
@@ -132,26 +144,26 @@ func get_runtime_exp_recipient_battle_pokemon(fallback_executor: BattlePokemon) 
 			and not fallback_executor.fainted and fallback_executor.base_data != null:
 		out.append(fallback_executor)
 	return out
-	
+
 func _to_string() -> String:
 	return "patata"
-	
+
 func get_type1() -> TypeData:
 	return base_data.get_type1()
 
 func get_type2() -> TypeData:
 	return base_data.get_type2()
-	
+
 func get_back_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_back_sprite.atlas.get_image().get_region(instance.battle_back_sprite.region))
 	#texture.set_size_override(texture.get_size())
 	return base_data.get_battle_back_sprite()
-	
+
 func get_front_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_front_sprite.atlas.get_image().get_region(instance.battle_front_sprite.region))
 	#texture.set_size_override(texture.get_size())
 	return base_data.get_battle_front_sprite()
-	
+
 
 func get_hp() -> int:
 	return hp
@@ -170,16 +182,16 @@ func get_sp_defense() -> int:
 
 func get_speed() -> int:
 	return speed
-	
+
 func get_name() -> String:
 	return base_data.base.Name
-		
+
 func get_display_name() -> String:
 	return base_data.get_display_name()
 
 func get_battle_display_name(upper:bool = false) -> String:
 	var display_name = ""
-	
+
 	if controllable:
 		display_name = get_display_name()
 	elif is_wild:
@@ -207,7 +219,7 @@ func get_battle_target_name() -> String:
 
 func get_level() -> int:
 	return base_data.level
-	
+
 func is_fainted() -> bool:
 	return get_hp() <= 0
 
@@ -219,6 +231,27 @@ func get_available_moves() -> Array[BattleMove]:
 		prepare_battle_moves()
 	return battle_moves
 
+
+func find_move_index_by_id(move_id: int) -> int:
+	if move_id <= 0:
+		return -1
+	var moves := get_available_moves()
+	for i in range(moves.size()):
+		if moves[i].get_id() == move_id:
+			return i
+	return -1
+
+
+func get_move_by_id(move_id: int) -> BattleMove:
+	var idx := find_move_index_by_id(move_id)
+	if idx < 0:
+		return null
+	return get_available_moves()[idx]
+
+## Índices en get_available_moves() elegibles (PP, mofa, disable, etc.) vía efectos.
+func get_selectable_move_indices() -> Array[int]:
+	return BattleEffectController.get_selectable_move_indices(self)
+
 func prepare_battle_moves():
 	battle_moves.clear()
 	for move: Move in base_data.movements:
@@ -227,9 +260,13 @@ func prepare_battle_moves():
 func decide_random_action() -> BattleChoice:
 	var moves = get_available_moves()
 	if moves.is_empty():
-		return BattleChoice.new()  # fallback
+		return BattleChoice.new()
 
-	var index = randi() % moves.size()
+	var legal_indices := get_selectable_move_indices()
+	if legal_indices.is_empty():
+		return BattlePassChoice.new()
+
+	var index: int = legal_indices[randi() % legal_indices.size()]
 	var move = moves[index]
 
 	var choice = BattleMoveChoice.new()
@@ -260,6 +297,8 @@ func set_status(new_status: AilmentData):
 		return
 
 	status = new_status
+	if base_data != null:
+		base_data.major_status = AilmentData.to_major_status(new_status) if new_status else CONST.STATUS.OK
 
 func get_base_stat(stat: StatsEnum.Values) -> int:
 	return base_data.get_base_stat(stat)

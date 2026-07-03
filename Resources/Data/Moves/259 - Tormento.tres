@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_5xcyf"]
 [ext_resource type="Resource" uid="uid://dnsnvqip0m7rb" path="res://Resources/Data/Ailments/TORMENT.tres" id="1_7o10n"]
-[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_lt80i"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_mrhfh"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_lt80i"]
+
+[sub_resource type="Resource" id="Resource_torment_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_7o10n")
+chance = 100
 
 [resource]
 resource_name = "259 - Tormento"
@@ -23,6 +29,9 @@ effect_entries = "Prevents the target from using the same move twice in a row. P
 If the target is forced to attempt a repeated move due to choice band, choice scarf, choice specs, disable, encore, taunt, only having PP remaining for one move, or any other effect, the target will use struggle instead.  The target is then free to use the forced move next turn, as it didn't use that move this turn."
 target_id = 10
 meta_ailment_id = 12
+meta_min_turns = 0
+meta_max_turns = 0
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_torment_entry")])
 ailment_id = 12
 ailment = ExtResource("1_7o10n")
 category = ExtResource("2_lt80i")

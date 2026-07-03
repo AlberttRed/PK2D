@@ -107,6 +107,13 @@ func get_invalid_switch_reason(slot: int) -> String:
 	return ""
 
 
+func get_invalid_switch_message(slot: int) -> Dictionary:
+	var reason := get_invalid_switch_reason(slot)
+	if reason.is_empty():
+		return {}
+	return {"type": "wait", "text": reason, "wait_time": 2.0}
+
+
 func can_cancel_battle_switch() -> bool:
 	return not _force_switch
 

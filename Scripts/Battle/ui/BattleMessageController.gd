@@ -147,30 +147,47 @@ func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 		"wait_time": 0.5
 	}
 
-func get_start_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+func get_start_ailment_message(
+	user: BattlePokemon,
+	ailment_id: AilmentsEnum.Values,
+	related_pokemon: BattlePokemon = null,
+	causing_move_id: int = 0
+) -> Dictionary:
 	if user == null:
 		return {}
-	return AilmentMessages.get_start_ailment_message(user, ailment_id)
+	return AilmentMessages.get_start_ailment_message(user, ailment_id, related_pokemon, causing_move_id)
 
-func get_end_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+func get_end_ailment_message(
+	user: BattlePokemon,
+	ailment_id: AilmentsEnum.Values,
+	causing_move_id: int = 0
+) -> Dictionary:
 	if user == null:
 		return {}
-	return AilmentMessages.get_end_ailment_message(user, ailment_id)
+	return AilmentMessages.get_end_ailment_message(user, ailment_id, causing_move_id)
 
 func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values, has_other_status: bool) -> Dictionary:
 	if user == null:
 		return {}
 	return AilmentMessages.get_already_ailment_message(user, ailment_id, has_other_status)
 
-func get_ailment_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+func get_ailment_effect_message(
+	user: BattlePokemon,
+	ailment_id: AilmentsEnum.Values,
+	causing_move_id: int = 0
+) -> Dictionary:
 	if user == null:
 		return {}
-	return AilmentMessages.get_ailment_effect_message(user, ailment_id)
+	return AilmentMessages.get_ailment_effect_message(user, ailment_id, causing_move_id)
 
-func get_ailment_previous_effect_message(user:BattlePokemon, ailment_id: AilmentsEnum.Values) -> Dictionary:
+func get_ailment_previous_effect_message(
+	user: BattlePokemon,
+	ailment_id: AilmentsEnum.Values,
+	related_pokemon: BattlePokemon = null
+) -> Dictionary:
 	if user == null:
 		return {}
-	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id)
+	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id, related_pokemon)
 
 func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
 	if user == null or target == null:
@@ -222,10 +239,17 @@ func get_already_active_field_effect_message() -> Dictionary:
 # Unificado: helpers por familia (limpia BattleUI)
 # ============================================================================
 
-func get_start_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, side: BattleSide = null) -> Dictionary:
+func get_start_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source: int = 0,
+	side: BattleSide = null,
+	related_pokemon: BattlePokemon = null,
+	causing_move_id: int = 0
+) -> Dictionary:
 	match family:
 		FAMILY.AILMENT:
-			return get_start_ailment_message(user, source)
+			return get_start_ailment_message(user, source, related_pokemon, causing_move_id)
 		FAMILY.ABILITY:
 			return get_start_ability_message(user, source)
 		FAMILY.WEATHER:
@@ -235,10 +259,15 @@ func get_start_effect_message(family: MessageFamily.Values, user: BattlePokemon 
 		_:
 			return {}
 
-func get_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> Dictionary:
+func get_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source: int = 0,
+	causing_move_id: int = 0
+) -> Dictionary:
 	match family:
 		FAMILY.AILMENT:
-			return get_ailment_effect_message(user, source)
+			return get_ailment_effect_message(user, source, causing_move_id)
 		FAMILY.ABILITY:
 			return get_ability_effect_message(user, null, source)
 		FAMILY.WEATHER:
@@ -248,10 +277,16 @@ func get_effect_message(family: MessageFamily.Values, user: BattlePokemon = null
 		_:
 			return {}
 
-func get_end_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0, side: BattleSide = null) -> Dictionary:
+func get_end_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source: int = 0,
+	side: BattleSide = null,
+	causing_move_id: int = 0
+) -> Dictionary:
 	match family:
 		FAMILY.AILMENT:
-			return get_end_ailment_message(user, source)
+			return get_end_ailment_message(user, source, causing_move_id)
 		FAMILY.ABILITY:
 			return get_end_ability_message(user, source)
 		FAMILY.WEATHER:
@@ -272,10 +307,15 @@ func get_already_effect_message(family: MessageFamily.Values, user: BattlePokemo
 		_:
 			return {}
 
-func get_previous_effect_message(family: MessageFamily.Values, user: BattlePokemon = null, source: int = 0) -> Dictionary:
+func get_previous_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	source: int = 0,
+	related_pokemon: BattlePokemon = null
+) -> Dictionary:
 	match family:
 		FAMILY.AILMENT:
-			return get_ailment_previous_effect_message(user, source)
+			return get_ailment_previous_effect_message(user, source, related_pokemon)
 		_:
 			return {}
 

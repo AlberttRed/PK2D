@@ -11,11 +11,11 @@ func _init(_source = null, _duration: int = 5, _side_key: String = "", _side_dis
 	side_key = _side_key
 	side_display_name = _side_display
 
-func apply_phase(_pokemon, phase: Phases) -> void:
+func apply_phase(_pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase == Phases.ON_END_BATTLE_TURN:
 		next_turn()
 
-func visualize_phase(_pokemon, ui: BattleUI, phase: Phases) -> void:
+func visualize_phase(_pokemon, ui: BattleUI, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase == Phases.ON_BATTLE_START:
 		await ui.show_start_effect_message(MessageFamily.Values.FIELD_EFFECT, source.pokemon, source.get_id())
 	elif phase == Phases.ON_END_BATTLE_TURN and has_finished():

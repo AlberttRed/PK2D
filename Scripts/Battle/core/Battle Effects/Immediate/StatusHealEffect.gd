@@ -2,7 +2,6 @@ extends ImmediateBattleEffect
 
 class_name StatusHealEffect
 
-var target: BattlePokemon
 ## Major status (`CONST.STATUS`) que tenía el objetivo antes de limpiar (mensajes en capas superiores).
 var cured_major_status: int
 

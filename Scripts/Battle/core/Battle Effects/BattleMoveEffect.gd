@@ -8,8 +8,6 @@ extends ImmediateBattleEffect
 ## específicos de movimientos como RainDanceMoveEffect, SunnyDayMoveEffect, etc.
 
 var move: BattleMove
-var user: BattlePokemon
-var target: BattlePokemon
 
 func _init(_move: BattleMove, _user: BattlePokemon, _target: BattlePokemon = null) -> void:
 	move = _move

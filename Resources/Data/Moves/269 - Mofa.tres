@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://guhquc54sw6w"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_0oep8"]
-[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_26stw"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/TAUNT.tres" id="1_taunt"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_jqvv6"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="3_cat"]
+
+[sub_resource type="Resource" id="Resource_taunt_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_taunt")
+chance = 100
 
 [resource]
 resource_name = "269 - Mofa"
@@ -23,5 +30,11 @@ assist, copycat, me first, metronome, mirror move, and sleep talk do not directl
 
 bide, counter, endeavor, metal burst, and mirror coat are allowed."
 target_id = 10
+meta_ailment_id = 11
 meta_category_id = 13
-category = ExtResource("1_26stw")
+meta_min_turns = 3
+meta_max_turns = 3
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_taunt_entry")])
+ailment_id = 11
+ailment = ExtResource("1_taunt")
+category = ExtResource("3_cat")

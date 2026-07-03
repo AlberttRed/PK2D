@@ -4,6 +4,12 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_iqdyy"]
 [ext_resource type="Resource" uid="uid://cvbopjxbt76ho" path="res://Resources/Data/Types/03.tres" id="2_0wq3u"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_6rxn3"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_y83mw"]
+
+[sub_resource type="Resource" id="Resource_nacq1"]
+script = ExtResource("2_y83mw")
+ailment = ExtResource("1_ejpaa")
+chance = 30
 
 [resource]
 resource_name = "542 - Vendaval"
@@ -31,6 +37,7 @@ meta_category_id = 4
 meta_min_turns = 2
 meta_max_turns = 5
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_y83mw")]([SubResource("Resource_nacq1")])
 ailment_id = 6
 ailment = ExtResource("1_ejpaa")
 category = ExtResource("2_6rxn3")

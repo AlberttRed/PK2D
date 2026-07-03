@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_1a1h0"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_w0p6u"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_nof0a"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_o8ybu"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_pfoy6"]
+
+[sub_resource type="Resource" id="Resource_ja7hr"]
+script = ExtResource("2_nof0a")
+ailment = ExtResource("1_1a1h0")
+chance = 30
 
 [resource]
 resource_name = "554 - Llama Gélida"
@@ -25,6 +31,7 @@ target_id = 10
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_nof0a")]([SubResource("Resource_ja7hr")])
 ailment_id = 4
 ailment = ExtResource("1_1a1h0")
 category = ExtResource("2_o8ybu")

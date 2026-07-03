@@ -1,9 +1,15 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cxxd8xic852ci"]
 
-[ext_resource type="Resource" uid="uid://3nf0h0chenc8" path="res://Resources/Data/Ailments/DISABLE.tres" id="1_jcn75"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qad0n"]
+[ext_resource type="Resource" uid="uid://3nf0h0chenc8" path="res://Resources/Data/Ailments/DISABLE.tres" id="1_jcn75"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_1ya2u"]
-[ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="2_mhadd"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="3_cat"]
+
+[sub_resource type="Resource" id="Resource_disable_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_jcn75")
+chance = 100
 
 [resource]
 resource_name = "50 - Anulación"
@@ -24,6 +30,7 @@ meta_ailment_id = 13
 meta_category_id = 13
 meta_min_turns = 4
 meta_max_turns = 4
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_disable_entry")])
 ailment_id = 13
 ailment = ExtResource("1_jcn75")
-category = ExtResource("2_mhadd")
+category = ExtResource("3_cat")

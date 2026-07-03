@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://bdh8a5rhvppwm" path="res://Resources/Data/Ailments/TRAP.tres" id="1_l5yry"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_lna0b"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_0mtiw"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_tp4bc"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_x1fva"]
+
+[sub_resource type="Resource" id="Resource_2puii"]
+script = ExtResource("2_0mtiw")
+ailment = ExtResource("1_l5yry")
+chance = 100
 
 [resource]
 resource_name = "20 - Atadura"
@@ -30,6 +36,7 @@ meta_category_id = 4
 meta_min_turns = 5
 meta_max_turns = 6
 meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_0mtiw")]([SubResource("Resource_2puii")])
 ailment_id = 8
 ailment = ExtResource("1_l5yry")
 category = ExtResource("2_x1fva")

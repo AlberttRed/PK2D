@@ -4,6 +4,12 @@
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_vnfw0"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_2bwgu"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_ac4e3"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_knh3o"]
+
+[sub_resource type="Resource" id="Resource_elt6i"]
+script = ExtResource("2_knh3o")
+ailment = ExtResource("1_vnfw0")
+chance = 30
 
 [resource]
 resource_name = "545 - Bomba Ígnea"
@@ -25,6 +31,7 @@ target_id = 9
 meta_ailment_id = 4
 meta_category_id = 4
 meta_ailment_chance = 30
+ailment_entries = Array[ExtResource("2_knh3o")]([SubResource("Resource_elt6i")])
 ailment_id = 4
 ailment = ExtResource("1_vnfw0")
 category = ExtResource("2_2bwgu")

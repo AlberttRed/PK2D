@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_1xqfm"]
 [ext_resource type="Resource" uid="uid://l318umt6ltd1" path="res://Resources/Data/Ailments/BURN.tres" id="1_ggyyh"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_ctsor"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_j2hi0"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_p3hxn"]
+
+[sub_resource type="Resource" id="Resource_13jca"]
+script = ExtResource("2_ctsor")
+ailment = ExtResource("1_ggyyh")
+chance = 10
 
 [resource]
 resource_name = "394 - Envite Ígneo"
@@ -27,6 +33,7 @@ meta_ailment_id = 4
 meta_category_id = 4
 meta_drain = -33
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_ctsor")]([SubResource("Resource_13jca")])
 ailment_id = 4
 ailment = ExtResource("1_ggyyh")
 category = ExtResource("2_p3hxn")

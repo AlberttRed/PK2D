@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://buuwpnmv6nctl"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_217yg"]
-[ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_sq48u"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_8pjt3"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_pu2bj"]
+[ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="dmg_ail_cat"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/FLINCH.tres" id="flinch_ail"]
+
+[sub_resource type="Resource" id="Resource_iyq13"]
+script = ExtResource("2_pu2bj")
+ailment = ExtResource("flinch_ail")
+chance = 100
 
 [resource]
 resource_name = "252 - Sorpresa"
@@ -22,6 +29,11 @@ priority = 3
 damage_class_id = 2
 effect_entries = "Can only be used as the first move after the user enters battle.  Causes the target to flinch. Inflicts regular damage.  Causes the target to flinch.  Can only be used on the user's first turn after entering the field."
 target_id = 10
-meta_category_id = 0
+meta_ailment_id = 22
+meta_category_id = 4
+meta_ailment_chance = 100
 meta_flinch_chance = 100
-category = ExtResource("1_sq48u")
+ailment_entries = Array[ExtResource("2_pu2bj")]([SubResource("Resource_iyq13")])
+ailment_id = 22
+ailment = ExtResource("flinch_ail")
+category = ExtResource("dmg_ail_cat")

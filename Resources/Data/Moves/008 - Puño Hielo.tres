@@ -3,7 +3,13 @@
 [ext_resource type="Resource" uid="uid://djlu5d7nxiwrg" path="res://Resources/Data/Ailments/FREEZE.tres" id="1_8ssfo"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hpugd"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="2_5sibw"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_ifdsr"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_nw5y2"]
+
+[sub_resource type="Resource" id="Resource_ol3ri"]
+script = ExtResource("2_ifdsr")
+ailment = ExtResource("1_8ssfo")
+chance = 10
 
 [resource]
 resource_name = "8 - Puño Hielo"
@@ -24,6 +30,7 @@ target_id = 10
 meta_ailment_id = 3
 meta_category_id = 4
 meta_ailment_chance = 10
+ailment_entries = Array[ExtResource("2_ifdsr")]([SubResource("Resource_ol3ri")])
 ailment_id = 3
 ailment = ExtResource("1_8ssfo")
 category = ExtResource("2_5sibw")

@@ -22,6 +22,7 @@ func apply():
 			effects_ctrl._clear_pokemon_effects(out_pokemon)
 		out_pokemon.in_battle = false
 	if spot and in_pokemon:
+		in_pokemon.clear_last_used_move()
 		spot.load_active_pokemon(in_pokemon, rules)
 
 func visualize(ui):
