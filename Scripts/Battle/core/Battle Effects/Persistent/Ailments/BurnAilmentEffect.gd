@@ -5,7 +5,7 @@ extends PersistentBattleEffect
 func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
-		
+
 	var dmg:int = ceil(pokemon.total_hp / 16.0)
 
 	var burn_effect := DamageEffect.new(null, pokemon, null, dmg)
@@ -20,6 +20,6 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 
 	await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 	await pokemon.battle_spot.apply_damage()
-	
+
 func get_priority() -> int:
 	return 10

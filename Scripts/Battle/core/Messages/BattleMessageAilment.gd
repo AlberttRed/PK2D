@@ -34,6 +34,8 @@ func get_start_ailment_message(
 			msg = "¡%s cae presa de la mofa!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.DISABLE:
 			msg = "¡Se anuló %s!" % [_get_move_display_name(causing_move_id)]
+		AilmentsEnum.Values.TORMENT:
+			msg = "¡%s está sufriendo un Tormento!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -74,6 +76,8 @@ func get_end_ailment_message(
 			msg = "¡%s se liberó de la mofa!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.DISABLE:
 			msg = "¡%s ya no está anulado!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.TORMENT:
+			msg = "¡%s se liberó del Tormento!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_end_ailment_message()")
 			return {}
@@ -118,6 +122,8 @@ func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Va
 				msg = "¡%s ya está bajo los efectos de la mofa!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.DISABLE:
 				msg = "¡%s ya tiene un movimiento anulado!" % [user.get_battle_display_name(true)]
+			AilmentsEnum.Values.TORMENT:
+				msg = "¡%s ya está bajo los efectos del Tormento!" % [user.get_battle_display_name(true)]
 			_:
 				push_warning("Invalid AIlment on get_already_ailment_message()")
 				return {}
@@ -165,6 +171,11 @@ func get_ailment_effect_message(
 			]
 		AilmentsEnum.Values.DISABLE:
 			msg = "¡%s está anulado!" % [_get_move_display_name(causing_move_id)]
+		AilmentsEnum.Values.TORMENT:
+			msg = "¡%s no puede usar %s dos veces seguidas!" % [
+				user.get_battle_display_name(true),
+				_get_move_display_name(causing_move_id),
+			]
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}

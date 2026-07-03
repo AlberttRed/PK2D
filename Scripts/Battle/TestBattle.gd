@@ -45,9 +45,9 @@ func _ready() -> void:
 	if use_fixed_rattata_vs_gastly:
 		var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
 		var chance_note := " (ailment garantizado)" if debug_force_ailment_apply else ""
-		print(">>> Combate fijo: Rattata (Otra Vez + Anulación + %s%s) vs Pidgey (Anulación + Tornado + Látigo)" % [move_label, chance_note])
+		print(">>> Combate fijo: Rattata (Otra Vez + Tormento + %s%s) vs Pidgey (Anulación + Tormento + Tornado + Látigo)" % [move_label, chance_note])
 		if debug_pidgey_status_only:
-			print(">>> debug_pidgey_status_only: Pidgey solo lleva Anulación + Látigo.")
+			print(">>> debug_pidgey_status_only: Pidgey solo lleva Anulación + Tormento + Látigo.")
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -272,7 +272,7 @@ func _create_rattata_ailment_test_instance() -> Pokemon:
 	)
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.ENCORE,
-		MovesEnum.Values.DISABLE,
+		MovesEnum.Values.TORMENT,
 		move_id,
 		MovesEnum.Values.TAIL_WHIP,
 	]
@@ -286,9 +286,18 @@ func _create_pidgey_trap_test_instance() -> Pokemon:
 	pkmn.level = 20
 	pkmn.is_wild = true
 	if debug_pidgey_status_only:
-		pkmn.custom_move_ids = [MovesEnum.Values.DISABLE, MovesEnum.Values.TAIL_WHIP]
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.DISABLE,
+			MovesEnum.Values.TORMENT,
+			MovesEnum.Values.TAIL_WHIP,
+		]
 	else:
-		pkmn.custom_move_ids = [MovesEnum.Values.DISABLE, MovesEnum.Values.GUST, MovesEnum.Values.TAIL_WHIP]
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.DISABLE,
+			MovesEnum.Values.TORMENT,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.TAIL_WHIP,
+		]
 	pkmn._post_init()
 	return pkmn
 

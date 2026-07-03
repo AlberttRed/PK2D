@@ -9,7 +9,7 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var def = target.get_modified_stat(def_stat)
 	var level = user.get_level()
 	var power = move.get_power()
-	
+
 	# Aplicar modificadores de potencia (atacante, globales)
 	var power_data = ModifierEngine.apply_power(move, user, target, power)
 	power = power_data.power
@@ -32,7 +32,7 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	# Paso 5: Variación aleatoria
 	var random_value = randi_range(217, 255)
 	var random_factor = float(random_value) / 255.0
-	
+
 	# Paso 6: Daño final
 	var total = floor(base * stab * crit * effectiveness * random_factor)
 
@@ -99,7 +99,7 @@ static func log_damage_calculation(effect: DamageEffect, final_mods: Array = [])
 			var percent_change = (mod.multiplier - 1.0) * 100.0
 			modifier_names.append("%s (%s%.0f%%)" % [mod.name, sign_str, percent_change])
 		power_display = "%d → %d (%s)" % [base_power, power, ", ".join(modifier_names)]
-	
+
 	print("Movimiento: %s | Potencia: %s | Clase de daño: %s" %
 		[move.get_name(), power_display, get_damage_class_string(move.get_damage_class())])
 	print("Atacante: %s (Nivel %d)" % [user.get_display_name(), user_level])
@@ -168,7 +168,7 @@ static func _format_effect_name(name: String) -> String:
 		return "Tormenta de Arena"
 	if name == "HailWeather":
 		return "Granizo"
-	
+
 	# Para otros casos, intentar convertir de CamelCase
 	var result = ""
 	for i in range(name.length()):

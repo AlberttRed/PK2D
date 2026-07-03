@@ -71,7 +71,7 @@ func _init(_pokemon: Pokemon, _IA: BattleIA = null):
 	# Los estados persistentes fuera de combate viven en Pokemon.major_status → AilmentData aquí al entrar.
 	status = AilmentData.from_major_status(base_data.major_status)
 	fainted = base_data.hp_actual <= 0
-	
+
 
 	setIA(_IA)
 
@@ -89,7 +89,7 @@ func write_persistent_state_to_runtime() -> void:
 
 func set_battle_spot(spot: BattleSpot) -> void:
 	battle_spot = spot
-	
+
 func setIA(_IA:BattleIA):
 	if _IA != null:
 		# Duplicar la IA para que cada Pokémon tenga su propia instancia
@@ -144,26 +144,26 @@ func get_runtime_exp_recipient_battle_pokemon(fallback_executor: BattlePokemon) 
 			and not fallback_executor.fainted and fallback_executor.base_data != null:
 		out.append(fallback_executor)
 	return out
-	
+
 func _to_string() -> String:
 	return "patata"
-	
+
 func get_type1() -> TypeData:
 	return base_data.get_type1()
 
 func get_type2() -> TypeData:
 	return base_data.get_type2()
-	
+
 func get_back_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_back_sprite.atlas.get_image().get_region(instance.battle_back_sprite.region))
 	#texture.set_size_override(texture.get_size())
 	return base_data.get_battle_back_sprite()
-	
+
 func get_front_sprite():
 	#var texture:Texture2D = ImageTexture.new().create_from_image(instance.battle_front_sprite.atlas.get_image().get_region(instance.battle_front_sprite.region))
 	#texture.set_size_override(texture.get_size())
 	return base_data.get_battle_front_sprite()
-	
+
 
 func get_hp() -> int:
 	return hp
@@ -182,16 +182,16 @@ func get_sp_defense() -> int:
 
 func get_speed() -> int:
 	return speed
-	
+
 func get_name() -> String:
 	return base_data.base.Name
-		
+
 func get_display_name() -> String:
 	return base_data.get_display_name()
 
 func get_battle_display_name(upper:bool = false) -> String:
 	var display_name = ""
-	
+
 	if controllable:
 		display_name = get_display_name()
 	elif is_wild:
@@ -219,7 +219,7 @@ func get_battle_target_name() -> String:
 
 func get_level() -> int:
 	return base_data.level
-	
+
 func is_fainted() -> bool:
 	return get_hp() <= 0
 

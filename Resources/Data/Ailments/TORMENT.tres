@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=2 format=3 uid="uid://dnsnvqip0m7rb"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://dnsnvqip0m7rb"]
 
-[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_acc0y"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/TormentAilmentEffect.gd" id="1_torment"]
+[ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="2_ailment"]
 
 [resource]
-script = ExtResource("1_acc0y")
+script = ExtResource("2_ailment")
 id = 12
 internal_name = "torment"
 display_name = "Tormento"
 description = ""
 is_persistent = false
+effect = ExtResource("1_torment")

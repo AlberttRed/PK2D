@@ -302,6 +302,8 @@ func _process_global_phase(phase: BattleEffect.Phases):
 
 func _apply_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	for effect in _get_all_effects_to_apply_for(pokemon):
+		if ctx != null and ctx.rejected:
+			break
 		effect.apply_phase(pokemon, phase, ctx)
 
 func _visualize_phase(pokemon, phase, ctx: BattlePhaseContext = null):
