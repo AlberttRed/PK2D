@@ -6,7 +6,10 @@
 
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 script = ExtResource("1_tse6d")
-debug_seed_persistent_effects = true
+use_fixed_substitute_test = true
+use_fixed_rattata_vs_gastly = false
+debug_force_ailment_apply = true
+debug_seed_persistent_effects = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_03bsw"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/UniqueMoveCategory.tres" id="1_vlvis"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_hdwpt"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/SubstituteMoveEffect.gd" id="3_moveeffect"]
 
 [resource]
 resource_name = "164 - Sustituto"
@@ -37,4 +38,5 @@ The doll is passed on by baton pass.  It keeps its existing HP, but uses the rep
 All other effects work as normal."
 target_id = 7
 meta_category_id = 13
+move_effect = ExtResource("3_moveeffect")
 category = ExtResource("1_vlvis")

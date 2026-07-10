@@ -61,6 +61,12 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 func get_active_pokemon() -> BattlePokemon:
 	return pokemon
 
+func set_pokemon_sprite_visible(is_visible: bool) -> void:
+	if pokemon == null:
+		return
+	sprite.visible = is_visible
+	shadow.visible = is_visible and pokemon.is_wild
+
 
 ## Registra Poison/Burn/etc. en el controlador de efectos al entrar en campo (estado ya cargado desde `Pokemon.major_status`).
 ## Sin esto solo existía `BattlePokemon.status` visualmente y el daño por veneno no corría en turnos.
@@ -121,14 +127,14 @@ func has_active_pokemon() -> bool:
 	return pokemon != null and not pokemon.is_fainted()
 
 func apply_damage(decrease_value = null) -> void:
-	if get_active_pokemon() == null:
+	var active := get_active_pokemon()
+	if active == null or hp_bar == null:
 		return
-
-	if hp_bar:
-		if decrease_value:
-			await hp_bar.reduce_hp_by(decrease_value)
-		else:
-			await hp_bar.update_hp(get_active_pokemon().hp)
+	hp_bar.pokemon = active
+	if decrease_value != null and decrease_value > 0:
+		await hp_bar.reduce_hp_by(decrease_value)
+	else:
+		await hp_bar.update_hp(active.hp)
 
 func apply_heal(increase_value = null) -> void:
 	if get_active_pokemon() == null:

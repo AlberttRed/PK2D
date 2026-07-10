@@ -18,6 +18,7 @@ enum Values {
 	DISABLE = 13,
 	YAWN = 14,
 	HEAL_BLOCK = 15,
+	SUBSTITUTE = 16,
 	NO_TYPE_IMMUNITY = 17,
 	LEECH_SEED = 18,
 	EMBARGO = 19,
@@ -44,6 +45,7 @@ static func from_string(id: String) -> int:
 		"disable": return Values.DISABLE
 		"yawn": return Values.YAWN
 		"heal-block": return Values.HEAL_BLOCK
+		"substitute": return Values.SUBSTITUTE
 		"no-type-immunity": return Values.NO_TYPE_IMMUNITY
 		"leech-seed": return Values.LEECH_SEED
 		"embargo": return Values.EMBARGO
@@ -56,7 +58,7 @@ static func from_string(id: String) -> int:
 static func from_id(numeric_id: int) -> int:
 	# Mapea IDs de PokeAPI -> enum interno
 	match numeric_id:
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22:
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22:
 			return numeric_id
 		_:
 			return Values.NONE
@@ -79,6 +81,7 @@ static func get_string(val: int) -> String:
 		Values.DISABLE: return "disable"
 		Values.YAWN: return "yawn"
 		Values.HEAL_BLOCK: return "heal-block"
+		Values.SUBSTITUTE: return "substitute"
 		Values.NO_TYPE_IMMUNITY: return "no-type-immunity"
 		Values.LEECH_SEED: return "leech-seed"
 		Values.EMBARGO: return "embargo"

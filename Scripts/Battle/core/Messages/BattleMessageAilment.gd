@@ -38,6 +38,8 @@ func get_start_ailment_message(
 			msg = "¡%s está sufriendo un Tormento!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.YAWN:
 			msg = "¡%s tiene mucho sueño!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.SUBSTITUTE:
+			msg = "¡%s creó un sustituto!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -46,6 +48,26 @@ func get_start_ailment_message(
 		"type": "wait",
 		"text": msg,
 		"wait_time": 2.0
+	}
+
+
+func get_substitute_damage_message(owner: BattlePokemon) -> Dictionary:
+	if owner == null:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡El sustituto recibe daño en lugar de %s!" % [owner.get_battle_display_name()],
+		"wait_time": 2.0,
+	}
+
+
+func get_substitute_break_message(owner: BattlePokemon) -> Dictionary:
+	if owner == null:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡El sustituto de %s se debilitó!" % [owner.get_display_name()],
+		"wait_time": 2.0,
 	}
 
 

@@ -133,6 +133,10 @@ func _try_apply_sleep(pokemon: BattlePokemon) -> bool:
 	if sleep_data == null or sleep_data.effect == null:
 		push_warning("YawnAilmentEffect: no se pudo cargar SLEEP.tres")
 		return false
+	var ctx := BattlePhaseContext.for_ailment(pokemon, sleep_data)
+	BattleEffectController.run_apply_phase(pokemon, BattleEffect.Phases.ON_VALIDATE_AILMENT, ctx)
+	if ctx.rejected:
+		return false
 
 	var sleep_effect := sleep_data.get_effect(null, null) as PersistentBattleEffect
 	if sleep_effect == null:

@@ -84,6 +84,11 @@ func _validate_ailment_apply(ailment: AilmentData, effect_instance: PersistentBa
 				return ApplyFailReason.Values.ALREADY_ACTIVE
 			return ApplyFailReason.Values.GENERIC_FAIL
 
+	var ctx := BattlePhaseContext.for_ailment(pokemon, ailment)
+	BattleEffectController.run_apply_phase(pokemon, BattleEffect.Phases.ON_VALIDATE_AILMENT, ctx)
+	if ctx.rejected:
+		return ApplyFailReason.Values.GENERIC_FAIL
+
 	if effect_instance != null:
 		return effect_instance.can_apply()
 	return ApplyFailReason.Values.OK
@@ -162,6 +167,19 @@ func _try_apply_ailment_entry(entry: MoveAilmentEntry) -> Dictionary:
 		"result": ApplyFailReason.Values.OK,
 		"effect": effect_instance,
 	}
+
+func _finalize_defender_move_resolution(damage_effect: DamageEffect = null) -> void:
+	var pokemon: BattlePokemon = target.get_pokemon() if target != null else null
+	if pokemon == null:
+		return
+	pokemon = pokemon.get_active_battle_pokemon()
+	var ctx: BattlePhaseContext = null
+	if damage_effect != null:
+		damage_effect.target = pokemon
+		ctx = BattlePhaseContext.for_incoming_damage(pokemon, damage_effect)
+	BattleEffectController.run_apply_phase(
+		pokemon, BattleEffect.Phases.ON_INCOMING_DAMAGE_FINALIZE, ctx
+	)
 
 
 func _visualize_ailment_entry_result(ui: BattleUI, apply_data: Dictionary, show_fail_messages: bool) -> void:
