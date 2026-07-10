@@ -628,6 +628,9 @@ func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
 
 func show_move_selection(pokemon: BattlePokemon) -> BattleMoveChoice:
 	var selection := BattleEffectController.get_move_selection_filter(pokemon)
+	if selection.requires_struggle():
+		await show_no_moves_left_message(pokemon)
+		return await _finish_move_selection(pokemon, BattleStruggleChoice.create_for(pokemon))
 	if selection.auto_submit_index >= 0:
 		var forced_choice := BattleMoveChoice.new()
 		forced_choice.move_index = selection.auto_submit_index
@@ -716,6 +719,16 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 
 func show_used_move_message(user: BattlePokemon, move: BattleMove) -> void:
 	await show_message_from_dict(message_controller.get_used_move_message(user, move))
+
+
+func show_no_moves_left_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_no_moves_left_message(pokemon))
+	clear_message_box()
+
+
+func show_struggle_recoil_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_struggle_recoil_message(pokemon))
+	clear_message_box()
 
 func show_failed_move_message(user: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_failed_move_message(user))

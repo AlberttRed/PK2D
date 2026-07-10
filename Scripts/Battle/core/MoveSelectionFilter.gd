@@ -42,3 +42,8 @@ func get_selectable_indices() -> Array[int]:
 		if not is_index_blocked(i):
 			out.append(i)
 	return out
+
+
+## True cuando hay moveset pero ningún índice es elegible (PP agotado y/o bloqueado por efectos).
+func requires_struggle() -> bool:
+	return not moves.is_empty() and get_selectable_indices().is_empty()

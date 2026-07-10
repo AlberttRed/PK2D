@@ -146,6 +146,10 @@ func commit_move_usage(move: BattleMove) -> void:
 	if move == null:
 		return
 	last_used_move_id = move.get_id()
+	if move.get_id() == MovesEnum.Values.STRUGGLE:
+		return
+	if move.base_data != null:
+		move.base_data.use_pp()
 
 
 func clear_last_used_move() -> void:
@@ -287,6 +291,10 @@ func decide_random_action() -> BattleChoice:
 	var moves = get_available_moves()
 	if moves.is_empty():
 		return BattleChoice.new()
+
+	var struggle := BattleStruggleChoice.create_if_needed(self)
+	if struggle != null:
+		return struggle
 
 	var legal_indices := get_selectable_move_indices()
 	if legal_indices.is_empty():

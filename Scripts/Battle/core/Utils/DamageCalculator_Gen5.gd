@@ -11,6 +11,7 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	var def = target.get_modified_stat(def_stat)
 	var level = user.get_level()
 	var power = move.get_power()
+	var is_struggle := move.get_id() == MovesEnum.Values.STRUGGLE
 
 	# Aplicar modificadores de potencia (atacante, globales)
 	var power_data = ModifierEngine.apply_power(move, user, target, power)
@@ -19,17 +20,21 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	# Paso 1: Daño base
 	var base = (((2 * level / 5.0 + 2) * power * atk / def) / 50.0) + 2
 
-	# Paso 2: STAB
-	var stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
+	# Paso 2: STAB (Forcejeo es typeless en Gen 5)
+	var stab := 1.0
+	if not is_struggle:
+		stab = 1.5 if move.get_type() == user.get_type1() or move.get_type() == user.get_type2() else 1.0
 
 	# Paso 3: Crítico
 	var is_crit = is_critical_hit(move.get_critical_rate())
 	var crit = 2.0 if is_crit else 1.0
 
-	# Paso 4: Efectividad
-	var effectiveness = TypeEffectivenessUtils.get_multiplier(
-		move.get_type(), target.get_type1(), target.get_type2()
-	)
+	# Paso 4: Efectividad (Forcejeo siempre ×1)
+	var effectiveness := 1.0
+	if not is_struggle:
+		effectiveness = TypeEffectivenessUtils.get_multiplier(
+			move.get_type(), target.get_type1(), target.get_type2()
+		)
 
 	# Paso 5: Variación aleatoria
 	var random_value = randi_range(217, 255)

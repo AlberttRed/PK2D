@@ -147,6 +147,29 @@ func get_used_move_message(user: BattlePokemon, move: BattleMove) -> Dictionary:
 		"wait_time": 0.5
 	}
 
+
+func get_no_moves_left_message(pokemon: BattlePokemon) -> Dictionary:
+	if pokemon == null:
+		return {}
+	var subject := pokemon.get_battle_target_name()
+	if not subject.is_empty():
+		subject = subject[0].to_upper() + subject.substr(1)
+	return {
+		"type": "display",
+		"text": "¡%s no le quedan movimientos!" % subject,
+		"wait_time": 1.0,
+	}
+
+
+func get_struggle_recoil_message(pokemon: BattlePokemon) -> Dictionary:
+	if pokemon == null:
+		return {}
+	return {
+		"type": "display",
+		"text": "¡%s se resiente del retroceso!" % pokemon.get_battle_display_name(true),
+		"wait_time": 1.0,
+	}
+
 func get_start_ailment_message(
 	user: BattlePokemon,
 	ailment_id: AilmentsEnum.Values,

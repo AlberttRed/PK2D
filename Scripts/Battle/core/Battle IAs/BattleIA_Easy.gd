@@ -24,6 +24,10 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	if moves.is_empty():
 		return BattlePassChoice.new()
 
+	var struggle := BattleStruggleChoice.create_if_needed(pokemon)
+	if struggle != null:
+		return struggle
+
 	var legal_indices := get_selectable_move_indices(pokemon)
 	if legal_indices.is_empty():
 		return BattlePassChoice.new()
@@ -58,6 +62,9 @@ func _select_random_move(
 	if indices.is_empty():
 		indices = get_selectable_move_indices(pokemon)
 	if indices.is_empty():
+		var struggle := BattleStruggleChoice.create_if_needed(pokemon)
+		if struggle != null:
+			return struggle
 		return BattlePassChoice.new()
 	var index: int = indices[randi() % indices.size()]
 	var move = moves[index]

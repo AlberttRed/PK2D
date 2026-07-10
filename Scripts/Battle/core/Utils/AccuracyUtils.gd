@@ -1,6 +1,8 @@
 class_name AccuracyUtils
 
 static func check_hit(move: BattleMove, user: BattlePokemon, target: BattlePokemon) -> bool:
+	if move.get_id() == MovesEnum.Values.STRUGGLE:
+		return true
 	var base_accuracy = move.get_accuracy()
 	# Movimientos sin precisión (0) siempre impactan: usados para efectos de campo/side
 	if base_accuracy <= 0 or !target:

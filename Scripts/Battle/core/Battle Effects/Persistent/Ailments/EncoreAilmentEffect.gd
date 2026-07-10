@@ -94,6 +94,8 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 		effect_success = false
 		if not is_active():
 			return
+		if ctx.move.get_id() == MovesEnum.Values.STRUGGLE:
+			return
 		if ctx.move.get_id() != _locked_move_id:
 			effect_success = true
 			_rejected_move_id = ctx.move.get_id()
@@ -108,6 +110,8 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 			return
 		applied = true
 		effect_success = false
+		if move.get_id() == MovesEnum.Values.STRUGGLE:
+			return
 		if move.get_id() != _locked_move_id or not _is_locked_move_usable(pokemon):
 			effect_success = true
 			_rejected_move_id = move.get_id()

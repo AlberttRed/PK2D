@@ -3,7 +3,7 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Canto Mortal + Destructor + Látigo) vs Pidgey (Sustituto + Bostezo/Picotazo Veneno/Tornado).
+## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Anulación + Destructor + Látigo) vs Pidgey (solo Bostezo).
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
 @export var use_fixed_rattata_vs_gastly: bool = true
@@ -13,6 +13,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var debug_rattata_test_bite: bool = true
 ## Si true, el ailment del movimiento de prueba siempre se aplica (omite el %).
 @export var debug_force_ailment_apply: bool = false
+## Si true, todos los movimientos del combate fijo empiezan con 0 PP (prueba Forcejeo por PP).
+## Desactivar para el escenario Sustituto/Anulación (Forcejeo vía Anulación, no por PP).
+@export var debug_zero_pp: bool = false
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -42,6 +45,11 @@ func _ready() -> void:
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
 		_print_substitute_test_guide()
+		if debug_zero_pp:
+			push_warning(
+				"TestBattle: debug_zero_pp fuerza Forcejeo al pulsar LUCHAR. "
+				+ "Desactívalo para probar Anulación → Forcejeo."
+			)
 		await wildFixedSubstituteTestBattle()
 		return
 	if use_fixed_rattata_vs_gastly:
@@ -55,6 +63,8 @@ func _ready() -> void:
 		print(">>> Combate fijo: Rattata (Otra Vez + Bostezo + %s%s) vs Pidgey (Anulación + Bostezo + Tornado + Látigo)" % [move_label, chance_note])
 		if debug_pidgey_status_only:
 			print(">>> debug_pidgey_status_only: Pidgey solo lleva Anulación + Bostezo + Látigo.")
+		if debug_zero_pp:
+			print(">>> debug_zero_pp: todos los movimientos a 0 PP — pulsa LUCHAR para Forcejeo.")
 		await wildFixedRattataGastlyBattle()
 		return
 	# Lanzar combates en bucle para testing continuo
@@ -185,11 +195,12 @@ func _create_substitute_test_player_instance() -> Pokemon:
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.SUBSTITUTE,
-		MovesEnum.Values.PERISH_SONG,
+		MovesEnum.Values.DISABLE,
 		MovesEnum.Values.POUND,
 		MovesEnum.Values.TAIL_WHIP,
 	]
 	pkmn._post_init()
+	_apply_debug_zero_pp(pkmn)
 	return pkmn
 
 
@@ -199,26 +210,25 @@ func _create_substitute_test_enemy_instance() -> Pokemon:
 	pkmn.level = 20
 	pkmn.is_wild = true
 	pkmn.custom_move_ids = [
-		MovesEnum.Values.SUBSTITUTE,
-		MovesEnum.Values.PERISH_SONG,
 		MovesEnum.Values.YAWN,
-		MovesEnum.Values.POISON_STING,
 	]
 	pkmn._post_init()
+	_apply_debug_zero_pp(pkmn)
 	return pkmn
 
 
 func _print_substitute_test_guide() -> void:
 	var ailment_note := " (ailments garantizados)" if debug_force_ailment_apply else ""
-	print(">>> Combate Sustituto: Clefairy (Sustituto + Canto Mortal + Destructor + Látigo) vs Pidgey (Sustituto + Canto Mortal + Bostezo + Picotazo Veneno)%s" % ailment_note)
-	print(">>> Validación manual sugerida:")
-	print(">>>   1) Turno 1 — Clefairy usa Sustituto: pierde ~1/4 PS máx, mensaje «creó un sustituto».")
-	print(">>>   2) Pidgey puede usar Sustituto; Clefairy con Destructor rompe el muñeco rival.")
-	print(">>>   3) Con sustituto activo — Pidgey usa Bostezo o Picotazo Veneno: «¡Pero falló!», sin estado en Clefairy.")
-	print(">>>   4) Pidgey usa Tornado varias veces: baja PS del muñeco, no los de Clefairy hasta que se rompa.")
-	print(">>>   5) Tras romperse — Bostezo/Veneno deberían aplicarse con normalidad.")
-	print(">>>   6) Segundo Sustituto sin romper el primero: «¡Pero falló!».")
-	print(">>>   7) Edge: Bostezo antes de Sustituto → al final del turno Clefairy sí puede dormirse (bostezo previo).")
+	print(">>> Combate Sustituto: Clefairy (Sustituto + Anulación + Destructor + Látigo) vs Pidgey (solo Bostezo)%s" % ailment_note)
+	if debug_zero_pp:
+		print(">>> AVISO: debug_zero_pp=ON → Forcejeo inmediato. Ponlo en false para probar Anulación.")
+	else:
+		print(">>> Prueba Anulación → Forcejeo (debug_zero_pp desactivado):")
+		print(">>>   1) Turno 1 — Pidgey (más rápido) usa Bostezo; Clefairy elige Anulación.")
+		print(">>>   2) Turno 2 — Pidgey no puede usar Bostezo → Forcejeo automático (IA).")
+	print(">>> Otros (Sustituto):")
+	print(">>>   · Clefairy usa Sustituto: pierde ~1/4 PS máx, mensaje «creó un sustituto».")
+	print(">>>   · Con sustituto activo — Forcejeo de Pidgey daña al muñeco.")
 
 
 ## 1vs1 salvaje: Pikachu♂ vs Clefairy♀ con Atracción; ambos equipos tienen banca para probar cambios.
@@ -332,6 +342,8 @@ func singleTrainerBattle():
 func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
 	if debug_seed_persistent_effects:
 		BattleDebugEffectSeeder.enable()
+	if debug_zero_pp:
+		_apply_debug_zero_pp_to_participants(participants)
 	BattleDebugAilmentTest.force_ailment_apply = debug_force_ailment_apply
 	var winner: String = await DisplayManager.start_battle(participants, rules)
 	BattleDebugAilmentTest.force_ailment_apply = false
@@ -354,6 +366,7 @@ func _create_rattata_ailment_test_instance() -> Pokemon:
 		MovesEnum.Values.TAIL_WHIP,
 	]
 	pkmn._post_init()
+	_apply_debug_zero_pp(pkmn)
 	return pkmn
 
 
@@ -376,7 +389,29 @@ func _create_pidgey_trap_test_instance() -> Pokemon:
 			MovesEnum.Values.TAIL_WHIP,
 		]
 	pkmn._post_init()
+	_apply_debug_zero_pp(pkmn)
 	return pkmn
+
+
+func _apply_debug_zero_pp(pkmn: Pokemon) -> void:
+	if not debug_zero_pp or pkmn == null:
+		return
+	for mv in pkmn.movements:
+		if mv != null:
+			mv.pp_actual = 0
+
+
+func _apply_debug_zero_pp_to_participants(participants: Array[BattleParticipant]) -> void:
+	for participant in participants:
+		if participant == null:
+			continue
+		for bp in participant.pokemon_team:
+			if bp == null:
+				continue
+			for mv in bp.get_available_moves():
+				if mv != null and mv.base_data != null:
+					mv.base_data.pp_actual = 0
+	print(">>> debug_zero_pp: PP a 0 en todos los movimientos de combate activos.")
 
 
 ## Party en escena para `player` / `wildPokemons` (combate fijo por battler opcional).
