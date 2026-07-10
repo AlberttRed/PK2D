@@ -8,8 +8,8 @@
 script = ExtResource("1_tse6d")
 use_fixed_substitute_test = true
 use_fixed_rattata_vs_gastly = false
-debug_force_ailment_apply = true
-debug_seed_persistent_effects = false
+debug_rattata_test_bite = false
+debug_zero_pp = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

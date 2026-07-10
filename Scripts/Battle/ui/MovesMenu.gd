@@ -25,6 +25,7 @@ func _ready():
 func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 	current_pokemon = pokemon
 	moves = pokemon.get_available_moves()
+	var filter := BattleEffectController.get_move_selection_filter(pokemon)
 	unlock_visual_focus()
 	for i in 4:
 		if i < moves.size():
@@ -32,7 +33,7 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 			var button = move_buttons[i]
 			button.visible = true
 			button.get_node("Label").setText(move.get_name())
-			button.disabled = false
+			button.disabled = filter.is_index_blocked(i)
 
 			# Estilo visual según tipo (posición vertical en el sprite)
 			button.get("theme_override_styles/normal").region_rect.position.y = 46 * (move.get_type().id - 1)
@@ -43,6 +44,11 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 	# Usar el último índice de movimiento del Pokémon específico
 	# Validar que esté dentro del rango de movimientos disponibles
 	var initial_index = clamp(pokemon.last_move_index, 0, moves.size() - 1)
+	if filter.is_index_blocked(initial_index):
+		for i in range(moves.size()):
+			if not filter.is_index_blocked(i):
+				initial_index = i
+				break
 	move_buttons[initial_index].grab_focus()
 	visible = true
 	set_process_input(true)
