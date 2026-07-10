@@ -1,8 +1,16 @@
 [gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://cvxoguuloo01l"]
 
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_hkl0l"]
+[ext_resource type="Resource" path="res://Resources/Data/Ailments/PERISH-SONG.tres" id="1_perish"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="1_v37lk"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_dwnfc"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/PerishSongMoveEffect.gd" id="3_moveeffect"]
+
+[sub_resource type="Resource" id="Resource_perish_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_perish")
+chance = 100
 
 [resource]
 resource_name = "195 - Canto Mortal"
@@ -23,6 +31,11 @@ This effect is passed on by baton pass.
 This move cannot be copied by mirror move."
 target_id = 14
 meta_ailment_id = 20
-meta_min_turns = 4
-meta_max_turns = 4
+meta_min_turns = 3
+meta_max_turns = 3
+meta_ailment_chance = 100
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_perish_entry")])
+ailment_id = 20
+ailment = ExtResource("1_perish")
+move_effect = ExtResource("3_moveeffect")
 category = ExtResource("1_v37lk")

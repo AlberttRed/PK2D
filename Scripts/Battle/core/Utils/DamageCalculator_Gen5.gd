@@ -2,6 +2,8 @@ class_name DamageCalculator_Gen5
 extends RefCounted
 
 static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokemon) -> DamageEffect:
+	user = user.get_active_battle_pokemon() if user != null else null
+	target = target.get_active_battle_pokemon() if target != null else null
 	var atk_stat = StatsEnum.Values.SP_ATTACK if move.is_special_category() else StatsEnum.Values.ATTACK
 	var def_stat = StatsEnum.Values.SP_DEFENSE if move.is_special_category() else StatsEnum.Values.DEFENSE
 
@@ -36,15 +38,15 @@ static func calculate(move: BattleMove, user: BattlePokemon, target: BattlePokem
 	# Paso 6: Daño final
 	var total = floor(base * stab * crit * effectiveness * random_factor)
 
-	# Paso 7: Crear DamageEffect
+	# Paso 7: Crear DamageEffect y aplicar daño mínimo 1 antes de modificadores finales
 	var effect := DamageEffect.new(user, target, move, int(total))
 	effect.effectiveness = effectiveness
 	effect.is_critical = is_crit && !effect.is_ineffective()
 	effect.is_stab = (stab > 1.0)
-
-	# Paso 8: Modificadores de daño final (defensor, globales)
-	var final_mods = ModifierEngine.apply_final_damage_with_log(effect)
 	effect.validate()
+
+	# Paso 8: Modificadores de daño final (defensor, globales); pueden reducir a 0
+	var final_mods = ModifierEngine.apply_final_damage_with_log(effect)
 	log_damage_calculation(effect, final_mods)
 	return effect
 

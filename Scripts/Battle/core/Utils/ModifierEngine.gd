@@ -31,21 +31,20 @@ static func apply_accuracy(move: BattleMove, user: BattlePokemon, target: Battle
 	return { "accuracy": int(modified_accuracy), "modifiers": modifiers_applied }
 
 static func apply_final_damage(effect: DamageEffect) -> void:
-	# Usar una sola fuente: incluye efectos del defensor, side y campo
-	var effects = BattleEffectController.get_all_effects_for(effect.target)
-	for e in effects:
-		if e.has_method("on_damage"):
-			e.on_damage(effect)
+	apply_final_damage_with_log(effect)
 
 static func apply_final_damage_with_log(effect: DamageEffect) -> Array:
 	var applied := []
-	var effects = BattleEffectController.get_all_effects_for(effect.target)
-	for e in effects:
-		if e.has_method("on_damage"):
-			var old := float(effect.amount)
-			e.on_damage(effect)
-			if float(effect.amount) != old:
-				applied.append(_mod_name(e, float(effect.amount) / old))
+	if effect == null or effect.target == null:
+		return applied
+	var defender := effect.target.get_active_battle_pokemon()
+	effect.target = defender
+	var ctx := BattlePhaseContext.for_incoming_damage(defender, effect)
+	for e in BattleEffectController.get_all_effects_for(defender):
+		var old := float(effect.amount)
+		e.apply_phase(defender, BattleEffect.Phases.ON_INCOMING_DAMAGE_CALCULATE, ctx)
+		if float(effect.amount) != old:
+			applied.append(_mod_name(e, float(effect.amount) / old))
 	return applied
 
 static func _mod_name(effect, multiplier: float) -> Dictionary:

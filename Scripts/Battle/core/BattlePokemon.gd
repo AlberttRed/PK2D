@@ -90,6 +90,32 @@ func write_persistent_state_to_runtime() -> void:
 func set_battle_spot(spot: BattleSpot) -> void:
 	battle_spot = spot
 
+
+## Instancia activa en el spot (evita desajustes con varias refs al mismo Pokémon).
+func get_active_battle_pokemon() -> BattlePokemon:
+	if battle_spot != null:
+		var active := battle_spot.get_active_pokemon()
+		if active != null:
+			return active
+	if in_battle and side != null:
+		for spot in side.battle_spots:
+			if spot == null:
+				continue
+			var active := spot.get_active_pokemon()
+			if active == self:
+				return self
+			if active != null and base_data != null and active.base_data == base_data:
+				return active
+	return self
+
+
+func resolve_battle_spot() -> BattleSpot:
+	var active := get_active_battle_pokemon()
+	if active != null and active.battle_spot != null:
+		return active.battle_spot
+	return battle_spot
+
+
 func setIA(_IA:BattleIA):
 	if _IA != null:
 		# Duplicar la IA para que cada Pokémon tenga su propia instancia
@@ -295,6 +321,11 @@ func set_status(new_status: AilmentData):
 
 	if status == new_status:
 		return
+
+	if status != null and status.is_persistent:
+		BattleEffectController.remove_major_status_ailment_effect(
+			self, status.get_enum_value()
+		)
 
 	status = new_status
 	if base_data != null:

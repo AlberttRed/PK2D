@@ -7,19 +7,20 @@ var _apply_results: Array[Dictionary] = []
 
 
 func _apply() -> void:
-	if target.get_pokemon() == null:
+	var defender: BattlePokemon = target.get_pokemon().get_active_battle_pokemon() if target.get_pokemon() != null else null
+	if defender == null:
 		return
 
-	damage = move.calculate_damage(target.get_pokemon())
+	damage = move.calculate_damage(defender)
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
 
 	_apply_results.clear()
-	if damage == null or damage.is_ineffective() or target.get_pokemon().is_fainted():
-		return
+	if damage != null and not damage.is_ineffective() and not defender.is_fainted():
+		for entry in move.get_ailment_entries():
+			_apply_results.append(_try_apply_ailment_entry(entry))
 
-	for entry in move.get_ailment_entries():
-		_apply_results.append(_try_apply_ailment_entry(entry))
+	_finalize_defender_move_resolution(damage)
 
 
 func _visualize(ui) -> void:

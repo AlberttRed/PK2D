@@ -77,11 +77,10 @@ func next_turn(): turns_left -= 1
 
 func on_modifier(_modifier_type: int, _move, _user, _target, value): return value # legacy (no usar)
 
-# --- Nuevos hooks específicos por fase ---
+# --- Modificadores numéricos (cadena en ModifierEngine) ---
 func on_power(_move, _user, _target, value): return value
 func on_accuracy(_move, _user, _target, value): return value
 func on_crit_chance(_move, _user, _target, value): return value
-func on_damage(_effect: DamageEffect) -> void: pass
 
 func get_priority() -> int:
 	return 0

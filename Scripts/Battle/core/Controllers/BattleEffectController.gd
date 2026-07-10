@@ -16,6 +16,16 @@ static func add_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 static func remove_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 	get_instance()._remove_pokemon_effect(pokemon, effect)
 
+## Quita el efecto de combate asociado a un estado mayor (veneno, sueño, etc.).
+static func remove_major_status_ailment_effect(pokemon: BattlePokemon, ailment_enum: int) -> void:
+	var effect_class := _major_status_ailment_class_name(ailment_enum)
+	if pokemon == null or effect_class.is_empty():
+		return
+	for effect in get_pokemon_effects(pokemon):
+		if effect.get_script().get_global_name() == effect_class:
+			remove_pokemon_effect(pokemon, effect)
+			return
+
 static func clear_pokemon_effects(pokemon):
 	get_instance()._clear_pokemon_effects(pokemon)
 
@@ -87,6 +97,12 @@ static func process_global_phase(phase: BattleEffect.Phases):
 static func apply_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
 	return await get_instance()._apply_phase(pokemon, phase, ctx)
 
+## Ejecuta solo apply_phase (sin visualize); para puntos síncronos del pipeline de combate.
+static func run_apply_phase(
+	pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null
+) -> void:
+	get_instance()._apply_phase(pokemon, phase, ctx)
+
 static func visualize_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
 	return await get_instance()._visualize_phase(pokemon, phase, ctx)
 
@@ -151,23 +167,28 @@ func _register_effect(effect: PersistentBattleEffect) -> void:
 
 func _add_pokemon_effect(pokemon, effect: PersistentBattleEffect):
 	_register_effect(effect)
-	if not pokemon_effects.has(pokemon):
-		pokemon_effects[pokemon] = _empty_effect_list()
-	pokemon_effects[pokemon].append(effect)
+	var key: BattlePokemon = _resolve_pokemon_effect_key(pokemon)
+	if key == null:
+		return
+	if not pokemon_effects.has(key):
+		pokemon_effects[key] = _empty_effect_list()
+	pokemon_effects[key].append(effect)
 
 func _remove_pokemon_effect(pokemon, effect: PersistentBattleEffect):
-	if not pokemon_effects.has(pokemon):
+	var key: BattlePokemon = _resolve_pokemon_effect_key(pokemon)
+	if key == null or not pokemon_effects.has(key):
 		return
 	var target_class = effect.get_script().get_global_name()
-	pokemon_effects[pokemon] = _filter_out_effect_class(pokemon_effects[pokemon], target_class)
-	if pokemon_effects[pokemon].is_empty():
-		pokemon_effects.erase(pokemon)
+	pokemon_effects[key] = _filter_out_effect_class(pokemon_effects[key], target_class)
+	if pokemon_effects[key].is_empty():
+		pokemon_effects.erase(key)
 
 func _clear_pokemon_effects(pokemon) -> void:
-	if pokemon == null:
+	var key: BattlePokemon = _resolve_pokemon_effect_key(pokemon)
+	if key == null:
 		return
-	if pokemon_effects.has(pokemon):
-		pokemon_effects.erase(pokemon)
+	if pokemon_effects.has(key):
+		pokemon_effects.erase(key)
 
 func _add_side_effect(side: String, effect: PersistentBattleEffect):
 	_register_effect(effect)
@@ -232,10 +253,18 @@ static func _sort_effects_for_visualize(effects: Array[PersistentBattleEffect]) 
 	return sorted
 
 func _get_pokemon_effects(pokemon) -> Array[PersistentBattleEffect]:
-	if pokemon_effects.has(pokemon):
-		var list: Array[PersistentBattleEffect] = pokemon_effects[pokemon]
+	var key: BattlePokemon = _resolve_pokemon_effect_key(pokemon)
+	if key == null:
+		return _empty_effect_list()
+	if pokemon_effects.has(key):
+		var list: Array[PersistentBattleEffect] = pokemon_effects[key]
 		return list.duplicate()
 	return _empty_effect_list()
+
+func _resolve_pokemon_effect_key(pokemon: BattlePokemon) -> BattlePokemon:
+	if pokemon == null:
+		return null
+	return pokemon.get_active_battle_pokemon()
 
 func _get_side_effects(pokemon: BattlePokemon) -> Array[PersistentBattleEffect]:
 	if pokemon == null or pokemon.side == null:
@@ -347,3 +376,19 @@ func _visualize_global_phase(phase: BattleEffect.Phases) -> void:
 	for effect in _sort_effects_for_visualize(global_effects):
 		await effect.visualize_phase(null, ui, phase)
 		_remove_global_effect_if_finished(effect)
+
+
+static func _major_status_ailment_class_name(ailment_enum: int) -> String:
+	match ailment_enum:
+		AilmentsEnum.Values.POISON:
+			return "PoisonAilmentEffect"
+		AilmentsEnum.Values.BURN:
+			return "BurnAilmentEffect"
+		AilmentsEnum.Values.PARALYSIS:
+			return "ParalysisAilmentEffect"
+		AilmentsEnum.Values.SLEEP:
+			return "SleepAilmentEffect"
+		AilmentsEnum.Values.FREEZE:
+			return "FreezeAilmentEffect"
+		_:
+			return ""

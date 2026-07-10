@@ -7,12 +7,13 @@ var effect: BattleMoveEffect
 func _apply() -> void:
 	# Los movimientos únicos tienen lógica específica
 	var effect_target: BattlePokemon = null
-	
+
 	if target.is_pokemon():
 		effect_target = target.get_pokemon()
-	
+
 	effect = move.create_move_effect(effect_target)
 	if effect:
+		effect.user = user
 		effect.apply()
 
 func _visualize(ui: BattleUI) -> void:

@@ -9,7 +9,7 @@ func _init(_move, _user, _target, _category = null):
 
 func _apply() -> void:
 	# Resolver Pokémon del target y validar
-	var target_pokemon: BattlePokemon = target.get_pokemon()
+	var target_pokemon: BattlePokemon = target.get_pokemon().get_active_battle_pokemon() if target.get_pokemon() != null else null
 	if target_pokemon == null:
 		return
 
@@ -17,6 +17,7 @@ func _apply() -> void:
 	damage = move.calculate_damage(target_pokemon)
 	show_effectiveness = (damage.effectiveness != 1.0)
 	damage.apply()
+	_finalize_defender_move_resolution(damage)
 
 func _visualize(ui: BattleUI) -> void:
 	if damage == null:

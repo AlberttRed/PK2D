@@ -24,7 +24,7 @@ func get_start_ailment_message(
 			msg = "¡%s se encuentra confuso!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.INFATUATION:
 			msg = "¡%s se ha enamorado!" % [user.get_battle_display_name(true)]
-		AilmentsEnum.Values.FLINCH:
+		AilmentsEnum.Values.FLINCH, AilmentsEnum.Values.PERISH_SONG:
 			return {}
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_start_message(user, related_pokemon, causing_move_id)
@@ -36,6 +36,10 @@ func get_start_ailment_message(
 			msg = "¡Se anuló %s!" % [_get_move_display_name(causing_move_id)]
 		AilmentsEnum.Values.TORMENT:
 			msg = "¡%s está sufriendo un Tormento!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.YAWN:
+			msg = "¡%s tiene mucho sueño!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.SUBSTITUTE:
+			msg = "¡%s creó un sustituto!" % [user.get_battle_display_name(true)]
 		_:
 			push_warning("Invalid AIlment on get_start_ailment_message()")
 			return {}
@@ -44,6 +48,26 @@ func get_start_ailment_message(
 		"type": "wait",
 		"text": msg,
 		"wait_time": 2.0
+	}
+
+
+func get_substitute_damage_message(owner: BattlePokemon) -> Dictionary:
+	if owner == null:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡El sustituto recibe daño en lugar de %s!" % [owner.get_battle_display_name()],
+		"wait_time": 2.0,
+	}
+
+
+func get_substitute_break_message(owner: BattlePokemon) -> Dictionary:
+	if owner == null:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡El sustituto de %s se debilitó!" % [owner.get_display_name()],
+		"wait_time": 2.0,
 	}
 
 
@@ -78,6 +102,8 @@ func get_end_ailment_message(
 			msg = "¡%s ya no está anulado!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.TORMENT:
 			msg = "¡%s se liberó del Tormento!" % [user.get_battle_display_name(true)]
+		AilmentsEnum.Values.YAWN:
+			return {}
 		_:
 			push_warning("Invalid AIlment or not implemented on get_end_ailment_message()")
 			return {}
@@ -124,6 +150,8 @@ func get_already_ailment_message(user:BattlePokemon, ailment_id: AilmentsEnum.Va
 				msg = "¡%s ya tiene un movimiento anulado!" % [user.get_battle_display_name(true)]
 			AilmentsEnum.Values.TORMENT:
 				msg = "¡%s ya está bajo los efectos del Tormento!" % [user.get_battle_display_name(true)]
+			AilmentsEnum.Values.YAWN:
+				msg = "¡%s ya tiene mucho sueño!" % [user.get_battle_display_name(true)]
 			_:
 				push_warning("Invalid AIlment on get_already_ailment_message()")
 				return {}
@@ -176,6 +204,8 @@ func get_ailment_effect_message(
 				user.get_battle_display_name(true),
 				_get_move_display_name(causing_move_id),
 			]
+		AilmentsEnum.Values.YAWN:
+			msg = "¡Pero falló!"
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}
