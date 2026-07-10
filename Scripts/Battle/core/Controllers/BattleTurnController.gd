@@ -229,6 +229,7 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 func end_turn():
 	if not battle_controller.finished:
 		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
+		await check_and_show_fainted_after_residual_effects()
 	turn_finished.emit(current_turn)
 
 func reset():
@@ -323,22 +324,34 @@ func print_stat_stages_log() -> void:
 			print("  (Sin modificaciones activas)")
 
 func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
-	# Primero mostramos los debilitados del lado CONTRARIO (rival)
-	# Luego los del lado del ejecutor (tu Pokémon)
 	var executor_side = action_executor.side
 	var opponent_side = action_executor.get_opponent_side()
 
-	# 1. Primero los del lado contrario
 	for spot in opponent_side.battle_spots:
-		if spot.pokemon and spot.pokemon.is_fainted():
-			await spot.play_faint_animation()
-			await battle_controller.ui.show_faint_message(spot.pokemon)
-			await battle_controller.grant_experience_after_enemy_ko(spot.pokemon, action_executor)
-			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
+		await _resolve_faint_on_spot(spot, action_executor, true)
 
-	# 2. Luego los del lado del ejecutor
 	for spot in executor_side.battle_spots:
-		if spot.pokemon and spot.pokemon.is_fainted():
-			await spot.play_faint_animation()
-			await battle_controller.ui.show_faint_message(spot.pokemon)
-			spot.remove_pokemon()  # Limpia el spot después de mostrar el mensaje
+		await _resolve_faint_on_spot(spot, action_executor, false)
+
+
+func check_and_show_fainted_after_residual_effects() -> void:
+	if battle_controller.enemy_side != null:
+		for spot in battle_controller.enemy_side.battle_spots:
+			await _resolve_faint_on_spot(spot, null, true)
+	if battle_controller.player_side != null:
+		for spot in battle_controller.player_side.battle_spots:
+			await _resolve_faint_on_spot(spot, null, false)
+
+
+func _resolve_faint_on_spot(
+	spot: BattleSpot,
+	exp_executor: BattlePokemon,
+	grant_exp: bool
+) -> void:
+	if spot == null or spot.pokemon == null or not spot.pokemon.is_fainted():
+		return
+	await spot.play_faint_animation()
+	await battle_controller.ui.show_faint_message(spot.pokemon)
+	if grant_exp:
+		await battle_controller.grant_experience_after_enemy_ko(spot.pokemon, exp_executor)
+	spot.remove_pokemon()

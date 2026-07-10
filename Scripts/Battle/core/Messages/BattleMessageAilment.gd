@@ -24,7 +24,7 @@ func get_start_ailment_message(
 			msg = "¡%s se encuentra confuso!" % [user.get_battle_display_name(true)]
 		AilmentsEnum.Values.INFATUATION:
 			msg = "¡%s se ha enamorado!" % [user.get_battle_display_name(true)]
-		AilmentsEnum.Values.FLINCH:
+		AilmentsEnum.Values.FLINCH, AilmentsEnum.Values.PERISH_SONG:
 			return {}
 		AilmentsEnum.Values.TRAP:
 			return _get_trap_start_message(user, related_pokemon, causing_move_id)

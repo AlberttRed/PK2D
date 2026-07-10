@@ -3,7 +3,7 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
-## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Destructor + Látigo) vs Pidgey (Sustituto + Bostezo/Picotazo Veneno/Tornado).
+## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Canto Mortal + Destructor + Látigo) vs Pidgey (Sustituto + Bostezo/Picotazo Veneno/Tornado).
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
 @export var use_fixed_rattata_vs_gastly: bool = true
@@ -185,6 +185,7 @@ func _create_substitute_test_player_instance() -> Pokemon:
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.SUBSTITUTE,
+		MovesEnum.Values.PERISH_SONG,
 		MovesEnum.Values.POUND,
 		MovesEnum.Values.TAIL_WHIP,
 	]
@@ -199,9 +200,9 @@ func _create_substitute_test_enemy_instance() -> Pokemon:
 	pkmn.is_wild = true
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.SUBSTITUTE,
+		MovesEnum.Values.PERISH_SONG,
 		MovesEnum.Values.YAWN,
 		MovesEnum.Values.POISON_STING,
-		MovesEnum.Values.GUST,
 	]
 	pkmn._post_init()
 	return pkmn
@@ -209,7 +210,7 @@ func _create_substitute_test_enemy_instance() -> Pokemon:
 
 func _print_substitute_test_guide() -> void:
 	var ailment_note := " (ailments garantizados)" if debug_force_ailment_apply else ""
-	print(">>> Combate Sustituto: Clefairy (Sustituto + Destructor + Látigo) vs Pidgey (Sustituto + Bostezo + Picotazo Veneno + Tornado)%s" % ailment_note)
+	print(">>> Combate Sustituto: Clefairy (Sustituto + Canto Mortal + Destructor + Látigo) vs Pidgey (Sustituto + Canto Mortal + Bostezo + Picotazo Veneno)%s" % ailment_note)
 	print(">>> Validación manual sugerida:")
 	print(">>>   1) Turno 1 — Clefairy usa Sustituto: pierde ~1/4 PS máx, mensaje «creó un sustituto».")
 	print(">>>   2) Pidgey puede usar Sustituto; Clefairy con Destructor rompe el muñeco rival.")
