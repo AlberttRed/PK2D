@@ -87,8 +87,9 @@ func show_trainers_and_pokemon():
 #
 	#
 func show_hp_bars():
-	await battle_ui.show_enemy_hp_bar(battle_controller.enemy_side.get_active_pokemons())
-	await get_tree().create_timer(0.5).timeout
+	if battle_controller.rules == null or battle_controller.rules.type != BattleRules.BattleTypes.TRAINER:
+		await battle_ui.show_enemy_hp_bar(battle_controller.enemy_side.get_active_pokemons())
+		await get_tree().create_timer(0.5).timeout
 	await battle_ui.show_player_hp_bar(battle_controller.player_side.get_active_pokemons())
 	await get_tree().create_timer(0.5).timeout
 

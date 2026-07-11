@@ -87,6 +87,20 @@ func assign_active_pokemons_to_spots():
 
 	# Ajustar visualmente la posición de los spots
 	ui.position_battlespots_for_mode(rules.mode)
+	prepare_trainer_intro_field()
+
+
+func prepare_trainer_intro_field() -> void:
+	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
+		return
+	if enemy_side == null:
+		return
+	for spot: BattleSpot in enemy_side.battle_spots:
+		if spot == null:
+			continue
+		spot.set_pokemon_sprite_visible(false)
+		if spot.hp_bar:
+			spot.hp_bar.visible = false
 
 
 func _connect_exp_signals_on_spots(spots: Array[BattleSpot]) -> void:

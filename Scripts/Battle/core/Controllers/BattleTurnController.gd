@@ -350,8 +350,69 @@ func _resolve_faint_on_spot(
 ) -> void:
 	if spot == null or spot.pokemon == null or not spot.pokemon.is_fainted():
 		return
+	var fainted := spot.pokemon
+	var side := fainted.side
 	await spot.play_faint_animation()
-	await battle_controller.ui.show_faint_message(spot.pokemon)
+	await battle_controller.ui.show_faint_message(fainted)
 	if grant_exp:
-		await battle_controller.grant_experience_after_enemy_ko(spot.pokemon, exp_executor)
+		await battle_controller.grant_experience_after_enemy_ko(fainted, exp_executor)
+	BattleEffectController.clear_pokemon_effects(fainted)
 	spot.remove_pokemon()
+
+	if battle_controller.battle_finished():
+		return
+	if side == null or not side.has_any_pokemon_alive():
+		return
+	if spot.pokemon != null:
+		return
+
+	await _send_forced_switch_after_faint(side, spot, fainted)
+
+
+func _send_forced_switch_after_faint(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> void:
+	var choice: BattleSwitchChoice = null
+	if side.is_controllable():
+		choice = await battle_controller.ui.resolve_player_forced_switch_after_faint(side, spot, fainted)
+		if battle_controller.battle_finished():
+			return
+	else:
+		var participant := _get_side_participant(side)
+		if participant != null:
+			choice = participant.decide_forced_switch_for(side, spot, fainted)
+			if choice != null and _is_trainer_send_in_after_faint(side):
+				await battle_controller.ui.handle_opponent_trainer_send_in_sequence(
+					side, participant, choice
+				)
+				if battle_controller.battle_finished():
+					return
+
+	if choice == null:
+		if side.escapedBattle or battle_controller.battle_finished():
+			return
+		push_warning("Forced switch: no se pudo elegir sustituto.")
+		return
+
+	var handlers := choice.resolve()
+	if handlers.is_empty():
+		push_warning("Forced switch: no se pudo resolver el cambio.")
+		return
+	await handle_switch_result(choice, handlers)
+
+
+func _get_side_participant(side: BattleSide) -> BattleParticipant:
+	if side == null or side.participants.is_empty():
+		return null
+	return side.participants[0]
+
+
+func _is_trainer_send_in_after_faint(side: BattleSide) -> bool:
+	if side == null or side.is_controllable():
+		return false
+	var rules := side.battle_rules
+	if rules == null and battle_controller != null:
+		rules = battle_controller.rules
+	return rules != null and rules.type == BattleRules.BattleTypes.TRAINER
