@@ -28,6 +28,50 @@ func decide_action(_pokemon: BattlePokemon) -> BattleChoice:
 	push_error("decide_action() debe ser implementado en la subclase de BattleIA")
 	return BattlePassChoice.new()
 
+## Elige el sustituto tras debilitarse el activo (cambio forzado por KO).
+## Las subclases pueden sobreescribir para estrategia (tipos, matchups, etc.).
+func decide_forced_switch(side: BattleSide, spot: BattleSpot, fainted: BattlePokemon) -> BattleSwitchChoice:
+	return build_first_available_forced_switch(side, spot, fainted)
+
+## Primer Pokémon vivo del party que no esté en campo (orden de lista).
+func build_first_available_forced_switch(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> BattleSwitchChoice:
+	var incoming := find_first_bench_pokemon(side)
+	if incoming == null:
+		return null
+	return _make_forced_switch_choice(side, spot, fainted, incoming)
+
+
+func find_first_bench_pokemon(side: BattleSide) -> BattlePokemon:
+	if side == null:
+		return null
+	for p in side.pokemonParty:
+		if p != null and not p.is_fainted() and not p.in_battle:
+			return p
+	return null
+
+
+func _make_forced_switch_choice(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon,
+	incoming: BattlePokemon
+) -> BattleSwitchChoice:
+	var choice := BattleSwitchChoice.new()
+	choice.side = side
+	choice.target_spot = spot
+	choice.outgoing_pokemon = fainted
+	choice.incoming_pokemon = incoming
+	choice.pokemon = incoming
+	choice.forced_by_faint = true
+	if spot != null:
+		choice.origin_spot_index = spot.index
+	choice.target_index = side.pokemonParty.find(incoming)
+	return choice
+
 # ============================================================================
 # MÉTODOS DE UTILIDAD COMUNES PARA TODAS LAS IAS
 # ============================================================================

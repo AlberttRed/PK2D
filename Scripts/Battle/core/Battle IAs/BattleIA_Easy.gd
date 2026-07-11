@@ -52,7 +52,11 @@ func decide_action(pokemon: BattlePokemon) -> BattleChoice:
 	
 	return choice
 
-## Selecciona un movimiento aleatorio como fallback.
+## Tras KO del activo: primer Pokémon vivo del party que no esté en campo.
+func decide_forced_switch(side: BattleSide, spot: BattleSpot, fainted: BattlePokemon) -> BattleSwitchChoice:
+	return build_first_available_forced_switch(side, spot, fainted)
+
+
 func _select_random_move(
 	pokemon: BattlePokemon,
 	moves: Array[BattleMove],

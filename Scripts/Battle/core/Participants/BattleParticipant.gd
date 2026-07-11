@@ -58,5 +58,15 @@ func decide_action_for(pokemon: BattlePokemon) -> BattleChoice:
 	return await pokemon.decide_random_action()  # fallback aleatorio
 
 
+func decide_forced_switch_for(
+	battle_side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> BattleSwitchChoice:
+	if ai_controller:
+		return ai_controller.decide_forced_switch(battle_side, spot, fainted)
+	return BattleIA.new().build_first_available_forced_switch(battle_side, spot, fainted)
+
+
 func get_active_pokemons() -> Array[BattlePokemon]:
 	return pokemon_team.filter(func(pk): return pk.in_battle and not pk.fainted)

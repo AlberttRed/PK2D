@@ -599,6 +599,274 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 		choice.origin_spot_index = pokemon.battle_spot.index
 	return choice
 
+
+func resolve_player_forced_switch_after_faint(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> BattleSwitchChoice:
+	actions_menu.hide()
+	moves_menu.hide()
+	target_selector_ui.hide()
+	message_box.hide()
+
+	var rules: BattleRules = side.battle_rules if side != null else null
+	if rules == null and battle_controller != null:
+		rules = battle_controller.rules
+	var is_wild := rules != null and rules.type == BattleRules.BattleTypes.WILD
+
+	if is_wild:
+		var prompt_idx: int = await DisplayManager.show_message_with_choices(
+			message_controller.get_use_next_pokemon_prompt_text(),
+			["Sí", "No"],
+			true
+		)
+		if prompt_idx != 0:
+			var escaped := await _attempt_battle_flee(fainted, false)
+			if escaped:
+				return null
+			await show_message_from_dict(message_controller.get_faint_refuse_flee_failed_message())
+			await _await_menu_inputs_released()
+
+	return await show_forced_switch_selection(side, spot, fainted)
+
+
+func handle_opponent_trainer_send_in_sequence(
+	_enemy_side: BattleSide,
+	participant: BattleParticipant,
+	incoming_choice: BattleSwitchChoice
+) -> void:
+	var incoming: BattlePokemon = incoming_choice.incoming_pokemon
+	if incoming == null:
+		return
+
+	actions_menu.hide()
+	moves_menu.hide()
+	target_selector_ui.hide()
+	message_box.hide()
+
+	var trainer_name := participant.name if participant != null and not participant.name.is_empty() else "Entrenador"
+	var pokemon_name := incoming.get_display_name()
+	await show_message_from_dict(
+		message_controller.get_opponent_next_pokemon_message(pokemon_name, trainer_name)
+	)
+
+	var player_name := _get_player_battle_name()
+	var switch_idx: int = await DisplayManager.show_message_with_choices(
+		"%s, ¿quieres cambiar de POKéMON?" % player_name,
+		["Sí", "No"],
+		true
+	)
+	if switch_idx != 0:
+		return
+
+	var active := _get_player_active_pokemon()
+	if active == null or battle_controller == null:
+		return
+
+	var player_switch: BattleSwitchChoice = await show_optional_switch_selection(active)
+	if player_switch == null:
+		return
+
+	var handlers := player_switch.resolve()
+	if handlers.is_empty():
+		return
+	await battle_controller.turn_controller.handle_switch_result(player_switch, handlers)
+
+
+func show_optional_switch_selection(pokemon: BattlePokemon) -> BattleSwitchChoice:
+	if party_ui == null:
+		push_error("BattleUI: PartyUI no está disponible en la escena de batalla.")
+		return null
+
+	_sync_player_battle_party_to_persistent()
+	await _await_menu_inputs_released()
+
+	var switch_controller = _BATTLE_PARTY_SWITCH_CONTROLLER.new(pokemon.side, pokemon, false)
+	party_ui.setup(switch_controller)
+	actions_menu.hide()
+	moves_menu.hide()
+	target_selector_ui.hide()
+	message_box.hide()
+
+	var current_slot: int = switch_controller.find_slot_for_battle_pokemon(pokemon)
+	party_ui.open_for_battle_switch_pick(current_slot, false)
+
+	var selection_state := {
+		"selected_slot": -1,
+		"pending_slot": -1,
+		"canceled": false,
+		"done": false,
+		"rejected_message": {},
+	}
+
+	var on_selected := func(slot_index: int) -> void:
+		selection_state["pending_slot"] = slot_index
+	var on_canceled := func() -> void:
+		selection_state["canceled"] = true
+		selection_state["done"] = true
+	var on_rejected := func(message: Dictionary) -> void:
+		selection_state["rejected_message"] = message
+
+	party_ui.battle_switch_slot_selected.connect(on_selected)
+	party_ui.battle_switch_cancelled.connect(on_canceled)
+	party_ui.battle_switch_rejected.connect(on_rejected)
+	while not bool(selection_state["done"]):
+		var pending_slot: int = int(selection_state["pending_slot"])
+		if pending_slot >= 0:
+			selection_state["pending_slot"] = -1
+			var switch_ctx := BattlePhaseContext.for_choice(pokemon, BattleSwitchChoice.new())
+			await BattleEffectController.process_phase(
+				pokemon, BattleEffect.Phases.ON_VALIDATE_SWITCH, switch_ctx
+			)
+			if switch_ctx.rejected:
+				if not switch_ctx.rejection_message.is_empty():
+					await _show_party_switch_rejection_message(switch_ctx.rejection_message)
+				await _await_menu_inputs_released()
+				continue
+			selection_state["selected_slot"] = pending_slot
+			selection_state["done"] = true
+			continue
+		var rejected: Dictionary = selection_state["rejected_message"]
+		if not rejected.is_empty():
+			selection_state["rejected_message"] = {}
+			await _show_party_switch_rejection_message(rejected)
+		await get_tree().process_frame
+
+	if party_ui.battle_switch_slot_selected.is_connected(on_selected):
+		party_ui.battle_switch_slot_selected.disconnect(on_selected)
+	if party_ui.battle_switch_cancelled.is_connected(on_canceled):
+		party_ui.battle_switch_cancelled.disconnect(on_canceled)
+	if party_ui.battle_switch_rejected.is_connected(on_rejected):
+		party_ui.battle_switch_rejected.disconnect(on_rejected)
+
+	party_ui.close()
+
+	if bool(selection_state["canceled"]):
+		return null
+
+	var selected_slot: int = int(selection_state["selected_slot"])
+	var incoming_bp: BattlePokemon = switch_controller.get_battle_pokemon_at(selected_slot)
+	if incoming_bp == null:
+		return null
+
+	var choice := BattleSwitchChoice.new()
+	choice.pokemon = pokemon
+	choice.side = pokemon.side
+	choice.target_index = selected_slot
+	choice.outgoing_pokemon = pokemon
+	choice.incoming_pokemon = incoming_bp
+	if pokemon.battle_spot != null:
+		choice.origin_spot_index = pokemon.battle_spot.index
+	return choice
+
+
+func _get_player_battle_name() -> String:
+	if GameStateService != null:
+		var player_name := str(GameStateService.get_variable("PLAYER_NAME", "PLAYER")).strip_edges()
+		if not player_name.is_empty():
+			return player_name
+	return "PLAYER"
+
+
+func _get_player_active_pokemon() -> BattlePokemon:
+	if battle_controller == null or battle_controller.player_side == null:
+		return null
+	for spot: BattleSpot in battle_controller.player_side.battle_spots:
+		if spot != null and spot.pokemon != null and not spot.pokemon.is_fainted():
+			return spot.pokemon
+	return null
+
+
+func _attempt_battle_flee(runner: BattlePokemon, show_fail_message: bool = true) -> bool:
+	if runner == null or runner.side == null:
+		return false
+	var handler := BattleRunHandler.new(runner, runner.side.battle_rules)
+	handler.apply()
+	var escaped: bool = runner.side.escapedBattle
+	if escaped:
+		await show_escape_message(false, true)
+	elif show_fail_message:
+		await show_escape_message(false, false)
+	return escaped
+
+
+func show_forced_switch_selection(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> BattleSwitchChoice:
+	if party_ui == null:
+		push_error("BattleUI: PartyUI no está disponible en la escena de batalla.")
+		return null
+
+	_sync_player_battle_party_to_persistent()
+	await _await_menu_inputs_released()
+
+	var switch_controller = _BATTLE_PARTY_SWITCH_CONTROLLER.new(side, fainted, true)
+	party_ui.setup(switch_controller)
+	actions_menu.hide()
+	moves_menu.hide()
+	target_selector_ui.hide()
+	message_box.hide()
+	party_ui.open_for_battle_switch_pick(-1, true)
+
+	var selection_state := {
+		"selected_slot": -1,
+		"pending_slot": -1,
+		"done": false,
+		"rejected_message": {},
+	}
+
+	var on_selected := func(slot_index: int) -> void:
+		selection_state["pending_slot"] = slot_index
+	var on_rejected := func(message: Dictionary) -> void:
+		selection_state["rejected_message"] = message
+
+	party_ui.battle_switch_slot_selected.connect(on_selected)
+	party_ui.battle_switch_rejected.connect(on_rejected)
+	while not bool(selection_state["done"]):
+		var pending_slot: int = int(selection_state["pending_slot"])
+		if pending_slot >= 0:
+			selection_state["pending_slot"] = -1
+			if not switch_controller.is_selectable_switch_slot(pending_slot):
+				await _await_menu_inputs_released()
+				continue
+			selection_state["selected_slot"] = pending_slot
+			selection_state["done"] = true
+			continue
+		var rejected: Dictionary = selection_state["rejected_message"]
+		if not rejected.is_empty():
+			selection_state["rejected_message"] = {}
+			await _show_party_switch_rejection_message(rejected)
+		await get_tree().process_frame
+
+	if party_ui.battle_switch_slot_selected.is_connected(on_selected):
+		party_ui.battle_switch_slot_selected.disconnect(on_selected)
+	if party_ui.battle_switch_rejected.is_connected(on_rejected):
+		party_ui.battle_switch_rejected.disconnect(on_rejected)
+
+	party_ui.close()
+
+	var selected_slot: int = int(selection_state["selected_slot"])
+	if selected_slot < 0:
+		return null
+	var incoming_bp: BattlePokemon = switch_controller.get_battle_pokemon_at(selected_slot)
+	if incoming_bp == null:
+		return null
+
+	var choice := BattleSwitchChoice.new()
+	choice.side = side
+	choice.target_spot = spot
+	choice.target_index = selected_slot
+	choice.outgoing_pokemon = fainted
+	choice.incoming_pokemon = incoming_bp
+	choice.pokemon = incoming_bp
+	choice.forced_by_faint = true
+	if spot != null:
+		choice.origin_spot_index = spot.index
+	return choice
+
 func _show_party_switch_rejection_message(message: Dictionary) -> void:
 	if message == null or message.is_empty():
 		return
@@ -712,10 +980,28 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 
 	for msg in intro_messages:
 		await show_message_from_dict(msg)
-		print("escrito!")
+		if bool(msg.get("trainer_send_in", false)):
+			if bool(msg.get("trainer_send_in_double", false)):
+				_reveal_enemy_trainer_send_in(0)
+				_reveal_enemy_trainer_send_in(1)
+			else:
+				_reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
 
-	# Aquí podrías activar el menú o iniciar la siguiente fase del combate
 	actions_menu.show()
+
+
+func _reveal_enemy_trainer_send_in(spot_index: int) -> void:
+	if battle_controller == null or battle_controller.enemy_side == null:
+		return
+	var spots := battle_controller.enemy_side.battle_spots
+	if spot_index < 0 or spot_index >= spots.size():
+		return
+	var spot: BattleSpot = spots[spot_index]
+	if spot == null:
+		return
+	spot.set_pokemon_sprite_visible(true)
+	if spot.hp_bar:
+		spot.hp_bar.visible = true
 
 func show_used_move_message(user: BattlePokemon, move: BattleMove) -> void:
 	await show_message_from_dict(message_controller.get_used_move_message(user, move))
@@ -773,6 +1059,12 @@ func show_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> voi
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
 	await show_message_from_dict(message_controller.get_switch_message(trainer_name, pokemon_name))
+
+
+func show_trainer_send_in_display(trainer_name: String, pokemon_name: String) -> void:
+	await show_message_from_dict(
+		message_controller.get_trainer_send_in_display_message(pokemon_name, trainer_name)
+	)
 
 # Mensaje de final de combate
 func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> void:

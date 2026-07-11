@@ -28,9 +28,14 @@ func get_party_members_ordered() -> Array[Pokemon]:
 	return out
 
 
-func touch_pokemon(_mon: Pokemon) -> void:
-	# No-op: en combate la fuente de verdad es BattlePokemon/base_data ya inicializado.
-	pass
+func touch_pokemon(mon: Pokemon) -> void:
+	if _side == null or mon == null:
+		return
+	for bp in _side.pokemonParty:
+		if bp != null and bp.base_data == mon:
+			var max_hp := mon.get_final_stat(StatsEnum.Values.HP)
+			mon.hp_actual = clampi(bp.get_hp(), 0, max_hp)
+			return
 
 
 func get_slot_view(slot: int) -> Dictionary:
@@ -40,6 +45,7 @@ func get_slot_view(slot: int) -> Dictionary:
 
 	var mon: Pokemon = bp.base_data
 	var max_hp := mon.get_final_stat(StatsEnum.Values.HP)
+	mon.hp_actual = clampi(bp.get_hp(), 0, max_hp)
 	var status := "—"
 	if bp.is_fainted():
 		status = "Debilitado"
@@ -96,10 +102,10 @@ func get_invalid_switch_reason(slot: int) -> String:
 	var candidate: BattlePokemon = get_battle_pokemon_at(slot)
 	if candidate == null:
 		return "No hay ningún Pokémon en ese slot."
-	if candidate == _active_pokemon:
-		return "%s ya está en el campo de batalla." % candidate.get_display_name()
 	if candidate.is_fainted():
 		return "¡A %s no le quedan fuerzas para luchar!" % candidate.get_display_name()
+	if candidate == _active_pokemon:
+		return "%s ya está en el campo de batalla." % candidate.get_display_name()
 	if candidate.in_battle:
 		return "%s ya está en el campo de batalla." % candidate.get_display_name()
 	if not candidate.inBattleParty:

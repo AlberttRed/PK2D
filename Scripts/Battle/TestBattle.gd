@@ -3,6 +3,10 @@ extends Node2D
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Equipos de prueba")
+## Si true, lanza 1vs1 salvaje con party jugador 2+ para probar cambio forzado por KO (AC1).
+@export var use_forced_switch_player_test: bool = false
+## Si true, lanza 1vs1 entrenador con party 2+ (jugador y rival) para probar cambio forzado por KO.
+@export var use_forced_switch_trainer_test: bool = false
 ## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Anulación + Destructor + Látigo) vs Pidgey (solo Bostezo).
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
@@ -41,6 +45,15 @@ var _bootstrapped_display_manager: DisplayManager = null
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not await _ensure_display_manager():
+		return
+	if use_forced_switch_player_test:
+		_setup_forced_switch_player_test_parties()
+		_print_forced_switch_player_guide()
+		await forcedSwitchPlayerTestBattle()
+		return
+	if use_forced_switch_trainer_test:
+		_print_forced_switch_trainer_guide()
+		await forcedSwitchTrainerTestBattle()
 		return
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
@@ -174,6 +187,112 @@ func wildFixedSubstituteTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla Sustituto terminada. Ganador: %s" % winner)
+
+
+func forcedSwitchTrainerTestBattle() -> void:
+	var player_participant := _create_forced_switch_test_strong_player_participant()
+	var trainer_participant := _create_forced_switch_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla cambio forzado (trainer) terminada. Ganador: %s" % winner)
+
+
+func _create_forced_switch_test_strong_player_participant() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 28
+	charmander.is_wild = false
+	charmander.custom_move_ids = [MovesEnum.Values.EMBER, MovesEnum.Values.SCRATCH, MovesEnum.Values.TAIL_WHIP]
+	charmander._post_init()
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 28
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [MovesEnum.Values.WATER_GUN, MovesEnum.Values.TACKLE]
+	squirtle._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	var bench: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	bench.controllable = true
+	var participant := BattleParticipant.new([lead, bench])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_forced_switch_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var lead: BattlePokemon = _create_forced_switch_test_player_lead(PokemonsEnum.Values.RATTATA).to_battle_pokemon()
+	var bench: BattlePokemon = _create_forced_switch_test_player_lead(PokemonsEnum.Values.BULBASAUR).to_battle_pokemon()
+	lead.setIA(ia)
+	bench.setIA(ia)
+	lead.controllable = false
+	bench.controllable = false
+	var participant := BattleParticipant.new([lead, bench])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_forced_switch_trainer_guide() -> void:
+	print(">>> Test cambio forzado (rival): Charmander + Squirtle (Nv.28) vs Rattata + Bulbasaur (Nv.8, entrenador).")
+	print(">>> Debilita al Rattata rival → prompt de cambio opcional + envío automático de Bulbasaur.")
+
+
+func forcedSwitchPlayerTestBattle() -> void:
+	var player_participant := _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: forcedSwitchPlayerTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla cambio forzado (jugador) terminada. Ganador: %s" % winner)
+
+
+func _setup_forced_switch_player_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(
+			_create_forced_switch_test_player_lead(PokemonsEnum.Values.RATTATA, 20)
+		)
+		player.add_pokemon_to_party(
+			_create_forced_switch_test_player_lead(PokemonsEnum.Values.BULBASAUR)
+		)
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_forced_switch_test_enemy())
+
+
+func _create_forced_switch_test_player_lead(species_id: int, level: int = 8) -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = species_id as PokemonsEnum.Values
+	pkmn.level = level
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_forced_switch_test_enemy() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 8
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [MovesEnum.Values.GUST, MovesEnum.Values.TACKLE]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_forced_switch_player_guide() -> void:
+	print(">>> Test cambio forzado (jugador): Rattata (Nv.20) + Bulbasaur (Nv.8) vs Pidgey (Nv.8).")
+	print(">>> Deja que el rival debilite al activo → debe abrirse Party obligatoria (sin cancelar).")
+	print(">>> Elige Bulbasaur (o el otro vivo) y comprueba mensaje de entrada + ON_SWITCH_IN.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:
@@ -522,6 +641,20 @@ func _create_random_player_participant(num_pokemon: int = 1) -> BattleParticipan
 	var participant := BattleParticipant.new(player_team)
 	participant.is_player = true
 	participant.name = "Jugador"
+	return participant
+
+
+func _create_random_trainer_participant(num_pokemon: int = 1) -> BattleParticipant:
+	var trainer_team: Array[BattlePokemon] = []
+	var ia := BattleIA_Easy.new()
+	for i in num_pokemon:
+		var bp := _create_random_pokemon(false)
+		bp.setIA(ia)
+		trainer_team.append(bp)
+	var participant := BattleParticipant.new(trainer_team)
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
 	return participant
 
 #

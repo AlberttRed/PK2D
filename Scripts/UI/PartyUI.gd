@@ -85,7 +85,7 @@ func open_for_battle_switch_pick(initial_focus_slot: int = -1, force_switch: boo
 	_battle_switch_pick_mode = true
 	_battle_force_switch = force_switch
 	if _battle_force_switch:
-		_set_help_text("Elige un Pokémon para continuar.")
+		_set_help_text(_get_battle_switch_default_help_text())
 	else:
 		_set_help_text("Elige el Pokémon al que cambiar.")
 
@@ -185,6 +185,16 @@ func _set_help_text(text: String) -> void:
 		lbl.setText(text)
 	elif lbl is Label:
 		(lbl as Label).text = text
+
+
+func _get_battle_switch_default_help_text() -> String:
+	if _battle_force_switch:
+		return "Elegir un POKéMON."
+	return "Elige el Pokémon al que cambiar."
+
+
+func _reset_battle_switch_help_text() -> void:
+	_set_help_text(_get_battle_switch_default_help_text())
 
 
 func _apply_menu_mode_all_panels() -> void:
@@ -523,7 +533,6 @@ func _on_input_cancel() -> void:
 		return
 	if _battle_switch_pick_mode:
 		if _battle_force_switch:
-			_set_help_text("Debes elegir un Pokémon válido.")
 			return
 		battle_switch_cancelled.emit()
 		return
@@ -540,7 +549,7 @@ func _on_input_start() -> void:
 		return
 	if _battle_switch_pick_mode and _can_handle_party_input():
 		if _battle_force_switch:
-			_set_help_text("Debes elegir un Pokémon válido.")
+			return
 			return
 		battle_switch_cancelled.emit()
 		return
@@ -569,7 +578,7 @@ func _handle_accept_async() -> void:
 	if _battle_switch_pick_mode:
 		if slot == CANCEL_INDEX:
 			if _battle_force_switch:
-				_set_help_text("Debes elegir un Pokémon válido.")
+				return
 			else:
 				battle_switch_cancelled.emit()
 			return
@@ -701,6 +710,7 @@ func _handle_battle_switch_choice_menu(slot: int) -> void:
 		0:
 			if not _controller.is_selectable_switch_slot(slot):
 				battle_switch_rejected.emit(_controller.get_invalid_switch_message(slot))
+				_reset_battle_switch_help_text()
 				return
 			battle_switch_slot_selected.emit(slot)
 			return
@@ -708,10 +718,7 @@ func _handle_battle_switch_choice_menu(slot: int) -> void:
 			await _open_hgss_summary(slot)
 			return
 		_:
-			if _battle_force_switch:
-				_set_help_text("Elige un Pokémon para continuar.")
-			else:
-				_set_help_text("Elige el Pokémon al que cambiar.")
+			_reset_battle_switch_help_text()
 			return
 
 
@@ -740,7 +747,10 @@ func _open_hgss_summary(slot: int) -> void:
 		pokemon_panels[slot].grab_focus()
 	else:
 		_focus_first_occupied_or_salir()
-	_set_help_text("Elige a un Pokémon.")
+	if _battle_switch_pick_mode:
+		_reset_battle_switch_help_text()
+	else:
+		_set_help_text("Elige a un Pokémon.")
 
 
 func _block_player_control() -> void:

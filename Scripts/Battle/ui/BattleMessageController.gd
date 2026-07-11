@@ -52,11 +52,9 @@ func get_intro_messages(
 					"text": "¡" + enemy + " quiere luchar!",
 					"showIconAtEnd": true
 				})
-				messages.append({
-					"type": "display",
-					"text": "¡" + enemy + " envió a " + enemy_pokemon[0].get_name() + "!",
-					"wait_time": 1.2
-				})
+				messages.append(get_trainer_send_in_intro_message(
+					enemy_pokemon[0].get_display_name(), enemy, 0
+				))
 			messages.append({
 				"type": "display",
 				"text": "¡Adelante, " + player_pokemon[0].get_name() + "!",
@@ -77,22 +75,23 @@ func get_intro_messages(
 						"text": "¡" + enemy_trainers[0] + " quiere luchar!",
 						"showIconAtEnd": true
 					})
-					messages.append({
-						"type": "display",
-						"text": "¡" + enemy_trainers[0] + " envió a " + enemy_pokemon[0].get_name() + " y " + enemy_pokemon[1].get_name() + "!",
-						"wait_time": 1.4
-					})
+					messages.append(get_trainer_double_send_in_intro_message(
+						enemy_pokemon[0].get_display_name(),
+						enemy_pokemon[1].get_display_name(),
+						enemy_trainers[0]
+					))
 				elif enemy_trainers.size() == 2:
 					messages.append({
 						"type": "input",
 						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " quieren luchar!",
 						"showIconAtEnd": true
 					})
-					messages.append({
-						"type": "display",
-						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " enviaron a " + enemy_pokemon[0].get_name() + " y " + enemy_pokemon[1].get_name() + "!",
-						"wait_time": 1.4
-					})
+					messages.append(get_trainer_send_in_intro_message(
+						enemy_pokemon[0].get_display_name(), enemy_trainers[0], 0
+					))
+					messages.append(get_trainer_send_in_intro_message(
+						enemy_pokemon[1].get_display_name(), enemy_trainers[1], 1
+					))
 
 			if player_trainers.size() == 1:
 				messages.append({
@@ -400,6 +399,68 @@ func get_faint_message(pokemon: BattlePokemon) -> Dictionary:
 		"text": "¡%s se debilitó!" % pokemon.get_battle_display_name(true), #Validado HGSS
 		"showIconAtEnd": true
 	}
+
+
+func get_use_next_pokemon_prompt_text() -> String:
+	return "¿Usas el siguiente Pokémon?"
+
+
+func get_faint_refuse_flee_failed_message() -> Dictionary:
+	return {
+		"type": "input",
+		"text": "¡No puedes huir!",
+		"showIconAtEnd": true
+	}
+
+
+func get_opponent_next_pokemon_message(pokemon_name: String, trainer_name: String) -> Dictionary:
+	return {
+		"type": "input",
+		"text": "¡%s será el próximo POKéMON de %s!" % [pokemon_name, trainer_name],
+		"showIconAtEnd": true
+	}
+
+
+func get_trainer_send_in_display_message(pokemon_name: String, trainer_name: String) -> Dictionary:
+	return {
+		"type": "display",
+		"text": "¡%s es el POKéMON enviado por %s!" % [pokemon_name, trainer_name],
+		"wait_time": 1.2
+	}
+
+
+func get_trainer_send_in_intro_message(
+	pokemon_name: String,
+	trainer_name: String,
+	enemy_spot_index: int
+) -> Dictionary:
+	var msg := get_trainer_send_in_display_message(pokemon_name, trainer_name)
+	msg["trainer_send_in"] = true
+	msg["enemy_spot_index"] = enemy_spot_index
+	return msg
+
+
+func get_trainer_double_send_in_display_message(
+	pokemon_a: String,
+	pokemon_b: String,
+	trainer_name: String
+) -> Dictionary:
+	return {
+		"type": "display",
+		"text": "¡%s y %s son la opción de %s!" % [pokemon_a, pokemon_b, trainer_name],
+		"wait_time": 1.4
+	}
+
+
+func get_trainer_double_send_in_intro_message(
+	pokemon_a: String,
+	pokemon_b: String,
+	trainer_name: String
+) -> Dictionary:
+	var msg := get_trainer_double_send_in_display_message(pokemon_a, pokemon_b, trainer_name)
+	msg["trainer_send_in"] = true
+	msg["trainer_send_in_double"] = true
+	return msg
 
 
 func get_gained_exp_message(battle_pokemon: BattlePokemon, exp_gained: int) -> Dictionary:
