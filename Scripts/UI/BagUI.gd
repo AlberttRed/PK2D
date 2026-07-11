@@ -56,7 +56,7 @@ var _background_stylebox: StyleBoxTexture = null
 
 var _pocket_label = null
 var _selection_cursor_base_y: float = 0.0
-var _items_container_base_pos: Vector2 = Vector2.ZERO
+var _items_container_base_offset_top: float = 14.0
 var _slider_base_x: float = 0.0
 var _slider_y_min: float = 83.0
 var _arrow_anim_time: float = 0.0
@@ -72,7 +72,7 @@ func _ready() -> void:
 	set_process(false)
 	hide()
 	if _items_container:
-		_items_container_base_pos = _items_container.position
+		_items_container_base_offset_top = _items_container.offset_top
 	if _selection_cursor:
 		_selection_cursor_base_y = _selection_cursor.position.y
 	if _slider:
@@ -80,6 +80,9 @@ func _ready() -> void:
 		_slider_y_min = _slider.position.y
 	if _item_icon:
 		_item_icon_back_texture = _item_icon.texture
+	if _item_template and _items_container and _item_template.get_parent() == _items_container:
+		_items_container.remove_child(_item_template)
+		add_child(_item_template)
 	if _item_template:
 		_item_template.visible = false
 	_background_stylebox = StyleBoxTexture.new()
@@ -304,12 +307,20 @@ func _update_list_scroll_arrows(scroll_top: int, item_count: int) -> void:
 	if not _down_arrow.visible:
 		_down_arrow.frame = 0
 
+func _reset_list_scroll() -> void:
+	if _items_container:
+		_items_container.offset_top = _items_container_base_offset_top
+
+
+func _apply_list_scroll(scroll_top: int, spacing_y: float) -> void:
+	if _items_container:
+		_items_container.offset_top = _items_container_base_offset_top - (float(scroll_top) * spacing_y)
+
+
 func _render_items() -> void:
 	for child in _items_container.get_children():
-		if child == _item_template:
-			continue
 		child.queue_free()
-	_items_container.position = _items_container_base_pos
+	_reset_list_scroll()
 
 	for item in _current_items:
 		if _item_template == null:
@@ -338,7 +349,7 @@ func _render_items() -> void:
 	_update_selection_visuals()
 
 func _get_list_row_spacing() -> float:
-	var row_height := 32.0
+	var row_height := LabelHGSS.MENU_ROW_HEIGHT
 	if _item_template:
 		row_height = float(_item_template.custom_minimum_size.y)
 	var separation := float(_items_container.get_theme_constant("separation", "VBoxContainer"))
@@ -357,8 +368,7 @@ func _update_selection_visuals() -> void:
 	if _current_items.is_empty():
 		if _selection_cursor:
 			_selection_cursor.visible = false
-		if _items_container:
-			_items_container.position = _items_container_base_pos
+		_reset_list_scroll()
 		if _slider:
 			_slider.position = Vector2(_slider_base_x, _slider_y_min)
 		_update_list_scroll_arrows(0, 0)
@@ -369,10 +379,7 @@ func _update_selection_visuals() -> void:
 		var spacing_y := _get_list_row_spacing()
 		var scroll_top := _compute_list_scroll_top(_current_items.size(), _selected_item_index)
 		_update_list_scroll_arrows(scroll_top, _current_items.size())
-		_items_container.position = Vector2(
-			_items_container_base_pos.x,
-			_items_container_base_pos.y - (float(scroll_top) * spacing_y)
-		)
+		_apply_list_scroll(scroll_top, spacing_y)
 		var cursor_row := mini(_selected_item_index, _LIST_CURSOR_ANCHOR_INDEX)
 		_selection_cursor.position.y = _selection_cursor_base_y + (float(cursor_row) * spacing_y)
 

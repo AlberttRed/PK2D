@@ -44,7 +44,7 @@ func can_use(player: Node, target: Node) -> bool:
 ## @param player: Nodo del jugador
 ## @param target: Nodo del evento a afectar
 ## @return: Dictionary con {success: bool, data: Dictionary}
-func execute(player: Node, target: Node) -> Dictionary:
+func execute(player: Node, target: Node, _context: Node) -> Dictionary:
 	var event_id = target.name
 
 	# 1. Desactivar el evento para que no sea visible

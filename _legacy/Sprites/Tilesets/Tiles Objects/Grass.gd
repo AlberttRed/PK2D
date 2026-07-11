@@ -13,7 +13,7 @@ var body
 @onready var timer = $Timer
 
 const grass_overlay_texture = preload("res://Sprites/Others/Stepped_Tall_Grass.png")
-const GrassEffect = preload("res://Objetos/Animaciones/GrassEffect.tscn")
+const GrassEffect = preload("res://Scenes/Overworld/Others/GrassEffect.tscn")
 var grass_overlay: Sprite2D = null
 
 var player_inside: bool = false

@@ -22,39 +22,31 @@ func _run() -> void:
 		if not ResourceLoader.exists(file_path):
 			continue
 
-		var item_resource := load(file_path)
+		var item_resource := load(file_path) as ItemData
 		if item_resource == null:
 			continue
 
-		# Verificar si tiene icono
-		if not item_resource.has("icon"):
-			continue
-
-		var icon := item_resource.get("icon")
+		var icon: AtlasTexture = item_resource.icon
 		if icon == null:
 			continue
 
-		# Verificar si es un AtlasTexture
-		if not (icon is AtlasTexture):
-			continue
-
-		var atlas_tex := icon as AtlasTexture
-		var atlas := atlas_tex.atlas
+		var atlas_tex: AtlasTexture = icon
+		var atlas: Texture2D = atlas_tex.atlas
 
 		if atlas == null:
 			continue
 
 		# Obtener la ruta del atlas
-		var atlas_path := atlas.resource_path
+		var atlas_path: String = atlas.resource_path
 		if atlas_path == "":
 			continue
 
 		# Si la ruta contiene la ruta antigua, actualizarla
 		if atlas_path.contains(OLD_ATLAS_PATH):
-			var new_atlas_path := atlas_path.replace(OLD_ATLAS_PATH, NEW_ATLAS_PATH)
+			var new_atlas_path: String = atlas_path.replace(OLD_ATLAS_PATH, NEW_ATLAS_PATH)
 
 			# Cargar el nuevo atlas
-			var new_atlas := load(new_atlas_path) as Texture2D
+			var new_atlas: Texture2D = load(new_atlas_path) as Texture2D
 			if new_atlas == null:
 				push_warning("[UpdateItemIconPaths] No se pudo cargar nuevo atlas: %s" % new_atlas_path)
 				error_count += 1
@@ -62,7 +54,7 @@ func _run() -> void:
 
 			# Actualizar la referencia
 			atlas_tex.atlas = new_atlas
-			item_resource.set("icon", atlas_tex)
+			item_resource.icon = atlas_tex
 
 			# Guardar
 			var save_error := ResourceSaver.save(item_resource, file_path)

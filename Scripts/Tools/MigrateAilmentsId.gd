@@ -44,10 +44,10 @@ func _run() -> void:
 		if res == null:
 			push_warning("[MigrateAilmentsId] No se pudo cargar: " + p)
 			continue
-		if not (res is Ailment):
+		if not (res is AilmentData):
 			skipped += 1
 			continue
-		var ail: Ailment = res
+		var ail: AilmentData = res
 
 		var old_id_any = ail.id
 		var old_internal := ail.internal_name

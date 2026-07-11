@@ -8,6 +8,9 @@ signal text_completed
 
 const LINE_CHARS = 36
 const VISIBLE_CHARS_LIMIT = 72
+const MENU_ROW_HEIGHT := 34.0
+const MENU_TEXT_RISE := -6
+const MENU_FONT_SIZE := 26
 
 var lastLine: int = 0
 var nextLineStop: int = 2
@@ -142,6 +145,69 @@ func _apply_full_richtext(raw: String) -> void:
 	_request_outline_visual_refresh()
 
 
+## Fila compacta para menús lista (PauseMenu, ChoiceBox). Godot 4.7: line_separation>0 infla filas ~56px.
+static func create_menu_row(text: String) -> LabelHGSS:
+	var label := LabelHGSS.new()
+	label.bbcode_enabled = true
+	label.fit_content = false
+	label.scroll_active = false
+	label.size_flags_horizontal = Control.SIZE_FILL
+	label.custom_minimum_size = Vector2(0, MENU_ROW_HEIGHT)
+
+	var custom_theme := Theme.new()
+	var font: Font = load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf")
+	var font_variation := FontVariation.new()
+	font_variation.base_font = font
+	font_variation.spacing_top = MENU_TEXT_RISE
+	custom_theme.default_font = font_variation
+	custom_theme.default_font_size = MENU_FONT_SIZE
+
+	label.theme = custom_theme
+	label.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
+	label.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
+	label.add_theme_constant_override("line_separation", 0)
+	label.add_theme_constant_override("paragraph_separation", 0)
+	label.add_theme_constant_override("shadow_offset_x", 2)
+	label.add_theme_constant_override("shadow_offset_y", 0)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	label.clip_contents = false
+
+	var outline1 := RichTextLabel.new()
+	outline1.name = "Outline"
+	outline1.bbcode_enabled = true
+	outline1.fit_content = false
+	outline1.scroll_active = false
+	outline1.theme = custom_theme
+	outline1.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
+	outline1.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
+	outline1.add_theme_constant_override("line_separation", 0)
+	outline1.add_theme_constant_override("paragraph_separation", 0)
+	outline1.add_theme_constant_override("shadow_offset_x", 0)
+	outline1.add_theme_constant_override("shadow_offset_y", 2)
+	outline1.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	outline1.clip_contents = false
+
+	var outline2 := RichTextLabel.new()
+	outline2.name = "Outline2"
+	outline2.bbcode_enabled = true
+	outline2.fit_content = false
+	outline2.scroll_active = false
+	outline2.theme = custom_theme
+	outline2.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
+	outline2.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
+	outline2.add_theme_constant_override("line_separation", 0)
+	outline2.add_theme_constant_override("paragraph_separation", 0)
+	outline2.add_theme_constant_override("shadow_offset_x", 2)
+	outline2.add_theme_constant_override("shadow_offset_y", 2)
+	outline2.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	outline2.clip_contents = false
+
+	label.add_child(outline1)
+	label.add_child(outline2)
+	label.setText(text)
+	return label
+
+
 func setText(_text):
 	var prefix := "[left]"
 	match align:
@@ -162,7 +228,7 @@ func reset():
 	# MessageBox controla visible_characters; no tocar visible_ratio aquí (desalinea las 3 capas).
 
 
-func _set(_name, value):
+func _set(_name, value) -> bool:
 	match _name:
 		"text":
 			var normalized: String = _bbcode_normalize_newlines(str(value))
@@ -171,6 +237,7 @@ func _set(_name, value):
 				o.text = normalized
 			_sync_outline_layout_from_parent()
 			_request_outline_visual_refresh()
+			return true
 		"visible_characters":
 			var next_line = 0
 			visible_characters = value
@@ -183,12 +250,19 @@ func _set(_name, value):
 			if messageHasFinished or next_line != actualLine:
 				line_displayed.emit()
 				lastLine = actualLine
+			return true
 		"theme_override_colors/default_color":
+			add_theme_color_override("default_color", value)
 			for o in _outline_layers():
-				o.set("theme_override_colors/default_color", value)
+				o.add_theme_color_override("default_color", value)
+			return true
 		"theme_override_colors/font_shadow_color":
+			add_theme_color_override("font_shadow_color", value)
 			for o in _outline_layers():
-				o.set("theme_override_colors/font_shadow_color", value)
+				o.add_theme_color_override("font_shadow_color", value)
+			return true
+		_:
+			return false
 
 
 func _notification(what: int) -> void:

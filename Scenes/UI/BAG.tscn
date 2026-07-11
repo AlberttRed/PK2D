@@ -19,8 +19,16 @@ texture = ExtResource("1_r6uq1")
 [sub_resource type="FontVariation" id="FontVariation_bag"]
 base_font = ExtResource("9_font")
 
+[sub_resource type="FontVariation" id="FontVariation_bag_list"]
+base_font = ExtResource("9_font")
+spacing_top = -6
+
 [sub_resource type="Theme" id="Theme_bag_label"]
 default_font = SubResource("FontVariation_bag")
+default_font_size = 26
+
+[sub_resource type="Theme" id="Theme_bag_list_row"]
+default_font = SubResource("FontVariation_bag_list")
 default_font_size = 26
 
 [node name="BAG" type="Panel" unique_id=473099982]
@@ -158,30 +166,33 @@ metadata/_edit_lock_ = true
 [node name="ItemsContainer" type="VBoxContainer" parent="ItemsViewport" unique_id=1845251394]
 layout_mode = 1
 anchors_preset = -1
-offset_top = 20.0
+offset_top = 14.0
 offset_right = 254.0
 offset_bottom = 264.0
 theme_override_constants/separation = 0
 metadata/_edit_lock_ = true
 
 [node name="ExitTemplate" type="HBoxContainer" parent="ItemsViewport/ItemsContainer" unique_id=1356186654]
-custom_minimum_size = Vector2(230, 32)
+custom_minimum_size = Vector2(230, 34)
 layout_mode = 2
 metadata/_edit_lock_ = true
 
 [node name="Name" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1274286925]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 0
 bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
+fit_content = false
 scroll_active = false
+clip_contents = false
 script = ExtResource("10_labelhgss")
 metadata/_edit_lock_ = true
 
@@ -192,15 +203,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
+fit_content = false
 scroll_active = false
+clip_contents = false
 metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=305166836]
@@ -210,28 +224,34 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
 text = "CERRAR LA MOCHILA"
+fit_content = false
 scroll_active = false
+clip_contents = false
 metadata/_edit_lock_ = true
 
 [node name="Quantity" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=393232243]
-custom_minimum_size = Vector2(48, 32)
+custom_minimum_size = Vector2(48, 34)
 layout_mode = 2
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 0
 bbcode_enabled = true
+fit_content = false
 scroll_active = false
+clip_contents = false
 script = ExtResource("10_labelhgss")
 align = 2
 metadata/_edit_lock_ = true
@@ -243,14 +263,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
+fit_content = false
 scroll_active = false
+clip_contents = false
 metadata/_edit_lock_ = true
 
 [node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=455254522]
@@ -260,14 +283,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_bag_label")
+theme = SubResource("Theme_bag_list_row")
 theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
 theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
 theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 bbcode_enabled = true
+fit_content = false
 scroll_active = false
+clip_contents = false
 metadata/_edit_lock_ = true
 
 [node name="Mochila_Sprite" type="Sprite2D" parent="." unique_id=82672573]

@@ -1,22 +1,22 @@
 
 extends Panel
 
-export(StyleBox) var sprite_Bag1
-export(StyleBox) var sprite_Bag2
-export(StyleBox) var sprite_Bag3
-export(StyleBox) var sprite_Bag4
-export(StyleBox) var sprite_Bag5
-export(StyleBox) var sprite_Bag6
-export(StyleBox) var sprite_Bag7
-export(StyleBox) var sprite_Bag8
+@export var sprite_Bag1: StyleBox
+@export var sprite_Bag2: StyleBox
+@export var sprite_Bag3: StyleBox
+@export var sprite_Bag4: StyleBox
+@export var sprite_Bag5: StyleBox
+@export var sprite_Bag6: StyleBox
+@export var sprite_Bag7: StyleBox
+@export var sprite_Bag8: StyleBox
 
-export(StyleBox) var style_actions_empty
-export(StyleBox) var style_actions_selected
+@export var style_actions_empty: StyleBox
+@export var style_actions_selected: StyleBox
 
-onready var actions_chs = [get_node("ACTIONS/VBoxContainer/USAR"),get_node("ACTIONS/VBoxContainer/DAR"),get_node("ACTIONS/VBoxContainer/TIRAR"),get_node("ACTIONS/VBoxContainer/SALIR")]
+@onready var actions_chs = [get_node("ACTIONS/VBoxContainer/USAR"),get_node("ACTIONS/VBoxContainer/DAR"),get_node("ACTIONS/VBoxContainer/TIRAR"),get_node("ACTIONS/VBoxContainer/SALIR")]
 
-onready var backgrounds = [null, sprite_Bag1, sprite_Bag2, sprite_Bag3, sprite_Bag4, sprite_Bag5, sprite_Bag6, sprite_Bag7, sprite_Bag8]
-onready var pockets = [null, [], [], [], [], [], [], [], []]
+@onready var backgrounds = [null, sprite_Bag1, sprite_Bag2, sprite_Bag3, sprite_Bag4, sprite_Bag5, sprite_Bag6, sprite_Bag7, sprite_Bag8]
+@onready var pockets = [null, [], [], [], [], [], [], [], []]
 var pocket_index = 1
 var item_index = 0
 var selected_index = 1
@@ -24,8 +24,8 @@ var actions_index = 0
 var items_on_screen = []
 var selected_item = null
 
-onready var actions = get_node("ACTIONS")
-onready var msg = get_node("MSG")
+@onready var actions = get_node("ACTIONS")
+@onready var msg = get_node("MSG")
 
 const msgBox_normalSize = Vector2(398, 66)
 const msgBox_actionsSize = Vector2(370, 66)

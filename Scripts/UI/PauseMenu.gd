@@ -155,69 +155,8 @@ func close() -> void:
 	# Emitir señal de cierre
 	menu_closed.emit()
 
-## Crea un label con el estilo HGSS (3 capas de sombreado)
 func _create_label_hgss(text: String) -> LabelHGSS:
-	# Crear el label principal
-	var label = LabelHGSS.new()
-	label.bbcode_enabled = true
-	label.fit_content = true
-	label.scroll_active = false
-	label.custom_minimum_size = Vector2(0, 34)
-
-	# Aplicar el mismo tema que el MessageBox
-	var custom_theme = Theme.new()
-	var font = load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf")
-	var font_variation = FontVariation.new()
-	font_variation.base_font = font
-	# Menús lista: menos desajuste respecto al rect del Control que spacing_top del MessageBox.
-	font_variation.spacing_top = 0
-
-	custom_theme.default_font = font_variation
-	custom_theme.default_font_size = 26
-
-	label.theme = custom_theme
-	label.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
-	label.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
-	label.add_theme_constant_override("line_separation", 8)
-	label.add_theme_constant_override("paragraph_separation", 0)
-	label.add_theme_constant_override("shadow_offset_x", 2)
-	label.add_theme_constant_override("shadow_offset_y", 0)
-
-	# Crear las capas de outline (sombra)
-	var outline1 = RichTextLabel.new()
-	outline1.name = "Outline"
-	outline1.bbcode_enabled = true
-	outline1.fit_content = true
-	outline1.scroll_active = false
-	outline1.theme = custom_theme
-	outline1.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
-	outline1.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
-	outline1.add_theme_constant_override("line_separation", 8)
-	outline1.add_theme_constant_override("paragraph_separation", 0)
-	outline1.add_theme_constant_override("shadow_offset_x", 0)
-	outline1.add_theme_constant_override("shadow_offset_y", 2)
-
-	var outline2 = RichTextLabel.new()
-	outline2.name = "Outline2"
-	outline2.bbcode_enabled = true
-	outline2.fit_content = true
-	outline2.scroll_active = false
-	outline2.theme = custom_theme
-	outline2.add_theme_color_override("default_color", Color(0.317647, 0.317647, 0.34902, 1))
-	outline2.add_theme_color_override("font_shadow_color", Color(0.65098, 0.65098, 0.682353, 1))
-	outline2.add_theme_constant_override("line_separation", 8)
-	outline2.add_theme_constant_override("paragraph_separation", 0)
-	outline2.add_theme_constant_override("shadow_offset_x", 2)
-	outline2.add_theme_constant_override("shadow_offset_y", 2)
-
-	# Agregar outlines como hijos del label principal
-	label.add_child(outline1)
-	label.add_child(outline2)
-
-	# Establecer el texto (LabelHGSS lo sincroniza con los outlines)
-	label.setText(text)
-
-	return label
+	return LabelHGSS.create_menu_row(text)
 
 ## Limpia las opciones del contenedor
 func _clear_options() -> void:
@@ -240,8 +179,7 @@ func _apply_panel_width_and_provisional_height() -> void:
 	var mc := $MarginContainer as MarginContainer
 	var mt := float(mc.get_theme_constant("margin_top"))
 	var mb := float(mc.get_theme_constant("margin_bottom"))
-	# Estimación holgada por fila (tras cambios de métricas RTL / fuente).
-	var provisional_row := 44.0
+	var provisional_row := LabelHGSS.MENU_ROW_HEIGHT
 	var row_n := int(_visible_indices.size()) if not _visible_indices.is_empty() else FULL_MENU_OPTION_COUNT
 	var provisional_height := mt + mb + float(row_n) * provisional_row
 
@@ -255,21 +193,11 @@ func _apply_panel_width_and_provisional_height() -> void:
 
 ## Alto del bloque de opciones: suma de filas (no `VBox.size.y`: al panel ser alto provisional el VBox estira y el hueco cuenta como margen inferior).
 func _options_stack_content_height() -> float:
+	var n := options_container.get_child_count()
+	if n == 0:
+		return 0.0
 	var sep := float(options_container.get_theme_constant("separation"))
-	var kids := options_container.get_children()
-	var sum_h := 0.0
-	for child in kids:
-		var ctl := child as Control
-		if ctl:
-			# size.y puede ser el reparto estirado del VBox; el mínimo combina mejor el alto intrínseco del RTL.
-			var h: float = ctl.get_combined_minimum_size().y
-			if h < 1.0:
-				h = ctl.size.y
-			sum_h += h
-	var n := kids.size()
-	if n > 1:
-		sum_h += sep * float(n - 1)
-	return sum_h
+	return float(n) * LabelHGSS.MENU_ROW_HEIGHT + sep * float(max(0, n - 1))
 
 
 ## Ajusta la altura del panel al contenido real (márgenes + pila de filas).
