@@ -15,6 +15,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
 @export var debug_rattata_test_bite: bool = true
+## Si true, Rattata lleva Otra Vez/Mofa/Bostezo/Atracción (♂) y Pidgey Constricción (♀) para probar más volátiles.
+@export var debug_rattata_extended_volatiles: bool = true
 ## Si true, el ailment del movimiento de prueba siempre se aplica (omite el %).
 @export var debug_force_ailment_apply: bool = false
 ## Si true, todos los movimientos del combate fijo empiezan con 0 PP (prueba Forcejeo por PP).
@@ -58,6 +60,7 @@ func _ready() -> void:
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
 		_print_substitute_test_guide()
+		_print_volatile_integration_guide()
 		if debug_zero_pp:
 			push_warning(
 				"TestBattle: debug_zero_pp fuerza Forcejeo al pulsar LUCHAR. "
@@ -71,9 +74,19 @@ func _ready() -> void:
 		_setup_test_battler_parties()
 	_seed_test_capture_items()
 	if use_fixed_rattata_vs_gastly:
-		var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
 		var chance_note := " (ailment garantizado)" if debug_force_ailment_apply else ""
-		print(">>> Combate fijo: Rattata (Otra Vez + Bostezo + %s%s) vs Pidgey (Anulación + Bostezo + Tornado + Látigo)" % [move_label, chance_note])
+		if debug_rattata_extended_volatiles:
+			print(
+				">>> Combate fijo: Rattata♂ (Otra Vez + Mofa + Bostezo + Atracción%s) vs Pidgey♀ (Anulación + Constricción + Bostezo + Tornado/Látigo)"
+				% chance_note
+			)
+		else:
+			var move_label := "Mordisco" if debug_rattata_test_bite else "Picotazo Veneno"
+			print(
+				">>> Combate fijo: Rattata (Otra Vez + Bostezo + %s%s) vs Pidgey (Anulación + Bostezo + Tornado + Látigo)"
+				% [move_label, chance_note]
+			)
+		_print_volatile_integration_guide()
 		if debug_pidgey_status_only:
 			print(">>> debug_pidgey_status_only: Pidgey solo lleva Anulación + Bostezo + Látigo.")
 		if debug_zero_pp:
@@ -350,6 +363,22 @@ func _print_substitute_test_guide() -> void:
 	print(">>>   · Con sustituto activo — Forcejeo de Pidgey daña al muñeco.")
 
 
+func _print_volatile_integration_guide() -> void:
+	print(">>> [PBI 686] Guía integración volátiles — ver Docs/battle/temporary-states-precedence.md")
+	if debug_rattata_extended_volatiles:
+		print(">>> Escenario extendido Rattata♂ vs Pidgey♀:")
+		print(">>>   · Mofa bloquea movimientos de estado; Atracción puede bloquear el ataque (solo un msg pre-move).")
+		print(">>>   · Constricción (Pidgey) → trap; intenta cambiar: mensaje «está atrapado».")
+		print(">>>   · Otra Vez + Anulación → Forcejeo si el movimiento encadenado queda anulado.")
+	else:
+		print(">>> Escenario Rattata vs Pidgey (Encore+Disable+Yawn):")
+		print(">>>   · Anulación bloquea el último movimiento usado; con Otra Vez activo → Forcejeo si el movimiento encadenado está anulado.")
+		print(">>>   · Solo un mensaje de bloqueo pre-move por turno (sueño > parálisis > retroceso > confusión > enamoramiento).")
+	print(">>> Escenario Sustituto:")
+	print(">>>   · Trap/switch: mensaje «está atrapado» vía ON_VALIDATE_SWITCH (no bypass silencioso).")
+	print(">>>   · Fin de turno: veneno/trap/perish/yawn en orden fijo por prioridad; Pokémon más rápidos primero.")
+
+
 ## 1vs1 salvaje: Pikachu♂ vs Clefairy♀ con Atracción; ambos equipos tienen banca para probar cambios.
 func wildFixedAttractTestBattle() -> void:
 	_setup_fixed_attract_test_parties()
@@ -474,16 +503,25 @@ func _create_rattata_ailment_test_instance() -> Pokemon:
 	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	pkmn.level = 20
 	pkmn.is_wild = false
-	var move_id: MovesEnum.Values = (
-		MovesEnum.Values.BITE if debug_rattata_test_bite
-		else MovesEnum.Values.POISON_STING
-	)
-	pkmn.custom_move_ids = [
-		MovesEnum.Values.ENCORE,
-		MovesEnum.Values.YAWN,
-		move_id,
-		MovesEnum.Values.TAIL_WHIP,
-	]
+	if debug_rattata_extended_volatiles:
+		pkmn.gender = CONST.GENEROS.MACHO
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.ENCORE,
+			MovesEnum.Values.TAUNT,
+			MovesEnum.Values.YAWN,
+			MovesEnum.Values.ATTRACT,
+		]
+	else:
+		var move_id: MovesEnum.Values = (
+			MovesEnum.Values.BITE if debug_rattata_test_bite
+			else MovesEnum.Values.POISON_STING
+		)
+		pkmn.custom_move_ids = [
+			MovesEnum.Values.ENCORE,
+			MovesEnum.Values.YAWN,
+			move_id,
+			MovesEnum.Values.TAIL_WHIP,
+		]
 	pkmn._post_init()
 	_apply_debug_zero_pp(pkmn)
 	return pkmn
@@ -494,7 +532,23 @@ func _create_pidgey_trap_test_instance() -> Pokemon:
 	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
 	pkmn.level = 20
 	pkmn.is_wild = true
-	if debug_pidgey_status_only:
+	if debug_rattata_extended_volatiles:
+		pkmn.gender = CONST.GENEROS.HEMBRA
+		if debug_pidgey_status_only:
+			pkmn.custom_move_ids = [
+				MovesEnum.Values.DISABLE,
+				MovesEnum.Values.WRAP,
+				MovesEnum.Values.YAWN,
+				MovesEnum.Values.TAIL_WHIP,
+			]
+		else:
+			pkmn.custom_move_ids = [
+				MovesEnum.Values.DISABLE,
+				MovesEnum.Values.WRAP,
+				MovesEnum.Values.YAWN,
+				MovesEnum.Values.GUST,
+			]
+	elif debug_pidgey_status_only:
 		pkmn.custom_move_ids = [
 			MovesEnum.Values.DISABLE,
 			MovesEnum.Values.YAWN,

@@ -126,4 +126,4 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.VALIDATE_TAUNT

@@ -211,6 +211,18 @@ func get_ailment_previous_effect_message(
 		return {}
 	return AilmentMessages.get_ailment_previous_effect_message(user, ailment_id, related_pokemon)
 
+
+func get_trap_block_switch_message(user: BattlePokemon) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_trap_block_switch_message(user)
+
+
+func get_perish_song_tick_message(user: BattlePokemon, counter: int) -> Dictionary:
+	if user == null:
+		return {}
+	return AilmentMessages.get_perish_song_tick_message(user, counter)
+
 func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, ability_id: AbilitiesEnum.Values) -> Dictionary:
 	if user == null or target == null:
 		return {}

@@ -13,6 +13,8 @@ func _init(src, min_turns = null, max_turns = null, _application_chance: int = 1
 func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
+	if not pokemon.can_act_this_turn:
+		return
 
 	next_turn()
 
@@ -31,4 +33,4 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.PRE_MOVE_SLEEP

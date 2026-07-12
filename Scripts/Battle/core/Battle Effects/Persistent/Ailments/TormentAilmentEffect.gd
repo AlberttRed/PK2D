@@ -158,7 +158,7 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 8
+	return BattleEffectPriority.VALIDATE_TORMENT
 
 
 static func _get_selected_move(pokemon: BattlePokemon) -> BattleMove:

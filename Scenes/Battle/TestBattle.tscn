@@ -6,10 +6,11 @@
 
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 script = ExtResource("1_tse6d")
-use_forced_switch_player_test = true
+use_forced_switch_player_test = false
 use_forced_switch_trainer_test = false
 use_fixed_substitute_test = false
-use_fixed_rattata_vs_gastly = false
+use_fixed_rattata_vs_gastly = true
+debug_rattata_extended_volatiles = true
 debug_rattata_test_bite = false
 debug_zero_pp = false
 

@@ -97,7 +97,7 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.END_YAWN
 
 
 static func _has_major_status(pokemon: BattlePokemon) -> bool:

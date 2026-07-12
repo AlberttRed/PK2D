@@ -2,8 +2,14 @@
 
 [ext_resource type="Resource" uid="uid://cph5xgmmwynox" path="res://Resources/Data/Ailments/INFATUATION.tres" id="1_5oy70"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_7iqyn"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_puvev"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_xkms0"]
+
+[sub_resource type="Resource" id="Resource_attract_entry"]
+script = ExtResource("2_entry")
+ailment = ExtResource("1_5oy70")
+chance = 100
 
 [resource]
 resource_name = "213 - Atracción"
@@ -21,6 +27,7 @@ damage_class_id = 1
 effect_entries = "Target falls in love if it has the opposite gender, and has a 50% chance to refuse attacking the user. Causes the target to fall in love with the user, giving it a 50% chance to do nothing each turn.  If the user and target are the same gender, or either is genderless, this move will fail.  If either Pokémon leaves the field, this effect ends."
 target_id = 10
 meta_ailment_id = 7
+ailment_entries = Array[ExtResource("2_entry")]([SubResource("Resource_attract_entry")])
 ailment_id = 7
 ailment = ExtResource("1_5oy70")
 category = ExtResource("2_xkms0")

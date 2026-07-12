@@ -22,4 +22,4 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 	await pokemon.battle_spot.apply_damage()
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.END_BURN

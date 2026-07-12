@@ -78,14 +78,9 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 	if _perish_counter < 0:
 		return
 
-	await ui.show_message_from_dict({
-		"type": "wait",
-		"text": "¡La cuenta atrás de Canto Mortal de %s ha bajado a %d!" % [
-			pokemon.get_battle_display_name(),
-			_perish_counter,
-		],
-		"wait_time": 2.0,
-	})
+	var tick_msg := ui.message_controller.get_perish_song_tick_message(pokemon, _perish_counter)
+	if not tick_msg.is_empty():
+		await ui.show_message_from_dict(tick_msg)
 
 	if _ko_this_turn and pokemon.battle_spot != null and _ko_hp_loss > 0:
 		await pokemon.battle_spot.apply_damage(_ko_hp_loss)
@@ -97,4 +92,4 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.END_PERISH_SONG

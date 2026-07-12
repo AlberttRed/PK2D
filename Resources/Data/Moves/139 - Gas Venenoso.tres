@@ -4,6 +4,13 @@
 [ext_resource type="Resource" uid="uid://d3gp5fdyknbo7" path="res://Resources/Data/Ailments/POISON.tres" id="1_tmev8"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_qh7rl"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_xit2m"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_tmev8")
+chance = 100
 
 [resource]
 resource_name = "139 - Gas Venenoso"
@@ -21,6 +28,7 @@ damage_class_id = 1
 effect_entries = "Poisons the target. Poisons the target."
 target_id = 11
 meta_ailment_id = 5
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 5
 ailment = ExtResource("1_tmev8")
 category = ExtResource("2_qh7rl")

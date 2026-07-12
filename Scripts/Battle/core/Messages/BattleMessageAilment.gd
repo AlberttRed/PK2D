@@ -51,6 +51,19 @@ func get_start_ailment_message(
 	}
 
 
+func get_perish_song_tick_message(user: BattlePokemon, counter: int) -> Dictionary:
+	if user == null or counter < 0:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡La cuenta atrás de Canto Mortal de %s ha bajado a %d!" % [
+			user.get_battle_display_name(),
+			counter,
+		],
+		"wait_time": 2.0,
+	}
+
+
 func get_substitute_damage_message(owner: BattlePokemon) -> Dictionary:
 	if owner == null:
 		return {}
@@ -206,6 +219,8 @@ func get_ailment_effect_message(
 			]
 		AilmentsEnum.Values.YAWN:
 			msg = "¡Pero falló!"
+		AilmentsEnum.Values.PERISH_SONG:
+			return {}
 		_:
 			push_warning("Invalid AIlment or not implemented on get_ailment_effect_message()")
 			return {}

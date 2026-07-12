@@ -50,4 +50,4 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 		await pokemon.battle_spot.apply_damage()
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.PRE_MOVE_CONFUSION

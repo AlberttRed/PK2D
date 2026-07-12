@@ -4,6 +4,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_q8cjc"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_qdbt6"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_u5rss"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_m8m1w")
+chance = 100
 
 [resource]
 resource_name = "92 - Tóxico"
@@ -23,6 +30,7 @@ target_id = 10
 meta_ailment_id = 5
 meta_min_turns = 15
 meta_max_turns = 15
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 5
 ailment = ExtResource("1_m8m1w")
 category = ExtResource("2_qdbt6")

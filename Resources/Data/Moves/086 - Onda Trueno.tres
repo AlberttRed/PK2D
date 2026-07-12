@@ -4,6 +4,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="2_3r6jj"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_wqjix"]
 [ext_resource type="Resource" uid="uid://ces0u5nv45fpj" path="res://Resources/Data/Types/13.tres" id="3_8vxk8"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_gct4g")
+chance = 100
 
 [resource]
 resource_name = "86 - Onda Trueno"
@@ -21,6 +28,7 @@ damage_class_id = 1
 effect_entries = "Paralyzes the target. Paralyzes the target."
 target_id = 10
 meta_ailment_id = 1
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 1
 ailment = ExtResource("1_gct4g")
 category = ExtResource("2_wqjix")

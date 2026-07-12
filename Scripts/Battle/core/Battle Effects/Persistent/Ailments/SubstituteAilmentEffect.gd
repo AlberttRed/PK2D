@@ -136,4 +136,4 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 6
+	return BattleEffectPriority.INCOMING_SUBSTITUTE

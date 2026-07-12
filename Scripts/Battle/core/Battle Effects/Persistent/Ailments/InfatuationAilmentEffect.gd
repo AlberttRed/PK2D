@@ -23,6 +23,10 @@ static func _are_opposite_genders(a: BattlePokemon, b: BattlePokemon) -> bool:
 		return false
 	var gender_a: int = a.base_data.gender
 	var gender_b: int = b.base_data.gender
+	return _genders_are_opposite(gender_a, gender_b)
+
+
+static func _genders_are_opposite(gender_a: int, gender_b: int) -> bool:
 	if gender_a == CONST.GENEROS.SIN_GENERO or gender_b == CONST.GENEROS.SIN_GENERO:
 		return false
 	if gender_a == CONST.GENEROS.NON_SELECTED or gender_b == CONST.GENEROS.NON_SELECTED:
@@ -70,4 +74,4 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.PRE_MOVE_INFATUATION
