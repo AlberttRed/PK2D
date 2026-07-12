@@ -13,6 +13,8 @@ var damage: DamageEffect = null
 var ailment: AilmentData = null
 ## Marcado por efectos que rechazan la selección en UI.
 var rejected: bool = false
+## Efecto que provocó el rechazo (prioridad más alta en la fase).
+var blocking_effect: PersistentBattleEffect = null
 ## Mensaje opcional; la UI puede mostrarlo con el overlay adecuado (p. ej. party).
 var rejection_message: Dictionary = {}
 

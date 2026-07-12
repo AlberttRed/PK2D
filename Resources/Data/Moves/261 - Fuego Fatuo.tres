@@ -4,6 +4,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_osl5k"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_d72j7"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_eq2pl"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_lb4fn")
+chance = 100
 
 [resource]
 resource_name = "261 - Fuego Fatuo"
@@ -20,6 +27,7 @@ damage_class_id = 1
 effect_entries = "Burns the target. Burns the target."
 target_id = 10
 meta_ailment_id = 4
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 4
 ailment = ExtResource("1_lb4fn")
 category = ExtResource("2_d72j7")

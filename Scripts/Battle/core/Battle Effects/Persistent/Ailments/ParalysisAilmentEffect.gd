@@ -7,6 +7,8 @@ func check_effect_success():
 func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
+	if not pokemon.can_act_this_turn:
+		return
 	check_effect_success()
 
 	if effect_success:
@@ -21,4 +23,4 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 
 func get_priority() -> int:
-	return 10
+	return BattleEffectPriority.PRE_MOVE_PARALYSIS

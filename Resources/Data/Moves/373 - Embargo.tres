@@ -4,6 +4,13 @@
 [ext_resource type="Resource" uid="uid://cpwtm52644vtl" path="res://Resources/Data/Ailments/EMBARGO.tres" id="1_vvv2u"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_i07b6"]
 [ext_resource type="Resource" uid="uid://cue4l3iv6vhdx" path="res://Resources/Data/Types/17.tres" id="2_ibumy"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_vvv2u")
+chance = 100
 
 [resource]
 resource_name = "373 - Embargo"
@@ -28,6 +35,7 @@ target_id = 10
 meta_ailment_id = 19
 meta_min_turns = 5
 meta_max_turns = 5
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 19
 ailment = ExtResource("1_vvv2u")
 category = ExtResource("2_i07b6")

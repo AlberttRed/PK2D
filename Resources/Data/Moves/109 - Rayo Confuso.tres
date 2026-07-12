@@ -4,6 +4,13 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_cysgr"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/AilmentMoveCategory.tres" id="2_an82b"]
 [ext_resource type="Resource" uid="uid://cuafndafgcgqe" path="res://Resources/Data/Types/08.tres" id="2_pdt3k"]
+[ext_resource type="Script" uid="uid://blt82k8rhh5uu" path="res://Scripts/Resources/Classes/MoveAilmentEntry.gd" id="2_migrate_entry"]
+
+
+[sub_resource type="Resource" id="Resource_migrated_ailment_entry"]
+script = ExtResource("2_migrate_entry")
+ailment = ExtResource("1_02qys")
+chance = 100
 
 [resource]
 resource_name = "109 - Rayo Confuso"
@@ -22,6 +29,7 @@ target_id = 10
 meta_ailment_id = 6
 meta_min_turns = 2
 meta_max_turns = 5
+ailment_entries = Array[ExtResource("2_migrate_entry")]([SubResource("Resource_migrated_ailment_entry")])
 ailment_id = 6
 ailment = ExtResource("1_02qys")
 category = ExtResource("2_an82b")

@@ -157,7 +157,7 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 9
+	return BattleEffectPriority.VALIDATE_DISABLE
 
 
 func get_disabled_move_id() -> int:

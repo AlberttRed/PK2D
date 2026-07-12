@@ -30,4 +30,4 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 50
+	return BattleEffectPriority.PRE_MOVE_FLINCH

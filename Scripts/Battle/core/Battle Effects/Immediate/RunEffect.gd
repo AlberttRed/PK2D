@@ -4,6 +4,7 @@ extends ImmediateBattleEffect
 var pokemon: BattlePokemon
 var can_escape: bool
 var succeeded: bool = false
+var _escape_blocked: bool = false
 
 func _init(_pokemon: BattlePokemon, _can_escape: bool):
 	pokemon = _pokemon
@@ -13,7 +14,13 @@ func apply():
 	if not can_escape:
 		return
 
-	if TrapAilmentEffect.is_trapped(pokemon):
+	_escape_blocked = false
+	var run_ctx := BattlePhaseContext.for_choice(pokemon, BattleRunChoice.new())
+	BattleEffectController.run_apply_phase(
+		pokemon, BattleEffect.Phases.ON_VALIDATE_RUN, run_ctx
+	)
+	if run_ctx.rejected:
+		_escape_blocked = true
 		succeeded = false
 		return
 
@@ -65,5 +72,9 @@ func _calculate_escape_success() -> bool:
 
 func visualize(ui):
 	var is_trainer_battle = not can_escape
-	
+
+	if _escape_blocked:
+		await ui.show_escape_message(is_trainer_battle, false)
+		return
+
 	await ui.show_escape_message(is_trainer_battle, succeeded)

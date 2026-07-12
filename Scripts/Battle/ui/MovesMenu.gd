@@ -33,7 +33,9 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 			var button = move_buttons[i]
 			button.visible = true
 			button.get_node("Label").setText(move.get_name())
-			button.disabled = filter.is_index_blocked(i)
+			# Solo deshabilitar por PP agotado; Anulación/Encore/etc. validan al elegir (sin cambiar estilo).
+			button.disabled = move.get_pp() <= 0
+			button.modulate = Color.WHITE
 
 			# Estilo visual según tipo (posición vertical en el sprite)
 			button.get("theme_override_styles/normal").region_rect.position.y = 46 * (move.get_type().id - 1)

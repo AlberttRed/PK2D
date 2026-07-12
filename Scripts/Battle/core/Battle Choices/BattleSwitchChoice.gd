@@ -23,9 +23,14 @@ func resolve() -> Array[BattleHandler]:
 		print("[SWITCH] Spot de origen inválido")
 		return []
 	var current := outgoing_pokemon if outgoing_pokemon != null else spot.get_active_pokemon()
-	if not forced_by_faint and TrapAilmentEffect.is_trapped(current):
-		print("[SWITCH] Pokémon atrapado, no puede cambiar")
-		return []
+	if not forced_by_faint and current != null:
+		var trap_ctx := BattlePhaseContext.for_choice(current, self)
+		BattleEffectController.run_apply_phase(
+			current, BattleEffect.Phases.ON_VALIDATE_SWITCH, trap_ctx
+		)
+		if trap_ctx.rejected:
+			print("[SWITCH] Pokémon atrapado, no puede cambiar")
+			return []
 	var target_idx := target_index
 	var party := side_ref.pokemonParty
 

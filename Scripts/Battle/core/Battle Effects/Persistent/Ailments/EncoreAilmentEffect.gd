@@ -105,6 +105,10 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 	if phase == BattleEffect.Phases.ON_BEFORE_MOVE:
 		if not pokemon.can_act_this_turn or pokemon != target or not is_active():
 			return
+		if try_force_encored_move_choice(pokemon):
+			applied = true
+			effect_success = false
+			return
 		var move := _get_selected_move(pokemon)
 		if move == null:
 			return
@@ -163,11 +167,29 @@ func has_finished() -> bool:
 
 
 func get_priority() -> int:
-	return 11
+	return BattleEffectPriority.VALIDATE_ENCORE
 
 
 func get_locked_move_id() -> int:
 	return _locked_move_id
+
+
+## Si Otra Vez se aplicó este turno antes de actuar, fuerza el movimiento bloqueado en la elección ya hecha.
+static func try_force_encored_move_choice(pokemon: BattlePokemon) -> bool:
+	var encore := get_active_effect(pokemon)
+	if encore == null or not encore.is_active():
+		return false
+	var choice := pokemon.selectedBattleChoice
+	if choice == null or not choice is BattleMoveChoice:
+		return false
+	var locked_index := pokemon.find_move_index_by_id(encore._locked_move_id)
+	if locked_index < 0 or not encore._is_locked_move_usable(pokemon):
+		return false
+	var move_choice := choice as BattleMoveChoice
+	if move_choice.move_index == locked_index:
+		return true
+	move_choice.move_index = locked_index
+	return true
 
 
 func _is_locked_move_usable(pokemon: BattlePokemon) -> bool:

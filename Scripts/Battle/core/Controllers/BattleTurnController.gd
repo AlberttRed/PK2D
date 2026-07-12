@@ -177,8 +177,13 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 	# Aplicar y visualizar efectos previos al movimiento (como confusión, paralizado, mofa)
 	await BattleEffectController.process_phase(choice.pokemon, BattleEffect.Phases.ON_BEFORE_MOVE)
 
-	if(!choice.pokemon.can_act_this_turn):
+	if not choice.pokemon.can_act_this_turn:
 		return
+
+	# Otra Vez u otros efectos pueden haber cambiado el movimiento tras la resolución inicial.
+	var refreshed := choice.resolve()
+	if not refreshed.is_empty():
+		handlers = refreshed
 
 	await battle_controller.ui.show_used_move_message(choice.pokemon, choice.get_move())
 
