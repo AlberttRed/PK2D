@@ -94,9 +94,12 @@ func remove_pokemon() -> void:
 		pokemon.in_battle = false
 		pokemon.battle_spot = null
 	pokemon = null
+	sprite.texture = null
 	sprite.visible = false
 	shadow.visible = false
-	hp_bar.visible = false
+	if hp_bar:
+		hp_bar.clear_ui()
+		hp_bar.visible = false
 
 func position_hp_bar(mode: int) -> void:
 	match mode:

@@ -73,18 +73,16 @@ func show_player_pokemon(pokemons: Array[BattlePokemon], rules: BattleRules):
 	# Mostrar el sprite del Pokémon del jugador
 
 func show_enemy_hp_bar(pokemons: Array[BattlePokemon]):
-	if pokemons.size() >= 1:
-		$FieldUI/EnemyBase/PokemonSpotA/HPBar.visible = true
-	if pokemons.size() >= 2:
-		$FieldUI/EnemyBase/PokemonSpotB/HPBar.visible = true
-	# Mostrar la barra de vida del Pokémon enemigo
+	var spot_a: BattleSpot = $FieldUI/EnemyBase/PokemonSpotA
+	var spot_b: BattleSpot = $FieldUI/EnemyBase/PokemonSpotB
+	spot_a.hp_bar.visible = pokemons.size() >= 1 and spot_a.visible
+	spot_b.hp_bar.visible = pokemons.size() >= 2 and spot_b.visible
 
 func show_player_hp_bar(pokemons: Array[BattlePokemon]):
-	if pokemons.size() >= 1:
-		$FieldUI/PlayerBase/PokemonSpotA/HPBar.visible = true
-	if pokemons.size() >= 2:
-		$FieldUI/PlayerBase/PokemonSpotB/HPBar.visible = true
-	# Mostrar la barra de vida del Pokémon del jugador
+	var spot_a: BattleSpot = $FieldUI/PlayerBase/PokemonSpotA
+	var spot_b: BattleSpot = $FieldUI/PlayerBase/PokemonSpotB
+	spot_a.hp_bar.visible = pokemons.size() >= 1 and spot_a.visible
+	spot_b.hp_bar.visible = pokemons.size() >= 2 and spot_b.visible
 
 func get_player_spots_for_mode(mode: int) -> Array[BattleSpot]:
 	return $FieldUI.get_player_spots_for_mode(mode)
@@ -95,8 +93,12 @@ func get_enemy_spots_for_mode(mode: int) -> Array[BattleSpot]:
 func get_all_spots_for_mode(mode: int) -> Array[BattleSpot]:
 	return $FieldUI.get_all_spots_for_mode(mode)
 
-func position_battlespots_for_mode(mode: int) -> void:
-	$FieldUI.position_battlespots_for_mode(mode)
+func position_battlespots_for_mode(
+	mode: int,
+	player_active_count: int = -1,
+	enemy_active_count: int = -1
+) -> void:
+	$FieldUI.position_battlespots_for_mode(mode, player_active_count, enemy_active_count)
 
 func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 	# Mostrar panel de acciones: LUCHAR, POKÉMON, MOCHILA, HUIR
@@ -957,7 +959,7 @@ func show_target_selection(user: BattlePokemon, enemies_only: bool = false) -> B
 	if candidates.size() == 1:
 		return candidates[0]
 
-	message_box.hide()
+	message_box.show_clear_text()
 	get_viewport().gui_release_focus()
 	target_selector_ui.show_selection(grid)
 
@@ -1017,7 +1019,35 @@ func show_struggle_recoil_message(pokemon: BattlePokemon) -> void:
 	clear_message_box()
 
 func show_failed_move_message(user: BattlePokemon) -> void:
-	await show_message_from_dict(message_controller.get_failed_move_message(user))
+	await show_move_fail_message(HitResult.Values.MISS_GLOBAL, user)
+
+
+func show_move_fail_message(
+	hit_result: HitResult.Values,
+	user: BattlePokemon,
+	move: BattleMove = null,
+	target: BattleTarget = null
+) -> void:
+	var msg: Dictionary = message_controller.get_move_fail_message(hit_result, user, move, target)
+	if msg.is_empty():
+		msg = message_controller.get_move_fail_message(HitResult.Values.MISS_GLOBAL, user)
+	await show_message_from_dict(msg)
+	clear_message_box()
+
+
+func show_fail_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	hit_result: int = 0,
+	move: BattleMove = null,
+	target: BattleTarget = null
+) -> void:
+	var msg: Dictionary = message_controller.get_fail_effect_message(
+		family, user, hit_result, move, target
+	)
+	if msg.is_empty():
+		msg = message_controller.get_move_fail_message(HitResult.Values.MISS_GLOBAL, user)
+	await show_message_from_dict(msg)
 	clear_message_box()
 
 func show_multi_hit_message(num_hits: int) -> void:
@@ -1033,8 +1063,7 @@ func show_critical_hit_message() -> void:
 	clear_message_box()
 
 func show_no_target_message(user: BattlePokemon) -> void:
-	await show_message_from_dict(message_controller.get_no_target_message(user))
-	clear_message_box()
+	await show_move_fail_message(HitResult.Values.NO_TARGET, user)
 
 func show_heal_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_heal_message(pokemon))

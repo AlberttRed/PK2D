@@ -73,21 +73,31 @@ func assign_active_pokemons_to_spots():
 	_connect_exp_signals_on_spots(player_spots)
 	_connect_exp_signals_on_spots(enemy_spots)
 
-	for i in player_actives.size():
-		var spot := player_spots[i]
-		spot.load_active_pokemon(player_actives[i], rules)
-		spot.side = player_side
-		player_side.battle_spots.append(spot)
+	player_side.battle_spots.clear()
+	enemy_side.battle_spots.clear()
 
-	for i in enemy_actives.size():
-		var spot := enemy_spots[i]
-		spot.load_active_pokemon(enemy_actives[i], rules)
-		spot.side = enemy_side
-		enemy_side.battle_spots.append(spot)
+	_assign_actives_to_spots(player_actives, player_spots, player_side)
+	_assign_actives_to_spots(enemy_actives, enemy_spots, enemy_side)
 
-	# Ajustar visualmente la posición de los spots
-	ui.position_battlespots_for_mode(rules.mode)
+	ui.position_battlespots_for_mode(rules.mode, player_actives.size(), enemy_actives.size())
 	prepare_trainer_intro_field()
+
+
+func _assign_actives_to_spots(
+	actives: Array[BattlePokemon],
+	spots: Array[BattleSpot],
+	side: BattleSide
+) -> void:
+	for i in spots.size():
+		var spot := spots[i]
+		if i < actives.size():
+			spot.visible = true
+			spot.load_active_pokemon(actives[i], rules)
+			spot.side = side
+			side.battle_spots.append(spot)
+		else:
+			spot.remove_pokemon()
+			spot.visible = false
 
 
 func prepare_trainer_intro_field() -> void:

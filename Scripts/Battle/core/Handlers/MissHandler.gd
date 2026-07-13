@@ -1,16 +1,6 @@
-extends BattleHandler
+extends MoveFailHandler
 
 class_name MissHandler
 
-var user: BattlePokemon
-
-func _init(_user: BattlePokemon):
-	user = _user
-
-func apply() -> void:
-	pass
-
-func visualize(ui: BattleUI) -> void:
-	await ui.show_failed_move_message(user)
-
-
+func _init(_user: BattlePokemon, _move: BattleMove = null):
+	super(_user, HitResult.Values.MISS_GLOBAL, _move, null)

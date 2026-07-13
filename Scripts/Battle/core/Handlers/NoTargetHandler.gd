@@ -1,16 +1,6 @@
-extends BattleHandler
+extends MoveFailHandler
 
 class_name NoTargetHandler
 
-var user: BattlePokemon
-
-func _init(_user: BattlePokemon):
-    user = _user
-
-func apply() -> void:
-    pass
-
-func visualize(ui: BattleUI) -> void:
-    await ui.show_no_target_message(user)
-
-
+func _init(_user: BattlePokemon, _move: BattleMove = null):
+	super(_user, HitResult.Values.NO_TARGET, _move, null)

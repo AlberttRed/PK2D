@@ -8,4 +8,4 @@ func apply():
 	pass # no cambia el estado
 
 func visualize(ui: BattleUI):
-	await ui.show_failed_move_message(user)
+	await ui.show_move_fail_message(HitResult.Values.MISS_GLOBAL, user)
