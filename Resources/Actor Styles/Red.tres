@@ -45,7 +45,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vxp23")
 }],
-"loop": false,
+"loop": 0,
 "name": &"default",
 "speed": 15.0
 }]
@@ -68,7 +68,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3drw2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"default",
 "speed": 10.0
 }]
@@ -154,7 +154,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vahkr")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_left",
 "speed": 15.0
 }, {
@@ -165,7 +165,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jahj8")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_right",
 "speed": 15.0
 }, {
@@ -182,7 +182,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tsrlx")
 }],
-"loop": false,
+"loop": 0,
 "name": &"idle",
 "speed": 7.5
 }, {
@@ -193,7 +193,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hvgyn")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_left",
 "speed": 15.0
 }, {
@@ -204,7 +204,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_l63d1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_right",
 "speed": 15.0
 }, {
@@ -215,7 +215,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3ycc4")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_left",
 "speed": 15.0
 }, {
@@ -226,7 +226,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3ycc4")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_right",
 "speed": 15.0
 }, {
@@ -237,7 +237,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_c7wld")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_left",
 "speed": 15.0
 }, {
@@ -248,7 +248,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_c7wld")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_right",
 "speed": 15.0
 }]
@@ -358,7 +358,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hoo8s")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_left",
 "speed": 1.0
 }, {
@@ -369,7 +369,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hoo8s")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_right",
 "speed": 1.0
 }, {
@@ -380,7 +380,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sdvoe")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle_down",
 "speed": 1.0
 }, {
@@ -391,7 +391,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_w307e")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle_left",
 "speed": 1.0
 }, {
@@ -402,7 +402,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gqdhp")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle_right",
 "speed": 1.0
 }, {
@@ -413,7 +413,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_nm6ay")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle_up",
 "speed": 1.0
 }, {
@@ -424,7 +424,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pgvfc")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_left",
 "speed": 1.0
 }, {
@@ -435,7 +435,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pgvfc")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_right",
 "speed": 1.0
 }, {
@@ -446,7 +446,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_omyud")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_left",
 "speed": 1.0
 }, {
@@ -457,7 +457,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_omyud")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_right",
 "speed": 1.0
 }, {
@@ -468,7 +468,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bjirs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_down_left",
 "speed": 1.0
 }, {
@@ -479,7 +479,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bjirs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_down_right",
 "speed": 1.0
 }, {
@@ -490,7 +490,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jhbin")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_left_left",
 "speed": 1.0
 }, {
@@ -501,7 +501,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jhbin")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_left_right",
 "speed": 1.0
 }, {
@@ -512,7 +512,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ajk5k")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_right_left",
 "speed": 1.0
 }, {
@@ -523,7 +523,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ajk5k")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_right_right",
 "speed": 1.0
 }, {
@@ -534,7 +534,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_duhiy")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_up_left",
 "speed": 1.0
 }, {
@@ -545,7 +545,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_duhiy")
 }],
-"loop": false,
+"loop": 0,
 "name": &"run_up_right",
 "speed": 1.0
 }, {
@@ -556,7 +556,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7fc7g")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_left",
 "speed": 1.0
 }, {
@@ -567,7 +567,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7fc7g")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_right",
 "speed": 1.0
 }]
@@ -603,7 +603,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o3eld")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }]
@@ -681,7 +681,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_theat")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_left",
 "speed": 7.5
 }, {
@@ -692,7 +692,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0hlcb")
 }],
-"loop": false,
+"loop": 0,
 "name": &"down_right",
 "speed": 7.5
 }, {
@@ -709,7 +709,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tsrlx")
 }],
-"loop": false,
+"loop": 0,
 "name": &"idle",
 "speed": 7.5
 }, {
@@ -720,7 +720,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6py5t")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_left",
 "speed": 7.5
 }, {
@@ -731,7 +731,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_axjsp")
 }],
-"loop": false,
+"loop": 0,
 "name": &"left_right",
 "speed": 7.5
 }, {
@@ -742,7 +742,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tj8xc")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_left",
 "speed": 7.5
 }, {
@@ -753,7 +753,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_b34u2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"right_right",
 "speed": 7.5
 }, {
@@ -764,7 +764,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_grd1l")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_left",
 "speed": 7.5
 }, {
@@ -775,7 +775,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_p0ptx")
 }],
-"loop": false,
+"loop": 0,
 "name": &"up_right",
 "speed": 7.5
 }]

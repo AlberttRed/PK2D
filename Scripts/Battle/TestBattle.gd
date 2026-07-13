@@ -23,6 +23,12 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Desactivar para el escenario Sustituto/Anulación (Forcejeo vía Anulación, no por PP).
 @export var debug_zero_pp: bool = false
 
+@export_group("Debug mensajes MOVE_FAIL (PBI 687)")
+## Escenario natural Machop vs Gastly (inmunidad, protección, evasión, fallo de precisión).
+@export var use_move_fail_message_test: bool = false
+## Escenario doble Pikachu+Machop vs Gastly débil + Rattata (sin objetivo al aplicar).
+@export var use_move_fail_no_target_test: bool = false
+
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
 ## Sirve para probar el orden de mensajes al final del turno (Reflejo → Lluvia → Veneno).
@@ -47,6 +53,16 @@ var _bootstrapped_display_manager: DisplayManager = null
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not await _ensure_display_manager():
+		return
+	if use_move_fail_no_target_test:
+		_setup_move_fail_no_target_test_parties()
+		_print_move_fail_no_target_test_guide()
+		await wildMoveFailNoTargetTestBattle()
+		return
+	if use_move_fail_message_test:
+		_setup_move_fail_message_test_parties()
+		_print_move_fail_message_test_guide()
+		await wildMoveFailMessageTestBattle()
 		return
 	if use_forced_switch_player_test:
 		_setup_forced_switch_player_test_parties()
@@ -171,6 +187,158 @@ func wildDoubleBattle():
 
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+func wildMoveFailMessageTestBattle() -> void:
+	_setup_move_fail_message_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildMoveFailMessageTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var test_ia := BattleIA_MoveFailTest.create_gastly_scenario()
+	wild_bp.setIA(test_ia)
+	var wild_participant: BattleParticipantWild = BattleParticipantWild.new([wild_bp])
+	wild_participant.ai_controller = test_ia
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla MOVE_FAIL (1v1) terminada. Ganador: %s" % winner)
+
+
+func wildMoveFailNoTargetTestBattle() -> void:
+	_setup_move_fail_no_target_test_parties()
+	var player_participant: BattleParticipant = _create_move_fail_no_target_player_participant()
+	if wildPokemons == null or wildPokemons.party.size() < 2:
+		push_error("TestBattle: wildMoveFailNoTargetTestBattle necesita 2 rivales en WildPokemons.")
+		return
+	var wild_team: Array[BattlePokemon] = []
+	for p: Pokemon in wildPokemons.party:
+		var wild_bp: BattlePokemon = p.to_battle_pokemon()
+		wild_bp.is_wild = true
+		wild_team.append(wild_bp)
+	var wild_participant: BattleParticipant = BattleParticipantWild.new(wild_team)
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla MOVE_FAIL (NO_TARGET) terminada. Ganador: %s" % winner)
+
+
+func _setup_move_fail_message_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_move_fail_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_move_fail_test_enemy_instance())
+
+
+func _setup_move_fail_no_target_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_move_fail_no_target_pikachu())
+		player.add_pokemon_to_party(_create_move_fail_no_target_machop())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_move_fail_no_target_enemy())
+		wildPokemons.add_pokemon_to_party(_create_move_fail_no_target_decoy_enemy())
+
+
+func _create_move_fail_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.HYPNOSIS,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.GASTLY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.DOUBLE_TEAM,
+		MovesEnum.Values.LICK,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_no_target_pikachu() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIKACHU as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.THUNDERBOLT]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_no_target_machop() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
+	pkmn.level = 10
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.TACKLE]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_no_target_enemy() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.GASTLY as PokemonsEnum.Values
+	pkmn.level = 5
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [MovesEnum.Values.LICK]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_no_target_decoy_enemy() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [MovesEnum.Values.TAIL_WHIP]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_move_fail_no_target_player_participant() -> BattleParticipant:
+	var team: Array[BattlePokemon] = []
+	if player == null or player.party.size() < 2:
+		push_error("TestBattle: party insuficiente para NO_TARGET doble.")
+		return BattleParticipant.new(team)
+	for p: Pokemon in player.party:
+		team.append(p.to_battle_pokemon())
+	var participant := BattleParticipant.new(team)
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _print_move_fail_message_test_guide() -> void:
+	print(">>> [MOVE_FAIL 1v1] Machop vs Gastly — casos naturales (IA de prueba en rival)")
+	print(">>> Turno 1 — IMMUNE: Machop Placaje / Gastly Lengüetazo → «No afecta a Gastly...»")
+	print(">>> Turnos 2-7 — EVADED: Machop Hipnosis / Gastly Doble Equipo (×6) → «¡Gastly esquivó el ataque!»")
+	print(">>>        (Hipnosis es estado y sí afecta a Fantasma; Placaje siempre daría inmunidad)")
+	print(">>> Turno 8+ — MISS_GLOBAL: Machop Hipnosis → repite hasta «¡El ataque de Machop falló!»")
+	print(">>> NO_TARGET: activa use_move_fail_no_target_test y relanza F6.")
+
+
+func _print_move_fail_no_target_test_guide() -> void:
+	print(">>> [MOVE_FAIL doble] Pikachu + Machop vs Gastly Nv.5 + Rattata — NO_TARGET natural")
+	print(">>> Turno 1: Pikachu → Rayo / Machop → Placaje (ambos apuntando a Gastly)")
+	print(">>> Pikachu actúa primero (más rápido), debilita a Gastly. Rattata sigue en pie.")
+	print(">>> Machop intenta Placaje al Gastly debilitado → «¡Pero no hay objetivo al que atacar!»")
+
 
 func wildFixedRattataGastlyBattle() -> void:
 	_setup_fixed_rattata_gastly_parties()

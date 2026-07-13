@@ -19,30 +19,53 @@ func get_priority() -> int:
 ## Resuelve el movimiento y genera los handlers correspondientes
 func resolve() -> Array[BattleHandler]:
 	var handlers: Array[BattleHandler] = []
-	
+
 	var move_instance := get_move()
 	if not move_instance:
 		return handlers
-	
+
 	if targets.is_empty():
 		return handlers
-	
+
 	var category: BattleMoveCategory = move_instance.get_category() if move_instance.has_method("get_category") else null
 	if not category:
 		print("No category found for move: " + move_instance.get_name())
 		return handlers
-	
+
+	if move_instance.get_accuracy() > 0 and not AccuracyUtils.roll_global_accuracy(move_instance, pokemon):
+		handlers.append(MissHandler.new(pokemon, move_instance))
+		return handlers
 
 	for target in targets:
-		if move_instance.get_accuracy() > 0 and not AccuracyUtils.check_hit(move_instance, pokemon, target.get_pokemon()):
-			handlers.append(MissHandler.new(pokemon))
-			continue
-		
-		var handler := category.create_handler(move_instance, pokemon, target)
-		if handler:
-			handlers.append(handler)
-	
+		var hit_result := AccuracyUtils.check_target_hit(move_instance, pokemon, target)
+		if hit_result == HitResult.Values.HIT:
+			var handler := category.create_handler(move_instance, pokemon, target)
+			if handler:
+				handlers.append(handler)
+		else:
+			var fail_handler := _create_fail_handler(hit_result, move_instance, target)
+			if fail_handler:
+				handlers.append(fail_handler)
+
 	return handlers
+
+
+func _create_fail_handler(
+	hit_result: HitResult.Values,
+	move_instance: BattleMove,
+	target: BattleTarget
+) -> BattleHandler:
+	match hit_result:
+		HitResult.Values.EVADED:
+			return EvadedHandler.new(pokemon, move_instance, target)
+		HitResult.Values.PROTECTED:
+			return ProtectedHandler.new(pokemon, move_instance, target)
+		HitResult.Values.IMMUNE:
+			return ImmuneHandler.new(pokemon, move_instance, target)
+		HitResult.Values.NO_TARGET:
+			return NoTargetHandler.new(pokemon, move_instance)
+		_:
+			return NoTargetHandler.new(pokemon, move_instance)
 
 
 # Retorna el target válido si existe; en caso contrario devuelve null

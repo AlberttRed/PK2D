@@ -6,6 +6,7 @@ var AbilityMessages = BattleMessageAbility.new()
 var WeatherMessages = BattleMessageWeather.new()
 var FieldEffectMessages = BattleMessageFieldEffect.new()
 var ItemMessages = BattleMessageItem.new()
+var MoveFailMessages = BattleMessageMoveFail.new()
 const FAMILY := MessageFamily.Values
 
 func get_intro_messages(
@@ -63,50 +64,92 @@ func get_intro_messages(
 
 		BattleRules.BattleModes.DOUBLE:
 			if rules.type == BattleRules.BattleTypes.WILD:
-				messages.append({
-					"type": "input",
-					"text": "¡Un " + enemy_pokemon[0].get_name() + " y un " + enemy_pokemon[1].get_name() + " salvajes aparecieron!",
-					"showIconAtEnd": true
-				})
+				messages.append(_get_wild_double_appeared_message(enemy_pokemon))
 			else:
-				if enemy_trainers.size() == 1:
-					messages.append({
-						"type": "input",
-						"text": "¡" + enemy_trainers[0] + " quiere luchar!",
-						"showIconAtEnd": true
-					})
-					messages.append(get_trainer_double_send_in_intro_message(
-						enemy_pokemon[0].get_display_name(),
-						enemy_pokemon[1].get_display_name(),
-						enemy_trainers[0]
-					))
-				elif enemy_trainers.size() == 2:
-					messages.append({
-						"type": "input",
-						"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " quieren luchar!",
-						"showIconAtEnd": true
-					})
-					messages.append(get_trainer_send_in_intro_message(
-						enemy_pokemon[0].get_display_name(), enemy_trainers[0], 0
-					))
-					messages.append(get_trainer_send_in_intro_message(
-						enemy_pokemon[1].get_display_name(), enemy_trainers[1], 1
-					))
+				_append_trainer_double_enemy_intro_messages(
+					messages, enemy_pokemon, enemy_trainers
+				)
 
-			if player_trainers.size() == 1:
-				messages.append({
-					"type": "wait",
-					"text": "¡Adelante, " + player_pokemon[0].get_name() + " y " + player_pokemon[1].get_name() + "!",
-					"wait_time": 0.5
-				})
-			elif player_trainers.size() == 2:
-				messages.append({
-					"type": "wait",
-					"text": "¡" + player_trainers[0] + " y " + player_trainers[1] + " enviaron a " + player_pokemon[0].get_name() + " y " + player_pokemon[1].get_name() + "!",
-					"wait_time": 0.5
-				})
+			_append_player_double_send_in_message(
+				messages, player_pokemon, player_trainers
+			)
 
 	return messages
+
+
+func _get_wild_double_appeared_message(enemy_pokemon: Array[BattlePokemon]) -> Dictionary:
+	var text: String
+	if enemy_pokemon.size() >= 2:
+		text = "¡Un %s y un %s salvajes aparecieron!" % [
+			enemy_pokemon[0].get_name(), enemy_pokemon[1].get_name()
+		]
+	else:
+		text = "¡Un %s salvaje apareció!" % enemy_pokemon[0].get_name()
+	return {"type": "input", "text": text, "showIconAtEnd": true}
+
+
+func _append_trainer_double_enemy_intro_messages(
+	messages: Array[Dictionary],
+	enemy_pokemon: Array[BattlePokemon],
+	enemy_trainers: Array[String]
+) -> void:
+	if enemy_trainers.size() == 1:
+		messages.append({
+			"type": "input",
+			"text": "¡" + enemy_trainers[0] + " quiere luchar!",
+			"showIconAtEnd": true
+		})
+		if enemy_pokemon.size() >= 2:
+			messages.append(get_trainer_double_send_in_intro_message(
+				enemy_pokemon[0].get_display_name(),
+				enemy_pokemon[1].get_display_name(),
+				enemy_trainers[0]
+			))
+		else:
+			messages.append(get_trainer_send_in_intro_message(
+				enemy_pokemon[0].get_display_name(), enemy_trainers[0], 0
+			))
+	elif enemy_trainers.size() >= 2:
+		messages.append({
+			"type": "input",
+			"text": "¡" + enemy_trainers[0] + " y " + enemy_trainers[1] + " quieren luchar!",
+			"showIconAtEnd": true
+		})
+		messages.append(get_trainer_send_in_intro_message(
+			enemy_pokemon[0].get_display_name(), enemy_trainers[0], 0
+		))
+		if enemy_pokemon.size() >= 2:
+			messages.append(get_trainer_send_in_intro_message(
+				enemy_pokemon[1].get_display_name(), enemy_trainers[1], 1
+			))
+
+
+func _append_player_double_send_in_message(
+	messages: Array[Dictionary],
+	player_pokemon: Array[BattlePokemon],
+	player_trainers: Array[String]
+) -> void:
+	var pokemon_names := _format_active_pokemon_names(player_pokemon)
+	if player_trainers.size() == 1:
+		messages.append({
+			"type": "wait",
+			"text": "¡Adelante, %s!" % pokemon_names,
+			"wait_time": 0.5
+		})
+	elif player_trainers.size() >= 2:
+		messages.append({
+			"type": "wait",
+			"text": "¡%s y %s enviaron a %s!" % [
+				player_trainers[0], player_trainers[1], pokemon_names
+			],
+			"wait_time": 0.5
+		})
+
+
+func _format_active_pokemon_names(pokemon: Array[BattlePokemon]) -> String:
+	if pokemon.size() >= 2:
+		return "%s y %s" % [pokemon[0].get_name(), pokemon[1].get_name()]
+	return pokemon[0].get_name()
 
 func get_effectiveness_message(result: DamageEffect) -> Dictionary:
 	if result.is_super_effective():
@@ -391,12 +434,33 @@ func get_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: 
 
 # (El bloque duplicado de agregadores por familia fue consolidado en los métodos anteriores)
 
+func get_move_fail_message(
+	hit_result: HitResult.Values,
+	user: BattlePokemon,
+	move: BattleMove = null,
+	target: BattleTarget = null
+) -> Dictionary:
+	if user == null:
+		return {}
+	return MoveFailMessages.get_move_fail_message(hit_result, user, move, target)
+
+
+func get_fail_effect_message(
+	family: MessageFamily.Values,
+	user: BattlePokemon = null,
+	hit_result: int = 0,
+	move: BattleMove = null,
+	target: BattleTarget = null
+) -> Dictionary:
+	match family:
+		FAMILY.MOVE_FAIL:
+			return get_move_fail_message(hit_result, user, move, target)
+		_:
+			return {}
+
+
 func get_failed_move_message(user: BattlePokemon) -> Dictionary:
-	return {
-		"type": "wait",
-		"text": "¡El ataque %s falló!" % [user.get_battle_possessive_name()],
-		"wait_time": 1.0
-	}
+	return get_move_fail_message(HitResult.Values.MISS_GLOBAL, user)
 
 func get_multi_hit_message(num_hits: int) -> Dictionary:
 	return {
@@ -492,11 +556,7 @@ func get_level_up_message(battle_pokemon: BattlePokemon, new_level: int) -> Dict
 
 
 func get_no_target_message(user: BattlePokemon) -> Dictionary:
-	return {
-		"type": "wait",
-		"text": "¡Pero no hay objetivo al que atacar!",
-		"wait_time": 1.0
-	}
+	return get_move_fail_message(HitResult.Values.NO_TARGET, user)
 
 # Mensaje de escape/huida unificado
 func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:

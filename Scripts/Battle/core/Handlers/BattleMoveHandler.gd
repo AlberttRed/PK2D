@@ -51,6 +51,10 @@ func ensure_valid_single_enemy_target_or_null() -> bool:
 	if not is_single:
 		return true
 
+	if target.selection_type == BattleTarget.TYPE.SELECCIONAR \
+			or target.selection_type == BattleTarget.TYPE.ESPECIFICO:
+		return target.is_valid()
+
 	var tp: BattlePokemon = target.get_pokemon()
 	if tp != null and tp.in_battle and not tp.is_fainted() and tp.battle_spot != null:
 		return true

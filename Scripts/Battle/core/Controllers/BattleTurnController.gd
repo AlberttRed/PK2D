@@ -192,7 +192,7 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 	for i in handlers.size():
 		var h: BattleHandler = handlers[i]
 		if h is BattleMoveHandler and !h.ensure_valid_single_enemy_target_or_null():
-			h = NoTargetHandler.new(choice.pokemon)
+			h = NoTargetHandler.new(choice.pokemon, choice.get_move())
 			handlers[i] = h
 		h.apply()
 

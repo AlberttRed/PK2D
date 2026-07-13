@@ -34,30 +34,27 @@ func get_enemy_spot(index: int) -> BattleSpot:
 		1: return $EnemyBase/PokemonSpotB
 		_: return null
 
-func position_battlespots_for_mode(mode: int) -> void:
-	var p_base = $PlayerBase
-	var e_base = $EnemyBase
-
+func position_battlespots_for_mode(
+	mode: int,
+	player_active_count: int = -1,
+	enemy_active_count: int = -1
+) -> void:
 	match mode:
 		BattleRules.BattleModes.SINGLE:
-			# Player side
 			$PlayerBase/PokemonSpotA.global_position = $PlayerBase/Positions/SpotA_Single.global_position
-			$PlayerBase/PokemonSpotB.visible = false  # Solo se usa uno en modo SINGLE
+			$PlayerBase/PokemonSpotB.visible = false
 
-			# Enemy side
 			$EnemyBase/PokemonSpotA.global_position = $EnemyBase/Positions/SpotA_Single.global_position
 			$EnemyBase/PokemonSpotB.visible = false
 
 		BattleRules.BattleModes.DOUBLE:
-			# Player side
 			$PlayerBase/PokemonSpotA.global_position = $PlayerBase/Positions/SpotA_Double.global_position
 			$PlayerBase/PokemonSpotB.global_position = $PlayerBase/Positions/SpotB_Double.global_position
-			$PlayerBase/PokemonSpotB.visible = true
+			$PlayerBase/PokemonSpotB.visible = player_active_count != 1
 
-			# Enemy side
 			$EnemyBase/PokemonSpotA.global_position = $EnemyBase/Positions/SpotA_Double.global_position
 			$EnemyBase/PokemonSpotB.global_position = $EnemyBase/Positions/SpotB_Double.global_position
-			$EnemyBase/PokemonSpotB.visible = true
+			$EnemyBase/PokemonSpotB.visible = enemy_active_count != 1
 
 		_:
 			push_warning("Combate no compatible: usando modo SINGLE por defecto")

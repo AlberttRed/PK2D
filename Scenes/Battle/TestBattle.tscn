@@ -6,13 +6,8 @@
 
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 script = ExtResource("1_tse6d")
-use_forced_switch_player_test = false
-use_forced_switch_trainer_test = false
-use_fixed_substitute_test = false
-use_fixed_rattata_vs_gastly = true
-debug_rattata_extended_volatiles = true
 debug_rattata_test_bite = false
-debug_zero_pp = false
+use_move_fail_no_target_test = true
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

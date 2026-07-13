@@ -6,6 +6,7 @@ enum Values {
 	ABILITY,
 	WEATHER,
 	FIELD_EFFECT,
+	MOVE_FAIL,
 }
 
 
