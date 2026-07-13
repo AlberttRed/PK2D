@@ -41,6 +41,9 @@ static func add_field_effect(effect: PersistentBattleEffect):
 static func remove_field_effect(effect: PersistentBattleEffect):
 	get_instance()._remove_field_effect(effect)
 
+static func remove_field_weather_effects() -> void:
+	get_instance()._remove_field_weather_effects()
+
 static func has_effect_for(pokemon, effect_instance: PersistentBattleEffect) -> bool:
 	return effect_instance != null and get_instance()._has_effect_for(pokemon, effect_instance)
 
@@ -215,6 +218,13 @@ func _add_field_effect(effect: PersistentBattleEffect):
 func _remove_field_effect(effect: PersistentBattleEffect):
 	var target_class = effect.get_script().get_global_name()
 	field_effects = _filter_out_effect_class(field_effects, target_class)
+
+func _remove_field_weather_effects() -> void:
+	var kept := _empty_effect_list()
+	for effect in field_effects:
+		if not effect is WeatherBattleEffect:
+			kept.append(effect)
+	field_effects = kept
 
 func _has_effect_for(pokemon, effect: PersistentBattleEffect) -> bool:
 	var target_class = effect.get_script().get_global_name()

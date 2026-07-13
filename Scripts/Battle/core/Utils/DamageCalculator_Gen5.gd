@@ -167,9 +167,9 @@ static func apply_power_modifiers(move: BattleMove, user: BattlePokemon, target:
 # Convierte nombres de efectos de CamelCase a formato legible
 static func _format_effect_name(name: String) -> String:
 	# Casos especiales primero
-	if name == "RainWeather":
+	if name == "RainWeatherEffect":
 		return "Lluvia"
-	if name == "SunnyWeather":
+	if name == "SunWeatherEffect":
 		return "Sol"
 	if name == "SandstormWeather":
 		return "Tormenta de Arena"

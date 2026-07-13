@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://brbn3d4ht1mwq"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=6 format=3 uid="uid://brbn3d4ht1mwq"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_1671l"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_n71yu"]
 [ext_resource type="Resource" uid="uid://d3pw7574qhbn3" path="res://Resources/Data/Types/10.tres" id="2_v003a"]
+[ext_resource type="Script" uid="uid://b8sunnydaymove01" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/SunnyDayMoveEffect.gd" id="4_moveeffect"]
+[ext_resource type="Resource" uid="uid://oq3o8uhtgyu5" path="res://Resources/Data/Weather/SUN.tres" id="5_sun"]
 
 [resource]
 resource_name = "241 - Día Soleado"
@@ -42,4 +44,7 @@ Pokémon with dry skin lose 1/8 max HP at the end of each turn.
 Pokémon with solar power have their original Special Attack raised by 50% but lose 1/8 their max HP at the end of each turn."
 target_id = 12
 meta_category_id = 10
+weather_id = 2
+weather = ExtResource("5_sun")
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_1671l")
