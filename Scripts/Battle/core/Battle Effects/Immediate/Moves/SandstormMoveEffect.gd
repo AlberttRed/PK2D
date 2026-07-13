@@ -1,0 +1,2 @@
+extends WeatherMoveEffect
+class_name SandstormMoveEffect

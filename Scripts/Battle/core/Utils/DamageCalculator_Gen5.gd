@@ -171,7 +171,7 @@ static func _format_effect_name(name: String) -> String:
 		return "Lluvia"
 	if name == "SunWeatherEffect":
 		return "Sol"
-	if name == "SandstormWeather":
+	if name == "SandstormWeatherEffect":
 		return "Tormenta de Arena"
 	if name == "HailWeatherEffect":
 		return "Granizo"
