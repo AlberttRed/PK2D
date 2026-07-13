@@ -173,7 +173,7 @@ static func _format_effect_name(name: String) -> String:
 		return "Sol"
 	if name == "SandstormWeather":
 		return "Tormenta de Arena"
-	if name == "HailWeather":
+	if name == "HailWeatherEffect":
 		return "Granizo"
 
 	# Para otros casos, intentar convertir de CamelCase

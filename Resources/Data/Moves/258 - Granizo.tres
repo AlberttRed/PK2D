@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="MoveData" format=3 uid="uid://bjw0fma833hrm"]
+[gd_resource type="Resource" script_class="MoveData" load_steps=6 format=3 uid="uid://bjw0fma833hrm"]
 
 [ext_resource type="Resource" path="res://Resources/Move Categories/WholeFieldEffectMoveCategory.tres" id="1_bhpou"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_n3cn0"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_cxyvl"]
+[ext_resource type="Script" uid="uid://b7hailmoveeff01" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/HailMoveEffect.gd" id="4_moveeffect"]
+[ext_resource type="Resource" uid="uid://cu43plpmlq0n0" path="res://Resources/Data/Weather/HAIL.tres" id="5_hail"]
 
 [resource]
 resource_name = "258 - Granizo"
@@ -27,4 +29,7 @@ moonlight, morning sun, and synthesis heal only 1/4 of the user's max HP.
 Pokémon with snow cloak are exempt from this effect's damage."
 target_id = 12
 meta_category_id = 10
+weather_id = 4
+weather = ExtResource("5_hail")
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_bhpou")

@@ -88,4 +88,18 @@ func get_end_weather_message(weather_id: int) -> Dictionary:
 
 func get_already_active_weather_message() -> Dictionary:
 	return { "type": "wait", "text": "¡Pero falló!", "wait_time": 1.0 }
-	
+
+
+func get_residual_damage_message(weather_id: int, pokemon: BattlePokemon) -> Dictionary:
+	if pokemon == null:
+		return {}
+	var msg := ""
+	match weather_id:
+		WeathersEnum.Values.HAIL:
+			msg = "¡El granizo daña a %s!" % pokemon.get_battle_display_name(true)
+		WeathersEnum.Values.SANDSTORM:
+			msg = "¡La tormenta de arena daña a %s!" % pokemon.get_battle_display_name(true)
+		_:
+			return {}
+	return { "type": "wait", "text": msg, "wait_time": 1.0 }
+

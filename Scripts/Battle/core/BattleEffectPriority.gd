@@ -21,6 +21,7 @@ const VALIDATE_TRAP := 10
 ## ON_END_BATTLE_TURN — residuales y ticks.
 const END_POISON := 25
 const END_BURN := 24
+const END_WEATHER_RESIDUAL := 20
 const END_TRAP := 15
 const END_PERISH_SONG := 14
 const END_YAWN := 13
@@ -112,6 +113,8 @@ static func _end_turn_priority(effect_class: String) -> int:
 			return END_POISON
 		"BurnAilmentEffect":
 			return END_BURN
+		"HailWeatherEffect", "SandstormWeatherEffect":
+			return END_WEATHER_RESIDUAL
 		"TrapAilmentEffect":
 			return END_TRAP
 		"PerishSongAilmentEffect":

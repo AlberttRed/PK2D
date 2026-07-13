@@ -299,6 +299,14 @@ func get_end_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
 func get_already_active_weather_message() -> Dictionary:
 	return WeatherMessages.get_already_active_weather_message()
 
+func get_weather_residual_damage_message(
+	weather_id: WeathersEnum.Values,
+	pokemon: BattlePokemon
+) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE or pokemon == null:
+		return {}
+	return WeatherMessages.get_residual_damage_message(weather_id, pokemon)
+
 func get_start_field_effect_message(effect_id: FieldEffectsEnum.Values, side: BattleSide = null) -> Dictionary:
 	if effect_id < 0:
 		return {}
