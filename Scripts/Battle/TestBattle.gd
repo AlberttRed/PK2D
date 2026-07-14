@@ -29,6 +29,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Escenario doble Pikachu+Machop vs Gastly débil + Rattata (sin objetivo al aplicar).
 @export var use_move_fail_no_target_test: bool = false
 
+@export_group("Debug clima")
+## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
+@export var use_rain_weather_test: bool = true
+
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
 ## Sirve para probar el orden de mensajes al final del turno (Reflejo → Lluvia → Veneno).
@@ -83,6 +87,11 @@ func _ready() -> void:
 				+ "Desactívalo para probar Anulación → Forcejeo."
 			)
 		await wildFixedSubstituteTestBattle()
+		return
+	if use_rain_weather_test:
+		_seed_test_capture_items()
+		_print_rain_weather_test_guide()
+		await wildRainWeatherTestBattle()
 		return
 	if use_fixed_rattata_vs_gastly:
 		_setup_fixed_rattata_gastly_parties()
@@ -355,6 +364,21 @@ func wildFixedRattataGastlyBattle() -> void:
 	print(">>> Batalla Rattata vs Pidgey terminada. Ganador: %s" % winner)
 
 
+func wildRainWeatherTestBattle() -> void:
+	_setup_rain_weather_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildRainWeatherTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla clima (Granizo) terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -474,6 +498,50 @@ func _print_forced_switch_player_guide() -> void:
 	print(">>> Test cambio forzado (jugador): Rattata (Nv.20) + Bulbasaur (Nv.8) vs Pidgey (Nv.8).")
 	print(">>> Deja que el rival debilite al activo → debe abrirse Party obligatoria (sin cancelar).")
 	print(">>> Elige Bulbasaur (o el otro vivo) y comprueba mensaje de entrada + ON_SWITCH_IN.")
+
+
+func _setup_rain_weather_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_rain_weather_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_rain_weather_test_enemy_instance())
+
+
+func _create_rain_weather_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.HAIL,
+		MovesEnum.Values.SUNNY_DAY,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.SANDSTORM,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_rain_weather_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_rain_weather_test_guide() -> void:
+	print(">>> Combate clima: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).")
+	print(">>>   1) Usa Granizo → mensaje de inicio y granizo activo 5 turnos (+ daño residual).")
+	print(">>>   2) Día Soleado reemplaza el clima activo.")
+	print(">>>   3) Al final de cada turno: mensajes ongoing/end del clima correspondiente.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:
@@ -802,9 +870,12 @@ func _seed_test_capture_items() -> void:
 	bag.add_item(4, 10)  # Poké Ball
 	bag.add_item(3, 10)  # Super Ball
 	bag.add_item(2, 10)  # Ultra Ball
-	bag.add_item(17, 10)  # Poción
+	bag.add_item(17, 20)  # Poción
+	bag.add_item(26, 10)  # Superpoción
+	bag.add_item(25, 10)  # Hiperpoción
+	bag.add_item(24, 5)   # Poción Máxima
 	bag.add_item(18, 10)  # Antídoto
-	print("TestBattle: ítems de prueba en mochila (bolas x10, Poción x10, Antídoto x10).")
+	print("TestBattle: ítems de prueba en mochila (bolas x10, pociones, Antídoto x10).")
 
 
 func _create_pokemon_instance(

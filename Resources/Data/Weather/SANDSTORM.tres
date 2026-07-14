@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="WeatherData" load_steps=2 format=3 uid="uid://bcspxmrep6uk7"]
+[gd_resource type="Resource" script_class="WeatherData" load_steps=3 format=3 uid="uid://bcspxmrep6uk7"]
 
+[ext_resource type="Script" uid="uid://d5sandstormw01" path="res://Scripts/Battle/core/Battle Effects/Persistent/Weather/SandstormWeatherEffect.gd" id="1_sandfx"]
 [ext_resource type="Script" uid="uid://b5uwuha6ycfob" path="res://Scripts/Resources/Classes/WeatherData.gd" id="1_34o1g"]
 
 [resource]
@@ -7,4 +8,4 @@ script = ExtResource("1_34o1g")
 id = 3
 internal_name = "sandstorm"
 display_name = "Tormenta de arena"
-metadata/_custom_type_script = "uid://c3ykal5rqqt2m"
+effect = ExtResource("1_sandfx")
