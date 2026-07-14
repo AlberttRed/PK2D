@@ -1,4 +1,4 @@
-class_name ReflectFieldEffect
+class_name LightScreenFieldEffect
 extends ScreenFieldEffect
 
 
@@ -11,7 +11,7 @@ func on_damage(ctx: BattlePhaseContext = null) -> void:
 	var damage_target := effect.target
 	if damage_target == null or damage_target.side == null:
 		return
-	if not effect.move.is_physic_category():
+	if not effect.move.is_special_category():
 		return
 	var target_side_key: String = damage_target.side._to_string()
 	if not applies_to_side(target_side_key):

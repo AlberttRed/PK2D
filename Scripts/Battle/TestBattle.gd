@@ -515,10 +515,10 @@ func _create_rain_weather_test_player_instance() -> Pokemon:
 	pkmn.level = 30
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
+		MovesEnum.Values.REFLECT,
+		MovesEnum.Values.LIGHT_SCREEN,
 		MovesEnum.Values.HAIL,
 		MovesEnum.Values.SUNNY_DAY,
-		MovesEnum.Values.WATER_GUN,
-		MovesEnum.Values.SANDSTORM,
 	]
 	pkmn._post_init()
 	return pkmn
@@ -538,10 +538,12 @@ func _create_rain_weather_test_enemy_instance() -> Pokemon:
 
 
 func _print_rain_weather_test_guide() -> void:
-	print(">>> Combate clima: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).")
-	print(">>>   1) Usa Granizo → mensaje de inicio y granizo activo 5 turnos (+ daño residual).")
-	print(">>>   2) Día Soleado reemplaza el clima activo.")
-	print(">>>   3) Al final de cada turno: mensajes ongoing/end del clima correspondiente.")
+	print(">>> Combate clima + pantallas: Squirtle (Reflejo + Pantalla de Luz + Granizo + Día Soleado) vs Pidgey (Tornado + Placaje).")
+	print(">>>   1) Usa Reflejo → Placaje rival (físico) hace la mitad de daño.")
+	print(">>>   2) Usa Pantalla de Luz → Tornado rival (especial) hace la mitad de daño.")
+	print(">>>   3) Sin pantalla activa: Tornado y Placaje hacen daño completo.")
+	print(">>>   4) Tras 5 turnos: mensajes de fin de cada pantalla.")
+	print(">>>   (Opcional) Granizo/Día Soleado siguen disponibles para probar clima.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

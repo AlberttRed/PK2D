@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_0r5fh"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_f4id8"]
 [ext_resource type="Resource" uid="uid://b5h0i8wbbp1lp" path="res://Resources/Data/Types/14.tres" id="2_s68nk"]
+[ext_resource type="Script" uid="uid://c8k3m2lightmv01" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/LightScreenMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "113 - Pantalla de Luz"
@@ -23,4 +24,5 @@ If the user is holding light clay, the barrier lasts for eight turns.
 brick break or defog used by an opponent will destroy the barrier."
 target_id = 4
 meta_category_id = 11
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_f4id8")
