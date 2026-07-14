@@ -512,13 +512,13 @@ func _setup_rain_weather_test_parties() -> void:
 func _create_rain_weather_test_player_instance() -> Pokemon:
 	var pkmn := Pokemon.new()
 	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
-	pkmn.level = 30
+	pkmn.level = 50
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.REFLECT,
 		MovesEnum.Values.LIGHT_SCREEN,
+		MovesEnum.Values.SAFEGUARD,
 		MovesEnum.Values.HAIL,
-		MovesEnum.Values.SUNNY_DAY,
 	]
 	pkmn._post_init()
 	return pkmn
@@ -532,18 +532,21 @@ func _create_rain_weather_test_enemy_instance() -> Pokemon:
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.GUST,
 		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.POISON_STING,
 	]
 	pkmn._post_init()
 	return pkmn
 
 
 func _print_rain_weather_test_guide() -> void:
-	print(">>> Combate clima + pantallas: Squirtle (Reflejo + Pantalla de Luz + Granizo + Día Soleado) vs Pidgey (Tornado + Placaje).")
-	print(">>>   1) Usa Reflejo → Placaje rival (físico) hace la mitad de daño.")
-	print(">>>   2) Usa Pantalla de Luz → Tornado rival (especial) hace la mitad de daño.")
-	print(">>>   3) Sin pantalla activa: Tornado y Placaje hacen daño completo.")
-	print(">>>   4) Tras 5 turnos: mensajes de fin de cada pantalla.")
-	print(">>>   (Opcional) Granizo/Día Soleado siguen disponibles para probar clima.")
+	print(">>> Combate pantallas: Squirtle (Reflejo + Pantalla de Luz + Velo Sagrado + Granizo) vs Pidgey (Tornado + Placaje + Onda Trueno + Picotazo Veneno).")
+	print(">>>   1) Reflejo → Placaje rival (físico) hace la mitad de daño.")
+	print(">>>   2) Pantalla de Luz → Tornado rival (especial) hace la mitad de daño.")
+	print(">>>   3) Velo Sagrado → Onda Trueno / Picotazo Veneno no aplican parálisis/veneno.")
+	print(">>>   4) Sin Velo Sagrado: Onda Trueno puede paralizar; Picotazo Veneno puede envenenar (activa debug_force_ailment_apply para 100%).")
+	print(">>>   5) Tras 5 turnos: mensajes de fin de cada pantalla.")
+	print(">>>   (Opcional) Granizo sigue disponible para probar clima.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

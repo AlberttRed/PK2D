@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_i2hbg"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_r77ik"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_h87mk"]
+[ext_resource type="Script" uid="uid://c8k3m2safegmv01" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/SafeguardMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "219 - Velo Sagrado"
@@ -25,4 +26,5 @@ defog used by an opponent will end this effect.
 This effect does not prevent the confusion caused by outrage, petal dance, or thrash."
 target_id = 4
 meta_category_id = 11
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_r77ik")
