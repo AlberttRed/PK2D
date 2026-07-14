@@ -52,7 +52,7 @@ func get_ongoing_weather_message(weather_id: int) -> Dictionary:
 			return {}
 
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": msg,
 		"wait_time": 1.0
 	}
@@ -101,5 +101,4 @@ func get_residual_damage_message(weather_id: int, pokemon: BattlePokemon) -> Dic
 			msg = "¡La tormenta de arena daña a %s!" % pokemon.get_battle_display_name(true)
 		_:
 			return {}
-	return { "type": "wait", "text": msg, "wait_time": 1.0 }
-
+	return { "type": "display", "text": msg, "wait_time": 0.5 }

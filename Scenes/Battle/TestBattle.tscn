@@ -7,7 +7,6 @@
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 script = ExtResource("1_tse6d")
 debug_rattata_test_bite = false
-use_move_fail_no_target_test = true
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")
