@@ -3,6 +3,7 @@
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_18a0q"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_s3jid"]
 [ext_resource type="Resource" uid="uid://ctaiklw776yao" path="res://Resources/Data/Types/15.tres" id="2_niduv"]
+[ext_resource type="Script" uid="uid://c8k3m2mistmv01" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/MistMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "54 - Neblina"
@@ -23,4 +24,5 @@ guard swap, heart swap, and power swap may still be used.
 defog used by an opponent will end this effect."
 target_id = 4
 meta_category_id = 11
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_18a0q")

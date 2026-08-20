@@ -4,15 +4,38 @@ extends RefCounted
 ## Activa lluvia (campo), Reflejo (lado jugador) y veneno (primer Pokémon activo del jugador)
 ## Pensado para probar el orden de fin de turno en TestBattle.
 static var _pending: bool = false
+## Solo Reflejo en el lado del jugador (PBI 704 — convivencia con hazards).
+static var _pending_reflect_only: bool = false
 
 static func enable() -> void:
 	_pending = true
 
+static func enable_reflect_only() -> void:
+	_pending_reflect_only = true
+
 static func try_apply(controller: BattleController) -> void:
+	if _pending_reflect_only:
+		_pending_reflect_only = false
+		_apply_reflect_only(controller)
+		return
 	if not _pending:
 		return
 	_pending = false
 	_apply(controller)
+
+static func _apply_reflect_only(controller: BattleController) -> void:
+	if controller == null or controller.player_side == null:
+		return
+	var player_team: Array = controller.player_side.get_active_pokemons()
+	if player_team.is_empty():
+		push_warning("BattleDebugEffectSeeder: no hay Pokémon activo del jugador.")
+		return
+	var player_pkmn: BattlePokemon = player_team[0] as BattlePokemon
+	_seed_reflect(player_pkmn)
+	print(
+		"BattleDebugEffectSeeder: Reflejo (Player) en %s para test de integración field effects."
+		% player_pkmn.get_name()
+	)
 
 static func _apply(controller: BattleController) -> void:
 	if controller == null or controller.player_side == null:
@@ -50,10 +73,10 @@ static func _seed_reflect(player_pkmn: BattlePokemon) -> void:
 		push_warning("BattleDebugEffectSeeder: no se encontró el movimiento Reflejo (115).")
 		return
 	var battle_move := BattleMove.new(Move.new(move_data), player_pkmn)
-	var reflect := ReflectFieldEffect.new(battle_move, 5, "Player", "tu lado")
-	if BattleEffectController.has_side_effect("Player", reflect):
+	var reflect := ReflectFieldEffect.new(battle_move, 5, BattleSide.Types.PLAYER)
+	if BattleEffectController.has_side_effect(BattleSide.Types.PLAYER, reflect):
 		return
-	BattleEffectController.add_side_effect("Player", reflect)
+	BattleEffectController.add_side_effect(BattleSide.Types.PLAYER, reflect)
 
 static func _seed_poison(player_pkmn: BattlePokemon) -> void:
 	var poison_data: AilmentData = AilmentData.from_major_status(CONST.STATUS.POISON)

@@ -320,6 +320,21 @@ func get_end_field_effect_message(effect_id: FieldEffectsEnum.Values, side: Batt
 func get_already_active_field_effect_message() -> Dictionary:
 	return FieldEffectMessages.get_already_active_field_effect_message()
 
+func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_mist_stat_block_message(pokemon)
+
+func get_spikes_damage_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_spikes_damage_message(pokemon)
+
+func get_stealth_rock_damage_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_stealth_rock_damage_message(pokemon)
+
+func get_toxic_spikes_absorbed_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_toxic_spikes_absorbed_message(pokemon)
+
+func get_badly_poisoned_message(pokemon: BattlePokemon) -> Dictionary:
+	return AilmentMessages.get_badly_poisoned_message(pokemon)
+
 # ============================================================================
 # Unificado: helpers por familia (limpia BattleUI)
 # ============================================================================

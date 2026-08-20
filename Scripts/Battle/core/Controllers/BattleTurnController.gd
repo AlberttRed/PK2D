@@ -101,7 +101,7 @@ func execute_turn():
 		await BattleEffectController.process_phase(actor, BattleEffect.Phases.ON_INIT_POKEMON_TURN)
 		await handle_result(choice, results[choice])
 
-		await check_and_show_fainted_pokemon(actor)
+		await check_and_show_fainted(actor)
 
 		if battle_controller.battle_finished():
 			break
@@ -116,7 +116,7 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 		if actor == null:
 			continue
 		var pkmn_name = actor.get_name()
-		var speed = actor.get_speed()
+		var speed = actor.get_effective_speed()
 		var action_desc := ""
 		if choice is BattleMoveChoice and choice.get_move() != null:
 			action_desc = "usará %s" % choice.get_move().get_name()
@@ -146,8 +146,8 @@ func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 		return a.get_priority() > b.get_priority()
 
 	# 2. Velocidad
-	var speed_a: int = a.pokemon.get_speed() if a.pokemon != null else 0
-	var speed_b: int = b.pokemon.get_speed() if b.pokemon != null else 0
+	var speed_a: int = a.pokemon.get_effective_speed() if a.pokemon != null else 0
+	var speed_b: int = b.pokemon.get_effective_speed() if b.pokemon != null else 0
 
 	if speed_a != speed_b:
 		return speed_a > speed_b
@@ -206,12 +206,35 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 		BattlePhaseContext.for_move(choice.pokemon, choice)
 	)
 
-func handle_switch_result(_choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
+func handle_switch_result(choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
 	for handler in handlers:
 		handler.apply()
 
 	for handler in handlers:
 		await handler.visualize(battle_controller.ui)
+
+	# Hazards al entrar (Púas / Trampa Rocas) pueden dejar HP a 0.
+	await check_and_show_fainted(_exp_executor_after_switch(choice))
+
+
+func _exp_executor_after_switch(choice: BattleSwitchChoice) -> BattlePokemon:
+	# EXP del rival debilitado por hazards al entrar → Pokémon activo del jugador.
+	var player_active := _first_living_active(battle_controller.player_side)
+	if player_active != null:
+		return player_active
+	if choice != null and choice.pokemon != null and not choice.pokemon.is_fainted():
+		return choice.pokemon
+	return null
+
+
+func _first_living_active(side: BattleSide) -> BattlePokemon:
+	if side == null:
+		return null
+	for pokemon in side.get_active_pokemons():
+		if pokemon != null and not pokemon.is_fainted():
+			return pokemon
+	return null
+
 
 func handle_bag_result(_choice: BattleBagChoice, handlers: Array[BattleHandler]) -> void:
 	# Aplicar todos los handlers
@@ -234,7 +257,8 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 func end_turn():
 	if not battle_controller.finished:
 		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
-		await check_and_show_fainted_after_residual_effects()
+		# Residual (veneno, clima…): EXP al activo del jugador si cae un rival.
+		await check_and_show_fainted(_first_living_active(battle_controller.player_side))
 	turn_finished.emit(current_turn)
 
 func reset():
@@ -328,38 +352,30 @@ func print_stat_stages_log() -> void:
 		if not any_modified:
 			print("  (Sin modificaciones activas)")
 
-func check_and_show_fainted_pokemon(action_executor: BattlePokemon) -> void:
-	var executor_side = action_executor.side
-	var opponent_side = action_executor.get_opponent_side()
-
-	for spot in opponent_side.battle_spots:
-		await _resolve_faint_on_spot(spot, action_executor, true)
-
-	for spot in executor_side.battle_spots:
-		await _resolve_faint_on_spot(spot, action_executor, false)
-
-
-func check_and_show_fainted_after_residual_effects() -> void:
+## Resuelve KOs en campo (anim + mensaje + EXP + cambio forzado).
+## exp_executor: quién se apunta la EXP de rivales debilitados (null = sin EXP).
+func check_and_show_fainted(exp_executor: BattlePokemon = null) -> void:
 	if battle_controller.enemy_side != null:
 		for spot in battle_controller.enemy_side.battle_spots:
-			await _resolve_faint_on_spot(spot, null, true)
+			await _resolve_faint_on_spot(spot, exp_executor)
 	if battle_controller.player_side != null:
 		for spot in battle_controller.player_side.battle_spots:
-			await _resolve_faint_on_spot(spot, null, false)
+			await _resolve_faint_on_spot(spot, exp_executor)
 
 
-func _resolve_faint_on_spot(
-	spot: BattleSpot,
-	exp_executor: BattlePokemon,
-	grant_exp: bool
-) -> void:
+func _resolve_faint_on_spot(spot: BattleSpot, exp_executor: BattlePokemon) -> void:
 	if spot == null or spot.pokemon == null or not spot.pokemon.is_fainted():
 		return
 	var fainted := spot.pokemon
 	var side := fainted.side
 	await spot.play_faint_animation()
 	await battle_controller.ui.show_faint_message(fainted)
-	if grant_exp:
+	var should_grant_exp := (
+		side != null
+		and side.type == BattleSide.Types.ENEMY
+		and exp_executor != null
+	)
+	if should_grant_exp:
 		await battle_controller.grant_experience_after_enemy_ko(fainted, exp_executor)
 	BattleEffectController.clear_pokemon_effects(fainted)
 	spot.remove_pokemon()

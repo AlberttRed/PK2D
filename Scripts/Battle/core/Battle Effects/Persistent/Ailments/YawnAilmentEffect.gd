@@ -135,7 +135,7 @@ func _try_apply_sleep(pokemon: BattlePokemon) -> bool:
 		return false
 	var ctx := BattlePhaseContext.for_ailment(pokemon, sleep_data)
 	BattleEffectController.run_apply_phase(pokemon, BattleEffect.Phases.ON_VALIDATE_AILMENT, ctx)
-	if ctx.rejected:
+	if ctx.validation != null and ctx.validation.rejected:
 		return false
 
 	var sleep_effect := sleep_data.get_effect(null, null) as PersistentBattleEffect

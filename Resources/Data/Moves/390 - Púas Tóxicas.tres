@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_8ywal"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_sdpov"]
 [ext_resource type="Resource" uid="uid://0qhj5bvapu6l" path="res://Resources/Data/Types/04.tres" id="2_pe0dr"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/ToxicSpikesMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "390 - Púas Tóxicas"
@@ -28,4 +29,5 @@ This move does not trigger synchronize, unless the Pokémon with synchronize was
 Pokémon entering the field due to baton pass are not affected by this effect."
 target_id = 6
 meta_category_id = 11
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_sdpov")

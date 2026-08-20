@@ -21,9 +21,21 @@ func get_start_field_effect_message(effect_id: int, side: BattleSide = null) -> 
         MovesEnum.Values.TAILWIND:
             msg = "¡Viento Afín sopla a favor de %s!" % side_name
         MovesEnum.Values.SPIKES:
-            msg = "¡Púas fueron esparcidas en %s!" % side_name
+            # HGSS: «¡Se esparcieron púas alrededor del equipo enemigo/tu equipo!»
+            if side.type == BattleSide.Types.PLAYER:
+                msg = "¡Se esparcieron púas alrededor de tu equipo!"
+            else:
+                msg = "¡Se esparcieron púas alrededor del equipo rival!"
+        MovesEnum.Values.TOXIC_SPIKES:
+            if side.type == BattleSide.Types.PLAYER:
+                msg = "¡Se esparcieron púas tóxicas alrededor de tu equipo!"
+            else:
+                msg = "¡Se esparcieron púas tóxicas alrededor del equipo rival!"
         MovesEnum.Values.STEALTH_ROCK:
-            msg = "¡Trampa Rocas rodea %s!" % side_name
+            if side.type == BattleSide.Types.PLAYER:
+                msg = "¡Trampa Rocas rodea a tu equipo!"
+            else:
+                msg = "¡Trampa Rocas rodea al equipo rival!"
         MovesEnum.Values.STICKY_WEB:
             msg = "¡Red Viscosa se extendió en %s!" % side_name
         _:
@@ -53,6 +65,8 @@ func get_end_field_effect_message(effect_id: int, side: BattleSide = null) -> Di
             msg = "¡Viento Afín de %s amainó!" % side_name
         MovesEnum.Values.SPIKES:
             msg = "¡Las Púas en %s han sido removidas!" % side_name
+        MovesEnum.Values.TOXIC_SPIKES:
+            msg = "¡Las púas tóxicas en %s han sido removidas!" % side_name
         MovesEnum.Values.STEALTH_ROCK:
             msg = "¡Trampa Rocas en %s se desactivó!" % side_name
         MovesEnum.Values.STICKY_WEB:
@@ -66,5 +80,39 @@ func get_end_field_effect_message(effect_id: int, side: BattleSide = null) -> Di
 
 func get_already_active_field_effect_message() -> Dictionary:
     return { "type": "wait", "text": "¡Pero falló!", "wait_time": 1.0 }
+
+
+func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡La neblina protege las características de %s!" % pokemon.get_battle_display_name(true),
+        "wait_time": 1.0,
+    }
+
+
+func get_spikes_damage_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡%s ha recibido daño por las púas!" % pokemon.get_battle_display_name(true),
+        "wait_time": 1.0,
+    }
+
+
+func get_stealth_rock_damage_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡Las piedras puntiagudas hirieron %s!" % pokemon.get_battle_target_name(),
+        "wait_time": 1.0,
+    }
+
+
+func get_toxic_spikes_absorbed_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡Las púas tóxicas desaparecieron de debajo de los pies %s!" % (
+            pokemon.get_battle_possessive_name()
+        ),
+        "wait_time": 1.2,
+    }
 
 

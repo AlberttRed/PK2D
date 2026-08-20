@@ -7,6 +7,16 @@ enum Types {
 	ENEMY
 }
 
+## Texto genérico del lado para mensajes/UI ("tu lado", "el lado rival", …).
+static func get_display_name(side_type: Types) -> String:
+	match side_type:
+		Types.PLAYER:
+			return "tu lado"
+		Types.ENEMY:
+			return "el lado rival"
+		_:
+			return ""
+
 const MAX_PARTY_SIZE := 6
 
 var type: Types  # PLAYER / ENEMY / etc.

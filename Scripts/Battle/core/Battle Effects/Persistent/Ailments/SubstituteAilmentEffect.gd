@@ -68,8 +68,8 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 
 	if phase == Phases.ON_VALIDATE_AILMENT:
 		if is_active_for_blocking():
-			if ctx != null:
-				ctx.rejected = true
+			if ctx != null and ctx.validation != null:
+				ctx.validation.rejected = true
 		return
 
 	if phase == Phases.ON_INCOMING_DAMAGE_FINALIZE:
@@ -81,7 +81,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 
 
 func _apply_incoming_damage_calculate(ctx: BattlePhaseContext) -> void:
-	var effect: DamageEffect = ctx.damage if ctx != null else null
+	var effect: DamageEffect = ctx.damage.damage if ctx != null and ctx.damage != null else null
 	if effect == null:
 		return
 	if not _affects_owner(effect.target):

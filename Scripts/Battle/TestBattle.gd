@@ -10,7 +10,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Anulación + Destructor + Látigo) vs Pidgey (solo Bostezo).
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
-@export var use_fixed_rattata_vs_gastly: bool = true
+@export var use_fixed_rattata_vs_gastly: bool = false
 ## Si true, Pidgey solo lleva Látigo (útil para probar fallback si el movimiento bloqueado no es usable).
 @export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
@@ -31,7 +31,21 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Debug clima")
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
-@export var use_rain_weather_test: bool = true
+@export var use_rain_weather_test: bool = false
+
+@export_group("Debug field effects")
+## 1vs1 salvaje: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).
+@export var use_mist_test: bool = false
+## 1vs1 salvaje: Slowpoke Nv.50 vs Pidgey Nv.24 — Tailwind invierte orden (~40 vs ~39).
+@export var use_tailwind_test: bool = false
+## 1vs1 entrenador: Squirtle (Púas) vs Rattata + Bulbasaur (+ Pidgey Volador) — capas y daño al entrar.
+@export var use_spikes_test: bool = false
+## 1vs1 entrenador: Squirtle (Púas Tóxicas) vs Rattata + Sandshrew + Ekans + Diglett — capas, absorción y grounded.
+@export var use_toxic_spikes_test: bool = false
+## 1vs1 entrenador: Squirtle (Trampa Rocas) vs Rattata + Machop + Charizard — daño × efectividad Roca.
+@export var use_stealth_rock_test: bool = false
+## 1vs1 entrenador: Reflect + Spikes + Toxic Spikes + Stealth Rock — convivencia PBI 704.
+@export var use_field_effects_integration_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -87,6 +101,37 @@ func _ready() -> void:
 				+ "Desactívalo para probar Anulación → Forcejeo."
 			)
 		await wildFixedSubstituteTestBattle()
+		return
+	if use_mist_test:
+		_seed_test_capture_items()
+		_print_mist_test_guide()
+		await wildMistTestBattle()
+		return
+	if use_tailwind_test:
+		_seed_test_capture_items()
+		_print_tailwind_test_guide()
+		await wildTailwindTestBattle()
+		return
+	if use_spikes_test:
+		_seed_test_capture_items()
+		_print_spikes_test_guide()
+		await spikesTrainerTestBattle()
+		return
+	if use_toxic_spikes_test:
+		_seed_test_capture_items()
+		_print_toxic_spikes_test_guide()
+		await toxicSpikesTrainerTestBattle()
+		return
+	if use_stealth_rock_test:
+		_seed_test_capture_items()
+		_print_stealth_rock_test_guide()
+		await stealthRockTrainerTestBattle()
+		return
+	if use_field_effects_integration_test:
+		_seed_test_capture_items()
+		BattleDebugEffectSeeder.enable_reflect_only()
+		_print_field_effects_integration_test_guide()
+		await fieldEffectsIntegrationTrainerTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -379,6 +424,72 @@ func wildRainWeatherTestBattle() -> void:
 	print(">>> Batalla clima (Granizo) terminada. Ganador: %s" % winner)
 
 
+func wildMistTestBattle() -> void:
+	_setup_mist_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildMistTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Neblina terminada. Ganador: %s" % winner)
+
+
+func wildTailwindTestBattle() -> void:
+	_setup_tailwind_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildTailwindTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Viento Afín terminada. Ganador: %s" % winner)
+
+
+func spikesTrainerTestBattle() -> void:
+	var player_participant := _create_spikes_test_player_participant()
+	var trainer_participant := _create_spikes_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Púas terminada. Ganador: %s" % winner)
+
+
+func toxicSpikesTrainerTestBattle() -> void:
+	var player_participant := _create_toxic_spikes_test_player_participant()
+	var trainer_participant := _create_toxic_spikes_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Púas Tóxicas terminada. Ganador: %s" % winner)
+
+
+func stealthRockTrainerTestBattle() -> void:
+	var player_participant := _create_stealth_rock_test_player_participant()
+	var trainer_participant := _create_stealth_rock_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Trampa Rocas terminada. Ganador: %s" % winner)
+
+
+func fieldEffectsIntegrationTrainerTestBattle() -> void:
+	var player_participant := _create_field_effects_integration_player_participant()
+	var trainer_participant := _create_field_effects_integration_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla integración field effects terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -512,13 +623,13 @@ func _setup_rain_weather_test_parties() -> void:
 func _create_rain_weather_test_player_instance() -> Pokemon:
 	var pkmn := Pokemon.new()
 	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
-	pkmn.level = 30
+	pkmn.level = 50
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
+		MovesEnum.Values.REFLECT,
+		MovesEnum.Values.LIGHT_SCREEN,
+		MovesEnum.Values.SAFEGUARD,
 		MovesEnum.Values.HAIL,
-		MovesEnum.Values.SUNNY_DAY,
-		MovesEnum.Values.WATER_GUN,
-		MovesEnum.Values.SANDSTORM,
 	]
 	pkmn._post_init()
 	return pkmn
@@ -532,16 +643,369 @@ func _create_rain_weather_test_enemy_instance() -> Pokemon:
 	pkmn.custom_move_ids = [
 		MovesEnum.Values.GUST,
 		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.POISON_STING,
 	]
 	pkmn._post_init()
 	return pkmn
 
 
 func _print_rain_weather_test_guide() -> void:
-	print(">>> Combate clima: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).")
-	print(">>>   1) Usa Granizo → mensaje de inicio y granizo activo 5 turnos (+ daño residual).")
-	print(">>>   2) Día Soleado reemplaza el clima activo.")
-	print(">>>   3) Al final de cada turno: mensajes ongoing/end del clima correspondiente.")
+	print(">>> Combate pantallas: Squirtle (Reflejo + Pantalla de Luz + Velo Sagrado + Granizo) vs Pidgey (Tornado + Placaje + Onda Trueno + Picotazo Veneno).")
+	print(">>>   1) Reflejo → Placaje rival (físico) hace la mitad de daño.")
+	print(">>>   2) Pantalla de Luz → Tornado rival (especial) hace la mitad de daño.")
+	print(">>>   3) Velo Sagrado → Onda Trueno / Picotazo Veneno no aplican parálisis/veneno.")
+	print(">>>   4) Sin Velo Sagrado: Onda Trueno puede paralizar; Picotazo Veneno puede envenenar (activa debug_force_ailment_apply para 100%).")
+	print(">>>   5) Tras 5 turnos: mensajes de fin de cada pantalla.")
+	print(">>>   (Opcional) Granizo sigue disponible para probar clima.")
+
+
+func _setup_mist_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_mist_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_mist_test_enemy_instance())
+
+
+func _create_mist_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.MIST,
+		MovesEnum.Values.SWORDS_DANCE,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_mist_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GROWL,
+		MovesEnum.Values.TAIL_WHIP,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_mist_test_guide() -> void:
+	print(">>> Combate Neblina: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).")
+	print(">>>   1) Turno 1 — Neblina: «¡Neblina protege a los Pokémon de tu equipo!»")
+	print(">>>   2) Pidgey usa Gruñido o Látigo → «¡La neblina protege las características de Squirtle!» (sin bajar stats)")
+	print(">>>   3) Squirtle usa Danza Espada → sube Ataque (Neblina no bloquea subidas propias)")
+	print(">>>   4) Repetir Neblina con pantalla activa → «¡Pero falló!»")
+	print(">>>   5) Tras 5 turnos de combate: «¡La neblina en tu equipo se disipó!» → Gruñido/Látigo vuelven a bajar stats")
+
+
+func _setup_tailwind_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_tailwind_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_tailwind_test_enemy_instance())
+
+
+func _create_tailwind_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SLOWPOKE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.TAILWIND,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_tailwind_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 24
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_tailwind_test_guide() -> void:
+	print(">>> Combate Viento Afín: Slowpoke Nv.50 (Viento Afín + Placaje) vs Pidgey Nv.24 (Tornado + Placaje).")
+	print(">>>   1) Turno 1 — Pidgey más rápido actúa primero (~39 vs ~20); Slowpoke usa Viento Afín.")
+	print(">>>   2) Turnos 2-4 — Slowpoke debería actuar primero (~40 vs ~39 en log de velocidad efectiva).")
+	print(">>>   3) Repetir Viento Afín activo → «¡Pero falló!»")
+	print(">>>   4) Tras 3 turnos de combate: «¡Viento Afín de tu equipo amainó!» → Pidgey vuelve a ir primero.")
+
+
+func _create_spikes_test_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.SPIKES,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_spikes_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var bulbasaur := Pokemon.new()
+	bulbasaur.pokemon_id = PokemonsEnum.Values.BULBASAUR as PokemonsEnum.Values
+	bulbasaur.level = 12
+	bulbasaur.is_wild = false
+	bulbasaur.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.GROWL]
+	bulbasaur._post_init()
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 12
+	pidgey.is_wild = false
+	pidgey.custom_move_ids = [MovesEnum.Values.GUST, MovesEnum.Values.TACKLE]
+	pidgey._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var mid: BattlePokemon = bulbasaur.to_battle_pokemon()
+	var flyer: BattlePokemon = pidgey.to_battle_pokemon()
+	lead.setIA(ia)
+	mid.setIA(ia)
+	flyer.setIA(ia)
+	lead.controllable = false
+	mid.controllable = false
+	flyer.controllable = false
+	var participant := BattleParticipant.new([lead, mid, flyer])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_spikes_test_guide() -> void:
+	print(">>> Combate Púas: Squirtle Nv.40 (Púas + Pistola Agua + Placaje) vs Rattata + Bulbasaur + Pidgey (Nv.12, entrenador).")
+	print(">>>   1) Usa Púas 1–3 veces → mensaje de colocación; 4ª vez → «¡Pero falló!»")
+	print(">>>   2) Debilita a Rattata → entra Bulbasaur y recibe daño de entrada (1/8 · 1/6 · 1/4 según capas).")
+	print(">>>   3) Debilita a Bulbasaur → entra Pidgey (Volador) → NO debe recibir daño de Púas.")
+	print(">>>   4) Comprueba en log de efectos activos: SpikesFieldEffect con layers 1–3 en Enemy.")
+
+
+func _create_toxic_spikes_test_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.TOXIC_SPIKES,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_toxic_spikes_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var sandshrew := Pokemon.new()
+	sandshrew.pokemon_id = PokemonsEnum.Values.SANDSHREW as PokemonsEnum.Values
+	sandshrew.level = 12
+	sandshrew.is_wild = false
+	sandshrew.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.SAND_ATTACK]
+	sandshrew._post_init()
+	var ekans := Pokemon.new()
+	ekans.pokemon_id = PokemonsEnum.Values.EKANS as PokemonsEnum.Values
+	ekans.level = 12
+	ekans.is_wild = false
+	ekans.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.WRAP]
+	ekans._post_init()
+	var diglett := Pokemon.new()
+	diglett.pokemon_id = PokemonsEnum.Values.DIGLETT as PokemonsEnum.Values
+	diglett.level = 12
+	diglett.is_wild = false
+	diglett.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.SCRATCH]
+	diglett._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var grounded_a: BattlePokemon = sandshrew.to_battle_pokemon()
+	var poison: BattlePokemon = ekans.to_battle_pokemon()
+	var grounded_b: BattlePokemon = diglett.to_battle_pokemon()
+	for bp in [lead, grounded_a, poison, grounded_b]:
+		bp.setIA(ia)
+		bp.controllable = false
+	var participant := BattleParticipant.new([lead, grounded_a, poison, grounded_b])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_toxic_spikes_test_guide() -> void:
+	print(">>> Combate Púas Tóxicas: Squirtle Nv.40 vs Rattata + Sandshrew + Ekans + Diglett (Nv.12, todos grounded).")
+	print(">>>   1) Usa Púas Tóxicas 1–2 veces → colocación; 3ª → «¡Pero falló!»")
+	print(">>>   2) Con 1 capa: KO Rattata → «fue envenenado!» + residual 1/8 al fin de turno.")
+	print(">>>      Con 2 capas: KO Rattata → «fue gravemente envenenado!» + residual N/16 creciente.")
+	print(">>>   3) Sandshrew (Ground) entra → recibe veneno/tóxico según capas.")
+	print(">>>   4) Ekans (Veneno grounded) → absorbe («púas tóxicas desaparecieron…»).")
+	print(">>>   5) Vuelve a colocar; Diglett (Ground) entra → recibe veneno otra vez.")
+
+
+func _create_stealth_rock_test_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.STEALTH_ROCK,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_stealth_rock_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var machop := Pokemon.new()
+	machop.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
+	machop.level = 12
+	machop.is_wild = false
+	machop.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.LOW_KICK]
+	machop._post_init()
+	var charizard := Pokemon.new()
+	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
+	charizard.level = 12
+	charizard.is_wild = false
+	charizard.custom_move_ids = [MovesEnum.Values.SCRATCH, MovesEnum.Values.EMBER]
+	charizard._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var resist: BattlePokemon = machop.to_battle_pokemon()
+	var weak: BattlePokemon = charizard.to_battle_pokemon()
+	for bp in [lead, resist, weak]:
+		bp.setIA(ia)
+		bp.controllable = false
+	var participant := BattleParticipant.new([lead, resist, weak])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_stealth_rock_test_guide() -> void:
+	print(">>> Combate Trampa Rocas: Squirtle Nv.40 vs Rattata + Machop + Charizard (Nv.12).")
+	print(">>>   1) Usa Trampa Rocas → «¡Trampa Rocas rodea al equipo rival!»; 2ª vez → «¡Pero falló!»")
+	print(">>>   2) KO Rattata (Normal, ×1) → daño ~1/8 + «piedras puntiagudas hirieron…»")
+	print(">>>   3) Machop (Lucha, ×0.5) → daño ~1/16")
+	print(">>>   4) Charizard (Fuego/Volador, ×4) → daño ~1/2 (Volador NO inmuniza)")
+
+
+func _create_field_effects_integration_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.SPIKES,
+		MovesEnum.Values.TOXIC_SPIKES,
+		MovesEnum.Values.STEALTH_ROCK,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_field_effects_integration_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var bulbasaur := Pokemon.new()
+	bulbasaur.pokemon_id = PokemonsEnum.Values.BULBASAUR as PokemonsEnum.Values
+	bulbasaur.level = 12
+	bulbasaur.is_wild = false
+	bulbasaur.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.GROWL]
+	bulbasaur._post_init()
+	var charizard := Pokemon.new()
+	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
+	charizard.level = 12
+	charizard.is_wild = false
+	charizard.custom_move_ids = [MovesEnum.Values.SCRATCH, MovesEnum.Values.EMBER]
+	charizard._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var grounded: BattlePokemon = bulbasaur.to_battle_pokemon()
+	var flyer: BattlePokemon = charizard.to_battle_pokemon()
+	for bp in [lead, grounded, flyer]:
+		bp.setIA(ia)
+		bp.controllable = false
+	var participant := BattleParticipant.new([lead, grounded, flyer])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_field_effects_integration_test_guide() -> void:
+	print(">>> Integración field effects (PBI 704): Squirtle Nv.40 vs Rattata + Bulbasaur + Charizard (Nv.12).")
+	print(">>>   Movimientos: Púas + Púas Tóxicas + Trampa Rocas + Pistola Agua.")
+	print(">>>   Reflejo se siembra al inicio en tu lado (5 turnos) para coexistir con hazards.")
+	print(">>>   1) Coloca los 3 hazards (orden libre de colocación).")
+	print(">>>   2) Reaplica Trampa Rocas → fail; Púas/Púas Tóxicas → +capa hasta tope.")
+	print(">>>   3) KO Rattata → Bulbasaur: mensajes Stealth Rock → Spikes → Toxic Spikes.")
+	print(">>>   4) KO Bulbasaur → Charizard: Spikes/Toxic NO; Stealth Rock sí (×4); faint limpio si KO.")
+	print(">>>   5) Reflejo no rompe el turno; caduca con mensaje end a los 5 turnos.")
+	print(">>>   Doc: Docs/battle/field-effects.md")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

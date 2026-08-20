@@ -28,7 +28,7 @@ func resolve() -> Array[BattleHandler]:
 		BattleEffectController.run_apply_phase(
 			current, BattleEffect.Phases.ON_VALIDATE_SWITCH, trap_ctx
 		)
-		if trap_ctx.rejected:
+		if trap_ctx.validation != null and trap_ctx.validation.rejected:
 			print("[SWITCH] Pokémon atrapado, no puede cambiar")
 			return []
 	var target_idx := target_index

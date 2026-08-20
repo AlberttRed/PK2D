@@ -40,8 +40,8 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 			return
 		applied = true
 		effect_success = true
-		if ctx != null:
-			ctx.rejected = true
+		if ctx != null and ctx.validation != null:
+			ctx.validation.rejected = true
 		return
 
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
@@ -78,7 +78,8 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, ctx: B
 	if phase == BattleEffect.Phases.ON_VALIDATE_SWITCH:
 		if not applied or not effect_success or ctx == null:
 			return
-		ctx.rejection_message = ui.message_controller.get_trap_block_switch_message(pokemon)
+		if ctx.validation != null:
+			ctx.validation.rejection_message = ui.message_controller.get_trap_block_switch_message(pokemon)
 		return
 
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN or not applied:

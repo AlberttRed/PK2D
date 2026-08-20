@@ -35,7 +35,7 @@ Taunt en `ON_BEFORE_MOVE` actúa como red de seguridad (IA); la restricción pri
 
 ## ON_VALIDATE_MOVE — restricción de selección
 
-Primer rechazo gana (`ctx.rejected` + `ctx.blocking_effect`).
+Primer rechazo gana (`ctx.validation.rejected` + `ctx.validation.blocking_effect`).
 
 | Prioridad | Efecto |
 |-----------|--------|
@@ -45,6 +45,16 @@ Primer rechazo gana (`ctx.rejected` + `ctx.blocking_effect`).
 | 8 | Torment |
 
 `restrict_selectable_moves` usa el mismo orden. Si 0 movimientos elegibles → Forcejeo (`BattleStruggleChoice`).
+
+## ON_VALIDATE_STAT — bloqueo de bajadas de stats
+
+Validación centralizada vía `BattlePhaseContext.stat_change` + resultado en `ctx.validation` (p. ej. Neblina → `block_reason = "mist"`).
+
+Aplica a movimientos con `StatChangeEffect` y a habilidades que bajan stats rivales vía el mismo efecto (p. ej. Intimidate). El bloqueador publica `rejection_message`.
+
+## ON_VALIDATE_AILMENT — bloqueo de estados
+
+Payload en `ctx.ailment`; rechazo en `ctx.validation.rejected` (p. ej. Velo Sagrado, Substitute).
 
 ## ON_VALIDATE_SWITCH / ON_VALIDATE_RUN
 
@@ -69,6 +79,10 @@ Por Pokémon, ordenados por velocidad descendente; dentro de cada uno:
 
 Field/Weather/Side se procesan antes que efectos por Pokémon (`effect_source`).
 
+## Field effects (screens + hazards)
+
+Matriz de stacking, fases, reaplicación y orden de entrada: ver [`field-effects.md`](field-effects.md) (PBI 704).
+
 ## Limpieza
 
 | Evento | Comportamiento |
@@ -80,8 +94,9 @@ Field/Weather/Side se procesan antes que efectos por Pokémon (`effect_source`).
 
 ## Excepciones documentadas
 
-- **Substitute**: pipeline de daño (`ON_INCOMING_DAMAGE_*`) y `ON_VALIDATE_AILMENT`; no participa en restricción de movimientos.
+- **Substitute**: pipeline de daño (`ON_INCOMING_DAMAGE_*`, payload en `ctx.damage`) y `ON_VALIDATE_AILMENT`; no participa en restricción de movimientos.
 - **Perish Song**: mensajes vía `BattleMessageAilment.get_perish_song_tick_message()`.
+- **BattlePhaseContext**: subcontextos opcionales (`validation`, `damage`, `ailment`, `stat_change`, `choice`); ver factories en `BattlePhaseContext.gd`.
 
 ## Casos QA (TestBattle)
 
