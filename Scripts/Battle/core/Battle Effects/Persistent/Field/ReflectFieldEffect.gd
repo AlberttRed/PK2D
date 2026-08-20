@@ -3,7 +3,7 @@ extends ScreenFieldEffect
 
 
 func on_damage(ctx: BattlePhaseContext = null) -> void:
-	var effect: DamageEffect = ctx.damage if ctx != null else null
+	var effect: DamageEffect = ctx.damage.damage if ctx != null and ctx.damage != null else null
 	if effect == null:
 		return
 	if effect.is_critical:

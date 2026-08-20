@@ -320,6 +320,9 @@ func get_end_field_effect_message(effect_id: FieldEffectsEnum.Values, side: Batt
 func get_already_active_field_effect_message() -> Dictionary:
 	return FieldEffectMessages.get_already_active_field_effect_message()
 
+func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_mist_stat_block_message(pokemon)
+
 # ============================================================================
 # Unificado: helpers por familia (limpia BattleUI)
 # ============================================================================

@@ -18,6 +18,7 @@ func _apply() -> void:
 	# Subir stats del usuario si corresponde
 	var changes: Dictionary = move.get_stat_changes()
 	stat_effect = StatChangeEffect.new(user, changes)
+	stat_effect.user = user
 	stat_effect.apply()
 
 func _visualize(ui) -> void:

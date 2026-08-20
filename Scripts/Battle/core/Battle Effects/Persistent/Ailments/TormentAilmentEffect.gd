@@ -83,17 +83,19 @@ func restrict_selectable_moves(pokemon: BattlePokemon, filter: MoveSelectionFilt
 
 func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext = null) -> void:
 	if phase == BattleEffect.Phases.ON_VALIDATE_MOVE:
-		if ctx == null or ctx.move == null or pokemon != target:
+		if ctx == null or ctx.choice == null or ctx.choice.move == null or pokemon != target:
 			return
 		applied = true
 		_rejected_move_id = 0
 		effect_success = false
 		if not is_active():
 			return
-		if blocks_move(pokemon, ctx.move):
+		var blocked_move := ctx.choice.move
+		if blocks_move(pokemon, blocked_move):
 			effect_success = true
-			_rejected_move_id = ctx.move.get_id()
-			ctx.rejected = true
+			_rejected_move_id = blocked_move.get_id()
+			if ctx.validation != null:
+				ctx.validation.rejected = true
 		return
 
 	if phase == BattleEffect.Phases.ON_BEFORE_MOVE:

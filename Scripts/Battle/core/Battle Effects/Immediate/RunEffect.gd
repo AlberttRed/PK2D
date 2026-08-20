@@ -19,7 +19,7 @@ func apply():
 	BattleEffectController.run_apply_phase(
 		pokemon, BattleEffect.Phases.ON_VALIDATE_RUN, run_ctx
 	)
-	if run_ctx.rejected:
+	if run_ctx.validation != null and run_ctx.validation.rejected:
 		_escape_blocked = true
 		succeeded = false
 		return

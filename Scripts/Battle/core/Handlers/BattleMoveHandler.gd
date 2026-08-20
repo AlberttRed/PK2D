@@ -90,7 +90,7 @@ func _validate_ailment_apply(ailment: AilmentData, effect_instance: PersistentBa
 
 	var ctx := BattlePhaseContext.for_ailment(pokemon, ailment)
 	BattleEffectController.run_apply_phase(pokemon, BattleEffect.Phases.ON_VALIDATE_AILMENT, ctx)
-	if ctx.rejected:
+	if ctx.validation != null and ctx.validation.rejected:
 		return ApplyFailReason.Values.GENERIC_FAIL
 
 	if effect_instance != null:

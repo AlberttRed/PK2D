@@ -409,12 +409,17 @@ func _apply_phase(pokemon, phase, ctx: BattlePhaseContext = null):
 	if phase == BattleEffect.Phases.ON_BEFORE_MOVE:
 		_phase_blocker = null
 	for effect in _get_all_effects_to_apply_for(pokemon, phase):
-		if ctx != null and ctx.rejected:
+		if ctx != null and ctx.validation != null and ctx.validation.rejected:
 			break
 		var could_act: bool = pokemon.can_act_this_turn if pokemon != null else true
 		effect.apply_phase(pokemon, phase, ctx)
-		if ctx != null and ctx.rejected and ctx.blocking_effect == null:
-			ctx.blocking_effect = effect
+		if (
+			ctx != null
+			and ctx.validation != null
+			and ctx.validation.rejected
+			and ctx.validation.blocking_effect == null
+		):
+			ctx.validation.blocking_effect = effect
 		if (
 			pokemon != null
 			and could_act
@@ -445,8 +450,8 @@ func _should_skip_phase_visualize(
 		BattleEffect.Phases.ON_VALIDATE_SWITCH,
 		BattleEffect.Phases.ON_VALIDATE_RUN,
 	]:
-		if ctx != null and ctx.blocking_effect != null:
-			return effect != ctx.blocking_effect
+		if ctx != null and ctx.validation != null and ctx.validation.blocking_effect != null:
+			return effect != ctx.validation.blocking_effect
 	return false
 
 func _remove_global_effect_if_finished(effect: PersistentBattleEffect) -> void:

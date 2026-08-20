@@ -20,6 +20,7 @@ func _apply() -> void:
 	if not target.get_pokemon().is_fainted():
 		var changes: Dictionary = move.get_stat_changes()
 		stat_effect = StatChangeEffect.new(target.get_pokemon(), changes)
+		stat_effect.user = user
 		stat_effect.apply()
 
 func _visualize(ui) -> void:

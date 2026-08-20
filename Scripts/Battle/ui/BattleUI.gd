@@ -125,7 +125,7 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 			await BattleEffectController.process_phase(
 				pokemon, BattleEffect.Phases.ON_VALIDATE_RUN, run_ctx
 			)
-			if run_ctx.rejected:
+			if run_ctx.validation != null and run_ctx.validation.rejected:
 				return await show_action_selection(pokemon)
 		return choice
 
@@ -562,9 +562,9 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 			await BattleEffectController.process_phase(
 				pokemon, BattleEffect.Phases.ON_VALIDATE_SWITCH, switch_ctx
 			)
-			if switch_ctx.rejected:
-				if not switch_ctx.rejection_message.is_empty():
-					await _show_party_switch_rejection_message(switch_ctx.rejection_message)
+			if switch_ctx.validation != null and switch_ctx.validation.rejected:
+				if not switch_ctx.validation.rejection_message.is_empty():
+					await _show_party_switch_rejection_message(switch_ctx.validation.rejection_message)
 				await _await_menu_inputs_released()
 				continue
 			selection_state["selected_slot"] = pending_slot
@@ -723,9 +723,9 @@ func show_optional_switch_selection(pokemon: BattlePokemon) -> BattleSwitchChoic
 			await BattleEffectController.process_phase(
 				pokemon, BattleEffect.Phases.ON_VALIDATE_SWITCH, switch_ctx
 			)
-			if switch_ctx.rejected:
-				if not switch_ctx.rejection_message.is_empty():
-					await _show_party_switch_rejection_message(switch_ctx.rejection_message)
+			if switch_ctx.validation != null and switch_ctx.validation.rejected:
+				if not switch_ctx.validation.rejection_message.is_empty():
+					await _show_party_switch_rejection_message(switch_ctx.validation.rejection_message)
 				await _await_menu_inputs_released()
 				continue
 			selection_state["selected_slot"] = pending_slot
@@ -931,7 +931,7 @@ func _finish_move_selection(pokemon: BattlePokemon, move_choice: BattleMoveChoic
 	await BattleEffectController.process_phase(
 		pokemon, BattleEffect.Phases.ON_VALIDATE_MOVE, validate_ctx
 	)
-	if validate_ctx.rejected:
+	if validate_ctx.validation != null and validate_ctx.validation.rejected:
 		await _await_menu_inputs_released()
 		return await show_move_selection(pokemon)
 
@@ -1080,6 +1080,9 @@ func show_stat_stage_change_message(pokemon: BattlePokemon, stat: StatsEnum.Valu
 
 func show_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase: bool):
 	await show_message_from_dict(message_controller.get_generic_stat_stage_failed_message(pokemon, is_increase))
+
+func show_mist_stat_block_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_mist_stat_block_message(pokemon))
 
 func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, ability_id: int) -> void:
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability_id))

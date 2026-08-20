@@ -31,15 +31,23 @@ func _apply_field_effect_for_phase(
 			on_damage_post(ctx)
 		Phases.ON_VALIDATE_AILMENT:
 			_handle_validate_ailment(pokemon, ctx)
+		Phases.ON_VALIDATE_STAT:
+			_handle_validate_stat(pokemon, ctx)
 		_:
 			on_screen_phase(pokemon, phase, ctx)
 
 
-func _handle_validate_ailment(pokemon: BattlePokemon, ctx: BattlePhaseContext = null) -> void:
+func _handle_validate_stat(pokemon: BattlePokemon, ctx: BattlePhaseContext = null) -> void:
 	if ctx == null:
 		return
-	if on_status_restrict(pokemon, ctx.ailment, ctx):
-		ctx.rejected = true
+	on_stat_validate(pokemon, ctx)
+
+
+func _handle_validate_ailment(pokemon: BattlePokemon, ctx: BattlePhaseContext = null) -> void:
+	if ctx == null or ctx.ailment == null or ctx.validation == null:
+		return
+	if on_status_restrict(pokemon, ctx.ailment.ailment, ctx):
+		ctx.validation.rejected = true
 
 
 func on_damage_pre(_ctx: BattlePhaseContext = null) -> void:
@@ -64,12 +72,16 @@ func on_stat_modify(
 	return _value
 
 
+func on_stat_validate(_pokemon: BattlePokemon, _ctx: BattlePhaseContext = null) -> void:
+	pass
+
+
 func on_status_restrict(
 	_pokemon: BattlePokemon,
 	_ailment: AilmentData,
 	_ctx: BattlePhaseContext = null
 ) -> bool:
-	## Devuelve true para rechazar la aplicación del estado (ctx.rejected en ON_VALIDATE_AILMENT).
+	## Devuelve true para rechazar la aplicación del estado (ctx.validation.rejected en ON_VALIDATE_AILMENT).
 	return false
 
 

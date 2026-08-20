@@ -10,7 +10,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Si true, lanza 1vs1 salvaje: Clefairy (Sustituto + Anulación + Destructor + Látigo) vs Pidgey (solo Bostezo).
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
-@export var use_fixed_rattata_vs_gastly: bool = true
+@export var use_fixed_rattata_vs_gastly: bool = false
 ## Si true, Pidgey solo lleva Látigo (útil para probar fallback si el movimiento bloqueado no es usable).
 @export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
@@ -31,7 +31,11 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Debug clima")
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
-@export var use_rain_weather_test: bool = true
+@export var use_rain_weather_test: bool = false
+
+@export_group("Debug field effects")
+## 1vs1 salvaje: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).
+@export var use_mist_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -87,6 +91,11 @@ func _ready() -> void:
 				+ "Desactívalo para probar Anulación → Forcejeo."
 			)
 		await wildFixedSubstituteTestBattle()
+		return
+	if use_mist_test:
+		_seed_test_capture_items()
+		_print_mist_test_guide()
+		await wildMistTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -379,6 +388,21 @@ func wildRainWeatherTestBattle() -> void:
 	print(">>> Batalla clima (Granizo) terminada. Ganador: %s" % winner)
 
 
+func wildMistTestBattle() -> void:
+	_setup_mist_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildMistTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Neblina terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -547,6 +571,54 @@ func _print_rain_weather_test_guide() -> void:
 	print(">>>   4) Sin Velo Sagrado: Onda Trueno puede paralizar; Picotazo Veneno puede envenenar (activa debug_force_ailment_apply para 100%).")
 	print(">>>   5) Tras 5 turnos: mensajes de fin de cada pantalla.")
 	print(">>>   (Opcional) Granizo sigue disponible para probar clima.")
+
+
+func _setup_mist_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_mist_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_mist_test_enemy_instance())
+
+
+func _create_mist_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.MIST,
+		MovesEnum.Values.SWORDS_DANCE,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_mist_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GROWL,
+		MovesEnum.Values.TAIL_WHIP,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_mist_test_guide() -> void:
+	print(">>> Combate Neblina: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).")
+	print(">>>   1) Turno 1 — Neblina: «¡Neblina protege a los Pokémon de tu equipo!»")
+	print(">>>   2) Pidgey usa Gruñido o Látigo → «¡La neblina protege las características de Squirtle!» (sin bajar stats)")
+	print(">>>   3) Squirtle usa Danza Espada → sube Ataque (Neblina no bloquea subidas propias)")
+	print(">>>   4) Repetir Neblina con pantalla activa → «¡Pero falló!»")
+	print(">>>   5) Tras 5 turnos de combate: «¡La neblina en tu equipo se disipó!» → Gruñido/Látigo vuelven a bajar stats")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

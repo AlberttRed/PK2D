@@ -68,3 +68,11 @@ func get_already_active_field_effect_message() -> Dictionary:
     return { "type": "wait", "text": "¡Pero falló!", "wait_time": 1.0 }
 
 
+func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡La neblina protege las características de %s!" % pokemon.get_battle_display_name(true),
+        "wait_time": 1.0,
+    }
+
+
