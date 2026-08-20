@@ -352,9 +352,26 @@ func _get_all_active_effects() -> Array[PersistentBattleEffect]:
 
 func _process_phase(pokemon: BattlePokemon, phase: BattleEffect.Phases, ctx: BattlePhaseContext = null):
 	_phase_blocker = null
-	_apply_phase(pokemon, phase, ctx)
-	await _visualize_phase(pokemon, phase, ctx)
+	# Entrada: apply+visualize por efecto (Gen 4: una bajada de vida y mensaje por hazard).
+	if phase == BattleEffect.Phases.ON_SWITCH_IN:
+		await _process_switch_in_phase(pokemon, ctx)
+	else:
+		_apply_phase(pokemon, phase, ctx)
+		await _visualize_phase(pokemon, phase, ctx)
 	_phase_blocker = null
+
+
+## ON_SWITCH_IN intercalado: cada efecto aplica daño/estado y lo visualiza antes del siguiente.
+func _process_switch_in_phase(pokemon: BattlePokemon, ctx: BattlePhaseContext = null) -> void:
+	var phase := BattleEffect.Phases.ON_SWITCH_IN
+	for effect in _get_all_effects_to_apply_for(pokemon, phase):
+		effect.apply_phase(pokemon, phase, ctx)
+		if not _should_skip_phase_visualize(effect, pokemon, phase, ctx):
+			await effect.visualize_phase(pokemon, ui, phase, ctx)
+		if effect.has_finished():
+			_remove_pokemon_scoped_effect(pokemon, effect)
+		if pokemon != null and pokemon.is_fainted():
+			break
 
 func _build_move_selection_filter(
 	pokemon: BattlePokemon,
@@ -462,6 +479,14 @@ func _should_skip_phase_visualize(
 	]:
 		if ctx != null and ctx.validation != null and ctx.validation.blocking_effect != null:
 			return effect != ctx.validation.blocking_effect
+	# Tras KO por hazard: no visualizar habilidades de entrada (p. ej. Intimidate).
+	if (
+		phase == BattleEffect.Phases.ON_SWITCH_IN
+		and pokemon != null
+		and pokemon.is_fainted()
+		and effect.effect_source == PersistentBattleEffect.EffectSource.ABILITY
+	):
+		return true
 	return false
 
 func _remove_global_effect_if_finished(effect: PersistentBattleEffect) -> void:

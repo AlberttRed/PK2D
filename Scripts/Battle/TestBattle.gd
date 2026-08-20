@@ -43,7 +43,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 entrenador: Squirtle (Púas Tóxicas) vs Rattata + Sandshrew + Ekans + Diglett — capas, absorción y grounded.
 @export var use_toxic_spikes_test: bool = false
 ## 1vs1 entrenador: Squirtle (Trampa Rocas) vs Rattata + Machop + Charizard — daño × efectividad Roca.
-@export var use_stealth_rock_test: bool = true
+@export var use_stealth_rock_test: bool = false
+## 1vs1 entrenador: Reflect + Spikes + Toxic Spikes + Stealth Rock — convivencia PBI 704.
+@export var use_field_effects_integration_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -124,6 +126,12 @@ func _ready() -> void:
 		_seed_test_capture_items()
 		_print_stealth_rock_test_guide()
 		await stealthRockTrainerTestBattle()
+		return
+	if use_field_effects_integration_test:
+		_seed_test_capture_items()
+		BattleDebugEffectSeeder.enable_reflect_only()
+		_print_field_effects_integration_test_guide()
+		await fieldEffectsIntegrationTrainerTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -471,6 +479,15 @@ func stealthRockTrainerTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla Trampa Rocas terminada. Ganador: %s" % winner)
+
+
+func fieldEffectsIntegrationTrainerTestBattle() -> void:
+	var player_participant := _create_field_effects_integration_player_participant()
+	var trainer_participant := _create_field_effects_integration_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla integración field effects terminada. Ganador: %s" % winner)
 
 
 func wildFixedSubstituteTestBattle() -> void:
@@ -924,6 +941,71 @@ func _print_stealth_rock_test_guide() -> void:
 	print(">>>   2) KO Rattata (Normal, ×1) → daño ~1/8 + «piedras puntiagudas hirieron…»")
 	print(">>>   3) Machop (Lucha, ×0.5) → daño ~1/16")
 	print(">>>   4) Charizard (Fuego/Volador, ×4) → daño ~1/2 (Volador NO inmuniza)")
+
+
+func _create_field_effects_integration_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.SPIKES,
+		MovesEnum.Values.TOXIC_SPIKES,
+		MovesEnum.Values.STEALTH_ROCK,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_field_effects_integration_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var bulbasaur := Pokemon.new()
+	bulbasaur.pokemon_id = PokemonsEnum.Values.BULBASAUR as PokemonsEnum.Values
+	bulbasaur.level = 12
+	bulbasaur.is_wild = false
+	bulbasaur.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.GROWL]
+	bulbasaur._post_init()
+	var charizard := Pokemon.new()
+	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
+	charizard.level = 12
+	charizard.is_wild = false
+	charizard.custom_move_ids = [MovesEnum.Values.SCRATCH, MovesEnum.Values.EMBER]
+	charizard._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var grounded: BattlePokemon = bulbasaur.to_battle_pokemon()
+	var flyer: BattlePokemon = charizard.to_battle_pokemon()
+	for bp in [lead, grounded, flyer]:
+		bp.setIA(ia)
+		bp.controllable = false
+	var participant := BattleParticipant.new([lead, grounded, flyer])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_field_effects_integration_test_guide() -> void:
+	print(">>> Integración field effects (PBI 704): Squirtle Nv.40 vs Rattata + Bulbasaur + Charizard (Nv.12).")
+	print(">>>   Movimientos: Púas + Púas Tóxicas + Trampa Rocas + Pistola Agua.")
+	print(">>>   Reflejo se siembra al inicio en tu lado (5 turnos) para coexistir con hazards.")
+	print(">>>   1) Coloca los 3 hazards (orden libre de colocación).")
+	print(">>>   2) Reaplica Trampa Rocas → fail; Púas/Púas Tóxicas → +capa hasta tope.")
+	print(">>>   3) KO Rattata → Bulbasaur: mensajes Stealth Rock → Spikes → Toxic Spikes.")
+	print(">>>   4) KO Bulbasaur → Charizard: Spikes/Toxic NO; Stealth Rock sí (×4); faint limpio si KO.")
+	print(">>>   5) Reflejo no rompe el turno; caduca con mensaje end a los 5 turnos.")
+	print(">>>   Doc: Docs/battle/field-effects.md")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

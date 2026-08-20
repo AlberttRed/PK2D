@@ -79,6 +79,10 @@ Por Pokémon, ordenados por velocidad descendente; dentro de cada uno:
 
 Field/Weather/Side se procesan antes que efectos por Pokémon (`effect_source`).
 
+## Field effects (screens + hazards)
+
+Matriz de stacking, fases, reaplicación y orden de entrada: ver [`field-effects.md`](field-effects.md) (PBI 704).
+
 ## Limpieza
 
 | Evento | Comportamiento |

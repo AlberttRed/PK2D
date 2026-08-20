@@ -30,6 +30,11 @@ const END_VOLATILE_TICK := 5
 ## Daño entrante / validación de estados (Substitute).
 const INCOMING_SUBSTITUTE := 6
 
+## ON_SWITCH_IN — hazards de entrada (Gen 4: Stealth Rock → Spikes → Toxic Spikes).
+const SWITCH_IN_STEALTH_ROCK := 30
+const SWITCH_IN_SPIKES := 20
+const SWITCH_IN_TOXIC_SPIKES := 10
+
 
 ## Prioridad de un efecto en una fase concreta. 0 = sin preferencia (orden estable al final).
 static func get_for(effect: PersistentBattleEffect, phase: BattleEffect.Phases) -> int:
@@ -45,6 +50,8 @@ static func get_for(effect: PersistentBattleEffect, phase: BattleEffect.Phases) 
 			return _validate_trap_priority(effect_class)
 		BattleEffect.Phases.ON_END_BATTLE_TURN:
 			return _end_turn_priority(effect_class)
+		BattleEffect.Phases.ON_SWITCH_IN:
+			return _switch_in_priority(effect_class)
 		BattleEffect.Phases.ON_INCOMING_DAMAGE_PRE, \
 		BattleEffect.Phases.ON_INCOMING_DAMAGE_CALCULATE, \
 		BattleEffect.Phases.ON_INCOMING_DAMAGE_FINALIZE, \
@@ -124,4 +131,15 @@ static func _end_turn_priority(effect_class: String) -> int:
 		"EncoreAilmentEffect", "TauntAilmentEffect", \
 		"DisableAilmentEffect", "TormentAilmentEffect":
 			return END_VOLATILE_TICK
+	return 0
+
+
+static func _switch_in_priority(effect_class: String) -> int:
+	match effect_class:
+		"StealthRockFieldEffect":
+			return SWITCH_IN_STEALTH_ROCK
+		"SpikesFieldEffect":
+			return SWITCH_IN_SPIKES
+		"ToxicSpikesFieldEffect":
+			return SWITCH_IN_TOXIC_SPIKES
 	return 0

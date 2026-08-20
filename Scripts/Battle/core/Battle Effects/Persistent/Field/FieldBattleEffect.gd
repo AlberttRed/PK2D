@@ -101,5 +101,7 @@ func _get_message_pokemon() -> BattlePokemon:
 	return null
 
 
+## Preferencia genérica de field; el orden fino por fase vive en BattleEffectPriority
+## (p. ej. hazards en ON_SWITCH_IN: Stealth Rock → Spikes → Toxic Spikes).
 func get_priority() -> int:
 	return 5
