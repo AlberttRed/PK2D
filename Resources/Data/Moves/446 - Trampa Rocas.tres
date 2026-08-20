@@ -3,6 +3,7 @@
 [ext_resource type="Resource" path="res://Resources/Move Categories/FieldEffectMoveCategory.tres" id="1_1idfw"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_n3mja"]
 [ext_resource type="Resource" uid="uid://dhburvcqxnam0" path="res://Resources/Data/Types/06.tres" id="2_kbve4"]
+[ext_resource type="Script" path="res://Scripts/Battle/core/Battle Effects/Immediate/Moves/StealthRockMoveEffect.gd" id="4_moveeffect"]
 
 [resource]
 resource_name = "446 - Trampa Rocas"
@@ -21,4 +22,5 @@ effect_entries = "Causes damage when opposing Pokémon switch in. Spreads sharp 
 rapid spin removes this effect from its user's side of the field."
 target_id = 6
 meta_category_id = 11
+move_effect = ExtResource("4_moveeffect")
 category = ExtResource("1_1idfw")

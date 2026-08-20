@@ -1087,6 +1087,9 @@ func show_mist_stat_block_message(pokemon: BattlePokemon) -> void:
 func show_spikes_damage_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_spikes_damage_message(pokemon))
 
+func show_stealth_rock_damage_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_stealth_rock_damage_message(pokemon))
+
 func show_toxic_spikes_absorbed_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_toxic_spikes_absorbed_message(pokemon))
 

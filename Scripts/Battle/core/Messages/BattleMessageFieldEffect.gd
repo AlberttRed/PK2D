@@ -32,7 +32,10 @@ func get_start_field_effect_message(effect_id: int, side: BattleSide = null) -> 
             else:
                 msg = "¡Se esparcieron púas tóxicas alrededor del equipo rival!"
         MovesEnum.Values.STEALTH_ROCK:
-            msg = "¡Trampa Rocas rodea %s!" % side_name
+            if side.type == BattleSide.Types.PLAYER:
+                msg = "¡Trampa Rocas rodea a tu equipo!"
+            else:
+                msg = "¡Trampa Rocas rodea al equipo rival!"
         MovesEnum.Values.STICKY_WEB:
             msg = "¡Red Viscosa se extendió en %s!" % side_name
         _:
@@ -91,6 +94,14 @@ func get_spikes_damage_message(pokemon: BattlePokemon) -> Dictionary:
     return {
         "type": "wait",
         "text": "¡%s ha recibido daño por las púas!" % pokemon.get_battle_display_name(true),
+        "wait_time": 1.0,
+    }
+
+
+func get_stealth_rock_damage_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡Las piedras puntiagudas hirieron %s!" % pokemon.get_battle_target_name(),
         "wait_time": 1.0,
     }
 
