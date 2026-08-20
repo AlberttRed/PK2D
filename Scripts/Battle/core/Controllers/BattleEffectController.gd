@@ -72,6 +72,16 @@ static func get_pokemon_effects(pokemon):
 static func get_side_effects(pokemon):
 	return get_instance()._get_side_effects(pokemon)
 
+## Multiplicador acumulado de velocidad por efectos de lado (Tailwind, etc.).
+static func get_speed_multiplier(pokemon: BattlePokemon) -> float:
+	var mult := 1.0
+	if pokemon == null:
+		return mult
+	for effect in get_side_effects(pokemon):
+		if effect is FieldBattleEffect:
+			mult *= (effect as FieldBattleEffect).get_speed_multiplier(pokemon)
+	return mult
+
 static func get_field_effects():
 	return get_instance()._get_field_effects()
 
@@ -397,8 +407,8 @@ func _get_pokemon_keys_sorted_by_speed() -> Array:
 		var pb := b as BattlePokemon
 		if pa == null or pb == null:
 			return str(a) < str(b)
-		var speed_a: int = pa.get_speed()
-		var speed_b: int = pb.get_speed()
+		var speed_a: int = pa.get_effective_speed()
+		var speed_b: int = pb.get_effective_speed()
 		if speed_a != speed_b:
 			return speed_a > speed_b
 		return pa.get_instance_id() < pb.get_instance_id()

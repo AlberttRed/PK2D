@@ -35,7 +35,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Debug field effects")
 ## 1vs1 salvaje: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).
-@export var use_mist_test: bool = true
+@export var use_mist_test: bool = false
+## 1vs1 salvaje: Slowpoke Nv.50 vs Pidgey Nv.24 — Tailwind invierte orden (~40 vs ~39).
+@export var use_tailwind_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -96,6 +98,11 @@ func _ready() -> void:
 		_seed_test_capture_items()
 		_print_mist_test_guide()
 		await wildMistTestBattle()
+		return
+	if use_tailwind_test:
+		_seed_test_capture_items()
+		_print_tailwind_test_guide()
+		await wildTailwindTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -403,6 +410,21 @@ func wildMistTestBattle() -> void:
 	print(">>> Batalla Neblina terminada. Ganador: %s" % winner)
 
 
+func wildTailwindTestBattle() -> void:
+	_setup_tailwind_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildTailwindTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Viento Afín terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -619,6 +641,49 @@ func _print_mist_test_guide() -> void:
 	print(">>>   3) Squirtle usa Danza Espada → sube Ataque (Neblina no bloquea subidas propias)")
 	print(">>>   4) Repetir Neblina con pantalla activa → «¡Pero falló!»")
 	print(">>>   5) Tras 5 turnos de combate: «¡La neblina en tu equipo se disipó!» → Gruñido/Látigo vuelven a bajar stats")
+
+
+func _setup_tailwind_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_tailwind_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_tailwind_test_enemy_instance())
+
+
+func _create_tailwind_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SLOWPOKE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.TAILWIND,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_tailwind_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 24
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_tailwind_test_guide() -> void:
+	print(">>> Combate Viento Afín: Slowpoke Nv.50 (Viento Afín + Placaje) vs Pidgey Nv.24 (Tornado + Placaje).")
+	print(">>>   1) Turno 1 — Pidgey más rápido actúa primero (~39 vs ~20); Slowpoke usa Viento Afín.")
+	print(">>>   2) Turnos 2-4 — Slowpoke debería actuar primero (~40 vs ~39 en log de velocidad efectiva).")
+	print(">>>   3) Repetir Viento Afín activo → «¡Pero falló!»")
+	print(">>>   4) Tras 3 turnos de combate: «¡Viento Afín de tu equipo amainó!» → Pidgey vuelve a ir primero.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

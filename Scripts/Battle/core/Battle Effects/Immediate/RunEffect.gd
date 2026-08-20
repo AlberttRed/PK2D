@@ -32,7 +32,7 @@ func apply():
 
 func _calculate_escape_success() -> bool:
 	# Fórmula fiel a los juegos originales de Pokémon
-	var user_speed = pokemon.get_speed()
+	var user_speed = pokemon.get_effective_speed()
 	var side = pokemon.side
 	var opponent_side = side.opponent_side
 	
@@ -45,7 +45,7 @@ func _calculate_escape_success() -> bool:
 	# Iterar por cada Pokémon rival activo
 	for opponent_pokemon in opponent_pokemons:
 		var a = user_speed
-		var b = opponent_pokemon.get_speed()
+		var b = opponent_pokemon.get_effective_speed()
 		var n = side.escapeAttempts
 		
 		var base_chance = (a * 128.0) / b + 30 * n

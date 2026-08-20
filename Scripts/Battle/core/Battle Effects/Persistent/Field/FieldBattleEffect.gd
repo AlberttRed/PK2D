@@ -40,6 +40,11 @@ func applies_to_side(pokemon_side_key: String) -> bool:
 	return not side_key.is_empty() and pokemon_side_key == side_key
 
 
+## Multiplicador de velocidad efectiva para Pokémon del lado (p. ej. Tailwind → 2.0).
+func get_speed_multiplier(_pokemon: BattlePokemon) -> float:
+	return 1.0
+
+
 func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext = null) -> void:
 	if phase == Phases.ON_END_BATTLE_TURN:
 		next_turn()

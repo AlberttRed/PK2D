@@ -116,7 +116,7 @@ func order_choices(battle_choices: Array[BattleChoice]) -> Array[BattleChoice]:
 		if actor == null:
 			continue
 		var pkmn_name = actor.get_name()
-		var speed = actor.get_speed()
+		var speed = actor.get_effective_speed()
 		var action_desc := ""
 		if choice is BattleMoveChoice and choice.get_move() != null:
 			action_desc = "usará %s" % choice.get_move().get_name()
@@ -146,8 +146,8 @@ func _sort_choices(a: BattleChoice, b: BattleChoice) -> bool:
 		return a.get_priority() > b.get_priority()
 
 	# 2. Velocidad
-	var speed_a: int = a.pokemon.get_speed() if a.pokemon != null else 0
-	var speed_b: int = b.pokemon.get_speed() if b.pokemon != null else 0
+	var speed_a: int = a.pokemon.get_effective_speed() if a.pokemon != null else 0
+	var speed_b: int = b.pokemon.get_effective_speed() if b.pokemon != null else 0
 
 	if speed_a != speed_b:
 		return speed_a > speed_b

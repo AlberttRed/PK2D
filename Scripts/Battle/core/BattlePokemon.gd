@@ -213,6 +213,14 @@ func get_sp_defense() -> int:
 func get_speed() -> int:
 	return speed
 
+
+## Velocidad para orden de turno, huida y ticks: stats con stages + multiplicadores de lado.
+func get_effective_speed() -> int:
+	var value := int(get_modified_stat(StatsEnum.Values.SPEED))
+	value = int(value * BattleEffectController.get_speed_multiplier(self))
+	return maxi(value, 1)
+
+
 func get_name() -> String:
 	return base_data.base.Name
 
