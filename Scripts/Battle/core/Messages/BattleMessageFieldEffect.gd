@@ -21,7 +21,9 @@ func get_start_field_effect_message(effect_id: int, side: BattleSide = null) -> 
         MovesEnum.Values.TAILWIND:
             msg = "¡Viento Afín sopla a favor de %s!" % side_name
         MovesEnum.Values.SPIKES:
-            msg = "¡Púas fueron esparcidas en %s!" % side_name
+            # HGSS: «¡Se esparcieron púas alrededor del equipo enemigo/tu equipo!»
+            var spikes_side := "tu equipo" if side.type == BattleSide.Types.PLAYER else "el equipo rival"
+            msg = "¡Se esparcieron púas alrededor de %s!" % spikes_side
         MovesEnum.Values.STEALTH_ROCK:
             msg = "¡Trampa Rocas rodea %s!" % side_name
         MovesEnum.Values.STICKY_WEB:
@@ -72,6 +74,14 @@ func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
     return {
         "type": "wait",
         "text": "¡La neblina protege las características de %s!" % pokemon.get_battle_display_name(true),
+        "wait_time": 1.0,
+    }
+
+
+func get_spikes_damage_message(pokemon: BattlePokemon) -> Dictionary:
+    return {
+        "type": "wait",
+        "text": "¡%s ha recibido daño por las púas!" % pokemon.get_battle_display_name(true),
         "wait_time": 1.0,
     }
 

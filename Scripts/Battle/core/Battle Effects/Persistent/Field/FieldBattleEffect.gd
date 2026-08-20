@@ -12,22 +12,18 @@ extends PersistentBattleEffect
 ## Las implementaciones concretas deben heredar de ScreenFieldEffect o HazardFieldEffect,
 ## no directamente de FieldBattleEffect, salvo casos excepcionales documentados.
 
-## Clave del lado protegido o afectado: "Player" | "Enemy" (BattleSide._to_string()).
-var side_key: String = ""
-## Texto legible del lado para mensajes u opcionalmente UI ("tu lado", "el lado rival", …).
-var side_display_name: String = "tu lado"
+## Lado protegido o afectado (PLAYER / ENEMY).
+var side_type: BattleSide.Types = BattleSide.Types.NONE
 
 
 func _init(
 	_source = null,
 	_duration: int = 5,
-	_side_key: String = "",
-	_side_display: String = "tu lado"
+	_side_type: BattleSide.Types = BattleSide.Types.NONE
 ) -> void:
 	super._init(_source)
 	turns_left = _duration
-	side_key = _side_key
-	side_display_name = _side_display
+	side_type = _side_type
 
 
 func get_effect_id() -> int:
@@ -36,8 +32,8 @@ func get_effect_id() -> int:
 	return 0
 
 
-func applies_to_side(pokemon_side_key: String) -> bool:
-	return not side_key.is_empty() and pokemon_side_key == side_key
+func applies_to_side(lookup_side_type: BattleSide.Types) -> bool:
+	return lookup_side_type != BattleSide.Types.NONE and lookup_side_type == side_type
 
 
 ## Multiplicador de velocidad efectiva para Pokémon del lado (p. ej. Tailwind → 2.0).

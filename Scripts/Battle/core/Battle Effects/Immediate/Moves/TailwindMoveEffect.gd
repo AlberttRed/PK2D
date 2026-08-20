@@ -2,24 +2,17 @@ extends BattleMoveEffect
 class_name TailwindMoveEffect
 
 var already_active := false
-var side_key: String
-var side_display: String
 
 func apply():
-	var side := user.side
-	side_key = side._to_string()
-	side_display = "tu lado" if side.type == BattleSide.Types.PLAYER else "el lado rival"
-
+	var side_type := user.side.type
 	var duration := 3
-	var effect_instance: PersistentBattleEffect = TailwindFieldEffect.new(
-		move, duration, side_key, side_display
-	)
+	var effect_instance: PersistentBattleEffect = TailwindFieldEffect.new(move, duration, side_type)
 
-	if BattleEffectController.has_side_effect(side_key, effect_instance):
+	if BattleEffectController.has_side_effect(side_type, effect_instance):
 		already_active = true
 		return
 
-	BattleEffectController.add_side_effect(side_key, effect_instance)
+	BattleEffectController.add_side_effect(side_type, effect_instance)
 
 func visualize(ui: BattleUI):
 	if already_active:

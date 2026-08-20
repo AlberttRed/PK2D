@@ -13,8 +13,7 @@ func on_damage(ctx: BattlePhaseContext = null) -> void:
 		return
 	if not effect.move.is_special_category():
 		return
-	var target_side_key: String = damage_target.side._to_string()
-	if not applies_to_side(target_side_key):
+	if not applies_to_side(damage_target.side.type):
 		return
 	var is_double: bool = damage_target.side.get_active_pokemons().size() > 1
 	var mult := 2.0 / 3.0 if is_double else 0.5

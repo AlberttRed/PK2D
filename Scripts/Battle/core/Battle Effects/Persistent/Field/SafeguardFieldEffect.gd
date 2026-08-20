@@ -15,7 +15,7 @@ func on_status_restrict(
 		return false
 	if not _is_major_status_ailment(ailment):
 		return false
-	return applies_to_side(pokemon.side._to_string())
+	return applies_to_side(pokemon.side.type)
 
 
 static func _is_major_status_ailment(ailment: AilmentData) -> bool:

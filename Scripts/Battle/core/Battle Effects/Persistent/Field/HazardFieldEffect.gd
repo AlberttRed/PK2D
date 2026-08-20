@@ -4,7 +4,7 @@ extends FieldBattleEffect
 ## Subbase para trampas de lado que se activan al entrar un Pokémon (switch-in).
 ## Ejemplos: Spikes, Toxic Spikes, Stealth Rock, Sticky Web.
 ##
-## side_key identifica el lado donde están las trampas (normalmente el rival).
+## side_type identifica el lado donde están las trampas (normalmente el rival).
 ## La activación usa Phases.ON_SWITCH_IN (equivalente al ON_ENTRY del diseño).
 ##
 ## Las trampas no caducan por turnos por defecto (turns_left = null).
@@ -17,11 +17,10 @@ var max_layers: int = 1
 
 func _init(
 	_source = null,
-	_side_key: String = "",
-	_side_display: String = "el lado rival",
+	_side_type: BattleSide.Types = BattleSide.Types.NONE,
 	_max_layers: int = 1
 ) -> void:
-	super._init(_source, 1, _side_key, _side_display)
+	super._init(_source, 1, _side_type)
 	turns_left = null
 	max_layers = maxi(_max_layers, 1)
 	layers = 0
@@ -86,4 +85,4 @@ func _should_decrement_turns() -> bool:
 func _triggers_on_entry_for(pokemon: BattlePokemon) -> bool:
 	if pokemon == null or pokemon.side == null:
 		return false
-	return is_active() and applies_to_side(pokemon.side._to_string())
+	return is_active() and applies_to_side(pokemon.side.type)

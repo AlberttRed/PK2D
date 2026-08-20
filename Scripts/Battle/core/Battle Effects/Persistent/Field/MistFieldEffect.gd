@@ -16,7 +16,7 @@ func on_stat_validate(_pokemon: BattlePokemon, ctx: BattlePhaseContext = null) -
 		return
 	if stat_source.side == stat_target.side:
 		return
-	if applies_to_side(stat_target.side._to_string()):
+	if applies_to_side(stat_target.side.type):
 		ctx.validation.block_reason = "mist"
 		ctx.validation.rejected = true
 		ctx.validation.rejection_message = BattleMessageFieldEffect.new().get_mist_stat_block_message(

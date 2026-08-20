@@ -6,7 +6,8 @@ enum EffectSource { WEATHER, FIELD, AILMENT, ABILITY, ITEM, OTHER }
 var source # AilmentData/AbilityData/WeatherData
 var effect_source: EffectSource = EffectSource.OTHER
 var effect_success:bool
-var turns_left:int
+## Turnos restantes; null = sin caducidad por turnos (p. ej. trampas de entrada).
+var turns_left = null
 var applied:bool = false
 var application_chance: int = 100
 

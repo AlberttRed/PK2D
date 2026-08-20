@@ -50,10 +50,10 @@ static func _seed_reflect(player_pkmn: BattlePokemon) -> void:
 		push_warning("BattleDebugEffectSeeder: no se encontró el movimiento Reflejo (115).")
 		return
 	var battle_move := BattleMove.new(Move.new(move_data), player_pkmn)
-	var reflect := ReflectFieldEffect.new(battle_move, 5, "Player", "tu lado")
-	if BattleEffectController.has_side_effect("Player", reflect):
+	var reflect := ReflectFieldEffect.new(battle_move, 5, BattleSide.Types.PLAYER)
+	if BattleEffectController.has_side_effect(BattleSide.Types.PLAYER, reflect):
 		return
-	BattleEffectController.add_side_effect("Player", reflect)
+	BattleEffectController.add_side_effect(BattleSide.Types.PLAYER, reflect)
 
 static func _seed_poison(player_pkmn: BattlePokemon) -> void:
 	var poison_data: AilmentData = AilmentData.from_major_status(CONST.STATUS.POISON)

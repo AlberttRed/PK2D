@@ -29,10 +29,10 @@ static func remove_major_status_ailment_effect(pokemon: BattlePokemon, ailment_e
 static func clear_pokemon_effects(pokemon):
 	get_instance()._clear_pokemon_effects(pokemon)
 
-static func add_side_effect(side: String, effect: PersistentBattleEffect):
+static func add_side_effect(side: BattleSide.Types, effect: PersistentBattleEffect):
 	get_instance()._add_side_effect(side, effect)
 
-static func remove_side_effect(side: String, effect: PersistentBattleEffect):
+static func remove_side_effect(side: BattleSide.Types, effect: PersistentBattleEffect):
 	get_instance()._remove_side_effect(side, effect)
 
 static func add_field_effect(effect: PersistentBattleEffect):
@@ -50,7 +50,7 @@ static func has_effect_for(pokemon, effect_instance: PersistentBattleEffect) -> 
 static func has_field_effect(effect_instance: PersistentBattleEffect) -> bool:
 	return effect_instance != null and get_instance()._has_field_effect(effect_instance)
 
-static func has_side_effect(side: String, effect_instance: PersistentBattleEffect) -> bool:
+static func has_side_effect(side: BattleSide.Types, effect_instance: PersistentBattleEffect) -> bool:
 	return effect_instance != null and get_instance()._has_side_effect(side, effect_instance)
 
 static func get_all_effects_for(pokemon):
@@ -145,27 +145,27 @@ static func reset_effects():
 		instance.pokemon_effects.clear()
 		instance.field_effects.clear()
 		instance.side_effects.clear()
-		instance._ensure_side_effect_list("Player")
-		instance._ensure_side_effect_list("Enemy")
+		instance._ensure_side_effect_list(BattleSide.Types.PLAYER)
+		instance._ensure_side_effect_list(BattleSide.Types.ENEMY)
 
 # 🔐 Datos internos
 var pokemon_effects: Dictionary = {}  # BattlePokemon -> Array[PersistentBattleEffect]
 var field_effects: Array[PersistentBattleEffect] = []
-var side_effects: Dictionary = {}  # String -> Array[PersistentBattleEffect]
+var side_effects: Dictionary = {}  # BattleSide.Types -> Array[PersistentBattleEffect]
 var ui: BattleUI
 ## Primer efecto que bloqueó la acción en la fase ON_BEFORE_MOVE actual (visualización).
 var _phase_blocker: PersistentBattleEffect = null
 
 func _ready():
 	_instance = self
-	_ensure_side_effect_list("Player")
-	_ensure_side_effect_list("Enemy")
+	_ensure_side_effect_list(BattleSide.Types.PLAYER)
+	_ensure_side_effect_list(BattleSide.Types.ENEMY)
 
 func _empty_effect_list() -> Array[PersistentBattleEffect]:
 	var list: Array[PersistentBattleEffect] = []
 	return list
 
-func _ensure_side_effect_list(side: String) -> Array[PersistentBattleEffect]:
+func _ensure_side_effect_list(side: BattleSide.Types) -> Array[PersistentBattleEffect]:
 	if not side_effects.has(side):
 		side_effects[side] = _empty_effect_list()
 	return side_effects[side]
@@ -209,11 +209,11 @@ func _clear_pokemon_effects(pokemon) -> void:
 	if pokemon_effects.has(key):
 		pokemon_effects.erase(key)
 
-func _add_side_effect(side: String, effect: PersistentBattleEffect):
+func _add_side_effect(side: BattleSide.Types, effect: PersistentBattleEffect):
 	_register_effect(effect)
 	_ensure_side_effect_list(side).append(effect)
 
-func _remove_side_effect(side: String, effect: PersistentBattleEffect):
+func _remove_side_effect(side: BattleSide.Types, effect: PersistentBattleEffect):
 	if not side_effects.has(side):
 		return
 	var target_class = effect.get_script().get_global_name()
@@ -245,7 +245,7 @@ func _has_field_effect(effect: PersistentBattleEffect) -> bool:
 	var target_class = effect.get_script().get_global_name()
 	return field_effects.any(func(e): return e.get_script().get_global_name() == target_class)
 
-func _has_side_effect(side: String, effect: PersistentBattleEffect) -> bool:
+func _has_side_effect(side: BattleSide.Types, effect: PersistentBattleEffect) -> bool:
 	if not side_effects.has(side):
 		return false
 	var target_class = effect.get_script().get_global_name()
@@ -332,9 +332,9 @@ func _resolve_pokemon_effect_key(pokemon: BattlePokemon) -> BattlePokemon:
 func _get_side_effects(pokemon: BattlePokemon) -> Array[PersistentBattleEffect]:
 	if pokemon == null or pokemon.side == null:
 		return _empty_effect_list()
-	var side := pokemon.side.to_string()
-	if side_effects.has(side):
-		var list: Array[PersistentBattleEffect] = side_effects[side]
+	var side_type := pokemon.side.type
+	if side_effects.has(side_type):
+		var list: Array[PersistentBattleEffect] = side_effects[side_type]
 		return list.duplicate()
 	return _empty_effect_list()
 
@@ -376,8 +376,8 @@ func _get_selectable_move_indices(pokemon: BattlePokemon) -> Array[int]:
 func _process_global_phase(phase: BattleEffect.Phases):
 	var global_effects: Array[PersistentBattleEffect] = []
 	global_effects.append_array(field_effects)
-	for side_key in side_effects.keys():
-		global_effects.append_array(side_effects[side_key])
+	for side_type in side_effects.keys():
+		global_effects.append_array(side_effects[side_type])
 	global_effects = _sort_effects_for_phase(global_effects, phase, false)
 	for effect in global_effects:
 		effect.apply_phase(null, phase)
@@ -470,32 +470,32 @@ func _remove_global_effect_if_finished(effect: PersistentBattleEffect) -> void:
 	if field_effects.any(func(e): return e == effect):
 		remove_field_effect(effect)
 		return
-	for side_key in side_effects.keys():
-		if side_effects[side_key].any(func(e): return e == effect):
-			remove_side_effect(side_key, effect)
+	for side_type in side_effects.keys():
+		if side_effects[side_type].any(func(e): return e == effect):
+			remove_side_effect(side_type, effect)
 			return
 
 func _remove_pokemon_scoped_effect(pokemon, effect: PersistentBattleEffect) -> void:
 	if _get_pokemon_effects(pokemon).any(func(e): return e == effect):
 		remove_pokemon_effect(pokemon, effect)
 	elif _get_side_effects(pokemon).any(func(e): return e == effect):
-		remove_side_effect(pokemon.side.to_string(), effect)
+		remove_side_effect(pokemon.side.type, effect)
 	elif field_effects.any(func(e): return e == effect):
 		remove_field_effect(effect)
 
 func _apply_global_phase(phase: BattleEffect.Phases) -> void:
 	var global_effects: Array[PersistentBattleEffect] = []
 	global_effects.append_array(field_effects)
-	for side_key in side_effects.keys():
-		global_effects.append_array(side_effects[side_key])
+	for side_type in side_effects.keys():
+		global_effects.append_array(side_effects[side_type])
 	for effect in _sort_effects_for_phase(global_effects, phase, false):
 		await effect.apply_phase(null, phase)
 
 func _visualize_global_phase(phase: BattleEffect.Phases) -> void:
 	var global_effects: Array[PersistentBattleEffect] = []
 	global_effects.append_array(field_effects)
-	for side_key in side_effects.keys():
-		global_effects.append_array(side_effects[side_key])
+	for side_type in side_effects.keys():
+		global_effects.append_array(side_effects[side_type])
 	for effect in _sort_effects_for_phase(global_effects, phase, true):
 		await effect.visualize_phase(null, ui, phase)
 		_remove_global_effect_if_finished(effect)

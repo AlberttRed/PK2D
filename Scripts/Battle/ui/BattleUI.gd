@@ -1084,6 +1084,9 @@ func show_generic_stat_stage_failed_message(pokemon: BattlePokemon, is_increase:
 func show_mist_stat_block_message(pokemon: BattlePokemon) -> void:
 	await show_message_from_dict(message_controller.get_mist_stat_block_message(pokemon))
 
+func show_spikes_damage_message(pokemon: BattlePokemon) -> void:
+	await show_message_from_dict(message_controller.get_spikes_damage_message(pokemon))
+
 func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, ability_id: int) -> void:
 	await show_message_from_dict(message_controller.get_ability_effect_message(user, target, ability_id))
 

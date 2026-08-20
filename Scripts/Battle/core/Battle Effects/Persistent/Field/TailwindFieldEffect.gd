@@ -10,6 +10,6 @@ const SPEED_MULTIPLIER: float = 2.0
 func get_speed_multiplier(pokemon: BattlePokemon) -> float:
 	if pokemon == null or pokemon.side == null or has_finished():
 		return 1.0
-	if applies_to_side(pokemon.side._to_string()):
+	if applies_to_side(pokemon.side.type):
 		return SPEED_MULTIPLIER
 	return 1.0

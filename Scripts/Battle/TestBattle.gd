@@ -37,7 +37,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Squirtle (Neblina + Danza Espada + Pistola Agua + Placaje) vs Pidgey (Gruñido + Látigo + Tornado + Placaje).
 @export var use_mist_test: bool = false
 ## 1vs1 salvaje: Slowpoke Nv.50 vs Pidgey Nv.24 — Tailwind invierte orden (~40 vs ~39).
-@export var use_tailwind_test: bool = true
+@export var use_tailwind_test: bool = false
+## 1vs1 entrenador: Squirtle (Púas) vs Rattata + Bulbasaur (+ Pidgey Volador) — capas y daño al entrar.
+@export var use_spikes_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -103,6 +105,11 @@ func _ready() -> void:
 		_seed_test_capture_items()
 		_print_tailwind_test_guide()
 		await wildTailwindTestBattle()
+		return
+	if use_spikes_test:
+		_seed_test_capture_items()
+		_print_spikes_test_guide()
+		await spikesTrainerTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -425,6 +432,15 @@ func wildTailwindTestBattle() -> void:
 	print(">>> Batalla Viento Afín terminada. Ganador: %s" % winner)
 
 
+func spikesTrainerTestBattle() -> void:
+	var player_participant := _create_spikes_test_player_participant()
+	var trainer_participant := _create_spikes_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Púas terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -684,6 +700,69 @@ func _print_tailwind_test_guide() -> void:
 	print(">>>   2) Turnos 2-4 — Slowpoke debería actuar primero (~40 vs ~39 en log de velocidad efectiva).")
 	print(">>>   3) Repetir Viento Afín activo → «¡Pero falló!»")
 	print(">>>   4) Tras 3 turnos de combate: «¡Viento Afín de tu equipo amainó!» → Pidgey vuelve a ir primero.")
+
+
+func _create_spikes_test_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.SPIKES,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_spikes_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var bulbasaur := Pokemon.new()
+	bulbasaur.pokemon_id = PokemonsEnum.Values.BULBASAUR as PokemonsEnum.Values
+	bulbasaur.level = 12
+	bulbasaur.is_wild = false
+	bulbasaur.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.GROWL]
+	bulbasaur._post_init()
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 12
+	pidgey.is_wild = false
+	pidgey.custom_move_ids = [MovesEnum.Values.GUST, MovesEnum.Values.TACKLE]
+	pidgey._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var mid: BattlePokemon = bulbasaur.to_battle_pokemon()
+	var flyer: BattlePokemon = pidgey.to_battle_pokemon()
+	lead.setIA(ia)
+	mid.setIA(ia)
+	flyer.setIA(ia)
+	lead.controllable = false
+	mid.controllable = false
+	flyer.controllable = false
+	var participant := BattleParticipant.new([lead, mid, flyer])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_spikes_test_guide() -> void:
+	print(">>> Combate Púas: Squirtle Nv.40 (Púas + Pistola Agua + Placaje) vs Rattata + Bulbasaur + Pidgey (Nv.12, entrenador).")
+	print(">>>   1) Usa Púas 1–3 veces → mensaje de colocación; 4ª vez → «¡Pero falló!»")
+	print(">>>   2) Debilita a Rattata → entra Bulbasaur y recibe daño de entrada (1/8 · 1/6 · 1/4 según capas).")
+	print(">>>   3) Debilita a Bulbasaur → entra Pidgey (Volador) → NO debe recibir daño de Púas.")
+	print(">>>   4) Comprueba en log de efectos activos: SpikesFieldEffect con layers 1–3 en Enemy.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:

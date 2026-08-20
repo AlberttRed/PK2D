@@ -323,6 +323,9 @@ func get_already_active_field_effect_message() -> Dictionary:
 func get_mist_stat_block_message(pokemon: BattlePokemon) -> Dictionary:
 	return FieldEffectMessages.get_mist_stat_block_message(pokemon)
 
+func get_spikes_damage_message(pokemon: BattlePokemon) -> Dictionary:
+	return FieldEffectMessages.get_spikes_damage_message(pokemon)
+
 # ============================================================================
 # Unificado: helpers por familia (limpia BattleUI)
 # ============================================================================
