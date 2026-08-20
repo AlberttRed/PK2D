@@ -51,6 +51,16 @@ func get_start_ailment_message(
 	}
 
 
+func get_badly_poisoned_message(user: BattlePokemon) -> Dictionary:
+	if user == null:
+		return {}
+	return {
+		"type": "wait",
+		"text": "¡%s fue gravemente envenenado!" % [user.get_battle_display_name(true)],
+		"wait_time": 2.0,
+	}
+
+
 func get_perish_song_tick_message(user: BattlePokemon, counter: int) -> Dictionary:
 	if user == null or counter < 0:
 		return {}

@@ -39,7 +39,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Slowpoke Nv.50 vs Pidgey Nv.24 — Tailwind invierte orden (~40 vs ~39).
 @export var use_tailwind_test: bool = false
 ## 1vs1 entrenador: Squirtle (Púas) vs Rattata + Bulbasaur (+ Pidgey Volador) — capas y daño al entrar.
-@export var use_spikes_test: bool = true
+@export var use_spikes_test: bool = false
+## 1vs1 entrenador: Squirtle (Púas Tóxicas) vs Rattata + Sandshrew + Ekans + Diglett — capas, absorción y grounded.
+@export var use_toxic_spikes_test: bool = true
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -110,6 +112,11 @@ func _ready() -> void:
 		_seed_test_capture_items()
 		_print_spikes_test_guide()
 		await spikesTrainerTestBattle()
+		return
+	if use_toxic_spikes_test:
+		_seed_test_capture_items()
+		_print_toxic_spikes_test_guide()
+		await toxicSpikesTrainerTestBattle()
 		return
 	if use_rain_weather_test:
 		_seed_test_capture_items()
@@ -441,6 +448,15 @@ func spikesTrainerTestBattle() -> void:
 	print(">>> Batalla Púas terminada. Ganador: %s" % winner)
 
 
+func toxicSpikesTrainerTestBattle() -> void:
+	var player_participant := _create_toxic_spikes_test_player_participant()
+	var trainer_participant := _create_toxic_spikes_test_trainer_participant()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Púas Tóxicas terminada. Ganador: %s" % winner)
+
+
 func wildFixedSubstituteTestBattle() -> void:
 	_setup_fixed_substitute_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -763,6 +779,75 @@ func _print_spikes_test_guide() -> void:
 	print(">>>   2) Debilita a Rattata → entra Bulbasaur y recibe daño de entrada (1/8 · 1/6 · 1/4 según capas).")
 	print(">>>   3) Debilita a Bulbasaur → entra Pidgey (Volador) → NO debe recibir daño de Púas.")
 	print(">>>   4) Comprueba en log de efectos activos: SpikesFieldEffect con layers 1–3 en Enemy.")
+
+
+func _create_toxic_spikes_test_player_participant() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 40
+	squirtle.is_wild = false
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.TOXIC_SPIKES,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+	]
+	squirtle._post_init()
+	var lead: BattlePokemon = squirtle.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_toxic_spikes_test_trainer_participant() -> BattleParticipant:
+	var ia := BattleIA_Easy.new()
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 12
+	rattata.is_wild = false
+	rattata.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
+	rattata._post_init()
+	var sandshrew := Pokemon.new()
+	sandshrew.pokemon_id = PokemonsEnum.Values.SANDSHREW as PokemonsEnum.Values
+	sandshrew.level = 12
+	sandshrew.is_wild = false
+	sandshrew.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.SAND_ATTACK]
+	sandshrew._post_init()
+	var ekans := Pokemon.new()
+	ekans.pokemon_id = PokemonsEnum.Values.EKANS as PokemonsEnum.Values
+	ekans.level = 12
+	ekans.is_wild = false
+	ekans.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.WRAP]
+	ekans._post_init()
+	var diglett := Pokemon.new()
+	diglett.pokemon_id = PokemonsEnum.Values.DIGLETT as PokemonsEnum.Values
+	diglett.level = 12
+	diglett.is_wild = false
+	diglett.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.SCRATCH]
+	diglett._post_init()
+	var lead: BattlePokemon = rattata.to_battle_pokemon()
+	var grounded_a: BattlePokemon = sandshrew.to_battle_pokemon()
+	var poison: BattlePokemon = ekans.to_battle_pokemon()
+	var grounded_b: BattlePokemon = diglett.to_battle_pokemon()
+	for bp in [lead, grounded_a, poison, grounded_b]:
+		bp.setIA(ia)
+		bp.controllable = false
+	var participant := BattleParticipant.new([lead, grounded_a, poison, grounded_b])
+	participant.ai_controller = ia
+	participant.is_trainer = true
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_toxic_spikes_test_guide() -> void:
+	print(">>> Combate Púas Tóxicas: Squirtle Nv.40 vs Rattata + Sandshrew + Ekans + Diglett (Nv.12, todos grounded).")
+	print(">>>   1) Usa Púas Tóxicas 1–2 veces → colocación; 3ª → «¡Pero falló!»")
+	print(">>>   2) Con 1 capa: KO Rattata → «fue envenenado!» + residual 1/8 al fin de turno.")
+	print(">>>      Con 2 capas: KO Rattata → «fue gravemente envenenado!» + residual N/16 creciente.")
+	print(">>>   3) Sandshrew (Ground) entra → recibe veneno/tóxico según capas.")
+	print(">>>   4) Ekans (Veneno grounded) → absorbe («púas tóxicas desaparecieron…»).")
+	print(">>>   5) Vuelve a colocar; Diglett (Ground) entra → recibe veneno otra vez.")
 
 
 func _setup_fixed_substitute_test_parties() -> void:
