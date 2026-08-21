@@ -268,12 +268,12 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - Sin animación → flujo visual previo sin cambios.
 - Otros sistemas (ailments, weather, items) podrán invocar el mismo `play(...)` sin API distinta.
 
-### Campo / intro (PBI 339+)
+### Campo / intro (PBI 339 / 338)
 
-- Catálogo: `BattleFieldAnimations` (p. ej. `play_pokeball_throw(ui, landing_spot)`).
-- `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy` según lado; `ball00` → `ball00_open`.
-- Intro: hide sprites → mensaje send-in → ball throw → reveal.
-- Switch-in: mismo throw antes de mostrar el sprite entrante.
+- Catálogo: `BattleFieldAnimations` (`play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`).
+- `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy`; `ball00` → open + brillo.
+- `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
+- Intro / switch-in: `play_send_in` = ball → enter → HP bar.
 
 ### Ailments
 

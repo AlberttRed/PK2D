@@ -116,6 +116,150 @@ static func wait(host: Node, seconds: float) -> void:
 	await host.get_tree().create_timer(seconds).timeout
 
 
+## Aparición de Pokémon: pequeño + blanco → tamaño/color normales. Awaitable.
+## Crece desde los pies (altura de la ball) hacia arriba, sin teleport final.
+## El flash blanco es un overlay que se desvanece sobre el sprite a color real
+## (evita el pop oscuro al quitar el shader del propio sprite).
+static func pokemon_enter_spot(
+	spot: BattleSpot,
+	scale_duration: float = 0.45,
+	white_duration: float = 0.75
+) -> void:
+	if spot == null or not is_instance_valid(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	if spr == null or not is_instance_valid(spr):
+		return
+	var shadow: Sprite2D = spot.shadow
+	var orig_scale := spr.scale
+	if orig_scale.length_squared() < 0.0001:
+		orig_scale = Vector2.ONE
+	var orig_pos := spr.position
+	var half_h := _sprite_half_height(spr)
+	var show_shadow := (
+		shadow != null
+		and is_instance_valid(shadow)
+		and spot.pokemon != null
+		and spot.pokemon.is_wild
+	)
+	var shadow_orig_pos := Vector2.ZERO
+	var shadow_half_h := 0.0
+	if show_shadow:
+		shadow_orig_pos = shadow.position
+		shadow_half_h = _sprite_half_height(shadow)
+
+	spr.visible = true
+	spr.modulate = Color(1, 1, 1, 1)
+	var start_scale := orig_scale * 0.12
+	spr.scale = start_scale
+	# Pies fijos: al reducir scale el centro subiría; bajamos position para anclar abajo.
+	spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, start_scale.y)
+
+	var flash := _make_white_overlay(spr)
+	spr.add_child(flash)
+
+	if show_shadow:
+		shadow.visible = true
+		shadow.scale = start_scale
+		shadow.modulate = Color(1, 1, 1, 0.35)
+		shadow.position = _position_with_feet_anchored(
+			shadow_orig_pos, shadow_half_h, orig_scale.y, start_scale.y
+		)
+
+	# Blanco se mantiene y luego baja; acaba después del scale.
+	var white_fade := maxf(white_duration - scale_duration * 0.35, scale_duration * 0.55)
+	var white_delay := maxf(white_duration - white_fade, 0.0)
+
+	var tw := spot.create_tween()
+	tw.set_parallel(true)
+	tw.tween_method(
+		func(s: float):
+			var sc := orig_scale * s
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y)
+			if show_shadow and is_instance_valid(shadow):
+				shadow.scale = sc
+				shadow.position = _position_with_feet_anchored(
+					shadow_orig_pos, shadow_half_h, orig_scale.y, sc.y
+				),
+		0.12,
+		1.0,
+		scale_duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(flash, "modulate:a", 0.0, white_fade).set_delay(white_delay).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_OUT)
+	if show_shadow:
+		tw.tween_property(shadow, "modulate:a", 1.0, scale_duration)
+	await tw.finished
+
+	if is_instance_valid(flash):
+		flash.queue_free()
+	if is_instance_valid(spr):
+		spr.scale = orig_scale
+		spr.position = orig_pos
+		spr.modulate = Color(1, 1, 1, 1)
+	if show_shadow and is_instance_valid(shadow):
+		shadow.scale = orig_scale
+		shadow.position = shadow_orig_pos
+		shadow.modulate = Color(1, 1, 1, 1)
+
+
+## Copia el sprite del spot como silueta blanca (hijo: hereda scale/position).
+static func _make_white_overlay(spr: Sprite2D) -> Sprite2D:
+	var flash := Sprite2D.new()
+	flash.name = "EnterWhiteFlash"
+	flash.texture = spr.texture
+	flash.centered = spr.centered
+	flash.offset = spr.offset
+	flash.flip_h = spr.flip_h
+	flash.flip_v = spr.flip_v
+	flash.region_enabled = spr.region_enabled
+	flash.region_rect = spr.region_rect
+	flash.hframes = spr.hframes
+	flash.vframes = spr.vframes
+	flash.frame = spr.frame
+	flash.texture_filter = spr.texture_filter
+	flash.position = Vector2.ZERO
+	flash.scale = Vector2.ONE
+	flash.z_as_relative = true
+	flash.z_index = 1
+	flash.modulate = Color(1, 1, 1, 1)
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://Shaders/evolution_white.gdshader") as Shader
+	mat.set_shader_parameter("white_mix", 1.0)
+	flash.material = mat
+	return flash
+
+
+## Mantiene el borde inferior del sprite fijo al cambiar el scale.y (Sprite2D centered).
+static func _position_with_feet_anchored(
+	orig_pos: Vector2,
+	half_height: float,
+	full_scale_y: float,
+	current_scale_y: float
+) -> Vector2:
+	var pos := orig_pos
+	pos.y = orig_pos.y + half_height * (full_scale_y - current_scale_y)
+	return pos
+
+
+static func _sprite_half_height(spr: Sprite2D) -> float:
+	if spr == null or spr.texture == null:
+		return 0.0
+	var tex_h := 0.0
+	if spr.region_enabled:
+		tex_h = spr.region_rect.size.y
+	elif spr.texture is AtlasTexture:
+		tex_h = (spr.texture as AtlasTexture).region.size.y
+	else:
+		tex_h = float(spr.texture.get_height())
+	# centered: de centro a borde = h/2; offset.y también cuenta (ya escalado aparte en formula vía half).
+	if spr.centered:
+		return tex_h * 0.5 + spr.offset.y
+	return tex_h + spr.offset.y
+
+
 static func _spot_sprite_ready(spot: BattleSpot) -> bool:
 	if spot == null or not is_instance_valid(spot):
 		return false

@@ -1014,10 +1014,7 @@ func _reveal_enemy_trainer_send_in(spot_index: int) -> void:
 	var spot: BattleSpot = spots[spot_index]
 	if spot == null:
 		return
-	await BattleFieldAnimations.play_pokeball_throw(self, spot)
-	spot.set_pokemon_sprite_visible(true)
-	if spot.hp_bar:
-		spot.hp_bar.visible = true
+	await BattleFieldAnimations.play_send_in(self, spot)
 
 
 func _reveal_player_send_in(spot_index: int) -> void:
@@ -1029,10 +1026,8 @@ func _reveal_player_send_in(spot_index: int) -> void:
 	var spot: BattleSpot = spots[spot_index]
 	if spot == null:
 		return
-	await BattleFieldAnimations.play_pokeball_throw(self, spot)
-	spot.set_pokemon_sprite_visible(true)
-	if spot.hp_bar:
-		spot.hp_bar.visible = true
+	await BattleFieldAnimations.play_send_in(self, spot)
+
 
 func show_used_move_message(user: BattlePokemon, move: BattleMove) -> void:
 	await show_message_from_dict(message_controller.get_used_move_message(user, move))

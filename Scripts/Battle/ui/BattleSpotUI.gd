@@ -210,6 +210,11 @@ func move_forward(distance: float = 16.0, duration: float = 0.12) -> void:
 	await BattleAnimationUtils.move_spot_forward(self, distance, duration)
 
 
+## Aparición al enviar: scale + de-white. Awaitable.
+func play_enter_animation(scale_duration: float = 0.45, white_duration: float = 0.75) -> void:
+	await BattleAnimationUtils.pokemon_enter_spot(self, scale_duration, white_duration)
+
+
 func play_heal_animation() -> void:
 	if not is_visible():
 		return
@@ -367,11 +372,6 @@ func play_hp_bar_slide_out() -> void:
 
 	# Restaurar posición (para futuras batallas)
 	hp_bar.global_position = original_hp_position
-
-func play_enter_animation():
-	# Simple animación de entrada, si querés algo visual
-	# Podés conectarlo luego con AnimationPlayer o con tween
-	pass
 
 func _on_status_changed():
 	var icon := pokemon.status.icon if pokemon.status else null
