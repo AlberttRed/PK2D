@@ -268,9 +268,13 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - Sin animación → flujo visual previo sin cambios.
 - Otros sistemas (ailments, weather, items) podrán invocar el mismo `play(...)` sin API distinta.
 
-### Campo / intro (PBI 339 / 338)
+### Campo / intro (PBI 339 / 338 / 706)
 
-- Catálogo: `BattleFieldAnimations` (`play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`).
+- Catálogo: `BattleFieldAnimations` (`play_intro_trainers_enter`, `play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`).
+- Trainer enter (706): trainers fijos en la base; se animan `PlayerBase`/`EnemyBase` (player der→izq, rival izq→der) con deltas de `CONST.BATTLE.*_BASE_*POSITION`. Idle frame 0. Sin gesto de brazo.
+- Posiciones de trainer: `CONST.BATTLE.BACK_SINGLE_TRAINER_POS` / `FRONT_SINGLE_TRAINER_POS`.
+- Antes del reveal: `prepare_intro_field` aparca bases fuera y oculta HP (evita flash).
+- Provisional: el trainer del lado se oculta justo antes de `play_pokeball_throw` hasta tener animación de exit.
 - `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy`; `ball00` → open + brillo.
 - `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
 - Intro / switch-in: `play_send_in` = ball → enter → HP bar.

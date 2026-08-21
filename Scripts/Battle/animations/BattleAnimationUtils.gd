@@ -232,6 +232,72 @@ static func _make_white_overlay(spr: Sprite2D) -> Sprite2D:
 	return flash
 
 
+## Intro: trainers fijos en la base; se animan PlayerBase/EnemyBase.
+## Player base: der→izq. Rival base: izq→der. (CONST.BATTLE.*_BASE_*POSITION)
+static func park_bases_offscreen(player_base: Node2D, enemy_base: Node2D) -> void:
+	if player_base != null and is_instance_valid(player_base):
+		var player_rest := _ensure_base_rest_pos(player_base)
+		var player_delta := (
+			CONST.BATTLE.PLAYER_BASE_INITIALPOSITION - CONST.BATTLE.PLAYER_BASE_FINALPOSITION
+		)
+		player_base.position = player_rest + player_delta
+	if enemy_base != null and is_instance_valid(enemy_base):
+		var enemy_rest := _ensure_base_rest_pos(enemy_base)
+		var enemy_delta := (
+			CONST.BATTLE.ENEMY_BASE_INITIALPOSITION - CONST.BATTLE.ENEMY_BASE_FINALPOSITION
+		)
+		enemy_base.position = enemy_rest + enemy_delta
+
+
+static func battle_bases_enter(
+	player_base: Node2D,
+	enemy_base: Node2D,
+	host: Node,
+	duration: float = 0.7
+) -> void:
+	if host == null or not is_instance_valid(host):
+		return
+	# Asegura posición inicial (por si no se llamó park_bases_offscreen).
+	park_bases_offscreen(player_base, enemy_base)
+	var tw := host.create_tween()
+	tw.set_parallel(true)
+	var any := false
+	if player_base != null and is_instance_valid(player_base):
+		var player_rest := _ensure_base_rest_pos(player_base)
+		tw.tween_property(player_base, "position", player_rest, duration).set_trans(
+			Tween.TRANS_SINE
+		).set_ease(Tween.EASE_OUT)
+		any = true
+	if enemy_base != null and is_instance_valid(enemy_base):
+		var enemy_rest := _ensure_base_rest_pos(enemy_base)
+		tw.tween_property(enemy_base, "position", enemy_rest, duration).set_trans(
+			Tween.TRANS_SINE
+		).set_ease(Tween.EASE_OUT)
+		any = true
+	if not any:
+		return
+	await tw.finished
+	if player_base != null and is_instance_valid(player_base):
+		player_base.position = _ensure_base_rest_pos(player_base)
+	if enemy_base != null and is_instance_valid(enemy_base):
+		enemy_base.position = _ensure_base_rest_pos(enemy_base)
+
+
+static func _ensure_base_rest_pos(base: Node2D) -> Vector2:
+	if not base.has_meta("battle_base_rest_pos"):
+		base.set_meta("battle_base_rest_pos", base.position)
+	return base.get_meta("battle_base_rest_pos")
+
+
+static func set_trainer_idle_frame(trainer_root: Node2D) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	if spr == null or not is_instance_valid(spr):
+		return
+	spr.frame = 0
+
+
 ## Mantiene el borde inferior del sprite fijo al cambiar el scale.y (Sprite2D centered).
 static func _position_with_feet_anchored(
 	orig_pos: Vector2,

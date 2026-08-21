@@ -178,7 +178,7 @@ visible = false
 
 [node name="TrainerA" type="Node2D" parent="PlayerBase" unique_id=1263930288]
 visible = false
-position = Vector2(262, -16)
+position = Vector2(128, 224)
 
 [node name="Sprite" type="Sprite2D" parent="PlayerBase/TrainerA" unique_id=309807513]
 texture = ExtResource("38_3nbt5")
@@ -372,7 +372,7 @@ visible = false
 
 [node name="TrainerA" type="Node2D" parent="EnemyBase" unique_id=1535528022]
 visible = false
-position = Vector2(122, 8)
+position = Vector2(384, 100)
 
 [node name="Sprite" type="Sprite2D" parent="EnemyBase/TrainerA" unique_id=2021215248]
 texture = ExtResource("44_fx3em")

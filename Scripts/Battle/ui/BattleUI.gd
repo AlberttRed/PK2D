@@ -979,6 +979,9 @@ func hide_action_menu():
 	actions_menu.hide()
 
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
+	# PBI 706: aparición (slide→idle). Gesto de brazo / salida → clips posteriores + 707.
+	await BattleFieldAnimations.play_intro_trainers_enter(self, rules)
+
 	var intro_messages = message_controller.get_intro_messages(
 		rules,
 		player_pokemon,

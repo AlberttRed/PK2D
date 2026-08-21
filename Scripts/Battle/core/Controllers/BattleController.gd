@@ -101,7 +101,9 @@ func _assign_actives_to_spots(
 
 
 func prepare_trainer_intro_field() -> void:
-	## Oculta sprites hasta el send-in visual (ball throw + reveal).
+	## Oculta sprites/HP hasta el send-in visual (ball throw + reveal).
+	if ui != null and ui.field_ui != null and rules != null:
+		ui.field_ui.hide_all_hp_bars(rules.mode)
 	if player_side != null:
 		for spot: BattleSpot in player_side.battle_spots:
 			if spot == null:
