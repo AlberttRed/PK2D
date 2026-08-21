@@ -979,33 +979,46 @@ func hide_action_menu():
 	actions_menu.hide()
 
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
-	# PBI 706: aparición (slide→idle). Gesto de brazo / salida → clips posteriores + 707.
+	## Intro (PBI 707): bases/trainers → mensajes → send-in → menú.
+	## Clips en BattleFieldAnimations; gesto de brazo / exit cuando existan.
 	await BattleFieldAnimations.play_intro_trainers_enter(self, rules)
 
-	var intro_messages = message_controller.get_intro_messages(
-		rules,
-		player_pokemon,
-		enemy_pokemon,
-		player_trainers,
-		enemy_trainers
-	)
+	var intro_messages: Array[Dictionary] = []
+	if message_controller != null:
+		intro_messages = message_controller.get_intro_messages(
+			rules,
+			player_pokemon,
+			enemy_pokemon,
+			player_trainers,
+			enemy_trainers
+		)
 
 	for msg in intro_messages:
 		await show_message_from_dict(msg)
-		if bool(msg.get("trainer_send_in", false)):
-			if bool(msg.get("trainer_send_in_double", false)):
-				await _reveal_enemy_trainer_send_in(0)
-				await _reveal_enemy_trainer_send_in(1)
-			else:
-				await _reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
-		if bool(msg.get("player_send_in", false)):
-			if bool(msg.get("player_send_in_double", false)):
-				await _reveal_player_send_in(0)
-				await _reveal_player_send_in(1)
-			else:
-				await _reveal_player_send_in(int(msg.get("player_spot_index", 0)))
+		await _play_intro_send_ins_for_message(msg)
 
-	actions_menu.show()
+	if actions_menu != null:
+		actions_menu.show()
+
+
+## Preparar campo en negro antes del reveal (bases fuera, HP ocultas).
+func prepare_intro_field(rules: BattleRules) -> void:
+	BattleFieldAnimations.prepare_intro_field(self, rules)
+
+
+func _play_intro_send_ins_for_message(msg: Dictionary) -> void:
+	if bool(msg.get("trainer_send_in", false)):
+		if bool(msg.get("trainer_send_in_double", false)):
+			await _reveal_enemy_trainer_send_in(0)
+			await _reveal_enemy_trainer_send_in(1)
+		else:
+			await _reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
+	if bool(msg.get("player_send_in", false)):
+		if bool(msg.get("player_send_in_double", false)):
+			await _reveal_player_send_in(0)
+			await _reveal_player_send_in(1)
+		else:
+			await _reveal_player_send_in(int(msg.get("player_spot_index", 0)))
 
 
 func _reveal_enemy_trainer_send_in(spot_index: int) -> void:
