@@ -157,21 +157,22 @@ func clear_last_used_move() -> void:
 
 
 func register_player_exp_participant(player_bp: BattlePokemon) -> void:
-	if player_bp == null or not player_bp.controllable or player_bp.fainted:
+	if player_bp == null or not player_bp.controllable or player_bp.is_fainted():
 		return
 	if _player_exp_participants.has(player_bp):
 		return
 	_player_exp_participants.append(player_bp)
 
 
-## Receptores de EXP por este KO (`BattlePokemon` en campo); si no hay lista (caso raro), `fallback_executor`.
+## Receptores de EXP por este KO: participantes vivos (como en la franquicia).
+## Si no hay lista (caso raro), `fallback_executor` solo si sigue vivo.
 func get_runtime_exp_recipient_battle_pokemon(fallback_executor: BattlePokemon) -> Array[BattlePokemon]:
 	var out: Array[BattlePokemon] = []
 	for bp in _player_exp_participants:
-		if bp != null and not bp.fainted and bp.base_data != null:
+		if bp != null and not bp.is_fainted() and bp.base_data != null:
 			out.append(bp)
 	if out.is_empty() and fallback_executor != null and fallback_executor.controllable \
-			and not fallback_executor.fainted and fallback_executor.base_data != null:
+			and not fallback_executor.is_fainted() and fallback_executor.base_data != null:
 		out.append(fallback_executor)
 	return out
 
@@ -324,10 +325,12 @@ func decide_random_action() -> BattleChoice:
 func take_damage(damage: DamageEffect) -> void:
 	hp -= damage.amount
 	hp = max(hp, 0)
+	fainted = hp <= 0
 
 func take_heal(heal: HealEffect) -> void:
 	hp += heal.amount
 	hp = min(hp, total_hp)
+	fainted = hp <= 0
 	print("hp after heal: " + str(hp))
 
 func set_status(new_status: AilmentData):

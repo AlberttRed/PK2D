@@ -60,6 +60,9 @@ func _load_from_trainer_data() -> void:
 	trainer_id = trainer_data.trainer_id
 	trainer_name = trainer_data.display_name
 	battle_ia = trainer_data.ai_profile
+	# Fallback de clase cuando el trainer no define perfil propio
+	if battle_ia == null and trainer_data.trainer_class != null:
+		battle_ia = trainer_data.trainer_class.default_ai
 	allow_double_battle = trainer_data.double_battle
 
 	# Cargar sprites (front y back) con fallback a los de la clase
@@ -243,8 +246,10 @@ func to_battle_participant() -> BattleParticipant:
 	var effective_name: String = get_full_name() if trainer_data else (trainer_name if not trainer_name.is_empty() else str(name))
 	participant.name = effective_name
 	participant.is_player = is_player
-	participant.ai_controller = battle_ia
+	# is_trainer antes de asignar IA: la validación runtime depende del tipo de participante
 	participant.is_trainer = (battler_type != CONST.BATTLER_TYPES.WILD_POKEMON)
+	participant.set_ai_controller(battle_ia, effective_name)
+	var resolved_ia: BattleIA = participant.ai_controller
 
 	# Pasar mensajes del trainer (para mostrar al final del combate)
 	participant.intro_message = before_battle_message
@@ -291,7 +296,7 @@ func to_battle_participant() -> BattleParticipant:
 						continue
 
 					# Convertir a BattlePokemon
-					var battle_pokemon = pokemon.to_battle_pokemon(battle_ia)
+					var battle_pokemon = pokemon.to_battle_pokemon(resolved_ia)
 					if battle_pokemon == null:
 						push_error("Battler.to_battle_participant(): No se pudo convertir Pokemon a BattlePokemon para trainer '%s'" % trainer_name)
 						continue
@@ -305,7 +310,7 @@ func to_battle_participant() -> BattleParticipant:
 			# Fallback: usar party existente (compatibilidad legacy)
 			for pokemon in party:
 				if pokemon:
-					var battle_pokemon = pokemon.to_battle_pokemon(battle_ia)
+					var battle_pokemon = pokemon.to_battle_pokemon(resolved_ia)
 					battle_pokemon.controllable = false
 					battle_pokemon.participant = participant
 					battle_pokemon_team.append(battle_pokemon)

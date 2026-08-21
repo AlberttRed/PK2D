@@ -29,8 +29,8 @@ class_name TrainerClassData
 @export var default_battle_front_sprite: Texture2D = null
 @export var default_battle_back_sprite: Texture2D = null
 
-## IA por defecto para esta clase (opcional)
-@export var default_ai: BattleIA = null
+## IA por defecto para esta clase (opcional; se usa si el trainer no define ai_profile)
+@export var default_ai: TrainerBattleIA = null
 
 ## Descripción (opcional, para notas)
 @export_multiline var description: String = ""

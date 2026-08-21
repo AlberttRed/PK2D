@@ -23,6 +23,12 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Desactivar para el escenario Sustituto/Anulación (Forcejeo vía Anulación, no por PP).
 @export var debug_zero_pp: bool = false
 
+@export_group("Debug IA tipada (PBI 705 / 342)")
+## 1vs1 fijo para validar TrainerEasy / WildBasic, tipado y fallbacks.
+@export var use_battle_ia_typing_test: bool = false
+## Escenario del test de IA (ver guía en consola al arrancar).
+@export_enum("Type Advantage", "Avoid Immunity", "All Immune Random", "Wild Basic") var battle_ia_test_scenario: int = 0
+
 @export_group("Debug mensajes MOVE_FAIL (PBI 687)")
 ## Escenario natural Machop vs Gastly (inmunidad, protección, evasión, fallo de precisión).
 @export var use_move_fail_message_test: bool = false
@@ -90,6 +96,11 @@ func _ready() -> void:
 	if use_forced_switch_trainer_test:
 		_print_forced_switch_trainer_guide()
 		await forcedSwitchTrainerTestBattle()
+		return
+	if use_battle_ia_typing_test:
+		_print_battle_ia_typing_test_guide()
+		_run_battle_ia_fallback_probe()
+		await battleIaTypingTestBattle()
 		return
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
@@ -538,7 +549,7 @@ func _create_forced_switch_test_strong_player_participant() -> BattleParticipant
 
 
 func _create_forced_switch_test_trainer_participant() -> BattleParticipant:
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	var lead: BattlePokemon = _create_forced_switch_test_player_lead(PokemonsEnum.Values.RATTATA).to_battle_pokemon()
 	var bench: BattlePokemon = _create_forced_switch_test_player_lead(PokemonsEnum.Values.BULBASAUR).to_battle_pokemon()
 	lead.setIA(ia)
@@ -546,8 +557,8 @@ func _create_forced_switch_test_trainer_participant() -> BattleParticipant:
 	lead.controllable = false
 	bench.controllable = false
 	var participant := BattleParticipant.new([lead, bench])
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -555,6 +566,238 @@ func _create_forced_switch_test_trainer_participant() -> BattleParticipant:
 func _print_forced_switch_trainer_guide() -> void:
 	print(">>> Test cambio forzado (rival): Charmander + Squirtle (Nv.28) vs Rattata + Bulbasaur (Nv.8, entrenador).")
 	print(">>> Debilita al Rattata rival → prompt de cambio opcional + envío automático de Bulbasaur.")
+
+
+# =============================================================================
+# Debug IA tipada (PBI 705 / 342)
+# =============================================================================
+
+func _print_battle_ia_typing_test_guide() -> void:
+	print(">>> === Test IA tipada (PBI 705 / 342) ===")
+	print(">>> Desactiva use_field_effects_integration_test y el resto de flags; deja solo use_battle_ia_typing_test=true.")
+	match battle_ia_test_scenario:
+		0:
+			print(">>> Escenario TYPE ADVANTAGE:")
+			print(">>>   Jugador: Charmander (Fuego) + Bulbasaur (Planta) — puedes cambiar")
+			print(">>>   Rival IA TrainerEasy: Squirtle — Water Gun / Tackle / Tail Whip / Bite")
+			print(">>>   vs Charmander: prioriza Pistola Agua (2x).")
+			print(">>>   Cambia a Bulbasaur: Agua pasa a 0.5x → debería usar Placaje o Mordisco (1x), no Agua.")
+		1:
+			print(">>> Escenario AVOID IMMUNITY:")
+			print(">>>   Jugador: Pidgey (Volador) — Gust / Tackle")
+			print(">>>   Rival IA TrainerEasy: Sandshrew — Earthquake / Dig / Tackle / Scratch")
+			print(">>>   Esperado: NO elige Terremoto/Excavar (0x); usa Placaje o Arañazo.")
+		2:
+			print(">>> Escenario ALL IMMUNE → random helper:")
+			print(">>>   Jugador: Gastly (Fantasma) — Lick / Night Shade")
+			print(">>>   Rival IA TrainerEasy: Rattata — solo Tackle / Scratch (ambos 0x)")
+			print(">>>   Esperado: sigue atacando (random legal), sin crash ni target_handler.")
+		3:
+			print(">>> Escenario WILD BASIC:")
+			print(">>>   Jugador: Squirtle — Water Gun / Tackle")
+			print(">>>   Salvaje WildBasic: Pidgey — Gust / Tackle / Quick Attack")
+			print(">>>   Esperado: ataques legales al azar (sin lógica de tipos).")
+		_:
+			print(">>> Escenario desconocido: %d" % battle_ia_test_scenario)
+	print(">>> Probe de fallback: al inicio se asigna WildBasic a un trainer → warning + TrainerEasy.")
+
+
+## Comprueba en consola el fallback tipado trainer←wild (PBI 705).
+func _run_battle_ia_fallback_probe() -> void:
+	var probe := BattleParticipant.new()
+	probe.is_trainer = true
+	probe.name = "ProbeTrainer"
+	probe.set_ai_controller(BattleIA_WildBasic.new(), "IA_PROBE")
+	var resolved := probe.ai_controller
+	var label := resolved.difficulty_name if resolved else "<null>"
+	print(">>> Probe fallback: IA tras asignar WildBasic a trainer = '%s' (esperado TrainerEasy)" % label)
+	if not (resolved is BattleIA_TrainerEasy):
+		push_error("TestBattle IA probe: se esperaba BattleIA_TrainerEasy tras fallback, recibido: %s" % label)
+
+
+func battleIaTypingTestBattle() -> void:
+	var player_participant: BattleParticipant
+	var enemy_participant: BattleParticipant
+	var rules: BattleRules
+	match battle_ia_test_scenario:
+		0:
+			player_participant = _create_battle_ia_type_advantage_player()
+			enemy_participant = _create_battle_ia_type_advantage_trainer()
+			rules = BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+		1:
+			player_participant = _create_battle_ia_avoid_immunity_player()
+			enemy_participant = _create_battle_ia_avoid_immunity_trainer()
+			rules = BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+		2:
+			player_participant = _create_battle_ia_all_immune_player()
+			enemy_participant = _create_battle_ia_all_immune_trainer()
+			rules = BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+		3:
+			player_participant = _create_battle_ia_wild_basic_player()
+			enemy_participant = _create_battle_ia_wild_basic_enemy()
+			rules = BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+		_:
+			push_error("TestBattle: battle_ia_test_scenario inválido (%d)" % battle_ia_test_scenario)
+			return
+	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla IA tipada (escenario %d) terminada. Ganador: %s" % [battle_ia_test_scenario, winner])
+
+
+func _create_battle_ia_type_advantage_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 30
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.EMBER,
+		MovesEnum.Values.SCRATCH,
+		MovesEnum.Values.GROWL,
+	]
+	charmander._post_init()
+	var bulbasaur := Pokemon.new()
+	bulbasaur.pokemon_id = PokemonsEnum.Values.BULBASAUR as PokemonsEnum.Values
+	bulbasaur.level = 30
+	bulbasaur.is_wild = false
+	bulbasaur.custom_move_ids = [
+		MovesEnum.Values.VINE_WHIP,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GROWL,
+	]
+	bulbasaur._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	var bench: BattlePokemon = bulbasaur.to_battle_pokemon()
+	lead.controllable = true
+	bench.controllable = true
+	var participant := BattleParticipant.new([lead, bench])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_battle_ia_type_advantage_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+		MovesEnum.Values.BITE,
+	]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.setIA(ia)
+	lead.controllable = false
+	var participant := BattleParticipant.new([lead])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Entrenador Easy"
+	return participant
+
+
+func _create_battle_ia_avoid_immunity_player() -> BattleParticipant:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.GUST, MovesEnum.Values.TACKLE]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_battle_ia_avoid_immunity_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SANDSHREW as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.EARTHQUAKE,
+		MovesEnum.Values.DIG,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.setIA(ia)
+	lead.controllable = false
+	var participant := BattleParticipant.new([lead])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Entrenador Easy"
+	return participant
+
+
+func _create_battle_ia_all_immune_player() -> BattleParticipant:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.GASTLY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.LICK, MovesEnum.Values.NIGHT_SHADE]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_battle_ia_all_immune_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.SCRATCH]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.setIA(ia)
+	lead.controllable = false
+	var participant := BattleParticipant.new([lead])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Entrenador Easy"
+	return participant
+
+
+func _create_battle_ia_wild_basic_player() -> BattleParticipant:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 25
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [MovesEnum.Values.WATER_GUN, MovesEnum.Values.TACKLE]
+	pkmn._post_init()
+	var lead: BattlePokemon = pkmn.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_battle_ia_wild_basic_enemy() -> BattleParticipant:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 25
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.QUICK_ATTACK,
+	]
+	pkmn._post_init()
+	var wild_bp: BattlePokemon = pkmn.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
 
 
 func forcedSwitchPlayerTestBattle() -> void:
@@ -771,7 +1014,7 @@ func _create_spikes_test_player_participant() -> BattleParticipant:
 
 
 func _create_spikes_test_trainer_participant() -> BattleParticipant:
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	var rattata := Pokemon.new()
 	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	rattata.level = 12
@@ -800,8 +1043,8 @@ func _create_spikes_test_trainer_participant() -> BattleParticipant:
 	mid.controllable = false
 	flyer.controllable = false
 	var participant := BattleParticipant.new([lead, mid, flyer])
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -834,7 +1077,7 @@ func _create_toxic_spikes_test_player_participant() -> BattleParticipant:
 
 
 func _create_toxic_spikes_test_trainer_participant() -> BattleParticipant:
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	var rattata := Pokemon.new()
 	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	rattata.level = 12
@@ -867,8 +1110,8 @@ func _create_toxic_spikes_test_trainer_participant() -> BattleParticipant:
 		bp.setIA(ia)
 		bp.controllable = false
 	var participant := BattleParticipant.new([lead, grounded_a, poison, grounded_b])
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -903,7 +1146,7 @@ func _create_stealth_rock_test_player_participant() -> BattleParticipant:
 
 
 func _create_stealth_rock_test_trainer_participant() -> BattleParticipant:
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	var rattata := Pokemon.new()
 	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	rattata.level = 12
@@ -929,8 +1172,8 @@ func _create_stealth_rock_test_trainer_participant() -> BattleParticipant:
 		bp.setIA(ia)
 		bp.controllable = false
 	var participant := BattleParticipant.new([lead, resist, weak])
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -964,7 +1207,7 @@ func _create_field_effects_integration_player_participant() -> BattleParticipant
 
 
 func _create_field_effects_integration_trainer_participant() -> BattleParticipant:
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	var rattata := Pokemon.new()
 	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	rattata.level = 12
@@ -990,8 +1233,8 @@ func _create_field_effects_integration_trainer_participant() -> BattleParticipan
 		bp.setIA(ia)
 		bp.controllable = false
 	var participant := BattleParticipant.new([lead, grounded, flyer])
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -1403,14 +1646,14 @@ func _create_random_player_participant(num_pokemon: int = 1) -> BattleParticipan
 
 func _create_random_trainer_participant(num_pokemon: int = 1) -> BattleParticipant:
 	var trainer_team: Array[BattlePokemon] = []
-	var ia := BattleIA_Easy.new()
+	var ia := BattleIA_TrainerEasy.new()
 	for i in num_pokemon:
 		var bp := _create_random_pokemon(false)
 		bp.setIA(ia)
 		trainer_team.append(bp)
 	var participant := BattleParticipant.new(trainer_team)
-	participant.ai_controller = ia
 	participant.is_trainer = true
+	participant.ai_controller = ia
 	participant.name = "Entrenador"
 	return participant
 
@@ -1438,7 +1681,7 @@ func _create_random_trainer_participant(num_pokemon: int = 1) -> BattleParticipa
 	#pkmn.isWild = true
 	#print("A wild " + str(pkmn.Name) + " Lvl. " + str(pkmn.level) + " appeared!")
 	#
-	#var enemyBattler : Battler = Battler.new().create(CONST.BATTLER_TYPES.WILD_POKEMON, [pkmn], BattleIA_Wild.new())
+	#var enemyBattler : Battler = Battler.new().create(CONST.BATTLER_TYPES.WILD_POKEMON, [pkmn], BattleIA_WildBasic.new())
 	#
 	#var br : BattleRules = BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	#var bc : BattleController = BattleController.new(br)

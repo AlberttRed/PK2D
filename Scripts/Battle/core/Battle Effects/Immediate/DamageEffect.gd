@@ -42,6 +42,7 @@ func visualize(_ui: BattleUI) -> void:
 	if hp_loss > 0:
 		await spot.play_hit_animation()
 		pokemon.hp = maxi(pokemon.hp - hp_loss, 0)
+		pokemon.fainted = pokemon.hp <= 0
 		await spot.apply_damage(hp_loss)
 
 	await BattleEffectController.process_phase(

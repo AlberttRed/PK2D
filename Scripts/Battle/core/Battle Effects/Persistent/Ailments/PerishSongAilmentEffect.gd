@@ -85,6 +85,7 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 	if _ko_this_turn and pokemon.battle_spot != null and _ko_hp_loss > 0:
 		await pokemon.battle_spot.apply_damage(_ko_hp_loss)
 		pokemon.hp = 0
+		pokemon.fainted = true
 
 
 func has_finished() -> bool:

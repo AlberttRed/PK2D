@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="TrainerData" format=3 uid="uid://6itik1l1vg5w"]
 
-[ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_Easy.gd" id="1_6hnd1"]
+[ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_TrainerEasy.gd" id="1_6hnd1"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="2_6hnd1"]
 [ext_resource type="Script" uid="uid://cotgo4ccshywo" path="res://Scripts/Resources/Classes/PokemonDefinition.gd" id="2_ww0q6"]
 

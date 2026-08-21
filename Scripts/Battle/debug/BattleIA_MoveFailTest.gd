@@ -1,8 +1,9 @@
-extends BattleIA
+extends WildBattleIA
 
 class_name BattleIA_MoveFailTest
 
 ## IA determinista para TestBattle: secuencia de movimientos que provocan fallos naturales.
+## Extiende WildBattleIA porque se usa en participantes salvajes de prueba.
 
 var _planned_move_ids: Array[int] = []
 var _step := 0
