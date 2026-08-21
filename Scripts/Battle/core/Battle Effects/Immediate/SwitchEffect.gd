@@ -20,28 +20,62 @@ func apply():
 		if effects_ctrl != null:
 			effects_ctrl._clear_pokemon_effects(out_pokemon)
 		out_pokemon.in_battle = false
-	if not _is_enemy_trainer_send_in():
-		_load_incoming_pokemon()
+	# El load del entrante va en visualize tras el recall (así el sprite saliente sigue visible).
 
 func visualize(ui):
 	if _is_enemy_trainer_send_in():
-		var trainer_name := _resolve_trainer_name()
-		var incoming_name := in_pokemon.get_display_name() if in_pokemon else "(ninguno)"
-		await ui.show_trainer_send_in_display(trainer_name, incoming_name)
-		_load_incoming_pokemon()
-		await _play_send_in_visual(ui)
-		await _process_switch_in()
-		print("[SWITCH] Entra %s (envío entrenador)" % incoming_name)
+		await _visualize_enemy_trainer(ui)
 		return
 
-	var out_name = out_pokemon.get_name() if out_pokemon else "(ninguno)"
-	var in_name = in_pokemon.get_name() if in_pokemon else "(ninguno)"
+	await _visualize_player_or_generic(ui)
 
-	await ui.show_switch_message(side.to_string(), in_name)
-	print("[SWITCH] Sale %s, entra %s" % [out_name, in_name])
 
+func _visualize_enemy_trainer(ui: BattleUI) -> void:
+	var trainer_name := _resolve_trainer_name()
+	var outgoing_name := _pokemon_display_name(out_pokemon)
+	var incoming_name := _pokemon_display_name(in_pokemon)
+	var has_live_out := out_pokemon != null and not out_pokemon.is_fainted()
+
+	if has_live_out:
+		await ui.show_enemy_switch_out_message(trainer_name, outgoing_name)
+		await _play_exit_visual(ui)
+
+	await ui.show_enemy_switch_in_message(trainer_name, incoming_name)
+	_load_incoming_pokemon()
 	await _play_send_in_visual(ui)
 	await _process_switch_in()
+	print("[SWITCH] Entra %s (envío entrenador)" % incoming_name)
+
+
+func _visualize_player_or_generic(ui: BattleUI) -> void:
+	var outgoing_name := _pokemon_display_name(out_pokemon)
+	var incoming_name := _pokemon_display_name(in_pokemon)
+	var has_live_out := out_pokemon != null and not out_pokemon.is_fainted()
+
+	print("[SWITCH] Sale %s, entra %s" % [outgoing_name, incoming_name])
+
+	if has_live_out:
+		await ui.show_player_switch_out_messages(outgoing_name)
+		await _play_exit_visual(ui)
+
+	await ui.show_player_switch_in_message(incoming_name)
+	_load_incoming_pokemon()
+	await _play_send_in_visual(ui)
+	await _process_switch_in()
+
+
+func _pokemon_display_name(bp: BattlePokemon) -> String:
+	if bp == null:
+		return "(ninguno)"
+	if bp.has_method("get_display_name"):
+		return bp.get_display_name()
+	return bp.get_name()
+
+
+func _play_exit_visual(ui: BattleUI) -> void:
+	if spot == null or out_pokemon == null:
+		return
+	await BattleFieldAnimations.play_pokemon_exit(ui, spot)
 
 
 func _play_send_in_visual(ui: BattleUI) -> void:

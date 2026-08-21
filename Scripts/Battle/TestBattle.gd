@@ -40,6 +40,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_ember_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
 @export var use_pokeball_animation_trainer_test: bool = false
+## 1vs1 entrenador con BattleIA_TrainerTest (guion SWITCH/MOVE/EASY). Ver trainer_ia_test_scenario.
+@export var use_trainer_ia_test: bool = true
+## Escenario del guion de BattleIA_TrainerTest.
+@export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
 @export_group("Debug clima")
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
@@ -57,7 +61,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 entrenador: Squirtle (Trampa Rocas) vs Rattata + Machop + Charizard — daño × efectividad Roca.
 @export var use_stealth_rock_test: bool = false
 ## 1vs1 entrenador: Reflect + Spikes + Toxic Spikes + Stealth Rock — convivencia PBI 704.
-@export var use_field_effects_integration_test: bool = true
+@export var use_field_effects_integration_test: bool = false
 
 @export_group("Debug efectos persistentes")
 ## Al iniciar combate: lluvia activa, Reflejo en el lado del jugador y veneno en el primer activo.
@@ -111,6 +115,10 @@ func _ready() -> void:
 	if use_ember_animation_test:
 		_print_ember_animation_test_guide()
 		await wildEmberAnimationTestBattle()
+		return
+	if use_trainer_ia_test:
+		_print_trainer_ia_test_guide()
+		await trainerIaTestBattle()
 		return
 	if use_pokeball_animation_trainer_test:
 		_print_pokeball_animation_trainer_test_guide()
@@ -531,6 +539,63 @@ func trainerPokeballAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Poké Ball (trainer) terminada. Ganador: %s" % winner)
+
+
+func trainerIaTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var trainer_participant := _create_trainer_ia_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla IA TrainerTest terminada. Ganador: %s" % winner)
+
+
+func _create_trainer_ia_test_trainer() -> BattleParticipant:
+	var ia := _build_trainer_ia_test()
+	var lead_pkmn := Pokemon.new()
+	lead_pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	lead_pkmn.level = 18
+	lead_pkmn.is_wild = false
+	lead_pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	lead_pkmn._post_init()
+	var lead: BattlePokemon = lead_pkmn.to_battle_pokemon()
+	lead.setIA(ia)
+	lead.controllable = false
+
+	var bench_pkmn := Pokemon.new()
+	bench_pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	bench_pkmn.level = 16
+	bench_pkmn.is_wild = false
+	bench_pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	bench_pkmn._post_init()
+	var bench: BattlePokemon = bench_pkmn.to_battle_pokemon()
+	bench.setIA(ia)
+	bench.controllable = false
+
+	var participant := BattleParticipant.new([lead, bench])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "EntrenadorTest"
+	return participant
+
+
+func _build_trainer_ia_test() -> BattleIA_TrainerTest:
+	match trainer_ia_test_scenario:
+		_:
+			return BattleIA_TrainerTest.create_switch_first_turn()
+
+
+func _print_trainer_ia_test_guide() -> void:
+	print(">>> Test BattleIA_TrainerTest: Charmander+Squirtle vs Squirtle+Rattata.")
+	print(">>> Escenario %d — por defecto: turno 1 el rival CAMBIA (recall + send-in)." % trainer_ia_test_scenario)
+	print(">>> Guion ampliable en Scripts/Battle/debug/BattleIA_TrainerTest.gd (MOVE/SWITCH/EASY).")
+	print(">>> Desactiva use_field_effects_integration_test y activa use_trainer_ia_test.")
 
 
 func _create_pokeball_animation_test_player() -> BattleParticipant:

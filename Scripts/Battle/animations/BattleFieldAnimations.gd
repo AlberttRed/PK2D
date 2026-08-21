@@ -12,6 +12,11 @@ const TRAINER_EXIT_SLIDE := 360.0
 const ENEMY_EXIT_AFTER_BALL_SEC := 0.38
 ## Player: deja arrancar el gesto/salida antes de que vuele la ball.
 const PLAYER_THROW_AFTER_EXIT_SEC := 0.5
+## Clips throw_*: instante en que se abre / empieza el brillo (ver PokeballThrowAnimation.tscn).
+const THROW_OPEN_PLAYER_SEC := 0.58
+const THROW_OPEN_ENEMY_SEC := 1.15
+## Por encima de BattleAnimationLayer (z=1) para que el grow tape la ball.
+const POKEMON_ABOVE_THROW_Z := 5
 
 static var _pokeball_throw: BattleAnimation = null
 static var _pokemon_enter: BattleAnimation = null
@@ -117,20 +122,46 @@ static func play_pokemon_enter(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	await anim.play(layer, landing_spot, targets)
 
 
-## Secuencia send-in: trainer exit (+ gesto player) en paralelo con ball → enter → HP.
+## Recall / salida del Pokémon (player slide / rival ball+scale). Awaitable.
+static func play_pokemon_exit(ui: BattleUI, leaving_spot: BattleSpot) -> void:
+	if ui == null or leaving_spot == null or not is_instance_valid(leaving_spot):
+		return
+	await BattleAnimationUtils.pokemon_exit_spot(leaving_spot)
+
+
+## Secuencia send-in: trainer exit (+ gesto player) en paralelo con ball;
+## el grow del Pokémon arranca al abrir/brillar la ball (solapa con el final del throw).
 static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	if ui == null or landing_spot == null or not is_instance_valid(landing_spot):
 		return
 	landing_spot.set_pokemon_sprite_visible(false)
 	if landing_spot.hp_bar:
 		landing_spot.hp_bar.visible = false
-	if _is_enemy_spot(landing_spot):
-		await _send_in_enemy(ui, landing_spot)
+
+	var is_enemy := _is_enemy_spot(landing_spot)
+	var open_at := THROW_OPEN_ENEMY_SEC if is_enemy else THROW_OPEN_PLAYER_SEC
+	var exit_tw: Tween = null
+	var trainer: Node2D = null
+
+	if is_enemy:
+		exit_tw = _start_enemy_trainer_exit(ui)
 	else:
-		await _send_in_player(ui, landing_spot)
-	await play_pokemon_enter(ui, landing_spot)
+		trainer = ui.field_ui.get_player_trainer(0) if ui.field_ui else null
+		if trainer != null and is_instance_valid(trainer) and trainer.visible:
+			exit_tw = BattleAnimationUtils.start_player_trainer_exit_with_throw(
+				trainer, TRAINER_EXIT_DURATION, TRAINER_EXIT_SLIDE
+			)
+			await BattleAnimationUtils.wait(ui, PLAYER_THROW_AFTER_EXIT_SEC)
+
+	await _play_throw_with_enter_overlap(ui, landing_spot, open_at)
+
 	if landing_spot.hp_bar:
-		landing_spot.hp_bar.visible = true
+		await landing_spot.play_hp_bar_slide_in()
+
+	if exit_tw != null and is_instance_valid(exit_tw) and exit_tw.is_running():
+		await exit_tw.finished
+	if trainer != null and is_instance_valid(trainer) and trainer.visible:
+		BattleAnimationUtils.finalize_trainer_exit(trainer)
 
 
 static func _is_enemy_spot(landing_spot: BattleSpot) -> bool:
@@ -140,42 +171,71 @@ static func _is_enemy_spot(landing_spot: BattleSpot) -> bool:
 	)
 
 
-## Rival: ball cae al suelo → trainer sale (en paralelo) → open más tarde (clip).
-static func _send_in_enemy(ui: BattleUI, landing_spot: BattleSpot) -> void:
-	var trainer: Node2D = ui.field_ui.get_enemy_trainer(0) if ui.field_ui else null
-	var exit_tw: Tween = null
-	if trainer != null and is_instance_valid(trainer) and trainer.visible:
-		if not trainer.has_meta("trainer_rest_pos"):
-			trainer.set_meta("trainer_rest_pos", trainer.position)
-		var rest: Vector2 = trainer.get_meta("trainer_rest_pos")
-		var end := rest + Vector2(TRAINER_EXIT_SLIDE, 0.0)
-		exit_tw = ui.create_tween()
-		exit_tw.tween_interval(ENEMY_EXIT_AFTER_BALL_SEC)
-		exit_tw.tween_property(trainer, "position", end, TRAINER_EXIT_DURATION).set_trans(
-			Tween.TRANS_SINE
-		).set_ease(Tween.EASE_IN)
-		exit_tw.tween_callback(
-			func():
-				if is_instance_valid(trainer):
-					trainer.visible = false
-					trainer.position = rest
-		)
-	await play_pokeball_throw(ui, landing_spot)
-	if exit_tw != null and is_instance_valid(exit_tw) and exit_tw.is_running():
-		await exit_tw.finished
+## Throw en paralelo; al llegar a `open_at` arranca el enter (scale/blanco).
+static func _play_throw_with_enter_overlap(
+	ui: BattleUI,
+	landing_spot: BattleSpot,
+	open_at: float
+) -> void:
+	var flags := {"throw": false, "enter": false}
+
+	var run_throw := func() -> void:
+		await play_pokeball_throw(ui, landing_spot)
+		flags.throw = true
+	run_throw.call()
+
+	await BattleAnimationUtils.wait(ui, open_at)
+
+	# BattleAnimationLayer (z=1) pinta la ball por encima del spot; al crecer el
+	# Pokémon debe quedar delante de la ball abierta/brillo.
+	var spr: Sprite2D = landing_spot.sprite
+	var prev_sprite_z := 0
+	if spr != null and is_instance_valid(spr):
+		prev_sprite_z = spr.z_index
+		spr.z_index = POKEMON_ABOVE_THROW_Z
+
+	var run_enter := func() -> void:
+		await play_pokemon_enter(ui, landing_spot)
+		flags.enter = true
+	run_enter.call()
+
+	# Espera a que termine el grow (el fade de la ball puede seguir en paralelo).
+	while not flags.enter:
+		if ui == null or not is_instance_valid(ui) or ui.get_tree() == null:
+			return
+		await ui.get_tree().process_frame
+
+	# Si el throw aún no acabó (fade), espera un poco para no cortar la ball.
+	var guard := 0
+	while not flags.throw and guard < 90:
+		if ui == null or not is_instance_valid(ui) or ui.get_tree() == null:
+			return
+		await ui.get_tree().process_frame
+		guard += 1
+
+	if spr != null and is_instance_valid(spr):
+		spr.z_index = prev_sprite_z
 
 
-## Player: gesto de mano + salida; la ball arranca un poco después.
-static func _send_in_player(ui: BattleUI, landing_spot: BattleSpot) -> void:
-	var trainer: Node2D = ui.field_ui.get_player_trainer(0) if ui.field_ui else null
-	var exit_tw: Tween = null
-	if trainer != null and is_instance_valid(trainer) and trainer.visible:
-		exit_tw = BattleAnimationUtils.start_player_trainer_exit_with_throw(
-			trainer, TRAINER_EXIT_DURATION, TRAINER_EXIT_SLIDE
-		)
-	await BattleAnimationUtils.wait(ui, PLAYER_THROW_AFTER_EXIT_SEC)
-	await play_pokeball_throw(ui, landing_spot)
-	if exit_tw != null and is_instance_valid(exit_tw) and exit_tw.is_running():
-		await exit_tw.finished
-	if trainer != null and is_instance_valid(trainer) and trainer.visible:
-		BattleAnimationUtils.finalize_trainer_exit(trainer)
+static func _start_enemy_trainer_exit(ui: BattleUI) -> Tween:
+	if ui == null or ui.field_ui == null:
+		return null
+	var trainer: Node2D = ui.field_ui.get_enemy_trainer(0)
+	if trainer == null or not is_instance_valid(trainer) or not trainer.visible:
+		return null
+	if not trainer.has_meta("trainer_rest_pos"):
+		trainer.set_meta("trainer_rest_pos", trainer.position)
+	var rest: Vector2 = trainer.get_meta("trainer_rest_pos")
+	var end := rest + Vector2(TRAINER_EXIT_SLIDE, 0.0)
+	var exit_tw := ui.create_tween()
+	exit_tw.tween_interval(ENEMY_EXIT_AFTER_BALL_SEC)
+	exit_tw.tween_property(trainer, "position", end, TRAINER_EXIT_DURATION).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_IN)
+	exit_tw.tween_callback(
+		func():
+			if is_instance_valid(trainer):
+				trainer.visible = false
+				trainer.position = rest
+	)
+	return exit_tw

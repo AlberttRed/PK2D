@@ -385,6 +385,178 @@ static func finalize_trainer_exit(trainer_root: Node2D) -> void:
 	set_trainer_idle_frame(trainer_root)
 
 
+## Recall / salida del Pokémon del spot. Player: slide izq. Rival: ball + blanco + scale.
+static func pokemon_exit_spot(spot: BattleSpot) -> void:
+	if spot == null or not is_instance_valid(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	if spr == null or not is_instance_valid(spr) or not spr.visible:
+		if spot.hp_bar != null and spot.hp_bar.visible:
+			await spot.play_hp_bar_slide_out()
+		return
+	var is_enemy := spot.side != null and spot.side.type == BattleSide.Types.ENEMY
+	if is_enemy:
+		await pokemon_exit_enemy_recall(spot)
+	else:
+		await pokemon_exit_player_slide(spot)
+
+
+## Player: el sprite se va hacia la izquierda hasta desaparecer.
+static func pokemon_exit_player_slide(
+	spot: BattleSpot,
+	duration: float = 0.55,
+	slide_distance: float = 340.0
+) -> void:
+	if spot == null or not is_instance_valid(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	if spr == null or not is_instance_valid(spr) or not spr.visible:
+		return
+	var orig_pos := spr.position
+	var shadow: Sprite2D = spot.shadow
+	var shadow_orig := Vector2.ZERO
+	var move_shadow := shadow != null and is_instance_valid(shadow) and shadow.visible
+	if move_shadow:
+		shadow_orig = shadow.position
+	var tw := spot.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(spr, "position", orig_pos + Vector2(-slide_distance, 0.0), duration).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_IN)
+	if move_shadow:
+		tw.tween_property(
+			shadow, "position", shadow_orig + Vector2(-slide_distance, 0.0), duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.visible = false
+		spr.position = orig_pos
+	if move_shadow and is_instance_valid(shadow):
+		shadow.visible = false
+		shadow.position = shadow_orig
+	if spot.hp_bar != null and spot.hp_bar.visible:
+		await spot.play_hp_bar_slide_out()
+
+
+## Rival recall (ref. frames cambio pokemon rival):
+## ball cerrada 0.5s → abierta 0.5s → blanco a tamaño completo → scale↓ + ball cierra a la vez →
+## sprite desaparece → ball cerrada 0.5s → ball out.
+## Offset Y alineado con el reposo de throw_enemy (VisualRoot en Feet + Ball (0,-56)).
+const ENEMY_RECALL_BALL_OFFSET := Vector2(0.0, -56.0)
+const ENEMY_RECALL_CLOSED_INTRO_SEC := 0.5
+const ENEMY_RECALL_OPEN_HOLD_SEC := 0.5
+const ENEMY_RECALL_WHITE_SEC := 0.28
+const ENEMY_RECALL_SCALE_SEC := 0.55
+const ENEMY_RECALL_CLOSED_HOLD_SEC := 0.5
+const ENEMY_RECALL_BALL_FADE_SEC := 0.15
+
+static func pokemon_exit_enemy_recall(spot: BattleSpot) -> void:
+	if spot == null or not is_instance_valid(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	if spr == null or not is_instance_valid(spr) or not spr.visible:
+		return
+	var orig_scale := spr.scale
+	if orig_scale.length_squared() < 0.0001:
+		orig_scale = Vector2.ONE
+	var orig_pos := spr.position
+	var half_h := _sprite_half_height(spr)
+	var shadow: Sprite2D = spot.shadow
+	var shadow_orig_pos := Vector2.ZERO
+	var shadow_orig_scale := Vector2.ONE
+	var has_shadow := shadow != null and is_instance_valid(shadow) and shadow.visible
+	if has_shadow:
+		shadow_orig_pos = shadow.position
+		shadow_orig_scale = shadow.scale
+
+	var tex_closed := load("res://Sprites/Pictures/ball00.png") as Texture2D
+	var tex_open := load("res://Sprites/Pictures/ball00_open.png") as Texture2D
+
+	var ball := Sprite2D.new()
+	ball.name = "RecallBall"
+	ball.texture = tex_closed
+	ball.z_as_relative = true
+	ball.z_index = 20
+	ball.modulate = Color(1, 1, 1, 0)
+	spot.add_child(ball)
+	var feet := spot.get_anchor_node(BattleSpot.ANCHOR_FEET)
+	if feet != null:
+		ball.global_position = feet.global_position + ENEMY_RECALL_BALL_OFFSET
+	else:
+		ball.position = ENEMY_RECALL_BALL_OFFSET
+
+	# 1) Ball cerrada visible ~0.5s.
+	var tw_in := spot.create_tween()
+	tw_in.tween_property(ball, "modulate:a", 1.0, ENEMY_RECALL_BALL_FADE_SEC)
+	await tw_in.finished
+	await wait(spot, ENEMY_RECALL_CLOSED_INTRO_SEC)
+
+	# 2) Abre y se mantiene ~0.5s.
+	if is_instance_valid(ball):
+		ball.texture = tex_open
+	await wait(spot, ENEMY_RECALL_OPEN_HOLD_SEC)
+
+	# 2) Transición a blanco a tamaño completo (aún sin scale).
+	var flash := _make_white_overlay(spr)
+	flash.name = "RecallWhiteFlash"
+	flash.modulate.a = 0.0
+	spr.add_child(flash)
+	var tw_white := spot.create_tween()
+	tw_white.tween_property(flash, "modulate:a", 1.0, ENEMY_RECALL_WHITE_SEC).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_OUT)
+	await tw_white.finished
+
+	# 3) Empieza el scale↓ y a la vez la ball se cierra.
+	if is_instance_valid(ball):
+		ball.texture = tex_closed
+
+	var tw_scale := spot.create_tween()
+	tw_scale.tween_method(
+		func(s: float):
+			if not is_instance_valid(spr):
+				return
+			var sc := orig_scale * s
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y)
+			if has_shadow and is_instance_valid(shadow):
+				shadow.scale = shadow_orig_scale * s
+				shadow.position = _position_with_feet_anchored(
+					shadow_orig_pos, half_h, shadow_orig_scale.y, shadow.scale.y
+				),
+		1.0,
+		0.06,
+		ENEMY_RECALL_SCALE_SEC
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw_scale.finished
+
+	# 4) Sprite desaparece; ball cerrada se mantiene ~1s.
+	if is_instance_valid(flash):
+		flash.queue_free()
+	if is_instance_valid(spr):
+		spr.visible = false
+		spr.scale = orig_scale
+		spr.position = orig_pos
+		spr.modulate = Color(1, 1, 1, 1)
+	if has_shadow and is_instance_valid(shadow):
+		shadow.visible = false
+		shadow.scale = shadow_orig_scale
+		shadow.position = shadow_orig_pos
+
+	await wait(spot, ENEMY_RECALL_CLOSED_HOLD_SEC)
+
+	# 5) Ball desaparece.
+	if is_instance_valid(ball):
+		var tw_out := spot.create_tween()
+		tw_out.tween_property(ball, "modulate:a", 0.0, ENEMY_RECALL_BALL_FADE_SEC)
+		await tw_out.finished
+		if is_instance_valid(ball):
+			ball.queue_free()
+
+	if spot.hp_bar != null and spot.hp_bar.visible:
+		await spot.play_hp_bar_slide_out()
+
+
 ## Mantiene el borde inferior del sprite fijo al cambiar el scale.y (Sprite2D centered).
 static func _position_with_feet_anchored(
 	orig_pos: Vector2,

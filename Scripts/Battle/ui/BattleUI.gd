@@ -653,6 +653,10 @@ func handle_opponent_trainer_send_in_sequence(
 	target_selector_ui.hide()
 	message_box.hide()
 
+	# Sin banca sana no hay prompt de cambio: el send-in real dirá «X saca a Y».
+	if not _player_has_healthy_bench():
+		return
+
 	var trainer_name := participant.name if participant != null and not participant.name.is_empty() else "Entrenador"
 	var pokemon_name := incoming.get_display_name()
 	await show_message_from_dict(
@@ -680,6 +684,16 @@ func handle_opponent_trainer_send_in_sequence(
 	if handlers.is_empty():
 		return
 	await battle_controller.turn_controller.handle_switch_result(player_switch, handlers)
+
+
+## Banca sana: vivo y no está ya en combate (en single ≈ “más de un no debilitado”).
+func _player_has_healthy_bench() -> bool:
+	if battle_controller == null or battle_controller.player_side == null:
+		return false
+	for p: BattlePokemon in battle_controller.player_side.pokemonParty:
+		if p != null and not p.is_fainted() and not p.in_battle:
+			return true
+	return false
 
 
 func show_optional_switch_selection(pokemon: BattlePokemon) -> BattleSwitchChoice:
@@ -1143,6 +1157,26 @@ func show_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> voi
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
 	await show_message_from_dict(message_controller.get_switch_message(trainer_name, pokemon_name))
+
+
+func show_player_switch_out_messages(outgoing_name: String) -> void:
+	await show_message_from_dict(message_controller.get_player_switch_out_message(outgoing_name))
+
+
+func show_player_switch_in_message(incoming_name: String) -> void:
+	await show_message_from_dict(message_controller.get_player_switch_in_message(incoming_name))
+
+
+func show_enemy_switch_out_message(trainer_name: String, outgoing_name: String) -> void:
+	await show_message_from_dict(
+		message_controller.get_enemy_switch_out_message(trainer_name, outgoing_name)
+	)
+
+
+func show_enemy_switch_in_message(trainer_name: String, incoming_name: String) -> void:
+	await show_message_from_dict(
+		message_controller.get_enemy_switch_in_message(trainer_name, incoming_name)
+	)
 
 
 func show_trainer_send_in_display(trainer_name: String, pokemon_name: String) -> void:

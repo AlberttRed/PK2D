@@ -279,7 +279,8 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - Trainer exit: `play_trainer_exit_for_spot` — slide del nodo Trainer (player← / rival→); la base permanece.
 - `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy`; `ball00` → open + brillo.
 - `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
-- Intro / switch-in: `play_send_in` = trainer exit → ball → enter → HP bar.
+- Intro / switch-in: `play_send_in` = trainer exit → ball; enter solapa con open/brillo de la ball → HP slide-in.
+- Recall / switch-out: `play_pokemon_exit` — player slide izq; rival ball + blanco + scale a pies; HP bar slide-out.
 
 ### Ailments
 

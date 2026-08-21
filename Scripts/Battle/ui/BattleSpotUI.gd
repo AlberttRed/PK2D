@@ -215,6 +215,11 @@ func play_enter_animation(scale_duration: float = 0.45, white_duration: float = 
 	await BattleAnimationUtils.pokemon_enter_spot(self, scale_duration, white_duration)
 
 
+## Recall / salida del spot. Awaitable.
+func play_exit_animation() -> void:
+	await BattleAnimationUtils.pokemon_exit_spot(self)
+
+
 func play_heal_animation() -> void:
 	if not is_visible():
 		return
@@ -344,20 +349,13 @@ func play_hp_bar_slide_out() -> void:
 	if not hp_bar or not hp_bar.visible:
 		return
 
-	# Determinar dirección según el tipo de lado
-	var is_player = pokemon.side.type == BattleSide.Types.PLAYER
-	var slide_distance = 300  # Píxeles a desplazar
-	var direction = 1 if is_player else -1  # Derecha (+) para player, izquierda (-) para enemy
+	var direction := _hp_bar_slide_direction()
+	var slide_distance := 300.0
+	var original_hp_position := hp_bar.global_position
 
-	# Guardar posición original
-	var original_hp_position = hp_bar.global_position
-
-	# Crear tween para deslizar el HP bar
 	var hp_tween := create_tween()
 	hp_tween.set_ease(Tween.EASE_IN)
 	hp_tween.set_trans(Tween.TRANS_CUBIC)
-
-	# Deslizar hacia la dirección correspondiente
 	hp_tween.tween_property(
 		hp_bar,
 		"global_position:x",
@@ -367,11 +365,39 @@ func play_hp_bar_slide_out() -> void:
 
 	await hp_tween.finished
 
-	# Ocultar HP bar
 	hp_bar.visible = false
-
-	# Restaurar posición (para futuras batallas)
 	hp_bar.global_position = original_hp_position
+
+
+## Inverso del slide-out: entra desde fuera hacia la posición de reposo.
+func play_hp_bar_slide_in(duration: float = 0.3) -> void:
+	if not hp_bar:
+		return
+	var direction := _hp_bar_slide_direction()
+	var slide_distance := 300.0
+	var rest := hp_bar.global_position
+	hp_bar.global_position = Vector2(rest.x + direction * slide_distance, rest.y)
+	hp_bar.visible = true
+
+	var hp_tween := create_tween()
+	hp_tween.set_ease(Tween.EASE_OUT)
+	hp_tween.set_trans(Tween.TRANS_CUBIC)
+	hp_tween.tween_property(hp_bar, "global_position:x", rest.x, duration)
+	await hp_tween.finished
+
+	if is_instance_valid(hp_bar):
+		hp_bar.global_position = rest
+
+
+func _hp_bar_slide_direction() -> float:
+	# Player: sale/entra por la derecha (+). Rival: por la izquierda (-).
+	var side_type := BattleSide.Types.PLAYER
+	if pokemon != null and pokemon.side != null:
+		side_type = pokemon.side.type
+	elif side != null:
+		side_type = side.type
+	return 1.0 if side_type == BattleSide.Types.PLAYER else -1.0
+
 
 func _on_status_changed():
 	var icon := pokemon.status.icon if pokemon.status else null
