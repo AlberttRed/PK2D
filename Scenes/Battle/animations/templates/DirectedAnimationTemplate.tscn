@@ -32,7 +32,7 @@ script = ExtResource("1_hooks")
 gizmo_extents = 16.0
 
 [node name="TargetAnchor" type="Marker2D" parent="."]
-position = Vector2(200, -60)
+position = Vector2(200, 0)
 gizmo_extents = 16.0
 
 [node name="VisualRoot" type="Node2D" parent="."]

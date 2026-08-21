@@ -32,6 +32,7 @@ func apply() -> void:
 func visualize(ui: BattleUI) -> void:
 	if not _should_visualize:
 		return
+	await _play_move_battle_animation(ui)
 	await _visualize(ui)
 
 # Métodos abstractos que cada hijo debe implementar
@@ -40,6 +41,52 @@ func _apply() -> void:
 
 func _visualize(_ui: BattleUI) -> void:
 	pass
+
+
+## Reproduce MoveData.battle_animation si existe. Sin side effects lógicos.
+func _play_move_battle_animation(ui: BattleUI) -> void:
+	if ui == null or move == null:
+		return
+	if not move.has_method("get_battle_animation"):
+		return
+	var anim: BattleAnimation = move.get_battle_animation()
+	if anim == null:
+		return
+	var layer: Node2D = ui.get_animation_layer()
+	var user_spot: BattleSpot = _resolve_user_spot_for_animation()
+	var target_spots: Array[BattleSpot] = _resolve_target_spots_for_animation()
+	await anim.play(layer, user_spot, target_spots)
+
+
+func _resolve_user_spot_for_animation() -> BattleSpot:
+	if user == null:
+		return null
+	if user.has_method("resolve_battle_spot"):
+		return user.resolve_battle_spot()
+	return user.battle_spot
+
+
+func _resolve_target_spots_for_animation() -> Array[BattleSpot]:
+	var spots: Array[BattleSpot] = []
+	if target == null:
+		return spots
+	if target.is_pokemon() or target.is_spot():
+		var spot: BattleSpot = target.get_spot()
+		if spot == null:
+			var p: BattlePokemon = target.get_pokemon()
+			if p != null:
+				spot = p.resolve_battle_spot() if p.has_method("resolve_battle_spot") else p.battle_spot
+		if spot != null:
+			spots.append(spot)
+		return spots
+	if target.is_side():
+		var side: BattleSide = target.get_side()
+		if side != null:
+			for s in side.battle_spots:
+				if s != null:
+					spots.append(s)
+		return spots
+	return spots
 
 # Valida/retarget en runtime si el movimiento es de objetivo único enemigo.
 # Devuelve true si hay target válido (posiblemente retargeteado); false si no hay objetivos.

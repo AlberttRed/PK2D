@@ -1,49 +1,50 @@
-[gd_scene load_steps=5 format=3 uid="uid://bctyl7571gj7l"]
+[gd_scene format=3 uid="uid://bctyl7571gj7l"]
 
 [ext_resource type="Script" uid="uid://b4dpgg4l8a73s" path="res://Scripts/Battle/ui/BattleSpotUI.gd" id="1_nleos"]
 [ext_resource type="Texture2D" uid="uid://bm3cxlnu0yn0x" path="res://Sprites/Batalla/007b.png" id="2_ereqq"]
 [ext_resource type="Texture2D" uid="uid://dumrcq1svc26j" path="res://Sprites/Batalla/battle_shadow.png" id="3_2j6lo"]
 [ext_resource type="PackedScene" uid="uid://dniko84d5byyb" path="res://Scenes/Battle/ui/HPBar.tscn" id="4_tu6mb"]
 
-[node name="BattleSpot" type="Node2D"]
+[node name="BattleSpot" type="Node2D" unique_id=738930569]
 script = ExtResource("1_nleos")
 metadata/_edit_lock_ = true
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="." unique_id=214919145]
 texture = ExtResource("2_ereqq")
 metadata/_edit_lock_ = true
 
-[node name="Shadow" type="Sprite2D" parent="."]
+[node name="Shadow" type="Sprite2D" parent="." unique_id=624533054]
 position = Vector2(-8, 84)
 scale = Vector2(1.125, 1.125)
 texture = ExtResource("3_2j6lo")
 
-[node name="HPBar" parent="." instance=ExtResource("4_tu6mb")]
+[node name="HPBar" parent="." unique_id=782842345 instance=ExtResource("4_tu6mb")]
 position = Vector2(313, 52)
 
-[node name="Positions" type="Node2D" parent="."]
+[node name="Positions" type="Node2D" parent="." unique_id=39893725]
 
-[node name="HPBarPos_Single" type="Marker2D" parent="Positions"]
+[node name="HPBarPos_Single" type="Marker2D" parent="Positions" unique_id=735899782]
 
-[node name="HPBarPos_Double" type="Marker2D" parent="Positions"]
+[node name="HPBarPos_Double" type="Marker2D" parent="Positions" unique_id=1763141181]
 
-[node name="Anchors" type="Node2D" parent="Positions"]
+[node name="Anchors" type="Node2D" parent="Positions" unique_id=1998176663]
 
-[node name="Center" type="Marker2D" parent="Positions/Anchors"]
+[node name="Center" type="Marker2D" parent="Positions/Anchors" unique_id=1312774470]
+position = Vector2(0, 36)
 gizmo_extents = 12.0
 
-[node name="HitCenter" type="Marker2D" parent="Positions/Anchors"]
-position = Vector2(0, -24)
+[node name="HitCenter" type="Marker2D" parent="Positions/Anchors" unique_id=1638926829]
+position = Vector2(0, 36)
 gizmo_extents = 12.0
 
-[node name="ProjectileOrigin" type="Marker2D" parent="Positions/Anchors"]
-position = Vector2(0, -36)
+[node name="ProjectileOrigin" type="Marker2D" parent="Positions/Anchors" unique_id=1947577036]
+position = Vector2(25, 33)
 gizmo_extents = 12.0
 
-[node name="StatusIcon" type="Marker2D" parent="Positions/Anchors"]
+[node name="StatusIcon" type="Marker2D" parent="Positions/Anchors" unique_id=1469226312]
 position = Vector2(-40, -72)
 gizmo_extents = 12.0
 
-[node name="Feet" type="Marker2D" parent="Positions/Anchors"]
-position = Vector2(0, 48)
+[node name="Feet" type="Marker2D" parent="Positions/Anchors" unique_id=1634240179]
+position = Vector2(0, 88)
 gizmo_extents = 12.0

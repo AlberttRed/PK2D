@@ -43,6 +43,9 @@ class_name MoveData
 
 @export var category: BattleMoveCategory = null
 
+## Animación visual de combate (nullable). Solo presentación; no afecta la lógica.
+@export var battle_animation: BattleAnimation = null
+
 func _init():
 	add_user_signal("move_done")
 	add_user_signal("animation_done")

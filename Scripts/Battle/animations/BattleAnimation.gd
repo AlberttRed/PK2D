@@ -4,16 +4,32 @@ class_name BattleAnimation
 ## Recurso reutilizable de animación de combate.
 ## Contrato canónico: Docs/battle/BattleAnimationContract.md
 ##
-## Solo visualiza. Nunca modifica HP, estados, turnos ni resultados lógicos.
-## El caller externo siempre hace: await battle_animation.play(...)
+## Proyectiles dirigidos: animar en +X de 0 a `authored_travel_length` (mismo valor en keys y export).
+## Solo visualiza. El caller externo siempre hace: await battle_animation.play(...)
 
-const USER_ANCHOR_SPOT_NAME := "ProjectileOrigin"
-const TARGET_ANCHOR_SPOT_NAME := "HitCenter"
+## Anchors del BattleSpot seleccionables en el inspector.
+enum SpotAnchor {
+	CENTER,
+	HIT_CENTER,
+	PROJECTILE_ORIGIN,
+	STATUS_ICON,
+	FEET,
+}
+
+const MIN_AUTHORED_SPAN := 0.001
 
 @export var animation_scene: PackedScene
 @export var animation_name: String = "default"
 ## Reserva de API: hoy solo se soporta el path bloqueante (await hasta terminar).
 @export var blocks_visualize: bool = true
+## Si hay UserAnchor+TargetAnchor+VisualRoot (o spots), encaja VisualRoot al segmento real.
+@export var fit_visual_to_anchors: bool = true
+## Longitud authorada del viaje completo en +X local (debe coincidir con las keys del proyectil).
+@export var authored_travel_length: float = 200.0
+## Punto del spot del usuario al que se mapea UserAnchor / origen del VisualRoot.
+@export var user_spot_anchor: SpotAnchor = SpotAnchor.PROJECTILE_ORIGIN
+## Punto del spot del target al que se apunta el VisualRoot.
+@export var target_spot_anchor: SpotAnchor = SpotAnchor.HIT_CENTER
 
 ## Punto de entrada único. Coroutine: el caller debe usar `await`.
 func play(
@@ -56,15 +72,14 @@ func play(
 	_cleanup_instance(instance)
 
 
-## Prepara instancia: Hooks.bind, anchors y orientación. Seguro si faltan nodos.
+## Prepara instancia: Hooks.bind, anchors y marco VisualRoot user→target.
 func _prepare_instance(
 	instance: Node,
 	user_spot: BattleSpot,
 	target_spots: Array[BattleSpot]
 ) -> void:
 	_bind_hooks(instance, user_spot, target_spots)
-	_apply_scene_anchors(instance, user_spot, target_spots)
-	_apply_orientation(instance, user_spot, target_spots)
+	_apply_scene_anchors_and_fit_visual(instance, user_spot, target_spots)
 
 
 func _bind_hooks(
@@ -78,48 +93,74 @@ func _bind_hooks(
 	hooks_node.bind(user_spot, target_spots)
 
 
-func _apply_scene_anchors(
+static func spot_anchor_name(anchor: SpotAnchor) -> String:
+	match anchor:
+		SpotAnchor.CENTER:
+			return BattleSpot.ANCHOR_CENTER
+		SpotAnchor.HIT_CENTER:
+			return BattleSpot.ANCHOR_HIT_CENTER
+		SpotAnchor.PROJECTILE_ORIGIN:
+			return BattleSpot.ANCHOR_PROJECTILE_ORIGIN
+		SpotAnchor.STATUS_ICON:
+			return BattleSpot.ANCHOR_STATUS_ICON
+		SpotAnchor.FEET:
+			return BattleSpot.ANCHOR_FEET
+		_:
+			return BattleSpot.ANCHOR_CENTER
+
+
+## Coloca anchors de escena (si existen) y encaja VisualRoot:
+## - origen en el anchor de spot del user
+## - +X local hacia el anchor de spot del target
+## - scale.x = distancia_real / authored_travel_length
+## Los proyectiles deben animarse en local de 0 a authored_travel_length en +X.
+func _apply_scene_anchors_and_fit_visual(
 	instance: Node,
 	user_spot: BattleSpot,
 	target_spots: Array[BattleSpot]
 ) -> void:
 	var user_anchor := instance.get_node_or_null("UserAnchor") as Node2D
-	if user_anchor != null and user_spot != null and is_instance_valid(user_spot):
-		user_anchor.global_position = user_spot.get_anchor_global_position(USER_ANCHOR_SPOT_NAME)
-
 	var target_anchor := instance.get_node_or_null("TargetAnchor") as Node2D
+	var user_anchor_name := spot_anchor_name(user_spot_anchor)
+	var target_anchor_name := spot_anchor_name(target_spot_anchor)
 	var first_target := _first_target(target_spots)
-	if target_anchor != null and first_target != null:
-		target_anchor.global_position = first_target.get_anchor_global_position(TARGET_ANCHOR_SPOT_NAME)
 
+	var user_global := Vector2.ZERO
+	var target_global := Vector2.ZERO
+	var has_real_span := false
+	if user_spot != null and is_instance_valid(user_spot) and first_target != null:
+		user_global = user_spot.get_anchor_global_position(user_anchor_name)
+		target_global = first_target.get_anchor_global_position(target_anchor_name)
+		has_real_span = true
 
-func _apply_orientation(
-	instance: Node,
-	user_spot: BattleSpot,
-	target_spots: Array[BattleSpot]
-) -> void:
-	var first_target := _first_target(target_spots)
-	if user_spot == null or first_target == null:
+	if user_anchor != null and has_real_span:
+		user_anchor.global_position = user_global
+	if target_anchor != null and has_real_span:
+		target_anchor.global_position = target_global
+
+	if not fit_visual_to_anchors:
 		return
-	if not is_instance_valid(user_spot) or not is_instance_valid(first_target):
+	if not has_real_span:
 		return
-
-	var from: Vector2 = user_spot.get_anchor_global_position("Center")
-	var to: Vector2 = first_target.get_anchor_global_position("Center")
-	var dir_x: float = to.x - from.x
-	if is_zero_approx(dir_x):
+	if authored_travel_length < MIN_AUTHORED_SPAN:
+		push_warning("BattleAnimation: authored_travel_length inválido; no se escala VisualRoot.")
 		return
 
 	var visual := instance.get_node_or_null("VisualRoot") as Node2D
-	if visual == null and instance is Node2D:
-		visual = instance as Node2D
 	if visual == null:
 		return
 
-	var sx := absf(visual.scale.x)
-	if sx < 0.0001:
-		sx = 1.0
-	visual.scale.x = sx if dir_x >= 0.0 else -sx
+	var real_vec := target_global - user_global
+	var real_len := real_vec.length()
+
+	visual.global_position = user_global
+	# Eje authorado = +X local (viaje 0 → authored_travel_length).
+	visual.rotation = real_vec.angle()
+	var stretch := real_len / authored_travel_length
+	var sy := absf(visual.scale.y)
+	if sy < MIN_AUTHORED_SPAN:
+		sy = 1.0
+	visual.scale = Vector2(stretch, sy)
 
 
 func _first_target(target_spots: Array[BattleSpot]) -> BattleSpot:
