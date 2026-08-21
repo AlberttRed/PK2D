@@ -36,7 +36,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_move_fail_no_target_test: bool = false
 
 @export_group("Debug animaciones de combate")
-## 1vs1 salvaje: Charmander (Arañazo + Ascuas) vs Pidgey — probar BattleAnimation de Ascuas.
+## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Charmander — probar BattleAnimations.
 @export var use_ember_animation_test: bool = false
 
 @export_group("Debug clima")
@@ -526,6 +526,7 @@ func _create_ember_animation_test_player() -> BattleParticipant:
 	charmander.custom_move_ids = [
 		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.EMBER,
+		MovesEnum.Values.TACKLE,
 	]
 	charmander._post_init()
 	var lead: BattlePokemon = charmander.to_battle_pokemon()
@@ -544,6 +545,7 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 	charmander.custom_move_ids = [
 		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.EMBER,
+		MovesEnum.Values.TACKLE,
 	]
 	charmander._post_init()
 	var wild_bp: BattlePokemon = charmander.to_battle_pokemon()
@@ -552,8 +554,8 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 
 
 func _print_ember_animation_test_guide() -> void:
-	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas) vs Charmander Nv.20 (Arañazo + Ascuas).")
-	print(">>> Usa Ascuas en ambos sentidos para validar marco VisualRoot user→target; Arañazo sin animación.")
+	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Charmander Nv.20 (igual).")
+	print(">>> Ascuas = proyectil dirigido; Placaje = embestida user; Arañazo sin animación.")
 
 
 func wildFixedSubstituteTestBattle() -> void:

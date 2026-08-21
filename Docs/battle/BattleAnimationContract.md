@@ -284,10 +284,49 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 
 ---
 
-## 12. Fuera de alcance de este contrato (PBIs posteriores)
+## 12. Fuera de alcance de este contrato (posteriores)
 
 - Catálogo masivo de animaciones concretas
-- Helpers visuales completos en spot / `BattleAnimationUtils` (673)
-- Subclases especiales de animación (673)
 - Animaciones no bloqueantes reales
 - Coreografía multi-target avanzada
+
+---
+
+## 13. Helpers y subclases (PBI 673)
+
+### `BattleAnimationUtils`
+
+Helpers estáticos (solo visual):
+
+- `flash_spot(spot, flashes, step_duration, end_pause)`
+- `shake_spot(spot, intensity, duration)`
+- `move_spot_forward(spot, distance, duration)`
+- `darken_overlay(parent, alpha, duration)` / `restore_overlay(overlay, duration)`
+- `wait(host, seconds)`
+
+### API en `BattleSpot`
+
+Fachadas que delegan en utils (call sites y Hooks):
+
+- `play_hit_animation()` → `flash_spot` (comportamiento de impacto existente)
+- `flash(...)`, `shake(...)`, `move_forward(...)`
+
+### Hooks
+
+Siguen siendo forwarder genérico: `call_on_target("play_hit_animation")` o `call_on_target("flash", [1, 0.05, 0.0])`.  
+Call Method no hace `await`; los tweens arrancan igual (fire-and-forget).
+
+### Subclases
+
+Ejemplo: `BattleAnimationWithFieldFlash` — oscurece el layer, `super.play`, restaura.  
+Recurso smoke: `Scenes/Battle/animations/_smoke/SmokeBattleAnimationWithFieldFlash.tres`.  
+Criterio: subclase solo si tracks + anchors + hooks no bastan.
+
+### Criterios de aceptación (PBI 673)
+
+- [x] Existe `BattleAnimationUtils` con flash, shake, move forward, darken/restore, wait.
+- [x] `BattleSpot.play_hit_animation` (y flash/shake/move_forward) delegan en utils.
+- [x] Call sites existentes (`DamageEffect`, etc.) siguen usando la fachada del spot.
+- [x] Hooks siguen siendo forwarder genérico hacia métodos del spot.
+- [x] Ejemplo de subclase (`BattleAnimationWithFieldFlash`) + recurso smoke.
+- [x] Sin efectos lógicos; documentado en el contrato.

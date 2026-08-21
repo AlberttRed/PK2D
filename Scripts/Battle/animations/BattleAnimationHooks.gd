@@ -2,7 +2,8 @@ extends Node
 class_name BattleAnimationHooks
 
 ## Puente no visual entre AnimationPlayer (Call Method) y BattleSpot.
-## Los efectos viven en el spot; este nodo solo reenvía tras bind().
+## Los efectos viven en el spot / BattleAnimationUtils; este nodo solo reenvía tras bind().
+## Ej.: call_on_target("play_hit_animation") | call_on_target("flash", [1, 0.05, 0.0])
 ## Contrato: Docs/battle/BattleAnimationContract.md
 
 var user_spot: BattleSpot = null
@@ -25,6 +26,11 @@ func call_on_user(method: StringName, args: Array = []) -> void:
 
 func call_on_target(method: StringName, args: Array = []) -> void:
 	_call_on_spot(_first_target(), method, args)
+
+
+## Atajo Call Method (sin Array anidado en el track): embestida del user.
+func user_move_forward(distance: float = 24.0, duration: float = 0.12) -> void:
+	call_on_user(&"move_forward", [distance, duration])
 
 
 func _first_target() -> BattleSpot:
