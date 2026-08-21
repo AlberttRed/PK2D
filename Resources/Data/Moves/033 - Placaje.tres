@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qlva5"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_rkwo5"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_86ge7"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/TackleAnimation.tres" id="3_tackle_anim"]
 
 [resource]
 resource_name = "33 - Placaje"
@@ -21,3 +22,4 @@ effect_entries = "Inflicts regular damage with no additional effect. Inflicts re
 target_id = 10
 meta_category_id = 0
 category = ExtResource("1_rkwo5")
+battle_animation = ExtResource("3_tackle_anim")

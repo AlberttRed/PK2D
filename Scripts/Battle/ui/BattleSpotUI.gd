@@ -15,6 +15,33 @@ var tween: Tween
 @onready var hp_bar: HPBar = $HPBar
 @onready var hp_bar_pos_single: Marker2D = $Positions/HPBarPos_Single
 @onready var hp_bar_pos_double: Marker2D = $Positions/HPBarPos_Double
+@onready var anchors_root: Node2D = $Positions/Anchors
+
+## Nombres estables de anchors visuales (PBI 671).
+const ANCHOR_CENTER := "Center"
+const ANCHOR_HIT_CENTER := "HitCenter"
+const ANCHOR_PROJECTILE_ORIGIN := "ProjectileOrigin"
+const ANCHOR_STATUS_ICON := "StatusIcon"
+const ANCHOR_FEET := "Feet"
+
+
+func get_anchor_node(anchor_name: String) -> Node2D:
+	if anchors_root == null:
+		return null
+	var node := anchors_root.get_node_or_null(anchor_name) as Node2D
+	if node != null:
+		return node
+	if anchor_name != ANCHOR_CENTER:
+		return anchors_root.get_node_or_null(ANCHOR_CENTER) as Node2D
+	return null
+
+
+func get_anchor_global_position(anchor_name: String) -> Vector2:
+	var node := get_anchor_node(anchor_name)
+	if node != null:
+		return node.global_position
+	return global_position
+
 
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
@@ -167,19 +194,21 @@ func has_previous_controllable_pokemon() -> bool:
 
 
 func play_hit_animation() -> void:
-	if not is_visible():
-		return
+	await BattleAnimationUtils.flash_spot(self)
 
-	var hit_tween := create_tween()
-	hit_tween.set_parallel(false) # animación secuencial (no solapada)
 
-	# Parpadeo: transparente → visible (2 veces)
-	for i in 2:
-		hit_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 0.0), 0.1)
-		hit_tween.tween_property(sprite, "modulate", Color(1, 1, 1, 1.0), 0.1)
+## Alias para Hooks / Call Method (mismos defaults que el hit).
+func flash(flashes: int = 2, step_duration: float = 0.1, end_pause: float = 0.5) -> void:
+	await BattleAnimationUtils.flash_spot(self, flashes, step_duration, end_pause)
 
-	await hit_tween.finished
-	await get_tree().create_timer(0.5).timeout
+
+func shake(intensity: float = 4.0, duration: float = 0.25) -> void:
+	await BattleAnimationUtils.shake_spot(self, intensity, duration)
+
+
+func move_forward(distance: float = 16.0, duration: float = 0.12) -> void:
+	await BattleAnimationUtils.move_spot_forward(self, distance, duration)
+
 
 func play_heal_animation() -> void:
 	if not is_visible():

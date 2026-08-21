@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
+
+[sub_resource type="Animation" id="Animation_default"]
+resource_name = "default"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"default": SubResource("Animation_default")
+}
+
+[node name="DirectedAnimationTemplate" type="Node2D"]
+
+[node name="Hooks" type="Node" parent="."]
+script = ExtResource("1_hooks")
+
+[node name="UserAnchor" type="Marker2D" parent="."]
+gizmo_extents = 16.0
+
+[node name="TargetAnchor" type="Marker2D" parent="."]
+position = Vector2(200, 0)
+gizmo_extents = 16.0
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Placeholder" type="Polygon2D" parent="VisualRoot"]
+color = Color(1, 0.85, 0.2, 0.85)
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_default")
+}

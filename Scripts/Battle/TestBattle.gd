@@ -35,6 +35,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Escenario doble Pikachu+Machop vs Gastly débil + Rattata (sin objetivo al aplicar).
 @export var use_move_fail_no_target_test: bool = false
 
+@export_group("Debug animaciones de combate")
+## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Squirtle — Ascuas/Placaje + burn end-turn.
+@export var use_ember_animation_test: bool = false
+
 @export_group("Debug clima")
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
 @export var use_rain_weather_test: bool = false
@@ -101,6 +105,10 @@ func _ready() -> void:
 		_print_battle_ia_typing_test_guide()
 		_run_battle_ia_fallback_probe()
 		await battleIaTypingTestBattle()
+		return
+	if use_ember_animation_test:
+		_print_ember_animation_test_guide()
+		await wildEmberAnimationTestBattle()
 		return
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
@@ -499,6 +507,54 @@ func fieldEffectsIntegrationTrainerTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla integración field effects terminada. Ganador: %s" % winner)
+
+
+func wildEmberAnimationTestBattle() -> void:
+	var player_participant := _create_ember_animation_test_player()
+	var wild_participant := _create_ember_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación Ascuas terminada. Ganador: %s" % winner)
+
+
+func _create_ember_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.SCRATCH,
+		MovesEnum.Values.EMBER,
+		MovesEnum.Values.TACKLE,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_ember_animation_test_wild() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 20
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_ember_animation_test_guide() -> void:
+	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Squirtle Nv.20.")
+	print(">>> Ascuas = proyectil; Placaje = embestida; con debug_force_ailment_apply Ascuas quema → anim burn end-turn.")
 
 
 func wildFixedSubstituteTestBattle() -> void:

@@ -125,6 +125,9 @@ func get_ailment_chance() -> float:
 func get_weather() -> WeatherData:
 	return base_data.get_weather()
 
+func get_battle_animation() -> BattleAnimation:
+	return base_data.get_battle_animation()
+
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base_data.get_stat_changes()
 

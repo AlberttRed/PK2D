@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" uid="uid://bg1y037na3awd" path="res://Sprites/Batalla/Battlebacks/battlebgFieldNight.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://bqo0l178kbta7" path="res://Sprites/Batalla/Battlebacks/playerbaseFieldNight.png" id="2_player_base"]
+[ext_resource type="Texture2D" uid="uid://cvk0t13l834rt" path="res://Sprites/Batalla/Battlebacks/enemybaseFieldNight.png" id="3_enemy_base"]
+[ext_resource type="Texture2D" uid="uid://bhtumcefgei33" path="res://Sprites/Batalla/025b.png" id="4_player_sprite"]
+[ext_resource type="Texture2D" uid="uid://c4llr0gst3evk" path="res://Sprites/Batalla/007.png" id="5_enemy_sprite"]
+
+[node name="BattleAnimationWorkbench" type="Node2D"]
+metadata/_edit_vertical_guides_ = [0.0, 512.0]
+metadata/_edit_horizontal_guides_ = [0.0, 384.0]
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -2
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="PlayerBase" type="Node2D" parent="."]
+
+[node name="BaseSprite" type="Sprite2D" parent="PlayerBase"]
+z_index = -1
+position = Vector2(128, 272)
+texture = ExtResource("2_player_base")
+
+[node name="PokemonSpotA" type="Node2D" parent="PlayerBase"]
+position = Vector2(128, 224)
+
+[node name="Sprite" type="Sprite2D" parent="PlayerBase/PokemonSpotA"]
+texture = ExtResource("4_player_sprite")
+
+[node name="Positions" type="Node2D" parent="PlayerBase/PokemonSpotA"]
+
+[node name="Anchors" type="Node2D" parent="PlayerBase/PokemonSpotA/Positions"]
+
+[node name="Center" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+gizmo_extents = 12.0
+
+[node name="HitCenter" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, -24)
+gizmo_extents = 12.0
+
+[node name="ProjectileOrigin" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(28, -36)
+gizmo_extents = 12.0
+
+[node name="StatusIcon" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(-40, -72)
+gizmo_extents = 12.0
+
+[node name="Feet" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, 48)
+gizmo_extents = 12.0
+
+[node name="EnemyBase" type="Node2D" parent="."]
+z_index = -1
+
+[node name="BaseSprite" type="Sprite2D" parent="EnemyBase"]
+z_index = -1
+position = Vector2(384, 176)
+texture = ExtResource("3_enemy_base")
+
+[node name="PokemonSpotA" type="Node2D" parent="EnemyBase"]
+position = Vector2(384, 140)
+
+[node name="Sprite" type="Sprite2D" parent="EnemyBase/PokemonSpotA"]
+texture = ExtResource("5_enemy_sprite")
+
+[node name="Positions" type="Node2D" parent="EnemyBase/PokemonSpotA"]
+
+[node name="Anchors" type="Node2D" parent="EnemyBase/PokemonSpotA/Positions"]
+
+[node name="Center" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+gizmo_extents = 12.0
+
+[node name="HitCenter" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, -24)
+gizmo_extents = 12.0
+
+[node name="ProjectileOrigin" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(-28, -36)
+gizmo_extents = 12.0
+
+[node name="StatusIcon" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(40, -72)
+gizmo_extents = 12.0
+
+[node name="Feet" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, 48)
+gizmo_extents = 12.0
+
+[node name="BattleAnimationLayer" type="Node2D" parent="."]
+z_index = 10

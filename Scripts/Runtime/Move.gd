@@ -175,6 +175,11 @@ func get_heal_amount() -> int:
 func get_move_effect_script() -> Script:
 	return base.move_effect
 
+func get_battle_animation() -> BattleAnimation:
+	if base == null:
+		return null
+	return base.battle_animation
+
 ## Helpers para características del movimiento
 func has_contact() -> bool:
 	"""Retorna true si el movimiento hace contacto físico"""

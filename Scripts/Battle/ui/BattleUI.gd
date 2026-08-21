@@ -84,6 +84,10 @@ func show_player_hp_bar(pokemons: Array[BattlePokemon]):
 	spot_a.hp_bar.visible = pokemons.size() >= 1 and spot_a.visible
 	spot_b.hp_bar.visible = pokemons.size() >= 2 and spot_b.visible
 
+func get_animation_layer() -> Node2D:
+	return field_ui.get_animation_layer()
+
+
 func get_player_spots_for_mode(mode: int) -> Array[BattleSpot]:
 	return $FieldUI.get_player_spots_for_mode(mode)
 

@@ -1,7 +1,13 @@
 extends Control
 
 class_name FieldUI
-	
+
+@onready var animation_layer: Node2D = $BattleAnimationLayer
+
+func get_animation_layer() -> Node2D:
+	return animation_layer
+
+
 func get_player_spots_for_mode(mode: int) -> Array[BattleSpot]:
 	match mode:
 		BattleRules.BattleModes.SINGLE:
