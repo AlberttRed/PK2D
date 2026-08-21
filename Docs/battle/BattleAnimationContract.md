@@ -276,10 +276,10 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - Catálogo de clips: `BattleFieldAnimations` (`play_intro_trainers_enter`, `play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`).
 - Trainer enter (706): trainers fijos en la base; se animan `PlayerBase`/`EnemyBase` (player der→izq, rival izq→der) con deltas de `CONST.BATTLE.*_BASE_*POSITION`. Idle frame 0. Sin gesto de brazo.
 - Posiciones de trainer: `CONST.BATTLE.BACK_SINGLE_TRAINER_POS` / `FRONT_SINGLE_TRAINER_POS`.
-- Provisional: el trainer del lado se oculta justo antes de `play_pokeball_throw` hasta tener animación de exit.
+- Trainer exit: `play_trainer_exit_for_spot` — slide del nodo Trainer (player← / rival→); la base permanece.
 - `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy`; `ball00` → open + brillo.
 - `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
-- Intro / switch-in: `play_send_in` = ball → enter → HP bar.
+- Intro / switch-in: `play_send_in` = trainer exit → ball → enter → HP bar.
 
 ### Ailments
 

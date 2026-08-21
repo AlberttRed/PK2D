@@ -298,6 +298,93 @@ static func set_trainer_idle_frame(trainer_root: Node2D) -> void:
 	spr.frame = 0
 
 
+## Salida del trainer del campo (solo el nodo Trainer, la base permanece).
+## Player: sale a la izquierda. Rival: sale a la derecha. Awaitable.
+static func trainer_exit(
+	trainer_root: Node2D,
+	to_left: bool,
+	duration: float = 0.55,
+	slide_distance: float = 360.0
+) -> void:
+	var tw := start_trainer_exit_tween(trainer_root, to_left, duration, slide_distance)
+	if tw == null:
+		return
+	await tw.finished
+	finalize_trainer_exit(trainer_root)
+
+
+## Inicia el slide de salida y devuelve el Tween (para solapar con la ball).
+static func start_trainer_exit_tween(
+	trainer_root: Node2D,
+	to_left: bool,
+	duration: float = 0.55,
+	slide_distance: float = 360.0
+) -> Tween:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return null
+	if not trainer_root.visible:
+		return null
+	if not trainer_root.has_meta("trainer_rest_pos"):
+		trainer_root.set_meta("trainer_rest_pos", trainer_root.position)
+	var rest: Vector2 = trainer_root.get_meta("trainer_rest_pos")
+	var end := rest
+	end.x = rest.x - slide_distance if to_left else rest.x + slide_distance
+	var tw := trainer_root.create_tween()
+	tw.tween_property(trainer_root, "position", end, duration).set_trans(Tween.TRANS_SINE).set_ease(
+		Tween.EASE_IN
+	)
+	tw.tween_callback(func(): finalize_trainer_exit(trainer_root))
+	return tw
+
+
+## Player: frames de throw (trback) + slide a la izquierda, en paralelo.
+static func start_player_trainer_exit_with_throw(
+	trainer_root: Node2D,
+	duration: float = 1.1,
+	slide_distance: float = 360.0
+) -> Tween:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return null
+	if not trainer_root.visible:
+		return null
+	if not trainer_root.has_meta("trainer_rest_pos"):
+		trainer_root.set_meta("trainer_rest_pos", trainer_root.position)
+	var rest: Vector2 = trainer_root.get_meta("trainer_rest_pos")
+	var end := rest + Vector2(-slide_distance, 0.0)
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	var tw := trainer_root.create_tween()
+	tw.set_parallel(true)
+	if spr != null and spr.hframes > 1:
+		var last_frame := float(spr.hframes - 1)
+		# Gesto en la primera parte del slide (como en los juegos).
+		tw.tween_method(
+			func(v: float):
+				if is_instance_valid(spr):
+					spr.frame = clampi(int(v), 0, spr.hframes - 1),
+			0.0,
+			last_frame + 0.99,
+			duration * 0.4
+		).set_trans(Tween.TRANS_LINEAR)
+	tw.tween_property(trainer_root, "position", end, duration).set_trans(Tween.TRANS_SINE).set_ease(
+		Tween.EASE_IN
+	)
+	tw.chain().tween_callback(func(): finalize_trainer_exit(trainer_root))
+	return tw
+
+
+static func finalize_trainer_exit(trainer_root: Node2D) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	var rest: Vector2 = (
+		trainer_root.get_meta("trainer_rest_pos")
+		if trainer_root.has_meta("trainer_rest_pos")
+		else trainer_root.position
+	)
+	trainer_root.visible = false
+	trainer_root.position = rest
+	set_trainer_idle_frame(trainer_root)
+
+
 ## Mantiene el borde inferior del sprite fijo al cambiar el scale.y (Sprite2D centered).
 static func _position_with_feet_anchored(
 	orig_pos: Vector2,
