@@ -183,13 +183,29 @@ Definidos para implementación en PBI 669:
 
 Autoría en workbench (PBI 670); runtime solo instancia la `.tscn` del VFX.
 
+### Workbench
+
+- Escena: `Scenes/Battle/animations/BattleAnimationWorkbench.tscn`
+- Réplica visual del **campo** (fondo, bases, spots mock single, `BattleAnimationLayer`).
+- **No** es escena de combate: sin controllers, menús ni lógica.
+- Spots mock incluyen anchors con nombres finales: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.
+- Flujo típico:
+  1. Duplicar una plantilla de `Scenes/Battle/animations/templates/`.
+  2. Abrir el workbench y, para previsualizar, instanciar temporalmente la escena bajo `BattleAnimationLayer` (o editar la escena de animación con el workbench como referencia de posiciones).
+  3. Guardar la animación como `.tscn` independiente.
+  4. Asignarla a un recurso `BattleAnimation.animation_scene`.
+
 ### Dirigidas (user → target)
+
+Plantilla: `Scenes/Battle/animations/templates/DirectedAnimationTemplate.tscn`
 
 - `UserAnchor`, `TargetAnchor`, `VisualRoot`, `AnimationPlayer`
 - Tracks del `AnimationPlayer` **solo** a nodos internos de esa escena
-- Prohibido: rutas a nodos de `Battle.tscn` / `FieldUI` de runtime
+- Prohibido: rutas a nodos de `Battle.tscn` / `FieldUI` / workbench de runtime
 
 ### Globales (campo)
+
+Plantilla: `Scenes/Battle/animations/templates/GlobalAnimationTemplate.tscn`
 
 - `FieldAnchor`, `VisualRoot`, `AnimationPlayer`
 - Misma regla de independencia de rutas
