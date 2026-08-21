@@ -267,6 +267,14 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - Mismo recurso reutilizable por varios movimientos.
 - Sin animación → flujo visual previo sin cambios.
 - Otros sistemas (ailments, weather, items) podrán invocar el mismo `play(...)` sin API distinta.
+
+### Ailments
+
+- `AilmentData.battle_animation: BattleAnimation` (nullable) + `get_battle_animation()` / `play_battle_animation_on(ui, pokemon)`.
+- Ejemplo: burn → `Scenes/Battle/animations/ailments/BurnAnimation.*` en `BURN.tres`.
+- Al **aplicar** el ailment (`BattleMoveHandler._visualize_ailment_entry_result`): anim → mensaje de inicio («se ha quemado», etc.).
+- Al **repetir** el efecto (p. ej. burn end-of-turn en `BurnAilmentEffect.visualize_phase`): anim → mensaje → HP.
+- VFX locales: `fit_visual_to_anchors = false` → `VisualRoot` se coloca en el anchor del spot (sin rotar/estirar).
 - Ejemplo E2E: Ascuas (`052`) → `Scenes/Battle/animations/moves/EmberAnimation.tres`.
 
 ---

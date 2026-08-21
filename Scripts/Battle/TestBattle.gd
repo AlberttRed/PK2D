@@ -36,7 +36,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_move_fail_no_target_test: bool = false
 
 @export_group("Debug animaciones de combate")
-## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Charmander — probar BattleAnimations.
+## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Squirtle — Ascuas/Placaje + burn end-turn.
 @export var use_ember_animation_test: bool = false
 
 @export_group("Debug clima")
@@ -538,24 +538,23 @@ func _create_ember_animation_test_player() -> BattleParticipant:
 
 
 func _create_ember_animation_test_wild() -> BattleParticipant:
-	var charmander := Pokemon.new()
-	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
-	charmander.level = 20
-	charmander.is_wild = true
-	charmander.custom_move_ids = [
-		MovesEnum.Values.SCRATCH,
-		MovesEnum.Values.EMBER,
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 20
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
 		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
 	]
-	charmander._post_init()
-	var wild_bp: BattlePokemon = charmander.to_battle_pokemon()
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
 	wild_bp.is_wild = true
 	return BattleParticipantWild.new([wild_bp])
 
 
 func _print_ember_animation_test_guide() -> void:
-	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Charmander Nv.20 (igual).")
-	print(">>> Ascuas = proyectil dirigido; Placaje = embestida user; Arañazo sin animación.")
+	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Squirtle Nv.20.")
+	print(">>> Ascuas = proyectil; Placaje = embestida; con debug_force_ailment_apply Ascuas quema → anim burn end-turn.")
 
 
 func wildFixedSubstituteTestBattle() -> void:

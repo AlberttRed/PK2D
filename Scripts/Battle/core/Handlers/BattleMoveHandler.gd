@@ -255,6 +255,8 @@ func _visualize_ailment_entry_result(ui: BattleUI, apply_data: Dictionary, show_
 	if entry.ailment.get_enum_value() == AilmentsEnum.Values.FLINCH:
 		return
 
+	await entry.ailment.play_battle_animation_on(ui, pokemon)
+
 	var effect_instance: PersistentBattleEffect = apply_data.get("effect")
 	var display_move_id: int = (
 		effect_instance.get_start_causing_move_id()

@@ -21,9 +21,35 @@ static var _major_status_ailment_cache: Dictionary = {}
 @export var icon: Texture2D = null   # Icono opcional para mostrar en batalla
 @export var is_persistent: bool = true  # Si persiste fuera de combate o al hacer switch
 @export var effect: Resource = null        # Script del PersistentBattleEffect asociado
+## Animación visual al aplicar y al repetir el efecto (p. ej. burn). Solo presentación.
+@export var battle_animation: BattleAnimation = null
 
 func get_effect(_min_turn = null, _max_turn = null, _application_chance: int = 100):
 	return effect.new(self, _min_turn, _max_turn, _application_chance) if effect != null else null
+
+
+func get_battle_animation() -> BattleAnimation:
+	return battle_animation
+
+
+## Reproduce battle_animation sobre el spot del Pokémon (si existe). Solo presentación.
+func play_battle_animation_on(ui: BattleUI, pokemon: BattlePokemon) -> void:
+	if ui == null or pokemon == null:
+		return
+	var anim := get_battle_animation()
+	if anim == null:
+		return
+	var layer: Node2D = ui.get_animation_layer()
+	var spot: BattleSpot = (
+		pokemon.resolve_battle_spot()
+		if pokemon.has_method("resolve_battle_spot")
+		else pokemon.battle_spot
+	)
+	if spot == null:
+		return
+	var targets: Array[BattleSpot] = [spot]
+	await anim.play(layer, spot, targets)
+
 
 # Helper para obtener el enum de mensajes de forma segura durante la transición
 func get_enum_value() -> int:

@@ -139,6 +139,8 @@ func _apply_scene_anchors_and_fit_visual(
 		target_anchor.global_position = target_global
 
 	if not fit_visual_to_anchors:
+		# Status / VFX locales: VisualRoot en el spot afectado (target, o user si no hay target).
+		_place_visual_on_affected_spot(instance, user_spot, target_spots)
 		return
 	if not has_real_span:
 		return
@@ -161,6 +163,26 @@ func _apply_scene_anchors_and_fit_visual(
 	if sy < MIN_AUTHORED_SPAN:
 		sy = 1.0
 	visual.scale = Vector2(stretch, sy)
+
+
+## Coloca VisualRoot en el anchor del spot afectado (sin rotar/estirar).
+func _place_visual_on_affected_spot(
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
+) -> void:
+	var visual := instance.get_node_or_null("VisualRoot") as Node2D
+	if visual == null:
+		return
+	var spot := _first_target(target_spots)
+	var anchor_name := spot_anchor_name(target_spot_anchor)
+	if spot == null:
+		spot = user_spot
+		anchor_name = spot_anchor_name(user_spot_anchor)
+	if spot == null or not is_instance_valid(spot):
+		return
+	visual.global_position = spot.get_anchor_global_position(anchor_name)
+	visual.rotation = 0.0
 
 
 func _first_target(target_spots: Array[BattleSpot]) -> BattleSpot:
