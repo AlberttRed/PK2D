@@ -991,10 +991,16 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 		await show_message_from_dict(msg)
 		if bool(msg.get("trainer_send_in", false)):
 			if bool(msg.get("trainer_send_in_double", false)):
-				_reveal_enemy_trainer_send_in(0)
-				_reveal_enemy_trainer_send_in(1)
+				await _reveal_enemy_trainer_send_in(0)
+				await _reveal_enemy_trainer_send_in(1)
 			else:
-				_reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
+				await _reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
+		if bool(msg.get("player_send_in", false)):
+			if bool(msg.get("player_send_in_double", false)):
+				await _reveal_player_send_in(0)
+				await _reveal_player_send_in(1)
+			else:
+				await _reveal_player_send_in(int(msg.get("player_spot_index", 0)))
 
 	actions_menu.show()
 
@@ -1008,6 +1014,22 @@ func _reveal_enemy_trainer_send_in(spot_index: int) -> void:
 	var spot: BattleSpot = spots[spot_index]
 	if spot == null:
 		return
+	await BattleFieldAnimations.play_pokeball_throw(self, spot)
+	spot.set_pokemon_sprite_visible(true)
+	if spot.hp_bar:
+		spot.hp_bar.visible = true
+
+
+func _reveal_player_send_in(spot_index: int) -> void:
+	if battle_controller == null or battle_controller.player_side == null:
+		return
+	var spots := battle_controller.player_side.battle_spots
+	if spot_index < 0 or spot_index >= spots.size():
+		return
+	var spot: BattleSpot = spots[spot_index]
+	if spot == null:
+		return
+	await BattleFieldAnimations.play_pokeball_throw(self, spot)
 	spot.set_pokemon_sprite_visible(true)
 	if spot.hp_bar:
 		spot.hp_bar.visible = true

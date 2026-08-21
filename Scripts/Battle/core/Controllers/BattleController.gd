@@ -101,6 +101,14 @@ func _assign_actives_to_spots(
 
 
 func prepare_trainer_intro_field() -> void:
+	## Oculta sprites hasta el send-in visual (ball throw + reveal).
+	if player_side != null:
+		for spot: BattleSpot in player_side.battle_spots:
+			if spot == null:
+				continue
+			spot.set_pokemon_sprite_visible(false)
+			if spot.hp_bar:
+				spot.hp_bar.visible = false
 	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
 		return
 	if enemy_side == null:

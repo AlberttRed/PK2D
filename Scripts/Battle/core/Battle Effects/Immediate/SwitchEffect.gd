@@ -29,6 +29,7 @@ func visualize(ui):
 		var incoming_name := in_pokemon.get_display_name() if in_pokemon else "(ninguno)"
 		await ui.show_trainer_send_in_display(trainer_name, incoming_name)
 		_load_incoming_pokemon()
+		await _play_send_in_ball_throw(ui)
 		await _process_switch_in()
 		print("[SWITCH] Entra %s (envío entrenador)" % incoming_name)
 		return
@@ -39,7 +40,20 @@ func visualize(ui):
 	await ui.show_switch_message(side.to_string(), in_name)
 	print("[SWITCH] Sale %s, entra %s" % [out_name, in_name])
 
+	await _play_send_in_ball_throw(ui)
 	await _process_switch_in()
+
+
+func _play_send_in_ball_throw(ui: BattleUI) -> void:
+	if spot == null or in_pokemon == null:
+		return
+	spot.set_pokemon_sprite_visible(false)
+	if spot.hp_bar:
+		spot.hp_bar.visible = false
+	await BattleFieldAnimations.play_pokeball_throw(ui, spot)
+	spot.set_pokemon_sprite_visible(true)
+	if spot.hp_bar:
+		spot.hp_bar.visible = true
 
 
 func _load_incoming_pokemon() -> void:

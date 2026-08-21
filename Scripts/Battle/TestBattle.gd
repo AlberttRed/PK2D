@@ -38,6 +38,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export_group("Debug animaciones de combate")
 ## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Squirtle — Ascuas/Placaje + burn end-turn.
 @export var use_ember_animation_test: bool = false
+## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
+@export var use_pokeball_animation_trainer_test: bool = false
 
 @export_group("Debug clima")
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
@@ -109,6 +111,10 @@ func _ready() -> void:
 	if use_ember_animation_test:
 		_print_ember_animation_test_guide()
 		await wildEmberAnimationTestBattle()
+		return
+	if use_pokeball_animation_trainer_test:
+		_print_pokeball_animation_trainer_test_guide()
+		await trainerPokeballAnimationTestBattle()
 		return
 	if use_fixed_substitute_test:
 		_setup_fixed_substitute_test_parties()
@@ -516,6 +522,88 @@ func wildEmberAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Ascuas terminada. Ganador: %s" % winner)
+
+
+func trainerPokeballAnimationTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var trainer_participant := _create_pokeball_animation_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación Poké Ball (trainer) terminada. Ganador: %s" % winner)
+
+
+func _create_pokeball_animation_test_player() -> BattleParticipant:
+	var lead_pkmn := Pokemon.new()
+	lead_pkmn.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	lead_pkmn.level = 20
+	lead_pkmn.is_wild = false
+	lead_pkmn.custom_move_ids = [
+		MovesEnum.Values.SCRATCH,
+		MovesEnum.Values.EMBER,
+		MovesEnum.Values.TACKLE,
+	]
+	lead_pkmn._post_init()
+	var lead: BattlePokemon = lead_pkmn.to_battle_pokemon()
+	lead.controllable = true
+
+	var bench_pkmn := Pokemon.new()
+	bench_pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	bench_pkmn.level = 18
+	bench_pkmn.is_wild = false
+	bench_pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	bench_pkmn._post_init()
+	var bench: BattlePokemon = bench_pkmn.to_battle_pokemon()
+	bench.controllable = true
+
+	var participant := BattleParticipant.new([lead, bench])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_pokeball_animation_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var lead_pkmn := Pokemon.new()
+	lead_pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	lead_pkmn.level = 18
+	lead_pkmn.is_wild = false
+	lead_pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	lead_pkmn._post_init()
+	var lead: BattlePokemon = lead_pkmn.to_battle_pokemon()
+	lead.setIA(ia)
+	lead.controllable = false
+
+	var bench_pkmn := Pokemon.new()
+	bench_pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	bench_pkmn.level = 16
+	bench_pkmn.is_wild = false
+	bench_pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	bench_pkmn._post_init()
+	var bench: BattlePokemon = bench_pkmn.to_battle_pokemon()
+	bench.setIA(ia)
+	bench.controllable = false
+
+	var participant := BattleParticipant.new([lead, bench])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Entrenador"
+	return participant
+
+
+func _print_pokeball_animation_trainer_test_guide() -> void:
+	print(">>> Test animación Poké Ball (trainer): Charmander+Squirtle vs Squirtle+Rattata.")
+	print(">>> Intro: throw rival (envío entrenador) + throw jugador (¡Adelante!).")
+	print(">>> Cambia de Pokémon para ver throw en switch-in.")
 
 
 func _create_ember_animation_test_player() -> BattleParticipant:

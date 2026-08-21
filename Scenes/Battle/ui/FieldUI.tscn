@@ -410,7 +410,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="BattleAnimationLayer" type="Node2D" parent="." unique_id=48733616]
-z_index = 10
+z_index = 1
 z_as_relative = false
 
 [editable path="PlayerBase/PokemonSpotA"]

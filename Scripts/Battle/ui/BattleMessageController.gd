@@ -59,7 +59,9 @@ func get_intro_messages(
 			messages.append({
 				"type": "display",
 				"text": "¡Adelante, " + player_pokemon[0].get_name() + "!",
-				"wait_time": 0.5
+				"wait_time": 0.5,
+				"player_send_in": true,
+				"player_spot_index": 0
 			})
 
 		BattleRules.BattleModes.DOUBLE:
@@ -134,7 +136,9 @@ func _append_player_double_send_in_message(
 		messages.append({
 			"type": "wait",
 			"text": "¡Adelante, %s!" % pokemon_names,
-			"wait_time": 0.5
+			"wait_time": 0.5,
+			"player_send_in": true,
+			"player_send_in_double": true
 		})
 	elif player_trainers.size() >= 2:
 		messages.append({
@@ -142,7 +146,9 @@ func _append_player_double_send_in_message(
 			"text": "¡%s y %s enviaron a %s!" % [
 				player_trainers[0], player_trainers[1], pokemon_names
 			],
-			"wait_time": 0.5
+			"wait_time": 0.5,
+			"player_send_in": true,
+			"player_send_in_double": true
 		})
 
 
