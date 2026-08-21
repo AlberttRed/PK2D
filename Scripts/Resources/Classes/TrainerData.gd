@@ -37,8 +37,8 @@ var trainer_class: TrainerClassData  # Se carga desde trainer_class_id
 
 ## === INTELIGENCIA ARTIFICIAL ===
 
-## Perfil de IA para el combate (null = IA por defecto)
-@export var ai_profile: BattleIA = null
+## Perfil de IA para el combate (null = default_ai de la clase, o BattleIA_TrainerEasy)
+@export var ai_profile: TrainerBattleIA = null
 
 ## === TEXTOS DE COMBATE ===
 

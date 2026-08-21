@@ -1,200 +1,132 @@
 # Sistema de IA de Combate
 
-Este sistema permite configurar diferentes niveles de inteligencia artificial para los Pokémon controlados por la IA en combate.
+Configura perfiles de IA tipados por tipo de participante (entrenador vs salvaje) y por nivel de dificultad de contenido.
 
-## 📚 Clases Disponibles
+## Jerarquía de clases
 
-### `BattleIA` (Clase Base)
-Clase base abstracta que define la interfaz para todas las IAs de combate.
-
-**Método principal:**
-- `decide_action(pokemon: BattlePokemon) -> BattleChoice` - Implementar en subclases
-
-**Propiedades configurables desde el editor:**
-- `difficulty_name`: Nombre descriptivo de la dificultad
-- `use_items`: Si la IA puede usar objetos (futuro)
-- `can_switch_strategically`: Si la IA puede cambiar Pokémon estratégicamente (futuro)
-
-**Métodos de utilidad comunes (disponibles para todas las IAs):**
-- `evaluate_best_move_target_combination(moves, enemies) -> Dictionary`
-  - Evalúa todas las combinaciones de (movimiento, objetivo)
-  - Retorna la mejor basándose en efectividad de tipos
-  - Útil para IAs que toman decisiones basadas en tipos
-- `_calculate_average_effectiveness(move, enemies) -> float`
-  - Calcula efectividad promedio contra múltiples enemigos
-- `_select_best_combination(combinations) -> Dictionary`
-  - Elige la mejor combinación (con desempate aleatorio)
-
----
-
-### `BattleIA_Wild`
-IA para Pokémon salvajes.
-
-**Comportamiento:**
-- ✅ Elige movimientos completamente al azar
-- ❌ No considera efectividad de tipos
-- ❌ No usa objetos
-- ❌ No cambia de Pokémon
-
-**Uso recomendado:** Pokémon salvajes
-
----
-
-### `BattleIA_Easy`
-IA básica para entrenadores de nivel fácil.
-
-**Comportamiento:**
-- ✅ Considera efectividad de tipos al elegir movimientos **Y objetivos**
-- ✅ Evalúa todas las combinaciones posibles de (movimiento, objetivo)
-- ✅ Elige la combinación con mejor efectividad contra el objetivo específico
-- ✅ Para movimientos multi-objetivo (ej: Terremoto), calcula efectividad promedio
-- ✅ En caso de empate, elige aleatoriamente entre los mejores
-- ❌ No considera stats, estado, clima u otros factores
-- ❌ No usa objetos
-- ❌ No cambia de Pokémon estratégicamente
-
-**Ejemplo:**
-- Si tiene Pistola Agua disponible y hay un Charizard y un Bulbasaur:
-  - Calculará: Pistola Agua → Charizard = 2.0x (súper efectivo)
-  - Calculará: Pistola Agua → Bulbasaur = 0.5x (no muy efectivo)
-  - Elegirá atacar a Charizard con Pistola Agua
-
-**Uso recomendado:** Entrenadores novatos, primeras rutas
-
----
-
-## 🎯 IAs Futuras (Planificadas)
-
-### `BattleIA_Medium` (No implementada)
-**Comportamiento previsto:**
-- Considera efectividad de tipos (usando `evaluate_best_move_target_combination()`)
-- Evalúa cambios de stats (boosts/drops)
-- Puede cambiar Pokémon en situaciones desfavorables
-- Usa objetos curativos básicos
-
-**Ejemplo de implementación:**
-```gdscript
-func decide_action(pokemon: BattlePokemon) -> BattleChoice:
-    var moves = pokemon.get_available_moves()
-    var enemies = pokemon.get_opponent_side().get_active_pokemons()
-    
-    # Reutilizar el método común para evaluar tipos
-    var best_type_combo = evaluate_best_move_target_combination(moves, enemies)
-    
-    # Extender con evaluación de stats, prioridad, etc.
-    var best_overall = _evaluate_with_stats(best_type_combo, pokemon, enemies)
-    
-    # Considerar cambio de Pokémon si es desfavorable
-    if _should_switch(pokemon, enemies):
-        return _create_switch_choice()
-    
-    return _create_move_choice(best_overall)
+```
+BattleIA                          # Base + utilidades (evaluate_*, build_random_legal_move_choice)
+├── TrainerBattleIA               # Solo trainers (TrainerData.ai_profile)
+│   └── BattleIA_TrainerEasy      # Contenido actual
+│   └── BattleIA_TrainerMedium    # Planificado
+│   └── BattleIA_TrainerHard      # Planificado
+└── WildBattleIA                  # Solo salvajes
+    └── BattleIA_WildBasic        # Contenido actual (+ roaming futuros)
 ```
 
-### `BattleIA_Hard` (No implementada)
-**Comportamiento previsto:**
-- Todo lo anterior
-- Considera clima, terreno y otras condiciones de campo
-- Estrategia avanzada de cambios
-- Uso óptimo de objetos
-- Predicción básica de movimientos del jugador
+**No existe** un `TrainerBasic` de contenido. El random legal es utilidad de **wild + fallback técnico**, no un nivel de dificultad de diseñador.
+
+Debug (no contenido): `BattleIA_MoveFailTest` (`extends WildBattleIA`) en `Scripts/Battle/debug/`.
 
 ---
 
-## 🔧 Cómo Usar
+## Contrato de dificultad
 
-### Opción 1: Desde el Editor de Godot
+| | **WildBasic** | **TrainerEasy** | **TrainerMedium** (futuro) | **TrainerHard** (futuro) |
+|---|---|---|---|---|
+| **Movimientos** | Random legal | Mejor efectividad de tipo; evita 0x/inmunidades si hay alternativa | Easy + peso simple por daño/HP/status | Medium + field/clima + timing |
+| **Items** | No | No | Curas básicas | Uso más óptimo |
+| **Switch voluntario** | No | No | Si el matchup es claramente malo | Anti-setup / pivot |
+| **Forced switch** | N/A (típicamente 1 mon) | Primer bench vivo | Preferir bench con tipo favorable | Matchup + riesgos |
+| **Factores** | Ninguno | Solo tipos | Stats/status básicos | Field + predicción ligera |
+| **Flags** | `use_items=false`, `can_switch_strategically=false` | Igual | `use_items` / `can_switch_strategically` = true según diseño | Igual o más agresivo |
 
-1. **Crear un Resource de IA:**
-   - En el FileSystem, click derecho → "New Resource"
-   - Seleccionar `BattleIA_Wild` o `BattleIA_Easy`
-   - Guardar el resource (ej: `res://Resources/Battle/wild_ai.tres`)
+### Frontera Easy → Medium → Hard
 
-2. **Asignar al Battler:**
-   - Seleccionar el nodo `Battler` del entrenador/salvaje
-   - En el Inspector, en la propiedad `Battle IA`
-   - Arrastrar el resource creado o usar el selector
+- **Easy** = “¿qué golpe tipado es mejor ahora?” Miopía de un turno. Por encima del random puro (wild/fallback), por debajo de Medium.
+- **Medium** añade: peso por daño/HP/status, **items curativos básicos**, **switch voluntario** ante mal matchup, forced switch con preferencia tipada.
+- **Hard** añade: field/clima, timing, items más óptimos, switch anti-setup/pivot, forced switch con riesgos, predicción ligera.
 
-### Opción 2: Desde Código
+Items y switch voluntario **empiezan en Medium**. Easy no debe absorber esas features.
 
-```gdscript
-# Crear un Battler con IA Wild
-var wild_ia = BattleIA_Wild.new()
-var battler = Battler.new().create(
-    CONST.BATTLER_TYPES.WILD_POKEMON,
-    [pokemon_instance],
-    wild_ia  # ← Asignar IA aquí
-)
+### Flags en `BattleIA`
 
-# Crear un Battler con IA Easy
-var easy_ia = BattleIA_Easy.new()
-var trainer = Battler.new().create(
-    CONST.BATTLER_TYPES.TRAINER,
-    trainer_team,
-    easy_ia  # ← Asignar IA aquí
-)
-
-# Convertir a BattleParticipant (la IA se propaga automáticamente)
-var participant = battler.to_battle_participant()
-```
-
-### Opción 3: Asignar directamente al Participant
-
-```gdscript
-var participant = BattleParticipant.new()
-participant.ai_controller = BattleIA_Easy.new()
-participant.add_pokemon_team(battle_pokemon_array)
-# La IA se asignará automáticamente a cada Pokémon
-```
+- `use_items` — contrato **Medium+**. Easy/WildBasic lo dejan en `false`.
+- `can_switch_strategically` — contrato **Medium+** (switch voluntario). Easy/WildBasic en `false`.
+- Forced switch por KO es independiente: Easy usa el primer bench vivo sin evaluar matchup.
 
 ---
 
-## 🔄 Flujo de Integración
+## Clases actuales
 
-El sistema se integra automáticamente con el controlador de turnos:
+### `BattleIA` (base)
+
+- `decide_action(pokemon) -> BattleChoice`
+- `decide_forced_switch(...)` / `build_first_available_forced_switch(...)`
+- `build_random_legal_move_choice(...)` — movimiento legal aleatorio con `targets` vía `BattleTargetSelector` (nunca `target_handler`)
+- `evaluate_best_move_target_combination(...)` — ranking por efectividad de tipos
+
+### `TrainerBattleIA` / `WildBattleIA`
+
+Sub-bases tipadas. `resolve(ai, context)` aplica fallback si la IA es incompatible o null:
+
+- Trainer → `BattleIA_TrainerEasy` (+ `push_warning` si el tipo era inválido)
+- Wild → `BattleIA_WildBasic`
+
+### `BattleIA_WildBasic`
+
+- Random legal vía helper
+- Sin items / sin switch
+- Uso: `BattleParticipantWild` (por defecto)
+
+### `BattleIA_TrainerEasy`
+
+- Mejor combinación (movimiento, objetivo) por efectividad
+- Si hay alguna combinación > 0, no elige ≤ 0; si todas son ≤ 0 → helper random
+- Empates entre máximos al azar
+- Forced switch = primer bench vivo
+- Uso: trainers de contenido (suelo de dificultad)
+
+---
+
+## Cómo asignar IA (cableado real)
+
+### Datos de entrenador (preferido)
+
+1. En el resource `TrainerData`, campo tipado **`ai_profile: TrainerBattleIA`**.
+2. Si `ai_profile == null`, `Battler` usa `TrainerClassData.default_ai` (también `TrainerBattleIA`).
+3. En runtime, `Battler.to_battle_participant()` llama a `set_ai_controller`, que valida el tipo.
+
+El inspector de `TrainerData` solo permite perfiles trainer (no wild).
+
+### Salvajes
+
+`BattleParticipantWild` asigna `BattleIA_WildBasic` automáticamente. No hace falta `TrainerData`.
+
+### Código / tests
+
+```gdscript
+# Trainer
+var participant := BattleParticipant.new()
+participant.is_trainer = true
+participant.set_ai_controller(BattleIA_TrainerEasy.new(), "TestTrainer")
+
+# Wild
+var wild := BattleParticipantWild.new([battle_pokemon])
+# o override tipado wild:
+wild.set_ai_controller(BattleIA_WildBasic.new(), "wild")
+```
+
+Evitar asignar una IA wild a un trainer (o al revés): el runtime hace fallback + warning, no rompe el combate.
+
+---
+
+## Flujo de integración
 
 ```
 BattleTurnController.select_actions()
-    ↓ (para cada Pokémon no controlable)
-BattleParticipant.decide_action_for(pokemon)
-    ↓
-BattleIA.decide_action(pokemon)
-    ↓
-Retorna BattleChoice
-    ↓
-BattleTurnController ejecuta el choice
+    → BattleParticipant.decide_action_for(pokemon)
+        → BattleIA.decide_action(pokemon)
+            → BattleChoice (Move / Struggle / Pass / Switch forzado)
 ```
 
----
-
-## ✅ Acceptance Criteria (PBI #132)
-
-- [x] La IA siempre elige una acción cuando se le solicita
-- [x] El flujo del turno progresa sin intervención del jugador
-- [x] Sistema escalable para diferentes niveles de dificultad
-- [x] Código limpio y bien documentado
-- [x] Integración transparente con BattleTurnController
+Cada Pokémon recibe una **copia** (`duplicate`) de la IA del participante al asignarse.
 
 ---
 
-## 📝 Notas Técnicas
+## Notas técnicas
 
-- Cada Pokémon recibe una **copia duplicada** de la IA del Participant
-- Las IAs son `Resource`, por lo que se pueden guardar y cargar desde archivos
-- El método `decide_action()` es **async** (usa `await`) debido a la selección de objetivos
-- Si no hay IA asignada, se usa `pokemon.decide_random_action()` como fallback
-
----
-
-## 🐛 Testing
-
-Para probar las diferentes IAs, modifica el script `TestBattle.gd`:
-
-```gdscript
-# Crear un participante con IA Easy en lugar de Wild
-var easy_ia = BattleIA_Easy.new()
-var trainer_participant = BattleParticipant.new()
-trainer_participant.ai_controller = easy_ia
-trainer_participant.add_pokemon(pokemon.to_battle_pokemon())
-```
-
+- Las IAs son `Resource` (`class_name`); se pueden embeber en `.tres` de trainers.
+- Toda `BattleMoveChoice` de las IAs tipadas debe rellenar `targets` con `BattleTargetSelector` (compatible con `BattleMoveChoice.resolve()`).
+- No hay “TrainerBasic” de diseñador: null / IA inválida → Easy o WildBasic según el participante.
+- Acceptance histórico PBI #132 (IA elige acción, turno progresa) sigue vigente; tipado = PBI #705; Easy endurecido = PBI #342; este contrato = PBI #343.

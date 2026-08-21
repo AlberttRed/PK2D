@@ -11,13 +11,15 @@ class_name BattleIA
 ## movimientos y objetivos basados en efectividad de tipos, que pueden ser
 ## utilizados por cualquier IA.
 ##
-## Ejemplos de subclases:
-## - BattleIA_Wild: Comportamiento aleatorio simple
-## - BattleIA_Easy: Considera efectividad de tipos
-## - BattleIA_Medium: (Futuro) Considera stats y cambios
-## - BattleIA_Hard: (Futuro) Estrategia avanzada
+## Jerarquía tipada por tipo de participante:
+## - TrainerBattleIA → BattleIA_TrainerEasy / (Medium/Hard futuros)
+## - WildBattleIA → BattleIA_WildBasic / ...
+##
+## El random legal (build_random_legal_move_choice) es utilidad de fallback/wild,
+## no un nivel de dificultad de contenido. Contrato completo: README_BattleIA.md
 
-## Configuración exportable para ajustar comportamiento desde el editor
+## Configuración exportable — contrato de dificultad:
+## - use_items / can_switch_strategically: Medium+ (Easy y WildBasic los dejan en false)
 @export var difficulty_name: String = "Default"
 @export var use_items: bool = false
 @export var can_switch_strategically: bool = false
@@ -27,6 +29,38 @@ class_name BattleIA
 func decide_action(_pokemon: BattlePokemon) -> BattleChoice:
 	push_error("decide_action() debe ser implementado en la subclase de BattleIA")
 	return BattlePassChoice.new()
+
+## Elige un movimiento legal aleatorio y rellena siempre BattleMoveChoice.targets
+## vía BattleTargetSelector (compatible con BattleMoveChoice.resolve()).
+func build_random_legal_move_choice(
+	pokemon: BattlePokemon,
+	moves: Array[BattleMove] = [],
+	legal_indices: Array[int] = []
+) -> BattleChoice:
+	var available: Array[BattleMove] = moves
+	if available.is_empty():
+		available = pokemon.get_available_moves()
+	if available.is_empty():
+		return BattlePassChoice.new()
+
+	var struggle := BattleStruggleChoice.create_if_needed(pokemon)
+	if struggle != null:
+		return struggle
+
+	var indices: Array[int] = legal_indices
+	if indices.is_empty():
+		indices = get_selectable_move_indices(pokemon)
+	if indices.is_empty():
+		return BattlePassChoice.new()
+
+	var index: int = indices[randi() % indices.size()]
+	var move: BattleMove = available[index]
+	var choice := BattleMoveChoice.new()
+	choice.move_index = index
+	choice.pokemon = pokemon
+	var selector := BattleTargetSelector.new()
+	choice.targets = selector.resolve_targets(move, pokemon, null)
+	return choice
 
 ## Elige el sustituto tras debilitarse el activo (cambio forzado por KO).
 ## Las subclases pueden sobreescribir para estrategia (tipos, matchups, etc.).
@@ -159,23 +193,24 @@ func _calculate_average_effectiveness(move: BattleMove, enemies: Array[BattlePok
 	return total_effectiveness / float(enemies.size())
 
 ## Selecciona la mejor combinación de un array de combinaciones.
-## En caso de empate, elige aleatoriamente entre las mejores.
+## Si existe alguna con efectividad > 0, solo considera esas (máximo; empate al azar).
+## Si todas son ≤ 0, devuelve una al azar entre ellas (las IAs tipadas como TrainerEasy
+## deben sustituir este caso por build_random_legal_move_choice).
 func _select_best_combination(combinations: Array[Dictionary]) -> Dictionary:
 	# Encontrar la mejor efectividad
 	var best_effectiveness := 0.0
 	for combo in combinations:
 		if combo.effectiveness > best_effectiveness:
 			best_effectiveness = combo.effectiveness
-	
-	# Si todos tienen efectividad 0 o negativa (inmunes), elegir aleatorio
+
+	# Sin golpe útil: devolver cualquiera ≤ 0 (caller decide fallback tipado)
 	if best_effectiveness <= 0.0:
 		return combinations[randi() % combinations.size()]
-	
-	# Recopilar todas las combinaciones con la mejor efectividad
+
+	# Solo máximos > 0 (excluye inmunidades/0x cuando hay alternativa)
 	var best_combos: Array[Dictionary] = []
 	for combo in combinations:
 		if is_equal_approx(combo.effectiveness, best_effectiveness):
 			best_combos.append(combo)
-	
-	# Si hay empate, elegir aleatoriamente
+
 	return best_combos[randi() % best_combos.size()]

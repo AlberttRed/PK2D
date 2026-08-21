@@ -8,7 +8,13 @@ var is_player: bool = false
 var name: String = "":
 	get:
 		return name if name != null else ""
-var ai_controller: BattleIA = null  # null si es jugador
+var _ai_controller: BattleIA = null  # null si es jugador
+## Preferir set_ai_controller() para validar compatibilidad trainer/wild.
+var ai_controller: BattleIA:
+	get:
+		return _ai_controller
+	set(value):
+		set_ai_controller(value)
 var sprite_path: String = ""  # Opcional, si usás esto para mostrar el entrenador
 var is_trainer: bool = true  # Nuevo flag, por compatibilidad futura
 var side: BattleSide = null  # Se asigna desde el add_participant()
@@ -33,11 +39,23 @@ var pokemon_team: Array[BattlePokemon]:
 
 func _init(_pokemon_team: Array[BattlePokemon] = []):
 	self.add_pokemon_team(_pokemon_team)
-#func _init(trainer_id: int, is_player := false, name := "", team := []):
-	#self.trainer_id = trainer_id
-	#self.is_player = is_player
-	#self.name = name
-	#self.pokemon_team = team
+
+
+## Asigna IA con validación runtime según tipo de participante.
+## Trainer NPC → TrainerBattleIA (fallback BattleIA_TrainerEasy).
+## Wild → WildBattleIA (fallback BattleIA_WildBasic).
+## Jugador → siempre null.
+func set_ai_controller(ai: BattleIA, context: String = "") -> void:
+	if is_player:
+		_ai_controller = null
+		return
+	var ctx := context
+	if ctx.is_empty():
+		ctx = name if not name.is_empty() else ("trainer" if is_trainer else "wild")
+	if is_trainer:
+		_ai_controller = TrainerBattleIA.resolve(ai, ctx)
+	else:
+		_ai_controller = WildBattleIA.resolve(ai, ctx)
 
 
 # Adds a single BattlePokemon to the participant's team.
