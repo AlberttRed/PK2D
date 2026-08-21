@@ -409,6 +409,10 @@ position = Vector2(352, 110)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
+[node name="BattleAnimationLayer" type="Node2D" parent="."]
+z_index = 10
+z_as_relative = false
+
 [editable path="PlayerBase/PokemonSpotA"]
 [editable path="PlayerBase/PokemonSpotA/HPBar"]
 [editable path="PlayerBase/PokemonSpotA/HPBar/health_bar"]
