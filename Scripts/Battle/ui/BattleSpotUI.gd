@@ -15,6 +15,33 @@ var tween: Tween
 @onready var hp_bar: HPBar = $HPBar
 @onready var hp_bar_pos_single: Marker2D = $Positions/HPBarPos_Single
 @onready var hp_bar_pos_double: Marker2D = $Positions/HPBarPos_Double
+@onready var anchors_root: Node2D = $Positions/Anchors
+
+## Nombres estables de anchors visuales (PBI 671).
+const ANCHOR_CENTER := "Center"
+const ANCHOR_HIT_CENTER := "HitCenter"
+const ANCHOR_PROJECTILE_ORIGIN := "ProjectileOrigin"
+const ANCHOR_STATUS_ICON := "StatusIcon"
+const ANCHOR_FEET := "Feet"
+
+
+func get_anchor_node(anchor_name: String) -> Node2D:
+	if anchors_root == null:
+		return null
+	var node := anchors_root.get_node_or_null(anchor_name) as Node2D
+	if node != null:
+		return node
+	if anchor_name != ANCHOR_CENTER:
+		return anchors_root.get_node_or_null(ANCHOR_CENTER) as Node2D
+	return null
+
+
+func get_anchor_global_position(anchor_name: String) -> Vector2:
+	var node := get_anchor_node(anchor_name)
+	if node != null:
+		return node.global_position
+	return global_position
+
 
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2

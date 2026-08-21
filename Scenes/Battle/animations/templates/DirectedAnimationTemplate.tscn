@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
 
 [sub_resource type="Animation" id="Animation_default"]
 resource_name = "default"
@@ -22,6 +24,9 @@ _data = {
 }
 
 [node name="DirectedAnimationTemplate" type="Node2D"]
+
+[node name="Hooks" type="Node" parent="."]
+script = ExtResource("1_hooks")
 
 [node name="UserAnchor" type="Marker2D" parent="."]
 gizmo_extents = 16.0

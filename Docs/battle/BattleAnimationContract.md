@@ -188,7 +188,7 @@ Autoría en workbench (PBI 670); runtime solo instancia la `.tscn` del VFX.
 - Escena: `Scenes/Battle/animations/BattleAnimationWorkbench.tscn`
 - Réplica visual del **campo** (fondo, bases, spots mock single, `BattleAnimationLayer`).
 - **No** es escena de combate: sin controllers, menús ni lógica.
-- Spots mock incluyen anchors con nombres finales: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.
+- Spots mock incluyen `Positions/Anchors` con los mismos nombres que `BattleSpotUI`: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.
 - Flujo típico:
   1. Duplicar una plantilla de `Scenes/Battle/animations/templates/`.
   2. Abrir el workbench y, para previsualizar, instanciar temporalmente la escena bajo `BattleAnimationLayer` (o editar la escena de animación con el workbench como referencia de posiciones).
@@ -199,7 +199,7 @@ Autoría en workbench (PBI 670); runtime solo instancia la `.tscn` del VFX.
 
 Plantilla: `Scenes/Battle/animations/templates/DirectedAnimationTemplate.tscn`
 
-- `UserAnchor`, `TargetAnchor`, `VisualRoot`, `AnimationPlayer`
+- `Hooks`, `UserAnchor`, `TargetAnchor`, `VisualRoot`, `AnimationPlayer`
 - Tracks del `AnimationPlayer` **solo** a nodos internos de esa escena
 - Prohibido: rutas a nodos de `Battle.tscn` / `FieldUI` / workbench de runtime
 
@@ -207,7 +207,7 @@ Plantilla: `Scenes/Battle/animations/templates/DirectedAnimationTemplate.tscn`
 
 Plantilla: `Scenes/Battle/animations/templates/GlobalAnimationTemplate.tscn`
 
-- `FieldAnchor`, `VisualRoot`, `AnimationPlayer`
+- `Hooks`, `FieldAnchor`, `VisualRoot`, `AnimationPlayer`
 - Misma regla de independencia de rutas
 
 ### Orientación (PBI 671)
@@ -217,12 +217,25 @@ Plantilla: `Scenes/Battle/animations/templates/GlobalAnimationTemplate.tscn`
 
 ### Anchors de `BattleSpot` (PBI 671)
 
-Nombres estables: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.
+Nombres estables: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.  
+API: `get_anchor_node(name)`, `get_anchor_global_position(name)` — fallback a `Center`, o a `global_position` del spot si no hay anchors.
 
-Mapeo por defecto:
+Mapeo por defecto al preparar la instancia:
 
 - `UserAnchor` → `ProjectileOrigin` (fallback `Center`)
 - `TargetAnchor` → `HitCenter` (fallback `Center`)
+- Multi-target: se usa el **primer** target
+
+### Hooks (mando al spot)
+
+- Nodo no visual `Hooks` (`BattleAnimationHooks`) dentro de la escena VFX.
+- En `_prepare_instance`: si existe, `bind(user_spot, target_spots)`.
+- Forwarder genérico (sin espejar la API del spot):
+  - `call_on_user(method, args := [])`
+  - `call_on_target(method, args := [])`
+- El `AnimationPlayer` usa Call Method Track → hook → `BattleSpot.callv(...)`.
+- Los efectos visuales viven en el **spot** (helpers en PBI 673); el hook solo reenvía.
+- Call Method no hace `await`: métodos del spot deben ser fire-and-forget si lanzan tweens.
 
 ---
 
@@ -250,9 +263,8 @@ Mapeo por defecto:
 ## 12. Fuera de alcance de este contrato (PBIs posteriores)
 
 - Catálogo de animaciones concretas
-- Workbench completo (670)
-- Anchors runtime y flip (671)
 - Cableado `MoveData` + handlers (672)
-- Helpers / subclases especiales (673)
+- Helpers visuales completos en spot / `BattleAnimationUtils` (673)
+- Subclases especiales de animación (673)
 - Animaciones no bloqueantes reales
 - Coreografía multi-target avanzada

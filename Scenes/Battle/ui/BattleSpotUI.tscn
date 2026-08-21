@@ -26,3 +26,24 @@ position = Vector2(313, 52)
 [node name="HPBarPos_Single" type="Marker2D" parent="Positions"]
 
 [node name="HPBarPos_Double" type="Marker2D" parent="Positions"]
+
+[node name="Anchors" type="Node2D" parent="Positions"]
+
+[node name="Center" type="Marker2D" parent="Positions/Anchors"]
+gizmo_extents = 12.0
+
+[node name="HitCenter" type="Marker2D" parent="Positions/Anchors"]
+position = Vector2(0, -24)
+gizmo_extents = 12.0
+
+[node name="ProjectileOrigin" type="Marker2D" parent="Positions/Anchors"]
+position = Vector2(0, -36)
+gizmo_extents = 12.0
+
+[node name="StatusIcon" type="Marker2D" parent="Positions/Anchors"]
+position = Vector2(-40, -72)
+gizmo_extents = 12.0
+
+[node name="Feet" type="Marker2D" parent="Positions/Anchors"]
+position = Vector2(0, 48)
+gizmo_extents = 12.0

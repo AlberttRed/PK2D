@@ -7,6 +7,9 @@ class_name BattleAnimation
 ## Solo visualiza. Nunca modifica HP, estados, turnos ni resultados lógicos.
 ## El caller externo siempre hace: await battle_animation.play(...)
 
+const USER_ANCHOR_SPOT_NAME := "ProjectileOrigin"
+const TARGET_ANCHOR_SPOT_NAME := "HitCenter"
+
 @export var animation_scene: PackedScene
 @export var animation_name: String = "default"
 ## Reserva de API: hoy solo se soporta el path bloqueante (await hasta terminar).
@@ -53,13 +56,79 @@ func play(
 	_cleanup_instance(instance)
 
 
-## Hook para subclases / PBI 671 (anchors, flip). Base: no-op.
+## Prepara instancia: Hooks.bind, anchors y orientación. Seguro si faltan nodos.
 func _prepare_instance(
-	_instance: Node,
-	_user_spot: BattleSpot,
-	_target_spots: Array[BattleSpot]
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
 ) -> void:
-	pass
+	_bind_hooks(instance, user_spot, target_spots)
+	_apply_scene_anchors(instance, user_spot, target_spots)
+	_apply_orientation(instance, user_spot, target_spots)
+
+
+func _bind_hooks(
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
+) -> void:
+	var hooks_node := instance.get_node_or_null("Hooks")
+	if hooks_node == null or not hooks_node.has_method("bind"):
+		return
+	hooks_node.bind(user_spot, target_spots)
+
+
+func _apply_scene_anchors(
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
+) -> void:
+	var user_anchor := instance.get_node_or_null("UserAnchor") as Node2D
+	if user_anchor != null and user_spot != null and is_instance_valid(user_spot):
+		user_anchor.global_position = user_spot.get_anchor_global_position(USER_ANCHOR_SPOT_NAME)
+
+	var target_anchor := instance.get_node_or_null("TargetAnchor") as Node2D
+	var first_target := _first_target(target_spots)
+	if target_anchor != null and first_target != null:
+		target_anchor.global_position = first_target.get_anchor_global_position(TARGET_ANCHOR_SPOT_NAME)
+
+
+func _apply_orientation(
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
+) -> void:
+	var first_target := _first_target(target_spots)
+	if user_spot == null or first_target == null:
+		return
+	if not is_instance_valid(user_spot) or not is_instance_valid(first_target):
+		return
+
+	var from: Vector2 = user_spot.get_anchor_global_position("Center")
+	var to: Vector2 = first_target.get_anchor_global_position("Center")
+	var dir_x: float = to.x - from.x
+	if is_zero_approx(dir_x):
+		return
+
+	var visual := instance.get_node_or_null("VisualRoot") as Node2D
+	if visual == null and instance is Node2D:
+		visual = instance as Node2D
+	if visual == null:
+		return
+
+	var sx := absf(visual.scale.x)
+	if sx < 0.0001:
+		sx = 1.0
+	visual.scale.x = sx if dir_x >= 0.0 else -sx
+
+
+func _first_target(target_spots: Array[BattleSpot]) -> BattleSpot:
+	if target_spots == null or target_spots.is_empty():
+		return null
+	var spot: BattleSpot = target_spots[0]
+	if spot == null or not is_instance_valid(spot):
+		return null
+	return spot
 
 
 func _find_animation_player(root: Node) -> AnimationPlayer:

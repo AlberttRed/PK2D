@@ -28,24 +28,26 @@ position = Vector2(128, 224)
 [node name="Sprite" type="Sprite2D" parent="PlayerBase/PokemonSpotA"]
 texture = ExtResource("4_player_sprite")
 
-[node name="Anchors" type="Node2D" parent="PlayerBase/PokemonSpotA"]
+[node name="Positions" type="Node2D" parent="PlayerBase/PokemonSpotA"]
 
-[node name="Center" type="Marker2D" parent="PlayerBase/PokemonSpotA/Anchors"]
+[node name="Anchors" type="Node2D" parent="PlayerBase/PokemonSpotA/Positions"]
+
+[node name="Center" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
 gizmo_extents = 12.0
 
-[node name="HitCenter" type="Marker2D" parent="PlayerBase/PokemonSpotA/Anchors"]
+[node name="HitCenter" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
 position = Vector2(0, -24)
 gizmo_extents = 12.0
 
-[node name="ProjectileOrigin" type="Marker2D" parent="PlayerBase/PokemonSpotA/Anchors"]
+[node name="ProjectileOrigin" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
 position = Vector2(28, -36)
 gizmo_extents = 12.0
 
-[node name="StatusIcon" type="Marker2D" parent="PlayerBase/PokemonSpotA/Anchors"]
+[node name="StatusIcon" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
 position = Vector2(-40, -72)
 gizmo_extents = 12.0
 
-[node name="Feet" type="Marker2D" parent="PlayerBase/PokemonSpotA/Anchors"]
+[node name="Feet" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
 position = Vector2(0, 48)
 gizmo_extents = 12.0
 
@@ -63,25 +65,27 @@ position = Vector2(384, 140)
 [node name="Sprite" type="Sprite2D" parent="EnemyBase/PokemonSpotA"]
 texture = ExtResource("5_enemy_sprite")
 
-[node name="Anchors" type="Node2D" parent="EnemyBase/PokemonSpotA"]
+[node name="Positions" type="Node2D" parent="EnemyBase/PokemonSpotA"]
 
-[node name="Center" type="Marker2D" parent="EnemyBase/PokemonSpotA/Anchors"]
+[node name="Anchors" type="Node2D" parent="EnemyBase/PokemonSpotA/Positions"]
+
+[node name="Center" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
 gizmo_extents = 12.0
 
-[node name="HitCenter" type="Marker2D" parent="EnemyBase/PokemonSpotA/Anchors"]
-position = Vector2(0, -20)
+[node name="HitCenter" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, -24)
 gizmo_extents = 12.0
 
-[node name="ProjectileOrigin" type="Marker2D" parent="EnemyBase/PokemonSpotA/Anchors"]
-position = Vector2(-28, -32)
+[node name="ProjectileOrigin" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(-28, -36)
 gizmo_extents = 12.0
 
-[node name="StatusIcon" type="Marker2D" parent="EnemyBase/PokemonSpotA/Anchors"]
-position = Vector2(36, -56)
+[node name="StatusIcon" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(40, -72)
 gizmo_extents = 12.0
 
-[node name="Feet" type="Marker2D" parent="EnemyBase/PokemonSpotA/Anchors"]
-position = Vector2(0, 40)
+[node name="Feet" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, 48)
 gizmo_extents = 12.0
 
 [node name="BattleAnimationLayer" type="Node2D" parent="."]
