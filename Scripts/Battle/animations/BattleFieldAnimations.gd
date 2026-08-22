@@ -3,9 +3,14 @@ class_name BattleFieldAnimations
 
 ## Clips de campo reutilizables (intro / switch). Solo presentación.
 
+const ENEMY_SEND_IN_PARTY_FADE_SEC := BattlePartyBarUI.FADE_OUT_DURATION
+## Retardo extra tras arrancar el exit del trainer antes de retirar la party.
+const PARTY_ROLL_OUT_AFTER_TRAINER_EXIT_SEC := 0.22
 const POKEBALL_THROW_PATH := "res://Scenes/Battle/animations/intro/PokeballThrowAnimation.tres"
 const POKEMON_ENTER_PATH := "res://Scenes/Battle/animations/intro/PokemonEnterAnimation.tres"
 const BASE_ENTER_DURATION := 1.35
+## Party intro arranca a esta fracción del slide de bases (solapa con trainer/base).
+const PARTY_INTRO_START_AT_BASE_FRACTION := 0.55
 const TRAINER_EXIT_DURATION := 1.1
 const TRAINER_EXIT_SLIDE := 360.0
 ## Rival: ball visible en el suelo antes de empezar a salir.
@@ -47,6 +52,7 @@ static func prepare_intro_field(ui: BattleUI, rules: BattleRules) -> void:
 	if rules != null:
 		mode = rules.mode
 	ui.field_ui.hide_all_hp_bars(mode)
+	ui.field_ui.hide_all_party_bars()
 	ui.field_ui.apply_trainer_rest_positions(mode)
 	ui.field_ui.reveal_intro_trainers(rules)
 	BattleAnimationUtils.park_bases_offscreen(
@@ -55,8 +61,7 @@ static func prepare_intro_field(ui: BattleUI, rules: BattleRules) -> void:
 	)
 
 
-## Intro (PBI 706): trainers ya en la base; se deslizan PlayerBase/EnemyBase.
-## Player base der→izq, rival izq→der. Sin gesto de brazo.
+## Intro (PBI 706): bases/trainers entran; party arranca ~a mitad del slide de bases.
 static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 	if ui == null or ui.field_ui == null:
 		return
@@ -66,13 +71,90 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 	ui.field_ui.hide_all_hp_bars(mode)
 	ui.field_ui.apply_trainer_rest_positions(mode)
 	ui.field_ui.reveal_intro_trainers(rules)
-	# Si prepare_intro_field ya aparcó las bases, solo anima hacia reposo.
-	await BattleAnimationUtils.battle_bases_enter(
-		ui.field_ui.get_player_base(),
-		ui.field_ui.get_enemy_base(),
+
+	var done := {"bases": false, "party": false}
+
+	(
+		func() -> void:
+			await BattleAnimationUtils.battle_bases_enter(
+				ui.field_ui.get_player_base(),
+				ui.field_ui.get_enemy_base(),
+				ui,
+				BASE_ENTER_DURATION
+			)
+			done.bases = true
+	).call()
+
+	(
+		func() -> void:
+			await BattleAnimationUtils.wait(
+				ui, BASE_ENTER_DURATION * PARTY_INTRO_START_AT_BASE_FRACTION
+			)
+			await show_party_bars(ui, rules)
+			done.party = true
+	).call()
+
+	while ui != null and is_instance_valid(ui) and ui.get_tree() != null:
+		if done.bases and done.party:
+			return
+		await ui.get_tree().process_frame
+
+
+## Barra de party: slide in (player siempre; rival solo trainer).
+static func show_party_bars(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null or ui.battle_controller == null:
+		return
+	await ui.field_ui.show_party_bars(
 		ui,
-		BASE_ENTER_DURATION
+		ui.battle_controller.player_side,
+		ui.battle_controller.enemy_side,
+		rules
 	)
+
+
+static func hide_party_bars(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null:
+		return
+	await ui.field_ui.hide_party_bars(ui, rules)
+
+
+static func hide_party_bar_for_spot(ui: BattleUI, landing_spot: BattleSpot) -> void:
+	if ui == null or ui.field_ui == null or landing_spot == null:
+		return
+	var rules: BattleRules = null
+	if ui.battle_controller != null:
+		rules = ui.battle_controller.rules
+	ui.field_ui.hide_party_bar_for_spot(ui, landing_spot, rules)
+
+
+static func refresh_party_bars(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null or ui.battle_controller == null:
+		return
+	ui.field_ui.refresh_party_bars(
+		ui.battle_controller.player_side,
+		ui.battle_controller.enemy_side,
+		rules
+	)
+
+
+## Envío rival mid-battle: party slide-in → «X saca a Y» → fade → send-in (intro excluida).
+static func play_enemy_trainer_send_in_pre_entry(
+	ui: BattleUI,
+	rules: BattleRules,
+	trainer_name: String,
+	incoming_name: String
+) -> void:
+	if ui == null or ui.field_ui == null or ui.battle_controller == null:
+		return
+	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
+		return
+	await ui.field_ui.show_enemy_party_bar(
+		ui,
+		ui.battle_controller.enemy_side,
+		rules
+	)
+	await ui.show_enemy_switch_in_message(trainer_name, incoming_name)
+	await ui.field_ui.fade_out_enemy_party_bar(ui, ENEMY_SEND_IN_PARTY_FADE_SEC)
 
 
 ## Salida del trainer del lado del spot (player← / rival→). Awaitable.
@@ -142,6 +224,8 @@ static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	var open_at := THROW_OPEN_ENEMY_SEC if is_enemy else THROW_OPEN_PLAYER_SEC
 	var exit_tw: Tween = null
 	var trainer: Node2D = null
+
+	_start_party_roll_out_with_trainer_exit(ui, landing_spot, is_enemy)
 
 	if is_enemy:
 		exit_tw = _start_enemy_trainer_exit(ui)
@@ -215,6 +299,21 @@ static func _play_throw_with_enter_overlap(
 
 	if spr != null and is_instance_valid(spr):
 		spr.z_index = prev_sprite_z
+
+
+## Party intro: sale en paralelo al exit del trainer (player al instante; rival tras delay de ball).
+static func _start_party_roll_out_with_trainer_exit(
+	ui: BattleUI,
+	landing_spot: BattleSpot,
+	is_enemy: bool
+) -> void:
+	(
+		func() -> void:
+			if is_enemy:
+				await BattleAnimationUtils.wait(ui, ENEMY_EXIT_AFTER_BALL_SEC)
+			await BattleAnimationUtils.wait(ui, PARTY_ROLL_OUT_AFTER_TRAINER_EXIT_SEC)
+			hide_party_bar_for_spot(ui, landing_spot)
+	).call()
 
 
 static func _start_enemy_trainer_exit(ui: BattleUI) -> Tween:

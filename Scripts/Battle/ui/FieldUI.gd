@@ -3,9 +3,148 @@ extends Control
 class_name FieldUI
 
 @onready var animation_layer: Node2D = $BattleAnimationLayer
+@onready var player_party_bar: BattlePartyBarUI = $PlayerBase/Party
+@onready var enemy_party_bar: BattlePartyBarUI = $EnemyBase/Party
+
+
+func _ready() -> void:
+	if player_party_bar != null:
+		player_party_bar.configure(true)
+	if enemy_party_bar != null:
+		enemy_party_bar.configure(false)
+	hide_all_party_bars()
+
 
 func get_animation_layer() -> Node2D:
 	return animation_layer
+
+
+func get_player_party_bar() -> BattlePartyBarUI:
+	return player_party_bar
+
+
+func get_enemy_party_bar() -> BattlePartyBarUI:
+	return enemy_party_bar
+
+
+func hide_all_party_bars() -> void:
+	if player_party_bar != null:
+		player_party_bar.park_offscreen()
+	if enemy_party_bar != null:
+		enemy_party_bar.park_offscreen()
+
+
+func refresh_party_bars(player_side: BattleSide, enemy_side: BattleSide, rules: BattleRules) -> void:
+	if player_party_bar != null and player_side != null:
+		player_party_bar.refresh_from_party(player_side.pokemonParty)
+	if (
+		enemy_party_bar != null
+		and enemy_side != null
+		and rules != null
+		and rules.type == BattleRules.BattleTypes.TRAINER
+	):
+		enemy_party_bar.refresh_from_party(enemy_side.pokemonParty)
+
+
+func show_party_bars(
+	host: Node,
+	player_side: BattleSide,
+	enemy_side: BattleSide,
+	rules: BattleRules
+) -> void:
+	if host == null or not is_instance_valid(host):
+		return
+	refresh_party_bars(player_side, enemy_side, rules)
+	var show_player := player_party_bar != null and player_side != null
+	var show_enemy := (
+		enemy_party_bar != null
+		and enemy_side != null
+		and rules != null
+		and rules.type == BattleRules.BattleTypes.TRAINER
+	)
+	await _slide_party_bars(host, show_player, show_enemy, true)
+
+
+func show_enemy_party_bar(host: Node, enemy_side: BattleSide, rules: BattleRules) -> void:
+	if host == null or not is_instance_valid(host):
+		return
+	if (
+		enemy_party_bar == null
+		or enemy_side == null
+		or rules == null
+		or rules.type != BattleRules.BattleTypes.TRAINER
+	):
+		return
+	enemy_party_bar.refresh_from_party(enemy_side.pokemonParty)
+	await enemy_party_bar.slide_in(host)
+
+
+func fade_out_enemy_party_bar(host: Node, duration: float = BattlePartyBarUI.FADE_OUT_DURATION) -> void:
+	if host == null or not is_instance_valid(host) or enemy_party_bar == null:
+		return
+	await enemy_party_bar.fade_out(host, duration)
+
+
+func hide_party_bars(host: Node, rules: BattleRules) -> void:
+	if host == null or not is_instance_valid(host):
+		return
+	var show_enemy := rules != null and rules.type == BattleRules.BattleTypes.TRAINER
+	await _slide_party_bars(host, player_party_bar != null, show_enemy, false)
+
+
+## Retira la barra del lado del spot en paralelo (no bloqueante).
+func hide_party_bar_for_spot(host: Node, landing_spot: BattleSpot, rules: BattleRules) -> void:
+	if host == null or not is_instance_valid(host) or landing_spot == null:
+		return
+	var is_enemy := (
+		landing_spot.side != null
+		and landing_spot.side.type == BattleSide.Types.ENEMY
+	)
+	if is_enemy:
+		if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
+			return
+		if enemy_party_bar == null:
+			return
+		(func() -> void:
+			await enemy_party_bar.intro_roll_out(host)
+		).call()
+	else:
+		if player_party_bar == null:
+			return
+		(func() -> void:
+			await player_party_bar.intro_roll_out(host)
+		).call()
+
+
+func _slide_party_bars(host: Node, slide_player: bool, slide_enemy: bool, slide_in: bool) -> void:
+	if not slide_player and not slide_enemy:
+		return
+	var flags := {
+		"player": not slide_player,
+		"enemy": not slide_enemy,
+	}
+	if slide_player:
+		(
+			func() -> void:
+				if slide_in:
+					await player_party_bar.intro_roll_in(host)
+				else:
+					await player_party_bar.intro_roll_out(host)
+				flags.player = true
+		).call()
+	if slide_enemy:
+		(
+			func() -> void:
+				if slide_in:
+					await enemy_party_bar.intro_roll_in(host)
+				else:
+					await enemy_party_bar.intro_roll_out(host)
+				flags.enemy = true
+		).call()
+	while host != null and is_instance_valid(host) and host.get_tree() != null:
+		if flags.player and flags.enemy:
+			return
+		await host.get_tree().process_frame
 
 
 func get_player_trainer(index: int = 0) -> Node2D:

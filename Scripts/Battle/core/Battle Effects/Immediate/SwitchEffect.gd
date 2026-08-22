@@ -25,9 +25,9 @@ func apply():
 func visualize(ui):
 	if _is_enemy_trainer_send_in():
 		await _visualize_enemy_trainer(ui)
-		return
-
-	await _visualize_player_or_generic(ui)
+	else:
+		await _visualize_player_or_generic(ui)
+	BattleFieldAnimations.refresh_party_bars(ui, rules)
 
 
 func _visualize_enemy_trainer(ui: BattleUI) -> void:
@@ -40,7 +40,9 @@ func _visualize_enemy_trainer(ui: BattleUI) -> void:
 		await ui.show_enemy_switch_out_message(trainer_name, outgoing_name)
 		await _play_exit_visual(ui)
 
-	await ui.show_enemy_switch_in_message(trainer_name, incoming_name)
+	await BattleFieldAnimations.play_enemy_trainer_send_in_pre_entry(
+		ui, rules, trainer_name, incoming_name
+	)
 	_load_incoming_pokemon()
 	await _play_send_in_visual(ui)
 	await _process_switch_in()
@@ -48,6 +50,9 @@ func _visualize_enemy_trainer(ui: BattleUI) -> void:
 
 
 func _visualize_player_or_generic(ui: BattleUI) -> void:
+	if ui != null and ui.field_ui != null:
+		ui.field_ui.hide_all_party_bars()
+
 	var outgoing_name := _pokemon_display_name(out_pokemon)
 	var incoming_name := _pokemon_display_name(in_pokemon)
 	var has_live_out := out_pokemon != null and not out_pokemon.is_fainted()
