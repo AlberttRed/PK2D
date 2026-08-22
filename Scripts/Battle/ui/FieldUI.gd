@@ -6,6 +6,13 @@ class_name FieldUI
 @onready var player_party_bar: BattlePartyBarUI = $PlayerBase/Party
 @onready var enemy_party_bar: BattlePartyBarUI = $EnemyBase/Party
 
+## Spot A doble: la party queda un poco baja respecto al marker HP.
+const ENEMY_PARTY_SPOT_A_Y_ADJUST := -10.0
+## z absoluto de HPBar: mismo nivel que el panel de mensajes (6); el MessageBox gana por orden en árbol.
+const HP_BAR_CANVAS_Z := 6
+## Balls de recall/throw en campo: debajo del HPBar, encima del layer de animación (z=1).
+const FIELD_POKEBALL_Z := HP_BAR_CANVAS_Z - 1
+
 
 func _ready() -> void:
 	if player_party_bar != null:
@@ -27,6 +34,13 @@ func get_enemy_party_bar() -> BattlePartyBarUI:
 	return enemy_party_bar
 
 
+## HPBar siempre por encima de BattleAnimationLayer (balls, VFX).
+func ensure_all_hp_bars_display_z(mode: int) -> void:
+	for spot: BattleSpot in get_all_spots_for_mode(mode):
+		if spot != null:
+			spot.ensure_hp_bar_display_z()
+
+
 func hide_all_party_bars() -> void:
 	if player_party_bar != null:
 		player_party_bar.park_offscreen()
@@ -36,14 +50,22 @@ func hide_all_party_bars() -> void:
 
 func refresh_party_bars(player_side: BattleSide, enemy_side: BattleSide, rules: BattleRules) -> void:
 	if player_party_bar != null and player_side != null:
-		player_party_bar.refresh_from_party(player_side.pokemonParty)
+		var local_player: BattleParticipant = player_side.get_local_player_participant()
+		if local_player != null:
+			player_party_bar.refresh_from_party(player_side.get_participant_battle_party(local_player))
+		else:
+			player_party_bar.refresh_from_party(player_side.pokemonParty)
 	if (
 		enemy_party_bar != null
 		and enemy_side != null
 		and rules != null
 		and rules.type == BattleRules.BattleTypes.TRAINER
 	):
-		enemy_party_bar.refresh_from_party(enemy_side.pokemonParty)
+		var local_enemy: BattleParticipant = enemy_side.get_local_player_participant()
+		if local_enemy != null:
+			enemy_party_bar.refresh_from_party(enemy_side.get_participant_battle_party(local_enemy))
+		else:
+			enemy_party_bar.refresh_from_party(enemy_side.pokemonParty)
 
 
 func show_party_bars(
@@ -70,7 +92,13 @@ func show_party_bars(
 	await _slide_party_bars(host, show_player, show_enemy, true)
 
 
-func show_enemy_party_bar(host: Node, enemy_side: BattleSide, rules: BattleRules) -> void:
+func show_enemy_party_bar(
+	host: Node,
+	enemy_side: BattleSide,
+	rules: BattleRules,
+	landing_spot: BattleSpot = null,
+	incoming: BattlePokemon = null
+) -> void:
 	if host == null or not is_instance_valid(host):
 		return
 	if (
@@ -80,8 +108,36 @@ func show_enemy_party_bar(host: Node, enemy_side: BattleSide, rules: BattleRules
 		or rules.type != BattleRules.BattleTypes.TRAINER
 	):
 		return
-	enemy_party_bar.refresh_from_party(enemy_side.pokemonParty)
+	if landing_spot != null:
+		position_enemy_party_for_spot(landing_spot, rules.mode)
+	else:
+		enemy_party_bar.reset_rest_position()
+	var party: Array = enemy_side.pokemonParty
+	if incoming != null and incoming.participant != null:
+		party = enemy_side.get_participant_battle_party(incoming.participant)
+	enemy_party_bar.refresh_from_party(party)
 	await enemy_party_bar.slide_in(host)
+
+
+## En dobles, la party rival entra donde estaba el HPBar del spot que cambia.
+func position_enemy_party_for_spot(landing_spot: BattleSpot, mode: int) -> void:
+	if enemy_party_bar == null or landing_spot == null:
+		return
+	var enemy_base := get_enemy_base()
+	if enemy_base == null:
+		return
+	var marker := (
+		landing_spot.hp_bar_pos_double
+		if mode == BattleRules.BattleModes.DOUBLE
+		else landing_spot.hp_bar_pos_single
+	)
+	if marker == null:
+		return
+	var default_rest := enemy_party_bar.get_default_rest_position()
+	var party_y := enemy_base.to_local(marker.global_position).y + _enemy_party_y_nudge(mode)
+	if mode == BattleRules.BattleModes.DOUBLE and landing_spot == get_enemy_spot(0):
+		party_y += ENEMY_PARTY_SPOT_A_Y_ADJUST
+	enemy_party_bar.set_rest_position(Vector2(default_rest.x, party_y))
 
 
 func fade_out_enemy_party_bar(host: Node, duration: float = BattlePartyBarUI.FADE_OUT_DURATION) -> void:
@@ -221,16 +277,49 @@ func capture_trainer_rest_positions() -> void:
 
 
 ## Muestra trainers ya colocados en la base (antes del slide de la base).
-func reveal_intro_trainers(rules: BattleRules) -> void:
-	var player_t := get_player_trainer(0)
-	if player_t != null:
-		BattleAnimationUtils.set_trainer_idle_frame(player_t)
-		player_t.visible = true
+func reveal_intro_trainers(
+	rules: BattleRules,
+	player_trainer_count: int = 1,
+	enemy_trainer_count: int = 1
+) -> void:
+	var mode := BattleRules.BattleModes.SINGLE
+	if rules != null:
+		mode = rules.mode
 	var show_enemy := rules != null and rules.type == BattleRules.BattleTypes.TRAINER
-	var enemy_t := get_enemy_trainer(0)
-	if enemy_t != null:
-		BattleAnimationUtils.set_trainer_idle_frame(enemy_t)
-		enemy_t.visible = show_enemy
+	for i in 2:
+		var player_t := get_player_trainer(i)
+		if player_t == null:
+			continue
+		var show_player_trainer := i == 0 or (
+			mode == BattleRules.BattleModes.DOUBLE and player_trainer_count >= 2
+		)
+		if show_player_trainer:
+			BattleAnimationUtils.set_trainer_idle_frame(player_t)
+		_set_trainer_shown(player_t, show_player_trainer)
+	for i in 2:
+		var enemy_t := get_enemy_trainer(i)
+		if enemy_t == null:
+			continue
+		var show_this_enemy := show_enemy and (
+			i == 0 or (mode == BattleRules.BattleModes.DOUBLE and enemy_trainer_count >= 2)
+		)
+		if show_this_enemy:
+			BattleAnimationUtils.set_trainer_idle_frame(enemy_t)
+		_set_trainer_shown(enemy_t, show_this_enemy)
+
+
+func _set_trainer_shown(trainer_root: Node2D, should_show: bool) -> void:
+	if trainer_root == null:
+		return
+	trainer_root.visible = should_show
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	if spr != null:
+		spr.visible = should_show
+
+
+func hide_all_enemy_trainers() -> void:
+	for i in 2:
+		_set_trainer_shown(get_enemy_trainer(i), false)
 
 
 func hide_all_hp_bars(mode: int = BattleRules.BattleModes.SINGLE) -> void:
@@ -245,6 +334,25 @@ func _set_trainer_rest(trainer_root: Node2D, rest: Vector2) -> void:
 		return
 	trainer_root.position = rest
 	trainer_root.set_meta("trainer_rest_pos", rest)
+
+
+## Desplazamiento vertical party vs marker HP (intro spot B ≈ 43 px; mitad evita recorte arriba en spot A).
+func _enemy_party_y_nudge(mode: int) -> float:
+	if not has_meta("enemy_party_y_nudge"):
+		var ref_idx := 1 if mode == BattleRules.BattleModes.DOUBLE else 0
+		var ref_spot := get_enemy_spot(ref_idx)
+		var nudge := 22.0
+		if ref_spot != null and enemy_party_bar != null:
+			var marker := (
+				ref_spot.hp_bar_pos_double
+				if mode == BattleRules.BattleModes.DOUBLE
+				else ref_spot.hp_bar_pos_single
+			)
+			if marker != null:
+				var ref_y := get_enemy_base().to_local(marker.global_position).y
+				nudge = (enemy_party_bar.get_default_rest_position().y - ref_y) * 0.5
+		set_meta("enemy_party_y_nudge", nudge)
+	return get_meta("enemy_party_y_nudge")
 
 
 func get_player_spots_for_mode(mode: int) -> Array[BattleSpot]:
@@ -272,7 +380,7 @@ func get_player_spot(index: int) -> BattleSpot:
 		0: return $PlayerBase/PokemonSpotA
 		1: return $PlayerBase/PokemonSpotB
 		_: return null
-		
+
 func get_enemy_spot(index: int) -> BattleSpot:
 	match index:
 		0: return $EnemyBase/PokemonSpotA

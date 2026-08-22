@@ -145,13 +145,13 @@ class BATTLE:
 
 
 	const BACK_SINGLE_TRAINER_POS = Vector2(128, 224) # centro PlayerBase (SpotA_Single)
-	const BACK_DOUBLE1_TRAINER_POS = Vector2(-144,-80)
-	const BACK_DOUBLE2_TRAINER_POS = Vector2(224,-80)
+	const BACK_DOUBLE1_TRAINER_POS = Vector2(70, 224) # PlayerBase/TrainerA (FieldUI.tscn)
+	const BACK_DOUBLE2_TRAINER_POS = Vector2(160, 234) # PlayerBase/TrainerB
 
 	# Rival: no usar SpotA_Single.y (hunde el sprite); equiv. antiguo local+(FINAL base).
 	const FRONT_SINGLE_TRAINER_POS = Vector2(384, 115)
-	const FRONT_DOUBLE1_TRAINER_POS = Vector2(38, -58)
-	const FRONT_DOUBLE2_TRAINER_POS = Vector2(84, -58)
+	const FRONT_DOUBLE1_TRAINER_POS = Vector2(425, 120) # EnemyBase/TrainerA (FieldUI.tscn)
+	const FRONT_DOUBLE2_TRAINER_POS = Vector2(355, 110) # EnemyBase/TrainerB
 
 	const PLAYER_BASE_INITIALPOSITION = Vector2(476,240)
 	const PLAYER_BASE_FINALPOSITION = Vector2(-128,240)

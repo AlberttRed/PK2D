@@ -6,32 +6,48 @@ const SLOT_COUNT: int = 6
 var _side: BattleSide
 var _active_pokemon: BattlePokemon
 var _force_switch: bool = false
+var _owner_participant: BattleParticipant
+var _scoped_party: Array[BattlePokemon] = []
 
 
 func _init(side: BattleSide, active_pokemon: BattlePokemon, force_switch: bool = false) -> void:
 	_side = side
 	_active_pokemon = active_pokemon
 	_force_switch = force_switch
+	_owner_participant = active_pokemon.participant if active_pokemon != null else null
+	_scoped_party = _build_scoped_party()
+
+
+func _build_scoped_party() -> Array[BattlePokemon]:
+	if _side == null:
+		return []
+	if _owner_participant != null:
+		return _side.get_participant_battle_party(_owner_participant)
+	return _side.pokemonParty
 
 
 func get_slot_count() -> int:
 	return SLOT_COUNT
 
 
+func get_global_party_index(battle_pokemon: BattlePokemon) -> int:
+	if _side == null:
+		return -1
+	return _side.find_party_index(battle_pokemon)
+
+
 func get_party_members_ordered() -> Array[Pokemon]:
 	var out: Array[Pokemon] = []
-	if _side == null:
-		return out
-	for bp in _side.pokemonParty:
+	for bp in _scoped_party:
 		if bp != null and bp.base_data != null:
 			out.append(bp.base_data)
 	return out
 
 
 func touch_pokemon(mon: Pokemon) -> void:
-	if _side == null or mon == null:
+	if mon == null:
 		return
-	for bp in _side.pokemonParty:
+	for bp in _scoped_party:
 		if bp != null and bp.base_data == mon:
 			var max_hp := mon.get_final_stat(StatsEnum.Values.HP)
 			mon.hp_actual = clampi(bp.get_hp(), 0, max_hp)
@@ -73,20 +89,18 @@ func is_slot_occupied(slot: int) -> bool:
 
 
 func get_battle_pokemon_at(slot: int) -> BattlePokemon:
-	if _side == null:
-		return null
 	if slot < 0 or slot >= SLOT_COUNT:
 		return null
-	if slot >= _side.pokemonParty.size():
+	if slot >= _scoped_party.size():
 		return null
-	return _side.pokemonParty[slot]
+	return _scoped_party[slot]
 
 
 func find_slot_for_battle_pokemon(target: BattlePokemon) -> int:
-	if _side == null or target == null:
+	if target == null:
 		return -1
-	for i in range(_side.pokemonParty.size()):
-		if _side.pokemonParty[i] == target:
+	for i in range(_scoped_party.size()):
+		if _scoped_party[i] == target:
 			return i
 	return -1
 
@@ -122,4 +136,3 @@ func get_invalid_switch_message(slot: int) -> Dictionary:
 
 func can_cancel_battle_switch() -> bool:
 	return not _force_switch
-

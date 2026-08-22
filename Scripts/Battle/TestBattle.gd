@@ -41,7 +41,13 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
 @export var use_pokeball_animation_trainer_test: bool = false
 ## 1vs1 salvaje: Charmander (+ banca) vs Pidgey — intro party + send-in jugador (sin trainer rival).
-@export var use_wild_animation_test: bool = true
+@export var use_wild_animation_test: bool = false
+## 2vs2 salvaje: Charmander+Squirtle vs Pidgey+Rattata — intro doble sin trainers rivales.
+@export var use_double_wild_animation_test: bool = true
+## 2vs2 entrenador: 2 trainers jugador vs 2 trainers rival — intro doble y send-in por spot.
+@export var use_double_trainer_animation_test: bool = false
+## Si true, JugadorB también es humano (controlas ambos spots). Si false, JugadorB es aliado IA en tu lado.
+@export var double_trainer_ally_controllable: bool = false
 ## 1vs1 entrenador con BattleIA_TrainerTest (guion SWITCH/MOVE/EASY). Ver trainer_ia_test_scenario.
 @export var use_trainer_ia_test: bool = false
 ## Escenario del guion de BattleIA_TrainerTest.
@@ -121,6 +127,14 @@ func _ready() -> void:
 	if use_wild_animation_test:
 		_print_wild_animation_test_guide()
 		await wildAnimationTestBattle()
+		return
+	if use_double_wild_animation_test:
+		_print_double_wild_animation_test_guide()
+		await wildDoubleAnimationTestBattle()
+		return
+	if use_double_trainer_animation_test:
+		_print_double_trainer_animation_test_guide()
+		await doubleTrainerAnimationTestBattle()
 		return
 	if use_trainer_ia_test:
 		_print_trainer_ia_test_guide()
@@ -547,6 +561,50 @@ func wildAnimationTestBattle() -> void:
 	print(">>> Batalla animaciones salvaje terminada. Ganador: %s" % winner)
 
 
+func wildDoubleAnimationTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_double_wild_animation_test_wilds()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animaciones salvaje 2vs2 terminada. Ganador: %s" % winner)
+
+
+func doubleTrainerAnimationTestBattle() -> void:
+	var player_a := _create_double_trainer_test_participant(
+		"JugadorA", PokemonsEnum.Values.CHARMANDER, 20, true
+	)
+	var player_b := _create_double_trainer_test_participant(
+		"JugadorB", PokemonsEnum.Values.SQUIRTLE, 18, double_trainer_ally_controllable
+	)
+	# Aliado IA: mismo lado que el jugador, sin ser humano.
+	if not double_trainer_ally_controllable:
+		player_b.joins_player_side = true
+	# Si controlas al aliado, tiene mochila propia (no la del GameState).
+	if double_trainer_ally_controllable:
+		player_b.set_bag_from_item_ids([17, 17, 18])  # Poción x2, Antídoto x1
+	var enemy_a := _create_double_trainer_test_participant(
+		"RivalA",
+		PokemonsEnum.Values.BULBASAUR,
+		18,
+		false,
+		PokemonsEnum.Values.PIKACHU,
+		BattleIA_TrainerTest.create_switch_first_turn()
+	)
+	var enemy_b := _create_double_trainer_test_participant(
+		"RivalB",
+		PokemonsEnum.Values.PIDGEY,
+		17,
+		false,
+		PokemonsEnum.Values.RATTATA,
+		BattleIA_TrainerTest.create_switch_first_turn()
+	)
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_a, player_b, enemy_a, enemy_b]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla 2vs2 trainers terminada. Ganador: %s" % winner)
+
+
 func trainerPokeballAnimationTestBattle() -> void:
 	var player_participant := _create_pokeball_animation_test_player()
 	var trainer_participant := _create_pokeball_animation_test_trainer()
@@ -680,6 +738,7 @@ func _create_pokeball_animation_test_trainer() -> BattleParticipant:
 	participant.is_trainer = true
 	participant.ai_controller = ia
 	participant.name = "Entrenador"
+	participant.defeat_message = "¡Imposible! ¡Mis Pokémon eran los mejores!"
 	return participant
 
 
@@ -705,11 +764,111 @@ func _create_wild_animation_test_wild() -> BattleParticipant:
 	return BattleParticipantWild.new([wild_bp])
 
 
+func _create_double_wild_animation_test_wilds() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	pidgey._post_init()
+	var wild_a: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_a.is_wild = true
+
+	var rattata := Pokemon.new()
+	rattata.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
+	rattata.level = 16
+	rattata.is_wild = true
+	rattata.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	rattata._post_init()
+	var wild_b: BattlePokemon = rattata.to_battle_pokemon()
+	wild_b.is_wild = true
+
+	return BattleParticipantWild.new([wild_a, wild_b])
+
+
 func _print_wild_animation_test_guide() -> void:
 	print(">>> Test animaciones combate salvaje: Charmander+Squirtle vs Pidgey salvaje.")
 	print(">>> Intro: slide bases → HP salvaje → «Pidgey salvaje apareció» → send-in jugador (sin party bar).")
 	print(">>> El salvaje ya está en campo (sin ball throw rival). Cambia Pokémon para probar switch player.")
 	print(">>> Desactiva use_wild_animation_test para volver al bucle aleatorio o activar otro flag.")
+
+
+func _print_double_wild_animation_test_guide() -> void:
+	print(">>> Test 2vs2 salvaje: Charmander+Squirtle (ambos tuyos) vs Pidgey+Rattata salvajes.")
+	print(">>> Intro: bases → HP dobles salvajes → mensaje → send-in jugador A/B (sin party bar rival).")
+	print(">>> Controlas ambos spots; sin trainers ni ball throw enemigo.")
+	print(">>> Desactiva use_double_wild_animation_test para volver a otro flag.")
+
+
+func _create_double_trainer_test_participant(
+	trainer_name: String,
+	pokemon_id: PokemonsEnum.Values,
+	level: int,
+	is_player: bool,
+	bench_pokemon_id: int = -1,
+	ai: BattleIA = null
+) -> BattleParticipant:
+	var ia_resolved: BattleIA = ai
+	if not is_player and ia_resolved == null:
+		ia_resolved = BattleIA_TrainerEasy.new()
+
+	var party: Array[BattlePokemon] = [
+		_create_double_trainer_battle_pokemon(pokemon_id, level, is_player, ia_resolved)
+	]
+	if bench_pokemon_id >= 0:
+		party.append(_create_double_trainer_battle_pokemon(bench_pokemon_id, level, is_player, ia_resolved))
+
+	var participant := BattleParticipant.new(party)
+	participant.is_player = is_player
+	participant.is_trainer = not is_player
+	participant.name = trainer_name
+	if not is_player:
+		participant.ai_controller = ia_resolved
+		participant.defeat_message = "¡%s ha perdido el combate!" % trainer_name
+	return participant
+
+
+func _create_double_trainer_battle_pokemon(
+	pokemon_id: PokemonsEnum.Values,
+	level: int,
+	is_player: bool,
+	ia: BattleIA
+) -> BattlePokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = pokemon_id
+	pkmn.level = level
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	pkmn._post_init()
+	var bp: BattlePokemon = pkmn.to_battle_pokemon(ia)
+	bp.controllable = is_player
+	if not is_player:
+		bp.setIA(ia)
+	return bp
+
+
+func _print_double_trainer_animation_test_guide() -> void:
+	if double_trainer_ally_controllable:
+		print(">>> Test 2vs2 trainers: JugadorA + JugadorB (ambos controlables) vs RivalA+RivalB.")
+		print(">>> JugadorB tiene mochila propia (Poción x2, Antídoto); JugadorA usa GameState.")
+	else:
+		print(">>> Test 2vs2 trainers: JugadorA (tú) + JugadorB (IA aliada) vs RivalA+RivalB.")
+		print(">>> Solo eliges acciones de tu Pokémon; JugadorB la controla la IA del entrenador.")
+	print(">>> Activa double_trainer_ally_controllable para controlar los dos entrenadores del lado jugador.")
+	print(">>> Intro: bases → party → «X y Y quieren luchar» → send-in rival A/B → send-in jugador A/B.")
+	print(">>> Revisa: TrainerA/B visibles, exit por trainer correcto, HP bars dobles.")
+	print(">>> Derrota 2vs2: enter → mensaje → exit por cada rival en secuencia.")
+	print(">>> Turno rival: RivalA (spot A) y RivalB (spot B) cambian en turno 1 (SWITCH).")
 
 
 func _create_ember_animation_test_player() -> BattleParticipant:

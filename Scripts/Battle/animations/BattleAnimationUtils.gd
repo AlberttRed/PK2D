@@ -315,7 +315,7 @@ static func trainer_enter(
 	var start := rest
 	start.x = rest.x - slide_distance if from_left else rest.x + slide_distance
 	trainer_root.position = start
-	trainer_root.visible = true
+	_show_trainer_visual(trainer_root)
 	var tw := trainer_root.create_tween()
 	tw.tween_property(trainer_root, "position", rest, duration).set_trans(Tween.TRANS_SINE).set_ease(
 		Tween.EASE_OUT
@@ -406,9 +406,27 @@ static func finalize_trainer_exit(trainer_root: Node2D) -> void:
 		if trainer_root.has_meta("trainer_rest_pos")
 		else trainer_root.position
 	)
-	trainer_root.visible = false
 	trainer_root.position = rest
 	set_trainer_idle_frame(trainer_root)
+	_hide_trainer_visual(trainer_root)
+
+
+static func _show_trainer_visual(trainer_root: Node2D) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	trainer_root.visible = true
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	if spr != null:
+		spr.visible = true
+
+
+static func _hide_trainer_visual(trainer_root: Node2D) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	trainer_root.visible = false
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	if spr != null:
+		spr.visible = false
 
 
 ## Recall / salida del Pokémon del spot. Player: slide izq. Rival: ball + blanco + scale.
@@ -501,8 +519,8 @@ static func pokemon_exit_enemy_recall(spot: BattleSpot) -> void:
 	var ball := Sprite2D.new()
 	ball.name = "RecallBall"
 	ball.texture = tex_closed
-	ball.z_as_relative = true
-	ball.z_index = 20
+	ball.z_as_relative = false
+	ball.z_index = FieldUI.FIELD_POKEBALL_Z
 	ball.modulate = Color(1, 1, 1, 0)
 	spot.add_child(ball)
 	var feet := spot.get_anchor_node(BattleSpot.ANCHOR_FEET)

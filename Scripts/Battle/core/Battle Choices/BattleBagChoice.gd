@@ -7,7 +7,7 @@ var item_id: int = -1
 ## Inyectado desde `BattleUI` al elegir MOCHILA (necesario para `ItemUseContext` / handlers).
 var battle_controller: BattleController = null
 
-## Índice en `player_side.pokemonParty` del Pokémon sobre el que aplica el ítem (-1 = convención por defecto, el que declaró la acción).
+## Índice en el party del participante (UI) del Pokémon sobre el que aplica el ítem (-1 = el que declaró la acción).
 var target_party_slot: int = -1
 
 ## Objetivo enemigo en runtime (p. ej. Poké Ball); opcional.
@@ -24,8 +24,12 @@ func resolve_item_target_battle_pokemon() -> BattlePokemon:
 	if battle_controller == null:
 		return pokemon
 	if target_party_slot >= 0:
-		# `target_party_slot` viene del PartyUI global (overworld ordering).
-		# En combate, `player_side.pokemonParty` puede no coincidir 1:1 por índice.
+		# Slot del PartyUI acotado al participante del actor.
+		if pokemon != null and pokemon.participant != null and pokemon.side != null:
+			var scoped: Array[BattlePokemon] = pokemon.side.get_participant_battle_party(pokemon.participant)
+			if target_party_slot < scoped.size():
+				return scoped[target_party_slot]
+		# Fallback: índices globales del save / party del lado.
 		var player_party: Array = GameStateService.get_player_party()
 		if target_party_slot < player_party.size():
 			var selected_base: Pokemon = player_party[target_party_slot] as Pokemon
@@ -54,4 +58,3 @@ func resolve() -> Array[BattleHandler]:
 	if item_data != null and item_data.category != null and item_data.category.has_method("create_handler"):
 		handler = item_data.category.create_handler(self, item_data)
 	return [handler]
-

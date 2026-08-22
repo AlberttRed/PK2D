@@ -5,6 +5,9 @@ class_name BattleParticipant
 var trainer_id: int = -1  # -1 o algún valor especial para salvajes
 var trainer_resource_id: String = ""  # Identificador único del trainer (nombre del .res sin extensión)
 var is_player: bool = false
+## Si true, combate en el lado del jugador aunque no sea humano (aliado con IA).
+## `is_player` siempre implica lado jugador.
+var joins_player_side: bool = false
 var name: String = "":
 	get:
 		return name if name != null else ""
@@ -24,6 +27,10 @@ var intro_message: String = ""
 var defeat_message: String = ""
 var victory_message: String = ""
 
+## Mochila de combate. `null` + `is_player` → `GameStateService.get_bag()`.
+## Entrenador/aliado con ítems propios: asignar con `set_bag_from_item_ids` o `bag = Bag.new()`.
+var bag: Bag = null
+
 # Internal storage for the participant's battle team.
 # DO NOT modify this directly. Use add_pokemon or add_pokemon_team.
 var _pokemon_team: Array[BattlePokemon] = []
@@ -39,6 +46,30 @@ var pokemon_team: Array[BattlePokemon]:
 
 func _init(_pokemon_team: Array[BattlePokemon] = []):
 	self.add_pokemon_team(_pokemon_team)
+
+
+## ¿Pertenece al lado del jugador (humano o aliado IA)?
+func belongs_to_player_side() -> bool:
+	return is_player or joins_player_side
+
+
+## Mochila efectiva en combate: propia, o la del save si es jugador humano.
+func get_battle_bag() -> Bag:
+	if bag != null:
+		return bag
+	if is_player:
+		return GameStateService.get_bag() as Bag
+	return null
+
+
+## Rellena `bag` desde una lista de item_id (p. ej. TrainerData.battle_items).
+## IDs repetidos se apilan. Sobrescribe cualquier bag previa.
+func set_bag_from_item_ids(item_ids: Array) -> void:
+	bag = Bag.new()
+	for item_id_variant in item_ids:
+		var item_id := int(item_id_variant)
+		if item_id > 0:
+			bag.add_item(item_id, 1)
 
 
 ## Asigna IA con validación runtime según tipo de participante.

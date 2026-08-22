@@ -80,6 +80,9 @@ func assign_active_pokemons_to_spots():
 	_assign_actives_to_spots(enemy_actives, enemy_spots, enemy_side)
 
 	ui.position_battlespots_for_mode(rules.mode, player_actives.size(), enemy_actives.size())
+	if ui.field_ui != null:
+		ui.field_ui.apply_z_order_for_mode(rules.mode)
+		ui.field_ui.ensure_all_hp_bars_display_z(rules.mode)
 	prepare_trainer_intro_field()
 
 

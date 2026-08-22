@@ -20,8 +20,9 @@ const PLAYER_THROW_AFTER_EXIT_SEC := 0.5
 ## Clips throw_*: instante en que se abre / empieza el brillo (ver PokeballThrowAnimation.tscn).
 const THROW_OPEN_PLAYER_SEC := 0.58
 const THROW_OPEN_ENEMY_SEC := 1.15
-## Por encima de BattleAnimationLayer (z=1) para que el grow tape la ball.
-const POKEMON_ABOVE_THROW_Z := 5
+## Por encima de BattleAnimationLayer (z=1) y por debajo de MessageBox (z=6).
+## SpotB player (z=2) + este valor debe quedar ≤ 5.
+const POKEMON_ABOVE_THROW_Z := 3
 
 static var _pokeball_throw: BattleAnimation = null
 static var _pokemon_enter: BattleAnimation = null
@@ -54,7 +55,11 @@ static func prepare_intro_field(ui: BattleUI, rules: BattleRules) -> void:
 	ui.field_ui.hide_all_hp_bars(mode)
 	ui.field_ui.hide_all_party_bars()
 	ui.field_ui.apply_trainer_rest_positions(mode)
-	ui.field_ui.reveal_intro_trainers(rules)
+	ui.field_ui.reveal_intro_trainers(
+		rules,
+		_side_trainer_count(ui, true),
+		_side_trainer_count(ui, false)
+	)
 	BattleAnimationUtils.park_bases_offscreen(
 		ui.field_ui.get_player_base(),
 		ui.field_ui.get_enemy_base()
@@ -70,7 +75,11 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 		mode = rules.mode
 	ui.field_ui.hide_all_hp_bars(mode)
 	ui.field_ui.apply_trainer_rest_positions(mode)
-	ui.field_ui.reveal_intro_trainers(rules)
+	ui.field_ui.reveal_intro_trainers(
+		rules,
+		_side_trainer_count(ui, true),
+		_side_trainer_count(ui, false)
+	)
 
 	var is_wild := rules != null and rules.type == BattleRules.BattleTypes.WILD
 
@@ -170,7 +179,9 @@ static func play_enemy_trainer_send_in_pre_entry(
 	ui: BattleUI,
 	rules: BattleRules,
 	trainer_name: String,
-	incoming_name: String
+	incoming_name: String,
+	landing_spot: BattleSpot = null,
+	incoming: BattlePokemon = null
 ) -> void:
 	if ui == null or ui.field_ui == null or ui.battle_controller == null:
 		return
@@ -179,7 +190,9 @@ static func play_enemy_trainer_send_in_pre_entry(
 	await ui.field_ui.show_enemy_party_bar(
 		ui,
 		ui.battle_controller.enemy_side,
-		rules
+		rules,
+		landing_spot,
+		incoming
 	)
 	await ui.show_enemy_switch_in_message(trainer_name, incoming_name)
 	await ui.field_ui.fade_out_enemy_party_bar(ui, ENEMY_SEND_IN_PARTY_FADE_SEC)
@@ -187,17 +200,25 @@ static func play_enemy_trainer_send_in_pre_entry(
 
 ## Salida del trainer del lado del spot (player← / rival→). Awaitable.
 ## Fin de combate (trainer): rival reaparece desde la derecha antes del defeat_message.
-static func play_enemy_trainer_defeat_enter(ui: BattleUI, rules: BattleRules) -> void:
+static func play_enemy_trainer_defeat_enter(
+	ui: BattleUI,
+	rules: BattleRules,
+	trainer_index: int = 0
+) -> void:
 	if ui == null or ui.field_ui == null:
 		return
 	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
 		return
 	var mode := rules.mode
 	ui.field_ui.apply_trainer_rest_positions(mode)
-	var trainer: Node2D = ui.field_ui.get_enemy_trainer(0)
+	ui.field_ui.hide_all_enemy_trainers()
+	var trainer: Node2D = ui.field_ui.get_enemy_trainer(trainer_index)
 	if trainer == null or not is_instance_valid(trainer):
-		push_warning("BattleFieldAnimations: sin trainer rival para defeat enter")
+		push_warning(
+			"BattleFieldAnimations: sin trainer rival índice %d para defeat enter" % trainer_index
+		)
 		return
+	trainer.z_index = 4
 	await BattleAnimationUtils.trainer_enter(
 		trainer, false, TRAINER_EXIT_DURATION, TRAINER_EXIT_SLIDE
 	)
@@ -206,14 +227,8 @@ static func play_enemy_trainer_defeat_enter(ui: BattleUI, rules: BattleRules) ->
 static func play_trainer_exit_for_spot(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	if ui == null or ui.field_ui == null or landing_spot == null:
 		return
-	var trainer: Node2D = null
-	var to_left := true
-	if landing_spot.side != null and landing_spot.side.type == BattleSide.Types.ENEMY:
-		trainer = ui.field_ui.get_enemy_trainer(0)
-		to_left = false
-	else:
-		trainer = ui.field_ui.get_player_trainer(0)
-		to_left = true
+	var trainer := _get_trainer_for_spot(ui, landing_spot)
+	var to_left := not _is_enemy_spot(landing_spot)
 	if trainer == null or not is_instance_valid(trainer):
 		return
 	await BattleAnimationUtils.trainer_exit(
@@ -261,6 +276,12 @@ static func play_pokemon_exit(ui: BattleUI, leaving_spot: BattleSpot) -> void:
 static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	if ui == null or landing_spot == null or not is_instance_valid(landing_spot):
 		return
+	var mode := BattleRules.BattleModes.SINGLE
+	if ui.battle_controller != null and ui.battle_controller.rules != null:
+		mode = ui.battle_controller.rules.mode
+	if ui.field_ui != null:
+		ui.field_ui.ensure_all_hp_bars_display_z(mode)
+
 	landing_spot.set_pokemon_sprite_visible(false)
 	if landing_spot.hp_bar:
 		landing_spot.hp_bar.visible = false
@@ -273,9 +294,9 @@ static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	_start_party_roll_out_with_trainer_exit(ui, landing_spot, is_enemy)
 
 	if is_enemy:
-		exit_tw = _start_enemy_trainer_exit(ui)
+		exit_tw = _start_enemy_trainer_exit(ui, landing_spot)
 	else:
-		trainer = ui.field_ui.get_player_trainer(0) if ui.field_ui else null
+		trainer = _get_trainer_for_spot(ui, landing_spot)
 		if trainer != null and is_instance_valid(trainer) and trainer.visible:
 			exit_tw = BattleAnimationUtils.start_player_trainer_exit_with_throw(
 				trainer, TRAINER_EXIT_DURATION, TRAINER_EXIT_SLIDE
@@ -284,13 +305,76 @@ static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 
 	await _play_throw_with_enter_overlap(ui, landing_spot, open_at)
 
+	if ui.field_ui != null:
+		ui.field_ui.ensure_all_hp_bars_display_z(mode)
+
 	if landing_spot.hp_bar:
+		await _prepare_hp_bar_slide_in(ui)
 		await landing_spot.play_hp_bar_slide_in()
+	_finish_hp_bar_slide_in(ui)
 
 	if exit_tw != null and is_instance_valid(exit_tw) and exit_tw.is_running():
 		await exit_tw.finished
 	if trainer != null and is_instance_valid(trainer) and trainer.visible:
 		BattleAnimationUtils.finalize_trainer_exit(trainer)
+
+
+## Send-in de varios spots a la vez (intro doble: trainers + balls en paralelo).
+static func play_send_in_parallel(ui: BattleUI, landing_spots: Array[BattleSpot]) -> void:
+	if ui == null or landing_spots.is_empty():
+		return
+	var flags: Dictionary = {}
+	for i in landing_spots.size():
+		flags[i] = false
+		var spot: BattleSpot = landing_spots[i]
+		(
+			func(idx: int, landing: BattleSpot) -> void:
+				if landing != null and is_instance_valid(landing):
+					await play_send_in(ui, landing)
+				flags[idx] = true
+		).call(i, spot)
+
+	while not _all_flags_true(flags):
+		if ui == null or not is_instance_valid(ui) or ui.get_tree() == null:
+			return
+		await ui.get_tree().process_frame
+
+
+static func _all_flags_true(flags: Dictionary) -> bool:
+	for key in flags:
+		if not flags[key]:
+			return false
+	return true
+
+
+static func _clear_animation_layer(ui: BattleUI) -> void:
+	if ui == null or ui.field_ui == null:
+		return
+	var layer := ui.field_ui.get_animation_layer()
+	if layer == null:
+		return
+	for child in layer.get_children():
+		if is_instance_valid(child):
+			child.free()
+	if ui.get_tree() != null:
+		await ui.get_tree().process_frame
+
+
+static func _prepare_hp_bar_slide_in(ui: BattleUI) -> void:
+	await _clear_animation_layer(ui)
+	if ui == null or ui.field_ui == null:
+		return
+	var layer := ui.field_ui.get_animation_layer()
+	if layer != null:
+		layer.visible = false
+
+
+static func _finish_hp_bar_slide_in(ui: BattleUI) -> void:
+	if ui == null or ui.field_ui == null:
+		return
+	var layer := ui.field_ui.get_animation_layer()
+	if layer != null:
+		layer.visible = true
 
 
 static func _is_enemy_spot(landing_spot: BattleSpot) -> bool:
@@ -334,13 +418,10 @@ static func _play_throw_with_enter_overlap(
 			return
 		await ui.get_tree().process_frame
 
-	# Si el throw aún no acabó (fade), espera un poco para no cortar la ball.
-	var guard := 0
-	while not flags.throw and guard < 90:
+	while not flags.throw:
 		if ui == null or not is_instance_valid(ui) or ui.get_tree() == null:
 			return
 		await ui.get_tree().process_frame
-		guard += 1
 
 	if spr != null and is_instance_valid(spr):
 		spr.z_index = prev_sprite_z
@@ -361,10 +442,41 @@ static func _start_party_roll_out_with_trainer_exit(
 	).call()
 
 
-static func _start_enemy_trainer_exit(ui: BattleUI) -> Tween:
+static func _side_trainer_count(ui: BattleUI, is_player: bool) -> int:
+	if ui == null or ui.battle_controller == null:
+		return 1
+	var side: BattleSide = (
+		ui.battle_controller.player_side if is_player else ui.battle_controller.enemy_side
+	)
+	if side == null or side.participants.is_empty():
+		return 1
+	return side.participants.size()
+
+
+static func _trainer_index_for_spot(landing_spot: BattleSpot) -> int:
+	if landing_spot == null or landing_spot.side == null:
+		return 0
+	var side: BattleSide = landing_spot.side
+	if side.participants.size() >= 2 and side.battle_spots.size() >= 2:
+		var idx := side.battle_spots.find(landing_spot)
+		if idx >= 0:
+			return idx
+	return 0
+
+
+static func _get_trainer_for_spot(ui: BattleUI, landing_spot: BattleSpot) -> Node2D:
+	if ui == null or ui.field_ui == null or landing_spot == null:
+		return null
+	var trainer_idx := _trainer_index_for_spot(landing_spot)
+	if _is_enemy_spot(landing_spot):
+		return ui.field_ui.get_enemy_trainer(trainer_idx)
+	return ui.field_ui.get_player_trainer(trainer_idx)
+
+
+static func _start_enemy_trainer_exit(ui: BattleUI, landing_spot: BattleSpot) -> Tween:
 	if ui == null or ui.field_ui == null:
 		return null
-	var trainer: Node2D = ui.field_ui.get_enemy_trainer(0)
+	var trainer: Node2D = _get_trainer_for_spot(ui, landing_spot)
 	if trainer == null or not is_instance_valid(trainer) or not trainer.visible:
 		return null
 	if not trainer.has_meta("trainer_rest_pos"):

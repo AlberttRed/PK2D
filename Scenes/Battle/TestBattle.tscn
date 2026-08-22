@@ -5,14 +5,10 @@
 [ext_resource type="Script" uid="uid://ct0qiycflsnlt" path="res://Scripts/Battler.gd" id="3_bfl41"]
 
 [node name="TestBattle" type="Node2D" unique_id=764670732]
+position = Vector2(1, 2)
 script = ExtResource("1_tse6d")
 debug_rattata_test_bite = false
 debug_force_ailment_apply = true
-use_battle_ia_typing_test = false
-use_ember_animation_test = false
-use_pokeball_animation_trainer_test = false
-use_trainer_ia_test = true
-use_field_effects_integration_test = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

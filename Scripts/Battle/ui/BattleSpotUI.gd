@@ -72,6 +72,7 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	hp_bar.setup_for(self.pokemon.side.type, rules.mode)
 	hp_bar.set_status_icon(pokemon.status.icon if pokemon.status else null)
 	position_hp_bar(rules.mode)
+	ensure_hp_bar_display_z()
 	hp_bar.visible = true
 
 	# Mostrar el spot completo
@@ -136,6 +137,20 @@ func position_hp_bar(mode: int) -> void:
 			hp_bar.global_position = hp_bar_pos_double.global_position
 		_:
 			push_warning("Modo de batalla no soportado para posicionar HPBar")
+
+
+## z absoluto por encima de balls (layer z=1) y sprites del spot; empata con MessageBox (6).
+func ensure_hp_bar_display_z() -> void:
+	if hp_bar == null:
+		return
+	hp_bar.z_as_relative = false
+	hp_bar.z_index = FieldUI.HP_BAR_CANVAS_Z
+	for child in hp_bar.get_children():
+		if child is CanvasItem:
+			var ci := child as CanvasItem
+			ci.z_as_relative = false
+			ci.z_index = FieldUI.HP_BAR_CANVAS_Z + 1
+
 
 func highlight(active: bool) -> void:
 	if tween:
@@ -373,6 +388,7 @@ func play_hp_bar_slide_out() -> void:
 func play_hp_bar_slide_in(duration: float = 0.3) -> void:
 	if not hp_bar:
 		return
+	ensure_hp_bar_display_z()
 	var direction := _hp_bar_slide_direction()
 	var slide_distance := 300.0
 	var rest := hp_bar.global_position

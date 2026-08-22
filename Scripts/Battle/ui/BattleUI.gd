@@ -175,6 +175,10 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 	_ensure_battle_bag_ui()
 	var bag_ctrl: BagController = _BAG_CONTROLLER_SCRIPT.new(null)
 	bag_ctrl.configure_battle_item_flow()
+	if pokemon != null and pokemon.participant != null:
+		var participant_bag: Bag = pokemon.participant.get_battle_bag()
+		if participant_bag != null:
+			bag_ctrl.set_bag_source(participant_bag)
 	_battle_bag_ui.setup(bag_ctrl)
 
 	actions_menu.hide()
@@ -600,7 +604,7 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 	var choice := BattleSwitchChoice.new()
 	choice.pokemon = pokemon
 	choice.side = pokemon.side
-	choice.target_index = selected_slot
+	choice.target_index = switch_controller.get_global_party_index(incoming_bp)
 	choice.outgoing_pokemon = pokemon
 	choice.incoming_pokemon = incoming_bp
 	if pokemon.battle_spot != null:
@@ -653,7 +657,7 @@ func handle_opponent_trainer_send_in_sequence(
 	target_selector_ui.hide()
 	message_box.hide()
 
-	# Sin banca sana no hay prompt de cambio: el send-in real dirá «X saca a Y».
+	# Sin banca sana en ningún entrenador humano no hay prompt de cambio.
 	if not _player_has_healthy_bench():
 		return
 
@@ -663,37 +667,37 @@ func handle_opponent_trainer_send_in_sequence(
 		message_controller.get_opponent_next_pokemon_message(pokemon_name, trainer_name)
 	)
 
-	var player_name := _get_player_battle_name()
-	var switch_idx: int = await DisplayManager.show_message_with_choices(
-		"%s, ¿quieres cambiar de POKéMON?" % player_name,
-		["Sí", "No"],
-		true
-	)
-	if switch_idx != 0:
+	var player_side := battle_controller.player_side if battle_controller != null else null
+	if player_side == null:
 		return
 
-	var active := _get_player_active_pokemon()
-	if active == null or battle_controller == null:
-		return
+	for active: BattlePokemon in player_side.get_controllable_active_pokemons():
+		if not player_side.participant_has_healthy_bench(active.participant):
+			continue
+		var player_name := _get_player_battle_name()
+		var switch_idx: int = await DisplayManager.show_message_with_choices(
+			"%s, ¿quieres cambiar de POKéMON?" % player_name,
+			["Sí", "No"],
+			true
+		)
+		if switch_idx != 0:
+			continue
 
-	var player_switch: BattleSwitchChoice = await show_optional_switch_selection(active)
-	if player_switch == null:
-		return
+		var player_switch: BattleSwitchChoice = await show_optional_switch_selection(active)
+		if player_switch == null:
+			continue
 
-	var handlers := player_switch.resolve()
-	if handlers.is_empty():
-		return
-	await battle_controller.turn_controller.handle_switch_result(player_switch, handlers)
+		var handlers := player_switch.resolve()
+		if handlers.is_empty():
+			continue
+		await battle_controller.turn_controller.handle_switch_result(player_switch, handlers)
 
 
-## Banca sana: vivo y no está ya en combate (en single ≈ “más de un no debilitado”).
+## ¿Algún entrenador humano tiene banca disponible?
 func _player_has_healthy_bench() -> bool:
 	if battle_controller == null or battle_controller.player_side == null:
 		return false
-	for p: BattlePokemon in battle_controller.player_side.pokemonParty:
-		if p != null and not p.is_fainted() and not p.in_battle:
-			return true
-	return false
+	return battle_controller.player_side.any_player_participant_has_healthy_bench()
 
 
 func show_optional_switch_selection(pokemon: BattlePokemon) -> BattleSwitchChoice:
@@ -775,7 +779,7 @@ func show_optional_switch_selection(pokemon: BattlePokemon) -> BattleSwitchChoic
 	var choice := BattleSwitchChoice.new()
 	choice.pokemon = pokemon
 	choice.side = pokemon.side
-	choice.target_index = selected_slot
+	choice.target_index = switch_controller.get_global_party_index(incoming_bp)
 	choice.outgoing_pokemon = pokemon
 	choice.incoming_pokemon = incoming_bp
 	if pokemon.battle_spot != null:
@@ -794,10 +798,10 @@ func _get_player_battle_name() -> String:
 func _get_player_active_pokemon() -> BattlePokemon:
 	if battle_controller == null or battle_controller.player_side == null:
 		return null
-	for spot: BattleSpot in battle_controller.player_side.battle_spots:
-		if spot != null and spot.pokemon != null and not spot.pokemon.is_fainted():
-			return spot.pokemon
-	return null
+	var actives: Array[BattlePokemon] = battle_controller.player_side.get_controllable_active_pokemons()
+	if actives.is_empty():
+		return null
+	return actives[0]
 
 
 func _attempt_battle_flee(runner: BattlePokemon, show_fail_message: bool = true) -> bool:
@@ -880,7 +884,7 @@ func show_forced_switch_selection(
 	var choice := BattleSwitchChoice.new()
 	choice.side = side
 	choice.target_spot = spot
-	choice.target_index = selected_slot
+	choice.target_index = switch_controller.get_global_party_index(incoming_bp)
 	choice.outgoing_pokemon = fainted
 	choice.incoming_pokemon = incoming_bp
 	choice.pokemon = incoming_bp
@@ -1007,9 +1011,95 @@ func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enem
 			enemy_trainers
 		)
 
-	for msg in intro_messages:
+	var i := 0
+	while i < intro_messages.size():
+		var msg: Dictionary = intro_messages[i]
+
+		if _is_double_enemy_send_in_pair(intro_messages, i):
+			await _play_parallel_send_ins_with_messages(
+				_get_side_spots_for_indices(false, [0, 1]),
+				[msg, intro_messages[i + 1]]
+			)
+			i += 2
+			continue
+
+		if bool(msg.get("trainer_send_in_double", false)):
+			await _play_parallel_send_ins_with_messages(
+				_get_side_spots_for_indices(false, [0, 1]),
+				[msg]
+			)
+			i += 1
+			continue
+
+		if bool(msg.get("player_send_in_double", false)):
+			await _play_parallel_send_ins_with_messages(
+				_get_side_spots_for_indices(true, [0, 1]),
+				[msg]
+			)
+			i += 1
+			continue
+
 		await show_message_from_dict(msg)
 		await _play_intro_send_ins_for_message(msg)
+		i += 1
+
+
+func _is_double_enemy_send_in_pair(messages: Array, index: int) -> bool:
+	if index + 1 >= messages.size():
+		return false
+	var msg_a: Dictionary = messages[index]
+	var msg_b: Dictionary = messages[index + 1]
+	return (
+		bool(msg_a.get("trainer_send_in", false))
+		and bool(msg_b.get("trainer_send_in", false))
+		and not bool(msg_a.get("trainer_send_in_double", false))
+		and not bool(msg_b.get("trainer_send_in_double", false))
+		and int(msg_a.get("enemy_spot_index", -1)) == 0
+		and int(msg_b.get("enemy_spot_index", -1)) == 1
+	)
+
+
+func _get_side_spots_for_indices(is_player: bool, indices: Array[int]) -> Array[BattleSpot]:
+	var spots: Array[BattleSpot] = []
+	if battle_controller == null:
+		return spots
+	var side: BattleSide = (
+		battle_controller.player_side if is_player else battle_controller.enemy_side
+	)
+	if side == null:
+		return spots
+	for idx in indices:
+		if idx >= 0 and idx < side.battle_spots.size():
+			var spot: BattleSpot = side.battle_spots[idx]
+			if spot != null:
+				spots.append(spot)
+	return spots
+
+
+## Arranca send-ins en paralelo y muestra mensajes display/wait mientras corren.
+func _play_parallel_send_ins_with_messages(
+	spots: Array[BattleSpot],
+	messages: Array[Dictionary]
+) -> void:
+	if spots.is_empty():
+		for msg in messages:
+			await show_message_from_dict(msg)
+		return
+
+	var state := {"anim_done": false}
+	(
+		func() -> void:
+			await BattleFieldAnimations.play_send_in_parallel(self, spots)
+			state.anim_done = true
+	).call()
+
+	for msg in messages:
+		await show_message_from_dict(msg)
+
+	while not state.anim_done:
+		if not is_instance_valid(self) or get_tree() == null:
+			return
+		await get_tree().process_frame
 
 	if actions_menu != null:
 		actions_menu.show()
@@ -1023,16 +1113,12 @@ func prepare_intro_field(rules: BattleRules) -> void:
 func _play_intro_send_ins_for_message(msg: Dictionary) -> void:
 	if bool(msg.get("trainer_send_in", false)):
 		if bool(msg.get("trainer_send_in_double", false)):
-			await _reveal_enemy_trainer_send_in(0)
-			await _reveal_enemy_trainer_send_in(1)
-		else:
-			await _reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
+			return
+		await _reveal_enemy_trainer_send_in(int(msg.get("enemy_spot_index", 0)))
 	if bool(msg.get("player_send_in", false)):
 		if bool(msg.get("player_send_in_double", false)):
-			await _reveal_player_send_in(0)
-			await _reveal_player_send_in(1)
-		else:
-			await _reveal_player_send_in(int(msg.get("player_spot_index", 0)))
+			return
+		await _reveal_player_send_in(int(msg.get("player_spot_index", 0)))
 
 
 func _reveal_enemy_trainer_send_in(spot_index: int) -> void:
@@ -1189,22 +1275,28 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 	# Mostrar mensaje de victoria
 	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
 
-	# Si el jugador ganó contra un entrenador, reaparece el rival y luego el defeat_message
+	# Si el jugador ganó contra entrenador(es): enter → defeat_message → exit por rival.
 	if winner_side == "player" and rules.type == BattleRules.BattleTypes.TRAINER:
-		var show_defeat_enter := false
-		for participant in enemy_participants:
-			if participant is BattleParticipant and not participant.defeat_message.is_empty():
-				show_defeat_enter = true
-				break
-		if show_defeat_enter:
-			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules)
-		for participant in enemy_participants:
-			if participant is BattleParticipant and not participant.defeat_message.is_empty():
-				await show_message_from_dict({
-					"type": "input",
-					"text": participant.defeat_message,
-					"showIconAtEnd": true
-				})
+		for i in enemy_participants.size():
+			var participant = enemy_participants[i]
+			if participant == null or not participant is BattleParticipant:
+				continue
+			if participant.defeat_message.is_empty():
+				continue
+			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules, i)
+			await show_message_from_dict({
+				"type": "input",
+				"text": participant.defeat_message,
+				"showIconAtEnd": true
+			})
+			var trainer: Node2D = field_ui.get_enemy_trainer(i)
+			if trainer != null and is_instance_valid(trainer):
+				await BattleAnimationUtils.trainer_exit(
+					trainer,
+					false,
+					BattleFieldAnimations.TRAINER_EXIT_DURATION,
+					BattleFieldAnimations.TRAINER_EXIT_SLIDE
+				)
 
 # Mensaje de debilitamiento
 func show_faint_message(pokemon: BattlePokemon) -> void:

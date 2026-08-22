@@ -80,7 +80,8 @@ func decide_forced_switch(side: BattleSide, spot: BattleSpot, fainted: BattlePok
 		if int(step.get("kind", -1)) == StepKind.SWITCH:
 			_step += 1
 			var idx := int(step.get("party_index", -1))
-			var incoming := _resolve_bench(side, idx)
+			var owner: BattleParticipant = fainted.participant if fainted != null else null
+			var incoming := _resolve_bench(side, idx, owner)
 			if incoming != null:
 				print("[IA_TEST] forced SWITCH → %s" % incoming.get_display_name())
 				return _make_forced_switch_choice(side, spot, fainted, incoming)
@@ -96,7 +97,7 @@ func _decide_easy(pokemon: BattlePokemon) -> BattleChoice:
 func _try_build_switch(pokemon: BattlePokemon, party_index: int) -> BattleSwitchChoice:
 	if pokemon == null or pokemon.side == null:
 		return null
-	var incoming := _resolve_bench(pokemon.side, party_index)
+	var incoming := _resolve_bench(pokemon.side, party_index, pokemon.participant)
 	if incoming == null:
 		return null
 	var choice := BattleSwitchChoice.new()
@@ -112,15 +113,25 @@ func _try_build_switch(pokemon: BattlePokemon, party_index: int) -> BattleSwitch
 	return choice
 
 
-func _resolve_bench(side: BattleSide, party_index: int) -> BattlePokemon:
+## Banca solo del participante (en 2vs2 no se puede robar el bench del compañero).
+func _resolve_bench(
+	side: BattleSide,
+	party_index: int,
+	participant: BattleParticipant = null
+) -> BattlePokemon:
 	if side == null:
 		return null
-	if party_index >= 0 and party_index < side.pokemonParty.size():
-		var p: BattlePokemon = side.pokemonParty[party_index]
+	var pool: Array[BattlePokemon] = (
+		side.get_participant_battle_party(participant)
+		if participant != null
+		else side.pokemonParty
+	)
+	if party_index >= 0 and party_index < pool.size():
+		var p: BattlePokemon = pool[party_index]
 		if p != null and not p.is_fainted() and not p.in_battle:
 			return p
 		return null
-	return find_first_bench_pokemon(side)
+	return find_first_bench_pokemon(side, participant)
 
 
 func _try_build_move(pokemon: BattlePokemon, move_id: int) -> BattleChoice:

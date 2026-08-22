@@ -35,6 +35,7 @@ const INTRO_ROLL_OUT_FADE_SEC := 0.82
 const BALL_ROLL_TURNS := 2.0
 
 var _rest_position: Vector2 = Vector2.ZERO
+var _default_rest_position: Vector2 = Vector2.ZERO
 var _slide_from_right := true
 var _tex_normal: Texture2D
 var _tex_empty: Texture2D
@@ -48,7 +49,8 @@ var _intro_ball_spin_tweens: Array[Tween] = []
 
 
 func _ready() -> void:
-	_rest_position = position
+	_default_rest_position = position
+	_rest_position = _default_rest_position
 	visible = false
 	_load_textures()
 	_cache_nodes()
@@ -56,6 +58,18 @@ func _ready() -> void:
 
 func configure(slide_from_right: bool) -> void:
 	_slide_from_right = slide_from_right
+
+
+func get_default_rest_position() -> Vector2:
+	return _default_rest_position
+
+
+func set_rest_position(rest: Vector2) -> void:
+	_rest_position = rest
+
+
+func reset_rest_position() -> void:
+	_rest_position = _default_rest_position
 
 
 func park_offscreen() -> void:
@@ -285,17 +299,11 @@ func _ball_cluster_position(slot_idx: int) -> Vector2:
 	if _slot_rest_positions.is_empty():
 		return rest
 	var leftmost := _slot_rest_positions[0].x
-	var rightmost := _slot_rest_positions[SLOT_COUNT - 1].x
 	var step := _ball_display_step()
-	var cluster_x := 0.0
-	if _slide_from_right:
-		# Player: fila compacta (sin hueco) desplazada a la izquierda.
-		var cluster_start := leftmost - INTRO_BALL_CLUSTER_SHIFT
-		cluster_x = cluster_start + float(slot_idx) * step
-	else:
-		# Rival: fila compacta desplazada a la derecha visual (local +X).
-		var cluster_start := rightmost + INTRO_BALL_CLUSTER_SHIFT
-		cluster_x = cluster_start - float(slot_idx) * step
+	# Misma fila compacta en coords locales. Con scale.x=-1 del rival, el rebote
+	# hacia rest queda visual derecha → izquierda (espejo del jugador).
+	var cluster_start := leftmost - INTRO_BALL_CLUSTER_SHIFT
+	var cluster_x := cluster_start + float(slot_idx) * step
 	return Vector2(cluster_x, rest.y)
 
 

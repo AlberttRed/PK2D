@@ -20,7 +20,11 @@ func apply():
 		if effects_ctrl != null:
 			effects_ctrl._clear_pokemon_effects(out_pokemon)
 		out_pokemon.in_battle = false
-	# El load del entrante va en visualize tras el recall (así el sprite saliente sigue visible).
+	# Reservar al entrante ya en apply: evita que otro switch del mismo turno
+	# (p. ej. 2vs2 con banca mal filtrada) cargue la misma instancia en dos spots.
+	if in_pokemon:
+		in_pokemon.in_battle = true
+	# El load visual del entrante va en visualize tras el recall.
 
 func visualize(ui):
 	if _is_enemy_trainer_send_in():
@@ -41,7 +45,7 @@ func _visualize_enemy_trainer(ui: BattleUI) -> void:
 		await _play_exit_visual(ui)
 
 	await BattleFieldAnimations.play_enemy_trainer_send_in_pre_entry(
-		ui, rules, trainer_name, incoming_name
+		ui, rules, trainer_name, incoming_name, spot, in_pokemon
 	)
 	_load_incoming_pokemon()
 	await _play_send_in_visual(ui)
@@ -93,6 +97,8 @@ func _load_incoming_pokemon() -> void:
 	if spot and in_pokemon:
 		in_pokemon.clear_last_used_move()
 		spot.load_active_pokemon(in_pokemon, rules)
+		if spot.hp_bar:
+			spot.hp_bar.visible = false
 
 
 func _process_switch_in() -> void:
@@ -112,6 +118,12 @@ func _is_enemy_trainer_send_in() -> bool:
 func _resolve_trainer_name() -> String:
 	if side == null:
 		return "Entrenador"
+	if spot != null and side.participants.size() >= 2 and side.battle_spots.size() >= 2:
+		var idx := side.battle_spots.find(spot)
+		if idx >= 0 and idx < side.participants.size():
+			var participant: BattleParticipant = side.participants[idx]
+			if participant != null and not participant.name.is_empty():
+				return participant.name
 	var names := side.get_trainer_names()
 	if not names.is_empty() and not names[0].is_empty():
 		return names[0]

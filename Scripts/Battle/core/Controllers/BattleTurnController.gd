@@ -396,12 +396,14 @@ func _send_forced_switch_after_faint(
 	fainted: BattlePokemon
 ) -> void:
 	var choice: BattleSwitchChoice = null
-	if side.is_controllable():
+	if fainted != null and fainted.controllable:
 		choice = await battle_controller.ui.resolve_player_forced_switch_after_faint(side, spot, fainted)
 		if battle_controller.battle_finished():
 			return
 	else:
-		var participant := _get_side_participant(side)
+		var participant: BattleParticipant = (
+			fainted.participant if fainted != null else _get_side_participant(side)
+		)
 		if participant != null:
 			choice = participant.decide_forced_switch_for(side, spot, fainted)
 			if choice != null and _is_trainer_send_in_after_faint(side):

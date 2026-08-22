@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ui53do2ck5tn"]
 
 [ext_resource type="Script" uid="uid://rdhfue55dpvn" path="res://Scripts/Battle/ui/FieldUI.gd" id="1_n4ij7"]
-[ext_resource type="Script" path="res://Scripts/Battle/ui/BattlePartyBarUI.gd" id="1_partybar"]
+[ext_resource type="Script" uid="uid://7n5iiep3lrb5" path="res://Scripts/Battle/ui/BattlePartyBarUI.gd" id="1_partybar"]
 [ext_resource type="Texture2D" uid="uid://bg1y037na3awd" path="res://Sprites/Batalla/Battlebacks/battlebgFieldNight.png" id="2_bpnwx"]
 [ext_resource type="Texture2D" uid="uid://bqo0l178kbta7" path="res://Sprites/Batalla/Battlebacks/playerbaseFieldNight.png" id="3_35p23"]
 [ext_resource type="Texture2D" uid="uid://bhtumcefgei33" path="res://Sprites/Batalla/025b.png" id="5_35p23"]
@@ -219,11 +219,8 @@ hframes = 5
 
 [node name="TrainerB" type="Node2D" parent="PlayerBase" unique_id=94652234]
 visible = false
-position = Vector2(0, 9)
 
 [node name="Sprite" type="Sprite2D" parent="PlayerBase/TrainerB" unique_id=2110857013]
-visible = false
-position = Vector2(78, 93)
 texture = ExtResource("39_xa6db")
 hframes = 5
 
@@ -333,7 +330,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="PokemonSpotB" parent="EnemyBase" unique_id=914920463 instance=ExtResource("5_ymflm")]
-position = Vector2(352, 110)
+position = Vector2(360, 140)
 
 [node name="Sprite" parent="EnemyBase/PokemonSpotB" index="0" unique_id=214919145]
 texture = ExtResource("23_ymflm")
@@ -344,7 +341,7 @@ z_index = -1
 position = Vector2(2, 32)
 
 [node name="HPBar" parent="EnemyBase/PokemonSpotB" index="2" unique_id=782842345]
-position = Vector2(-238, -23)
+position = Vector2(-246, -53)
 texture = ExtResource("43_b6gim")
 
 [node name="lblName" parent="EnemyBase/PokemonSpotB/HPBar" index="0"]
@@ -396,7 +393,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="HPBarPos_Double" parent="EnemyBase/PokemonSpotB/Positions" index="1" unique_id=1763141181]
-position = Vector2(-238, -23)
+position = Vector2(-246, -53)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
@@ -445,7 +442,6 @@ visible = false
 position = Vector2(331, 102)
 
 [node name="Sprite" type="Sprite2D" parent="EnemyBase/TrainerB" unique_id=1403306974]
-visible = false
 texture = ExtResource("45_3vgjn")
 
 [node name="Positions" type="Node2D" parent="EnemyBase" unique_id=1244721928]
@@ -468,7 +464,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="SpotB_Double" type="Marker2D" parent="EnemyBase/Positions" unique_id=2133069268]
-position = Vector2(352, 110)
+position = Vector2(360, 140)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
