@@ -37,13 +37,13 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Debug animaciones de combate")
 ## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Squirtle — Ascuas/Placaje + burn end-turn.
-@export var use_ember_animation_test: bool = false
+@export var use_ember_animation_test: bool = true
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
 @export var use_pokeball_animation_trainer_test: bool = false
 ## 1vs1 salvaje: Charmander (+ banca) vs Pidgey — intro party + send-in jugador (sin trainer rival).
 @export var use_wild_animation_test: bool = false
 ## 2vs2 salvaje: Charmander+Squirtle vs Pidgey+Rattata — intro doble sin trainers rivales.
-@export var use_double_wild_animation_test: bool = true
+@export var use_double_wild_animation_test: bool = false
 ## 2vs2 entrenador: 2 trainers jugador vs 2 trainers rival — intro doble y send-in por spot.
 @export var use_double_trainer_animation_test: bool = false
 ## Si true, JugadorB también es humano (controlas ambos spots). Si false, JugadorB es aliado IA en tu lado.
