@@ -298,6 +298,32 @@ static func set_trainer_idle_frame(trainer_root: Node2D) -> void:
 	spr.frame = 0
 
 
+## Entrada del trainer al campo (inverso de trainer_exit). Idle en frame 0. Awaitable.
+## `from_left`: player (izq→der). `from_left == false`: rival (der→izq).
+static func trainer_enter(
+	trainer_root: Node2D,
+	from_left: bool,
+	duration: float = 0.55,
+	slide_distance: float = 360.0
+) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	if not trainer_root.has_meta("trainer_rest_pos"):
+		trainer_root.set_meta("trainer_rest_pos", trainer_root.position)
+	var rest: Vector2 = trainer_root.get_meta("trainer_rest_pos")
+	set_trainer_idle_frame(trainer_root)
+	var start := rest
+	start.x = rest.x - slide_distance if from_left else rest.x + slide_distance
+	trainer_root.position = start
+	trainer_root.visible = true
+	var tw := trainer_root.create_tween()
+	tw.tween_property(trainer_root, "position", rest, duration).set_trans(Tween.TRANS_SINE).set_ease(
+		Tween.EASE_OUT
+	)
+	await tw.finished
+	trainer_root.position = rest
+
+
 ## Salida del trainer del campo (solo el nodo Trainer, la base permanece).
 ## Player: sale a la izquierda. Rival: sale a la derecha. Awaitable.
 static func trainer_exit(

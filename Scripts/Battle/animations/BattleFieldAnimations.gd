@@ -158,6 +158,23 @@ static func play_enemy_trainer_send_in_pre_entry(
 
 
 ## Salida del trainer del lado del spot (player← / rival→). Awaitable.
+## Fin de combate (trainer): rival reaparece desde la derecha antes del defeat_message.
+static func play_enemy_trainer_defeat_enter(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null:
+		return
+	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
+		return
+	var mode := rules.mode
+	ui.field_ui.apply_trainer_rest_positions(mode)
+	var trainer: Node2D = ui.field_ui.get_enemy_trainer(0)
+	if trainer == null or not is_instance_valid(trainer):
+		push_warning("BattleFieldAnimations: sin trainer rival para defeat enter")
+		return
+	await BattleAnimationUtils.trainer_enter(
+		trainer, false, TRAINER_EXIT_DURATION, TRAINER_EXIT_SLIDE
+	)
+
+
 static func play_trainer_exit_for_spot(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	if ui == null or ui.field_ui == null or landing_spot == null:
 		return

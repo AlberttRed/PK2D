@@ -1189,8 +1189,15 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 	# Mostrar mensaje de victoria
 	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
 
-	# Si el jugador ganó contra un entrenador, mostrar mensaje de derrota del trainer
+	# Si el jugador ganó contra un entrenador, reaparece el rival y luego el defeat_message
 	if winner_side == "player" and rules.type == BattleRules.BattleTypes.TRAINER:
+		var show_defeat_enter := false
+		for participant in enemy_participants:
+			if participant is BattleParticipant and not participant.defeat_message.is_empty():
+				show_defeat_enter = true
+				break
+		if show_defeat_enter:
+			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules)
 		for participant in enemy_participants:
 			if participant is BattleParticipant and not participant.defeat_message.is_empty():
 				await show_message_from_dict({

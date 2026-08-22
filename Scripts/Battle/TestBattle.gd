@@ -582,6 +582,9 @@ func _create_trainer_ia_test_trainer() -> BattleParticipant:
 	participant.is_trainer = true
 	participant.ai_controller = ia
 	participant.name = "EntrenadorTest"
+	var test_trainer_data: TrainerData = load("res://Resources/Trainers/TEST.tres") as TrainerData
+	if test_trainer_data != null:
+		participant.defeat_message = test_trainer_data.get_defeat_message()
 	return participant
 
 

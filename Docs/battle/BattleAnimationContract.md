@@ -273,10 +273,11 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - **Orquestación intro (707):** `BattleUI.prepare_intro_field` + `BattleUI.play_intro_sequence`
   - prepare — en negro, antes del reveal
   - play — tras reveal: bases/trainers → mensajes → send-in → menú
-- Catálogo de clips: `BattleFieldAnimations` (`play_intro_trainers_enter`, `play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`).
+- Catálogo de clips: `BattleFieldAnimations` (`play_intro_trainers_enter`, `play_pokeball_throw`, `play_pokemon_enter`, `play_send_in`, `play_enemy_trainer_defeat_enter`).
 - Trainer enter (706): trainers fijos en la base; se animan `PlayerBase`/`EnemyBase` (player der→izq, rival izq→der) con deltas de `CONST.BATTLE.*_BASE_*POSITION`. Idle frame 0. Sin gesto de brazo.
 - Posiciones de trainer: `CONST.BATTLE.BACK_SINGLE_TRAINER_POS` / `FRONT_SINGLE_TRAINER_POS`.
 - Trainer exit: `play_trainer_exit_for_spot` — slide del nodo Trainer (player← / rival→); la base permanece.
+- Trainer defeat enter: `play_enemy_trainer_defeat_enter` — tras victoria del jugador, rival entra der→izq (inverso del exit) antes del `defeat_message`; reutiliza `BattleAnimationUtils.trainer_enter`.
 - `PokeballThrowBattleAnimation`: clips `throw_player` / `throw_enemy`; `ball00` → open + brillo.
 - `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
 - Intro / switch-in: `play_send_in` = trainer exit → ball; enter solapa con open/brillo de la ball → HP slide-in.
