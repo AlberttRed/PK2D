@@ -896,6 +896,7 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 	squirtle.level = 20
 	squirtle.is_wild = true
 	squirtle.custom_move_ids = [
+		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.TACKLE,
 		MovesEnum.Values.TAIL_WHIP,
 	]
@@ -906,7 +907,7 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 
 
 func _print_ember_animation_test_guide() -> void:
-	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Squirtle Nv.20.")
+	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Squirtle Nv.20 (Arañazo + Placaje + Látigo).")
 	print(">>> Ascuas = proyectil; Placaje = embestida; con debug_force_ailment_apply Ascuas quema → anim burn end-turn.")
 
 
