@@ -53,7 +53,7 @@ func _apply() -> void:
 	_refresh_status_ui(target_bp)
 
 	item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
-	_consume_from_bag_if_needed(_item_data, item_use_result)
+	_consume_from_bag_if_needed(_item_data, item_use_result, _choice)
 
 
 func _sync_battle_status_from_base(bp: BattlePokemon) -> void:

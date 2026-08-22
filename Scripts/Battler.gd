@@ -256,6 +256,10 @@ func to_battle_participant() -> BattleParticipant:
 	participant.defeat_message = end_battle_message
 	participant.victory_message = ""  # Por si se añade en el futuro
 
+	# Mochila de combate: jugador → GameState (bag null). Trainer → TrainerData.battle_items.
+	if not is_player and trainer_data != null and not trainer_data.battle_items.is_empty():
+		participant.set_bag_from_item_ids(trainer_data.battle_items)
+
 	# Obtener el equipo según el tipo de battler
 	var battle_pokemon_team: Array[BattlePokemon] = []
 

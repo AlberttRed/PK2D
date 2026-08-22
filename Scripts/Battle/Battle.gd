@@ -28,17 +28,13 @@ func start_battle(player_participants: Array[BattleParticipant], enemy_participa
 	# Ejecutar transición de entrada (hasta negro)
 	await play_transition()
 
-	# Configurar todos los elementos visuales mientras está en negro
-	battle_ui.visible = true  # Si estaba oculto por defecto
+	# Campo listo en negro: bases fuera de pantalla (sin flash al revelar).
+	battle_ui.visible = true
 	battle_ui.message_box.show_clear_text()
-	#await show_trainers_and_pokemon()
-	await show_hp_bars()
+	battle_ui.prepare_intro_field(battle_controller.rules)
 
-
-	# Revelar el combate ya configurado
+	# Revelar y empezar intro (slide de bases + mensajes / send-in)
 	await DisplayManager.reveal_battle(0.4)
-
-	# Iniciar la lógica del combate
 	await battle_controller.start_battle()
 
 

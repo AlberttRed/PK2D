@@ -58,7 +58,7 @@ func _apply() -> void:
 	_runtime_capture.apply()
 	var capture_result: CaptureResult = _runtime_capture.result
 
-	_consume_from_bag_if_needed(_item_data, item_use_result)
+	_consume_from_bag_if_needed(_item_data, item_use_result, _choice)
 
 	if capture_result != null and capture_result.success:
 		_choice.battle_controller.register_successful_capture(capture_result, target_bp)

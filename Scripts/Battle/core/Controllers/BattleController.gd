@@ -80,6 +80,9 @@ func assign_active_pokemons_to_spots():
 	_assign_actives_to_spots(enemy_actives, enemy_spots, enemy_side)
 
 	ui.position_battlespots_for_mode(rules.mode, player_actives.size(), enemy_actives.size())
+	if ui.field_ui != null:
+		ui.field_ui.apply_z_order_for_mode(rules.mode)
+		ui.field_ui.ensure_all_hp_bars_display_z(rules.mode)
 	prepare_trainer_intro_field()
 
 
@@ -101,6 +104,16 @@ func _assign_actives_to_spots(
 
 
 func prepare_trainer_intro_field() -> void:
+	## Oculta sprites/HP hasta el send-in visual (ball throw + reveal).
+	if ui != null and ui.field_ui != null and rules != null:
+		ui.field_ui.hide_all_hp_bars(rules.mode)
+	if player_side != null:
+		for spot: BattleSpot in player_side.battle_spots:
+			if spot == null:
+				continue
+			spot.set_pokemon_sprite_visible(false)
+			if spot.hp_bar:
+				spot.hp_bar.visible = false
 	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
 		return
 	if enemy_side == null:

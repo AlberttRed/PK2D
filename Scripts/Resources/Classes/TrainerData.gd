@@ -71,7 +71,8 @@ var _party_data_migrated: bool = false
 
 ## === OTROS ===
 
-## Items que puede usar en combate (futuro)
+## Items de combate del entrenador (item_id; repetidos se apilan).
+## Se copia a `BattleParticipant.bag` al crear el participante (no jugadores humanos).
 @export var battle_items: Array[int] = []
 
 ## Si true, el entrenador ya fue derrotado (para tracking)

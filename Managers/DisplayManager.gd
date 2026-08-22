@@ -548,7 +548,7 @@ func _start_battle(participants: Array[BattleParticipant], rules: BattleRules, f
 	var enemy_participants: Array[BattleParticipant] = []
 
 	for participant in participants:
-		if participant.is_player:
+		if participant.belongs_to_player_side():
 			player_participants.append(participant)
 		else:
 			enemy_participants.append(participant)

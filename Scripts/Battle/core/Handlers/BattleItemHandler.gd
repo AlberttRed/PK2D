@@ -91,22 +91,38 @@ func show_battle_result_message(ui: BattleUI, result: ItemUseResult) -> void:
 	})
 
 
-func _consume_from_bag_if_needed(item_data: ItemData, result: ItemUseResult) -> void:
+func _consume_from_bag_if_needed(
+	item_data: ItemData,
+	result: ItemUseResult,
+	choice: BattleBagChoice = null
+) -> void:
 	if item_data == null or result == null or not result.success:
 		return
 	if item_data.is_consumable and result.consume_amount > 0:
-		var bag = GameStateService.get_bag()
+		var bag: Bag = resolve_battle_bag(choice)
 		if bag != null:
 			bag.remove_item(item_data.id, result.consume_amount)
 
 
+## Mochila del participante que usa el ítem; fallback a GameState.
+static func resolve_battle_bag(choice: BattleBagChoice) -> Bag:
+	if choice != null and choice.pokemon != null and choice.pokemon.participant != null:
+		var participant_bag: Bag = choice.pokemon.participant.get_battle_bag()
+		if participant_bag != null:
+			return participant_bag
+	return GameStateService.get_bag() as Bag
+
+
 static func build_player_battle_item_context(choice: BattleBagChoice, target_battle_pokemon: BattlePokemon) -> ItemUseContext:
 	var bc: BattleController = choice.battle_controller
-	var bag = GameStateService.get_bag()
+	var bag: Bag = resolve_battle_bag(choice)
 	var party: Array = []
 	var slot := -1
 	var idx := 0
-	for bp in bc.player_side.pokemonParty:
+	var party_source: Array = bc.player_side.pokemonParty
+	if choice != null and choice.pokemon != null and choice.pokemon.participant != null and choice.pokemon.side != null:
+		party_source = choice.pokemon.side.get_participant_battle_party(choice.pokemon.participant)
+	for bp in party_source:
 		party.append(bp.base_data)
 		if bp == target_battle_pokemon:
 			slot = idx
@@ -126,6 +142,10 @@ static func build_player_battle_item_context(choice: BattleBagChoice, target_bat
 
 
 static func get_player_trainer_display_name(choice: BattleBagChoice) -> String:
+	if choice != null and choice.pokemon != null and choice.pokemon.participant != null:
+		var from_actor := str(choice.pokemon.participant.name).strip_edges()
+		if not from_actor.is_empty():
+			return from_actor
 	if choice != null and choice.battle_controller != null and choice.battle_controller.player_side != null:
 		var trainer_names: Array[String] = choice.battle_controller.player_side.get_trainer_names()
 		if not trainer_names.is_empty():

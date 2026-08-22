@@ -82,6 +82,70 @@ func load_party():
 func is_controllable() -> bool:
 	return participants.any(func(p): return p.is_player)
 
+
+## Primer participante humano del lado (GameState / party bar intro).
+func get_local_player_participant() -> BattleParticipant:
+	for p in participants:
+		if p != null and p.is_player:
+			return p
+	return null
+
+
+## Todos los participantes controlados por el jugador humano (1 o varios en dobles).
+func get_player_participants() -> Array[BattleParticipant]:
+	var out: Array[BattleParticipant] = []
+	for p in participants:
+		if p != null and p.is_player:
+			out.append(p)
+	return out
+
+
+func has_multiple_player_participants() -> bool:
+	return get_player_participants().size() > 1
+
+
+## Pokémon activos en campo que el jugador humano puede controlar.
+func get_controllable_active_pokemons() -> Array[BattlePokemon]:
+	var out: Array[BattlePokemon] = []
+	for p in get_active_pokemons():
+		if p != null and p.controllable and not p.is_fainted():
+			out.append(p)
+	return out
+
+
+func participant_has_healthy_bench(participant: BattleParticipant) -> bool:
+	if participant == null:
+		return false
+	for pk in get_participant_battle_party(participant):
+		if pk != null and not pk.is_fainted() and not pk.in_battle:
+			return true
+	return false
+
+
+func any_player_participant_has_healthy_bench() -> bool:
+	for participant in get_player_participants():
+		if participant_has_healthy_bench(participant):
+			return true
+	return false
+
+
+## Pokémon de combate de un participante (inBattleParty), en orden de equipo.
+func get_participant_battle_party(participant: BattleParticipant) -> Array[BattlePokemon]:
+	var out: Array[BattlePokemon] = []
+	if participant == null:
+		return out
+	for pk in participant.pokemon_team:
+		if pk != null and pk.inBattleParty:
+			out.append(pk)
+	return out
+
+
+func find_party_index(battle_pokemon: BattlePokemon) -> int:
+	if battle_pokemon == null:
+		return -1
+	return pokemonParty.find(battle_pokemon)
+
+
 # Devuelve el número máximo de Pokémon activos por side según el modo
 func get_max_active_per_side(rules: BattleRules) -> int:
 	match rules.mode:

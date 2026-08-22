@@ -6,6 +6,8 @@ var _context: OverworldContext = null
 var list_use_context: ItemEnums.UseContext = ItemEnums.UseContext.OVERWORLD
 ## Slot del party desde el que se abrió “Usar objeto” (-1 = flujo normal de pausa).
 var party_target_slot: int = -1
+## Mochila explícita (combate por participante). `null` → GameStateService.
+var _bag_source: Bag = null
 
 const BAG_LIST_ENTRY_SCRIPT = preload("res://Scripts/UI/BagListEntry.gd")
 const ITEM_USE_SERVICE_SCRIPT = preload("res://Scripts/Services/ItemUseService.gd")
@@ -53,6 +55,17 @@ func configure_battle_item_flow() -> void:
 	party_target_slot = -1
 
 
+## Fuente de inventario (combate: bag del participante). `null` = mochila del save.
+func set_bag_source(source: Bag) -> void:
+	_bag_source = source
+
+
+func get_active_bag() -> Bag:
+	if _bag_source != null:
+		return _bag_source
+	return GameStateService.get_bag() as Bag
+
+
 func _is_item_relevant_in_battle_list(item_data: ItemData) -> bool:
 	if item_data == null:
 		return false
@@ -93,7 +106,7 @@ func get_pocket_name(pocket: int) -> String:
 	return _POCKET_NAMES.get(pocket, "Objetos")
 
 func get_items_in_pocket(pocket: int) -> Array:
-	var bag = GameStateService.get_bag()
+	var bag: Bag = get_active_bag()
 	var ui_items: Array = []
 	if bag == null:
 		ui_items.append(BAG_LIST_ENTRY_SCRIPT.create_exit_entry())
@@ -154,25 +167,25 @@ func get_item_description(item_id: int) -> String:
 		return ""
 	return item_data.description
 
-## Añade un item al inventario global y devuelve la cantidad realmente añadida.
+## Añade un item a la mochila activa y devuelve la cantidad realmente añadida.
 func add_item(item_id: int, quantity: int = 1) -> int:
 	if item_id <= 0:
 		push_warning("BagController.add_item: item_id inválido (%d)" % item_id)
 		return 0
 	var safe_quantity := maxi(1, quantity)
-	var bag = GameStateService.get_bag()
+	var bag: Bag = get_active_bag()
 	if bag == null:
 		push_warning("BagController.add_item: Bag no disponible")
 		return 0
 	return bag.add_item(item_id, safe_quantity)
 
-## Quita un item del inventario global y devuelve la cantidad realmente retirada.
+## Quita un item de la mochila activa y devuelve la cantidad realmente retirada.
 func remove_item(item_id: int, quantity: int = 1) -> int:
 	if item_id <= 0:
 		push_warning("BagController.remove_item: item_id inválido (%d)" % item_id)
 		return 0
 	var safe_quantity := maxi(1, quantity)
-	var bag = GameStateService.get_bag()
+	var bag: Bag = get_active_bag()
 	if bag == null:
 		push_warning("BagController.remove_item: Bag no disponible")
 		return 0
@@ -186,7 +199,8 @@ func get_item_selection_debug(item_id: int) -> Dictionary:
 			"quantity": 0
 		}
 
-	var quantity: int = GameStateService.get_bag().get_quantity(item_id)
+	var active_bag: Bag = get_active_bag()
+	var quantity: int = active_bag.get_quantity(item_id) if active_bag != null else 0
 	var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
 	if item_data == null:
 		return {
@@ -224,9 +238,9 @@ func request_use_item(item_id: int) -> Dictionary:
 			"message": "Este objeto no se puede usar aqui."
 		}
 
-	var bag = GameStateService.get_bag()
+	var bag: Bag = get_active_bag()
 	var party = GameStateService.get_party()
-	var members: Array = party.get_all()
+	var members: Array = party.get_all() if party != null else []
 	var target_mon: Pokemon = null
 
 	if list_use_context == ItemEnums.UseContext.PARTY_MENU:
@@ -244,7 +258,7 @@ func request_use_item(item_id: int) -> Dictionary:
 	var result: ItemUseResult = ITEM_USE_SERVICE_SCRIPT.try_use(item_data, ctx)
 
 	var consumed := false
-	if result.success and item_data.is_consumable and result.consume_amount > 0:
+	if result.success and item_data.is_consumable and result.consume_amount > 0 and bag != null:
 		var removed: int = bag.remove_item(item_id, result.consume_amount)
 		consumed = removed > 0
 		if removed < result.consume_amount:

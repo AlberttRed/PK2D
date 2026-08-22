@@ -73,16 +73,25 @@ func build_first_available_forced_switch(
 	spot: BattleSpot,
 	fainted: BattlePokemon
 ) -> BattleSwitchChoice:
-	var incoming := find_first_bench_pokemon(side)
+	var participant: BattleParticipant = fainted.participant if fainted != null else null
+	var incoming := find_first_bench_pokemon(side, participant)
 	if incoming == null:
 		return null
 	return _make_forced_switch_choice(side, spot, fainted, incoming)
 
 
-func find_first_bench_pokemon(side: BattleSide) -> BattlePokemon:
+func find_first_bench_pokemon(
+	side: BattleSide,
+	participant: BattleParticipant = null
+) -> BattlePokemon:
 	if side == null:
 		return null
-	for p in side.pokemonParty:
+	var pool: Array[BattlePokemon] = (
+		side.get_participant_battle_party(participant)
+		if participant != null
+		else side.pokemonParty
+	)
+	for p in pool:
 		if p != null and not p.is_fainted() and not p.in_battle:
 			return p
 	return null

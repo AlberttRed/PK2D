@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PokemonEnterBattleAnimation" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/PokemonEnterBattleAnimation.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+scale_duration = 0.45
+white_duration = 0.75
+blocks_visualize = true
+fit_visual_to_anchors = false
+user_spot_anchor = 0
+target_spot_anchor = 0

@@ -59,7 +59,9 @@ func get_intro_messages(
 			messages.append({
 				"type": "display",
 				"text": "¡Adelante, " + player_pokemon[0].get_name() + "!",
-				"wait_time": 0.5
+				"wait_time": 0.5,
+				"player_send_in": true,
+				"player_spot_index": 0
 			})
 
 		BattleRules.BattleModes.DOUBLE:
@@ -134,7 +136,9 @@ func _append_player_double_send_in_message(
 		messages.append({
 			"type": "wait",
 			"text": "¡Adelante, %s!" % pokemon_names,
-			"wait_time": 0.5
+			"wait_time": 0.5,
+			"player_send_in": true,
+			"player_send_in_double": true
 		})
 	elif player_trainers.size() >= 2:
 		messages.append({
@@ -142,7 +146,9 @@ func _append_player_double_send_in_message(
 			"text": "¡%s y %s enviaron a %s!" % [
 				player_trainers[0], player_trainers[1], pokemon_names
 			],
-			"wait_time": 0.5
+			"wait_time": 0.5,
+			"player_send_in": true,
+			"player_send_in_double": true
 		})
 
 
@@ -524,7 +530,7 @@ func get_trainer_send_in_display_message(pokemon_name: String, trainer_name: Str
 	return {
 		"type": "display",
 		"text": "¡%s es el POKéMON enviado por %s!" % [pokemon_name, trainer_name],
-		"wait_time": 1.2
+		"wait_time": 0.4
 	}
 
 
@@ -547,7 +553,7 @@ func get_trainer_double_send_in_display_message(
 	return {
 		"type": "display",
 		"text": "¡%s y %s son la opción de %s!" % [pokemon_a, pokemon_b, trainer_name],
-		"wait_time": 1.4
+		"wait_time": 0.5
 	}
 
 
@@ -602,13 +608,42 @@ func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dict
 			"wait_time": 1.5
 		}
 
-# Mensajes de cambio de Pokémon
-func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionary:
+# Mensajes de cambio de Pokémon (voluntario / mid-battle)
+func get_player_switch_out_message(pokemon_name: String) -> Dictionary:
 	return {
-		"type": "wait",
-		"text": "¡%s envió a %s!" % [trainer_name, pokemon_name],
-		"wait_time": 1.2
+		"type": "display",
+		"text": "¡%s, cambio!\n¡Vuelve aquí!" % pokemon_name,
+		"wait_time": 0.425
 	}
+
+
+func get_player_switch_in_message(pokemon_name: String) -> Dictionary:
+	return {
+		"type": "display",
+		"text": "¡Adelante, %s!" % pokemon_name,
+		"wait_time": 0.4
+	}
+
+
+func get_enemy_switch_out_message(trainer_name: String, pokemon_name: String) -> Dictionary:
+	return {
+		"type": "display",
+		"text": "%s:\n¡%s, retírate!" % [trainer_name, pokemon_name],
+		"wait_time": 0.7
+	}
+
+
+func get_enemy_switch_in_message(trainer_name: String, pokemon_name: String) -> Dictionary:
+	return {
+		"type": "display",
+		"text": "¡%s saca a %s!" % [trainer_name, pokemon_name],
+		"wait_time": 0.45
+	}
+
+
+## Legacy / genérico (evitar en switch voluntario; preferir helpers player/enemy).
+func get_switch_message(trainer_name: String, pokemon_name: String) -> Dictionary:
+	return get_enemy_switch_in_message(trainer_name, pokemon_name)
 
 # Mensajes de final de combate
 func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> Dictionary:

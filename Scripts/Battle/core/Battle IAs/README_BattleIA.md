@@ -16,7 +16,9 @@ BattleIA                          # Base + utilidades (evaluate_*, build_random_
 
 **No existe** un `TrainerBasic` de contenido. El random legal es utilidad de **wild + fallback técnico**, no un nivel de dificultad de diseñador.
 
-Debug (no contenido): `BattleIA_MoveFailTest` (`extends WildBattleIA`) en `Scripts/Battle/debug/`.
+Debug (no contenido):
+- `BattleIA_MoveFailTest` (`extends WildBattleIA`) en `Scripts/Battle/debug/`.
+- `BattleIA_TrainerTest` (`extends TrainerBattleIA`) — guion SWITCH/MOVE/EASY; flag `use_trainer_ia_test` en TestBattle.
 
 ---
 

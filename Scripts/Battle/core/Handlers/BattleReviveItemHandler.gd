@@ -58,7 +58,7 @@ func _apply() -> void:
 	target_bp.write_persistent_state_to_runtime()
 
 	item_use_result.battle_continuation = ItemUseResult.BattleContinuation.COMPLETE_ACTION
-	_consume_from_bag_if_needed(_item_data, item_use_result)
+	_consume_from_bag_if_needed(_item_data, item_use_result, _choice)
 
 
 func _visualize(ui: BattleUI) -> void:
