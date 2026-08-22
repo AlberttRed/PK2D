@@ -179,7 +179,7 @@ Ningún fallo visual debe lanzar un error que aborte el turno o invalide el resu
 | `user_spot_anchor` | `SpotAnchor` | `PROJECTILE_ORIGIN` | Anchor del spot para el origen |
 | `target_spot_anchor` | `SpotAnchor` | `HIT_CENTER` | Anchor del spot para el destino |
 
-`SpotAnchor`: `CENTER`, `HIT_CENTER`, `PROJECTILE_ORIGIN`, `STATUS_ICON`, `FEET` (mismo set que `BattleSpot`).
+`SpotAnchor`: `CENTER`, `HIT_CENTER`, `PROJECTILE_ORIGIN`, `STATUS_ICON`, `FEET`, `HEAD` (mismo set que `BattleSpot`).
 
 ---
 
@@ -192,7 +192,7 @@ Autoría en workbench (PBI 670); runtime solo instancia la `.tscn` del VFX.
 - Escena: `Scenes/Battle/animations/BattleAnimationWorkbench.tscn`
 - Réplica visual del **campo** (fondo, bases, spots mock single, `BattleAnimationLayer`).
 - **No** es escena de combate: sin controllers, menús ni lógica.
-- Spots mock incluyen `Positions/Anchors` con los mismos nombres que `BattleSpotUI`: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.
+- Spots mock incluyen `Positions/Anchors` con los mismos nombres que `BattleSpotUI`: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`, `Head`.
 - Flujo típico:
   1. Duplicar una plantilla de `Scenes/Battle/animations/templates/`.
   2. Abrir el workbench y, para previsualizar, instanciar temporalmente la escena bajo `BattleAnimationLayer` (o editar la escena de animación con el workbench como referencia de posiciones).
@@ -237,8 +237,9 @@ Desactivar `fit_visual_to_anchors` en el `.tres` para VFX que no deban estirarse
 
 ### Anchors de `BattleSpot` (PBI 671)
 
-Nombres estables: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`.  
-API: `get_anchor_node(name)`, `get_anchor_global_position(name)` — fallback a `Center`, o a `global_position` del spot si no hay anchors.
+Nombres estables: `Center`, `HitCenter`, `ProjectileOrigin`, `StatusIcon`, `Feet`, `Head`.  
+API: `get_anchor_node(name)`, `get_anchor_global_position(name)` — fallback a `Center`, o a `global_position` del spot si no hay anchors.  
+Al cargar un Pokémon (`load_active_pokemon`), `BattleSpot.refresh_visual_anchors()` recoloca esos markers según el bbox opaco del sprite (Feet abajo, Head arriba, Center/HitCenter en el cuerpo).
 
 Mapeo al preparar la instancia (configurable en el `.tres`):
 

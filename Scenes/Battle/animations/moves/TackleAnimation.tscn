@@ -73,7 +73,7 @@ gizmo_extents = 16.0
 
 [node name="Impact" type="Sprite2D" parent="VisualRoot"]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(0, -28)
+position = Vector2(0, 6)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("2_tackle")
 

@@ -95,8 +95,8 @@ func _assign_actives_to_spots(
 		var spot := spots[i]
 		if i < actives.size():
 			spot.visible = true
-			spot.load_active_pokemon(actives[i], rules)
 			spot.side = side
+			spot.load_active_pokemon(actives[i], rules)
 			side.battle_spots.append(spot)
 		else:
 			spot.remove_pokemon()

@@ -23,6 +23,9 @@ const ANCHOR_HIT_CENTER := "HitCenter"
 const ANCHOR_PROJECTILE_ORIGIN := "ProjectileOrigin"
 const ANCHOR_STATUS_ICON := "StatusIcon"
 const ANCHOR_FEET := "Feet"
+const ANCHOR_HEAD := "Head"
+
+const _OPAQUE_ALPHA_THRESHOLD := 0.06
 
 
 func get_anchor_node(anchor_name: String) -> Node2D:
@@ -43,6 +46,99 @@ func get_anchor_global_position(anchor_name: String) -> Vector2:
 	return global_position
 
 
+## Recalcula Markers de Anchors según el bbox opaco del sprite actual.
+## Spot-local: Feet abajo, Head arriba, Center/HitCenter en el cuerpo.
+func refresh_visual_anchors() -> void:
+	if anchors_root == null or sprite == null:
+		return
+	var opaque := _get_sprite_opaque_rect_in_spot()
+	if opaque.size.x <= 0.0 or opaque.size.y <= 0.0:
+		return
+
+	var mid_x := opaque.position.x + opaque.size.x * 0.5
+	var top_y := opaque.position.y
+	var bottom_y := opaque.position.y + opaque.size.y
+	var center_y := opaque.position.y + opaque.size.y * 0.5
+	## Un poco por encima del centro geométrico (torso / zona de impacto).
+	var hit_y := opaque.position.y + opaque.size.y * 0.42
+
+	_set_anchor_position(ANCHOR_FEET, Vector2(mid_x, bottom_y))
+	_set_anchor_position(ANCHOR_HEAD, Vector2(mid_x, top_y))
+	_set_anchor_position(ANCHOR_CENTER, Vector2(mid_x, center_y))
+	_set_anchor_position(ANCHOR_HIT_CENTER, Vector2(mid_x, hit_y))
+
+	var toward_enemy := 1.0
+	if side != null and side.type == BattleSide.Types.ENEMY:
+		toward_enemy = -1.0
+	elif pokemon != null and pokemon.side != null and pokemon.side.type == BattleSide.Types.ENEMY:
+		toward_enemy = -1.0
+
+	_set_anchor_position(
+		ANCHOR_PROJECTILE_ORIGIN,
+		Vector2(mid_x + toward_enemy * opaque.size.x * 0.22, hit_y - opaque.size.y * 0.05)
+	)
+	var status_x := opaque.position.x - 8.0
+	if toward_enemy < 0.0:
+		status_x = opaque.position.x + opaque.size.x + 8.0
+	_set_anchor_position(ANCHOR_STATUS_ICON, Vector2(status_x, top_y))
+
+
+func _set_anchor_position(anchor_name: String, spot_local: Vector2) -> void:
+	var node := anchors_root.get_node_or_null(anchor_name) as Node2D
+	if node == null:
+		return
+	# Anchors cuelgan de Positions/Anchors; convertir desde espacio del spot.
+	node.position = anchors_root.to_local(to_global(spot_local))
+
+
+## Rect del contenido opaco del sprite en coordenadas locales del BattleSpot.
+func _get_sprite_opaque_rect_in_spot() -> Rect2:
+	var tex: Texture2D = sprite.texture
+	if tex == null:
+		return Rect2()
+
+	var tex_size := tex.get_size()
+	var img: Image = tex.get_image()
+	var min_x := 0
+	var min_y := 0
+	var max_x := int(tex_size.x) - 1
+	var max_y := int(tex_size.y) - 1
+	var found := false
+
+	if img != null and not img.is_empty():
+		var w := img.get_width()
+		var h := img.get_height()
+		min_x = w
+		min_y = h
+		max_x = -1
+		max_y = -1
+		for y in h:
+			for x in w:
+				if img.get_pixel(x, y).a > _OPAQUE_ALPHA_THRESHOLD:
+					min_x = mini(min_x, x)
+					min_y = mini(min_y, y)
+					max_x = maxi(max_x, x)
+					max_y = maxi(max_y, y)
+					found = true
+		if not found:
+			min_x = 0
+			min_y = 0
+			max_x = w - 1
+			max_y = h - 1
+		tex_size = Vector2(w, h)
+	else:
+		found = true
+
+	var top_left := Vector2.ZERO
+	if sprite.centered:
+		top_left = -tex_size * 0.5
+	top_left += sprite.offset
+
+	var opaque_pos := sprite.position + top_left + Vector2(min_x, min_y)
+	var opaque_size := Vector2(max_x - min_x + 1, max_y - min_y + 1)
+	return Rect2(opaque_pos, opaque_size)
+
+
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
 
@@ -56,6 +152,8 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 		sprite.texture = self.pokemon.get_back_sprite()
 	else:
 		sprite.texture = self.pokemon.get_front_sprite()
+
+	refresh_visual_anchors()
 
 	# Posicionar sprite si hiciera falta (ya tenías set_sprite_position)
 	#set_sprite_position()

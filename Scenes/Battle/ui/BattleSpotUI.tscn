@@ -48,3 +48,7 @@ gizmo_extents = 12.0
 [node name="Feet" type="Marker2D" parent="Positions/Anchors" unique_id=1634240179]
 position = Vector2(0, 88)
 gizmo_extents = 12.0
+
+[node name="Head" type="Marker2D" parent="Positions/Anchors"]
+position = Vector2(0, -40)
+gizmo_extents = 12.0
