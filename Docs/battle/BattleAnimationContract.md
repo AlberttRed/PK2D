@@ -282,7 +282,7 @@ Mapeo al preparar la instancia (configurable en el `.tres`):
 - `PokemonEnterBattleAnimation`: grow desde silueta blanca sobre el sprite del spot (`evolution_white`).
 - Intro / switch-in: `play_send_in` = trainer exit → ball; enter solapa con open/brillo de la ball → HP slide-in.
 - Recall / switch-out: `play_pokemon_exit` — player slide izq; rival ball + blanco + scale a pies; HP bar slide-out.
-- Party bar (PBI party): intro — `intro_roll_in` (línea slide lateral → bolas al ~72% del slide); arranca al ~55% del enter de bases. `intro_roll_out` al send-in (sync trainer exit). Mid-battle rival: `slide_in` + fade. Mid-battle jugador: oculta.
+- Party bar (PBI party): intro — `intro_roll_in` (línea slide lateral → bolas al ~72% del slide); arranca al ~55% del enter de bases. `intro_roll_out` al send-in (sync trainer exit). Mid-battle rival: `slide_in` + fade. Mid-battle jugador: oculta. **Salvaje:** sin party bar; tras bases, HP rival (`show_wild_enemy_hp_bars`) y luego mensaje de aparición.
 
 ### Ailments
 

@@ -55,7 +55,12 @@ func show_party_bars(
 	if host == null or not is_instance_valid(host):
 		return
 	refresh_party_bars(player_side, enemy_side, rules)
-	var show_player := player_party_bar != null and player_side != null
+	var show_player := (
+		player_party_bar != null
+		and player_side != null
+		and rules != null
+		and rules.type == BattleRules.BattleTypes.TRAINER
+	)
 	var show_enemy := (
 		enemy_party_bar != null
 		and enemy_side != null
@@ -109,6 +114,8 @@ func hide_party_bar_for_spot(host: Node, landing_spot: BattleSpot, rules: Battle
 			await enemy_party_bar.intro_roll_out(host)
 		).call()
 	else:
+		if rules != null and rules.type == BattleRules.BattleTypes.WILD:
+			return
 		if player_party_bar == null:
 			return
 		(func() -> void:

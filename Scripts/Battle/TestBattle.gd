@@ -40,8 +40,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_ember_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
 @export var use_pokeball_animation_trainer_test: bool = false
+## 1vs1 salvaje: Charmander (+ banca) vs Pidgey — intro party + send-in jugador (sin trainer rival).
+@export var use_wild_animation_test: bool = true
 ## 1vs1 entrenador con BattleIA_TrainerTest (guion SWITCH/MOVE/EASY). Ver trainer_ia_test_scenario.
-@export var use_trainer_ia_test: bool = true
+@export var use_trainer_ia_test: bool = false
 ## Escenario del guion de BattleIA_TrainerTest.
 @export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
@@ -115,6 +117,10 @@ func _ready() -> void:
 	if use_ember_animation_test:
 		_print_ember_animation_test_guide()
 		await wildEmberAnimationTestBattle()
+		return
+	if use_wild_animation_test:
+		_print_wild_animation_test_guide()
+		await wildAnimationTestBattle()
 		return
 	if use_trainer_ia_test:
 		_print_trainer_ia_test_guide()
@@ -532,6 +538,15 @@ func wildEmberAnimationTestBattle() -> void:
 	print(">>> Batalla animación Ascuas terminada. Ganador: %s" % winner)
 
 
+func wildAnimationTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animaciones salvaje terminada. Ganador: %s" % winner)
+
+
 func trainerPokeballAnimationTestBattle() -> void:
 	var player_participant := _create_pokeball_animation_test_player()
 	var trainer_participant := _create_pokeball_animation_test_trainer()
@@ -672,6 +687,29 @@ func _print_pokeball_animation_trainer_test_guide() -> void:
 	print(">>> Test animación Poké Ball (trainer): Charmander+Squirtle vs Squirtle+Rattata.")
 	print(">>> Intro: throw rival (envío entrenador) + throw jugador (¡Adelante!).")
 	print(">>> Cambia de Pokémon para ver throw en switch-in.")
+
+
+func _create_wild_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.TAIL_WHIP,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_wild_animation_test_guide() -> void:
+	print(">>> Test animaciones combate salvaje: Charmander+Squirtle vs Pidgey salvaje.")
+	print(">>> Intro: slide bases → HP salvaje → «Pidgey salvaje apareció» → send-in jugador (sin party bar).")
+	print(">>> El salvaje ya está en campo (sin ball throw rival). Cambia Pokémon para probar switch player.")
+	print(">>> Desactiva use_wild_animation_test para volver al bucle aleatorio o activar otro flag.")
 
 
 func _create_ember_animation_test_player() -> BattleParticipant:

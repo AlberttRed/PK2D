@@ -72,6 +72,18 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 	ui.field_ui.apply_trainer_rest_positions(mode)
 	ui.field_ui.reveal_intro_trainers(rules)
 
+	var is_wild := rules != null and rules.type == BattleRules.BattleTypes.WILD
+
+	if is_wild:
+		await BattleAnimationUtils.battle_bases_enter(
+			ui.field_ui.get_player_base(),
+			ui.field_ui.get_enemy_base(),
+			ui,
+			BASE_ENTER_DURATION
+		)
+		await show_wild_enemy_hp_bars(ui, rules)
+		return
+
 	var done := {"bases": false, "party": false}
 
 	(
@@ -100,7 +112,7 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 		await ui.get_tree().process_frame
 
 
-## Barra de party: slide in (player siempre; rival solo trainer).
+## Barra de party: slide in (player solo trainer; rival solo trainer).
 static func show_party_bars(ui: BattleUI, rules: BattleRules) -> void:
 	if ui == null or ui.field_ui == null or ui.battle_controller == null:
 		return
@@ -116,6 +128,22 @@ static func hide_party_bars(ui: BattleUI, rules: BattleRules) -> void:
 	if ui == null or ui.field_ui == null:
 		return
 	await ui.field_ui.hide_party_bars(ui, rules)
+
+
+## Salvaje: tras el slide de bases, HP del rival antes del mensaje «X salvaje apareció».
+static func show_wild_enemy_hp_bars(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null or ui.battle_controller == null:
+		return
+	if rules == null or rules.type != BattleRules.BattleTypes.WILD:
+		return
+	var mode := rules.mode
+	var spots := ui.field_ui.get_enemy_spots_for_mode(mode)
+	var actives := ui.battle_controller.enemy_side.get_active_pokemons()
+	for i in mini(spots.size(), actives.size()):
+		var spot: BattleSpot = spots[i]
+		if spot == null or spot.hp_bar == null:
+			continue
+		await spot.play_hp_bar_slide_in()
 
 
 static func hide_party_bar_for_spot(ui: BattleUI, landing_spot: BattleSpot) -> void:
