@@ -8,6 +8,15 @@ var index = null
 var pokemon: BattlePokemon = null
 var side: BattleSide
 var tween: Tween
+var _selection_bounce_sprite_rest_y: float = 0.0
+var _selection_bounce_hp_rest_y: float = 0.0
+var _selection_bounce_hp_active: bool = false
+var _selection_bounce_active: bool = false
+var _selection_bounce_elapsed: float = 0.0
+
+## Resaltado mientras eliges acción/movimiento (estilo juegos originales).
+const SELECTION_BOUNCE_OFFSET := 3.0
+const SELECTION_BOUNCE_CYCLE_SEC := 0.9
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var shadow: Sprite2D = $Shadow
@@ -167,6 +176,7 @@ func _get_sprite_opaque_rect_in_spot() -> Rect2:
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
 	_refresh_ball_ground_anchor(0.0)
+	set_process(false)
 
 func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	self.pokemon = _pokemon
@@ -237,11 +247,13 @@ func _register_persistent_ailment_effect_if_needed(bp: BattlePokemon) -> void:
 
 
 func clear() -> void:
+	stop_selection_bounce()
 	sprite.texture = null
 	hide()
 
-##	Remueve el Pokémon debilitado del battlespot y limpia la UI
+## Remueve el Pokémon debilitado del battlespot y limpia la UI
 func remove_pokemon() -> void:
+	stop_selection_bounce()
 	if pokemon:
 		pokemon.in_battle = false
 		pokemon.battle_spot = null
@@ -288,6 +300,49 @@ func highlight(active: bool) -> void:
 		tween.tween_property($Sprite, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	else:
 		$Sprite.modulate.a = 1.0
+
+
+## Pequeño bounce arriba/abajo del sprite y la HP bar mientras se elige acción o movimiento.
+func start_selection_bounce() -> void:
+	stop_selection_bounce()
+	if sprite == null or not sprite.visible:
+		return
+	_selection_bounce_sprite_rest_y = sprite.position.y
+	_selection_bounce_hp_active = hp_bar != null and hp_bar.visible
+	if _selection_bounce_hp_active:
+		_selection_bounce_hp_rest_y = hp_bar.global_position.y
+	# Fase por tiempo real: movimiento continuo sin hitch al reiniciar el ciclo.
+	_selection_bounce_elapsed = 0.0
+	_selection_bounce_active = true
+	set_process(true)
+
+
+func stop_selection_bounce() -> void:
+	_selection_bounce_active = false
+	set_process(false)
+	_selection_bounce_elapsed = 0.0
+	if sprite != null and is_instance_valid(sprite):
+		sprite.position.y = _selection_bounce_sprite_rest_y
+	if _selection_bounce_hp_active and hp_bar != null and is_instance_valid(hp_bar):
+		hp_bar.global_position.y = _selection_bounce_hp_rest_y
+	_selection_bounce_hp_active = false
+
+
+func _process(delta: float) -> void:
+	if not _selection_bounce_active:
+		return
+	_selection_bounce_elapsed += delta
+	var phase := fmod(_selection_bounce_elapsed / SELECTION_BOUNCE_CYCLE_SEC, 1.0)
+	_update_selection_bounce(phase)
+
+
+func _update_selection_bounce(t: float) -> void:
+	# Seno completo continuo (misma posición y velocidad en t=0 y t=1).
+	var offset := sin(t * TAU) * SELECTION_BOUNCE_OFFSET
+	if sprite != null and is_instance_valid(sprite):
+		sprite.position.y = _selection_bounce_sprite_rest_y - offset
+	if _selection_bounce_hp_active and hp_bar != null and is_instance_valid(hp_bar):
+		hp_bar.global_position.y = _selection_bounce_hp_rest_y + offset
 
 func get_opponent_side() -> BattleSide:
 	return side.opponent_side
