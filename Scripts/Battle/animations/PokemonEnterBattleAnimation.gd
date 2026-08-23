@@ -19,5 +19,6 @@ func play(
 		landing = user_spot
 	if landing == null or not is_instance_valid(landing):
 		return
-	# animation_layer no se usa: el VFX vive en el sprite del spot.
-	await BattleAnimationUtils.pokemon_enter_spot(landing, scale_duration, white_duration)
+	await BattleAnimationUtils.pokemon_enter_spot(
+		landing, scale_duration, white_duration, _animation_layer
+	)

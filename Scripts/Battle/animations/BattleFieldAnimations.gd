@@ -20,9 +20,9 @@ const PLAYER_THROW_AFTER_EXIT_SEC := 0.5
 ## Clips throw_*: instante en que se abre / empieza el brillo (ver PokeballThrowAnimation.tscn).
 const THROW_OPEN_PLAYER_SEC := 0.58
 const THROW_OPEN_ENEMY_SEC := 1.15
-## Por encima de BattleAnimationLayer (z=1) y por debajo de MessageBox (z=6).
-## SpotB player (z=2) + este valor debe quedar ≤ 5.
-const POKEMON_ABOVE_THROW_Z := 3
+## Durante el enter: Pokémon detrás del flash y de la ball (ref. frames 63–79).
+const POKEMON_BEHIND_ENTER_VFX_Z := -1
+const TRAINER_SEND_IN_EXIT_META := &"trainer_send_in_exit_active"
 
 static var _pokeball_throw: BattleAnimation = null
 static var _pokemon_enter: BattleAnimation = null
@@ -54,7 +54,11 @@ static func prepare_intro_field(ui: BattleUI, rules: BattleRules) -> void:
 		mode = rules.mode
 	ui.field_ui.hide_all_hp_bars(mode)
 	ui.field_ui.hide_all_party_bars()
-	ui.field_ui.apply_trainer_rest_positions(mode)
+	ui.field_ui.apply_trainer_rest_positions(
+		mode,
+		_side_trainer_count(ui, true),
+		_side_trainer_count(ui, false)
+	)
 	ui.field_ui.reveal_intro_trainers(
 		rules,
 		_side_trainer_count(ui, true),
@@ -74,7 +78,11 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 	if rules != null:
 		mode = rules.mode
 	ui.field_ui.hide_all_hp_bars(mode)
-	ui.field_ui.apply_trainer_rest_positions(mode)
+	ui.field_ui.apply_trainer_rest_positions(
+		mode,
+		_side_trainer_count(ui, true),
+		_side_trainer_count(ui, false)
+	)
 	ui.field_ui.reveal_intro_trainers(
 		rules,
 		_side_trainer_count(ui, true),
@@ -210,7 +218,11 @@ static func play_enemy_trainer_defeat_enter(
 	if rules == null or rules.type != BattleRules.BattleTypes.TRAINER:
 		return
 	var mode := rules.mode
-	ui.field_ui.apply_trainer_rest_positions(mode)
+	ui.field_ui.apply_trainer_rest_positions(
+		mode,
+		_side_trainer_count(ui, true),
+		_side_trainer_count(ui, false)
+	)
 	ui.field_ui.hide_all_enemy_trainers()
 	var trainer: Node2D = ui.field_ui.get_enemy_trainer(trainer_index)
 	if trainer == null or not is_instance_valid(trainer):
@@ -256,8 +268,8 @@ static func play_pokemon_enter(ui: BattleUI, landing_spot: BattleSpot) -> void:
 		return
 	var anim := get_pokemon_enter()
 	if anim == null:
-		# Fallback directo por si falta el .tres
-		await BattleAnimationUtils.pokemon_enter_spot(landing_spot)
+		var layer: Node2D = ui.get_animation_layer()
+		await BattleAnimationUtils.pokemon_enter_spot(landing_spot, 0.45, 0.75, layer)
 		return
 	var layer: Node2D = ui.get_animation_layer()
 	var targets: Array[BattleSpot] = [landing_spot]
@@ -294,6 +306,8 @@ static func play_send_in(ui: BattleUI, landing_spot: BattleSpot) -> void:
 	_start_party_roll_out_with_trainer_exit(ui, landing_spot, is_enemy)
 
 	if is_enemy:
+		# Intro: trainer visible desde reveal_intro_trainers → exit + ball.
+		# Cambio mid-battle: trainer oculto → solo ball al suelo.
 		exit_tw = _start_enemy_trainer_exit(ui, landing_spot)
 	else:
 		trainer = _get_trainer_for_spot(ui, landing_spot)
@@ -399,13 +413,12 @@ static func _play_throw_with_enter_overlap(
 
 	await BattleAnimationUtils.wait(ui, open_at)
 
-	# BattleAnimationLayer (z=1) pinta la ball por encima del spot; al crecer el
-	# Pokémon debe quedar delante de la ball abierta/brillo.
+	# Orden ref. 63–79: ball delante → flash → Pokémon creciendo detrás.
 	var spr: Sprite2D = landing_spot.sprite
 	var prev_sprite_z := 0
 	if spr != null and is_instance_valid(spr):
 		prev_sprite_z = spr.z_index
-		spr.z_index = POKEMON_ABOVE_THROW_Z
+		spr.z_index = POKEMON_BEHIND_ENTER_VFX_Z
 
 	var run_enter := func() -> void:
 		await play_pokemon_enter(ui, landing_spot)
@@ -479,9 +492,16 @@ static func _start_enemy_trainer_exit(ui: BattleUI, landing_spot: BattleSpot) ->
 	var trainer: Node2D = _get_trainer_for_spot(ui, landing_spot)
 	if trainer == null or not is_instance_valid(trainer) or not trainer.visible:
 		return null
+	if trainer.has_meta(TRAINER_SEND_IN_EXIT_META) and trainer.get_meta(TRAINER_SEND_IN_EXIT_META):
+		return null
 	if not trainer.has_meta("trainer_rest_pos"):
-		trainer.set_meta("trainer_rest_pos", trainer.position)
+		push_warning(
+			"BattleFieldAnimations: trainer sin trainer_rest_pos; omitiendo exit de send-in."
+		)
+		return null
+	trainer.set_meta(TRAINER_SEND_IN_EXIT_META, true)
 	var rest: Vector2 = trainer.get_meta("trainer_rest_pos")
+	trainer.position = rest
 	var end := rest + Vector2(TRAINER_EXIT_SLIDE, 0.0)
 	var exit_tw := ui.create_tween()
 	exit_tw.tween_interval(ENEMY_EXIT_AFTER_BALL_SEC)
@@ -493,5 +513,7 @@ static func _start_enemy_trainer_exit(ui: BattleUI, landing_spot: BattleSpot) ->
 			if is_instance_valid(trainer):
 				trainer.visible = false
 				trainer.position = rest
+				if trainer.has_meta(TRAINER_SEND_IN_EXIT_META):
+					trainer.remove_meta(TRAINER_SEND_IN_EXIT_META)
 	)
 	return exit_tw

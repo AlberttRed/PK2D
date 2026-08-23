@@ -15,6 +15,7 @@ enum SpotAnchor {
 	STATUS_ICON,
 	FEET,
 	HEAD,
+	BALL_GROUND,
 }
 
 const MIN_AUTHORED_SPAN := 0.001
@@ -108,6 +109,8 @@ static func spot_anchor_name(anchor: SpotAnchor) -> String:
 			return BattleSpot.ANCHOR_FEET
 		SpotAnchor.HEAD:
 			return BattleSpot.ANCHOR_HEAD
+		SpotAnchor.BALL_GROUND:
+			return BattleSpot.ANCHOR_BALL_GROUND
 		_:
 			return BattleSpot.ANCHOR_CENTER
 

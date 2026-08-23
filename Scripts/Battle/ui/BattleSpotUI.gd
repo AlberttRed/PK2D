@@ -24,6 +24,8 @@ const ANCHOR_PROJECTILE_ORIGIN := "ProjectileOrigin"
 const ANCHOR_STATUS_ICON := "StatusIcon"
 const ANCHOR_FEET := "Feet"
 const ANCHOR_HEAD := "Head"
+## Suelo del spot (sombra / campo): reposo de Poké Ball rival, distinto del bbox Feet.
+const ANCHOR_BALL_GROUND := "BallGround"
 
 const _OPAQUE_ALPHA_THRESHOLD := 0.06
 
@@ -49,13 +51,18 @@ func get_anchor_global_position(anchor_name: String) -> Vector2:
 ## Recalcula Markers de Anchors según el bbox opaco del sprite actual.
 ## Spot-local: Feet abajo, Head arriba, Center/HitCenter en el cuerpo.
 func refresh_visual_anchors() -> void:
-	if anchors_root == null or sprite == null:
+	if anchors_root == null:
+		return
+	var mid_x := 0.0
+	if sprite == null:
+		_refresh_ball_ground_anchor(mid_x)
 		return
 	var opaque := _get_sprite_opaque_rect_in_spot()
 	if opaque.size.x <= 0.0 or opaque.size.y <= 0.0:
+		_refresh_ball_ground_anchor(mid_x)
 		return
 
-	var mid_x := opaque.position.x + opaque.size.x * 0.5
+	mid_x = opaque.position.x + opaque.size.x * 0.5
 	var top_y := opaque.position.y
 	var bottom_y := opaque.position.y + opaque.size.y
 	var center_y := opaque.position.y + opaque.size.y * 0.5
@@ -81,6 +88,24 @@ func refresh_visual_anchors() -> void:
 	if toward_enemy < 0.0:
 		status_x = opaque.position.x + opaque.size.x + 8.0
 	_set_anchor_position(ANCHOR_STATUS_ICON, Vector2(status_x, top_y))
+
+	_refresh_ball_ground_anchor(mid_x)
+
+
+## Suelo visual del spot (línea de sombra). No usar Feet dinámico: el bbox del sprite queda más arriba.
+const BALL_GROUND_SPOT_A_Y_NUDGE := -10.0
+const BALL_GROUND_SPOT_B_Y_NUDGE := -5.0
+
+
+func _refresh_ball_ground_anchor(mid_x: float) -> void:
+	var ground_y := 88.0
+	if shadow != null:
+		ground_y = shadow.position.y
+	if index == 1:
+		ground_y += BALL_GROUND_SPOT_A_Y_NUDGE
+	elif index == 2:
+		ground_y += BALL_GROUND_SPOT_B_Y_NUDGE
+	_set_anchor_position(ANCHOR_BALL_GROUND, Vector2(mid_x, ground_y))
 
 
 func _set_anchor_position(anchor_name: String, spot_local: Vector2) -> void:
@@ -141,6 +166,7 @@ func _get_sprite_opaque_rect_in_spot() -> Rect2:
 
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
+	_refresh_ball_ground_anchor(0.0)
 
 func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	self.pokemon = _pokemon
