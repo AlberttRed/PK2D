@@ -46,8 +46,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_poison_ailment_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Canto) vs Pidgey — animación ailment Sleep (aplicar + “sigue dormido”).
 @export var use_sleep_ailment_animation_test: bool = false
-## 1vs1 salvaje: Charmander (Rayo Hielo) vs Pidgey — animación ailment Freeze.
-@export var use_freeze_ailment_animation_test: bool = true
+## 1vs1 salvaje: Charmander (Rayo Hielo) vs Squirtle — animación ailment Freeze.
+@export var use_freeze_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Onda Trueno) vs Squirtle — animación ailment Paralysis.
+@export var use_paralysis_ailment_animation_test: bool = true
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -165,6 +167,10 @@ func _ready() -> void:
 	if use_freeze_ailment_animation_test:
 		_print_freeze_ailment_animation_test_guide()
 		await wildFreezeAilmentAnimationTestBattle()
+		return
+	if use_paralysis_ailment_animation_test:
+		_print_paralysis_ailment_animation_test_guide()
+		await wildParalysisAilmentAnimationTestBattle()
 		return
 	if use_growl_animation_test:
 		_print_growl_animation_test_guide()
@@ -670,6 +676,18 @@ func wildFreezeAilmentAnimationTestBattle() -> void:
 	var winner = await _start_test_battle(participants, rules)
 	debug_force_ailment_apply = prev_force
 	print(">>> Batalla animación Freeze terminada. Ganador: %s" % winner)
+
+
+func wildParalysisAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_paralysis_ailment_animation_test_player()
+	var wild_participant := _create_paralysis_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Paralysis terminada. Ganador: %s" % winner)
 
 
 func wildGrowlAnimationTestBattle() -> void:
@@ -1405,6 +1423,47 @@ func _print_freeze_ailment_animation_test_guide() -> void:
 	print(">>> Test animación ailment Freeze: Charmander Nv.20 (Rayo Hielo) vs Squirtle Nv.22 (Rayo Hielo).")
 	print(">>> Ailment forzado: overlay de hielo + barrido de brillo (reflejo).")
 	print(">>> Desactiva use_freeze_ailment_animation_test para volver a otro flag.")
+
+
+func _create_paralysis_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_paralysis_ailment_animation_test_wild() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 22
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_paralysis_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Paralysis: Charmander Nv.20 (Onda Trueno) vs Squirtle Nv.22 (Onda Trueno).")
+	print(">>> Ailment forzado: temblor + 3 chispas (ParalysisFrames) alternando.")
+	print(">>> Desactiva use_paralysis_ailment_animation_test para volver a otro flag.")
 
 
 func _create_growl_animation_test_player() -> BattleParticipant:
