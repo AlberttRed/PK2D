@@ -472,6 +472,10 @@ func move_forward(distance: float = 16.0, duration: float = 0.12) -> void:
 	await BattleAnimationUtils.move_spot_forward(self, distance, duration)
 
 
+func nudge_down(distance: float = 10.0, duration: float = 0.1) -> void:
+	await BattleAnimationUtils.nudge_spot_down(self, distance, duration)
+
+
 ## Aparición al enviar: scale + de-white. Awaitable.
 func play_enter_animation(scale_duration: float = 0.45, white_duration: float = 0.75) -> void:
 	await BattleAnimationUtils.pokemon_enter_spot(self, scale_duration, white_duration)

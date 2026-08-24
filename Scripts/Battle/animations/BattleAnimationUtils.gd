@@ -192,6 +192,25 @@ static func move_spot_forward(
 		spr.position = origin
 
 
+## Baja el sprite en Y y vuelve (p. ej. impacto de Mordisco). Awaitable.
+static func nudge_spot_down(
+	spot: BattleSpot,
+	distance: float = 10.0,
+	duration: float = 0.1
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var origin := spr.position
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(spr, "position", origin + Vector2(0.0, distance), duration)
+	tw.tween_property(spr, "position", origin, duration)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.position = origin
+
+
 ## Oscurece el campo con un Polygon2D hijo de `parent`. Devuelve el overlay (o null).
 static func darken_overlay(
 	parent: Node,

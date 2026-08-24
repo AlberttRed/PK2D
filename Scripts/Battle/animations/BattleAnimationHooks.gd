@@ -43,6 +43,11 @@ func user_recoil(distance: float = 16.0, duration: float = 0.1) -> void:
 	call_on_user(&"move_forward", [-distance, duration])
 
 
+## Baja el target en Y y vuelve (impacto tipo Mordisco).
+func target_nudge_down(distance: float = 10.0, duration: float = 0.1) -> void:
+	call_on_target(&"nudge_down", [distance, duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null

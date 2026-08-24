@@ -53,7 +53,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Charmander (Destructor + Placaje) vs Pidgey (Destructor + Tornado) — animación Pound.
 @export var use_pound_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Ataque Arena + Placaje) vs Pidgey (Ataque Arena + Tornado) — animación Sand Attack.
-@export var use_sand_attack_animation_test: bool = true
+@export var use_sand_attack_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Mordisco + Placaje) vs Pidgey (Mordisco + Tornado) — animación Bite.
+@export var use_bite_animation_test: bool = true
 ## 2vs2 multi-entrenador: 2 trainers jugador vs 2 trainers rival — intro doble y send-in por spot.
 @export var use_double_trainer_animation_test: bool = false
 ## Si true, JugadorB también es humano (controlas ambos spots). Si false, JugadorB es aliado IA en tu lado.
@@ -149,6 +151,10 @@ func _ready() -> void:
 	if use_sand_attack_animation_test:
 		_print_sand_attack_animation_test_guide()
 		await wildSandAttackAnimationTestBattle()
+		return
+	if use_bite_animation_test:
+		_print_bite_animation_test_guide()
+		await wildBiteAnimationTestBattle()
 		return
 	if use_wild_animation_test:
 		_print_wild_animation_test_guide()
@@ -616,6 +622,15 @@ func wildSandAttackAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Ataque Arena terminada. Ganador: %s" % winner)
+
+
+func wildBiteAnimationTestBattle() -> void:
+	var player_participant := _create_bite_animation_test_player()
+	var wild_participant := _create_bite_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación Mordisco terminada. Ganador: %s" % winner)
 
 
 func wildAnimationTestBattle() -> void:
@@ -1260,6 +1275,47 @@ func _print_sand_attack_animation_test_guide() -> void:
 	print(">>> Test animación Ataque Arena: Charmander Nv.20 (Ataque Arena + Placaje + Arañazo) vs Pidgey Nv.18 salvaje (Ataque Arena + Tornado + Placaje).")
 	print(">>> User retrocede y lanza 6 racimos de arena (salen uno a uno, se agrupan en el target).")
 	print(">>> Desactiva use_sand_attack_animation_test para volver a otro flag.")
+
+
+func _create_bite_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.BITE,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_bite_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.BITE,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_bite_animation_test_guide() -> void:
+	print(">>> Test animación Mordisco (Bite): Charmander Nv.20 (Mordisco + Placaje + Arañazo) vs Pidgey Nv.18 salvaje (Mordisco + Tornado + Placaje).")
+	print(">>> Mandíbulas arriba/abajo del target que se cierran; el target tambalea al morder.")
+	print(">>> Desactiva use_bite_animation_test para volver a otro flag.")
 
 
 func wildFixedSubstituteTestBattle() -> void:
