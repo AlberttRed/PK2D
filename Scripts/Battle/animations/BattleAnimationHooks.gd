@@ -63,6 +63,11 @@ func target_poison_tint(up_duration: float = 0.08, hold_duration: float = 0.55, 
 	call_on_target(&"tint", [Color(0.55, 0.0, 1.0, 1.0), up_duration, hold_duration, down_duration])
 
 
+## Tinte cian del target (ailment Freeze).
+func target_freeze_tint(up_duration: float = 0.1, hold_duration: float = 1.22, down_duration: float = 0.18) -> void:
+	call_on_target(&"tint", [Color(0.48, 0.78, 1.0, 1.0), up_duration, hold_duration, down_duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null
