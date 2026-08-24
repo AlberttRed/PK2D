@@ -211,6 +211,35 @@ static func nudge_spot_down(
 		spr.position = origin
 
 
+## Órbita circular del sprite alrededor de su posición (p. ej. Látigo). Awaitable.
+static func orbit_spot(
+	spot: BattleSpot,
+	radius: float = 10.0,
+	revolutions: float = 2.0,
+	duration: float = 0.7
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	if duration <= 0.0 or radius <= 0.0 or revolutions == 0.0:
+		return
+	var spr: Sprite2D = spot.sprite
+	var origin := spr.position
+	var tw := spot.create_tween()
+	tw.tween_method(
+		func(t: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var angle := t * TAU * revolutions
+			spr.position = origin + Vector2(cos(angle), sin(angle)) * radius,
+		0.0,
+		1.0,
+		duration
+	)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.position = origin
+
+
 ## Oscurece el campo con un Polygon2D hijo de `parent`. Devuelve el overlay (o null).
 static func darken_overlay(
 	parent: Node,

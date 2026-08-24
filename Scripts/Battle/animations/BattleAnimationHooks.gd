@@ -48,6 +48,11 @@ func target_nudge_down(distance: float = 10.0, duration: float = 0.1) -> void:
 	call_on_target(&"nudge_down", [distance, duration])
 
 
+## User da vueltas en círculo (Látigo).
+func user_orbit_circle(radius: float = 10.0, revolutions: float = 2.0, duration: float = 0.7) -> void:
+	call_on_user(&"orbit_circle", [radius, revolutions, duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null

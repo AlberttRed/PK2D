@@ -37,7 +37,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
 @export_group("Debug animaciones de combate")
 ## 1vs1 salvaje: Charmander (Ascuas + Arañazo + Placaje) vs Squirtle — animación Ember / Ascuas.
-@export var use_ember_animation_test: bool = true
+@export var use_ember_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Látigo + Placaje) vs Pidgey (Látigo + Tornado) — animación Tail Whip.
+@export var use_tail_whip_animation_test: bool = true
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -135,6 +137,10 @@ func _ready() -> void:
 	if use_ember_animation_test:
 		_print_ember_animation_test_guide()
 		await wildEmberAnimationTestBattle()
+		return
+	if use_tail_whip_animation_test:
+		_print_tail_whip_animation_test_guide()
+		await wildTailWhipAnimationTestBattle()
 		return
 	if use_growl_animation_test:
 		_print_growl_animation_test_guide()
@@ -586,6 +592,15 @@ func wildEmberAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Ascuas terminada. Ganador: %s" % winner)
+
+
+func wildTailWhipAnimationTestBattle() -> void:
+	var player_participant := _create_tail_whip_animation_test_player()
+	var wild_participant := _create_tail_whip_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación Látigo terminada. Ganador: %s" % winner)
 
 
 func wildGrowlAnimationTestBattle() -> void:
@@ -1113,6 +1128,47 @@ func _print_ember_animation_test_guide() -> void:
 	print(">>> Test animación Ascuas (Ember): Charmander Nv.20 (Ascuas + Arañazo + Placaje) vs Squirtle Nv.20 (Ascuas + Arañazo + Placaje + Látigo).")
 	print(">>> 4 chispas (BurnFrames f0) vuelan al target, algunas pasan a f1, luego animación de quemado.")
 	print(">>> Desactiva use_ember_animation_test para volver a otro flag.")
+
+
+func _create_tail_whip_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.TAIL_WHIP,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_tail_whip_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.TAIL_WHIP,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_tail_whip_animation_test_guide() -> void:
+	print(">>> Test animación Látigo (Tail Whip): Charmander Nv.20 (Látigo + Placaje + Arañazo) vs Pidgey Nv.18 (Látigo + Tornado + Placaje).")
+	print(">>> El user da 2 vueltas en círculo (sin frames).")
+	print(">>> Desactiva use_tail_whip_animation_test para volver a otro flag.")
 
 
 func _create_growl_animation_test_player() -> BattleParticipant:
