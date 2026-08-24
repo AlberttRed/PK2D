@@ -224,13 +224,15 @@ static func orbit_spot(
 		return
 	var spr: Sprite2D = spot.sprite
 	var origin := spr.position
+	# Jugador: agujas del reloj. Rival: sentido contrario.
+	var dir := _forward_sign(spot)
 	var tw := spot.create_tween()
 	tw.tween_method(
 		func(t: float) -> void:
 			if not is_instance_valid(spr):
 				return
-			var angle := t * TAU * revolutions
-			spr.position = origin + Vector2(cos(angle), sin(angle)) * radius,
+			var angle := t * TAU * revolutions * dir
+			spr.position = origin + Vector2(sin(angle), -cos(angle)) * radius,
 		0.0,
 		1.0,
 		duration
@@ -238,6 +240,30 @@ static func orbit_spot(
 	await tw.finished
 	if is_instance_valid(spr):
 		spr.position = origin
+
+
+## Ilumina un poco el sprite (modulate > 1) y vuelve. Awaitable.
+static func glow_spot(
+	spot: BattleSpot,
+	peak: float = 1.4,
+	up_duration: float = 0.08,
+	hold_duration: float = 0.25,
+	down_duration: float = 0.12
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var base := Color(1, 1, 1, 1)
+	var bright := Color(peak, peak, peak, 1)
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(spr, "modulate", bright, maxf(up_duration, 0.01))
+	if hold_duration > 0.0:
+		tw.tween_interval(hold_duration)
+	tw.tween_property(spr, "modulate", base, maxf(down_duration, 0.01))
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.modulate = base
 
 
 ## Oscurece el campo con un Polygon2D hijo de `parent`. Devuelve el overlay (o null).

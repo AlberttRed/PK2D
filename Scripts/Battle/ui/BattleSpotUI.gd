@@ -480,6 +480,10 @@ func orbit_circle(radius: float = 10.0, revolutions: float = 2.0, duration: floa
 	await BattleAnimationUtils.orbit_spot(self, radius, revolutions, duration)
 
 
+func glow(peak: float = 1.4, up_duration: float = 0.08, hold_duration: float = 0.25, down_duration: float = 0.12) -> void:
+	await BattleAnimationUtils.glow_spot(self, peak, up_duration, hold_duration, down_duration)
+
+
 ## Aparición al enviar: scale + de-white. Awaitable.
 func play_enter_animation(scale_duration: float = 0.45, white_duration: float = 0.75) -> void:
 	await BattleAnimationUtils.pokemon_enter_spot(self, scale_duration, white_duration)

@@ -53,6 +53,11 @@ func user_orbit_circle(radius: float = 10.0, revolutions: float = 2.0, duration:
 	call_on_user(&"orbit_circle", [radius, revolutions, duration])
 
 
+## Ilumina un poco el sprite del user (Ataque Rápido).
+func user_glow(peak: float = 1.4, up_duration: float = 0.08, hold_duration: float = 0.25, down_duration: float = 0.12) -> void:
+	call_on_user(&"glow", [peak, up_duration, hold_duration, down_duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null
