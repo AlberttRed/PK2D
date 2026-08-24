@@ -3,6 +3,7 @@
 [ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_15s52"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_t5ff6"]
 [ext_resource type="Resource" uid="uid://bg5akexgaovle" path="res://Resources/Data/Types/05.tres" id="2_clqf6"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/SandAttackAnimation.tres" id="3_sand_anim"]
 
 [resource]
 resource_name = "28 - Ataque Arena"
@@ -23,3 +24,4 @@ stat_changes = Dictionary[int, int]({
 target_id = 10
 meta_category_id = 2
 category = ExtResource("1_15s52")
+battle_animation = ExtResource("3_sand_anim")
