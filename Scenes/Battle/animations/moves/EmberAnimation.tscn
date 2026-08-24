@@ -1,129 +1,277 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
+[ext_resource type="Texture2D" path="res://Sprites/Batalla/Moves Animations/BurnFrames.png" id="2_burn"]
 
 [sub_resource type="Animation" id="Animation_default"]
 resource_name = "default"
-length = 0.7
-tracks/0/type = "value"
+length = 1.55
+step = 0.01
+tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("VisualRoot/FlameA:position")
+tracks/0/path = NodePath("Hooks")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.32),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(200, 0)]
+"times": PackedFloat32Array(0.46),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"shake", [2.5, 0.2]],
+"method": &"call_on_target"
+}]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualRoot/FlameA:modulate")
+tracks/1/path = NodePath("VisualRoot/EmberA:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.28, 0.35),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0.02, 0.42, 0.58),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 0.45, 0.1, 0), Color(1, 0.5, 0.12, 1), Color(1, 0.55, 0.15, 1), Color(1, 0.45, 0.1, 0)]
+"values": [Vector2(0, -6), Vector2(200, -8), Vector2(210, -16)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualRoot/FlameB:position")
+tracks/2/path = NodePath("VisualRoot/EmberA:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.08, 0.42),
+"times": PackedFloat32Array(0, 0.48),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, -18), Vector2(200, -18)]
+"update": 1,
+"values": [0, 0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("VisualRoot/FlameB:modulate")
+tracks/3/path = NodePath("VisualRoot/EmberA:modulate")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.08, 0.14, 0.38, 0.45),
+"times": PackedFloat32Array(0, 0.02, 0.05, 0.58, 0.68),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(1, 0.4, 0.08, 0), Color(1, 0.4, 0.08, 0), Color(1, 0.48, 0.12, 1), Color(1, 0.55, 0.18, 1), Color(1, 0.4, 0.08, 0)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("VisualRoot/FlameC:position")
+tracks/4/path = NodePath("VisualRoot/EmberB:position")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.14, 0.5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.05, 0.44, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 16), Vector2(200, 16)]
+"values": [Vector2(0, 8), Vector2(200, 10), Vector2(188, 18)]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("VisualRoot/FlameC:modulate")
+tracks/5/path = NodePath("VisualRoot/EmberB:frame")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.14, 0.2, 0.46, 0.54),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 0.35, 0.05, 0), Color(1, 0.35, 0.05, 0), Color(1, 0.5, 0.1, 1), Color(1, 0.6, 0.2, 1), Color(1, 0.35, 0.05, 0)]
+"times": PackedFloat32Array(0, 0.48),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("VisualRoot/FlameD:position")
+tracks/6/path = NodePath("VisualRoot/EmberB:modulate")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0.22, 0.58),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.05, 0.08, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, -8), Vector2(200, -8)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("VisualRoot/FlameD:modulate")
+tracks/7/path = NodePath("VisualRoot/EmberC:position")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 0.22, 0.28, 0.54, 0.62),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0.08, 0.46, 0.62),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 0.55, 0.15, 0), Color(1, 0.55, 0.15, 0), Color(1, 0.65, 0.2, 1), Color(1, 0.7, 0.25, 1), Color(1, 0.55, 0.15, 0)]
+"values": [Vector2(0, -12), Vector2(200, -2), Vector2(206, 8)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("VisualRoot/FlameE:position")
+tracks/8/path = NodePath("VisualRoot/EmberC:frame")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0.28, 0.64),
+"times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 10), Vector2(200, 10)]
+"update": 1,
+"values": [0, 0]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("VisualRoot/FlameE:modulate")
+tracks/9/path = NodePath("VisualRoot/EmberC:modulate")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(0, 0.28, 0.34, 0.6, 0.68),
+"times": PackedFloat32Array(0, 0.08, 0.11, 0.62, 0.72),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(1, 0.42, 0.08, 0), Color(1, 0.42, 0.08, 0), Color(1, 0.52, 0.14, 1), Color(1, 0.58, 0.18, 1), Color(1, 0.42, 0.08, 0)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("VisualRoot/EmberD:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0.11, 0.48, 0.64),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 2), Vector2(200, 6), Vector2(214, -4)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("VisualRoot/EmberD:frame")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.52),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("VisualRoot/EmberD:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 0.11, 0.14, 0.64, 0.72),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("TargetVisualRoot/FlameA:position")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.68, 1.23),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(40, -4), Vector2(-44, -16)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("TargetVisualRoot/FlameA:frame")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0.68, 0.78, 0.88, 0.98, 1.08, 1.18),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 4]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("TargetVisualRoot/FlameA:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 0.68, 0.73, 1.13, 1.23),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("TargetVisualRoot/FlameB:position")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0.8, 1.35),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(36, -20), Vector2(-40, -6)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("TargetVisualRoot/FlameB:frame")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0.8, 0.9, 1, 1.1, 1.2, 1.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 4, 0, 1]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("TargetVisualRoot/FlameB:modulate")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0, 0.8, 0.85, 1.25, 1.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("TargetVisualRoot/FlameC:position")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0.92, 1.48),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(44, -10), Vector2(-36, -22)]
+}
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("TargetVisualRoot/FlameC:frame")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0.92, 1.02, 1.12, 1.22, 1.32, 1.42),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 3]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("TargetVisualRoot/FlameC:modulate")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0, 0.92, 0.97, 1.38, 1.48),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
@@ -145,34 +293,57 @@ gizmo_extents = 16.0
 
 [node name="VisualRoot" type="Node2D" parent="."]
 
-[node name="FlameA" type="Polygon2D" parent="VisualRoot"]
-modulate = Color(1, 0.45, 0.1, 0)
-color = Color(1, 0.4, 0.05, 1)
-polygon = PackedVector2Array(0, -14, 10, 6, 0, 2, -10, 6)
+[node name="EmberA" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -6)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
 
-[node name="FlameB" type="Polygon2D" parent="VisualRoot"]
-modulate = Color(1, 0.4, 0.08, 0)
-scale = Vector2(0.85, 0.85)
-color = Color(1, 0.45, 0.08, 1)
-polygon = PackedVector2Array(0, -12, 9, 5, 0, 1, -9, 5)
+[node name="EmberB" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 8)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
 
-[node name="FlameC" type="Polygon2D" parent="VisualRoot"]
-modulate = Color(1, 0.35, 0.05, 0)
-scale = Vector2(0.75, 0.75)
-color = Color(1, 0.35, 0.05, 1)
-polygon = PackedVector2Array(0, -11, 8, 5, 0, 1, -8, 5)
+[node name="EmberC" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -12)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
 
-[node name="FlameD" type="Polygon2D" parent="VisualRoot"]
-modulate = Color(1, 0.55, 0.15, 0)
-scale = Vector2(0.7, 0.7)
-color = Color(1, 0.55, 0.12, 1)
-polygon = PackedVector2Array(0, -10, 7, 4, 0, 1, -7, 4)
+[node name="EmberD" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 2)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
 
-[node name="FlameE" type="Polygon2D" parent="VisualRoot"]
-modulate = Color(1, 0.42, 0.08, 0)
-scale = Vector2(0.65, 0.65)
-color = Color(1, 0.38, 0.06, 1)
-polygon = PackedVector2Array(0, -9, 7, 4, 0, 1, -7, 4)
+[node name="TargetVisualRoot" type="Node2D" parent="."]
+
+[node name="FlameA" type="Sprite2D" parent="TargetVisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(40, -4)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
+
+[node name="FlameB" type="Sprite2D" parent="TargetVisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(36, -20)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
+frame = 1
+
+[node name="FlameC" type="Sprite2D" parent="TargetVisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(44, -10)
+texture = ExtResource("2_burn")
+hframes = 1
+vframes = 5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

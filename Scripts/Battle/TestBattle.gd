@@ -36,8 +36,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_move_fail_no_target_test: bool = false
 
 @export_group("Debug animaciones de combate")
-## 1vs1 salvaje: Charmander (Arañazo + Ascuas + Placaje) vs Squirtle — Ascuas/Placaje + burn end-turn.
-@export var use_ember_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Ascuas + Arañazo + Placaje) vs Squirtle — animación Ember / Ascuas.
+@export var use_ember_animation_test: bool = true
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -55,7 +55,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Charmander (Ataque Arena + Placaje) vs Pidgey (Ataque Arena + Tornado) — animación Sand Attack.
 @export var use_sand_attack_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Mordisco + Placaje) vs Pidgey (Mordisco + Tornado) — animación Bite.
-@export var use_bite_animation_test: bool = true
+@export var use_bite_animation_test: bool = false
 ## 2vs2 multi-entrenador: 2 trainers jugador vs 2 trainers rival — intro doble y send-in por spot.
 @export var use_double_trainer_animation_test: bool = false
 ## Si true, JugadorB también es humano (controlas ambos spots). Si false, JugadorB es aliado IA en tu lado.
@@ -1079,8 +1079,8 @@ func _create_ember_animation_test_player() -> BattleParticipant:
 	charmander.level = 20
 	charmander.is_wild = false
 	charmander.custom_move_ids = [
-		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.EMBER,
+		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.TACKLE,
 	]
 	charmander._post_init()
@@ -1098,6 +1098,7 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 	squirtle.level = 20
 	squirtle.is_wild = true
 	squirtle.custom_move_ids = [
+		MovesEnum.Values.EMBER,
 		MovesEnum.Values.SCRATCH,
 		MovesEnum.Values.TACKLE,
 		MovesEnum.Values.TAIL_WHIP,
@@ -1109,8 +1110,9 @@ func _create_ember_animation_test_wild() -> BattleParticipant:
 
 
 func _print_ember_animation_test_guide() -> void:
-	print(">>> Test animación: Charmander Nv.20 (Arañazo + Ascuas + Placaje) vs Squirtle Nv.20 (Arañazo + Placaje + Látigo).")
-	print(">>> Ascuas = proyectil; Placaje = embestida; con debug_force_ailment_apply Ascuas quema → anim burn end-turn.")
+	print(">>> Test animación Ascuas (Ember): Charmander Nv.20 (Ascuas + Arañazo + Placaje) vs Squirtle Nv.20 (Ascuas + Arañazo + Placaje + Látigo).")
+	print(">>> 4 chispas (BurnFrames f0) vuelan al target, algunas pasan a f1, luego animación de quemado.")
+	print(">>> Desactiva use_ember_animation_test para volver a otro flag.")
 
 
 func _create_growl_animation_test_player() -> BattleParticipant:
