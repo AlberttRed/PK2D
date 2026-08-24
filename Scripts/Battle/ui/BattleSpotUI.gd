@@ -464,6 +464,10 @@ func shake(intensity: float = 4.0, duration: float = 0.25) -> void:
 	await BattleAnimationUtils.shake_spot(self, intensity, duration)
 
 
+func pulse_scale(peak_scale: float = 1.12, up_duration: float = 0.12, down_duration: float = 0.16) -> void:
+	await BattleAnimationUtils.pulse_scale_spot(self, peak_scale, up_duration, down_duration)
+
+
 func move_forward(distance: float = 16.0, duration: float = 0.12) -> void:
 	await BattleAnimationUtils.move_spot_forward(self, distance, duration)
 

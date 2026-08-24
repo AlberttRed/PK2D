@@ -126,6 +126,52 @@ static func shake_spot(
 		spr.position = origin
 
 
+## Pulso de escala (crece y vuelve) con pies anclados. Awaitable.
+static func pulse_scale_spot(
+	spot: BattleSpot,
+	peak_scale: float = 1.12,
+	up_duration: float = 0.12,
+	down_duration: float = 0.16
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var orig_scale := spr.scale
+	if orig_scale.length_squared() < 0.0001:
+		orig_scale = Vector2.ONE
+	var orig_pos := spr.position
+	var half_h := _sprite_half_height(spr)
+	var peak := orig_scale * peak_scale
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_method(
+		func(s: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var sc := orig_scale.lerp(peak, s)
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y),
+		0.0,
+		1.0,
+		up_duration
+	)
+	tw.tween_method(
+		func(s: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var sc := peak.lerp(orig_scale, s)
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y),
+		0.0,
+		1.0,
+		down_duration
+	)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.scale = orig_scale
+		spr.position = orig_pos
+
+
 ## Desplaza solo el sprite hacia el rival y vuelve (HP bar / UI del spot no se mueven). Awaitable.
 static func move_spot_forward(
 	spot: BattleSpot,
