@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b1vlm4qgwlct4" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/PoisonAilmentEffect.gd" id="1_blhvb"]
 [ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="2_pnp0m"]
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="3_e7ob0"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/ailments/PoisonAnimation.tres" id="4_poison_anim"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g6qng"]
 atlas = ExtResource("2_pnp0m")
@@ -17,3 +18,4 @@ description = ""
 icon = SubResource("AtlasTexture_g6qng")
 is_persistent = true
 effect = ExtResource("1_blhvb")
+battle_animation = ExtResource("4_poison_anim")
