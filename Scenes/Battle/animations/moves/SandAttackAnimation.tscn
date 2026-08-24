@@ -1,0 +1,234 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
+[ext_resource type="Texture2D" path="res://Sprites/Batalla/Moves Animations/SandAttackFrames.png" id="2_sand"]
+
+[sub_resource type="Animation" id="Animation_default"]
+resource_name = "default"
+length = 0.9
+step = 0.01
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hooks")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.56),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [14.0, 0.1],
+"method": &"user_recoil"
+}, {
+"args": [&"shake", [2.5, 0.22]],
+"method": &"call_on_target"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/SandA:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1, 0.54, 0.72),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, -3), Vector2(200, -2), Vector2(206, -18)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/SandA:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.14, 0.62, 0.78),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/SandB:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.16, 0.55, 0.73),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 2), Vector2(200, 2), Vector2(208, 16)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VisualRoot/SandB:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.16, 0.2, 0.63, 0.79),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VisualRoot/SandC:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.22, 0.56, 0.74),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, -1), Vector2(200, -1), Vector2(204, -12)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VisualRoot/SandC:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.22, 0.26, 0.64, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VisualRoot/SandD:position")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.28, 0.57, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 3), Vector2(200, 1), Vector2(207, 14)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("VisualRoot/SandD:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.28, 0.32, 0.65, 0.81),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("VisualRoot/SandE:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.34, 0.58, 0.76),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, -2), Vector2(200, -3), Vector2(205, -22)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("VisualRoot/SandE:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.34, 0.38, 0.66, 0.82),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("VisualRoot/SandF:position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0.4, 0.59, 0.77),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 1), Vector2(200, 0), Vector2(209, 10)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("VisualRoot/SandF:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.44, 0.67, 0.84),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"default": SubResource("Animation_default")
+}
+
+[node name="SandAttackAnimation" type="Node2D"]
+
+[node name="Hooks" type="Node" parent="."]
+script = ExtResource("1_hooks")
+
+[node name="UserAnchor" type="Marker2D" parent="."]
+gizmo_extents = 16.0
+
+[node name="TargetAnchor" type="Marker2D" parent="."]
+position = Vector2(200, 0)
+gizmo_extents = 16.0
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="SandA" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -3)
+texture = ExtResource("2_sand")
+
+[node name="SandB" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 2)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("2_sand")
+flip_h = true
+
+[node name="SandC" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -1)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("2_sand")
+flip_v = true
+
+[node name="SandD" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 3)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("2_sand")
+
+[node name="SandE" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -2)
+scale = Vector2(1.05, 1.05)
+texture = ExtResource("2_sand")
+flip_h = true
+flip_v = true
+
+[node name="SandF" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 1)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("2_sand")
+flip_v = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_default")
+}

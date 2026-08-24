@@ -239,27 +239,37 @@ func get_enemy_base() -> Node2D:
 
 
 ## Coloca trainers en las posiciones de descanso (CONST.BATTLE) según el modo.
+## En doble con un solo entrenador por lado, usa posición single (centro).
 ## Preferir capture_trainer_rest_positions() si la escena es la fuente de verdad.
-func apply_trainer_rest_positions(mode: int = BattleRules.BattleModes.SINGLE) -> void:
+func apply_trainer_rest_positions(
+	mode: int = BattleRules.BattleModes.SINGLE,
+	player_trainer_count: int = 1,
+	enemy_trainer_count: int = 1
+) -> void:
 	var player_a := get_player_trainer(0)
 	var enemy_a := get_enemy_trainer(0)
-	match mode:
-		BattleRules.BattleModes.DOUBLE:
-			if player_a:
-				_set_trainer_rest(player_a, CONST.BATTLE.BACK_DOUBLE1_TRAINER_POS)
-			var player_b := get_player_trainer(1)
-			if player_b:
-				_set_trainer_rest(player_b, CONST.BATTLE.BACK_DOUBLE2_TRAINER_POS)
-			if enemy_a:
-				_set_trainer_rest(enemy_a, CONST.BATTLE.FRONT_DOUBLE1_TRAINER_POS)
-			var enemy_b := get_enemy_trainer(1)
-			if enemy_b:
-				_set_trainer_rest(enemy_b, CONST.BATTLE.FRONT_DOUBLE2_TRAINER_POS)
-		_:
-			if player_a:
-				_set_trainer_rest(player_a, CONST.BATTLE.BACK_SINGLE_TRAINER_POS)
-			if enemy_a:
-				_set_trainer_rest(enemy_a, CONST.BATTLE.FRONT_SINGLE_TRAINER_POS)
+	var use_player_double := (
+		mode == BattleRules.BattleModes.DOUBLE and player_trainer_count >= 2
+	)
+	var use_enemy_double := (
+		mode == BattleRules.BattleModes.DOUBLE and enemy_trainer_count >= 2
+	)
+	if use_player_double:
+		if player_a:
+			_set_trainer_rest(player_a, CONST.BATTLE.BACK_DOUBLE1_TRAINER_POS)
+		var player_b := get_player_trainer(1)
+		if player_b:
+			_set_trainer_rest(player_b, CONST.BATTLE.BACK_DOUBLE2_TRAINER_POS)
+	elif player_a:
+		_set_trainer_rest(player_a, CONST.BATTLE.BACK_SINGLE_TRAINER_POS)
+	if use_enemy_double:
+		if enemy_a:
+			_set_trainer_rest(enemy_a, CONST.BATTLE.FRONT_DOUBLE1_TRAINER_POS)
+		var enemy_b := get_enemy_trainer(1)
+		if enemy_b:
+			_set_trainer_rest(enemy_b, CONST.BATTLE.FRONT_DOUBLE2_TRAINER_POS)
+	elif enemy_a:
+		_set_trainer_rest(enemy_a, CONST.BATTLE.FRONT_SINGLE_TRAINER_POS)
 
 
 ## Usa la posición actual del nodo en la escena como descanso (no pisa con CONST).

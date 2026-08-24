@@ -6,6 +6,80 @@ class_name BattleAnimationUtils
 
 const DEFAULT_FLASH_STEP := 0.1
 const DEFAULT_HIT_END_PAUSE := 0.5
+const ENTER_LIGHT_SCENE := preload(
+	"res://Scenes/Battle/animations/intro/PokemonEnterLightAnimation.tscn"
+)
+const ENTER_RAY_TEXTURE := preload(
+	"res://Sprites/Batalla/Battle Animations/EnterRayFrames2.png"
+)
+const ENTER_FLASH_TEXTURE := preload(
+	"res://Sprites/Batalla/Battle Animations/EnterFlashFrames.png"
+)
+## En BattleAnimationLayer: encima del Pokémon en spot, debajo de la ball (z=1).
+const ENTER_LIGHT_Z_INDEX := 0
+const ENTER_FLASH_SCALE_START := 0.85
+const ENTER_FLASH_SCALE_END := 2.85
+const POKEMON_ENTER_SCALE_START := 0.12
+## Rayos de entrada: ángulo (° desde arriba), retardo, longitud (scale.y), duración de crecimiento.
+## Abanico asimétrico (ref. frames originales): más separados; uno marcado hacia la derecha.
+const ENTER_RAY_SPECS: Array[Dictionary] = [
+	{"angle": -62.0, "delay": 0.10, "max_y": 3.0, "max_x": 0.78, "grow": 0.34},
+	{"angle": -36.0, "delay": 0.02, "max_y": 3.5, "max_x": 0.86, "grow": 0.40},
+	{"angle": -14.0, "delay": 0.16, "max_y": 2.7, "max_x": 0.72, "grow": 0.32},
+	{"angle": 16.0, "delay": 0.06, "max_y": 2.85, "max_x": 0.74, "grow": 0.38},
+	{"angle": 42.0, "delay": 0.20, "max_y": 3.1, "max_x": 0.76, "grow": 0.30},
+	{"angle": 68.0, "delay": 0.12, "max_y": 3.3, "max_x": 0.82, "grow": 0.36},
+]
+const ENTER_RAY_COLOR_START := Color(1.0, 1.0, 0.98, 1.0)
+const ENTER_RAY_COLOR_END := Color(1.0, 0.76, 0.18, 1.0)
+const ENTER_RAY_REGION := Rect2(13.0, 16.0, 34.0, 40.0)
+## Ancho final ≈ 90% del inicial al llegar a longitud máxima (estrechamiento suave).
+const ENTER_RAY_WIDTH_END_RATIO := 0.9
+## Cascada: chispas → rayos → foco circular.
+const ENTER_SPARK_FADE_LEAD_BEFORE_FLASH := 0.34
+const ENTER_RAY_FADE_LEAD_BEFORE_FLASH := 0.18
+const ENTER_SPARK_RAY_FADE_GAP := 0.08
+const ENTER_FLASH_FADE_EXTRA_HOLD := 0.18
+const ENTER_FLASH_FADE_DURATION_SCALE := 1.08
+const ENTER_RAY_FADE_DURATION_SCALE := 0.72
+const ENTER_SPARK_FADE_DURATION_SCALE := 0.68
+## Alpha máxima de rayos (< flash) para que se lean detrás del brillo circular.
+const ENTER_RAY_ALPHA_PEAK := 0.58
+## Chispas: mini bolas EnterFlash; spawn/reach definen dónde nacen y hasta dónde llegan.
+## Radio máx. ≈ longitud de rayo (max_y 3.5 × región 40 px).
+const ENTER_SPARK_MAX_REACH := 118.0
+const ENTER_SPARK_SPECS: Array[Dictionary] = [
+	# Junto al foco — deriva corta
+	{"angle": -22.0, "spawn": 0.0, "reach": 0.22, "delay": 0.00, "scale": 0.22},
+	{"angle": 18.0, "spawn": 0.02, "reach": 0.26, "delay": 0.03, "scale": 0.26},
+	{"angle": -48.0, "spawn": 0.0, "reach": 0.20, "delay": 0.05, "scale": 0.20},
+	{"angle": 52.0, "spawn": 0.03, "reach": 0.24, "delay": 0.07, "scale": 0.24},
+	# Desde abajo — recorrido medio
+	{"angle": 178.0, "spawn": 0.0, "reach": 0.34, "delay": 0.06, "scale": 0.28, "offset": Vector2(0, 6)},
+	{"angle": 165.0, "spawn": 0.02, "reach": 0.40, "delay": 0.10, "scale": 0.30, "offset": Vector2(-4, 8)},
+	{"angle": 192.0, "spawn": 0.0, "reach": 0.38, "delay": 0.14, "scale": 0.26, "offset": Vector2(5, 7)},
+	{"angle": 172.0, "spawn": 0.04, "reach": 0.32, "delay": 0.18, "scale": 0.24, "offset": Vector2(0, 5)},
+	# Recorrido medio
+	{"angle": -14.0, "spawn": 0.0, "reach": 0.58, "delay": 0.08, "scale": 0.32},
+	{"angle": 38.0, "spawn": 0.04, "reach": 0.52, "delay": 0.06, "scale": 0.30},
+	# Largo alcance — hasta donde llegan los rayos (mismos ángulos)
+	{"angle": -62.0, "spawn": 0.0, "reach": 0.98, "delay": 0.01, "scale": 0.36},
+	{"angle": -36.0, "spawn": 0.02, "reach": 1.05, "delay": 0.03, "scale": 0.42},
+	{"angle": 16.0, "spawn": 0.0, "reach": 0.92, "delay": 0.05, "scale": 0.38},
+	{"angle": 68.0, "spawn": 0.0, "reach": 1.0, "delay": 0.04, "scale": 0.40},
+]
+const ENTER_SPARK_ALPHA_PEAK := 0.90
+const ENTER_SPARK_ALPHA_PEAK_INNER := 0.62
+const ENTER_SPARK_ALPHA_FLOOR := 0.50
+const ENTER_SPARK_FADE_IN_SEC := 0.10
+const ENTER_SPARK_SCALE_START_RATIO := 0.28
+## 1.0 = velocidad de alejamiento constante durante toda la vida visible.
+const ENTER_SPARK_MOVE_POWER := 1.0
+const ENTER_SPARK_DEFAULT_LIFE := 0.64
+## Posición de reposo de la ball en campo rival (global = Feet + offset) — solo enter flash.
+const ENEMY_BALL_GROUND_OFFSET := Vector2(0.0, -44.0)
+const ENTER_FLASH_ENEMY_BALL_OFFSET := ENEMY_BALL_GROUND_OFFSET
+const ENTER_FLASH_PLAYER_BALL_OFFSET := Vector2(0.0, 10.0)
 
 
 ## Parpadeo del sprite del spot (hit). Awaitable.
@@ -52,6 +126,52 @@ static func shake_spot(
 		spr.position = origin
 
 
+## Pulso de escala (crece y vuelve) con pies anclados. Awaitable.
+static func pulse_scale_spot(
+	spot: BattleSpot,
+	peak_scale: float = 1.12,
+	up_duration: float = 0.12,
+	down_duration: float = 0.16
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var orig_scale := spr.scale
+	if orig_scale.length_squared() < 0.0001:
+		orig_scale = Vector2.ONE
+	var orig_pos := spr.position
+	var half_h := _sprite_half_height(spr)
+	var peak := orig_scale * peak_scale
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_method(
+		func(s: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var sc := orig_scale.lerp(peak, s)
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y),
+		0.0,
+		1.0,
+		up_duration
+	)
+	tw.tween_method(
+		func(s: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var sc := peak.lerp(orig_scale, s)
+			spr.scale = sc
+			spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, sc.y),
+		0.0,
+		1.0,
+		down_duration
+	)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.scale = orig_scale
+		spr.position = orig_pos
+
+
 ## Desplaza solo el sprite hacia el rival y vuelve (HP bar / UI del spot no se mueven). Awaitable.
 static func move_spot_forward(
 	spot: BattleSpot,
@@ -70,6 +190,80 @@ static func move_spot_forward(
 	await tw.finished
 	if is_instance_valid(spr):
 		spr.position = origin
+
+
+## Baja el sprite en Y y vuelve (p. ej. impacto de Mordisco). Awaitable.
+static func nudge_spot_down(
+	spot: BattleSpot,
+	distance: float = 10.0,
+	duration: float = 0.1
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var origin := spr.position
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(spr, "position", origin + Vector2(0.0, distance), duration)
+	tw.tween_property(spr, "position", origin, duration)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.position = origin
+
+
+## Órbita circular del sprite alrededor de su posición (p. ej. Látigo). Awaitable.
+static func orbit_spot(
+	spot: BattleSpot,
+	radius: float = 10.0,
+	revolutions: float = 2.0,
+	duration: float = 0.7
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	if duration <= 0.0 or radius <= 0.0 or revolutions == 0.0:
+		return
+	var spr: Sprite2D = spot.sprite
+	var origin := spr.position
+	# Jugador: agujas del reloj. Rival: sentido contrario.
+	var dir := _forward_sign(spot)
+	var tw := spot.create_tween()
+	tw.tween_method(
+		func(t: float) -> void:
+			if not is_instance_valid(spr):
+				return
+			var angle := t * TAU * revolutions * dir
+			spr.position = origin + Vector2(sin(angle), -cos(angle)) * radius,
+		0.0,
+		1.0,
+		duration
+	)
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.position = origin
+
+
+## Ilumina un poco el sprite (modulate > 1) y vuelve. Awaitable.
+static func glow_spot(
+	spot: BattleSpot,
+	peak: float = 1.4,
+	up_duration: float = 0.08,
+	hold_duration: float = 0.25,
+	down_duration: float = 0.12
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var base := Color(1, 1, 1, 1)
+	var bright := Color(peak, peak, peak, 1)
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(spr, "modulate", bright, maxf(up_duration, 0.01))
+	if hold_duration > 0.0:
+		tw.tween_interval(hold_duration)
+	tw.tween_property(spr, "modulate", base, maxf(down_duration, 0.01))
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.modulate = base
 
 
 ## Oscurece el campo con un Polygon2D hijo de `parent`. Devuelve el overlay (o null).
@@ -116,14 +310,454 @@ static func wait(host: Node, seconds: float) -> void:
 	await host.get_tree().create_timer(seconds).timeout
 
 
+## Contenedor del destello + rayos en animation layer. Devuelve la raíz o null.
+static func _spawn_enter_light_root(animation_layer: Node2D, spot: BattleSpot) -> Node2D:
+	if animation_layer == null or not is_instance_valid(animation_layer):
+		return null
+	if spot == null or not is_instance_valid(spot):
+		return null
+	var instance: Node2D = ENTER_LIGHT_SCENE.instantiate() as Node2D
+	if instance == null:
+		return null
+
+	animation_layer.add_child(instance)
+	instance.z_index = ENTER_LIGHT_Z_INDEX
+	instance.z_as_relative = true
+
+	var ball_offset := _get_enter_flash_ball_offset(spot)
+	instance.global_position = spot.get_anchor_global_position(BattleSpot.ANCHOR_FEET) + ball_offset
+
+	var ground_flash := instance.get_node_or_null("GroundFlash") as Sprite2D
+	if ground_flash == null:
+		instance.queue_free()
+		return null
+
+	ground_flash.modulate = Color(1, 1, 1, 0)
+	ground_flash.frame = 0
+	ground_flash.z_index = 1
+	ground_flash.scale = Vector2(ENTER_FLASH_SCALE_START, ENTER_FLASH_SCALE_START)
+	var rays := _setup_enter_rays(instance)
+	var sparks := _setup_enter_sparks(animation_layer, instance, instance.global_position)
+	instance.set_meta(&"enter_rays", rays)
+	instance.set_meta(&"enter_sparks", sparks)
+	return instance
+
+
+static func _get_enter_sparks_from_light_root(light_root: Node2D) -> Array[Sprite2D]:
+	if light_root == null or not is_instance_valid(light_root):
+		return []
+	if light_root.has_meta(&"enter_sparks"):
+		var stored: Variant = light_root.get_meta(&"enter_sparks")
+		if stored is Array:
+			return stored as Array[Sprite2D]
+	var collected: Array[Sprite2D] = []
+	if light_root.has_meta(&"enter_sparks_root"):
+		var sparks_root: Node = light_root.get_meta(&"enter_sparks_root") as Node
+		if sparks_root != null and is_instance_valid(sparks_root):
+			for child in sparks_root.get_children():
+				if child is Sprite2D:
+					collected.append(child as Sprite2D)
+	return collected
+
+
+static func _get_enter_rays_from_light_root(light_root: Node2D) -> Array[Sprite2D]:
+	if light_root == null or not is_instance_valid(light_root):
+		return []
+	if light_root.has_meta(&"enter_rays"):
+		return light_root.get_meta(&"enter_rays") as Array[Sprite2D]
+	return []
+
+
+static func _enter_vfx_max_duration() -> float:
+	var max_time := _enter_specs_max_duration(ENTER_RAY_SPECS, 0.24)
+	for spec in ENTER_SPARK_SPECS:
+		max_time = maxf(
+			max_time,
+			float(spec["delay"]) + float(spec.get("life", ENTER_SPARK_DEFAULT_LIFE))
+		)
+	return max_time
+
+
+static func _enter_specs_max_duration(specs: Array[Dictionary], visual_tail: float) -> float:
+	var max_time := 0.0
+	for spec in specs:
+		max_time = maxf(max_time, float(spec.delay) + float(spec.grow) + visual_tail)
+	return max_time
+
+
+static func _enter_rays_max_duration() -> float:
+	return _enter_vfx_max_duration()
+
+
+static func _make_enter_beam_sprite(start_y: float) -> Sprite2D:
+	var beam := Sprite2D.new()
+	beam.texture = ENTER_RAY_TEXTURE
+	beam.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	beam.region_enabled = true
+	beam.region_rect = ENTER_RAY_REGION
+	beam.centered = false
+	var start_x := 0.28
+	beam.scale = Vector2(start_x, start_y)
+	beam.position = _enter_ray_position_for_scale(beam.scale)
+	beam.modulate = Color(1, 1, 1, 0)
+	return beam
+
+
+static func _make_enter_spark_sprite(frame: int) -> Sprite2D:
+	var spark := Sprite2D.new()
+	spark.texture = ENTER_FLASH_TEXTURE
+	spark.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	spark.hframes = 3
+	spark.frame = frame
+	spark.centered = true
+	spark.modulate = Color(1, 1, 1, 0)
+	return spark
+
+
+static func _setup_enter_sparks(
+	animation_layer: Node2D,
+	light_root: Node2D,
+	center_global: Vector2
+) -> Array[Sprite2D]:
+	var sparks: Array[Sprite2D] = []
+	if (
+		animation_layer == null
+		or not is_instance_valid(animation_layer)
+		or light_root == null
+		or not is_instance_valid(light_root)
+	):
+		return sparks
+
+	var sparks_root := Node2D.new()
+	sparks_root.name = "EnterSparks"
+	sparks_root.z_index = 2
+	sparks_root.z_as_relative = true
+	sparks_root.global_position = center_global
+	animation_layer.add_child(sparks_root)
+	light_root.set_meta(&"enter_sparks_root", sparks_root)
+
+	for spec in ENTER_SPARK_SPECS:
+		var spark := _make_enter_spark_sprite(0)
+		var spawn_reach := float(spec.get("spawn", 0.0))
+		spark.position = _enter_spark_position(spec, spawn_reach)
+		var end_scale := float(spec.get("scale", 0.35))
+		spark.scale = Vector2.ONE * end_scale * ENTER_SPARK_SCALE_START_RATIO
+		sparks_root.add_child(spark)
+		sparks.append(spark)
+	return sparks
+
+
+static func _setup_enter_rays(light_root: Node2D) -> Array[Sprite2D]:
+	var rays: Array[Sprite2D] = []
+	if light_root == null or not is_instance_valid(light_root):
+		return rays
+
+	var rays_root := Node2D.new()
+	rays_root.name = "Rays"
+	rays_root.z_index = -1
+	light_root.add_child(rays_root)
+
+	for spec in ENTER_RAY_SPECS:
+		var pivot := Node2D.new()
+		pivot.rotation = deg_to_rad(float(spec.angle))
+		var ray := _make_enter_beam_sprite(0.18)
+		ray.scale = Vector2(float(spec.max_x), 0.18)
+		ray.position = _enter_ray_position_for_scale(ray.scale)
+		pivot.add_child(ray)
+		rays_root.add_child(pivot)
+		rays.append(ray)
+	return rays
+
+
+static func _enter_ray_position_for_scale(scale: Vector2) -> Vector2:
+	return Vector2(
+		-ENTER_RAY_REGION.size.x * 0.5 * scale.x,
+		-ENTER_RAY_REGION.size.y * scale.y
+	)
+
+
+static func _apply_enter_ray_frame(ray: Sprite2D, spec: Dictionary, progress: float) -> void:
+	_apply_enter_beam_frame(
+		ray,
+		spec,
+		progress,
+		0.18,
+		ENTER_RAY_WIDTH_END_RATIO,
+		0.62
+	)
+
+
+static func _enter_spark_direction(angle_deg: float) -> Vector2:
+	return Vector2.from_angle(deg_to_rad(angle_deg - 90.0))
+
+
+static func _enter_spark_position(spec: Dictionary, dist_reach: float) -> Vector2:
+	var angle_deg := float(spec.get("angle", 0.0))
+	var radial := _enter_spark_direction(angle_deg) * dist_reach * ENTER_SPARK_MAX_REACH
+	if spec.has("offset"):
+		return radial + (spec["offset"] as Vector2)
+	return radial
+
+
+static func _enter_spark_travel_duration(
+	spec: Dictionary,
+	vfx_end: float
+) -> float:
+	var delay := float(spec.get("delay", 0.0))
+	var life := float(spec.get("life", ENTER_SPARK_DEFAULT_LIFE))
+	return maxf(life, vfx_end - delay)
+
+
+static func _compute_enter_light_fade_schedule(
+	scale_duration: float,
+	white_duration: float
+) -> Dictionary:
+	var white_fade := maxf(white_duration - scale_duration * 0.35, scale_duration * 0.55)
+	var white_delay := maxf(white_duration - white_fade, 0.0)
+	var flash_fade_start := white_delay + ENTER_FLASH_FADE_EXTRA_HOLD
+	var flash_fade_dur := white_fade * ENTER_FLASH_FADE_DURATION_SCALE
+	var spark_fade_start := maxf(
+		flash_fade_start - ENTER_SPARK_FADE_LEAD_BEFORE_FLASH,
+		scale_duration * 0.26
+	)
+	var ray_fade_start := maxf(
+		flash_fade_start - ENTER_RAY_FADE_LEAD_BEFORE_FLASH,
+		spark_fade_start + ENTER_SPARK_RAY_FADE_GAP
+	)
+	var vfx_end := flash_fade_start + flash_fade_dur
+	return {
+		"flash_fade_start": flash_fade_start,
+		"flash_fade_dur": flash_fade_dur,
+		"ray_fade_start": ray_fade_start,
+		"ray_fade_dur": maxf(
+			(flash_fade_start - ray_fade_start) + flash_fade_dur * ENTER_RAY_FADE_DURATION_SCALE,
+			0.24
+		),
+		"spark_fade_start": spark_fade_start,
+		"spark_fade_dur": maxf(
+			(flash_fade_start - spark_fade_start) + flash_fade_dur * ENTER_SPARK_FADE_DURATION_SCALE,
+			0.22
+		),
+		"vfx_end": vfx_end,
+	}
+
+
+static func _apply_enter_spark_frame(
+	spark: Sprite2D,
+	spec: Dictionary,
+	progress: float,
+	fade_schedule: Dictionary
+) -> void:
+	if spark == null or not is_instance_valid(spark):
+		return
+	var spawn_reach := float(spec.get("spawn", 0.0))
+	var end_reach := maxf(float(spec.get("reach", spawn_reach + 0.14)), spawn_reach + 0.10)
+	var end_scale := float(spec.get("scale", 0.35))
+	var delay := float(spec.get("delay", 0.0))
+	var vfx_end := float(fade_schedule.get("vfx_end", 0.75))
+	var travel_dur := _enter_spark_travel_duration(spec, vfx_end)
+	var elapsed := delay + progress * travel_dur
+
+	var move_t := clampf(progress, 0.0, 1.0)
+	if ENTER_SPARK_MOVE_POWER != 1.0:
+		move_t = pow(move_t, ENTER_SPARK_MOVE_POWER)
+	var dist_reach := lerpf(spawn_reach, end_reach, move_t)
+	spark.position = _enter_spark_position(spec, dist_reach)
+
+	var scale_t := clampf(progress / 0.52, 0.0, 1.0)
+	scale_t = scale_t * scale_t * (3.0 - 2.0 * scale_t)
+	var sc := lerpf(end_scale * ENTER_SPARK_SCALE_START_RATIO, end_scale, scale_t)
+	if progress > 0.82:
+		var shrink_t := clampf((progress - 0.82) / 0.18, 0.0, 1.0)
+		sc = lerpf(end_scale, end_scale * 0.7, shrink_t)
+	spark.scale = Vector2(sc, sc)
+
+	# Frame + modulate: avanzan con la distancia recorrida.
+	var warm_t := clampf(dist_reach * 0.88 + move_t * 0.12, 0.0, 1.0)
+	if warm_t < 0.34:
+		spark.frame = 0
+	elif warm_t < 0.67:
+		spark.frame = 1
+	else:
+		spark.frame = 2
+	var rgb := ENTER_RAY_COLOR_START.lerp(ENTER_RAY_COLOR_END, warm_t)
+	var alpha_peak := maxf(
+		lerpf(ENTER_SPARK_ALPHA_PEAK_INNER, ENTER_SPARK_ALPHA_PEAK, end_reach),
+		ENTER_SPARK_ALPHA_FLOOR
+	)
+	var alpha := _enter_spark_alpha_at(elapsed, delay, fade_schedule, alpha_peak)
+	spark.modulate = Color(rgb.r, rgb.g, rgb.b, alpha)
+
+
+static func _enter_spark_alpha_at(
+	elapsed: float,
+	delay: float,
+	fade_schedule: Dictionary,
+	alpha_peak: float
+) -> float:
+	if elapsed < delay:
+		return 0.0
+	var fade_in := ENTER_SPARK_FADE_IN_SEC
+	if elapsed < delay + fade_in:
+		var t := clampf((elapsed - delay) / fade_in, 0.0, 1.0)
+		t = t * t * (3.0 - 2.0 * t)
+		return lerpf(0.0, alpha_peak, t)
+	var fade_start := float(fade_schedule.get("spark_fade_start", 0.35))
+	if elapsed < fade_start:
+		return alpha_peak
+	var fade_dur := float(fade_schedule.get("spark_fade_dur", 0.28))
+	var fade_t := clampf((elapsed - fade_start) / fade_dur, 0.0, 1.0)
+	return lerpf(alpha_peak, 0.0, fade_t)
+
+
+static func _apply_enter_beam_frame(
+	beam: Sprite2D,
+	spec: Dictionary,
+	progress: float,
+	start_y: float,
+	width_end_ratio: float,
+	grow_window: float
+) -> void:
+	if beam == null or not is_instance_valid(beam):
+		return
+	var grow_t := clampf(progress / grow_window, 0.0, 1.0)
+	var max_x := float(spec.get("max_x", 0.28))
+	var scale_y := lerpf(start_y, float(spec.get("max_y", start_y)), grow_t)
+	var scale_x := lerpf(max_x, max_x * width_end_ratio, grow_t)
+	beam.scale = Vector2(scale_x, scale_y)
+	beam.position = _enter_ray_position_for_scale(beam.scale)
+	_apply_enter_ray_color(beam, progress)
+
+
+static func _apply_enter_ray_color(ray: Sprite2D, progress: float) -> void:
+	if ray == null or not is_instance_valid(ray):
+		return
+	var color_t := clampf(progress / 0.75, 0.0, 1.0)
+	var rgb := ENTER_RAY_COLOR_START.lerp(ENTER_RAY_COLOR_END, color_t)
+	ray.modulate = Color(rgb.r, rgb.g, rgb.b, ray.modulate.a)
+
+
+static func _start_enter_beam_alpha_tween(
+	spot: BattleSpot,
+	beam: Sprite2D,
+	delay: float,
+	fade_start: float,
+	fade_dur: float,
+	alpha_peak: float
+) -> void:
+	if spot == null or beam == null or not is_instance_valid(beam):
+		return
+	var beam_fade_start := maxf(fade_start, delay + 0.06)
+	var tw := spot.create_tween()
+	tw.tween_property(beam, "modulate:a", alpha_peak, 0.05).set_delay(delay)
+	var hold := maxf(beam_fade_start - delay - 0.05, 0.0)
+	if hold > 0.0:
+		tw.tween_interval(hold)
+	tw.tween_property(beam, "modulate:a", 0.0, fade_dur).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_OUT)
+
+
+static func _start_enter_ray_alpha_tween(
+	spot: BattleSpot,
+	ray: Sprite2D,
+	delay: float,
+	fade_schedule: Dictionary
+) -> void:
+	_start_enter_beam_alpha_tween(
+		spot,
+		ray,
+		delay,
+		float(fade_schedule.get("ray_fade_start", 0.3)),
+		float(fade_schedule.get("ray_fade_dur", 0.28)),
+		ENTER_RAY_ALPHA_PEAK
+	)
+
+
+static func _start_enter_ray_tweens(
+	spot: BattleSpot,
+	rays: Array[Sprite2D],
+	fade_schedule: Dictionary
+) -> void:
+	if spot == null or not is_instance_valid(spot):
+		return
+
+	for i in rays.size():
+		var ray: Sprite2D = rays[i]
+		if ray == null or not is_instance_valid(ray):
+			continue
+		var spec: Dictionary = ENTER_RAY_SPECS[i]
+		var delay: float = float(spec.delay)
+		var grow: float = float(spec.grow)
+		var visual_dur := grow + 0.24
+
+		_start_enter_ray_alpha_tween(spot, ray, delay, fade_schedule)
+
+		var tw := spot.create_tween()
+		tw.tween_method(
+			func(t: float) -> void: _apply_enter_ray_frame(ray, spec, t),
+			0.0,
+			1.0,
+			visual_dur
+		).set_delay(delay).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+static func _start_enter_spark_tweens(
+	vfx_host: Node,
+	sparks: Array[Sprite2D],
+	fade_schedule: Dictionary
+) -> void:
+	if vfx_host == null or not is_instance_valid(vfx_host):
+		return
+	var vfx_end := float(fade_schedule.get("vfx_end", 0.75))
+
+	for i in sparks.size():
+		var spark: Sprite2D = sparks[i]
+		if spark == null or not is_instance_valid(spark):
+			continue
+		var spec: Dictionary = ENTER_SPARK_SPECS[i]
+		var delay: float = float(spec["delay"])
+		var travel_dur := _enter_spark_travel_duration(spec, vfx_end)
+
+		var tw := vfx_host.create_tween()
+		tw.tween_method(
+			func(t: float) -> void: _apply_enter_spark_frame(spark, spec, t, fade_schedule),
+			0.0,
+			1.0,
+			travel_dur
+		).set_delay(delay).set_trans(Tween.TRANS_LINEAR)
+
+
+static func _apply_enter_ground_flash_scale(ground_flash: Sprite2D, pokemon_scale_factor: float) -> void:
+	if ground_flash == null or not is_instance_valid(ground_flash):
+		return
+	var t := inverse_lerp(POKEMON_ENTER_SCALE_START, 1.0, pokemon_scale_factor)
+	var sc := lerpf(ENTER_FLASH_SCALE_START, ENTER_FLASH_SCALE_END, t)
+	ground_flash.scale = Vector2(sc, sc)
+	if t < 0.33:
+		ground_flash.frame = 0
+	elif t < 0.66:
+		ground_flash.frame = 1
+	else:
+		ground_flash.frame = 2
+
+
+static func _get_enter_flash_ball_offset(spot: BattleSpot) -> Vector2:
+	if spot != null and spot.side != null and spot.side.type == BattleSide.Types.ENEMY:
+		return ENTER_FLASH_ENEMY_BALL_OFFSET
+	return ENTER_FLASH_PLAYER_BALL_OFFSET
+
+
 ## Aparición de Pokémon: pequeño + blanco → tamaño/color normales. Awaitable.
 ## Crece desde los pies (altura de la ball) hacia arriba, sin teleport final.
 ## El flash blanco es un overlay que se desvanece sobre el sprite a color real
 ## (evita el pop oscuro al quitar el shader del propio sprite).
+## Si `animation_layer` no es null, añade el destello naranja sincronizado al crecimiento.
 static func pokemon_enter_spot(
 	spot: BattleSpot,
 	scale_duration: float = 0.45,
-	white_duration: float = 0.75
+	white_duration: float = 0.75,
+	animation_layer: Node2D = null
 ) -> void:
 	if spot == null or not is_instance_valid(spot):
 		return
@@ -150,7 +784,7 @@ static func pokemon_enter_spot(
 
 	spr.visible = true
 	spr.modulate = Color(1, 1, 1, 1)
-	var start_scale := orig_scale * 0.12
+	var start_scale := orig_scale * POKEMON_ENTER_SCALE_START
 	spr.scale = start_scale
 	# Pies fijos: al reducir scale el centro subiría; bajamos position para anclar abajo.
 	spr.position = _position_with_feet_anchored(orig_pos, half_h, orig_scale.y, start_scale.y)
@@ -169,6 +803,32 @@ static func pokemon_enter_spot(
 	# Blanco se mantiene y luego baja; acaba después del scale.
 	var white_fade := maxf(white_duration - scale_duration * 0.35, scale_duration * 0.55)
 	var white_delay := maxf(white_duration - white_fade, 0.0)
+	var fade_schedule := _compute_enter_light_fade_schedule(scale_duration, white_duration)
+
+	var ground_flash: Sprite2D = null
+	var light_root: Node2D = null
+	var enter_rays: Array[Sprite2D] = []
+	if animation_layer != null and is_instance_valid(animation_layer):
+		light_root = _spawn_enter_light_root(animation_layer, spot)
+		if light_root != null:
+			ground_flash = light_root.get_node_or_null("GroundFlash") as Sprite2D
+			enter_rays = _get_enter_rays_from_light_root(light_root)
+			var enter_sparks := _get_enter_sparks_from_light_root(light_root)
+			_start_enter_ray_tweens(spot, enter_rays, fade_schedule)
+			_start_enter_spark_tweens(light_root, enter_sparks, fade_schedule)
+
+	var ground_flash_alpha_tw: Tween = null
+	if ground_flash != null:
+		var flash_fade_start := float(fade_schedule.get("flash_fade_start", white_delay))
+		var flash_fade_dur := float(fade_schedule.get("flash_fade_dur", white_fade))
+		ground_flash_alpha_tw = spot.create_tween()
+		ground_flash_alpha_tw.tween_property(ground_flash, "modulate:a", 1.0, 0.06)
+		var hold := maxf(flash_fade_start - 0.06, 0.0)
+		if hold > 0.0:
+			ground_flash_alpha_tw.tween_interval(hold)
+		ground_flash_alpha_tw.tween_property(ground_flash, "modulate:a", 0.0, flash_fade_dur).set_trans(
+			Tween.TRANS_SINE
+		).set_ease(Tween.EASE_OUT)
 
 	var tw := spot.create_tween()
 	tw.set_parallel(true)
@@ -181,8 +841,10 @@ static func pokemon_enter_spot(
 				shadow.scale = sc
 				shadow.position = _position_with_feet_anchored(
 					shadow_orig_pos, shadow_half_h, orig_scale.y, sc.y
-				),
-		0.12,
+				)
+			if ground_flash != null and is_instance_valid(ground_flash):
+				_apply_enter_ground_flash_scale(ground_flash, s),
+		POKEMON_ENTER_SCALE_START,
 		1.0,
 		scale_duration
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -192,7 +854,15 @@ static func pokemon_enter_spot(
 	if show_shadow:
 		tw.tween_property(shadow, "modulate:a", 1.0, scale_duration)
 	await tw.finished
+	var vfx_end := maxf(float(fade_schedule.get("vfx_end", white_delay + white_fade)), _enter_vfx_max_duration())
+	await wait(spot, maxf(vfx_end - scale_duration, 0.0))
 
+	if light_root != null and is_instance_valid(light_root):
+		if light_root.has_meta(&"enter_sparks_root"):
+			var sparks_root: Node = light_root.get_meta(&"enter_sparks_root") as Node
+			if sparks_root != null and is_instance_valid(sparks_root):
+				sparks_root.queue_free()
+		light_root.queue_free()
 	if is_instance_valid(flash):
 		flash.queue_free()
 	if is_instance_valid(spr):
@@ -409,6 +1079,18 @@ static func finalize_trainer_exit(trainer_root: Node2D) -> void:
 	trainer_root.position = rest
 	set_trainer_idle_frame(trainer_root)
 	_hide_trainer_visual(trainer_root)
+	if trainer_root.has_meta("trainer_send_in_exit_active"):
+		trainer_root.remove_meta("trainer_send_in_exit_active")
+
+
+## Muestra al entrenador en su posición de reposo (requiere `trainer_rest_pos` previo).
+static func show_trainer_at_rest(trainer_root: Node2D) -> void:
+	if trainer_root == null or not is_instance_valid(trainer_root):
+		return
+	if trainer_root.has_meta("trainer_rest_pos"):
+		trainer_root.position = trainer_root.get_meta("trainer_rest_pos")
+	set_trainer_idle_frame(trainer_root)
+	_show_trainer_visual(trainer_root)
 
 
 static func _show_trainer_visual(trainer_root: Node2D) -> void:
@@ -485,8 +1167,8 @@ static func pokemon_exit_player_slide(
 ## Rival recall (ref. frames cambio pokemon rival):
 ## ball cerrada 0.5s → abierta 0.5s → blanco a tamaño completo → scale↓ + ball cierra a la vez →
 ## sprite desaparece → ball cerrada 0.5s → ball out.
-## Offset Y alineado con el reposo de throw_enemy (VisualRoot en Feet + Ball (0,-56)).
-const ENEMY_RECALL_BALL_OFFSET := Vector2(0.0, -56.0)
+## Recall rival: centro de la ball en BallGround (suelo del spot).
+const ENEMY_RECALL_BALL_OFFSET := Vector2.ZERO
 const ENEMY_RECALL_CLOSED_INTRO_SEC := 0.5
 const ENEMY_RECALL_OPEN_HOLD_SEC := 0.5
 const ENEMY_RECALL_WHITE_SEC := 0.28
@@ -523,11 +1205,15 @@ static func pokemon_exit_enemy_recall(spot: BattleSpot) -> void:
 	ball.z_index = FieldUI.FIELD_POKEBALL_Z
 	ball.modulate = Color(1, 1, 1, 0)
 	spot.add_child(ball)
-	var feet := spot.get_anchor_node(BattleSpot.ANCHOR_FEET)
-	if feet != null:
-		ball.global_position = feet.global_position + ENEMY_RECALL_BALL_OFFSET
+	var ball_ground := spot.get_anchor_node(BattleSpot.ANCHOR_BALL_GROUND)
+	if ball_ground != null:
+		ball.global_position = ball_ground.global_position + ENEMY_RECALL_BALL_OFFSET
 	else:
-		ball.position = ENEMY_RECALL_BALL_OFFSET
+		var feet := spot.get_anchor_node(BattleSpot.ANCHOR_FEET)
+		if feet != null:
+			ball.global_position = feet.global_position + Vector2(0.0, -56.0)
+		else:
+			ball.position = Vector2(0.0, -56.0)
 
 	# 1) Ball cerrada visible ~0.5s.
 	var tw_in := spot.create_tween()

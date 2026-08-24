@@ -14,9 +14,13 @@ enum SpotAnchor {
 	PROJECTILE_ORIGIN,
 	STATUS_ICON,
 	FEET,
+	HEAD,
+	BALL_GROUND,
 }
 
 const MIN_AUTHORED_SPAN := 0.001
+## En el lado jugador, FEET queda cerca del panel: subir VFX locales anclados ahí.
+const PLAYER_FEET_VFX_LIFT := 28.0
 
 @export var animation_scene: PackedScene
 @export var animation_name: String = "default"
@@ -24,12 +28,16 @@ const MIN_AUTHORED_SPAN := 0.001
 @export var blocks_visualize: bool = true
 ## Si hay UserAnchor+TargetAnchor+VisualRoot (o spots), encaja VisualRoot al segmento real.
 @export var fit_visual_to_anchors: bool = true
+## Con fit_visual_to_anchors=false: true = VisualRoot en el user (p. ej. Growl); false = en el target.
+@export var place_visual_on_user: bool = false
 ## Longitud authorada del viaje completo en +X local (debe coincidir con las keys del proyectil).
 @export var authored_travel_length: float = 200.0
 ## Punto del spot del usuario al que se mapea UserAnchor / origen del VisualRoot.
 @export var user_spot_anchor: SpotAnchor = SpotAnchor.PROJECTILE_ORIGIN
 ## Punto del spot del target al que se apunta el VisualRoot.
 @export var target_spot_anchor: SpotAnchor = SpotAnchor.HIT_CENTER
+## Ancla de `TargetVisualRoot` (overlay en target, sin rotar). Independiente del destino del proyectil.
+@export var target_visual_spot_anchor: SpotAnchor = SpotAnchor.FEET
 
 ## Punto de entrada único. Coroutine: el caller debe usar `await`.
 func play(
@@ -105,6 +113,10 @@ static func spot_anchor_name(anchor: SpotAnchor) -> String:
 			return BattleSpot.ANCHOR_STATUS_ICON
 		SpotAnchor.FEET:
 			return BattleSpot.ANCHOR_FEET
+		SpotAnchor.HEAD:
+			return BattleSpot.ANCHOR_HEAD
+		SpotAnchor.BALL_GROUND:
+			return BattleSpot.ANCHOR_BALL_GROUND
 		_:
 			return BattleSpot.ANCHOR_CENTER
 
@@ -141,15 +153,19 @@ func _apply_scene_anchors_and_fit_visual(
 	if not fit_visual_to_anchors:
 		# Status / VFX locales: VisualRoot en el spot afectado (target, o user si no hay target).
 		_place_visual_on_affected_spot(instance, user_spot, target_spots)
+		_place_target_visual_root(instance, user_spot, target_spots)
 		return
 	if not has_real_span:
+		_place_target_visual_root(instance, user_spot, target_spots)
 		return
 	if authored_travel_length < MIN_AUTHORED_SPAN:
 		push_warning("BattleAnimation: authored_travel_length inválido; no se escala VisualRoot.")
+		_place_target_visual_root(instance, user_spot, target_spots)
 		return
 
 	var visual := instance.get_node_or_null("VisualRoot") as Node2D
 	if visual == null:
+		_place_target_visual_root(instance, user_spot, target_spots)
 		return
 
 	var real_vec := target_global - user_global
@@ -163,9 +179,34 @@ func _apply_scene_anchors_and_fit_visual(
 	if sy < MIN_AUTHORED_SPAN:
 		sy = 1.0
 	visual.scale = Vector2(stretch, sy)
+	_place_target_visual_root(instance, user_spot, target_spots)
+
+
+## Overlay en el target sin heredar rotación/estirado de VisualRoot (p. ej. burn de Ascuas).
+## Nodo opcional: `TargetVisualRoot` — se coloca en `target_visual_spot_anchor` con ejes de pantalla.
+func _place_target_visual_root(
+	instance: Node,
+	user_spot: BattleSpot,
+	target_spots: Array[BattleSpot]
+) -> void:
+	var root := instance.get_node_or_null("TargetVisualRoot") as Node2D
+	if root == null:
+		return
+	var spot := _first_target(target_spots)
+	var anchor_name := spot_anchor_name(target_visual_spot_anchor)
+	if spot == null:
+		spot = user_spot
+		anchor_name = spot_anchor_name(user_spot_anchor)
+	if spot == null or not is_instance_valid(spot):
+		return
+	root.global_position = spot.get_anchor_global_position(anchor_name)
+	root.rotation = 0.0
+	_apply_local_vfx_facing(root, spot)
+	_nudge_player_feet_vfx(root, spot, anchor_name)
 
 
 ## Coloca VisualRoot en el anchor del spot afectado (sin rotar/estirar).
+## place_visual_on_user: VFX que salen del atacante (Growl). Si no, del target (Scratch).
 func _place_visual_on_affected_spot(
 	instance: Node,
 	user_spot: BattleSpot,
@@ -174,15 +215,50 @@ func _place_visual_on_affected_spot(
 	var visual := instance.get_node_or_null("VisualRoot") as Node2D
 	if visual == null:
 		return
-	var spot := _first_target(target_spots)
-	var anchor_name := spot_anchor_name(target_spot_anchor)
-	if spot == null:
+	var spot: BattleSpot = null
+	var anchor_name := ""
+	if place_visual_on_user:
 		spot = user_spot
 		anchor_name = spot_anchor_name(user_spot_anchor)
+	else:
+		spot = _first_target(target_spots)
+		anchor_name = spot_anchor_name(target_spot_anchor)
+		if spot == null:
+			spot = user_spot
+			anchor_name = spot_anchor_name(user_spot_anchor)
 	if spot == null or not is_instance_valid(spot):
 		return
 	visual.global_position = spot.get_anchor_global_position(anchor_name)
 	visual.rotation = 0.0
+	# Authoring en +X (lado derecho del player). Rival: espejo hacia la izquierda.
+	_apply_local_vfx_facing(visual, spot)
+	_nudge_player_feet_vfx(visual, spot, anchor_name)
+
+
+func _is_player_spot(spot: BattleSpot) -> bool:
+	if spot == null:
+		return false
+	if spot.side != null:
+		return spot.side.type == BattleSide.Types.PLAYER
+	if spot.pokemon != null and spot.pokemon.side != null:
+		return spot.pokemon.side.type == BattleSide.Types.PLAYER
+	return false
+
+
+func _apply_local_vfx_facing(node: Node2D, spot: BattleSpot) -> void:
+	var facing_right := _is_player_spot(spot)
+	var sy := absf(node.scale.y)
+	if sy < MIN_AUTHORED_SPAN:
+		sy = 1.0
+	node.scale = Vector2(1.0 if facing_right else -1.0, sy)
+
+
+func _nudge_player_feet_vfx(node: Node2D, spot: BattleSpot, anchor_name: String) -> void:
+	if anchor_name != BattleSpot.ANCHOR_FEET:
+		return
+	if not _is_player_spot(spot):
+		return
+	node.global_position.y -= PLAYER_FEET_VFX_LIFT
 
 
 func _first_target(target_spots: Array[BattleSpot]) -> BattleSpot:

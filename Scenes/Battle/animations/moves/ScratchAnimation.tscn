@@ -1,11 +1,11 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
-[ext_resource type="Texture2D" uid="uid://cfwn1eiu3gkkd" path="res://Sprites/Batalla/Moves Animations/TackleFrames.png" id="2_tackle"]
+[ext_resource type="Texture2D" uid="uid://dgmqlixxkta43" path="res://Sprites/Batalla/Moves Animations/ScratchFrames.png" id="2_scratch"]
 
 [sub_resource type="Animation" id="Animation_default"]
 resource_name = "default"
-length = 0.52
+length = 0.42
 step = 0.02
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -14,42 +14,48 @@ tracks/0/path = NodePath("Hooks")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.12, 0.28),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0.02),
+"transitions": PackedFloat32Array(1),
 "values": [{
-"args": [24.0, 0.12],
-"method": &"user_move_forward"
-}, {
-"args": [&"shake", [4.0, 0.16]],
-"method": &"call_on_target"
-}, {
-"args": [&"shake", [3.0, 0.16]],
+"args": [&"shake", [3.0, 0.35]],
 "method": &"call_on_target"
 }]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualRoot/Impact:modulate")
+tracks/1/path = NodePath("VisualRoot/Scratch:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.12, 0.16, 0.36, 0.48),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0.4), Color(1, 1, 1, 0)]
+"times": PackedFloat32Array(0, 0.06, 0.12, 0.18, 0.24, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 4]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualRoot/Impact:scale")
+tracks/2/path = NodePath("VisualRoot/Scratch:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.12, 0.16, 0.48),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.02, 0.28, 0.36),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0.65, 0.65), Vector2(0.75, 0.75), Vector2(0.7, 0.7)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/Scratch:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 2), Vector2(6, 12)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
@@ -57,7 +63,7 @@ _data = {
 &"default": SubResource("Animation_default")
 }
 
-[node name="TackleAnimation" type="Node2D"]
+[node name="ScratchAnimation" type="Node2D"]
 
 [node name="Hooks" type="Node" parent="."]
 script = ExtResource("1_hooks")
@@ -71,11 +77,12 @@ gizmo_extents = 16.0
 
 [node name="VisualRoot" type="Node2D" parent="."]
 
-[node name="Impact" type="Sprite2D" parent="VisualRoot"]
+[node name="Scratch" type="Sprite2D" parent="VisualRoot"]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(0, 6)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("2_tackle")
+position = Vector2(0, 2)
+texture = ExtResource("2_scratch")
+hframes = 1
+vframes = 5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

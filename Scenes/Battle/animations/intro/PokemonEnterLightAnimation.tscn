@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" uid="uid://dvfxguqymi05e" path="res://Sprites/Batalla/Battle Animations/EnterFlashFrames.png" id="1_flash"]
+
+[node name="PokemonEnterLightAnimation" type="Node2D"]
+
+[node name="GroundFlash" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+z_index = 1
+position = Vector2(0, 6)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("1_flash")
+hframes = 3

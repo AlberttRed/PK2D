@@ -262,7 +262,7 @@ metadata/_edit_lock_ = true
 
 [node name="PokemonSpotA" parent="EnemyBase" unique_id=299394794 instance=ExtResource("5_ymflm")]
 z_index = 1
-position = Vector2(432, 140)
+position = Vector2(427, 155)
 
 [node name="Sprite" parent="EnemyBase/PokemonSpotA" index="0" unique_id=214919145]
 texture = ExtResource("23_e18v2")
@@ -273,7 +273,7 @@ z_index = -1
 position = Vector2(2, 32)
 
 [node name="HPBar" parent="EnemyBase/PokemonSpotA" index="2" unique_id=782842345]
-position = Vector2(-306, -107)
+position = Vector2(-301, -122)
 texture = ExtResource("24_xmfry")
 
 [node name="lblName" parent="EnemyBase/PokemonSpotA/HPBar" index="0"]
@@ -325,12 +325,12 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="HPBarPos_Double" parent="EnemyBase/PokemonSpotA/Positions" index="1" unique_id=1763141181]
-position = Vector2(-306, -107)
+position = Vector2(-301, -122)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="PokemonSpotB" parent="EnemyBase" unique_id=914920463 instance=ExtResource("5_ymflm")]
-position = Vector2(360, 140)
+position = Vector2(355, 140)
 
 [node name="Sprite" parent="EnemyBase/PokemonSpotB" index="0" unique_id=214919145]
 texture = ExtResource("23_ymflm")
@@ -341,7 +341,7 @@ z_index = -1
 position = Vector2(2, 32)
 
 [node name="HPBar" parent="EnemyBase/PokemonSpotB" index="2" unique_id=782842345]
-position = Vector2(-246, -53)
+position = Vector2(-241, -53)
 texture = ExtResource("43_b6gim")
 
 [node name="lblName" parent="EnemyBase/PokemonSpotB/HPBar" index="0"]
@@ -393,7 +393,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="HPBarPos_Double" parent="EnemyBase/PokemonSpotB/Positions" index="1" unique_id=1763141181]
-position = Vector2(-246, -53)
+position = Vector2(-241, -53)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
@@ -454,7 +454,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="SpotA_Double" type="Marker2D" parent="EnemyBase/Positions" unique_id=1793974629]
-position = Vector2(432, 140)
+position = Vector2(427, 155)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
@@ -464,7 +464,7 @@ gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 
 [node name="SpotB_Double" type="Marker2D" parent="EnemyBase/Positions" unique_id=2133069268]
-position = Vector2(360, 140)
+position = Vector2(355, 140)
 gizmo_extents = 50.0
 metadata/_edit_lock_ = true
 

@@ -8,6 +8,15 @@ var index = null
 var pokemon: BattlePokemon = null
 var side: BattleSide
 var tween: Tween
+var _selection_bounce_sprite_rest_y: float = 0.0
+var _selection_bounce_hp_rest_y: float = 0.0
+var _selection_bounce_hp_active: bool = false
+var _selection_bounce_active: bool = false
+var _selection_bounce_elapsed: float = 0.0
+
+## Resaltado mientras eliges acción/movimiento (estilo juegos originales).
+const SELECTION_BOUNCE_OFFSET := 3.0
+const SELECTION_BOUNCE_CYCLE_SEC := 0.9
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var shadow: Sprite2D = $Shadow
@@ -23,6 +32,11 @@ const ANCHOR_HIT_CENTER := "HitCenter"
 const ANCHOR_PROJECTILE_ORIGIN := "ProjectileOrigin"
 const ANCHOR_STATUS_ICON := "StatusIcon"
 const ANCHOR_FEET := "Feet"
+const ANCHOR_HEAD := "Head"
+## Suelo del spot (sombra / campo): reposo de Poké Ball rival, distinto del bbox Feet.
+const ANCHOR_BALL_GROUND := "BallGround"
+
+const _OPAQUE_ALPHA_THRESHOLD := 0.06
 
 
 func get_anchor_node(anchor_name: String) -> Node2D:
@@ -43,8 +57,189 @@ func get_anchor_global_position(anchor_name: String) -> Vector2:
 	return global_position
 
 
+## Recalcula Markers de Anchors según el bbox opaco del sprite actual.
+## Spot-local: Feet abajo, Head arriba, Center/HitCenter en el cuerpo.
+func refresh_visual_anchors() -> void:
+	if anchors_root == null:
+		return
+	var mid_x := 0.0
+	if sprite == null:
+		_refresh_ball_ground_anchor(mid_x)
+		return
+	var opaque := _get_sprite_opaque_rect_in_spot()
+	if opaque.size.x <= 0.0 or opaque.size.y <= 0.0:
+		_refresh_ball_ground_anchor(mid_x)
+		return
+
+	mid_x = opaque.position.x + opaque.size.x * 0.5
+	var top_y := opaque.position.y
+	var bottom_y := opaque.position.y + opaque.size.y
+	var center_y := opaque.position.y + opaque.size.y * 0.5
+	## Un poco por encima del centro geométrico (torso / zona de impacto).
+	var hit_y := opaque.position.y + opaque.size.y * 0.42
+
+	_set_anchor_position(ANCHOR_FEET, Vector2(mid_x, bottom_y))
+	_set_anchor_position(ANCHOR_HEAD, Vector2(mid_x, top_y))
+	_set_anchor_position(ANCHOR_CENTER, Vector2(mid_x, center_y))
+	_set_anchor_position(ANCHOR_HIT_CENTER, Vector2(mid_x, hit_y))
+
+	var toward_enemy := 1.0
+	if side != null and side.type == BattleSide.Types.ENEMY:
+		toward_enemy = -1.0
+	elif pokemon != null and pokemon.side != null and pokemon.side.type == BattleSide.Types.ENEMY:
+		toward_enemy = -1.0
+
+	_set_anchor_position(
+		ANCHOR_PROJECTILE_ORIGIN,
+		Vector2(mid_x + toward_enemy * opaque.size.x * 0.22, hit_y - opaque.size.y * 0.05)
+	)
+	var status_x := opaque.position.x - 8.0
+	if toward_enemy < 0.0:
+		status_x = opaque.position.x + opaque.size.x + 8.0
+	_set_anchor_position(ANCHOR_STATUS_ICON, Vector2(status_x, top_y))
+
+	_refresh_ball_ground_anchor(mid_x)
+
+
+## Suelo visual del spot (línea de sombra). No usar Feet dinámico: el bbox del sprite queda más arriba.
+const BALL_GROUND_SPOT_A_Y_NUDGE := -10.0
+const BALL_GROUND_SPOT_B_Y_NUDGE := -5.0
+
+
+func _refresh_ball_ground_anchor(mid_x: float) -> void:
+	var ground_y := 88.0
+	if shadow != null:
+		ground_y = shadow.position.y
+	if index == 1:
+		ground_y += BALL_GROUND_SPOT_A_Y_NUDGE
+	elif index == 2:
+		ground_y += BALL_GROUND_SPOT_B_Y_NUDGE
+	_set_anchor_position(ANCHOR_BALL_GROUND, Vector2(mid_x, ground_y))
+
+
+func _set_anchor_position(anchor_name: String, spot_local: Vector2) -> void:
+	var node := anchors_root.get_node_or_null(anchor_name) as Node2D
+	if node == null:
+		return
+	# Anchors cuelgan de Positions/Anchors; convertir desde espacio del spot.
+	node.position = anchors_root.to_local(to_global(spot_local))
+
+
+## Rect del contenido opaco del sprite en coordenadas locales del BattleSpot.
+## Respeta el centrado de Sprite2D y el margin de AtlasTexture (región inset en el frame).
+func _get_sprite_opaque_rect_in_spot() -> Rect2:
+	var tex: Texture2D = sprite.texture
+	if tex == null:
+		return Rect2()
+
+	var frame_size := tex.get_size()
+	var region_origin := Vector2.ZERO
+	var region_size := frame_size
+	if tex is AtlasTexture:
+		var atlas_tex := tex as AtlasTexture
+		region_size = atlas_tex.region.size
+		region_origin = Vector2(atlas_tex.margin.position.x, atlas_tex.margin.position.y)
+
+	var img: Image = tex.get_image()
+	var min_x := 0
+	var min_y := 0
+	var max_x := 0
+	var max_y := 0
+
+	if img != null and not img.is_empty():
+		var w := img.get_width()
+		var h := img.get_height()
+		min_x = w
+		min_y = h
+		max_x = -1
+		max_y = -1
+		var found := false
+		for y in h:
+			for x in w:
+				if img.get_pixel(x, y).a > _OPAQUE_ALPHA_THRESHOLD:
+					min_x = mini(min_x, x)
+					min_y = mini(min_y, y)
+					max_x = maxi(max_x, x)
+					max_y = maxi(max_y, y)
+					found = true
+		if not found:
+			min_x = 0
+			min_y = 0
+			max_x = w - 1
+			max_y = h - 1
+		# get_image() a veces es solo la región; a veces el frame ya con padding.
+		# Solo sumar margin si los píxeles están en espacio de región.
+		var image_is_region_space := (
+			tex is AtlasTexture
+			and absf(float(w) - region_size.x) < 0.5
+			and absf(float(h) - region_size.y) < 0.5
+		)
+		if not image_is_region_space:
+			region_origin = Vector2.ZERO
+	else:
+		# Sin imagen legible: usar el frame completo (incluye margins).
+		max_x = int(frame_size.x) - 1
+		max_y = int(frame_size.y) - 1
+		region_origin = Vector2.ZERO
+
+	var top_left := Vector2.ZERO
+	if sprite.centered:
+		top_left = -frame_size * 0.5
+	top_left += sprite.offset
+	top_left += region_origin
+
+	var opaque_pos := sprite.position + top_left + Vector2(min_x, min_y)
+	var opaque_size := Vector2(max_x - min_x + 1, max_y - min_y + 1)
+	return Rect2(opaque_pos, opaque_size)
+
+
+## Alinea el bbox opaco sobre la sombra del spot (centro X + contacto Y).
+## BallGround no se usa aquí: tiene nudge de pokéball distinto al contacto visual.
+## Luego aplica battlerPlayerY / battlerEnemyY y resta battlerAltitude.
+const SPRITE_SHADOW_CONTACT_Y_NUDGE := 6.0
+
+func _align_sprite_to_ground() -> void:
+	if sprite == null or sprite.texture == null:
+		return
+
+	sprite.position = Vector2.ZERO
+	var ground_x := 0.0
+	var ground_y := 88.0
+	if shadow != null:
+		ground_x = shadow.position.x
+		# Centro de la sombra + nudge: el oval queda bajo los pies, no flotando encima.
+		ground_y = shadow.position.y + SPRITE_SHADOW_CONTACT_Y_NUDGE
+
+	var opaque := _get_sprite_opaque_rect_in_spot()
+	if opaque.size.y <= 0.0:
+		return
+
+	var opaque_bottom := opaque.position.y + opaque.size.y
+	var opaque_mid_x := opaque.position.x + opaque.size.x * 0.5
+	sprite.position.x += ground_x - opaque_mid_x
+	sprite.position.y += ground_y - opaque_bottom
+	sprite.position.y += _species_battler_y_nudge()
+
+
+func _species_battler_y_nudge() -> float:
+	if pokemon == null or pokemon.base_data == null or pokemon.base_data.base == null:
+		return 0.0
+	var data: PokemonData = pokemon.base_data.base
+	var is_player := false
+	if side != null:
+		is_player = side.type == BattleSide.Types.PLAYER
+	elif pokemon.side != null:
+		is_player = pokemon.side.type == BattleSide.Types.PLAYER
+	var nudge := float(data.battlerPlayerY if is_player else data.battlerEnemyY)
+	# Altitude sube el sprite (vuelo / flotación).
+	nudge -= float(data.battlerAltitude)
+	return nudge
+
+
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
+	_refresh_ball_ground_anchor(0.0)
+	set_process(false)
 
 func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	self.pokemon = _pokemon
@@ -57,8 +252,9 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	else:
 		sprite.texture = self.pokemon.get_front_sprite()
 
-	# Posicionar sprite si hiciera falta (ya tenías set_sprite_position)
-	#set_sprite_position()
+	_align_sprite_to_ground()
+	refresh_visual_anchors()
+
 	if not pokemon.status_changed.is_connected(_on_status_changed):
 		pokemon.status_changed.connect(_on_status_changed)
 	# Mostrar sombra si es salvaje
@@ -113,16 +309,20 @@ func _register_persistent_ailment_effect_if_needed(bp: BattlePokemon) -> void:
 
 
 func clear() -> void:
+	stop_selection_bounce()
 	sprite.texture = null
+	sprite.position = Vector2.ZERO
 	hide()
 
-##	Remueve el Pokémon debilitado del battlespot y limpia la UI
+## Remueve el Pokémon debilitado del battlespot y limpia la UI
 func remove_pokemon() -> void:
+	stop_selection_bounce()
 	if pokemon:
 		pokemon.in_battle = false
 		pokemon.battle_spot = null
 	pokemon = null
 	sprite.texture = null
+	sprite.position = Vector2.ZERO
 	sprite.visible = false
 	shadow.visible = false
 	if hp_bar:
@@ -164,6 +364,49 @@ func highlight(active: bool) -> void:
 		tween.tween_property($Sprite, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	else:
 		$Sprite.modulate.a = 1.0
+
+
+## Pequeño bounce arriba/abajo del sprite y la HP bar mientras se elige acción o movimiento.
+func start_selection_bounce() -> void:
+	stop_selection_bounce()
+	if sprite == null or not sprite.visible:
+		return
+	_selection_bounce_sprite_rest_y = sprite.position.y
+	_selection_bounce_hp_active = hp_bar != null and hp_bar.visible
+	if _selection_bounce_hp_active:
+		_selection_bounce_hp_rest_y = hp_bar.global_position.y
+	# Fase por tiempo real: movimiento continuo sin hitch al reiniciar el ciclo.
+	_selection_bounce_elapsed = 0.0
+	_selection_bounce_active = true
+	set_process(true)
+
+
+func stop_selection_bounce() -> void:
+	_selection_bounce_active = false
+	set_process(false)
+	_selection_bounce_elapsed = 0.0
+	if sprite != null and is_instance_valid(sprite):
+		sprite.position.y = _selection_bounce_sprite_rest_y
+	if _selection_bounce_hp_active and hp_bar != null and is_instance_valid(hp_bar):
+		hp_bar.global_position.y = _selection_bounce_hp_rest_y
+	_selection_bounce_hp_active = false
+
+
+func _process(delta: float) -> void:
+	if not _selection_bounce_active:
+		return
+	_selection_bounce_elapsed += delta
+	var phase := fmod(_selection_bounce_elapsed / SELECTION_BOUNCE_CYCLE_SEC, 1.0)
+	_update_selection_bounce(phase)
+
+
+func _update_selection_bounce(t: float) -> void:
+	# Seno completo continuo (misma posición y velocidad en t=0 y t=1).
+	var offset := sin(t * TAU) * SELECTION_BOUNCE_OFFSET
+	if sprite != null and is_instance_valid(sprite):
+		sprite.position.y = _selection_bounce_sprite_rest_y - offset
+	if _selection_bounce_hp_active and hp_bar != null and is_instance_valid(hp_bar):
+		hp_bar.global_position.y = _selection_bounce_hp_rest_y + offset
 
 func get_opponent_side() -> BattleSide:
 	return side.opponent_side
@@ -221,8 +464,24 @@ func shake(intensity: float = 4.0, duration: float = 0.25) -> void:
 	await BattleAnimationUtils.shake_spot(self, intensity, duration)
 
 
+func pulse_scale(peak_scale: float = 1.12, up_duration: float = 0.12, down_duration: float = 0.16) -> void:
+	await BattleAnimationUtils.pulse_scale_spot(self, peak_scale, up_duration, down_duration)
+
+
 func move_forward(distance: float = 16.0, duration: float = 0.12) -> void:
 	await BattleAnimationUtils.move_spot_forward(self, distance, duration)
+
+
+func nudge_down(distance: float = 10.0, duration: float = 0.1) -> void:
+	await BattleAnimationUtils.nudge_spot_down(self, distance, duration)
+
+
+func orbit_circle(radius: float = 10.0, revolutions: float = 2.0, duration: float = 0.7) -> void:
+	await BattleAnimationUtils.orbit_spot(self, radius, revolutions, duration)
+
+
+func glow(peak: float = 1.4, up_duration: float = 0.08, hold_duration: float = 0.25, down_duration: float = 0.12) -> void:
+	await BattleAnimationUtils.glow_spot(self, peak, up_duration, hold_duration, down_duration)
 
 
 ## Aparición al enviar: scale + de-white. Awaitable.

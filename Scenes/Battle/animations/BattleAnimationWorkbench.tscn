@@ -51,6 +51,10 @@ gizmo_extents = 12.0
 position = Vector2(0, 48)
 gizmo_extents = 12.0
 
+[node name="Head" type="Marker2D" parent="PlayerBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, -48)
+gizmo_extents = 12.0
+
 [node name="EnemyBase" type="Node2D" parent="."]
 z_index = -1
 
@@ -86,6 +90,10 @@ gizmo_extents = 12.0
 
 [node name="Feet" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
 position = Vector2(0, 48)
+gizmo_extents = 12.0
+
+[node name="Head" type="Marker2D" parent="EnemyBase/PokemonSpotA/Positions/Anchors"]
+position = Vector2(0, -48)
 gizmo_extents = 12.0
 
 [node name="BattleAnimationLayer" type="Node2D" parent="."]

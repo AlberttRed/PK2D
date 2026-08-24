@@ -3,6 +3,7 @@
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageMoveCategory.tres" id="1_7wtlw"]
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_qt13u"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_vijnv"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/PoundAnimation.tres" id="3_pound_anim"]
 
 [resource]
 resource_name = "1 - Destructor"
@@ -21,3 +22,4 @@ effect_entries = "Inflicts regular damage with no additional effect. Inflicts re
 target_id = 10
 meta_category_id = 0
 category = ExtResource("1_7wtlw")
+battle_animation = ExtResource("3_pound_anim")

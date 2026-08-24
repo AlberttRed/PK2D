@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_5728v"]
 [ext_resource type="Resource" path="res://Resources/Move Categories/NetGoodStatsMoveCategory.tres" id="1_ex3gr"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_rwg1s"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/GrowlAnimation.tres" id="3_growl_anim"]
 
 [resource]
 resource_name = "45 - Gruñido"
@@ -23,3 +24,4 @@ stat_changes = Dictionary[int, int]({
 target_id = 11
 meta_category_id = 2
 category = ExtResource("1_ex3gr")
+battle_animation = ExtResource("3_growl_anim")

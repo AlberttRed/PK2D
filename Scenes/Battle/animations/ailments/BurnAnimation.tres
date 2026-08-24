@@ -10,4 +10,4 @@ animation_name = "default"
 blocks_visualize = true
 fit_visual_to_anchors = false
 user_spot_anchor = 0
-target_spot_anchor = 0
+target_spot_anchor = 4

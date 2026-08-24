@@ -33,6 +33,31 @@ func user_move_forward(distance: float = 24.0, duration: float = 0.12) -> void:
 	call_on_user(&"move_forward", [distance, duration])
 
 
+## Retroceso del target (aleja y vuelve). Distancia positiva = hacia atrás.
+func target_recoil(distance: float = 16.0, duration: float = 0.1) -> void:
+	call_on_target(&"move_forward", [-distance, duration])
+
+
+## Retroceso del user (se echa atrás y vuelve). Distancia positiva = hacia atrás.
+func user_recoil(distance: float = 16.0, duration: float = 0.1) -> void:
+	call_on_user(&"move_forward", [-distance, duration])
+
+
+## Baja el target en Y y vuelve (impacto tipo Mordisco).
+func target_nudge_down(distance: float = 10.0, duration: float = 0.1) -> void:
+	call_on_target(&"nudge_down", [distance, duration])
+
+
+## User da vueltas en círculo (Látigo).
+func user_orbit_circle(radius: float = 10.0, revolutions: float = 2.0, duration: float = 0.7) -> void:
+	call_on_user(&"orbit_circle", [radius, revolutions, duration])
+
+
+## Ilumina un poco el sprite del user (Ataque Rápido).
+func user_glow(peak: float = 1.4, up_duration: float = 0.08, hold_duration: float = 0.25, down_duration: float = 0.12) -> void:
+	call_on_user(&"glow", [peak, up_duration, hold_duration, down_duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null

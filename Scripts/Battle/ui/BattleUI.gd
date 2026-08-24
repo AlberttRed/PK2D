@@ -21,6 +21,8 @@ const _BATTLE_PARTY_SWITCH_CONTROLLER := preload("res://Scripts/Battle/ui/Battle
 var target_selector: BattleTargetSelector = null
 @onready var result_display := BattleResultDisplay.new()
 
+var _selection_bounce_spot: BattleSpot = null
+
 ## Referencia al controlador de combate (asignada desde `BattleScene` al iniciar).
 var battle_controller: BattleController = null
 
@@ -105,10 +107,15 @@ func position_battlespots_for_mode(
 	$FieldUI.position_battlespots_for_mode(mode, player_active_count, enemy_active_count)
 
 func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
+	# Bounce activo durante todo el flujo de este Pokémon (acciones → moves → target).
+	_start_action_selection_bounce(pokemon)
+
 	# Mostrar panel de acciones: LUCHAR, POKÉMON, MOCHILA, HUIR
 	var choice: BattleChoice = await show_action_menu_for(pokemon)
 
 	if choice.canceled:
+		# Doble: cancelar vuelve al Pokémon anterior; restaurar posición estándar.
+		_clear_action_selection_bounce()
 		return choice
 
 	choice.pokemon = pokemon
@@ -131,12 +138,15 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 			)
 			if run_ctx.validation != null and run_ctx.validation.rejected:
 				return await show_action_selection(pokemon)
+		_clear_action_selection_bounce()
 		return choice
 
 	var move_choice: BattleMoveChoice = await show_move_selection(pokemon)
 	if move_choice.canceled:
 		return await show_action_selection(pokemon)
 
+	# Turno de este Pokémon confirmado (incluye tras elegir target).
+	_clear_action_selection_bounce()
 	return move_choice
 
 
@@ -172,6 +182,7 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 		var fail := BattleChoice.new()
 		fail.canceled = true
 		return fail
+	_clear_action_selection_bounce()
 	_ensure_battle_bag_ui()
 	var bag_ctrl: BagController = _BAG_CONTROLLER_SCRIPT.new(null)
 	bag_ctrl.configure_battle_item_flow()
@@ -533,6 +544,7 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 		canceled.canceled = true
 		return canceled
 
+	_clear_action_selection_bounce()
 	var switch_controller = _BATTLE_PARTY_SWITCH_CONTROLLER.new(pokemon.side, pokemon, false)
 	party_ui.setup(switch_controller)
 	actions_menu.hide()
@@ -984,6 +996,7 @@ func show_target_selection(user: BattlePokemon, enemies_only: bool = false) -> B
 	if candidates.size() == 1:
 		return candidates[0]
 
+	# Mantener bounce del usuario mientras elige target.
 	message_box.show_clear_text()
 	get_viewport().gui_release_focus()
 	target_selector_ui.show_selection(grid)
@@ -994,7 +1007,28 @@ func show_target_selection(user: BattlePokemon, enemies_only: bool = false) -> B
 	return selected_spot
 
 func hide_action_menu():
+	_clear_action_selection_bounce()
 	actions_menu.hide()
+
+
+func _start_action_selection_bounce(pokemon: BattlePokemon) -> void:
+	if pokemon == null or pokemon.battle_spot == null:
+		return
+	var spot: BattleSpot = pokemon.battle_spot
+	if not is_instance_valid(spot):
+		return
+	# Mismo spot ya en bounce (p. ej. cancel moves → reabrir acciones): no reiniciar.
+	if _selection_bounce_spot == spot:
+		return
+	_clear_action_selection_bounce()
+	_selection_bounce_spot = spot
+	spot.start_selection_bounce()
+
+
+func _clear_action_selection_bounce() -> void:
+	if _selection_bounce_spot != null and is_instance_valid(_selection_bounce_spot):
+		_selection_bounce_spot.stop_selection_bounce()
+	_selection_bounce_spot = null
 
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
 	## Intro (PBI 707): bases/trainers → mensajes → send-in → menú.
