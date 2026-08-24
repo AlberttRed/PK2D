@@ -26,6 +26,8 @@ const MIN_AUTHORED_SPAN := 0.001
 @export var blocks_visualize: bool = true
 ## Si hay UserAnchor+TargetAnchor+VisualRoot (o spots), encaja VisualRoot al segmento real.
 @export var fit_visual_to_anchors: bool = true
+## Con fit_visual_to_anchors=false: true = VisualRoot en el user (p. ej. Growl); false = en el target.
+@export var place_visual_on_user: bool = false
 ## Longitud authorada del viaje completo en +X local (debe coincidir con las keys del proyectil).
 @export var authored_travel_length: float = 200.0
 ## Punto del spot del usuario al que se mapea UserAnchor / origen del VisualRoot.
@@ -172,6 +174,7 @@ func _apply_scene_anchors_and_fit_visual(
 
 
 ## Coloca VisualRoot en el anchor del spot afectado (sin rotar/estirar).
+## place_visual_on_user: VFX que salen del atacante (Growl). Si no, del target (Scratch).
 func _place_visual_on_affected_spot(
 	instance: Node,
 	user_spot: BattleSpot,
@@ -180,15 +183,31 @@ func _place_visual_on_affected_spot(
 	var visual := instance.get_node_or_null("VisualRoot") as Node2D
 	if visual == null:
 		return
-	var spot := _first_target(target_spots)
-	var anchor_name := spot_anchor_name(target_spot_anchor)
-	if spot == null:
+	var spot: BattleSpot = null
+	var anchor_name := ""
+	if place_visual_on_user:
 		spot = user_spot
 		anchor_name = spot_anchor_name(user_spot_anchor)
+	else:
+		spot = _first_target(target_spots)
+		anchor_name = spot_anchor_name(target_spot_anchor)
+		if spot == null:
+			spot = user_spot
+			anchor_name = spot_anchor_name(user_spot_anchor)
 	if spot == null or not is_instance_valid(spot):
 		return
 	visual.global_position = spot.get_anchor_global_position(anchor_name)
 	visual.rotation = 0.0
+	# Authoring en +X (lado derecho del player). Rival: espejo hacia la izquierda.
+	var facing_right := true
+	if spot.side != null:
+		facing_right = spot.side.type == BattleSide.Types.PLAYER
+	elif spot.pokemon != null and spot.pokemon.side != null:
+		facing_right = spot.pokemon.side.type == BattleSide.Types.PLAYER
+	var sy := absf(visual.scale.y)
+	if sy < MIN_AUTHORED_SPAN:
+		sy = 1.0
+	visual.scale = Vector2(1.0 if facing_right else -1.0, sy)
 
 
 func _first_target(target_spots: Array[BattleSpot]) -> BattleSpot:
