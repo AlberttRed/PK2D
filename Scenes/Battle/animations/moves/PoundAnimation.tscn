@@ -1,0 +1,77 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
+[ext_resource type="Texture2D" path="res://Sprites/Batalla/Moves Animations/TackleFrames.png" id="2_tackle"]
+
+[sub_resource type="Animation" id="Animation_default"]
+resource_name = "default"
+length = 0.46
+step = 0.02
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hooks")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.04),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [16.0, 0.1],
+"method": &"target_recoil"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/Impact:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.28, 0.38),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.7), Color(1, 1, 1, 0.55), Color(1, 1, 1, 0.35), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/Impact:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.04, 0.1, 0.38),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.6, 0.6), Vector2(0.8, 0.8), Vector2(0.7, 0.7)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"default": SubResource("Animation_default")
+}
+
+[node name="PoundAnimation" type="Node2D"]
+
+[node name="Hooks" type="Node" parent="."]
+script = ExtResource("1_hooks")
+
+[node name="UserAnchor" type="Marker2D" parent="."]
+gizmo_extents = 16.0
+
+[node name="TargetAnchor" type="Marker2D" parent="."]
+position = Vector2(200, 0)
+gizmo_extents = 16.0
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Impact" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, 4)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_tackle")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_default")
+}

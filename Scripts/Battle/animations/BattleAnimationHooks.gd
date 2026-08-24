@@ -33,6 +33,11 @@ func user_move_forward(distance: float = 24.0, duration: float = 0.12) -> void:
 	call_on_user(&"move_forward", [distance, duration])
 
 
+## Retroceso del target (aleja y vuelve). Distancia positiva = hacia atrás.
+func target_recoil(distance: float = 16.0, duration: float = 0.1) -> void:
+	call_on_target(&"move_forward", [-distance, duration])
+
+
 func _first_target() -> BattleSpot:
 	if target_spots.is_empty():
 		return null

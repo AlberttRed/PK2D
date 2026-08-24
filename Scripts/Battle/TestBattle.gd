@@ -49,7 +49,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 2vs2 entrenador: 1 trainer jugador vs 1 trainer rival (Gyarados+Charizard por lado).
 @export var use_double_trainer_vs_trainer_test: bool = false
 ## 1vs1 salvaje: Charmander (Malicioso + Placaje) vs Pidgey (Malicioso + Tornado) — animación Leer.
-@export var use_leer_animation_test: bool = true
+@export var use_leer_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Destructor + Placaje) vs Pidgey (Destructor + Tornado) — animación Pound.
+@export var use_pound_animation_test: bool = true
 ## 2vs2 multi-entrenador: 2 trainers jugador vs 2 trainers rival — intro doble y send-in por spot.
 @export var use_double_trainer_animation_test: bool = false
 ## Si true, JugadorB también es humano (controlas ambos spots). Si false, JugadorB es aliado IA en tu lado.
@@ -137,6 +139,10 @@ func _ready() -> void:
 	if use_leer_animation_test:
 		_print_leer_animation_test_guide()
 		await wildLeerAnimationTestBattle()
+		return
+	if use_pound_animation_test:
+		_print_pound_animation_test_guide()
+		await wildPoundAnimationTestBattle()
 		return
 	if use_wild_animation_test:
 		_print_wild_animation_test_guide()
@@ -586,6 +592,15 @@ func wildLeerAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Malicioso terminada. Ganador: %s" % winner)
+
+
+func wildPoundAnimationTestBattle() -> void:
+	var player_participant := _create_pound_animation_test_player()
+	var wild_participant := _create_pound_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación Destructor terminada. Ganador: %s" % winner)
 
 
 func wildAnimationTestBattle() -> void:
@@ -1148,6 +1163,47 @@ func _print_leer_animation_test_guide() -> void:
 	print(">>> Test animación Malicioso (Leer): Charmander Nv.20 (Malicioso + Placaje + Arañazo) vs Pidgey Nv.18 salvaje (Malicioso + Tornado + Placaje).")
 	print(">>> Destello 5 frames en el user + pulso de escala; al final el target tambalea.")
 	print(">>> Desactiva use_leer_animation_test para volver a otro flag.")
+
+
+func _create_pound_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.POUND,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_pound_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.POUND,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_pound_animation_test_guide() -> void:
+	print(">>> Test animación Destructor (Pound): Charmander Nv.20 (Destructor + Placaje + Arañazo) vs Pidgey Nv.18 salvaje (Destructor + Tornado + Placaje).")
+	print(">>> Impacto TackleFrames en el target + retroceso; el user no se mueve.")
+	print(">>> Desactiva use_pound_animation_test para volver a otro flag.")
 
 
 func wildFixedSubstituteTestBattle() -> void:
