@@ -9,6 +9,8 @@ var result: CaptureResult = null
 
 var _ball_name: String = "Poké Ball"
 var _thrower_name: String = ""
+## Instancia viva de la fase 1 (ball en suelo) para la fase 2.
+var _throw_visual: CaptureThrowAnimation = null
 
 
 func _init(
@@ -87,17 +89,49 @@ func visualize(ui: BattleUI) -> void:
 
 	await _show_dialogue_line(ui, "¡%s usó %s!" % [_actor_name(), _ball_name], 0.9)
 
+	var spot: BattleSpot = (
+		target.resolve_battle_spot()
+		if target != null and target.has_method("resolve_battle_spot")
+		else (target.battle_spot if target != null else null)
+	)
+	if spot != null:
+		_throw_visual = await CaptureThrowAnimation.play_throw(ui, spot)
+
 	var shake_count := result.shakes
 	if ball_effect != null and ball_effect.guaranteed_capture:
 		shake_count = MAX_VISIBLE_SHAKES
 
-	await _show_shake_pauses(ui, shake_count)
+	if _throw_visual != null:
+		await _throw_visual.play_resolve(shake_count, result.success)
+		print(_resolve_shake_log(shake_count, result.success))
+	else:
+		await _show_shake_pauses(ui, shake_count)
 
 	if result.success:
 		await _show_success_dialogue(ui)
+		_cleanup_throw_visual(false)
 		return
 
+	# Escape ya restauró el sprite en play_escape_open.
+	_cleanup_throw_visual(false)
 	await _show_failure_dialogue(ui, result.shakes)
+
+
+func _resolve_shake_log(shake_count: int, success: bool) -> String:
+	if shake_count <= 0 and not success:
+		return ">>> Captura: escape inmediato (0 balanceos)."
+	if success:
+		return ">>> Captura: %d balanceos → éxito." % shake_count
+	return ">>> Captura: %d balanceos → escape." % shake_count
+
+
+func _cleanup_throw_visual(restore_sprite: bool) -> void:
+	if _throw_visual == null:
+		return
+	if restore_sprite:
+		_throw_visual.restore_target_sprite()
+	_throw_visual.cleanup()
+	_throw_visual = null
 
 
 func _actor_name() -> String:

@@ -51,7 +51,9 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Charmander (Onda Trueno) vs Squirtle — animación ailment Paralysis.
 @export var use_paralysis_ailment_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Supersónico) vs Squirtle — animación ailment Confusion.
-@export var use_confusion_ailment_animation_test: bool = true
+@export var use_confusion_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander vs Pidgey — fase 1 captura (lanzar ball → abrir/cerrar → rebotes).
+@export var use_capture_throw_animation_test: bool = true
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -177,6 +179,10 @@ func _ready() -> void:
 	if use_confusion_ailment_animation_test:
 		_print_confusion_ailment_animation_test_guide()
 		await wildConfusionAilmentAnimationTestBattle()
+		return
+	if use_capture_throw_animation_test:
+		_print_capture_throw_animation_test_guide()
+		await wildCaptureThrowAnimationTestBattle()
 		return
 	if use_growl_animation_test:
 		_print_growl_animation_test_guide()
@@ -706,6 +712,16 @@ func wildConfusionAilmentAnimationTestBattle() -> void:
 	var winner = await _start_test_battle(participants, rules)
 	debug_force_ailment_apply = prev_force
 	print(">>> Batalla animación Confusion terminada. Ganador: %s" % winner)
+
+
+func wildCaptureThrowAnimationTestBattle() -> void:
+	_seed_test_capture_items()
+	var player_participant := _create_capture_throw_animation_test_player()
+	var wild_participant := _create_capture_throw_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación captura (fase 1) terminada. Ganador: %s" % winner)
 
 
 func wildGrowlAnimationTestBattle() -> void:
@@ -1523,6 +1539,46 @@ func _print_confusion_ailment_animation_test_guide() -> void:
 	print(">>> Test animación ailment Confusion: Charmander Nv.20 (Supersónico) vs Squirtle Nv.22 (Supersónico).")
 	print(">>> Ailment forzado: 5 pájaros orbitando sobre la cabeza + frames girando.")
 	print(">>> Desactiva use_confusion_ailment_animation_test para volver a otro flag.")
+
+
+func _create_capture_throw_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+		MovesEnum.Values.GROWL,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_capture_throw_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 5
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GROWL,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_capture_throw_animation_test_guide() -> void:
+	print(">>> Test animación captura: Charmander Nv.20 vs Pidgey Nv.5 (salvaje).")
+	print(">>> Mochila con Poké Balls. Fase 1 (throw) + fase 2 (balanceos 0–3 / escape o oscurecido).")
+	print(">>> Estrellas/halos aún no. Desactiva use_capture_throw_animation_test para otro flag.")
 
 
 func _create_growl_animation_test_player() -> BattleParticipant:
