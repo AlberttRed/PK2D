@@ -40,6 +40,9 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 		await ui.show_end_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 		return
 
+	if source != null and source.has_method("play_battle_animation_on"):
+		await source.play_battle_animation_on(ui, pokemon)
+
 	# Mostrar mensaje de que está confuso
 	await ui.show_previous_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 

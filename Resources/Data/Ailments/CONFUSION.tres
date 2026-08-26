@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=3 format=3 uid="uid://cgmfhfx43byjx"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=4 format=3 uid="uid://cgmfhfx43byjx"]
 
 [ext_resource type="Script" uid="uid://b3ygcov781h3" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/ConfusionAilmentEffect.gd" id="1_21a6o"]
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1_rox0k"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/ailments/ConfusionAnimation.tres" id="2_confusion_anim"]
 
 [resource]
 script = ExtResource("1_rox0k")
@@ -11,3 +12,4 @@ display_name = "Confundir"
 description = ""
 is_persistent = false
 effect = ExtResource("1_21a6o")
+battle_animation = ExtResource("2_confusion_anim")

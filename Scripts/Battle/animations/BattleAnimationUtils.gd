@@ -266,6 +266,29 @@ static func glow_spot(
 		spr.modulate = base
 
 
+## Tinte temporal del sprite (p. ej. veneno morado) y vuelve. Awaitable.
+static func tint_spot(
+	spot: BattleSpot,
+	color: Color = Color(0.72, 0.22, 1.0, 1.0),
+	up_duration: float = 0.08,
+	hold_duration: float = 0.5,
+	down_duration: float = 0.15
+) -> void:
+	if not _spot_sprite_ready(spot):
+		return
+	var spr: Sprite2D = spot.sprite
+	var base := Color(1, 1, 1, 1)
+	var tw := spot.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(spr, "modulate", color, maxf(up_duration, 0.01))
+	if hold_duration > 0.0:
+		tw.tween_interval(hold_duration)
+	tw.tween_property(spr, "modulate", base, maxf(down_duration, 0.01))
+	await tw.finished
+	if is_instance_valid(spr):
+		spr.modulate = base
+
+
 ## Oscurece el campo con un Polygon2D hijo de `parent`. Devuelve el overlay (o null).
 static func darken_overlay(
 	parent: Node,

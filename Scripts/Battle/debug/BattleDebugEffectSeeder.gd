@@ -4,16 +4,26 @@ extends RefCounted
 ## Activa lluvia (campo), Reflejo (lado jugador) y veneno (primer Pokémon activo del jugador)
 ## Pensado para probar el orden de fin de turno en TestBattle.
 static var _pending: bool = false
+## Solo lluvia en el campo (animación de clima).
+static var _pending_rain_only: bool = false
 ## Solo Reflejo en el lado del jugador (PBI 704 — convivencia con hazards).
 static var _pending_reflect_only: bool = false
 
 static func enable() -> void:
 	_pending = true
 
+static func enable_rain_only() -> void:
+	_pending_rain_only = true
+
 static func enable_reflect_only() -> void:
 	_pending_reflect_only = true
 
 static func try_apply(controller: BattleController) -> void:
+	if _pending_rain_only:
+		_pending_rain_only = false
+		_seed_rain()
+		print("BattleDebugEffectSeeder: lluvia activa para test de animación de clima.")
+		return
 	if _pending_reflect_only:
 		_pending_reflect_only = false
 		_apply_reflect_only(controller)
@@ -60,7 +70,8 @@ static func _seed_rain() -> void:
 	if weather == null:
 		push_warning("BattleDebugEffectSeeder: DatabaseService.get_weather('rain') devolvió null.")
 		return
-	var rain := weather.get_effect(5, true)
+	# Clima de campo ya presente (no iniciado por movimiento): intro + sin caducar por turnos.
+	var rain := weather.get_effect(5, false)
 	if rain == null:
 		return
 	if BattleEffectController.has_field_effect(rain):

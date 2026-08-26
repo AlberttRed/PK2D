@@ -2,6 +2,36 @@ class_name BattleMessageWeather
 extends RefCounted
 
 
+## Clima ya presente al entrar en combate (no iniciado por movimiento).
+func get_intro_weather_message(weather_id: int) -> Dictionary:
+	var msg: String = ""
+	match weather_id:
+		WeathersEnum.Values.RAIN:
+			msg = "Está lloviendo..." #Validado HGSS
+		WeathersEnum.Values.SUN:
+			msg = "Hace mucho sol..."
+		WeathersEnum.Values.SANDSTORM:
+			msg = "Hay una tormenta de arena..."
+		WeathersEnum.Values.HAIL:
+			msg = "Está granizando..."
+		WeathersEnum.Values.SNOW:
+			msg = "Está nevando..."
+		WeathersEnum.Values.FOG:
+			msg = "Hay una densa niebla..."
+		WeathersEnum.Values.WIND:
+			msg = "El viento arrecia..."
+		_:
+			push_warning("Invalid WeatherData on get_intro_weather_message()")
+			return {}
+
+	return {
+		"type": "display",
+		"text": msg,
+		"wait_time": 1.5
+	}
+
+
+## Clima que acaba de activarse (p. ej. Danza Lluvia).
 func get_start_weather_message(weather_id: int) -> Dictionary:
 	var msg:String = ""
 	match weather_id:

@@ -8,7 +8,9 @@
 position = Vector2(1, 2)
 script = ExtResource("1_tse6d")
 debug_rattata_test_bite = false
-debug_force_ailment_apply = true
+debug_rattata_extended_volatiles = false
+use_capture_throw_animation_test = false
+use_rain_weather_animation_test = true
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

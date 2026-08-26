@@ -37,6 +37,8 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN:
 		return
 
+	if source != null and source.has_method("play_battle_animation_on"):
+		await source.play_battle_animation_on(ui, pokemon)
 	await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 	await pokemon.battle_spot.apply_damage()
 

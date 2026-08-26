@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://iyf3wks88soe" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/ParalysisAilmentEffect.gd" id="1_vfomk"]
 [ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="2_jymkc"]
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="3_8yg8h"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/ailments/ParalysisAnimation.tres" id="4_para_anim"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g0t8o"]
 atlas = ExtResource("2_jymkc")
@@ -17,3 +18,4 @@ description = ""
 icon = SubResource("AtlasTexture_g0t8o")
 is_persistent = true
 effect = ExtResource("1_vfomk")
+battle_animation = ExtResource("4_para_anim")

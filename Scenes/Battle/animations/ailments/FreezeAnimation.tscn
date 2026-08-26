@@ -1,0 +1,98 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle/animations/BattleAnimationHooks.gd" id="1_hooks"]
+[ext_resource type="Texture2D" path="res://Sprites/Batalla/Moves Animations/FreezeFrames.png" id="2_ice"]
+[ext_resource type="Shader" path="res://Shaders/Battle/ice_shine.gdshader" id="3_shine"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ice"]
+resource_local_to_scene = true
+shader = ExtResource("3_shine")
+shader_parameter/shine_pos = -0.5
+shader_parameter/shine_width = 0.055
+shader_parameter/shine_intensity = 1.15
+shader_parameter/band_gap = 0.05
+
+[sub_resource type="Animation" id="Animation_default"]
+resource_name = "default"
+length = 1.55
+step = 0.01
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hooks")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.02),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.1, 1.22, 0.18],
+"method": &"target_freeze_tint"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/Ice:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 1.28, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.5), Color(1, 1, 1, 0.5), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/Ice:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.9, 0.9)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/Ice:material:shader_parameter/shine_pos")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.14, 0.72, 0.78, 1.36),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.35, 1.25, -0.35, 1.25]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"default": SubResource("Animation_default")
+}
+
+[node name="FreezeAnimation" type="Node2D"]
+
+[node name="Hooks" type="Node" parent="."]
+script = ExtResource("1_hooks")
+
+[node name="UserAnchor" type="Marker2D" parent="."]
+gizmo_extents = 16.0
+
+[node name="TargetAnchor" type="Marker2D" parent="."]
+position = Vector2(200, 0)
+gizmo_extents = 16.0
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Ice" type="Sprite2D" parent="VisualRoot"]
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_ice")
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("2_ice")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_default")
+}

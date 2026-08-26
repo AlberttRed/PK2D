@@ -38,6 +38,8 @@ const PLAYER_FEET_VFX_LIFT := 28.0
 @export var target_spot_anchor: SpotAnchor = SpotAnchor.HIT_CENTER
 ## Ancla de `TargetVisualRoot` (overlay en target, sin rotar). Independiente del destino del proyectil.
 @export var target_visual_spot_anchor: SpotAnchor = SpotAnchor.FEET
+## Si false, no espeja el VFX local en el lado rival (p. ej. letras Z de Sleep).
+@export var mirror_facing: bool = true
 
 ## Punto de entrada único. Coroutine: el caller debe usar `await`.
 func play(
@@ -246,10 +248,13 @@ func _is_player_spot(spot: BattleSpot) -> bool:
 
 
 func _apply_local_vfx_facing(node: Node2D, spot: BattleSpot) -> void:
-	var facing_right := _is_player_spot(spot)
 	var sy := absf(node.scale.y)
 	if sy < MIN_AUTHORED_SPAN:
 		sy = 1.0
+	if not mirror_facing:
+		node.scale = Vector2(1.0, sy)
+		return
+	var facing_right := _is_player_spot(spot)
 	node.scale = Vector2(1.0 if facing_right else -1.0, sy)
 
 

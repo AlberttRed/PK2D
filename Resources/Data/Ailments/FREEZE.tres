@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="1"]
 [ext_resource type="Script" uid="uid://dvkbc2ndmmhjg" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/FreezeAilmentEffect.gd" id="1_f76ff"]
 [ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="2_n2t1o"]
+[ext_resource type="Resource" path="res://Scenes/Battle/animations/ailments/FreezeAnimation.tres" id="3_freeze_anim"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f76ff"]
 atlas = ExtResource("2_n2t1o")
@@ -17,3 +18,4 @@ description = ""
 icon = SubResource("AtlasTexture_f76ff")
 is_persistent = true
 effect = ExtResource("1_f76ff")
+battle_animation = ExtResource("3_freeze_anim")

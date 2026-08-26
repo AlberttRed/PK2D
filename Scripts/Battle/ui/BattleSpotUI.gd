@@ -484,6 +484,15 @@ func glow(peak: float = 1.4, up_duration: float = 0.08, hold_duration: float = 0
 	await BattleAnimationUtils.glow_spot(self, peak, up_duration, hold_duration, down_duration)
 
 
+func tint(
+	color: Color = Color(0.72, 0.22, 1.0, 1.0),
+	up_duration: float = 0.08,
+	hold_duration: float = 0.5,
+	down_duration: float = 0.15
+) -> void:
+	await BattleAnimationUtils.tint_spot(self, color, up_duration, hold_duration, down_duration)
+
+
 ## Aparición al enviar: scale + de-white. Awaitable.
 func play_enter_animation(scale_duration: float = 0.45, white_duration: float = 0.75) -> void:
 	await BattleAnimationUtils.pokemon_enter_spot(self, scale_duration, white_duration)

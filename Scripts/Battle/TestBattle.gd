@@ -41,7 +41,19 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Charmander (Látigo + Placaje) vs Pidgey (Látigo + Tornado) — animación Tail Whip.
 @export var use_tail_whip_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Ataque Rápido + Placaje) vs Pidgey (Ataque Rápido + Tornado) — animación Quick Attack.
-@export var use_quick_attack_animation_test: bool = true
+@export var use_quick_attack_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Picotazo Veneno) vs Pidgey — animación ailment Poison (aplicar + daño fin de turno).
+@export var use_poison_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Canto) vs Pidgey — animación ailment Sleep (aplicar + “sigue dormido”).
+@export var use_sleep_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Rayo Hielo) vs Squirtle — animación ailment Freeze.
+@export var use_freeze_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Onda Trueno) vs Squirtle — animación ailment Paralysis.
+@export var use_paralysis_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander (Supersónico) vs Squirtle — animación ailment Confusion.
+@export var use_confusion_ailment_animation_test: bool = false
+## 1vs1 salvaje: Charmander vs Pidgey — fase 1 captura (lanzar ball → abrir/cerrar → rebotes).
+@export var use_capture_throw_animation_test: bool = true
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -70,6 +82,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
 @export_group("Debug clima")
+## 1vs1 salvaje: clima lluvia al inicio — oscurecimiento + gotas (RainFrames).
+@export var use_rain_weather_animation_test: bool = false
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
 @export var use_rain_weather_test: bool = false
 
@@ -147,6 +161,34 @@ func _ready() -> void:
 	if use_quick_attack_animation_test:
 		_print_quick_attack_animation_test_guide()
 		await wildQuickAttackAnimationTestBattle()
+		return
+	if use_poison_ailment_animation_test:
+		_print_poison_ailment_animation_test_guide()
+		await wildPoisonAilmentAnimationTestBattle()
+		return
+	if use_sleep_ailment_animation_test:
+		_print_sleep_ailment_animation_test_guide()
+		await wildSleepAilmentAnimationTestBattle()
+		return
+	if use_freeze_ailment_animation_test:
+		_print_freeze_ailment_animation_test_guide()
+		await wildFreezeAilmentAnimationTestBattle()
+		return
+	if use_paralysis_ailment_animation_test:
+		_print_paralysis_ailment_animation_test_guide()
+		await wildParalysisAilmentAnimationTestBattle()
+		return
+	if use_confusion_ailment_animation_test:
+		_print_confusion_ailment_animation_test_guide()
+		await wildConfusionAilmentAnimationTestBattle()
+		return
+	if use_rain_weather_animation_test:
+		_print_rain_weather_animation_test_guide()
+		await wildRainWeatherAnimationTestBattle()
+		return
+	if use_capture_throw_animation_test:
+		_print_capture_throw_animation_test_guide()
+		await wildCaptureThrowAnimationTestBattle()
 		return
 	if use_growl_animation_test:
 		_print_growl_animation_test_guide()
@@ -525,6 +567,21 @@ func wildRainWeatherTestBattle() -> void:
 	print(">>> Batalla clima (Granizo) terminada. Ganador: %s" % winner)
 
 
+func wildRainWeatherAnimationTestBattle() -> void:
+	_setup_rain_animation_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildRainWeatherAnimationTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación lluvia terminada. Ganador: %s" % winner)
+
+
 func wildMistTestBattle() -> void:
 	_setup_mist_test_parties()
 	var player_participant: BattleParticipant = _create_fixed_player_participant()
@@ -616,6 +673,76 @@ func wildQuickAttackAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animación Ataque Rápido terminada. Ganador: %s" % winner)
+
+
+func wildPoisonAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_poison_ailment_animation_test_player()
+	var wild_participant := _create_poison_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Poison terminada. Ganador: %s" % winner)
+
+
+func wildSleepAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_sleep_ailment_animation_test_player()
+	var wild_participant := _create_sleep_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Sleep terminada. Ganador: %s" % winner)
+
+
+func wildFreezeAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_freeze_ailment_animation_test_player()
+	var wild_participant := _create_freeze_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Freeze terminada. Ganador: %s" % winner)
+
+
+func wildParalysisAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_paralysis_ailment_animation_test_player()
+	var wild_participant := _create_paralysis_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Paralysis terminada. Ganador: %s" % winner)
+
+
+func wildConfusionAilmentAnimationTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_confusion_ailment_animation_test_player()
+	var wild_participant := _create_confusion_ailment_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla animación Confusion terminada. Ganador: %s" % winner)
+
+
+func wildCaptureThrowAnimationTestBattle() -> void:
+	_seed_test_capture_items()
+	var player_participant := _create_capture_throw_animation_test_player()
+	var wild_participant := _create_capture_throw_animation_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación captura (fase 1) terminada. Ganador: %s" % winner)
 
 
 func wildGrowlAnimationTestBattle() -> void:
@@ -1229,6 +1356,252 @@ func _print_quick_attack_animation_test_guide() -> void:
 	print(">>> Desactiva use_quick_attack_animation_test para volver a otro flag.")
 
 
+func _create_poison_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.POISON_STING,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_poison_ailment_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.SCRATCH,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_poison_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Poison: Charmander Nv.20 (Picotazo Veneno) vs Pidgey Nv.18.")
+	print(">>> Ailment forzado: al aplicar y al daño de fin de turno → tint morado + 3 shakes.")
+	print(">>> Desactiva use_poison_ailment_animation_test para volver a otro flag.")
+
+
+func _create_sleep_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.SING,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_sleep_ailment_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 18
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.SING,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.SCRATCH,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_sleep_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Sleep: Charmander Nv.20 (Canto) vs Pidgey Nv.18 (Canto + Placaje + Tornado + Arañazo).")
+	print(">>> Ailment forzado: al aplicar (y al ‘sigue dormido’) → 2 Z que suben/crecen/rotan.")
+	print(">>> Desactiva use_sleep_ailment_animation_test para volver a otro flag.")
+
+
+func _create_freeze_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.ICE_BEAM,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_freeze_ailment_animation_test_wild() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 22
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.ICE_BEAM,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_freeze_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Freeze: Charmander Nv.20 (Rayo Hielo) vs Squirtle Nv.22 (Rayo Hielo).")
+	print(">>> Ailment forzado: overlay de hielo + barrido de brillo (reflejo).")
+	print(">>> Desactiva use_freeze_ailment_animation_test para volver a otro flag.")
+
+
+func _create_paralysis_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_paralysis_ailment_animation_test_wild() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 22
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.THUNDER_WAVE,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_paralysis_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Paralysis: Charmander Nv.20 (Onda Trueno) vs Squirtle Nv.22 (Onda Trueno).")
+	print(">>> Ailment forzado: temblor + chispas (ParalysisFrames) apareciendo/desapareciendo.")
+	print(">>> Desactiva use_paralysis_ailment_animation_test para volver a otro flag.")
+
+
+func _create_confusion_ailment_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.SUPERSONIC,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_confusion_ailment_animation_test_wild() -> BattleParticipant:
+	var squirtle := Pokemon.new()
+	squirtle.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	squirtle.level = 22
+	squirtle.is_wild = true
+	squirtle.custom_move_ids = [
+		MovesEnum.Values.SUPERSONIC,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WATER_GUN,
+	]
+	squirtle._post_init()
+	var wild_bp: BattlePokemon = squirtle.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_confusion_ailment_animation_test_guide() -> void:
+	print(">>> Test animación ailment Confusion: Charmander Nv.20 (Supersónico) vs Squirtle Nv.22 (Supersónico).")
+	print(">>> Ailment forzado: 5 pájaros orbitando sobre la cabeza + frames girando.")
+	print(">>> Desactiva use_confusion_ailment_animation_test para volver a otro flag.")
+
+
+func _create_capture_throw_animation_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 20
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+		MovesEnum.Values.GROWL,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_capture_throw_animation_test_wild() -> BattleParticipant:
+	var pidgey := Pokemon.new()
+	pidgey.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pidgey.level = 5
+	pidgey.is_wild = true
+	pidgey.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GROWL,
+	]
+	pidgey._post_init()
+	var wild_bp: BattlePokemon = pidgey.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_capture_throw_animation_test_guide() -> void:
+	print(">>> Test animación captura: Charmander Nv.20 vs Pidgey Nv.5 (salvaje).")
+	print(">>> Mochila con Poké Balls. Fase 1 (throw) + fase 2 (balanceos 0–3 / escape o oscurecido).")
+	print(">>> Estrellas/halos aún no. Desactiva use_capture_throw_animation_test para otro flag.")
+
+
 func _create_growl_animation_test_player() -> BattleParticipant:
 	var charizard := Pokemon.new()
 	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
@@ -1794,6 +2167,50 @@ func _setup_rain_weather_test_parties() -> void:
 	if wildPokemons != null:
 		wildPokemons.party.clear()
 		wildPokemons.add_pokemon_to_party(_create_rain_weather_test_enemy_instance())
+
+
+func _setup_rain_animation_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_rain_animation_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_rain_animation_test_enemy_instance())
+
+
+func _create_rain_animation_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.RAIN_DANCE,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WITHDRAW,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_rain_animation_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_rain_weather_animation_test_guide() -> void:
+	print(">>> Test animación lluvia: Squirtle vs Pidgey salvaje.")
+	print(">>> Al iniciar: oscurecimiento + gotas (clima lluvia sembrado). HPBar/MessageBox sin oscurecer.")
+	print(">>> También puedes usar Danza Lluvia en combate (misma animación).")
+	print(">>> Desactiva use_rain_weather_animation_test para otro flag.")
 
 
 func _create_rain_weather_test_player_instance() -> Pokemon:
