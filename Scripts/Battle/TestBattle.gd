@@ -82,6 +82,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
 @export_group("Debug clima")
+## 1vs1 salvaje: clima lluvia al inicio — oscurecimiento + gotas (RainFrames).
+@export var use_rain_weather_animation_test: bool = false
 ## 1vs1 salvaje: Squirtle (Granizo + Día Soleado + Pistola Agua + Tormenta Arena) vs Pidgey (Tornado + Placaje).
 @export var use_rain_weather_test: bool = false
 
@@ -179,6 +181,10 @@ func _ready() -> void:
 	if use_confusion_ailment_animation_test:
 		_print_confusion_ailment_animation_test_guide()
 		await wildConfusionAilmentAnimationTestBattle()
+		return
+	if use_rain_weather_animation_test:
+		_print_rain_weather_animation_test_guide()
+		await wildRainWeatherAnimationTestBattle()
 		return
 	if use_capture_throw_animation_test:
 		_print_capture_throw_animation_test_guide()
@@ -559,6 +565,21 @@ func wildRainWeatherTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla clima (Granizo) terminada. Ganador: %s" % winner)
+
+
+func wildRainWeatherAnimationTestBattle() -> void:
+	_setup_rain_animation_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildRainWeatherAnimationTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipant = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla animación lluvia terminada. Ganador: %s" % winner)
 
 
 func wildMistTestBattle() -> void:
@@ -2146,6 +2167,50 @@ func _setup_rain_weather_test_parties() -> void:
 	if wildPokemons != null:
 		wildPokemons.party.clear()
 		wildPokemons.add_pokemon_to_party(_create_rain_weather_test_enemy_instance())
+
+
+func _setup_rain_animation_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_rain_animation_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_rain_animation_test_enemy_instance())
+
+
+func _create_rain_animation_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.SQUIRTLE as PokemonsEnum.Values
+	pkmn.level = 50
+	pkmn.is_wild = false
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.RAIN_DANCE,
+		MovesEnum.Values.WATER_GUN,
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.WITHDRAW,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_rain_animation_test_enemy_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.PIDGEY as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn.custom_move_ids = [
+		MovesEnum.Values.GUST,
+		MovesEnum.Values.TACKLE,
+	]
+	pkmn._post_init()
+	return pkmn
+
+
+func _print_rain_weather_animation_test_guide() -> void:
+	print(">>> Test animación lluvia: Squirtle vs Pidgey salvaje.")
+	print(">>> Al iniciar: oscurecimiento + gotas (clima lluvia sembrado). HPBar/MessageBox sin oscurecer.")
+	print(">>> También puedes usar Danza Lluvia en combate (misma animación).")
+	print(">>> Desactiva use_rain_weather_animation_test para otro flag.")
 
 
 func _create_rain_weather_test_player_instance() -> Pokemon:

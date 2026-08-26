@@ -29,4 +29,13 @@ func visualize(ui: BattleUI) -> void:
 	if already_active:
 		await ui.show_already_effect_message(MessageFamily.Values.WEATHER, null, weather.id)
 		return
+	_clear_previous_weather_visual(ui)
+	if weather.id == WeathersEnum.Values.RAIN:
+		await RainWeatherEffect._play_rain_burst(ui)
 	await ui.show_start_effect_message(MessageFamily.Values.WEATHER, null, weather.id)
+
+
+func _clear_previous_weather_visual(ui: BattleUI) -> void:
+	if ui == null:
+		return
+	RainWeatherEffect.clear_rain_visual(ui)

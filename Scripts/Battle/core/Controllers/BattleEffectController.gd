@@ -142,6 +142,8 @@ static func cleanup():
 static func reset_effects():
 	var instance = get_instance()
 	if instance:
+		if instance.ui != null and instance.ui.field_ui != null:
+			instance.ui.field_ui.clear_weather_overlay()
 		instance.pokemon_effects.clear()
 		instance.field_effects.clear()
 		instance.side_effects.clear()
@@ -235,6 +237,8 @@ func _remove_field_weather_effects() -> void:
 		if not effect is WeatherBattleEffect:
 			kept.append(effect)
 	field_effects = kept
+	if ui != null and ui.field_ui != null:
+		ui.field_ui.clear_weather_overlay()
 
 func _has_effect_for(pokemon, effect: PersistentBattleEffect) -> bool:
 	var target_class = effect.get_script().get_global_name()

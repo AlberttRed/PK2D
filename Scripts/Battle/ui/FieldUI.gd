@@ -10,8 +10,12 @@ class_name FieldUI
 const ENEMY_PARTY_SPOT_A_Y_ADJUST := -10.0
 ## z absoluto de HPBar: mismo nivel que el panel de mensajes (6); el MessageBox gana por orden en árbol.
 const HP_BAR_CANVAS_Z := 6
+## Oscurecimiento + lluvia: encima del campo/VFX, debajo de HPBar y MessageBox.
+const FIELD_WEATHER_OVERLAY_Z := 4
 ## Balls de recall/throw en campo: debajo del HPBar, encima del layer de animación (z=1).
 const FIELD_POKEBALL_Z := HP_BAR_CANVAS_Z - 1
+
+@onready var weather_overlay: FieldWeatherOverlay = $FieldWeatherOverlay
 
 
 func _ready() -> void:
@@ -19,11 +23,23 @@ func _ready() -> void:
 		player_party_bar.configure(true)
 	if enemy_party_bar != null:
 		enemy_party_bar.configure(false)
+	if weather_overlay != null:
+		weather_overlay.z_as_relative = false
+		weather_overlay.z_index = FIELD_WEATHER_OVERLAY_Z
 	hide_all_party_bars()
 
 
 func get_animation_layer() -> Node2D:
 	return animation_layer
+
+
+func get_weather_overlay() -> FieldWeatherOverlay:
+	return weather_overlay
+
+
+func clear_weather_overlay() -> void:
+	if weather_overlay != null:
+		weather_overlay.clear()
 
 
 func get_player_party_bar() -> BattlePartyBarUI:

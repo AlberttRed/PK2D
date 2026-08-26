@@ -287,6 +287,11 @@ func get_end_ability_message(user:BattlePokemon, ability_id: AbilitiesEnum.Value
 		return {}
 	return AbilityMessages.get_end_ability_message(user, ability_id)
 
+func get_intro_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
+	if weather_id == WeathersEnum.Values.NONE:
+		return {}
+	return WeatherMessages.get_intro_weather_message(weather_id)
+
 func get_start_weather_message(weather_id: WeathersEnum.Values) -> Dictionary:
 	if weather_id == WeathersEnum.Values.NONE:
 		return {}

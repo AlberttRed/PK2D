@@ -46,7 +46,8 @@ func _show_weather_messages_for_phase(
 	if weather_id == 0:
 		return
 	if phase == Phases.ON_BATTLE_START:
-		await ui.show_message_from_dict(ui.message_controller.get_start_weather_message(weather_id))
+		# Clima ya activo al entrar: intro ("Está lloviendo..."), no el de activación por movimiento.
+		await ui.show_message_from_dict(ui.message_controller.get_intro_weather_message(weather_id))
 	elif phase == Phases.ON_END_BATTLE_TURN:
 		if has_finished():
 			await ui.show_message_from_dict(ui.message_controller.get_end_weather_message(weather_id))
