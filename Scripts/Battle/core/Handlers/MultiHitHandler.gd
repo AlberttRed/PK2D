@@ -39,6 +39,9 @@ func apply() -> void:
 
 func visualize(ui: BattleUI) -> void:
 	for h in per_hit_handlers:
+		# Multi-hit: animación del move por cada golpe, luego efecto de ese golpe.
+		if h is BattleMoveHandler:
+			await (h as BattleMoveHandler).play_battle_animation(ui)
 		await h.visualize(ui)
 
 	if num_hits > 1:

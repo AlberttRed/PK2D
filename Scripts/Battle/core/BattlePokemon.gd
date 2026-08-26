@@ -228,10 +228,16 @@ func get_name() -> String:
 func get_display_name() -> String:
 	return base_data.get_display_name()
 
+## Aliado en dobles: mismo lado que el jugador, aunque no sea controlable.
+func is_on_player_side() -> bool:
+	return side != null and side.type == BattleSide.Types.PLAYER
+
+
 func get_battle_display_name(upper:bool = false) -> String:
 	var display_name = ""
 
-	if controllable:
+	# Jugador y aliado: nombre normal (sin «enemigo»).
+	if controllable or is_on_player_side():
 		display_name = get_display_name()
 	elif is_wild:
 		display_name = "el %s salvaje" % get_name()
@@ -241,7 +247,7 @@ func get_battle_display_name(upper:bool = false) -> String:
 	return display_name[0].to_upper() + display_name.substr(1) if upper else display_name
 
 func get_battle_possessive_name() -> String:
-	if controllable:
+	if controllable or is_on_player_side():
 		return "de %s" % get_display_name()
 	elif is_wild:
 		return "del %s salvaje" % get_name()
@@ -249,7 +255,7 @@ func get_battle_possessive_name() -> String:
 		return "del %s enemigo" % get_name()
 
 func get_battle_target_name() -> String:
-	if controllable:
+	if controllable or is_on_player_side():
 		return "a %s" % get_display_name()
 	elif is_wild:
 		return "al %s salvaje" % get_name()

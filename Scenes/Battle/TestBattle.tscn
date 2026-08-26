@@ -11,7 +11,9 @@ debug_rattata_test_bite = false
 debug_rattata_extended_volatiles = false
 use_capture_throw_animation_test = false
 use_rain_weather_animation_test = false
-use_double_trainer_vs_trainer_test = true
+use_double_trainer_vs_trainer_test = false
+use_double_trainer_animation_test = true
+double_trainer_ally_controllable = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://ui53do2ck5tn"]
 
 [ext_resource type="Script" uid="uid://rdhfue55dpvn" path="res://Scripts/Battle/ui/FieldUI.gd" id="1_n4ij7"]
-[ext_resource type="Script" path="res://Scripts/Battle/ui/FieldWeatherOverlay.gd" id="1_weather"]
 [ext_resource type="Script" uid="uid://7n5iiep3lrb5" path="res://Scripts/Battle/ui/BattlePartyBarUI.gd" id="1_partybar"]
+[ext_resource type="Script" uid="uid://qvwg5xlm1rkf" path="res://Scripts/Battle/ui/FieldWeatherOverlay.gd" id="1_weather"]
 [ext_resource type="Texture2D" uid="uid://bg1y037na3awd" path="res://Sprites/Batalla/Battlebacks/battlebgFieldNight.png" id="2_bpnwx"]
 [ext_resource type="Texture2D" uid="uid://bqo0l178kbta7" path="res://Sprites/Batalla/Battlebacks/playerbaseFieldNight.png" id="3_35p23"]
 [ext_resource type="Texture2D" uid="uid://bhtumcefgei33" path="res://Sprites/Batalla/025b.png" id="5_35p23"]
@@ -473,7 +473,7 @@ metadata/_edit_lock_ = true
 z_index = 1
 z_as_relative = false
 
-[node name="FieldWeatherOverlay" type="Control" parent="."]
+[node name="FieldWeatherOverlay" type="Control" parent="." unique_id=122975719]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -483,7 +483,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_weather")
 
-[node name="Darken" type="ColorRect" parent="FieldWeatherOverlay"]
+[node name="Darken" type="ColorRect" parent="FieldWeatherOverlay" unique_id=1924320149]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -493,7 +493,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.02, 0.05, 0.12, 0)
 
-[node name="RainLayer" type="Node2D" parent="FieldWeatherOverlay"]
+[node name="RainLayer" type="Node2D" parent="FieldWeatherOverlay" unique_id=776322962]
 
 [editable path="PlayerBase/PokemonSpotA"]
 [editable path="PlayerBase/PokemonSpotA/HPBar"]
