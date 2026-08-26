@@ -5,6 +5,9 @@ var stat_changes: Array[StatChange] = []
 
 var _has_stat_up: bool = false
 var _has_stat_down: bool = false
+## Si false, omite mensajes genéricos de stage (subida/bajada / ya al tope).
+## Animaciones y `rejection_message` (Neblina, etc.) se mantienen siempre.
+var show_stage_messages: bool = true
 
 func _init(_target: BattlePokemon, _stats_changes_list: Dictionary[StatsEnum.Values, int]):
 	target = _target
@@ -57,24 +60,25 @@ func visualize(ui: BattleUI):
 	# Mensajes para stats que suben
 	# - Si es un solo stat: siempre mostrar mensaje (aplicado o no)
 	# - Si son múltiples stats: solo mostrar los que se aplicaron
-	for stat_change in stat_changes.filter(func(stat_change): return stat_change.amount > 0):
-		if stat_change.applied or is_single_stat:
-			await ui.show_stat_stage_change_message(target, stat_change.stat, stat_change.amount, stat_change.applied)
+	if show_stage_messages:
+		for stat_change in stat_changes.filter(func(stat_change): return stat_change.amount > 0):
+			if stat_change.applied or is_single_stat:
+				await ui.show_stat_stage_change_message(target, stat_change.stat, stat_change.amount, stat_change.applied)
 	
 	# Animación de stats que bajan (solo una vez si alguno se aplicó)
 	if _has_stat_down:
 		await target.battle_spot.play_stat_down_animation()
 	
 	# Mensajes para stats que bajan
-	# - Si es un solo stat: siempre mostrar mensaje (aplicado o no)
-	# - Si son múltiples stats: solo mostrar los que se aplicaron
+	# - rejection_message (Neblina, etc.) siempre
+	# - mensajes genéricos de stage solo si show_stage_messages
 	for stat_change in stat_changes.filter(func(stat_change): return stat_change.amount < 0):
 		if not stat_change.rejection_message.is_empty():
 			await ui.show_message_from_dict(stat_change.rejection_message)
-		elif stat_change.applied or is_single_stat:
+		elif show_stage_messages and (stat_change.applied or is_single_stat):
 			await ui.show_stat_stage_change_message(target, stat_change.stat, stat_change.amount, stat_change.applied)
 	
 	# Mensaje genérico cuando múltiples stats intentan cambiar pero TODOS fallan
 	# Ejemplo: Danza Dragón cuando Ataque y Velocidad ya están al máximo
-	if is_all_failed and !is_single_stat:
+	if show_stage_messages and is_all_failed and !is_single_stat:
 		await ui.show_generic_stat_stage_failed_message(target, stat_changes[0].amount > 0)

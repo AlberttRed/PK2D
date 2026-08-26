@@ -18,6 +18,8 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext
 			enemy, {StatsEnum.Values.ATTACK: -1}
 		)
 		effect.user = pokemon
+		# El mensaje de habilidad ya describe la bajada; no repetir el genérico de stage.
+		effect.show_stage_messages = false
 		effect.apply()
 		_stat_effects[enemy] = effect
 
@@ -28,9 +30,9 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, _ctx: 
 	var enemies := pokemon.side.opponent_side.get_active_pokemons()
 	var ability_id: int = source.id if source is AbilityData else int(source)
 	for enemy: BattlePokemon in enemies:
-		await ui.show_ability_effect_message(pokemon, enemy, ability_id)
 		if _stat_effects.has(enemy):
 			await _stat_effects[enemy].visualize(ui)
+		await ui.show_ability_effect_message(pokemon, enemy, ability_id)
 
 
 func get_priority() -> int:

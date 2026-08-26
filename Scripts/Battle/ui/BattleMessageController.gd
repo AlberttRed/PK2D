@@ -134,7 +134,7 @@ func _append_player_double_send_in_message(
 	var pokemon_names := _format_active_pokemon_names(player_pokemon)
 	if player_trainers.size() == 1:
 		messages.append({
-			"type": "wait",
+			"type": "display",
 			"text": "¡Adelante, %s!" % pokemon_names,
 			"wait_time": 0.5,
 			"player_send_in": true,
@@ -142,7 +142,7 @@ func _append_player_double_send_in_message(
 		})
 	elif player_trainers.size() >= 2:
 		messages.append({
-			"type": "wait",
+			"type": "display",
 			"text": "¡%s y %s enviaron a %s!" % [
 				player_trainers[0], player_trainers[1], pokemon_names
 			],

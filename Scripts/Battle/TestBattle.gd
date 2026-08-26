@@ -62,7 +62,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_wild_animation_test: bool = false
 ## 2vs2 salvaje: Gyarados+Charizard vs Gyarados+Charizard — alineación sombra en doble (sprites grandes).
 @export var use_double_wild_animation_test: bool = false
-## 2vs2 entrenador: 1 trainer jugador vs 1 trainer rival (Gyarados+Charizard por lado).
+## 2vs2 entrenador: 1 trainer jugador vs 1 trainer rival (Gyarados lead rival + Machamp).
 @export var use_double_trainer_vs_trainer_test: bool = false
 ## 1vs1 salvaje: Charmander (Malicioso + Placaje) vs Pidgey (Malicioso + Tornado) — animación Leer.
 @export var use_leer_animation_test: bool = false
@@ -1139,81 +1139,124 @@ func _create_double_trainer_battle_pokemon(
 
 
 func _create_double_trainer_vs_trainer_test_player() -> BattleParticipant:
-	var gyarados := Pokemon.new()
-	gyarados.pokemon_id = PokemonsEnum.Values.GYARADOS as PokemonsEnum.Values
-	gyarados.level = 40
-	gyarados.is_wild = false
-	gyarados.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	gyarados._post_init()
-	var lead_a: BattlePokemon = gyarados.to_battle_pokemon()
-	lead_a.controllable = true
-
-	var charizard := Pokemon.new()
-	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
-	charizard.level = 40
-	charizard.is_wild = false
-	charizard.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	charizard._post_init()
-	var lead_b: BattlePokemon = charizard.to_battle_pokemon()
-	lead_b.controllable = true
-
-	var participant := BattleParticipant.new([lead_a, lead_b])
+	# Activos: Charizard + Venusaur. Banca: Blastoise (cambio / KO en doble).
+	var lead_a := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.CHARIZARD,
+		40,
+		[
+			MovesEnum.Values.FLAMETHROWER,
+			MovesEnum.Values.WING_ATTACK,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.SCRATCH,
+		],
+		true
+	)
+	var lead_b := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.VENUSAUR,
+		40,
+		[
+			MovesEnum.Values.RAZOR_LEAF,
+			MovesEnum.Values.VINE_WHIP,
+			MovesEnum.Values.LEECH_SEED,
+			MovesEnum.Values.GROWL,
+		],
+		true
+	)
+	var bench := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.BLASTOISE,
+		38,
+		[
+			MovesEnum.Values.SURF,
+			MovesEnum.Values.ICE_BEAM,
+			MovesEnum.Values.PROTECT,
+			MovesEnum.Values.TACKLE,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([lead_a, lead_b, bench])
 	participant.is_player = true
 	participant.name = "Jugador"
 	return participant
 
 
 func _create_double_trainer_vs_trainer_test_trainer() -> BattleParticipant:
+	# Lead A = Gyarados (pedido QA). Partner = Machamp. Banca = Pikachu.
 	var ia := BattleIA_TrainerEasy.new()
-	var gyarados := Pokemon.new()
-	gyarados.pokemon_id = PokemonsEnum.Values.GYARADOS as PokemonsEnum.Values
-	gyarados.level = 40
-	gyarados.is_wild = false
-	gyarados.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	gyarados._post_init()
-	var bp_a: BattlePokemon = gyarados.to_battle_pokemon()
-	bp_a.setIA(ia)
-	bp_a.controllable = false
-
-	var charizard := Pokemon.new()
-	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
-	charizard.level = 40
-	charizard.is_wild = false
-	charizard.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	charizard._post_init()
-	var bp_b: BattlePokemon = charizard.to_battle_pokemon()
-	bp_b.setIA(ia)
-	bp_b.controllable = false
-
-	var participant := BattleParticipant.new([bp_a, bp_b])
+	var gyarados := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.GYARADOS,
+		40,
+		[
+			MovesEnum.Values.HYDRO_PUMP,
+			MovesEnum.Values.ICE_BEAM,
+			MovesEnum.Values.BITE,
+			MovesEnum.Values.THUNDERBOLT,
+		],
+		false,
+		ia
+	)
+	var machamp := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.MACHAMP,
+		40,
+		[
+			MovesEnum.Values.EARTHQUAKE,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.LEER,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pikachu := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIKACHU,
+		36,
+		[
+			MovesEnum.Values.THUNDERBOLT,
+			MovesEnum.Values.QUICK_ATTACK,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.TACKLE,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([gyarados, machamp, pikachu])
 	participant.is_trainer = true
 	participant.ai_controller = ia
 	participant.name = "Entrenador"
-	participant.defeat_message = "¡Imposible! ¡Mis Pokémon eran los mejores!"
+	participant.intro_message = "¡Prepárate para un combate doble!"
+	participant.defeat_message = "¡Imposible! ¡Mi Gyarados era imbatible!"
 	return participant
 
 
+func _make_double_tvt_battle_pokemon(
+	pokemon_id: PokemonsEnum.Values,
+	level: int,
+	move_ids: Array,
+	is_player: bool,
+	ia: BattleIA = null
+) -> BattlePokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = pokemon_id
+	pkmn.level = level
+	pkmn.is_wild = false
+	var typed_moves: Array[MovesEnum.Values] = []
+	for move_id in move_ids:
+		typed_moves.append(move_id as MovesEnum.Values)
+	pkmn.custom_move_ids = typed_moves
+	pkmn._post_init()
+	var bp: BattlePokemon = pkmn.to_battle_pokemon()
+	bp.controllable = is_player
+	if not is_player and ia != null:
+		bp.setIA(ia)
+	return bp
+
+
 func _print_double_trainer_vs_trainer_test_guide() -> void:
-	print(">>> Test 2vs2 trainer vs trainer: Gyarados+Charizard vs Gyarados+Charizard.")
-	print(">>> Intro: «Entrenador quiere luchar» → send-in doble rival → «¡Adelante, Gyarados y Charizard!».")
-	print(">>> Sin sombra salvaje; comprueba alineación al suelo en 4 spots. Controlas los 2 Pokémon.")
-	print(">>> Desactiva use_double_trainer_vs_trainer_test para volver a otro flag.")
+	print(">>> Test DOBLE 1 trainer vs 1 trainer (lógica de combate).")
+	print(">>> Jugador: Charizard + Venusaur (activos) + Blastoise (banca).")
+	print(">>> Rival: Gyarados + Machamp (activos) + Pikachu (banca). IA: TrainerEasy.")
+	print(">>> Moves útiles: Surf/Earthquake (área), Ice Beam/Bite/Flamethrower (elige objetivo), Protect, Leech Seed.")
+	print(">>> Revisa: targeting en doble, KO → cambio forzado, orden de turnos, daño a aliado (Earthquake).")
+	print(">>> Escena: TestBattle.tscn con use_double_trainer_vs_trainer_test = true.")
 
 
 func _print_double_trainer_animation_test_guide() -> void:

@@ -20,14 +20,14 @@ func _init(_category: BattleMoveCategory, _move: BattleMove, _user: BattlePokemo
 
 func apply() -> void:
 	per_hit_handlers.clear()
-	
+
 	# Solo aplicar multi-hit si el target es un Pokémon
 	if not target.is_pokemon():
 		push_warning("MultiHitHandler solo debe aplicarse a targets de tipo POKEMON")
 		return
-	
+
 	var target_pokemon := target.get_pokemon()
-	
+
 	for i in num_hits:
 		if target_pokemon.is_fainted():
 			break
@@ -40,7 +40,7 @@ func apply() -> void:
 func visualize(ui: BattleUI) -> void:
 	for h in per_hit_handlers:
 		await h.visualize(ui)
-	
+
 	if num_hits > 1:
 		await ui.show_multi_hit_message(per_hit_handlers.size())
 
