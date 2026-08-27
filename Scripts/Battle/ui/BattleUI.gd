@@ -660,6 +660,11 @@ func handle_opponent_trainer_send_in_sequence(
 	participant: BattleParticipant,
 	incoming_choice: BattleSwitchChoice
 ) -> void:
+	# Single: «X será el próximo» + ¿quieres cambiar? Doble: solo el send-in («saca a Y»).
+	var rules: BattleRules = battle_controller.rules if battle_controller != null else null
+	if rules != null and rules.mode == BattleRules.BattleModes.DOUBLE:
+		return
+
 	var incoming: BattlePokemon = incoming_choice.incoming_pokemon
 	if incoming == null:
 		return

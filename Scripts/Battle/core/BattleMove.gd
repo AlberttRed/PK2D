@@ -131,6 +131,9 @@ func get_battle_animation() -> BattleAnimation:
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base_data.get_stat_changes()
 
+func get_meta_stat_chance() -> int:
+	return base_data.get_meta_stat_chance() if base_data != null else 0
+
 func get_stat_change_value(stat: StatsEnum.Values) -> int:
 	return get_stat_changes()[stat]
 
