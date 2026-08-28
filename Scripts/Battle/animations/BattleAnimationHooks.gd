@@ -24,8 +24,10 @@ func call_on_user(method: StringName, args: Array = []) -> void:
 	_call_on_spot(user_spot, method, args)
 
 
+## Call Method Track: aplica el método a todos los targets (paralelo en dobles/triples).
 func call_on_target(method: StringName, args: Array = []) -> void:
-	_call_on_spot(_first_target(), method, args)
+	for spot in target_spots:
+		_call_on_spot(spot, method, args)
 
 
 ## Atajo Call Method (sin Array anidado en el track): embestida del user.
@@ -66,6 +68,11 @@ func target_poison_tint(up_duration: float = 0.08, hold_duration: float = 0.55, 
 ## Tinte cian del target (ailment Freeze).
 func target_freeze_tint(up_duration: float = 0.1, hold_duration: float = 1.22, down_duration: float = 0.18) -> void:
 	call_on_target(&"tint", [Color(0.48, 0.78, 1.0, 1.0), up_duration, hold_duration, down_duration])
+
+
+## Solo el primer target (casos que no deben multipicar el efecto).
+func call_on_first_target(method: StringName, args: Array = []) -> void:
+	_call_on_spot(_first_target(), method, args)
 
 
 func _first_target() -> BattleSpot:

@@ -414,11 +414,12 @@ static func _play_throw_with_enter_overlap(
 	await BattleAnimationUtils.wait(ui, open_at)
 
 	# Orden ref. 63–79: ball delante → flash → Pokémon creciendo detrás.
+	# Sin bajar el sprite por debajo de spots que deben quedar detrás (p. ej. Spot A vs B).
 	var spr: Sprite2D = landing_spot.sprite
 	var prev_sprite_z := 0
 	if spr != null and is_instance_valid(spr):
 		prev_sprite_z = spr.z_index
-		spr.z_index = POKEMON_BEHIND_ENTER_VFX_Z
+		spr.z_index = _sprite_z_for_enter_behind_vfx(landing_spot)
 
 	var run_enter := func() -> void:
 		await play_pokemon_enter(ui, landing_spot)
@@ -438,6 +439,29 @@ static func _play_throw_with_enter_overlap(
 
 	if spr != null and is_instance_valid(spr):
 		spr.z_index = prev_sprite_z
+
+
+## z del sprite al crecer detrás del VFX, respetando el orden Spot A delante / Spot B detrás.
+static func _sprite_z_for_enter_behind_vfx(landing_spot: BattleSpot) -> int:
+	if landing_spot == null:
+		return POKEMON_BEHIND_ENTER_VFX_Z
+	var spot_z := landing_spot.z_index
+	var min_z := -999
+	var max_z := 999
+	var parent := landing_spot.get_parent()
+	if parent == null:
+		return POKEMON_BEHIND_ENTER_VFX_Z
+	for child in parent.get_children():
+		if child == landing_spot or not (child is BattleSpot):
+			continue
+		var sib_z: int = child.z_index
+		if sib_z < spot_z:
+			# Debe seguir por delante de spots más atrás.
+			min_z = maxi(min_z, sib_z - spot_z + 1)
+		elif sib_z > spot_z:
+			# No superar spots que van por delante.
+			max_z = mini(max_z, sib_z - spot_z - 1)
+	return clampi(POKEMON_BEHIND_ENTER_VFX_Z, min_z, max_z)
 
 
 ## Party intro: sale en paralelo al exit del trainer (player al instante; rival tras delay de ball).

@@ -7,10 +7,18 @@
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 position = Vector2(1, 2)
 script = ExtResource("1_tse6d")
+use_endless_random_battle_loop = true
+use_psychic_stat_double_test = false
+use_surf_triple_ko_double_test = false
+use_level_100_single_test = false
+use_move_fail_no_target_test = false
 debug_rattata_test_bite = false
 debug_rattata_extended_volatiles = false
 use_capture_throw_animation_test = false
-use_rain_weather_animation_test = true
+use_rain_weather_animation_test = false
+use_double_trainer_vs_trainer_test = false
+use_double_trainer_animation_test = false
+double_trainer_ally_controllable = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

@@ -151,6 +151,11 @@ func get_weather() -> WeatherData:
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base.stat_changes
 
+func get_meta_stat_chance() -> int:
+	if base == null:
+		return 0
+	return base.meta_stat_chance
+
 func get_min_hits() -> int:
 	return base.meta_min_hits
 

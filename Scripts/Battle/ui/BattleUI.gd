@@ -660,6 +660,11 @@ func handle_opponent_trainer_send_in_sequence(
 	participant: BattleParticipant,
 	incoming_choice: BattleSwitchChoice
 ) -> void:
+	# Single: «X será el próximo» + ¿quieres cambiar? Doble: solo el send-in («saca a Y»).
+	var rules: BattleRules = battle_controller.rules if battle_controller != null else null
+	if rules != null and rules.mode == BattleRules.BattleModes.DOUBLE:
+		return
+
 	var incoming: BattlePokemon = incoming_choice.incoming_pokemon
 	if incoming == null:
 		return
@@ -1031,7 +1036,8 @@ func _clear_action_selection_bounce() -> void:
 	_selection_bounce_spot = null
 
 func play_intro_sequence(rules,player_pokemon,enemy_pokemon,player_trainers,enemy_trainers) -> void:
-	## Intro (PBI 707): bases/trainers → mensajes → send-in → menú.
+	## Intro (PBI 707): bases/trainers → mensajes → send-in.
+	## El menú de acciones se abre después de ON_BATTLE_START (habilidades, etc.).
 	## Clips en BattleFieldAnimations; gesto de brazo / exit cuando existan.
 	await BattleFieldAnimations.play_intro_trainers_enter(self, rules)
 
@@ -1135,8 +1141,8 @@ func _play_parallel_send_ins_with_messages(
 			return
 		await get_tree().process_frame
 
-	if actions_menu != null:
-		actions_menu.show()
+	# No mostrar el menú de acciones aquí: ON_BATTLE_START (habilidades, clima…)
+	# aún puede visualizarse. El menú se abre en show_action_menu_for.
 
 
 ## Preparar campo en negro antes del reveal (bases fuera, HP ocultas).

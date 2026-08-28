@@ -368,8 +368,15 @@ func grant_experience_after_enemy_ko(defeated_enemy: BattlePokemon, action_execu
 			lv_before = lvl_res.old_level
 			lv_gained = lvl_res.levels_gained
 		var spot: BattleSpot = bp.battle_spot
-		var should_animate_exp_bar: bool = spot != null and spot.hp_bar != null and bp.in_battle \
+		# En doble la barra EXP no se muestra: mensaje + grant, sin animación (evita delay vacío).
+		var is_double := rules.mode == BattleRules.BattleModes.DOUBLE
+		var should_animate_exp_bar: bool = (
+			not is_double
+			and spot != null
+			and spot.hp_bar != null
+			and bp.in_battle
 			and spot.get_active_pokemon() == bp
+		)
 		if should_animate_exp_bar:
 			var old_total: int = po.new_total_exp - po.gained_exp
 			# Durante la animación EXP, el nivel en pantalla debe seguir siendo el de antes hasta llenar el trozo actual.

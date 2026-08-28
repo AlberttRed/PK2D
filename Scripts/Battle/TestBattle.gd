@@ -2,6 +2,27 @@ extends Node2D
 
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 
+@export_group("Bucle aleatorio infinito")
+## Si true (o si no hay ningún otro flag de prueba), genera combates al azar sin parar.
+## Salvaje/entrenador × single/doble × 1v1 o 2v2 trainers. Sin lógica de escenarios fijos.
+@export var use_endless_random_battle_loop: bool = true
+## Diferencia máxima de nivel entre cualquier par de Pokémon del combate (1–100).
+@export_range(0, 99) var endless_loop_max_level_gap: int = 5
+## Cantidad de cada ítem de prueba en la mochila de cada participante.
+@export_range(1, 99) var endless_loop_item_qty: int = 10
+
+@export_group("Debug Psíquico + doble")
+## Doble 1 trainer vs 1: Alakazam (Psíquico) para validar stat tras daño / KO y send-in sin prompt.
+@export var use_psychic_stat_double_test: bool = false
+
+@export_group("Debug Surf multi-KO doble")
+## Doble: Gyarados Nv.80 (Surf) + aliado débil vs 2 rivales débiles (+ banca). Surf tumba a los 3.
+@export var use_surf_triple_ko_double_test: bool = false
+
+@export_group("Debug nivel 100")
+## 1vs1 entrenador: tu Pokémon Nv.100 vs Rival débil (probar barra EXP vacía y EXP sin subir).
+@export var use_level_100_single_test: bool = false
+
 @export_group("Equipos de prueba")
 ## Si true, lanza 1vs1 salvaje con party jugador 2+ para probar cambio forzado por KO (AC1).
 @export var use_forced_switch_player_test: bool = false
@@ -53,7 +74,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## 1vs1 salvaje: Charmander (Supersónico) vs Squirtle — animación ailment Confusion.
 @export var use_confusion_ailment_animation_test: bool = false
 ## 1vs1 salvaje: Charmander vs Pidgey — fase 1 captura (lanzar ball → abrir/cerrar → rebotes).
-@export var use_capture_throw_animation_test: bool = true
+@export var use_capture_throw_animation_test: bool = false
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
 @export var use_growl_animation_test: bool = false
 ## 1vs1 entrenador: Charmander vs Squirtle (+ banca) — intro ball throw player/rival y switch-in.
@@ -62,7 +83,7 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_wild_animation_test: bool = false
 ## 2vs2 salvaje: Gyarados+Charizard vs Gyarados+Charizard — alineación sombra en doble (sprites grandes).
 @export var use_double_wild_animation_test: bool = false
-## 2vs2 entrenador: 1 trainer jugador vs 1 trainer rival (Gyarados+Charizard por lado).
+## 2vs2 entrenador: 1 trainer jugador vs 1 trainer rival (Gyarados lead rival + Machamp).
 @export var use_double_trainer_vs_trainer_test: bool = false
 ## 1vs1 salvaje: Charmander (Malicioso + Placaje) vs Pidgey (Malicioso + Tornado) — animación Leer.
 @export var use_leer_animation_test: bool = false
@@ -113,6 +134,17 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 const WILD_PARTY_SINGLE: int = 1
 const WILD_PARTY_DOUBLE: int = 2
 
+## Ítems fijos del bucle infinito: Poción, Superpoción, Poké Ball, Super Ball.
+const ENDLESS_LOOP_ITEM_IDS: Array[int] = [17, 26, 4, 3]
+
+enum EndlessBattleKind {
+	WILD_SINGLE,
+	WILD_DOUBLE,
+	TRAINER_SINGLE,
+	TRAINER_DOUBLE_1V1,
+	TRAINER_DOUBLE_2V2,
+}
+
 # Instanciado solo al ejecutar esta escena en solitario (F6); en juego normal ya existe vía Main.
 var _bootstrapped_display_manager: DisplayManager = null
 
@@ -126,10 +158,25 @@ var _bootstrapped_display_manager: DisplayManager = null
 func _ready() -> void:
 	if not await _ensure_display_manager():
 		return
+	if use_psychic_stat_double_test:
+		_print_psychic_stat_double_test_guide()
+		await psychicStatDoubleTestBattle()
+		return
+	if use_surf_triple_ko_double_test:
+		_print_surf_triple_ko_double_test_guide()
+		await surfTripleKoDoubleTestBattle()
+		return
+	if use_level_100_single_test:
+		_print_level_100_single_test_guide()
+		await level100SingleTestBattle()
+		return
 	if use_move_fail_no_target_test:
 		_setup_move_fail_no_target_test_parties()
 		_print_move_fail_no_target_test_guide()
 		await wildMoveFailNoTargetTestBattle()
+		return
+	if use_endless_random_battle_loop:
+		await _run_endless_random_battle_loop()
 		return
 	if use_move_fail_message_test:
 		_setup_move_fail_message_test_parties()
@@ -306,15 +353,8 @@ func _ready() -> void:
 			print(">>> debug_zero_pp: todos los movimientos a 0 PP — pulsa LUCHAR para Forcejeo.")
 		await wildFixedRattataGastlyBattle()
 		return
-	# Lanzar combates en bucle para testing continuo
-	while true:
-		if randi() % 2 == 0:
-			print(">>> Iniciando Single Wild Battle (Random)")
-			await wildRandomSingleBattle()
-		else:
-			print(">>> Iniciando Double Wild Battle (Random)")
-			await wildRandomDoubleBattle()
-		await get_tree().create_timer(0.5).timeout
+	# Sin flags de escenario: mismo bucle aleatorio infinito.
+	await _run_endless_random_battle_loop()
 
 
 ## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
@@ -481,7 +521,8 @@ func _create_move_fail_no_target_pikachu() -> Pokemon:
 func _create_move_fail_no_target_machop() -> Pokemon:
 	var pkmn := Pokemon.new()
 	pkmn.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
-	pkmn.level = 10
+	# Más lento que Pikachu Nv.50 para actuar segundo tras el KO.
+	pkmn.level = 40
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [MovesEnum.Values.TACKLE]
 	pkmn._post_init()
@@ -489,21 +530,23 @@ func _create_move_fail_no_target_machop() -> Pokemon:
 
 
 func _create_move_fail_no_target_enemy() -> Pokemon:
+	# Objetivo compartido frágil (ambos moves le hacen daño; no Fantasma).
 	var pkmn := Pokemon.new()
-	pkmn.pokemon_id = PokemonsEnum.Values.GASTLY as PokemonsEnum.Values
+	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
 	pkmn.level = 5
 	pkmn.is_wild = true
-	pkmn.custom_move_ids = [MovesEnum.Values.LICK]
+	pkmn.custom_move_ids = [MovesEnum.Values.TACKLE, MovesEnum.Values.TAIL_WHIP]
 	pkmn._post_init()
 	return pkmn
 
 
 func _create_move_fail_no_target_decoy_enemy() -> Pokemon:
+	# El otro spot; no es el target del turno de prueba.
 	var pkmn := Pokemon.new()
-	pkmn.pokemon_id = PokemonsEnum.Values.RATTATA as PokemonsEnum.Values
-	pkmn.level = 30
+	pkmn.pokemon_id = PokemonsEnum.Values.SNORLAX as PokemonsEnum.Values
+	pkmn.level = 40
 	pkmn.is_wild = true
-	pkmn.custom_move_ids = [MovesEnum.Values.TAIL_WHIP]
+	pkmn.custom_move_ids = [MovesEnum.Values.REST, MovesEnum.Values.TACKLE]
 	pkmn._post_init()
 	return pkmn
 
@@ -531,10 +574,10 @@ func _print_move_fail_message_test_guide() -> void:
 
 
 func _print_move_fail_no_target_test_guide() -> void:
-	print(">>> [MOVE_FAIL doble] Pikachu + Machop vs Gastly Nv.5 + Rattata — NO_TARGET natural")
-	print(">>> Turno 1: Pikachu → Rayo / Machop → Placaje (ambos apuntando a Gastly)")
-	print(">>> Pikachu actúa primero (más rápido), debilita a Gastly. Rattata sigue en pie.")
-	print(">>> Machop intenta Placaje al Gastly debilitado → «¡Pero no hay objetivo al que atacar!»")
+	print(">>> [MOVE_FAIL doble / NO_TARGET] Pikachu Nv.50 + Machop Nv.40 vs Rattata Nv.5 + Snorlax")
+	print(">>> Turno 1: apunta AMBOS a Rattata — Pikachu Rayo, Machop Placaje.")
+	print(">>> Pikachu actúa primero y lo debilita; Machop → «¡Pero no hay objetivo al que atacar!»")
+	print(">>> (Snorlax queda en el otro spot; no es el objetivo elegido.)")
 
 
 func wildFixedRattataGastlyBattle() -> void:
@@ -817,35 +860,284 @@ func doubleTrainerVsTrainerTestBattle() -> void:
 	print(">>> Batalla 2vs2 trainer vs trainer terminada. Ganador: %s" % winner)
 
 
-func doubleTrainerAnimationTestBattle() -> void:
-	var player_a := _create_double_trainer_test_participant(
-		"JugadorA", PokemonsEnum.Values.CHARMANDER, 20, true
+func psychicStatDoubleTestBattle() -> void:
+	var player_participant := _create_psychic_stat_double_test_player()
+	var trainer_participant := _create_psychic_stat_double_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	_apply_endless_loop_bags(participants)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Psíquico doble terminada. Ganador: %s" % winner)
+
+
+func _print_psychic_stat_double_test_guide() -> void:
+	print(">>> [PSYCHIC DOUBLE] Alakazam+Venusaur vs Rattata(débil)+Snorlax(tank)+Pidgey(banca)")
+	print(">>> DEBUG_FORCE_STAT_CHANGE=true en BattleDamageLowerMoveHandler (stat siempre si sobrevive).")
+	print(">>> 1) Psíquico a Rattata → KO: NO mensaje de Def. Esp.; rival saca sin prompt de cambio.")
+	print(">>> 2) Psíquico a Snorlax → sobrevive: SÍ baja Def. Esp.")
+	print(">>> Desactiva use_psychic_stat_double_test y DEBUG_FORCE_STAT_CHANGE al terminar.")
+
+
+func surfTripleKoDoubleTestBattle() -> void:
+	var player_participant := _create_surf_triple_ko_double_test_player()
+	var trainer_participant := _create_surf_triple_ko_double_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	_apply_endless_loop_bags(participants)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Surf multi-KO doble terminada. Ganador: %s" % winner)
+
+
+func level100SingleTestBattle() -> void:
+	var player_participant := _create_level_100_single_test_player()
+	var trainer_participant := _create_level_100_single_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	_apply_endless_loop_bags(participants)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Nv.100 single terminada. Ganador: %s" % winner)
+
+
+func _print_level_100_single_test_guide() -> void:
+	print(">>> [NV.100 SINGLE] Charizard Nv.100 vs Rattata Nv.5 (+ Pidgey banca)")
+	print(">>> Barra EXP del activo debe verse vacía al entrar; al ganar EXP no debe llenarse.")
+	print(">>> Desactiva use_level_100_single_test al terminar.")
+
+
+func _create_level_100_single_test_player() -> BattleParticipant:
+	var lead := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.CHARIZARD,
+		100,
+		[
+			MovesEnum.Values.FLAMETHROWER,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
 	)
-	var player_b := _create_double_trainer_test_participant(
-		"JugadorB", PokemonsEnum.Values.SQUIRTLE, 18, double_trainer_ally_controllable
-	)
-	# Aliado IA: mismo lado que el jugador, sin ser humano.
-	if not double_trainer_ally_controllable:
-		player_b.joins_player_side = true
-	# Si controlas al aliado, tiene mochila propia (no la del GameState).
-	if double_trainer_ally_controllable:
-		player_b.set_bag_from_item_ids([17, 17, 18])  # Poción x2, Antídoto x1
-	var enemy_a := _create_double_trainer_test_participant(
-		"RivalA",
-		PokemonsEnum.Values.BULBASAUR,
-		18,
-		false,
-		PokemonsEnum.Values.PIKACHU,
-		BattleIA_TrainerTest.create_switch_first_turn()
-	)
-	var enemy_b := _create_double_trainer_test_participant(
-		"RivalB",
-		PokemonsEnum.Values.PIDGEY,
-		17,
-		false,
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_level_100_single_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var rattata := _make_double_tvt_battle_pokemon(
 		PokemonsEnum.Values.RATTATA,
-		BattleIA_TrainerTest.create_switch_first_turn()
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
 	)
+	var pidgey := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIDGEY,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([rattata, pidgey])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Rival"
+	participant.intro_message = "¡A ver esa barra de EXP!"
+	participant.defeat_message = "¡Nv.100 es imparable!"
+	return participant
+
+
+func _print_surf_triple_ko_double_test_guide() -> void:
+	print(">>> [SURF TRIPLE KO] Gyarados Nv.80 (Surf) + Rattata Nv.5 vs Rattata Nv.5 + Pidgey Nv.5 (+ banca)")
+	print(">>> Turno 1: Gyarados → Surf (golpea aliado + 2 rivales). Debería tumbar a los 3.")
+	print(">>> Verificar: por cada KO → barra 0 + faint + retirar + mensaje; EXP y envíos al final de turno.")
+	print(">>> Desactiva use_surf_triple_ko_double_test al terminar.")
+
+
+func _create_surf_triple_ko_double_test_player() -> BattleParticipant:
+	var gyarados := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.GYARADOS,
+		80,
+		[
+			MovesEnum.Values.SURF,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	# Aliado frágil: Surf también le golpea (3er KO).
+	var ally := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([gyarados, ally])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_surf_triple_ko_double_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var rattata := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pidgey := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIDGEY,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	# Banca para probar reemplazos al final de turno tras el Surf.
+	var machop := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.MACHOP,
+		10,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.LEER,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([rattata, pidgey, machop])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Rival"
+	participant.intro_message = "¡A ver ese Surf!"
+	participant.defeat_message = "¡Todo barrido por el Surf!"
+	return participant
+
+
+func _create_psychic_stat_double_test_player() -> BattleParticipant:
+	var alakazam := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.ALAKAZAM,
+		40,
+		[
+			MovesEnum.Values.PSYCHIC,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	var venusaur := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.VENUSAUR,
+		40,
+		[
+			MovesEnum.Values.RAZOR_LEAF,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([alakazam, venusaur])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_psychic_stat_double_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	# Débil: Psíquico debería debilitarlo a menudo (sin proc de stat).
+	var rattata := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	# Tanque: debería sobrevivir y mostrar bajada de Def. Esp.
+	var snorlax := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.SNORLAX,
+		50,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.REST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pidgey := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIDGEY,
+		20,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([rattata, snorlax, pidgey])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Rival"
+	participant.intro_message = "¡Probemos Psíquico en doble!"
+	participant.defeat_message = "¡Mi equipo no resistió Psíquico!"
+	return participant
+
+
+func doubleTrainerAnimationTestBattle() -> void:
+	# Trainer A: starters básicos. Trainer B: primeras evoluciones. Mismo en ambos lados.
+	var party_a: Array = [
+		PokemonsEnum.Values.CHARMANDER,
+		PokemonsEnum.Values.SQUIRTLE,
+		PokemonsEnum.Values.BULBASAUR,
+	]
+	var party_b: Array = [
+		PokemonsEnum.Values.CHARMELEON,
+		PokemonsEnum.Values.WARTORTLE,
+		PokemonsEnum.Values.IVYSAUR,
+	]
+	var player_a := _create_double_trainer_test_participant("JugadorA", party_a, 20, true)
+	var player_b := _create_double_trainer_test_participant("JugadorB", party_b, 22, false)
+	# Aliado IA en el lado jugador (no controlable).
+	player_b.joins_player_side = true
+	var enemy_a := _create_double_trainer_test_participant("RivalA", party_a, 20, false)
+	var enemy_b := _create_double_trainer_test_participant("RivalB", party_b, 22, false)
 	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
 	var participants: Array[BattleParticipant] = [player_a, player_b, enemy_a, enemy_b]
 	var winner = await _start_test_battle(participants, rules)
@@ -1090,21 +1382,19 @@ func _print_double_wild_animation_test_guide() -> void:
 
 func _create_double_trainer_test_participant(
 	trainer_name: String,
-	pokemon_id: PokemonsEnum.Values,
+	pokemon_ids: Array,
 	level: int,
 	is_player: bool,
-	bench_pokemon_id: int = -1,
 	ai: BattleIA = null
 ) -> BattleParticipant:
 	var ia_resolved: BattleIA = ai
 	if not is_player and ia_resolved == null:
 		ia_resolved = BattleIA_TrainerEasy.new()
 
-	var party: Array[BattlePokemon] = [
-		_create_double_trainer_battle_pokemon(pokemon_id, level, is_player, ia_resolved)
-	]
-	if bench_pokemon_id >= 0:
-		party.append(_create_double_trainer_battle_pokemon(bench_pokemon_id, level, is_player, ia_resolved))
+	var party: Array[BattlePokemon] = []
+	for pokemon_id_variant in pokemon_ids:
+		var pokemon_id: PokemonsEnum.Values = pokemon_id_variant as PokemonsEnum.Values
+		party.append(_create_double_trainer_battle_pokemon(pokemon_id, level, is_player, ia_resolved))
 
 	var participant := BattleParticipant.new(party)
 	participant.is_player = is_player
@@ -1127,8 +1417,10 @@ func _create_double_trainer_battle_pokemon(
 	pkmn.level = level
 	pkmn.is_wild = false
 	pkmn.custom_move_ids = [
+		MovesEnum.Values.GROWL,
+		MovesEnum.Values.SURF,
+		MovesEnum.Values.FURY_ATTACK,
 		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.TAIL_WHIP,
 	]
 	pkmn._post_init()
 	var bp: BattlePokemon = pkmn.to_battle_pokemon(ia)
@@ -1139,95 +1431,133 @@ func _create_double_trainer_battle_pokemon(
 
 
 func _create_double_trainer_vs_trainer_test_player() -> BattleParticipant:
-	var gyarados := Pokemon.new()
-	gyarados.pokemon_id = PokemonsEnum.Values.GYARADOS as PokemonsEnum.Values
-	gyarados.level = 40
-	gyarados.is_wild = false
-	gyarados.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	gyarados._post_init()
-	var lead_a: BattlePokemon = gyarados.to_battle_pokemon()
-	lead_a.controllable = true
-
-	var charizard := Pokemon.new()
-	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
-	charizard.level = 40
-	charizard.is_wild = false
-	charizard.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	charizard._post_init()
-	var lead_b: BattlePokemon = charizard.to_battle_pokemon()
-	lead_b.controllable = true
-
-	var participant := BattleParticipant.new([lead_a, lead_b])
+	# Activos: Charizard + Venusaur. Banca: Blastoise (cambio / KO en doble).
+	var lead_a := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.CHARIZARD,
+		40,
+		[
+			MovesEnum.Values.FLAMETHROWER,
+			MovesEnum.Values.WING_ATTACK,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.SCRATCH,
+		],
+		true
+	)
+	var lead_b := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.VENUSAUR,
+		40,
+		[
+			MovesEnum.Values.RAZOR_LEAF,
+			MovesEnum.Values.VINE_WHIP,
+			MovesEnum.Values.LEECH_SEED,
+			MovesEnum.Values.GROWL,
+		],
+		true
+	)
+	var bench := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.BLASTOISE,
+		38,
+		[
+			MovesEnum.Values.SURF,
+			MovesEnum.Values.ICE_BEAM,
+			MovesEnum.Values.PROTECT,
+			MovesEnum.Values.TACKLE,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([lead_a, lead_b, bench])
 	participant.is_player = true
 	participant.name = "Jugador"
 	return participant
 
 
 func _create_double_trainer_vs_trainer_test_trainer() -> BattleParticipant:
+	# Lead A = Gyarados (pedido QA). Partner = Machamp. Banca = Pikachu.
 	var ia := BattleIA_TrainerEasy.new()
-	var gyarados := Pokemon.new()
-	gyarados.pokemon_id = PokemonsEnum.Values.GYARADOS as PokemonsEnum.Values
-	gyarados.level = 40
-	gyarados.is_wild = false
-	gyarados.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	gyarados._post_init()
-	var bp_a: BattlePokemon = gyarados.to_battle_pokemon()
-	bp_a.setIA(ia)
-	bp_a.controllable = false
-
-	var charizard := Pokemon.new()
-	charizard.pokemon_id = PokemonsEnum.Values.CHARIZARD as PokemonsEnum.Values
-	charizard.level = 40
-	charizard.is_wild = false
-	charizard.custom_move_ids = [
-		MovesEnum.Values.GROWL,
-		MovesEnum.Values.TACKLE,
-		MovesEnum.Values.SCRATCH,
-	]
-	charizard._post_init()
-	var bp_b: BattlePokemon = charizard.to_battle_pokemon()
-	bp_b.setIA(ia)
-	bp_b.controllable = false
-
-	var participant := BattleParticipant.new([bp_a, bp_b])
+	var gyarados := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.GYARADOS,
+		40,
+		[
+			MovesEnum.Values.HYDRO_PUMP,
+			MovesEnum.Values.ICE_BEAM,
+			MovesEnum.Values.BITE,
+			MovesEnum.Values.THUNDERBOLT,
+		],
+		false,
+		ia
+	)
+	var machamp := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.MACHAMP,
+		40,
+		[
+			MovesEnum.Values.EARTHQUAKE,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.LEER,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pikachu := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIKACHU,
+		36,
+		[
+			MovesEnum.Values.THUNDERBOLT,
+			MovesEnum.Values.QUICK_ATTACK,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.TACKLE,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([gyarados, machamp, pikachu])
 	participant.is_trainer = true
 	participant.ai_controller = ia
 	participant.name = "Entrenador"
-	participant.defeat_message = "¡Imposible! ¡Mis Pokémon eran los mejores!"
+	participant.intro_message = "¡Prepárate para un combate doble!"
+	participant.defeat_message = "¡Imposible! ¡Mi Gyarados era imbatible!"
 	return participant
 
 
+func _make_double_tvt_battle_pokemon(
+	pokemon_id: PokemonsEnum.Values,
+	level: int,
+	move_ids: Array,
+	is_player: bool,
+	ia: BattleIA = null
+) -> BattlePokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = pokemon_id
+	pkmn.level = level
+	pkmn.is_wild = false
+	var typed_moves: Array[MovesEnum.Values] = []
+	for move_id in move_ids:
+		typed_moves.append(move_id as MovesEnum.Values)
+	pkmn.custom_move_ids = typed_moves
+	pkmn._post_init()
+	var bp: BattlePokemon = pkmn.to_battle_pokemon()
+	bp.controllable = is_player
+	if not is_player and ia != null:
+		bp.setIA(ia)
+	return bp
+
+
 func _print_double_trainer_vs_trainer_test_guide() -> void:
-	print(">>> Test 2vs2 trainer vs trainer: Gyarados+Charizard vs Gyarados+Charizard.")
-	print(">>> Intro: «Entrenador quiere luchar» → send-in doble rival → «¡Adelante, Gyarados y Charizard!».")
-	print(">>> Sin sombra salvaje; comprueba alineación al suelo en 4 spots. Controlas los 2 Pokémon.")
-	print(">>> Desactiva use_double_trainer_vs_trainer_test para volver a otro flag.")
+	print(">>> Test DOBLE 1 trainer vs 1 trainer (lógica de combate).")
+	print(">>> Jugador: Charizard + Venusaur (activos) + Blastoise (banca).")
+	print(">>> Rival: Gyarados + Machamp (activos) + Pikachu (banca). IA: TrainerEasy.")
+	print(">>> Moves útiles: Surf/Earthquake (área), Ice Beam/Bite/Flamethrower (elige objetivo), Protect, Leech Seed.")
+	print(">>> Revisa: targeting en doble, KO → cambio forzado, orden de turnos, daño a aliado (Earthquake).")
+	print(">>> Escena: TestBattle.tscn con use_double_trainer_vs_trainer_test = true.")
 
 
 func _print_double_trainer_animation_test_guide() -> void:
-	if double_trainer_ally_controllable:
-		print(">>> Test 2vs2 trainers: JugadorA + JugadorB (ambos controlables) vs RivalA+RivalB.")
-		print(">>> JugadorB tiene mochila propia (Poción x2, Antídoto); JugadorA usa GameState.")
-	else:
-		print(">>> Test 2vs2 trainers: JugadorA (tú) + JugadorB (IA aliada) vs RivalA+RivalB.")
-		print(">>> Solo eliges acciones de tu Pokémon; JugadorB la controla la IA del entrenador.")
-	print(">>> Activa double_trainer_ally_controllable para controlar los dos entrenadores del lado jugador.")
+	print(">>> Test 2vs2 trainers (aliado IA): JugadorA (tú) + JugadorB (IA) vs RivalA + RivalB.")
+	print(">>> Trainer A (ambos lados): Charmander + Squirtle + Bulbasaur. Activo: Charmander.")
+	print(">>> Trainer B (ambos lados): Charmeleon + Wartortle + Ivysaur. Activo: Charmeleon.")
+	print(">>> Solo eliges acciones de JugadorA; aliado y rivales usan TrainerEasy.")
 	print(">>> Intro: bases → party → «X y Y quieren luchar» → send-in rival A/B → send-in jugador A/B.")
-	print(">>> Revisa: TrainerA/B visibles, exit por trainer correcto, HP bars dobles.")
-	print(">>> Derrota 2vs2: enter → mensaje → exit por cada rival en secuencia.")
-	print(">>> Turno rival: RivalA (spot A) y RivalB (spot B) cambian en turno 1 (SWITCH).")
+	print(">>> Escena: TestBattle.tscn con use_double_trainer_animation_test = true.")
 
 
 func _create_ember_animation_test_player() -> BattleParticipant:
@@ -2745,6 +3075,7 @@ func wildRandomSingleBattle():
 	)
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
+	_apply_endless_loop_bags(participants)
 
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
@@ -2760,9 +3091,212 @@ func wildRandomDoubleBattle():
 	)
 
 	var participants:Array[BattleParticipant] = [playerParticipant, wildParticipant]
+	_apply_endless_loop_bags(participants)
 
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+## Bucle infinito: combates aleatorios (salvaje/entrenador, single/doble, 1v1 o 2v2).
+func _run_endless_random_battle_loop() -> void:
+	var battle_index := 0
+	print(">>> Bucle aleatorio infinito activo (gap nivel ≤ %d)." % endless_loop_max_level_gap)
+	print(">>> Formatos: wild/trainer × single/doble × 1v1 o 2v2 trainers. Sin flags de escenario.")
+	while true:
+		battle_index += 1
+		var level_band := _roll_endless_level_band()
+		var kind: int = randi() % EndlessBattleKind.size()
+		var kind_name := _endless_battle_kind_name(kind)
+		print(
+			">>> [#%d] %s | niveles %d–%d"
+			% [battle_index, kind_name, level_band.x, level_band.y]
+		)
+		match kind:
+			EndlessBattleKind.WILD_SINGLE:
+				await _endless_wild_single(level_band)
+			EndlessBattleKind.WILD_DOUBLE:
+				await _endless_wild_double(level_band)
+			EndlessBattleKind.TRAINER_SINGLE:
+				await _endless_trainer_single(level_band)
+			EndlessBattleKind.TRAINER_DOUBLE_1V1:
+				await _endless_trainer_double_1v1(level_band)
+			EndlessBattleKind.TRAINER_DOUBLE_2V2:
+				await _endless_trainer_double_2v2(level_band)
+			_:
+				await _endless_wild_single(level_band)
+		await get_tree().create_timer(0.5).timeout
+
+
+func _endless_battle_kind_name(kind: int) -> String:
+	match kind:
+		EndlessBattleKind.WILD_SINGLE:
+			return "Wild SINGLE"
+		EndlessBattleKind.WILD_DOUBLE:
+			return "Wild DOUBLE"
+		EndlessBattleKind.TRAINER_SINGLE:
+			return "Trainer SINGLE 1v1"
+		EndlessBattleKind.TRAINER_DOUBLE_1V1:
+			return "Trainer DOUBLE 1v1"
+		EndlessBattleKind.TRAINER_DOUBLE_2V2:
+			return "Trainer DOUBLE 2v2"
+		_:
+			return "Unknown"
+
+
+## Ventana [low, high] con high-low ≤ gap y dentro de 1–100.
+func _roll_endless_level_band() -> Vector2i:
+	var gap := clampi(endless_loop_max_level_gap, 0, 99)
+	var low := randi_range(1, 100)
+	var high := mini(100, low + gap)
+	return Vector2i(low, high)
+
+
+func _endless_wild_single(level_band: Vector2i) -> void:
+	var player_size := randi_range(1, 6)
+	var player_p := _create_random_player_participant_in_band(player_size, level_band)
+	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_SINGLE, level_band)
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_p, wild_p]
+	_apply_endless_loop_bags(participants)
+	print(">>> Party: jugador %d | salvaje 1" % player_size)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _endless_wild_double(level_band: Vector2i) -> void:
+	var player_size := randi_range(2, 6)
+	var player_p := _create_random_player_participant_in_band(player_size, level_band)
+	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_DOUBLE, level_band)
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_p, wild_p]
+	_apply_endless_loop_bags(participants)
+	print(">>> Party: jugador %d | salvajes 2" % player_size)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _endless_trainer_single(level_band: Vector2i) -> void:
+	var player_size := randi_range(1, 6)
+	var enemy_size := randi_range(1, 6)
+	var player_p := _create_random_player_participant_in_band(player_size, level_band)
+	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, level_band, "Rival")
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_p, enemy_p]
+	_apply_endless_loop_bags(participants)
+	print(">>> Party: jugador %d | rival %d" % [player_size, enemy_size])
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _endless_trainer_double_1v1(level_band: Vector2i) -> void:
+	var player_size := randi_range(2, 6)
+	var enemy_size := randi_range(2, 6)
+	var player_p := _create_random_player_participant_in_band(player_size, level_band)
+	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, level_band, "Rival")
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_p, enemy_p]
+	_apply_endless_loop_bags(participants)
+	print(">>> Party: jugador %d | rival %d (1 trainer vs 1, doble)" % [player_size, enemy_size])
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _endless_trainer_double_2v2(level_band: Vector2i) -> void:
+	var player_a_size := randi_range(1, 6)
+	var player_b_size := randi_range(1, 6)
+	var enemy_a_size := randi_range(1, 6)
+	var enemy_b_size := randi_range(1, 6)
+	var player_a := _create_random_player_participant_in_band(player_a_size, level_band)
+	player_a.name = "Jugador"
+	var player_b := _create_random_trainer_participant_in_band(player_b_size, level_band, "Aliado")
+	player_b.joins_player_side = true
+	var enemy_a := _create_random_trainer_participant_in_band(enemy_a_size, level_band, "RivalA")
+	var enemy_b := _create_random_trainer_participant_in_band(enemy_b_size, level_band, "RivalB")
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_a, player_b, enemy_a, enemy_b]
+	_apply_endless_loop_bags(participants)
+	print(
+		">>> Party: Jugador %d + Aliado %d | RivalA %d + RivalB %d (máx. %d vs %d)"
+		% [
+			player_a_size,
+			player_b_size,
+			enemy_a_size,
+			enemy_b_size,
+			player_a_size + player_b_size,
+			enemy_a_size + enemy_b_size,
+		]
+	)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla terminada. Ganador: %s" % winner)
+
+
+func _apply_endless_loop_bags(participants: Array[BattleParticipant]) -> void:
+	var item_ids := _build_endless_loop_item_ids()
+	for participant in participants:
+		if participant == null:
+			continue
+		if participant is BattleParticipantWild:
+			continue
+		participant.set_bag_from_item_ids(item_ids)
+	# Por si algún flujo cae al GameState del jugador.
+	if GameStateService != null:
+		var gs_bag = GameStateService.get_bag()
+		if gs_bag != null:
+			gs_bag.clear()
+			for item_id in item_ids:
+				gs_bag.add_item(item_id, 1)
+
+
+func _build_endless_loop_item_ids() -> Array:
+	var qty := maxi(endless_loop_item_qty, 1)
+	var ids: Array = []
+	for item_id in ENDLESS_LOOP_ITEM_IDS:
+		for _i in qty:
+			ids.append(item_id)
+	return ids
+
+
+func _create_random_pokemon_in_band(is_wild: bool, level_band: Vector2i) -> BattlePokemon:
+	var level := randi_range(level_band.x, level_band.y)
+	return _create_pokemon_instance(randi_range(1, 151), level, is_wild).to_battle_pokemon()
+
+
+func _create_random_wild_participant_in_band(num_pokemon: int, level_band: Vector2i) -> BattleParticipant:
+	var wild_team: Array[BattlePokemon] = []
+	for i in num_pokemon:
+		wild_team.append(_create_random_pokemon_in_band(true, level_band))
+	return BattleParticipantWild.new(wild_team)
+
+
+func _create_random_player_participant_in_band(num_pokemon: int, level_band: Vector2i) -> BattleParticipant:
+	var player_team: Array[BattlePokemon] = []
+	for i in num_pokemon:
+		player_team.append(_create_random_pokemon_in_band(false, level_band))
+	var participant := BattleParticipant.new(player_team)
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_random_trainer_participant_in_band(
+	num_pokemon: int,
+	level_band: Vector2i,
+	trainer_name: String = "Entrenador"
+) -> BattleParticipant:
+	var trainer_team: Array[BattlePokemon] = []
+	var ia := BattleIA_TrainerEasy.new()
+	for i in num_pokemon:
+		var bp := _create_random_pokemon_in_band(false, level_band)
+		bp.setIA(ia)
+		bp.controllable = false
+		trainer_team.append(bp)
+	var participant := BattleParticipant.new(trainer_team)
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = trainer_name
+	participant.defeat_message = "¡%s ha perdido el combate!" % trainer_name
+	return participant
+
 
 func singleTrainerBattle():
 	# Usar equipos configurados en ambos Battlers (Player vs SingleTrainer)

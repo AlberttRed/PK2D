@@ -58,8 +58,9 @@ func get_ability_effect_message(user:BattlePokemon, target:BattlePokemon, abilit
 			push_warning("Invalid AbilityData or not implemented on get_ability_effect_message()")
 			return {}
 			
+	# display: el texto permanece durante la animación del siguiente objetivo (dobles).
 	return {
-		"type": "wait",
+		"type": "display",
 		"text": msg,
 		"wait_time": 2.0
 	}

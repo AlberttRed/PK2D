@@ -28,11 +28,11 @@ func apply() -> void:
 	_apply()
 	_should_visualize = true
 
-# Template method: solo visualiza si apply() tuvo éxito
+# Template method: solo visualiza si apply() tuvo éxito.
+# La animación del move la dispara handle_move_result (una vez, todos los targets).
 func visualize(ui: BattleUI) -> void:
 	if not _should_visualize:
 		return
-	await _play_move_battle_animation(ui)
 	await _visualize(ui)
 
 # Métodos abstractos que cada hijo debe implementar
@@ -41,6 +41,86 @@ func _apply() -> void:
 
 func _visualize(_ui: BattleUI) -> void:
 	pass
+
+
+## Animación del movimiento para este handler (p. ej. multi-hit por golpe).
+func play_battle_animation(ui: BattleUI) -> void:
+	await _play_move_battle_animation(ui)
+
+
+## Una sola animación para un batch multi-target (todos los spots de los handlers).
+static func play_battle_animation_for_handlers(
+	ui: BattleUI,
+	handlers: Array[BattleHandler],
+	fallback_move = null,
+	fallback_user = null
+) -> void:
+	var move_ref = fallback_move
+	var user_ref = fallback_user
+	var spots: Array[BattleSpot] = []
+	var seen: Dictionary = {}
+	for h in handlers:
+		if h is BattleMoveHandler:
+			var mh := h as BattleMoveHandler
+			if move_ref == null:
+				move_ref = mh.move
+			if user_ref == null:
+				user_ref = mh.user
+			if not mh.will_visualize():
+				continue
+			for spot in mh._resolve_target_spots_for_animation():
+				if spot == null:
+					continue
+				var key := spot.get_instance_id()
+				if seen.has(key):
+					continue
+				seen[key] = true
+				spots.append(spot)
+		elif h is MoveFailHandler:
+			var fail := h as MoveFailHandler
+			# NO_TARGET / IMMUNE: solo mensaje, sin animación del move.
+			if (
+				fail.hit_result == HitResult.Values.NO_TARGET
+				or fail.hit_result == HitResult.Values.IMMUNE
+			):
+				continue
+			if move_ref == null:
+				move_ref = fail.move
+			if user_ref == null:
+				user_ref = fail.user
+			# Miss/protegido/etc.: animar hacia el objetivo si sigue resoluble.
+			if fail.target != null:
+				var fail_spot: BattleSpot = fail.target.get_spot()
+				if fail_spot == null:
+					var p: BattlePokemon = fail.target.get_pokemon()
+					if p != null:
+						fail_spot = (
+							p.resolve_battle_spot()
+							if p.has_method("resolve_battle_spot")
+							else p.battle_spot
+						)
+				if fail_spot != null:
+					var key := fail_spot.get_instance_id()
+					if not seen.has(key):
+						seen[key] = true
+						spots.append(fail_spot)
+	if move_ref == null or ui == null:
+		return
+	# Sin spots no hay a quién animar (p. ej. solo NO_TARGET/IMMUNE).
+	if spots.is_empty():
+		return
+	if not move_ref.has_method("get_battle_animation"):
+		return
+	var anim: BattleAnimation = move_ref.get_battle_animation()
+	if anim == null:
+		return
+	var layer: Node2D = ui.get_animation_layer()
+	var user_spot: BattleSpot = _resolve_user_spot_static(user_ref)
+	await anim.play(layer, user_spot, spots)
+
+
+func will_visualize() -> bool:
+	return _should_visualize
 
 
 ## Reproduce MoveData.battle_animation si existe. Sin side effects lógicos.
@@ -58,12 +138,16 @@ func _play_move_battle_animation(ui: BattleUI) -> void:
 	await anim.play(layer, user_spot, target_spots)
 
 
-func _resolve_user_spot_for_animation() -> BattleSpot:
-	if user == null:
+static func _resolve_user_spot_static(user_ref) -> BattleSpot:
+	if user_ref == null:
 		return null
-	if user.has_method("resolve_battle_spot"):
-		return user.resolve_battle_spot()
-	return user.battle_spot
+	if user_ref.has_method("resolve_battle_spot"):
+		return user_ref.resolve_battle_spot()
+	return user_ref.battle_spot
+
+
+func _resolve_user_spot_for_animation() -> BattleSpot:
+	return _resolve_user_spot_static(user)
 
 
 func _resolve_target_spots_for_animation() -> Array[BattleSpot]:

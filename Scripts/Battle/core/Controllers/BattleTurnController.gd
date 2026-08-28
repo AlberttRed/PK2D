@@ -9,6 +9,12 @@ var battle_controller: BattleController
 var current_turn := 0
 var collected_choices: Array[BattleChoice] = []
 var last_ordered_choices: Array[BattleChoice] = []
+## Spots que necesitan cambio forzado tras KO (Gen 4+: se resuelven al final del turno).
+## Cada entrada: { "side": BattleSide, "spot": BattleSpot, "fainted": BattlePokemon }
+var _pending_forced_switches: Array[Dictionary] = []
+## EXP de rivales debilitados (también al final del turno, con los reemplazos).
+## Cada entrada: { "fainted": BattlePokemon, "executor": BattlePokemon }
+var _pending_exp_grants: Array[Dictionary] = []
 
 func _ready():
 	randomize()
@@ -196,8 +202,19 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 			handlers[i] = h
 		h.apply()
 
+	# Animación del move una sola vez con todos los targets (multi-hit la gestiona MultiHitHandler).
+	if not _has_multi_hit_handler(handlers):
+		await BattleMoveHandler.play_battle_animation_for_handlers(
+			battle_controller.ui,
+			handlers,
+			choice.get_move(),
+			choice.pokemon
+		)
+
+	# Por target: daño/efecto → si KO, faint inmediato (no dejar barras a 0 hasta el final).
 	for h in handlers:
 		await h.visualize(battle_controller.ui)
+		await check_and_show_fainted(choice.pokemon)
 
 	choice.pokemon.commit_move_usage(choice.get_move())
 	await BattleEffectController.process_phase(
@@ -205,6 +222,13 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 		BattleEffect.Phases.ON_AFTER_MOVE,
 		BattlePhaseContext.for_move(choice.pokemon, choice)
 	)
+
+
+func _has_multi_hit_handler(handlers: Array[BattleHandler]) -> bool:
+	for h in handlers:
+		if h is MultiHitHandler:
+			return true
+	return false
 
 func handle_switch_result(choice: BattleSwitchChoice, handlers: Array[BattleHandler]) -> void:
 	for handler in handlers:
@@ -257,8 +281,15 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 func end_turn():
 	if not battle_controller.finished:
 		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
-		# Residual (veneno, clima…): EXP al activo del jugador si cae un rival.
+		# Residual (veneno, clima…): faint inmediato; EXP/reemplazos más abajo.
 		await check_and_show_fainted(_first_living_active(battle_controller.player_side))
+	# EXP de todos los KO del turno (y residuales), luego reemplazos.
+	await resolve_pending_experience()
+	if not battle_controller.finished:
+		await resolve_pending_forced_switches()
+	else:
+		_pending_forced_switches.clear()
+		_pending_exp_grants.clear()
 	turn_finished.emit(current_turn)
 
 func reset():
@@ -266,6 +297,8 @@ func reset():
 	current_turn = 0
 	collected_choices.clear()
 	last_ordered_choices.clear()
+	_pending_forced_switches.clear()
+	_pending_exp_grants.clear()
 
 func get_execution_order() -> Array[BattleChoice]:
 	return last_ordered_choices.duplicate()
@@ -352,7 +385,8 @@ func print_stat_stages_log() -> void:
 		if not any_modified:
 			print("  (Sin modificaciones activas)")
 
-## Resuelve KOs en campo (anim + mensaje + EXP + cambio forzado).
+## Resuelve KOs en campo (anim + mensaje) y encola EXP + cambios forzados.
+## EXP y reemplazos se aplican al final de turno (Gen 4+).
 ## exp_executor: quién se apunta la EXP de rivales debilitados (null = sin EXP).
 func check_and_show_fainted(exp_executor: BattlePokemon = null) -> void:
 	if battle_controller.enemy_side != null:
@@ -369,25 +403,106 @@ func _resolve_faint_on_spot(spot: BattleSpot, exp_executor: BattlePokemon) -> vo
 	var fainted := spot.pokemon
 	var side := fainted.side
 	await spot.play_faint_animation()
-	await battle_controller.ui.show_faint_message(fainted)
-	var should_grant_exp := (
-		side != null
-		and side.type == BattleSide.Types.ENEMY
-		and exp_executor != null
-	)
-	if should_grant_exp:
-		await battle_controller.grant_experience_after_enemy_ko(fainted, exp_executor)
+	# Tras el hundimiento: retirar sprite/HPBar antes del mensaje (como HGSS).
 	BattleEffectController.clear_pokemon_effects(fainted)
 	spot.remove_pokemon()
+	await battle_controller.ui.show_faint_message(fainted)
+	_queue_exp_after_enemy_faint(fainted, exp_executor)
 
 	if battle_controller.battle_finished():
+		_pending_forced_switches.clear()
 		return
 	if side == null or not side.has_any_pokemon_alive():
 		return
 	if spot.pokemon != null:
 		return
 
-	await _send_forced_switch_after_faint(side, spot, fainted)
+	_queue_forced_switch_after_faint(side, spot, fainted)
+
+
+func _queue_exp_after_enemy_faint(fainted: BattlePokemon, exp_executor: BattlePokemon) -> void:
+	if fainted == null or exp_executor == null:
+		return
+	var side := fainted.side
+	if side == null or side.type != BattleSide.Types.ENEMY:
+		return
+	_pending_exp_grants.append({
+		"fainted": fainted,
+		"executor": exp_executor,
+	})
+
+
+func resolve_pending_experience() -> void:
+	while not _pending_exp_grants.is_empty():
+		var entry: Dictionary = _pending_exp_grants.pop_front()
+		var fainted: BattlePokemon = entry.get("fainted")
+		var executor: BattlePokemon = entry.get("executor")
+		if fainted == null or executor == null:
+			continue
+		await battle_controller.grant_experience_after_enemy_ko(fainted, executor)
+
+
+func _queue_forced_switch_after_faint(
+	side: BattleSide,
+	spot: BattleSpot,
+	fainted: BattlePokemon
+) -> void:
+	for entry in _pending_forced_switches:
+		if entry.get("spot") == spot:
+			return
+
+	var participant: BattleParticipant = (
+		fainted.participant if fainted != null else _get_side_participant(side)
+	)
+	# Multi: el lado puede seguir vivo por el aliado, pero ESTE entrenador puede no tener banca.
+	if side != null and participant != null and not side.participant_has_healthy_bench(participant):
+		return
+
+	_pending_forced_switches.append({
+		"side": side,
+		"spot": spot,
+		"fainted": fainted,
+	})
+
+
+func resolve_pending_forced_switches() -> void:
+	_sort_pending_forced_switches()
+	while not _pending_forced_switches.is_empty():
+		if battle_controller.battle_finished():
+			_pending_forced_switches.clear()
+			return
+
+		var entry: Dictionary = _pending_forced_switches.pop_front()
+		var side: BattleSide = entry.get("side")
+		var spot: BattleSpot = entry.get("spot")
+		var fainted: BattlePokemon = entry.get("fainted")
+
+		if spot == null or spot.pokemon != null:
+			continue
+		if side == null or not side.has_any_pokemon_alive():
+			continue
+
+		await _send_forced_switch_after_faint(side, spot, fainted)
+		# Hazards al entrar pueden KO → faint + EXP encolada; repartir EXP antes del siguiente envío.
+		await resolve_pending_experience()
+		_sort_pending_forced_switches()
+
+
+func _sort_pending_forced_switches() -> void:
+	# Rival primero, luego jugador; dentro del lado, orden de spots.
+	_pending_forced_switches.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var side_a: BattleSide = a.get("side")
+		var side_b: BattleSide = b.get("side")
+		var rank_a := 0 if (side_a != null and side_a.type == BattleSide.Types.ENEMY) else 1
+		var rank_b := 0 if (side_b != null and side_b.type == BattleSide.Types.ENEMY) else 1
+		if rank_a != rank_b:
+			return rank_a < rank_b
+		var spot_a: BattleSpot = a.get("spot")
+		var spot_b: BattleSpot = b.get("spot")
+		var idx_a := side_a.battle_spots.find(spot_a) if side_a != null else 0
+		var idx_b := side_b.battle_spots.find(spot_b) if side_b != null else 0
+		return idx_a < idx_b
+	)
 
 
 func _send_forced_switch_after_faint(
@@ -395,15 +510,20 @@ func _send_forced_switch_after_faint(
 	spot: BattleSpot,
 	fainted: BattlePokemon
 ) -> void:
+	# Multi: el lado puede seguir vivo por el aliado, pero ESTE entrenador puede no tener banca.
+	# Sin sustituto no abrir party (atraparía al jugador sin opciones).
+	var participant: BattleParticipant = (
+		fainted.participant if fainted != null else _get_side_participant(side)
+	)
+	if side != null and participant != null and not side.participant_has_healthy_bench(participant):
+		return
+
 	var choice: BattleSwitchChoice = null
 	if fainted != null and fainted.controllable:
 		choice = await battle_controller.ui.resolve_player_forced_switch_after_faint(side, spot, fainted)
 		if battle_controller.battle_finished():
 			return
 	else:
-		var participant: BattleParticipant = (
-			fainted.participant if fainted != null else _get_side_participant(side)
-		)
 		if participant != null:
 			choice = participant.decide_forced_switch_for(side, spot, fainted)
 			if choice != null and _is_trainer_send_in_after_faint(side):

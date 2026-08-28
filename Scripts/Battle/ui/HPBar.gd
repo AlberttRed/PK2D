@@ -110,6 +110,13 @@ func animate_exp_bar_gain(
 	var mon := pokemon.base_data
 	var target_level: int = mon.level
 
+	# Nv.100: barra vacía y sin animación de subida.
+	if level_before_gain >= 100:
+		var empty := mon.get_exp_bar_segment_values_for_level(new_total_exp, 100)
+		exp_bar.set_values(empty.x, empty.y)
+		updated.emit()
+		return
+
 	if levels_gained <= 0:
 		var from_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(previous_total_exp, level_before_gain)
 		var to_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(new_total_exp, level_before_gain)
