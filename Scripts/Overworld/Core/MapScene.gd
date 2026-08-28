@@ -33,6 +33,10 @@ class_name MapScene
 ## Indica si este mapa requiere iluminación tipo destello
 @export var overlay_flashlight_required: bool = false
 
+@export_group("Battle Visuals")
+## Escenario de fondo en combates iniciados en este mapa (Essentials: BattleBack).
+@export var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.FIELD
+
 ## Referencia al grid de este mapa
 @onready var grid: OverworldGrid = $OverworldGrid
 
@@ -153,6 +157,18 @@ func _disable_processing() -> void:
 ## Obtiene el OverworldGrid de este mapa
 func get_grid() -> OverworldGrid:
 	return grid
+
+
+func get_battle_back() -> BattleBackEnum.Values:
+	return battle_back
+
+
+## Lee battle_back de un nodo de mapa; fallback Field si no es MapScene.
+static func battle_back_from_node(map_node: Node) -> BattleBackEnum.Values:
+	var map_scene := map_node as MapScene
+	if map_scene == null:
+		return BattleBackEnum.Values.FIELD
+	return map_scene.get_battle_back()
 
 
 ## Información de debug

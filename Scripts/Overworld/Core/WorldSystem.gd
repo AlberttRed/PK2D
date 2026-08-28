@@ -1107,6 +1107,12 @@ func print_warp_history() -> void:
 func get_active_map() -> Node:
 	return active_map
 
+
+## battle_back del mapa activo (Field si no hay mapa o no es MapScene).
+func get_active_map_battle_back() -> BattleBackEnum.Values:
+	return MapScene.battle_back_from_node(active_map)
+
+
 ## Obtiene el OverworldGrid del mapa activo (advertencia si aún no hay mapa cargado).
 func get_active_grid() -> OverworldGrid:
 	return _resolve_active_grid(false)

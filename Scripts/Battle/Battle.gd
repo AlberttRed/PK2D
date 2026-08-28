@@ -31,6 +31,7 @@ func start_battle(player_participants: Array[BattleParticipant], enemy_participa
 	# Campo listo en negro: bases fuera de pantalla (sin flash al revelar).
 	battle_ui.visible = true
 	battle_ui.message_box.show_clear_text()
+	battle_ui.field_ui.apply_battle_field(battle_controller.rules)
 	battle_ui.prepare_intro_field(battle_controller.rules)
 
 	# Revelar y empezar intro (slide de bases + mensajes / send-in)

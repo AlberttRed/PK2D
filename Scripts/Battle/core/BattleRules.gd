@@ -46,6 +46,10 @@ var mode : BattleModes = BattleModes.NONE # Indica si es un combat individual, d
 var weather : BattleWeather = BattleWeather.NONE
 var time : BattleTime = BattleTime.DAY
 var environment : BattleEnvironments = BattleEnvironments.GRASS
+## Fondo de combate (mapa / trainer). Resuelto por BattleFieldVisuals.
+var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.FIELD
+## Variante de base bajo los Pokémon. INHERIT = heredar resolución (#867).
+var base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.GRASS
 
 func _init(_battleType : BattleTypes, _battleMode : BattleModes, _weather : BattleWeather = BattleWeather.NONE, _time : BattleTime = BattleTime.DAY, _environment : BattleEnvironments = BattleEnvironments.GRASS):
 	type = _battleType

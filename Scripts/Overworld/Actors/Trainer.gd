@@ -541,6 +541,7 @@ func _initiate_battle_from_page() -> void:
 
 	# Crear reglas
 	var rules = BattleRules.new(BattleRules.BattleTypes.TRAINER, battle_command.battle_mode)
+	BattleFieldVisuals.configure_trainer_rules(rules, overworld_context.get_world_system())
 
 	# Iniciar batalla
 	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]

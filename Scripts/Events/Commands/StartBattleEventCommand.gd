@@ -103,6 +103,19 @@ func execute(context: Node) -> void:
 
 	# Crear reglas de batalla (battle_mode ya está en el formato correcto)
 	var rules = BattleRules.new(type, battle_mode)
+	var overworld_context := _get_overworld_context(context)
+	if type == BattleRules.BattleTypes.WILD:
+		BattleFieldVisuals.configure_wild_rules(
+			rules,
+			EncounterAreaTypeEnum.Values.LAND,
+			overworld_context.get_world_system() if overworld_context else null,
+			overworld_context.get_player() if overworld_context else null
+		)
+	else:
+		BattleFieldVisuals.configure_trainer_rules(
+			rules,
+			overworld_context.get_world_system() if overworld_context else null
+		)
 
 	# Preparar array de participantes
 	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]

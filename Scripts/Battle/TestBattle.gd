@@ -102,6 +102,12 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Escenario del guion de BattleIA_TrainerTest.
 @export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
+@export_group("Debug battle field visuals (PBI 862)")
+## 1vs1 salvaje: prueba BattleFieldVisuals (preset válido + time).
+@export var use_battle_field_visuals_test: bool = false
+@export var battle_field_visuals_test_preset: BattleFieldVisualPresetEnum.Values = BattleFieldVisualPresetEnum.Values.FIELD_GRASS
+@export_enum("Day", "Night", "Morning", "Afternoon", "Evening") var battle_field_visuals_test_time: int = 0
+
 @export_group("Debug clima")
 ## 1vs1 salvaje: clima lluvia al inicio — oscurecimiento + gotas (RainFrames).
 @export var use_rain_weather_animation_test: bool = false
@@ -157,6 +163,10 @@ var _bootstrapped_display_manager: DisplayManager = null
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not await _ensure_display_manager():
+		return
+	if use_battle_field_visuals_test:
+		_print_battle_field_visuals_test_guide()
+		await battleFieldVisualsTestBattle()
 		return
 	if use_psychic_stat_double_test:
 		_print_psychic_stat_double_test_guide()
@@ -840,6 +850,66 @@ func wildAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animaciones salvaje terminada. Ganador: %s" % winner)
+
+
+func _battle_field_visuals_test_visuals() -> Dictionary:
+	return BattleFieldVisualPresetEnum.to_visuals(battle_field_visuals_test_preset)
+
+
+func _print_battle_field_visuals_test_guide() -> void:
+	var visuals := _battle_field_visuals_test_visuals()
+	print(">>> Test PBI 862 — BattleFieldVisuals")
+	print(
+		">>> Preset: %s | Time: %s"
+		% [
+			BattleFieldVisualPresetEnum.get_label(battle_field_visuals_test_preset),
+			_battle_field_visuals_test_time_name(),
+		]
+	)
+	var preview := BattleFieldVisuals.resolve(
+		visuals.battle_back,
+		visuals.base_variant,
+		_battle_field_visuals_test_time()
+	)
+	print(">>> Rutas resueltas: %s" % BattleFieldVisuals.format_resolved_paths(preview))
+	print(">>> Al entrar en combate verás bg + bases según el preset del inspector.")
+
+
+func _battle_field_visuals_test_time() -> BattleRules.BattleTime:
+	match battle_field_visuals_test_time:
+		1: return BattleRules.BattleTime.NIGHT
+		2: return BattleRules.BattleTime.MORNING
+		3: return BattleRules.BattleTime.AFTERNOON
+		4: return BattleRules.BattleTime.EVENING
+		_: return BattleRules.BattleTime.DAY
+
+
+func _battle_field_visuals_test_time_name() -> String:
+	match battle_field_visuals_test_time:
+		1: return "Night"
+		2: return "Morning"
+		3: return "Afternoon"
+		4: return "Evening"
+		_: return "Day"
+
+
+func battleFieldVisualsTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var battle_time := _battle_field_visuals_test_time()
+	var visuals := _battle_field_visuals_test_visuals()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		battle_time,
+		BattleFieldVisuals.encounter_to_environment(EncounterAreaTypeEnum.Values.LAND)
+	)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Test BattleFieldVisuals terminado. Ganador: %s" % winner)
 
 
 func wildDoubleAnimationTestBattle() -> void:

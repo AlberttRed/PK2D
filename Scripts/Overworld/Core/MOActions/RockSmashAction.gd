@@ -150,7 +150,7 @@ func _maybe_trigger_rock_smash_encounter(overworld_context: OverworldContext, pl
 	if encounter_data.is_empty():
 		return
 
-	await _start_wild_battle(encounter_data, player)
+	await _start_wild_battle(encounter_data, player, overworld_context)
 
 
 func _get_current_map_encounters(overworld_context: OverworldContext) -> MapAreaEncounters:
@@ -173,7 +173,11 @@ func _get_current_map_encounters(overworld_context: OverworldContext) -> MapArea
 	return null
 
 
-func _start_wild_battle(encounter_data: Dictionary, player: Node) -> void:
+func _start_wild_battle(
+	encounter_data: Dictionary,
+	player: Node,
+	overworld_context: OverworldContext
+) -> void:
 	var pokemon_id: int = int(encounter_data.get("pokemon_id", -1))
 	var level: int = int(encounter_data.get("level", 1))
 
@@ -195,6 +199,13 @@ func _start_wild_battle(encounter_data: Dictionary, player: Node) -> void:
 	var rules := BattleRules.new(
 		BattleRules.BattleTypes.WILD,
 		BattleRules.BattleModes.SINGLE
+	)
+	var world_system: WorldSystem = overworld_context.get_world_system() if overworld_context else null
+	BattleFieldVisuals.configure_wild_rules(
+		rules,
+		ROCK_SMASH_ENCOUNTER_TYPE,
+		world_system,
+		player
 	)
 
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
