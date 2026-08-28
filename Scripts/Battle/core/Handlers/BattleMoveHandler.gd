@@ -78,14 +78,17 @@ static func play_battle_animation_for_handlers(
 				spots.append(spot)
 		elif h is MoveFailHandler:
 			var fail := h as MoveFailHandler
-			# NO_TARGET: solo mensaje, sin animación del move.
-			if fail.hit_result == HitResult.Values.NO_TARGET:
+			# NO_TARGET / IMMUNE: solo mensaje, sin animación del move.
+			if (
+				fail.hit_result == HitResult.Values.NO_TARGET
+				or fail.hit_result == HitResult.Values.IMMUNE
+			):
 				continue
 			if move_ref == null:
 				move_ref = fail.move
 			if user_ref == null:
 				user_ref = fail.user
-			# Miss/immune/etc.: animar hacia el objetivo si sigue resoluble.
+			# Miss/protegido/etc.: animar hacia el objetivo si sigue resoluble.
 			if fail.target != null:
 				var fail_spot: BattleSpot = fail.target.get_spot()
 				if fail_spot == null:
@@ -103,7 +106,7 @@ static func play_battle_animation_for_handlers(
 						spots.append(fail_spot)
 	if move_ref == null or ui == null:
 		return
-	# Sin spots no hay a quién animar (p. ej. solo NO_TARGET → parecería golpear al user).
+	# Sin spots no hay a quién animar (p. ej. solo NO_TARGET/IMMUNE).
 	if spots.is_empty():
 		return
 	if not move_ref.has_method("get_battle_animation"):

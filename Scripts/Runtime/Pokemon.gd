@@ -103,13 +103,12 @@ var nextLevelExpBase: int:
 
 ## Segmento de barra EXP como si el Pokémon estuviera en `bar_level` con `absolute_total_exp` de total acumulado.
 func get_exp_bar_segment_values_for_level(absolute_total_exp: int, bar_level: int) -> Vector2i:
+	# Nv.100: sin siguiente nivel — barra vacía (HGSS); la EXP extra no la llena.
+	if bar_level >= 100:
+		return Vector2i(0, 1)
 	var grp := PokemonExperienceGroup.new(base.growth_rate_id)
 	var floor_exp: int = grp.get_total_exp_for_level(bar_level)
-	var ceil_exp: int
-	if bar_level < 100:
-		ceil_exp = grp.get_total_exp_for_level(bar_level + 1)
-	else:
-		ceil_exp = maxi(absolute_total_exp, floor_exp)
+	var ceil_exp: int = grp.get_total_exp_for_level(bar_level + 1)
 	var span: int = maxi(ceil_exp - floor_exp, 1)
 	var seg: int = clampi(absolute_total_exp - floor_exp, 0, span)
 	return Vector2i(seg, span)

@@ -12,6 +12,9 @@ var last_ordered_choices: Array[BattleChoice] = []
 ## Spots que necesitan cambio forzado tras KO (Gen 4+: se resuelven al final del turno).
 ## Cada entrada: { "side": BattleSide, "spot": BattleSpot, "fainted": BattlePokemon }
 var _pending_forced_switches: Array[Dictionary] = []
+## EXP de rivales debilitados (también al final del turno, con los reemplazos).
+## Cada entrada: { "fainted": BattlePokemon, "executor": BattlePokemon }
+var _pending_exp_grants: Array[Dictionary] = []
 
 func _ready():
 	randomize()
@@ -208,8 +211,10 @@ func handle_move_result(choice: BattleMoveChoice, handlers: Array[BattleHandler]
 			choice.pokemon
 		)
 
+	# Por target: daño/efecto → si KO, faint inmediato (no dejar barras a 0 hasta el final).
 	for h in handlers:
 		await h.visualize(battle_controller.ui)
+		await check_and_show_fainted(choice.pokemon)
 
 	choice.pokemon.commit_move_usage(choice.get_move())
 	await BattleEffectController.process_phase(
@@ -276,12 +281,15 @@ func handle_run_result(choice: BattleRunChoice, handlers: Array[BattleHandler]) 
 func end_turn():
 	if not battle_controller.finished:
 		await BattleEffectController.process_global_phase(BattleEffect.Phases.ON_END_BATTLE_TURN)
-		# Residual (veneno, clima…): EXP al activo del jugador si cae un rival.
+		# Residual (veneno, clima…): faint inmediato; EXP/reemplazos más abajo.
 		await check_and_show_fainted(_first_living_active(battle_controller.player_side))
-		# Gen 4+: todos los reemplazos tras debilitados del turno (y residuales).
+	# EXP de todos los KO del turno (y residuales), luego reemplazos.
+	await resolve_pending_experience()
+	if not battle_controller.finished:
 		await resolve_pending_forced_switches()
 	else:
 		_pending_forced_switches.clear()
+		_pending_exp_grants.clear()
 	turn_finished.emit(current_turn)
 
 func reset():
@@ -290,6 +298,7 @@ func reset():
 	collected_choices.clear()
 	last_ordered_choices.clear()
 	_pending_forced_switches.clear()
+	_pending_exp_grants.clear()
 
 func get_execution_order() -> Array[BattleChoice]:
 	return last_ordered_choices.duplicate()
@@ -376,8 +385,8 @@ func print_stat_stages_log() -> void:
 		if not any_modified:
 			print("  (Sin modificaciones activas)")
 
-## Resuelve KOs en campo (anim + mensaje + EXP) y encola cambios forzados.
-## Los reemplazos se aplican en `resolve_pending_forced_switches` (final de turno, Gen 4+).
+## Resuelve KOs en campo (anim + mensaje) y encola EXP + cambios forzados.
+## EXP y reemplazos se aplican al final de turno (Gen 4+).
 ## exp_executor: quién se apunta la EXP de rivales debilitados (null = sin EXP).
 func check_and_show_fainted(exp_executor: BattlePokemon = null) -> void:
 	if battle_controller.enemy_side != null:
@@ -394,16 +403,11 @@ func _resolve_faint_on_spot(spot: BattleSpot, exp_executor: BattlePokemon) -> vo
 	var fainted := spot.pokemon
 	var side := fainted.side
 	await spot.play_faint_animation()
-	await battle_controller.ui.show_faint_message(fainted)
-	var should_grant_exp := (
-		side != null
-		and side.type == BattleSide.Types.ENEMY
-		and exp_executor != null
-	)
-	if should_grant_exp:
-		await battle_controller.grant_experience_after_enemy_ko(fainted, exp_executor)
+	# Tras el hundimiento: retirar sprite/HPBar antes del mensaje (como HGSS).
 	BattleEffectController.clear_pokemon_effects(fainted)
 	spot.remove_pokemon()
+	await battle_controller.ui.show_faint_message(fainted)
+	_queue_exp_after_enemy_faint(fainted, exp_executor)
 
 	if battle_controller.battle_finished():
 		_pending_forced_switches.clear()
@@ -414,6 +418,28 @@ func _resolve_faint_on_spot(spot: BattleSpot, exp_executor: BattlePokemon) -> vo
 		return
 
 	_queue_forced_switch_after_faint(side, spot, fainted)
+
+
+func _queue_exp_after_enemy_faint(fainted: BattlePokemon, exp_executor: BattlePokemon) -> void:
+	if fainted == null or exp_executor == null:
+		return
+	var side := fainted.side
+	if side == null or side.type != BattleSide.Types.ENEMY:
+		return
+	_pending_exp_grants.append({
+		"fainted": fainted,
+		"executor": exp_executor,
+	})
+
+
+func resolve_pending_experience() -> void:
+	while not _pending_exp_grants.is_empty():
+		var entry: Dictionary = _pending_exp_grants.pop_front()
+		var fainted: BattlePokemon = entry.get("fainted")
+		var executor: BattlePokemon = entry.get("executor")
+		if fainted == null or executor == null:
+			continue
+		await battle_controller.grant_experience_after_enemy_ko(fainted, executor)
 
 
 func _queue_forced_switch_after_faint(
@@ -457,7 +483,8 @@ func resolve_pending_forced_switches() -> void:
 			continue
 
 		await _send_forced_switch_after_faint(side, spot, fainted)
-		# Hazards al entrar pueden KO → `check_and_show_fainted` encola más.
+		# Hazards al entrar pueden KO → faint + EXP encolada; repartir EXP antes del siguiente envío.
+		await resolve_pending_experience()
 		_sort_pending_forced_switches()
 
 

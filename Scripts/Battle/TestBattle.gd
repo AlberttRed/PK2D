@@ -15,6 +15,14 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Doble 1 trainer vs 1: Alakazam (Psíquico) para validar stat tras daño / KO y send-in sin prompt.
 @export var use_psychic_stat_double_test: bool = false
 
+@export_group("Debug Surf multi-KO doble")
+## Doble: Gyarados Nv.80 (Surf) + aliado débil vs 2 rivales débiles (+ banca). Surf tumba a los 3.
+@export var use_surf_triple_ko_double_test: bool = false
+
+@export_group("Debug nivel 100")
+## 1vs1 entrenador: tu Pokémon Nv.100 vs Rival débil (probar barra EXP vacía y EXP sin subir).
+@export var use_level_100_single_test: bool = false
+
 @export_group("Equipos de prueba")
 ## Si true, lanza 1vs1 salvaje con party jugador 2+ para probar cambio forzado por KO (AC1).
 @export var use_forced_switch_player_test: bool = false
@@ -153,6 +161,14 @@ func _ready() -> void:
 	if use_psychic_stat_double_test:
 		_print_psychic_stat_double_test_guide()
 		await psychicStatDoubleTestBattle()
+		return
+	if use_surf_triple_ko_double_test:
+		_print_surf_triple_ko_double_test_guide()
+		await surfTripleKoDoubleTestBattle()
+		return
+	if use_level_100_single_test:
+		_print_level_100_single_test_guide()
+		await level100SingleTestBattle()
 		return
 	if use_move_fail_no_target_test:
 		_setup_move_fail_no_target_test_parties()
@@ -860,6 +876,170 @@ func _print_psychic_stat_double_test_guide() -> void:
 	print(">>> 1) Psíquico a Rattata → KO: NO mensaje de Def. Esp.; rival saca sin prompt de cambio.")
 	print(">>> 2) Psíquico a Snorlax → sobrevive: SÍ baja Def. Esp.")
 	print(">>> Desactiva use_psychic_stat_double_test y DEBUG_FORCE_STAT_CHANGE al terminar.")
+
+
+func surfTripleKoDoubleTestBattle() -> void:
+	var player_participant := _create_surf_triple_ko_double_test_player()
+	var trainer_participant := _create_surf_triple_ko_double_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	_apply_endless_loop_bags(participants)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Surf multi-KO doble terminada. Ganador: %s" % winner)
+
+
+func level100SingleTestBattle() -> void:
+	var player_participant := _create_level_100_single_test_player()
+	var trainer_participant := _create_level_100_single_test_trainer()
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	_apply_endless_loop_bags(participants)
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla Nv.100 single terminada. Ganador: %s" % winner)
+
+
+func _print_level_100_single_test_guide() -> void:
+	print(">>> [NV.100 SINGLE] Charizard Nv.100 vs Rattata Nv.5 (+ Pidgey banca)")
+	print(">>> Barra EXP del activo debe verse vacía al entrar; al ganar EXP no debe llenarse.")
+	print(">>> Desactiva use_level_100_single_test al terminar.")
+
+
+func _create_level_100_single_test_player() -> BattleParticipant:
+	var lead := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.CHARIZARD,
+		100,
+		[
+			MovesEnum.Values.FLAMETHROWER,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_level_100_single_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var rattata := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pidgey := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIDGEY,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([rattata, pidgey])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Rival"
+	participant.intro_message = "¡A ver esa barra de EXP!"
+	participant.defeat_message = "¡Nv.100 es imparable!"
+	return participant
+
+
+func _print_surf_triple_ko_double_test_guide() -> void:
+	print(">>> [SURF TRIPLE KO] Gyarados Nv.80 (Surf) + Rattata Nv.5 vs Rattata Nv.5 + Pidgey Nv.5 (+ banca)")
+	print(">>> Turno 1: Gyarados → Surf (golpea aliado + 2 rivales). Debería tumbar a los 3.")
+	print(">>> Verificar: por cada KO → barra 0 + faint + retirar + mensaje; EXP y envíos al final de turno.")
+	print(">>> Desactiva use_surf_triple_ko_double_test al terminar.")
+
+
+func _create_surf_triple_ko_double_test_player() -> BattleParticipant:
+	var gyarados := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.GYARADOS,
+		80,
+		[
+			MovesEnum.Values.SURF,
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	# Aliado frágil: Surf también le golpea (3er KO).
+	var ally := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		true
+	)
+	var participant := BattleParticipant.new([gyarados, ally])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_surf_triple_ko_double_test_trainer() -> BattleParticipant:
+	var ia := BattleIA_TrainerEasy.new()
+	var rattata := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.RATTATA,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.TAIL_WHIP,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var pidgey := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.PIDGEY,
+		5,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.GUST,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	# Banca para probar reemplazos al final de turno tras el Surf.
+	var machop := _make_double_tvt_battle_pokemon(
+		PokemonsEnum.Values.MACHOP,
+		10,
+		[
+			MovesEnum.Values.TACKLE,
+			MovesEnum.Values.LEER,
+			MovesEnum.Values.GROWL,
+			MovesEnum.Values.PROTECT,
+		],
+		false,
+		ia
+	)
+	var participant := BattleParticipant.new([rattata, pidgey, machop])
+	participant.is_trainer = true
+	participant.ai_controller = ia
+	participant.name = "Rival"
+	participant.intro_message = "¡A ver ese Surf!"
+	participant.defeat_message = "¡Todo barrido por el Surf!"
+	return participant
 
 
 func _create_psychic_stat_double_test_player() -> BattleParticipant:

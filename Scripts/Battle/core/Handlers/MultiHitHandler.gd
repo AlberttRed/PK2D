@@ -38,14 +38,20 @@ func apply() -> void:
 			per_hit_handlers.append(base_handler)
 
 func visualize(ui: BattleUI) -> void:
+	var hits_visualized := 0
 	for h in per_hit_handlers:
 		# Multi-hit: animación del move por cada golpe, luego efecto de ese golpe.
 		if h is BattleMoveHandler:
 			await (h as BattleMoveHandler).play_battle_animation(ui)
 		await h.visualize(ui)
+		hits_visualized += 1
+		# Si el golpe debilitó, no seguir con golpes pendientes en cola.
+		var target_pokemon := target.get_pokemon() if target != null else null
+		if target_pokemon != null and target_pokemon.is_fainted():
+			break
 
-	if num_hits > 1:
-		await ui.show_multi_hit_message(per_hit_handlers.size())
+	if num_hits > 1 and hits_visualized > 1:
+		await ui.show_multi_hit_message(hits_visualized)
 
 	if show_effectiveness and !per_hit_handlers.is_empty() and per_hit_handlers[0] is BattleDamageMoveHandler:
 		await ui.show_effectiveness_message(per_hit_handlers[0].damage)
