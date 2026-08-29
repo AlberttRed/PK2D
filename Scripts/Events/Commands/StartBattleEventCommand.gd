@@ -38,6 +38,12 @@ enum BattleType {
 ## Modo de batalla (usa el mismo enum que BattleRules)
 @export_enum("NONE", "SINGLE", "DOUBLE", "TRIPLE") var battle_mode: int = 1  # SINGLE por defecto (índice 1)
 
+@export_group("Wild Visuals")
+## Si true, infiere encounter_area del battle_back del mapa activo (cueva, agua, etc.).
+@export var infer_wild_encounter_from_map: bool = true
+## Área de encuentro para intro/fondo cuando infer_wild_encounter_from_map es false.
+@export var wild_encounter_area: EncounterAreaTypeEnum.Values = EncounterAreaTypeEnum.Values.LAND
+
 @export_group("Visual")
 
 ## Tipo de transición de batalla (futuro uso)
@@ -103,6 +109,22 @@ func execute(context: Node) -> void:
 
 	# Crear reglas de batalla (battle_mode ya está en el formato correcto)
 	var rules = BattleRules.new(type, battle_mode)
+	var overworld_context := _get_overworld_context(context)
+	if type == BattleRules.BattleTypes.WILD:
+		var world_system := overworld_context.get_world_system() if overworld_context else null
+		var encounter_area := _resolve_wild_encounter_area(world_system)
+		BattleFieldVisuals.configure_wild_rules(
+			rules,
+			encounter_area,
+			world_system,
+			overworld_context.get_player() if overworld_context else null
+		)
+	else:
+		BattleFieldVisuals.configure_trainer_rules(
+			rules,
+			overworld_context.get_world_system() if overworld_context else null,
+			trainer_data
+		)
 
 	# Preparar array de participantes
 	var participants: Array[BattleParticipant] = [player_participant, enemy_participant]
@@ -299,3 +321,11 @@ func _get_overworld_context(context: Node) -> OverworldContext:
 		if event_system and event_system.context:
 			return event_system.context
 	return null
+
+
+func _resolve_wild_encounter_area(world_system: WorldSystem) -> EncounterAreaTypeEnum.Values:
+	if infer_wild_encounter_from_map and world_system != null:
+		return BattleFieldVisuals.infer_encounter_area_from_map(
+			BattleFieldVisuals.get_map_battle_back(world_system)
+		)
+	return wild_encounter_area

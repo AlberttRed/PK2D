@@ -16,6 +16,9 @@ const FIELD_WEATHER_OVERLAY_Z := 4
 const FIELD_POKEBALL_Z := HP_BAR_CANVAS_Z - 1
 
 @onready var weather_overlay: FieldWeatherOverlay = $FieldWeatherOverlay
+@onready var _background_sprite: Sprite2D = $Background
+@onready var _player_base_sprite: Sprite2D = $PlayerBase/Sprite
+@onready var _enemy_base_sprite: Sprite2D = $EnemyBase/Sprite
 
 
 func _ready() -> void:
@@ -48,6 +51,26 @@ func get_player_party_bar() -> BattlePartyBarUI:
 
 func get_enemy_party_bar() -> BattlePartyBarUI:
 	return enemy_party_bar
+
+
+## Aplica fondo y bases desde BattleRules (PBI 865).
+func apply_battle_field(rules: BattleRules) -> void:
+	if rules == null:
+		return
+	var resolved := BattleFieldVisuals.resolve(rules.battle_back, rules.base_variant, rules.time)
+	_apply_resolved_field_visuals(resolved)
+
+
+func _apply_resolved_field_visuals(resolved: Dictionary) -> void:
+	var bg: Texture2D = resolved.get("bg")
+	var player_base: Texture2D = resolved.get("player_base")
+	var enemy_base: Texture2D = resolved.get("enemy_base")
+	if bg != null and _background_sprite != null:
+		_background_sprite.texture = bg
+	if player_base != null and _player_base_sprite != null:
+		_player_base_sprite.texture = player_base
+	if enemy_base != null and _enemy_base_sprite != null:
+		_enemy_base_sprite.texture = enemy_base
 
 
 ## HPBar siempre por encima de BattleAnimationLayer (balls, VFX).

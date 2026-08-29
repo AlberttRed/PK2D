@@ -1107,6 +1107,12 @@ func print_warp_history() -> void:
 func get_active_map() -> Node:
 	return active_map
 
+
+## battle_back del mapa activo (Field si no hay mapa o no es MapScene).
+func get_active_map_battle_back() -> BattleBackEnum.Values:
+	return MapScene.battle_back_from_node(active_map)
+
+
 ## Obtiene el OverworldGrid del mapa activo (advertencia si aún no hay mapa cargado).
 func get_active_grid() -> OverworldGrid:
 	return _resolve_active_grid(false)
@@ -1233,6 +1239,9 @@ func _setup_player_for_map() -> void:
 			var terrain_layer = grid.get_node("Terrain")
 			if terrain_layer:
 				camera.map_layer_path = terrain_layer.get_path()
+
+	if player.has_method("sync_diving_from_map_battle_back"):
+		player.sync_diving_from_map_battle_back(get_active_map_battle_back())
 
 ## Configura la visibilidad del nodo raíz (NO recursivo)
 ## Los nodos hijos gestionan su propia visibilidad

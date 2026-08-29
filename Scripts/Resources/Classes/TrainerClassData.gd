@@ -29,6 +29,12 @@ class_name TrainerClassData
 @export var default_battle_front_sprite: Texture2D = null
 @export var default_battle_back_sprite: Texture2D = null
 
+@export_group("Battle Visuals")
+## Fondo de combate por defecto para esta clase (INHERIT = usar mapa).
+@export var default_battle_back: BattleBackEnum.Values = BattleBackEnum.Values.INHERIT
+## Variante de base por defecto (INHERIT = resolver según backdrop).
+@export var default_base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.INHERIT
+
 ## IA por defecto para esta clase (opcional; se usa si el trainer no define ai_profile)
 @export var default_ai: TrainerBattleIA = null
 

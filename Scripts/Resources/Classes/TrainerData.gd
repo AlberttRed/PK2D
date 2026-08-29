@@ -35,6 +35,12 @@ var trainer_class: TrainerClassData  # Se carga desde trainer_class_id
 ## Sprite del entrenador para combate (vista trasera - jugador/aliado)
 @export var battle_back_sprite: Texture2D = null
 
+@export_group("Battle Visuals")
+## Fondo de combate para este entrenador (INHERIT = clase → mapa).
+@export var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.INHERIT
+## Variante de base bajo los Pokémon (INHERIT = clase → resolver por backdrop).
+@export var base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.INHERIT
+
 ## === INTELIGENCIA ARTIFICIAL ===
 
 ## Perfil de IA para el combate (null = default_ai de la clase, o BattleIA_TrainerEasy)
@@ -249,6 +255,24 @@ func get_battle_back_sprite() -> Texture2D:
 	if trainer_class and trainer_class.default_battle_back_sprite != null:
 		return trainer_class.default_battle_back_sprite
 	return null
+
+
+## Override de fondo de combate (trainer → clase → INHERIT).
+func get_battle_back_override() -> BattleBackEnum.Values:
+	if battle_back != BattleBackEnum.Values.INHERIT:
+		return battle_back
+	if trainer_class and trainer_class.default_battle_back != BattleBackEnum.Values.INHERIT:
+		return trainer_class.default_battle_back
+	return BattleBackEnum.Values.INHERIT
+
+
+## Override de variante de base (trainer → clase → INHERIT).
+func get_base_variant_override() -> BattleBaseVariantEnum.Values:
+	if base_variant != BattleBaseVariantEnum.Values.INHERIT:
+		return base_variant
+	if trainer_class and trainer_class.default_base_variant != BattleBaseVariantEnum.Values.INHERIT:
+		return trainer_class.default_base_variant
+	return BattleBaseVariantEnum.Values.INHERIT
 
 ## Retorna el texto de intro formateado
 func get_intro_message() -> String:

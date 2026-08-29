@@ -102,6 +102,33 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Escenario del guion de BattleIA_TrainerTest.
 @export_enum("Switch First Turn") var trainer_ia_test_scenario: int = 0
 
+@export_group("Debug battle field visuals (PBI 862)")
+## 1vs1 salvaje: prueba BattleFieldVisuals (preset válido + time).
+@export var use_battle_field_visuals_test: bool = false
+@export var battle_field_visuals_test_preset: BattleFieldVisualPresetEnum.Values = BattleFieldVisualPresetEnum.Values.FIELD_GRASS
+@export_enum("Day", "Night", "Morning", "Afternoon", "Evening") var battle_field_visuals_test_time: int = 0
+
+@export_group("Debug trainer battle visuals (PBI 867)")
+## 1vs1 entrenador: prueba override de battle_back (ignora mapa; world_system null → Field).
+@export var use_trainer_battle_back_override_test: bool = false
+@export var trainer_battle_back_override_test_back: BattleBackEnum.Values = BattleBackEnum.Values.ELITE_A
+
+@export_group("Debug wild intro overlay (PBI 866)")
+## 1vs1 salvaje: prueba overlay de intro hierba (scroll + bajada).
+@export var use_wild_intro_grass_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro mar (scroll + subida + fade).
+@export var use_wild_intro_sea_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro agua quieta / pesca (como mar, franja más fina).
+@export var use_wild_intro_still_water_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro hierba alta (scroll + estirar + bajada).
+@export var use_wild_intro_tall_grass_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro arena (scroll + fade).
+@export var use_wild_intro_sand_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro cueva (scroll + bajada).
+@export var use_wild_intro_cave_test: bool = false
+## 1vs1 salvaje: prueba overlay de intro bajo el agua (scroll + fade).
+@export var use_wild_intro_underwater_test: bool = false
+
 @export_group("Debug clima")
 ## 1vs1 salvaje: clima lluvia al inicio — oscurecimiento + gotas (RainFrames).
 @export var use_rain_weather_animation_test: bool = false
@@ -157,6 +184,42 @@ var _bootstrapped_display_manager: DisplayManager = null
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not await _ensure_display_manager():
+		return
+	if use_wild_intro_grass_test:
+		_print_wild_intro_grass_test_guide()
+		await wildIntroGrassTestBattle()
+		return
+	if use_wild_intro_sea_test:
+		_print_wild_intro_sea_test_guide()
+		await wildIntroSeaTestBattle()
+		return
+	if use_wild_intro_still_water_test:
+		_print_wild_intro_still_water_test_guide()
+		await wildIntroStillWaterTestBattle()
+		return
+	if use_wild_intro_tall_grass_test:
+		_print_wild_intro_tall_grass_test_guide()
+		await wildIntroTallGrassTestBattle()
+		return
+	if use_wild_intro_sand_test:
+		_print_wild_intro_sand_test_guide()
+		await wildIntroSandTestBattle()
+		return
+	if use_wild_intro_cave_test:
+		_print_wild_intro_cave_test_guide()
+		await wildIntroCaveTestBattle()
+		return
+	if use_wild_intro_underwater_test:
+		_print_wild_intro_underwater_test_guide()
+		await wildIntroUnderwaterTestBattle()
+		return
+	if use_battle_field_visuals_test:
+		_print_battle_field_visuals_test_guide()
+		await battleFieldVisualsTestBattle()
+		return
+	if use_trainer_battle_back_override_test:
+		_print_trainer_battle_back_override_test_guide()
+		await trainerBattleBackOverrideTestBattle()
 		return
 	if use_psychic_stat_double_test:
 		_print_psychic_stat_double_test_guide()
@@ -840,6 +903,289 @@ func wildAnimationTestBattle() -> void:
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla animaciones salvaje terminada. Ganador: %s" % winner)
+
+
+func _battle_field_visuals_test_visuals() -> Dictionary:
+	return BattleFieldVisualPresetEnum.to_visuals(battle_field_visuals_test_preset)
+
+
+func _print_battle_field_visuals_test_guide() -> void:
+	var visuals := _battle_field_visuals_test_visuals()
+	print(">>> Test PBI 862 — BattleFieldVisuals")
+	print(
+		">>> Preset: %s | Time: %s"
+		% [
+			BattleFieldVisualPresetEnum.get_label(battle_field_visuals_test_preset),
+			_battle_field_visuals_test_time_name(),
+		]
+	)
+	var preview := BattleFieldVisuals.resolve(
+		visuals.battle_back,
+		visuals.base_variant,
+		_battle_field_visuals_test_time()
+	)
+	print(">>> Rutas resueltas: %s" % BattleFieldVisuals.format_resolved_paths(preview))
+	print(">>> Al entrar en combate verás bg + bases según el preset del inspector.")
+
+
+func _battle_field_visuals_test_time() -> BattleRules.BattleTime:
+	match battle_field_visuals_test_time:
+		1: return BattleRules.BattleTime.NIGHT
+		2: return BattleRules.BattleTime.MORNING
+		3: return BattleRules.BattleTime.AFTERNOON
+		4: return BattleRules.BattleTime.EVENING
+		_: return BattleRules.BattleTime.DAY
+
+
+func _battle_field_visuals_test_time_name() -> String:
+	match battle_field_visuals_test_time:
+		1: return "Night"
+		2: return "Morning"
+		3: return "Afternoon"
+		4: return "Evening"
+		_: return "Day"
+
+
+func battleFieldVisualsTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var battle_time := _battle_field_visuals_test_time()
+	var visuals := _battle_field_visuals_test_visuals()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		battle_time,
+		BattleWildIntroEnum.environment_for_battle_back(visuals.battle_back)
+	)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Test BattleFieldVisuals terminado. Ganador: %s" % winner)
+
+
+func _print_trainer_battle_back_override_test_guide() -> void:
+	var trainer_visuals := TrainerData.new()
+	trainer_visuals.battle_back = trainer_battle_back_override_test_back
+	var resolved_back := BattleFieldVisuals.resolve_trainer_battle_back(
+		trainer_visuals,
+		BattleBackEnum.Values.FIELD
+	)
+	var resolved_variant := BattleFieldVisuals.resolve_trainer_base_variant(
+		trainer_visuals,
+		resolved_back
+	)
+	var preview := BattleFieldVisuals.resolve(
+		resolved_back,
+		resolved_variant,
+		BattleRules.BattleTime.DAY
+	)
+	print(">>> Test PBI 867 — Trainer battle_back override")
+	print(
+		">>> Override: %s | Resuelto: back=%s variant=%s"
+		% [
+			BattleBackEnum.get_display_name(trainer_battle_back_override_test_back),
+			BattleBackEnum.get_display_name(resolved_back),
+			BattleBaseVariantEnum.get_display_name(resolved_variant),
+		]
+	)
+	print(">>> Rutas resueltas: %s" % BattleFieldVisuals.format_resolved_paths(preview))
+	print(">>> Sin intro salvaje; solo fondo y bases del entrenador.")
+
+
+func trainerBattleBackOverrideTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var trainer_participant := _create_pokeball_animation_test_trainer()
+	var trainer_visuals := TrainerData.new()
+	trainer_visuals.battle_back = trainer_battle_back_override_test_back
+	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
+	BattleFieldVisuals.configure_trainer_rules(rules, null, trainer_visuals)
+	var participants: Array[BattleParticipant] = [player_participant, trainer_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Test trainer battle_back override terminado. Ganador: %s" % winner)
+
+
+func _print_wild_intro_grass_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay GRASS")
+	print(">>> Tras el fade a negro, al abrir el combate verás la franja de hierba")
+	print(">>> desplazándose a la izquierda mientras entran las bases (~mitad del slide).")
+	print(">>> Desactiva use_wild_intro_grass_test para volver a otro flag.")
+
+
+func wildIntroGrassTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.GRASS
+	)
+	rules.wild_intro = "grass"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro hierba terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_sea_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay SEA")
+	print(">>> Tras el fade a negro, al abrir el combate verás la franja de mar")
+	print(">>> desplazándose a la derecha, subiendo desde abajo y haciendo fade.")
+	print(">>> Desactiva use_wild_intro_sea_test para volver a otro flag.")
+
+
+func wildIntroSeaTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.WATER
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.WATER)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "sea"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro mar terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_still_water_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay STILL WATER")
+	print(">>> Tras el fade a negro, verás la franja de agua quieta")
+	print(">>> a altura fija, con scroll horizontal y bajada tras el panel.")
+	print(">>> Desactiva use_wild_intro_still_water_test para volver a otro flag.")
+
+
+func wildIntroStillWaterTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.WATER
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.WATER)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.encounter_area = EncounterAreaTypeEnum.Values.FISHING
+	rules.wild_intro = "stillwater"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro agua quieta terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_tall_grass_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay TALL GRASS")
+	print(">>> Tras el fade a negro, hierba alta crece desde el panel,")
+	print(">>> hace scroll y baja detrás del MessageBox.")
+	print(">>> Desactiva use_wild_intro_tall_grass_test para volver a otro flag.")
+
+
+func wildIntroTallGrassTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.GRASS
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.FOREST_GRASS)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "tallgrass"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro hierba alta terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_sand_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay SAND")
+	print(">>> Tras el fade a negro, verás la franja de arena")
+	print(">>> desplazándose horizontalmente y haciendo fade.")
+	print(">>> Desactiva use_wild_intro_sand_test para volver a otro flag.")
+
+
+func wildIntroSandTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.FIELD
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.FIELD_SAND)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.encounter_area = EncounterAreaTypeEnum.Values.SAND
+	rules.wild_intro = "sand"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro arena terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_cave_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay CAVE")
+	print(">>> Tras el fade a negro, verás la franja de rocas")
+	print(">>> desplazándose horizontalmente y bajando hasta desaparecer.")
+	print(">>> Desactiva use_wild_intro_cave_test para volver a otro flag.")
+
+
+func wildIntroCaveTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.CAVE
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.CAVE_PLAIN)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.encounter_area = EncounterAreaTypeEnum.Values.CAVE
+	rules.wild_intro = "cave"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro cueva terminada. Ganador: %s" % winner)
+
+
+func _print_wild_intro_underwater_test_guide() -> void:
+	print(">>> Test PBI 866 — Wild intro overlay UNDERWATER")
+	print(">>> Tras el fade a negro, verás la franja submarina")
+	print(">>> desplazándose horizontalmente y haciendo fade.")
+	print(">>> Desactiva use_wild_intro_underwater_test para volver a otro flag.")
+
+
+func wildIntroUnderwaterTestBattle() -> void:
+	var player_participant := _create_pokeball_animation_test_player()
+	var wild_participant := _create_wild_animation_test_wild()
+	var rules := BattleRules.new(
+		BattleRules.BattleTypes.WILD,
+		BattleRules.BattleModes.SINGLE,
+		BattleRules.BattleWeather.NONE,
+		BattleRules.BattleTime.DAY,
+		BattleRules.BattleEnvironments.WATER
+	)
+	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.UNDERWATER)
+	rules.battle_back = visuals.battle_back
+	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "underwater"
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla intro underwater terminada. Ganador: %s" % winner)
 
 
 func wildDoubleAnimationTestBattle() -> void:

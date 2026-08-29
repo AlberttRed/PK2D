@@ -9,7 +9,7 @@ class_name TileEffectSystem
 ## la ejecución de efectos visuales según el tipo de terreno del tile.
 ## La lógica específica de cada efecto está en handlers especializados.
 
-signal tile_effect_triggered(tile_pos: Vector2i, encounter_type: String, actor: Node2D)
+signal tile_effect_triggered(tile_pos: Vector2i, encounter_type: String, wild_intro: String, actor: Node2D)
 
 var context: OverworldContext = null
 var world_system: WorldSystem = null
@@ -134,7 +134,7 @@ func _get_tile_info_at_world_pos(world_pos: Vector2) -> Dictionary:
 	return {
 		"grid": null,
 		"tile": Vector2i.ZERO,
-		"info": {"terrain": "ground", "encounter_type": ""}
+		"info": {"terrain": "ground", "encounter_type": "", "wild_intro": ""}
 	}
 
 
@@ -196,7 +196,7 @@ func _on_actor_step_finished(tile: Vector2i, actor: Node2D) -> void:
 
 	# Emitir señal de efecto de tile si hay encounter_type
 	if not tile_info.encounter_type.is_empty() and actor.is_in_group("Player"):
-		tile_effect_triggered.emit(tile, tile_info.encounter_type, actor)
+		tile_effect_triggered.emit(tile, tile_info.encounter_type, tile_info.get("wild_intro", ""), actor)
 
 
 ## Maneja el movimiento hacia un tile de destino

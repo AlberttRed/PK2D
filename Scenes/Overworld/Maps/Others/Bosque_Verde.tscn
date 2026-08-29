@@ -668,6 +668,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 [node name="Bosque_Verde" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_ak8s0")
+battle_back = 2
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

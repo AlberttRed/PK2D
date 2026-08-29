@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://dkwildintro01"]
+
+[ext_resource type="Script" uid="uid://c8wildintrooverlay1" path="res://Scripts/Battle/visuals/BattleWildIntroOverlay.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://14kdraf2fo8e" path="res://Sprites/Batalla/Battle Animations/battleWildIntroGrass.png" id="2_tex"]
+
+[node name="BattleWildIntroOverlay" type="Control"]
+visible = false
+z_index = 5
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="GrassRow" type="Control" parent="."]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="Strip0" type="TextureRect" parent="GrassRow"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 97.0
+mouse_filter = 2
+texture = ExtResource("2_tex")
+stretch_mode = 4
+
+[node name="Strip1" type="TextureRect" parent="GrassRow"]
+layout_mode = 0
+offset_left = 512.0
+offset_right = 1024.0
+offset_bottom = 97.0
+mouse_filter = 2
+texture = ExtResource("2_tex")
+stretch_mode = 4
+
+[node name="Strip2" type="TextureRect" parent="GrassRow"]
+layout_mode = 0
+offset_left = 1024.0
+offset_right = 1536.0
+offset_bottom = 97.0
+mouse_filter = 2
+texture = ExtResource("2_tex")
+stretch_mode = 4
