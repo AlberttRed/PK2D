@@ -81,7 +81,8 @@ static func configure_wild_rules(
 	rules: BattleRules,
 	encounter_area: EncounterAreaTypeEnum.Values,
 	world_system: WorldSystem,
-	player: Node = null
+	player: Node = null,
+	wild_intro: String = ""
 ) -> void:
 	if rules == null:
 		return
@@ -90,6 +91,7 @@ static func configure_wild_rules(
 	var diving := is_player_diving(player)
 	rules.time = BattleRules.BattleTime.DAY
 	rules.encounter_area = encounter_area
+	rules.wild_intro = wild_intro
 	rules.environment = encounter_to_environment(encounter_area)
 	rules.battle_back = resolve_battle_back(map_back, encounter_area, surfing, diving)
 	rules.base_variant = encounter_to_default_base_variant(encounter_area, rules.battle_back)

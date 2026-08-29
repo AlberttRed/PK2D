@@ -53,7 +53,12 @@ func initialize(overworld_context: OverworldContext) -> void:
 
 
 ## Se ejecuta cuando TileEffectSystem detecta un tile de encuentro
-func _on_tile_effect_triggered(_tile_pos: Vector2i, encounter_type: String, actor: Node2D) -> void:
+func _on_tile_effect_triggered(
+	_tile_pos: Vector2i,
+	encounter_type: String,
+	wild_intro: String,
+	actor: Node2D
+) -> void:
 	# Solo procesar si es el jugador
 	if not actor.is_in_group("Player"):
 		return
@@ -81,11 +86,14 @@ func _on_tile_effect_triggered(_tile_pos: Vector2i, encounter_type: String, acto
 		return
 
 	# Intentar generar encuentro
-	_try_trigger_encounter(encounter_type_enum)
+	_try_trigger_encounter(encounter_type_enum, wild_intro)
 
 
 ## Intenta generar un encuentro salvaje
-func _try_trigger_encounter(encounter_type: EncounterAreaTypeEnum.Values) -> void:
+func _try_trigger_encounter(
+	encounter_type: EncounterAreaTypeEnum.Values,
+	wild_intro: String = ""
+) -> void:
 	if not current_map_encounters:
 		return
 
@@ -98,13 +106,14 @@ func _try_trigger_encounter(encounter_type: EncounterAreaTypeEnum.Values) -> voi
 	print("  Pokémon: %d, Nivel: %d" % [encounter_data["pokemon_id"], encounter_data["level"]])
 
 	steps_since_last_encounter = 0  # Resetear cooldown
-	_start_wild_battle(encounter_data, encounter_type)
+	_start_wild_battle(encounter_data, encounter_type, wild_intro)
 
 
 ## Inicia un combate salvaje
 func _start_wild_battle(
 	encounter_data: Dictionary,
-	encounter_area: EncounterAreaTypeEnum.Values
+	encounter_area: EncounterAreaTypeEnum.Values,
+	wild_intro: String = ""
 ) -> void:
 	var wild_pokemon_instance = _create_wild_pokemon(
 		encounter_data["pokemon_id"],
@@ -125,7 +134,13 @@ func _start_wild_battle(
 		BattleRules.BattleModes.SINGLE
 	)
 	var player_node: Node = context.get_player() if context else null
-	BattleFieldVisuals.configure_wild_rules(rules, encounter_area, world_system, player_node)
+	BattleFieldVisuals.configure_wild_rules(
+		rules,
+		encounter_area,
+		world_system,
+		player_node,
+		wild_intro
+	)
 
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 

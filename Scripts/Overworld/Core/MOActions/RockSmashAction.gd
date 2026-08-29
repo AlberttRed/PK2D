@@ -205,7 +205,8 @@ func _start_wild_battle(
 		rules,
 		ROCK_SMASH_ENCOUNTER_TYPE,
 		world_system,
-		player
+		player,
+		"cave"
 	)
 
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]

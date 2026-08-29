@@ -1023,6 +1023,7 @@ func wildIntroGrassTestBattle() -> void:
 		BattleRules.BattleTime.DAY,
 		BattleRules.BattleEnvironments.GRASS
 	)
+	rules.wild_intro = "grass"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro hierba terminada. Ganador: %s" % winner)
@@ -1048,6 +1049,7 @@ func wildIntroSeaTestBattle() -> void:
 	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.WATER)
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "sea"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro mar terminada. Ganador: %s" % winner)
@@ -1074,6 +1076,7 @@ func wildIntroStillWaterTestBattle() -> void:
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
 	rules.encounter_area = EncounterAreaTypeEnum.Values.FISHING
+	rules.wild_intro = "stillwater"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro agua quieta terminada. Ganador: %s" % winner)
@@ -1099,6 +1102,7 @@ func wildIntroTallGrassTestBattle() -> void:
 	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.FOREST_GRASS)
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "tallgrass"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro hierba alta terminada. Ganador: %s" % winner)
@@ -1125,6 +1129,7 @@ func wildIntroSandTestBattle() -> void:
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
 	rules.encounter_area = EncounterAreaTypeEnum.Values.SAND
+	rules.wild_intro = "sand"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro arena terminada. Ganador: %s" % winner)
@@ -1151,6 +1156,7 @@ func wildIntroCaveTestBattle() -> void:
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
 	rules.encounter_area = EncounterAreaTypeEnum.Values.CAVE
+	rules.wild_intro = "cave"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro cueva terminada. Ganador: %s" % winner)
@@ -1176,6 +1182,7 @@ func wildIntroUnderwaterTestBattle() -> void:
 	var visuals := BattleFieldVisualPresetEnum.to_visuals(BattleFieldVisualPresetEnum.Values.UNDERWATER)
 	rules.battle_back = visuals.battle_back
 	rules.base_variant = visuals.base_variant
+	rules.wild_intro = "underwater"
 	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla intro underwater terminada. Ganador: %s" % winner)

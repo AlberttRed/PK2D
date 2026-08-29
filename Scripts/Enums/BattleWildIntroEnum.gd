@@ -90,13 +90,38 @@ static func environment_for_battle_back(battle_back: BattleBackEnum.Values) -> B
 			return BattleRules.BattleEnvironments.GRASS
 
 
+static func parse_from_tile(intro_str: String) -> Values:
+	var key := intro_str.to_lower().replace("_", "").strip_edges()
+	match key:
+		"grass":
+			return Values.GRASS
+		"tallgrass":
+			return Values.TALL_GRASS
+		"sea":
+			return Values.SEA
+		"stillwater":
+			return Values.STILL_WATER
+		"underwater":
+			return Values.UNDERWATER
+		"cave":
+			return Values.CAVE
+		"sand":
+			return Values.SAND
+		_:
+			return Values.NONE
+
+
 static func resolve_from_rules(rules: BattleRules) -> Values:
 	if rules == null or rules.type != BattleRules.BattleTypes.WILD:
 		return Values.NONE
-	if rules.battle_back == BattleBackEnum.Values.FOREST:
-		match rules.environment:
-			BattleRules.BattleEnvironments.GRASS, BattleRules.BattleEnvironments.FIELD:
-				return Values.TALL_GRASS
+	var from_tile := parse_from_tile(rules.wild_intro)
+	if from_tile != Values.NONE:
+		return from_tile
+	return _resolve_intro_fallback(rules)
+
+
+## Sin wild_intro en tile (eventos, tests, MOs): inferir por encounter/backdrop.
+static func _resolve_intro_fallback(rules: BattleRules) -> Values:
 	if rules.battle_back == BattleBackEnum.Values.UNDERWATER:
 		return Values.UNDERWATER
 	if rules.environment == BattleRules.BattleEnvironments.WATER:

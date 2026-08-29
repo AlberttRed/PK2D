@@ -52,6 +52,8 @@ var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.FIELD
 var base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.GRASS
 ## Área de encuentro salvaje (pesca → intro still water, etc.).
 var encounter_area: EncounterAreaTypeEnum.Values = EncounterAreaTypeEnum.Values.NONE
+## Intro salvaje del tile (grass, tallgrass, sea, stillwater, underwater, cave, sand).
+var wild_intro: String = ""
 
 func _init(_battleType : BattleTypes, _battleMode : BattleModes, _weather : BattleWeather = BattleWeather.NONE, _time : BattleTime = BattleTime.DAY, _environment : BattleEnvironments = BattleEnvironments.GRASS):
 	type = _battleType

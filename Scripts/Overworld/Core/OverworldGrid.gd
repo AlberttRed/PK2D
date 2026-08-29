@@ -64,11 +64,12 @@ func get_tile_data(t: Vector2i) -> Array[TileData]:
 ## Obtiene toda la información relevante de un tile en un solo paso
 ## Evita múltiples llamadas a get_tile_data()
 ## @param t: Posición del tile
-## @return: Dictionary con terrain, encounter_type, y otros datos del tile
+## @return: Dictionary con terrain, encounter_type, wild_intro, y otros datos del tile
 func get_tile_info(t: Vector2i) -> Dictionary:
 	var info = {
 		"terrain": "ground",  # Por defecto
 		"encounter_type": "",
+		"wild_intro": "",
 		"water_reflection": false, # Indica si el tile muestra el efecto de reflejo del Sprite
 		"water_ripple": false, # Indica si el tile muestra el efecto de ripple
 		"exit_dir": "",  # Dirección de salida (para flecha de salida)
@@ -93,6 +94,12 @@ func get_tile_info(t: Vector2i) -> Dictionary:
 			var encounter_val = tile_data.get_custom_data("encounter_type")
 			if encounter_val is String and not encounter_val.is_empty():
 				info.encounter_type = encounter_val
+
+		# Recoger wild_intro (overlay de intro salvaje; el primero que encuentre)
+		if info.wild_intro.is_empty() and tile_data.has_custom_data("wild_intro"):
+			var wild_intro_val = tile_data.get_custom_data("wild_intro")
+			if wild_intro_val is String and not wild_intro_val.is_empty():
+				info.wild_intro = wild_intro_val
 
 		# Recoger water_reflection (el primero que encuentre)
 		if !info.water_reflection and tile_data.has_custom_data("water_reflection"):
