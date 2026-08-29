@@ -87,19 +87,55 @@ static func configure_wild_rules(
 		return
 	var map_back := get_map_battle_back(world_system)
 	var surfing := is_player_surfing(player)
+	var diving := is_player_diving(player)
 	rules.time = BattleRules.BattleTime.DAY
+	rules.encounter_area = encounter_area
 	rules.environment = encounter_to_environment(encounter_area)
-	rules.battle_back = resolve_battle_back(map_back, encounter_area, surfing)
+	rules.battle_back = resolve_battle_back(map_back, encounter_area, surfing, diving)
 	rules.base_variant = encounter_to_default_base_variant(encounter_area, rules.battle_back)
 
 
-## Rellena contexto visual en combates contra entrenador (PBI 864; overrides en #867).
-static func configure_trainer_rules(rules: BattleRules, world_system: WorldSystem) -> void:
+## Rellena contexto visual en combates contra entrenador (PBI 864 + overrides #867).
+static func configure_trainer_rules(
+	rules: BattleRules,
+	world_system: WorldSystem,
+	trainer_data: TrainerData = null
+) -> void:
 	if rules == null:
 		return
+	if trainer_data != null:
+		trainer_data.initialize()
+	var map_back := get_map_battle_back(world_system)
 	rules.time = BattleRules.BattleTime.DAY
-	rules.battle_back = get_map_battle_back(world_system)
-	rules.base_variant = BattleBaseVariantEnum.Values.INHERIT
+	rules.battle_back = resolve_trainer_battle_back(trainer_data, map_back)
+	rules.base_variant = resolve_trainer_base_variant(trainer_data, rules.battle_back)
+	rules.environment = BattleWildIntroEnum.environment_for_battle_back(rules.battle_back)
+
+
+## Prioridad: trainer → clase → mapa.
+static func resolve_trainer_battle_back(
+	trainer_data: TrainerData,
+	map_battle_back: BattleBackEnum.Values
+) -> BattleBackEnum.Values:
+	if trainer_data != null:
+		var override := trainer_data.get_battle_back_override()
+		if override != BattleBackEnum.Values.INHERIT:
+			return override
+	return map_battle_back
+
+
+## Prioridad: trainer → clase → INHERIT (resolver en FieldUI).
+static func resolve_trainer_base_variant(
+	trainer_data: TrainerData,
+	resolved_battle_back: BattleBackEnum.Values
+) -> BattleBaseVariantEnum.Values:
+	if BattleBackEnum.uses_fixed_base_set(resolved_battle_back):
+		return BattleBaseVariantEnum.Values.NONE
+	if trainer_data != null:
+		var override := trainer_data.get_base_variant_override()
+		if override != BattleBaseVariantEnum.Values.INHERIT:
+			return override
+	return BattleBaseVariantEnum.Values.INHERIT
 
 
 static func get_map_battle_back(world_system: WorldSystem) -> BattleBackEnum.Values:
@@ -112,12 +148,32 @@ static func is_player_surfing(player: Node) -> bool:
 	return player != null and player.get("is_surfing") == true
 
 
-## battle_back efectivo: mapa + overrides de agua/surf.
+static func is_player_diving(player: Node) -> bool:
+	return player != null and player.get("is_diving") == true
+
+
+## Inferencia para combates salvajes por evento cuando no hay tile de encuentro.
+static func infer_encounter_area_from_map(map_battle_back: BattleBackEnum.Values) -> EncounterAreaTypeEnum.Values:
+	match map_battle_back:
+		BattleBackEnum.Values.CAVE, BattleBackEnum.Values.CAVE_DARK, BattleBackEnum.Values.CAVE_DARKER:
+			return EncounterAreaTypeEnum.Values.CAVE
+		BattleBackEnum.Values.UNDERWATER:
+			return EncounterAreaTypeEnum.Values.LAND
+		BattleBackEnum.Values.WATER:
+			return EncounterAreaTypeEnum.Values.WATER
+		_:
+			return EncounterAreaTypeEnum.Values.LAND
+
+
+## battle_back efectivo: mapa + buceo/surf + área de encuentro.
 static func resolve_battle_back(
 	map_battle_back: BattleBackEnum.Values,
 	encounter_area: EncounterAreaTypeEnum.Values,
-	player_is_surfing: bool
+	player_is_surfing: bool,
+	player_is_diving: bool = false
 ) -> BattleBackEnum.Values:
+	if player_is_diving:
+		return BattleBackEnum.Values.UNDERWATER
 	if player_is_surfing:
 		return BattleBackEnum.Values.WATER
 	match encounter_area:

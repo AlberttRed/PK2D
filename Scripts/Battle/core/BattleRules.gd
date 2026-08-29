@@ -50,6 +50,8 @@ var environment : BattleEnvironments = BattleEnvironments.GRASS
 var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.FIELD
 ## Variante de base bajo los Pokémon. INHERIT = heredar resolución (#867).
 var base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.GRASS
+## Área de encuentro salvaje (pesca → intro still water, etc.).
+var encounter_area: EncounterAreaTypeEnum.Values = EncounterAreaTypeEnum.Values.NONE
 
 func _init(_battleType : BattleTypes, _battleMode : BattleModes, _weather : BattleWeather = BattleWeather.NONE, _time : BattleTime = BattleTime.DAY, _environment : BattleEnvironments = BattleEnvironments.GRASS):
 	type = _battleType

@@ -18,6 +18,7 @@ var input_dir := Vector2.ZERO
 var holding := false
 var movement_enabled: bool = true
 var is_surfing: bool = false  # Modo surfing activado
+var is_diving: bool = false  # Bajo el agua (mapa underwater / MO Dive)
 var _control_block_count: int = 0  # Contador de bloqueos anidados
 var _is_playing_mo_segment: bool = false
 var _mo_sequence_active: bool = false
@@ -280,6 +281,19 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.LEFT: sprite.frame = 1
 			Vector2.RIGHT: sprite.frame = 2
 		remove_meta("can_surf")
+
+## Activa o desactiva el modo buceo (Essentials: rutas submarinas / MO Dive).
+func set_diving_mode(enabled: bool) -> void:
+	if is_diving == enabled:
+		return
+	is_diving = enabled
+	if enabled and is_surfing:
+		set_surfing_mode(false)
+
+
+## Sincroniza buceo al entrar en un mapa según su battle_back (Gen 3 / Essentials).
+func sync_diving_from_map_battle_back(battle_back: BattleBackEnum.Values) -> void:
+	set_diving_mode(battle_back == BattleBackEnum.Values.UNDERWATER)
 
 func start_surf() -> void:
 	# Notificar que empieza una animación MO (el salto de SURF)

@@ -1,4 +1,5 @@
 extends ColorRect
+class_name FadeLayer
 
 ## FadeLayer - Sistema de transiciones visuales de fundido
 ## Maneja fade_in y fade_out para transiciones suaves entre escenas
@@ -201,53 +202,116 @@ func play_battle_transition(texture_path: String, duration: float = 1.0) -> void
 	transition_finished.emit()
 	# SignalManager.battle_transition_finished.emit()  # DEPRECATED
 
-## Revelar la escena de combate usando transición con máscara (inverso: de negro a transparente)
-func reveal_battle(duration: float = 0.4) -> void:
+const BATTLE_REVEAL_TEXTURE := "res://Sprites/Transiciones/wipe-vertical-reflected.png"
+## Gen 3: wipe abre a mitad, pausa con overlay visible, y termina de abrir.
+const BATTLE_REVEAL_HALF_PROGRESS := 0.5
+const BATTLE_REVEAL_OPEN_TO_HALF_SEC := 0.5
+const BATTLE_REVEAL_HOLD_SEC := 0.5
+const BATTLE_REVEAL_FINISH_SEC := 0.5
+
+
+static func battle_reveal_total_duration(
+	open_to_half_duration: float = BATTLE_REVEAL_OPEN_TO_HALF_SEC,
+	hold_duration: float = BATTLE_REVEAL_HOLD_SEC,
+	finish_duration: float = BATTLE_REVEAL_FINISH_SEC
+) -> float:
+	return open_to_half_duration + hold_duration + finish_duration
+
+
+func _prepare_battle_reveal_mask(texture: Texture2D, progress: float) -> void:
+	modulate.a = 1.0
+	color = Color.TRANSPARENT
+	transition_shader.set_shader_parameter("transition_mask", texture)
+	transition_shader.set_shader_parameter("progress", progress)
+	transition_shader.set_shader_parameter("smoothness", 0.01)
+	transition_overlay.modulate.a = 1.0
+	transition_overlay.visible = true
+
+
+func _finish_battle_reveal_mask() -> void:
+	transition_overlay.visible = false
+	color = Color.TRANSPARENT
+	visible = false
+	color = Color.BLACK
+	is_fading = false
+
+
+## Revelar combate: mitad → pausa → abrir del todo (ref. Gen 3 wild intro).
+func reveal_battle_staged(
+	open_to_half_duration: float = BATTLE_REVEAL_OPEN_TO_HALF_SEC,
+	hold_duration: float = BATTLE_REVEAL_HOLD_SEC,
+	finish_duration: float = BATTLE_REVEAL_FINISH_SEC,
+	half_progress: float = BATTLE_REVEAL_HALF_PROGRESS
+) -> void:
 	if is_fading:
 		return
 
 	is_fading = true
 	visible = true
 
-	# Cargar la textura de reveal
-	var texture = load("res://Sprites/Transiciones/wipe-vertical-reflected.png")
+	var texture := load(BATTLE_REVEAL_TEXTURE) as Texture2D
 	if texture == null:
 		push_error("FadeLayer: No se pudo cargar la textura de reveal")
 		is_fading = false
 		return
 
-	# El FadeLayer debe estar opaco pero transparente para no tapar el shader
-	modulate.a = 1.0
-	color = Color.TRANSPARENT
+	var half := clampf(half_progress, 0.0, 1.0)
+	_prepare_battle_reveal_mask(texture, 1.0)
 
-	# Configurar el shader con la máscara de reveal
-	transition_shader.set_shader_parameter("transition_mask", texture)
-	transition_shader.set_shader_parameter("progress", 1.0)  # Empezar en negro (inverso)
-	transition_shader.set_shader_parameter("smoothness", 0.01)
+	var open_tween := create_tween()
+	open_tween.tween_method(
+		func(value: float): transition_shader.set_shader_parameter("progress", value),
+		1.0,
+		half,
+		open_to_half_duration
+	).set_trans(Tween.TRANS_LINEAR)
+	await open_tween.finished
 
-	# Mostrar el overlay
-	transition_overlay.modulate.a = 1.0
-	transition_overlay.visible = true
+	if hold_duration > 0.0:
+		await get_tree().create_timer(hold_duration).timeout
 
-	# Animar el shader de 1.0 a 0.0 (de negro a transparente)
-	var tween = create_tween()
+	var finish_tween := create_tween()
+	finish_tween.tween_method(
+		func(value: float): transition_shader.set_shader_parameter("progress", value),
+		half,
+		0.0,
+		finish_duration
+	).set_trans(Tween.TRANS_LINEAR)
+	await finish_tween.finished
+
+	_finish_battle_reveal_mask()
+
+
+## Revelar la escena de combate usando transición con máscara (inverso: de negro a transparente)
+func reveal_battle(duration: float = 0.4, staged: bool = true) -> void:
+	if staged:
+		await reveal_battle_staged()
+		return
+
+	if is_fading:
+		return
+
+	is_fading = true
+	visible = true
+
+	var texture := load(BATTLE_REVEAL_TEXTURE) as Texture2D
+	if texture == null:
+		push_error("FadeLayer: No se pudo cargar la textura de reveal")
+		is_fading = false
+		return
+
+	_prepare_battle_reveal_mask(texture, 1.0)
+
+	var tween := create_tween()
 	tween.tween_method(
 		func(value: float): transition_shader.set_shader_parameter("progress", value),
-		1.0,   # Empezar totalmente negro
-		0.0,   # Terminar totalmente transparente
+		1.0,
+		0.0,
 		duration
 	).set_trans(Tween.TRANS_LINEAR)
 
 	await tween.finished
-
-	# Ocultar todo el FadeLayer
-	transition_overlay.visible = false
-	visible = false
-	color = Color.BLACK  # Restaurar para futuros fades normales
-	is_fading = false
-
-	# Emitir señal de que el reveal terminó
-	# SignalManager.battle_reveal_finished.emit()  # DEPRECATED
+	_finish_battle_reveal_mask()
 
 ## DEPRECATED: Ya no se usan, Battle.gd llama directamente a DisplayManager
 # func _on_battle_transition_requested(texture_path: String, duration: float) -> void:

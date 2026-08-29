@@ -1240,6 +1240,9 @@ func _setup_player_for_map() -> void:
 			if terrain_layer:
 				camera.map_layer_path = terrain_layer.get_path()
 
+	if player.has_method("sync_diving_from_map_battle_back"):
+		player.sync_diving_from_map_battle_back(get_active_map_battle_back())
+
 ## Configura la visibilidad del nodo raíz (NO recursivo)
 ## Los nodos hijos gestionan su propia visibilidad
 func _set_subtree_visibility(node: Node, vis: bool) -> void:

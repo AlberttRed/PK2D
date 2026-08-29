@@ -35,7 +35,9 @@ func start_battle(player_participants: Array[BattleParticipant], enemy_participa
 	battle_ui.prepare_intro_field(battle_controller.rules)
 
 	# Revelar y empezar intro (slide de bases + mensajes / send-in)
-	await DisplayManager.reveal_battle(0.4)
+	var reveal_duration := DisplayManager.battle_reveal_total_duration()
+	BattleWildIntroOverlay.play_for_ui(battle_ui, battle_controller.rules, reveal_duration)
+	await DisplayManager.reveal_battle()
 	await battle_controller.start_battle()
 
 

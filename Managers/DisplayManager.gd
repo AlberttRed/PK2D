@@ -296,12 +296,16 @@ static func start_evolution(
 	await instance._start_evolution_impl(pokemon, target_species_id, origin_context, evolution_method)
 
 
-## Revela la escena de batalla con efecto de transición inversa
-static func reveal_battle(duration: float = 0.4) -> void:
+## Revela la escena de batalla con efecto de transición inversa (Gen 3: mitad → pausa → abrir).
+static func reveal_battle(duration: float = 0.4, staged: bool = true) -> void:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
-	await instance.fade_layer.reveal_battle(duration)
+	await instance.fade_layer.reveal_battle(duration, staged)
+
+
+static func battle_reveal_total_duration() -> float:
+	return preload("res://Scripts/UI/FadeLayer.gd").battle_reveal_total_duration()
 
 ## Cierra el portrait box actual si está visible
 static func close_portrait_box() -> void:
