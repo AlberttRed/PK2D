@@ -73,6 +73,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_paralysis_ailment_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Supersónico) vs Squirtle — animación ailment Confusion.
 @export var use_confusion_ailment_animation_test: bool = false
+## 1vs1 salvaje: Butterfree (Supersónico + Polvo Veneno) vs Charmander — confusión y veneno.
+@export var use_supersonic_poison_powder_test: bool = false
 ## 1vs1 salvaje: Charmander vs Pidgey — fase 1 captura (lanzar ball → abrir/cerrar → rebotes).
 @export var use_capture_throw_animation_test: bool = false
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
@@ -238,9 +240,6 @@ func _ready() -> void:
 		_print_move_fail_no_target_test_guide()
 		await wildMoveFailNoTargetTestBattle()
 		return
-	if use_endless_random_battle_loop:
-		await _run_endless_random_battle_loop()
-		return
 	if use_move_fail_message_test:
 		_setup_move_fail_message_test_parties()
 		_print_move_fail_message_test_guide()
@@ -291,6 +290,10 @@ func _ready() -> void:
 	if use_confusion_ailment_animation_test:
 		_print_confusion_ailment_animation_test_guide()
 		await wildConfusionAilmentAnimationTestBattle()
+		return
+	if use_supersonic_poison_powder_test:
+		_print_supersonic_poison_powder_test_guide()
+		await wildSupersonicPoisonPowderTestBattle()
 		return
 	if use_rain_weather_animation_test:
 		_print_rain_weather_animation_test_guide()
@@ -416,8 +419,9 @@ func _ready() -> void:
 			print(">>> debug_zero_pp: todos los movimientos a 0 PP — pulsa LUCHAR para Forcejeo.")
 		await wildFixedRattataGastlyBattle()
 		return
-	# Sin flags de escenario: mismo bucle aleatorio infinito.
-	await _run_endless_random_battle_loop()
+	# Sin flags de escenario: bucle aleatorio infinito solo si está activado.
+	if use_endless_random_battle_loop:
+		await _run_endless_random_battle_loop()
 
 
 ## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
@@ -839,6 +843,18 @@ func wildConfusionAilmentAnimationTestBattle() -> void:
 	var winner = await _start_test_battle(participants, rules)
 	debug_force_ailment_apply = prev_force
 	print(">>> Batalla animación Confusion terminada. Ganador: %s" % winner)
+
+
+func wildSupersonicPoisonPowderTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_supersonic_poison_powder_test_player()
+	var wild_participant := _create_supersonic_poison_powder_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla Supersónico + Polvo Veneno terminada. Ganador: %s" % winner)
 
 
 func wildCaptureThrowAnimationTestBattle() -> void:
@@ -2236,6 +2252,45 @@ func _print_confusion_ailment_animation_test_guide() -> void:
 	print(">>> Test animación ailment Confusion: Charmander Nv.20 (Supersónico) vs Squirtle Nv.22 (Supersónico).")
 	print(">>> Ailment forzado: 5 pájaros orbitando sobre la cabeza + frames girando.")
 	print(">>> Desactiva use_confusion_ailment_animation_test para volver a otro flag.")
+
+
+func _create_supersonic_poison_powder_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 15
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_supersonic_poison_powder_test_wild() -> BattleParticipant:
+	var butterfree := Pokemon.new()
+	butterfree.pokemon_id = PokemonsEnum.Values.BUTTERFREE as PokemonsEnum.Values
+	butterfree.level = 30
+	butterfree.is_wild = true
+	butterfree.custom_move_ids = [
+		MovesEnum.Values.SUPERSONIC,
+		MovesEnum.Values.POISON_POWDER,
+	]
+	butterfree._post_init()
+	var wild_bp: BattlePokemon = butterfree.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_supersonic_poison_powder_test_guide() -> void:
+	print(">>> Test 1vs1 salvaje: Charmander Nv.15 vs Butterfree Nv.30 (rival más rápido, ataca primero).")
+	print(">>> Rival solo Supersónico y Polvo Veneno (IA random entre ambos). Ailments garantizados al acertar.")
+	print(">>> Desactiva use_supersonic_poison_powder_test para volver a otro flag.")
 
 
 func _create_capture_throw_animation_test_player() -> BattleParticipant:

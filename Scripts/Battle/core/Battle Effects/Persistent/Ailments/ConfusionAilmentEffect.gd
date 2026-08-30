@@ -5,11 +5,11 @@ func check_effect_success():
 	# 50% de probabilidad de atacarse a sí mismo
 	randomize()
 	effect_success = randf() < 0.5
-	
+
 func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE or not pokemon.can_act_this_turn:
 		return
-	
+
 	# Si el Pokémon ya no puede actuar por otro efecto (parálisis, sueño, etc.), no procesar confusión
 
 	applied = true
@@ -27,12 +27,12 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, _ctx: BattlePhaseContext
 		var effect := DamageEffect.new(pokemon, pokemon, null, damage)
 		pokemon.take_damage(effect)
 		pokemon.can_act_this_turn = false
-		
+
 
 func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE or !applied:
 		return
-	
+
 	# Si el Pokémon ya no puede actuar por otro efecto, no mostrar mensajes de confusión
 
 

@@ -3,7 +3,7 @@ extends PersistentBattleEffect
 
 func check_effect_success():
 	effect_success = randf() < 0.25
-	
+
 func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return
@@ -13,7 +13,7 @@ func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> voi
 
 	if effect_success:
 		pokemon.can_act_this_turn = false
-	
+
 
 func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.Phases, _ctx: BattlePhaseContext = null):
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:

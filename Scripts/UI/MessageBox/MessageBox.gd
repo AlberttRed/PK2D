@@ -60,6 +60,8 @@ var isLastMessage:bool:
 # Called when the node entzers the scene tree for the first time.
 func _ready():
 	setText("")
+	if wait_indicator:
+		wait_indicator.visible = false
 	if scroll != null:
 		_scene_scroll_defaults = {
 			"left": scroll.offset_left,
@@ -740,6 +742,10 @@ func cleanup_and_hide() -> void:
 
 func show_clear_text():
 	label.text = ""
+	if wait_indicator:
+		wait_indicator.visible = false
+	if animation_player:
+		animation_player.stop()
 	show()
 
 ## Ajusta el tamaño del Container y los RichTextLabel según el texto real.
