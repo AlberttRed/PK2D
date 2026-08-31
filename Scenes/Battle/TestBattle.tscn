@@ -7,10 +7,10 @@
 [node name="TestBattle" type="Node2D" unique_id=764670732]
 position = Vector2(1, 2)
 script = ExtResource("1_tse6d")
-use_endless_random_battle_loop = false
+use_endless_random_battle_loop = true
 debug_rattata_test_bite = false
 debug_rattata_extended_volatiles = false
-use_battler_altitude_test = true
+use_battler_altitude_test = false
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

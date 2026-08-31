@@ -30,6 +30,7 @@ var messageHasFinished: bool:
 #@export var text_font :Font #DynamicFont
 #@export var block_outline : bool = true
 var _refresh_task_running: bool = false
+var _refresh_generation: int = 0
 
 
 func _outline_layers() -> Array[RichTextLabel]:
@@ -53,10 +54,18 @@ func _sync_outline_layout_from_parent() -> void:
 
 ## Iguala Outline/Outline2 al rectángulo del RTL principal (sin PRESET_FULL_RECT: con `fit_content`
 ## el tamaño efectivo del texto no coincide siempre con el rect de anclas stretch).
+func _uses_immediate_outline_sync() -> bool:
+	# MessageBox anima visible_characters; menús/listas muestran el texto entero de golpe.
+	if visible_characters >= 0 and visible_characters < get_total_character_count():
+		return false
+	return true
+
+
 func _sync_outline_geometry_from_parent() -> void:
 	if not is_inside_tree():
 		return
 	var sz := size
+	var outlines_ready := sz.x > 1.0 and sz.y > 1.0
 	for o in _outline_layers():
 		o.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		o.offset_left = 0.0
@@ -64,6 +73,17 @@ func _sync_outline_geometry_from_parent() -> void:
 		o.offset_right = sz.x
 		o.offset_bottom = sz.y
 		o.custom_minimum_size = sz
+		o.visible = outlines_ready
+
+
+func _sync_outline_visual_immediate() -> void:
+	_sync_outline_layout_from_parent()
+	if not is_inside_tree():
+		return
+	_sync_outline_geometry_from_parent()
+	for o in _outline_layers():
+		o.queue_redraw()
+	queue_redraw()
 
 
 func _request_outline_visual_refresh() -> void:
@@ -76,19 +96,16 @@ func _request_outline_visual_refresh() -> void:
 
 
 func _deferred_outline_visual_refresh() -> void:
+	var generation := _refresh_generation
 	if not is_inside_tree():
 		_refresh_task_running = false
 		return
 	# Esperar un frame garantiza layout final cuando el control acaba de hacerse visible.
 	await get_tree().process_frame
-	if not is_inside_tree():
+	if generation != _refresh_generation or not is_inside_tree():
 		_refresh_task_running = false
 		return
-	_sync_outline_layout_from_parent()
-	_sync_outline_geometry_from_parent()
-	for o in _outline_layers():
-		o.queue_redraw()
-	queue_redraw()
+	_sync_outline_visual_immediate()
 	_refresh_task_running = false
 
 
@@ -119,7 +136,7 @@ func _ready():
 	for o in _outline_layers():
 		o.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 
-	_request_outline_visual_refresh()
+	_sync_outline_visual_immediate()
 
 
 ## RT con BBCode trata `\n` como párrafo nuevo. `[br]` mantiene una sola línea visual; `\n\n` sigue siendo hueco entre bloques.
@@ -137,12 +154,13 @@ func _bbcode_normalize_newlines(s: String) -> String:
 ## Normaliza `\n` → `[br]` y copia el mismo BBCode al RTL principal y a Outline/Outline2.
 ## Solo lo usa `setText()`: algunas rutas del motor no disparan `_set()` al escribir `text` directamente.
 func _apply_full_richtext(raw: String) -> void:
+	_refresh_generation += 1
+	_refresh_task_running = false
 	var normalized: String = _bbcode_normalize_newlines(raw)
 	text = normalized
 	for o in _outline_layers():
 		o.text = normalized
-	_sync_outline_layout_from_parent()
-	_request_outline_visual_refresh()
+	_sync_outline_visual_immediate()
 
 
 ## Fila compacta para menús lista (PauseMenu, ChoiceBox). Godot 4.7: line_separation>0 infla filas ~56px.
@@ -231,12 +249,7 @@ func reset():
 func _set(_name, value) -> bool:
 	match _name:
 		"text":
-			var normalized: String = _bbcode_normalize_newlines(str(value))
-			text = normalized
-			for o in _outline_layers():
-				o.text = normalized
-			_sync_outline_layout_from_parent()
-			_request_outline_visual_refresh()
+			_apply_full_richtext(str(value))
 			return true
 		"visible_characters":
 			var next_line = 0
@@ -268,8 +281,17 @@ func _set(_name, value) -> bool:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_THEME_CHANGED:
 		_sync_outline_layout_from_parent()
-		_request_outline_visual_refresh()
+		if _uses_immediate_outline_sync():
+			_sync_outline_visual_immediate()
+		else:
+			_request_outline_visual_refresh()
 	elif what == NOTIFICATION_RESIZED:
-		_request_outline_visual_refresh()
+		if _uses_immediate_outline_sync():
+			_sync_outline_visual_immediate()
+		else:
+			_request_outline_visual_refresh()
 	elif what == NOTIFICATION_VISIBILITY_CHANGED and visible:
-		_request_outline_visual_refresh()
+		if _uses_immediate_outline_sync():
+			_sync_outline_visual_immediate()
+		else:
+			_request_outline_visual_refresh()
