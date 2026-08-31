@@ -14,6 +14,8 @@ const ITEMS_DIR := "res://Resources/Data/Items"
 const _POKEMON_INDEX := preload("res://Services/PokemonResourceIndex.gd")
 const _MOVE_INDEX := preload("res://Services/MoveResourceIndex.gd")
 const _ITEM_INDEX := preload("res://Services/ItemResourceIndex.gd")
+const _ABILITY_INDEX := preload("res://Services/AbilityResourceIndex.gd")
+const _WEATHER_INDEX := preload("res://Services/WeatherResourceIndex.gd")
 
 var _pokemon_by_id: Dictionary = {}
 var _pokemon_by_name: Dictionary = {}
@@ -254,7 +256,37 @@ func _load_resources_by_pattern(dir_path: String, on_loaded: Callable) -> void:
 					on_loaded.call(res)
 		return
 
-	# Habilidades y climas: archivos con nombre (022-INTIMIDATE.tres, RAIN.tres, …) → DirAccess más abajo.
+	# Para Abilities: índice estático id -> ruta (evita depender de DirAccess en export).
+	if dir_path == ABILITIES_DIR:
+		var ability_ids: Array[int] = []
+		for id_any in _ABILITY_INDEX.BY_ID.keys():
+			ability_ids.append(int(id_any))
+		ability_ids.sort()
+		for ability_id in ability_ids:
+			var path_ability: String = _ABILITY_INDEX.BY_ID.get(ability_id, "")
+			if path_ability.is_empty():
+				continue
+			if ResourceLoader.exists(path_ability):
+				var res_ability := load(path_ability)
+				if res_ability != null:
+					on_loaded.call(res_ability)
+		return
+
+	# Para Weather: índice estático id -> ruta (evita depender de DirAccess en export).
+	if dir_path == WEATHERS_DIR:
+		var weather_ids: Array[int] = []
+		for id_any in _WEATHER_INDEX.BY_ID.keys():
+			weather_ids.append(int(id_any))
+		weather_ids.sort()
+		for weather_id in weather_ids:
+			var path_weather: String = _WEATHER_INDEX.BY_ID.get(weather_id, "")
+			if path_weather.is_empty():
+				continue
+			if ResourceLoader.exists(path_weather):
+				var res_weather := load(path_weather)
+				if res_weather != null:
+					on_loaded.call(res_weather)
+		return
 
 	# Para Items: índice estático id -> ruta (evita depender de DirAccess en export).
 	if dir_path == ITEMS_DIR:
@@ -416,11 +448,32 @@ func get_ability(name_or_id) -> Resource:
 		return null
 	var t := typeof(name_or_id)
 	if t == TYPE_INT or t == TYPE_FLOAT:
-		return _abilities_by_id.get(int(name_or_id), null)
+		return _get_ability_by_id(int(name_or_id))
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
-		return _abilities_by_id.get(int(key), null)
+		return _get_ability_by_id(int(key))
 	return _abilities_by_name.get(key, null)
+
+
+func _get_ability_by_id(ability_id: int) -> AbilityData:
+	if _abilities_by_id.has(ability_id):
+		return _abilities_by_id[ability_id]
+	var lazy_ability := _lazy_load_ability_by_id(ability_id)
+	if lazy_ability != null:
+		_abilities_by_id[ability_id] = lazy_ability
+		if typeof(lazy_ability.internal_name) == TYPE_STRING and lazy_ability.internal_name != "":
+			_abilities_by_name[lazy_ability.internal_name.to_lower()] = lazy_ability
+		return lazy_ability
+	return null
+
+
+func _lazy_load_ability_by_id(ability_id: int) -> AbilityData:
+	var path_ability: String = _ABILITY_INDEX.BY_ID.get(ability_id, "")
+	if path_ability.is_empty():
+		return null
+	if ResourceLoader.exists(path_ability):
+		return load(path_ability) as AbilityData
+	return null
 
 func get_nature(name_or_id) -> Resource:
 	var key := str(name_or_id).to_lower()
@@ -428,11 +481,32 @@ func get_nature(name_or_id) -> Resource:
 
 func get_weather(name_or_id) -> WeatherData:
 	if typeof(name_or_id) == TYPE_INT:
-		return _weathers_by_id.get(name_or_id, null)
+		return _get_weather_by_id(int(name_or_id))
 	var key := str(name_or_id).to_lower()
 	if key.is_valid_int():
-		return _weathers_by_id.get(int(key), null)
+		return _get_weather_by_id(int(key))
 	return _weathers_by_name.get(key, null)
+
+
+func _get_weather_by_id(weather_id: int) -> WeatherData:
+	if _weathers_by_id.has(weather_id):
+		return _weathers_by_id[weather_id]
+	var lazy_weather := _lazy_load_weather_by_id(weather_id)
+	if lazy_weather != null:
+		_weathers_by_id[weather_id] = lazy_weather
+		if typeof(lazy_weather.internal_name) == TYPE_STRING and lazy_weather.internal_name != "":
+			_weathers_by_name[lazy_weather.internal_name.to_lower()] = lazy_weather
+		return lazy_weather
+	return null
+
+
+func _lazy_load_weather_by_id(weather_id: int) -> WeatherData:
+	var path_weather: String = _WEATHER_INDEX.BY_ID.get(weather_id, "")
+	if path_weather.is_empty():
+		return null
+	if ResourceLoader.exists(path_weather):
+		return load(path_weather) as WeatherData
+	return null
 
 func get_trainer_class(name_or_id) -> TrainerClassData:
 	if typeof(name_or_id) == TYPE_INT:
