@@ -39,6 +39,9 @@ func play_battle_animation_on(ui: BattleUI, pokemon: BattlePokemon) -> void:
 	var anim := get_battle_animation()
 	if anim == null:
 		return
+	# Los menús de combate ocultan el MessageBox; restaurar el marco vacío antes del VFX.
+	if ui.message_box != null:
+		ui.message_box.show_clear_text()
 	var layer: Node2D = ui.get_animation_layer()
 	var spot: BattleSpot = (
 		pokemon.resolve_battle_spot()

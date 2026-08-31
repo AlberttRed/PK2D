@@ -83,6 +83,9 @@ category = "Pokémon Maternal"
 description = "Se han documentado casos de Kangaskhan sin
 crías que han adoptado bebés humanos cuyos
 padres habían sido víctimas de accidentes."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_o04v3")
 footprint_sprite = SubResource("AtlasTexture_uvp0x")
 battle_front_sprite = SubResource("AtlasTexture_wr8i3")

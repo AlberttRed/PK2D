@@ -86,6 +86,9 @@ category = "Pokémon Bivalvo"
 description = "Una vez que ha cerrado la concha, es imposible
 abrirla, independientemente de la fuerza que se
 ejerza."
+battlerAltitude = 4
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ldumr")
 footprint_sprite = SubResource("AtlasTexture_vwjtq")
 battle_front_sprite = SubResource("AtlasTexture_uuphx")

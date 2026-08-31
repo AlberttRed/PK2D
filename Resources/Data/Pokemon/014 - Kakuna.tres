@@ -87,6 +87,9 @@ category = "Pokémon Capullo"
 description = "Aunque es casi incapaz de moverse, en caso
 de sentirse amenazado puede envenenar a los
 enemigos con su aguijón."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ixgtp")
 footprint_sprite = SubResource("AtlasTexture_7xr15")
 battle_front_sprite = SubResource("AtlasTexture_oqc4h")

@@ -86,6 +86,9 @@ pokedex_numbers = {
 category = "Pokémon Bola"
 description = "Se dice que se camufla como una Poké Ball.
 Al más mínimo estímulo se autodestruirá."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ded43")
 footprint_sprite = SubResource("AtlasTexture_wwtgd")
 battle_front_sprite = SubResource("AtlasTexture_vrcmq")

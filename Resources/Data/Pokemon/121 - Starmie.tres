@@ -89,6 +89,9 @@ category = "Pokémon Misterioso"
 description = "Starmie absorbe plancton al tiempo que nada
 por el mar haciendo girar su cuerpo a gran
 velocidad."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_7q63a")
 footprint_sprite = SubResource("AtlasTexture_5hene")
 battle_front_sprite = SubResource("AtlasTexture_0v36e")

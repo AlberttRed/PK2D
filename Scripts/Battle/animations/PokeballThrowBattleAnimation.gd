@@ -25,12 +25,29 @@ func _prepare_instance(
 	var landing := _first_target(target_spots)
 	if landing == null:
 		landing = user_spot
+	_apply_ball_sprite_for_spot(instance, landing)
 	if landing == null or landing.side == null or landing.side.type != BattleSide.Types.ENEMY:
 		return
 	var visual := instance.get_node_or_null("VisualRoot") as Node2D
 	if visual == null:
 		return
 	visual.global_position = landing.get_anchor_global_position(BattleSpot.ANCHOR_BALL_GROUND)
+
+
+static func _resolve_ball_sprite_id(spot: BattleSpot) -> String:
+	if spot == null or spot.pokemon == null:
+		return PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+	var mon: Pokemon = spot.pokemon.base_data
+	if mon == null:
+		return PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+	return PokeballItemEffect.normalize_ball_sprite_id(mon.captured_ball_id)
+
+
+static func _apply_ball_sprite_for_spot(instance: Node, spot: BattleSpot) -> void:
+	var ball := instance.get_node_or_null("VisualRoot/Ball") as Sprite2D
+	if ball == null:
+		return
+	PokeballThrowSpriteFrames.setup_sprite_sheet_mode(ball, _resolve_ball_sprite_id(spot))
 
 
 func _resolve_throw_clip(landing: BattleSpot) -> String:

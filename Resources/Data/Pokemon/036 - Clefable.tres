@@ -89,6 +89,9 @@ category = "Pokémon Hada"
 description = "Su oído es tan fino que puede percibir cómo cae
 una aguja a 1 km de distancia. Por eso suele
 habitar en lugares tranquilos."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_anob1")
 footprint_sprite = SubResource("AtlasTexture_u2yh5")
 battle_front_sprite = SubResource("AtlasTexture_tmrml")

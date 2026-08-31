@@ -86,6 +86,9 @@ category = "Pokémon Transformación"
 description = "Cuando se encuentra con otro Ditto, se mueve
 más rápido de lo normal para intentar adoptar
 su aspecto."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_2i116")
 footprint_sprite = SubResource("AtlasTexture_y8aal")
 battle_front_sprite = SubResource("AtlasTexture_gqmjs")

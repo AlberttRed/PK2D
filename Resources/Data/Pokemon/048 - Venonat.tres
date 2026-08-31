@@ -87,6 +87,9 @@ category = "Pokémon Insecto"
 description = "Sus grandes ojos actúan como radares. A plena
 luz se percibe que son, en realidad, grupos de
 ojos diminutos."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_d8vbk")
 footprint_sprite = SubResource("AtlasTexture_5os4f")
 battle_front_sprite = SubResource("AtlasTexture_t6ywf")

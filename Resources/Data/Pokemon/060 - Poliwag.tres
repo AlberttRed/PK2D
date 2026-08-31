@@ -90,6 +90,9 @@ pokedex_numbers = {
 category = "Pokémon Renacuajo"
 description = "En ríos de aguas bravas, usa sus gruesos labios
 a modo de ventosa para adherirse a las rocas."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_eefgk")
 footprint_sprite = SubResource("AtlasTexture_jfx6n")
 battle_front_sprite = SubResource("AtlasTexture_h6b5s")

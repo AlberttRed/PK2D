@@ -85,6 +85,9 @@ pokedex_numbers = {
 category = "Pokémon Semilla"
 description = "Desde que nace, crece alimentándose de los
 nutrientes que contiene la semilla de su lomo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_2o7nj")
 footprint_sprite = SubResource("AtlasTexture_id7au")
 battle_front_sprite = SubResource("AtlasTexture_0hbpd")

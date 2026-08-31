@@ -92,6 +92,9 @@ category = "Pokémon Virtual"
 description = "Durante los últimos años, ha estado muy activo
 en el ciberespacio comprobando que no haya
 datos sospechosos."
+battlerAltitude = 6
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yma2l")
 footprint_sprite = SubResource("AtlasTexture_sywdp")
 battle_front_sprite = SubResource("AtlasTexture_0x06x")

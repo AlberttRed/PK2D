@@ -89,6 +89,9 @@ category = "Pokémon Caballo Fuego"
 description = "Por extraño que parezca, una vez que alguien
 se ha hecho merecedor de su confianza, puede
 tocarle la ardiente crin sin quemarse."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xdy0e")
 footprint_sprite = SubResource("AtlasTexture_vnr3p")
 battle_front_sprite = SubResource("AtlasTexture_yayi6")

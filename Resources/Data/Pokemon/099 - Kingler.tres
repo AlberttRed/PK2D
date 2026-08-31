@@ -76,6 +76,9 @@ category = "Pokémon Tenaza"
 description = "Su gran pinza posee una potencia devastadora,
 pero su peso excesivo la convierte en un estorbo
 fuera del terreno de combate."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_bnapx")
 footprint_sprite = SubResource("AtlasTexture_5yefp")
 battle_front_sprite = SubResource("AtlasTexture_ecc34")

@@ -24,6 +24,8 @@ const PokemonEvolutionRowScr := preload("res://Scripts/Resources/Classes/Pokemon
 @export_enum("Sin indicar", "Macho", "Hembra", "Sin Género") var gender: int = 0
 @export var is_wild: bool = false
 @export var shiny: bool = false
+## -1 = usar `shadow_size` del PokemonData; 0-3 = forzar tamaño (debug / TestBattle).
+var battle_shadow_size_override: int = -1
 
 @export_group("IVs (Individual Values)")
 @export_range(0, 31) var hp_IVs: int = 0
@@ -80,6 +82,7 @@ var original_trainer: String = "Red"
 var capture_date: String = ""
 var capture_route: String = ""
 var capture_level: int = 5
+var captured_ball_id: String = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
 var personality: String = ""
 
 # Experiencia
@@ -958,6 +961,7 @@ func to_serializable_state() -> Dictionary:
 		"capture_date": capture_date,
 		"capture_route": capture_route,
 		"capture_level": capture_level,
+		"captured_ball_id": captured_ball_id,
 		"personality": personality,
 	}
 

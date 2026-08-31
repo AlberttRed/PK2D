@@ -90,6 +90,9 @@ category = "Pokémon Gusano"
 description = "Sus cortas patas están recubiertas de ventosas
 que le permiten subir incansable por muros y
 cuestas."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ns6r5")
 footprint_sprite = SubResource("AtlasTexture_ynh5g")
 battle_front_sprite = SubResource("AtlasTexture_7impg")

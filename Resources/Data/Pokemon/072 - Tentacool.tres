@@ -104,6 +104,9 @@ category = "Pokémon Medusa"
 description = "Su cuerpo está compuesto casi por completo de
 agua, por lo que resulta muy difícil distinguirlo
 cuando está sumergido en el mar."
+battlerAltitude = 2
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_s7bvv")
 footprint_sprite = SubResource("AtlasTexture_yjnfb")
 battle_front_sprite = SubResource("AtlasTexture_moc10")

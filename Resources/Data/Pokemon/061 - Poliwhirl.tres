@@ -100,6 +100,9 @@ pokedex_numbers = {
 category = "Pokémon Renacuajo"
 description = "Secreta un sudor viscoso que le sirve para
 escurrirse y escapar del agarre de sus enemigos."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_60fh0")
 footprint_sprite = SubResource("AtlasTexture_us4mm")
 battle_front_sprite = SubResource("AtlasTexture_mlf7b")

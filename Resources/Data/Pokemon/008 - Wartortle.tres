@@ -86,6 +86,9 @@ pokedex_numbers = {
 category = "Pokémon Tortuga"
 description = "Utiliza hábilmente sus peludas orejas y la cola
 para mantener el equilibrio al nadar."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_t1pw8")
 footprint_sprite = SubResource("AtlasTexture_15lbr")
 battle_front_sprite = SubResource("AtlasTexture_2pomf")

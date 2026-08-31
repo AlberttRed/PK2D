@@ -106,6 +106,9 @@ category = "Pokémon Gato Araña"
 description = "Se lava cuidadosamente la cara para que no se le
 ensucie la moneda de oro que tiene en la frente.
 No se lleva nada bien con los Meowth de Galar."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_pxdhh")
 footprint_sprite = SubResource("AtlasTexture_5uuf1")
 battle_front_sprite = SubResource("AtlasTexture_27d0g")

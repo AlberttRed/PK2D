@@ -101,6 +101,9 @@ pokedex_numbers = {
 category = "Pokémon Atrocidad"
 description = "Cuando monta en cólera, puede quemarlo todo,
 incluso en medio de la más violenta tormenta."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yvgjh")
 footprint_sprite = SubResource("AtlasTexture_5ofpy")
 battle_front_sprite = SubResource("AtlasTexture_uxopf")

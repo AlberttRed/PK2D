@@ -45,6 +45,7 @@ func deserialize(data: Dictionary) -> Pokemon:
 	mon.capture_date = str(data.get("capture_date", mon.capture_date))
 	mon.capture_route = str(data.get("capture_route", mon.capture_route))
 	mon.capture_level = int(data.get("capture_level", mon.capture_level))
+	mon.captured_ball_id = str(data.get("captured_ball_id", mon.captured_ball_id))
 	mon.personality = str(data.get("personality", mon.personality))
 
 	mon._apply_ability_from_database()

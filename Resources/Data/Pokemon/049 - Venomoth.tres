@@ -82,6 +82,9 @@ category = "Pokémon Polilla Ven."
 description = "Las alas desprenden un polvillo de escamas
 impregnado de toxinas que se adhiere al
 contacto y resulta difícil de quitar."
+battlerAltitude = 14
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ya35r")
 footprint_sprite = SubResource("AtlasTexture_cm3ai")
 battle_front_sprite = SubResource("AtlasTexture_qmr17")

@@ -79,6 +79,9 @@ category = "Pokémon Congelar"
 description = "Posee el poder de controlar el hielo a su antojo.
 Se dice que este Pokémon habita en montañas
 de nieves perpetuas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_epbax")
 footprint_sprite = SubResource("AtlasTexture_qmdjq")
 battle_front_sprite = SubResource("AtlasTexture_vkfsb")

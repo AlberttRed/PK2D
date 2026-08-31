@@ -90,6 +90,9 @@ category = "Pokémon Pato Salvaje"
 description = "Combate empuñando un puerro como arma. La
 forma de blandirlo es tan variada que ha llegado
 a generar sus propias escuelas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_2xxvq")
 footprint_sprite = SubResource("AtlasTexture_6mhcp")
 battle_front_sprite = SubResource("AtlasTexture_oc2xy")

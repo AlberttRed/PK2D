@@ -98,6 +98,9 @@ category = "Pokémon Pez Color"
 description = "La aleta dorsal y las aletas pectorales están tan
 desarrolladas que actúan como músculos. Puede
 nadar a una velocidad de cinco nudos."
+battlerAltitude = 8
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_odlsm")
 footprint_sprite = SubResource("AtlasTexture_rwx1p")
 battle_front_sprite = SubResource("AtlasTexture_a3d8u")

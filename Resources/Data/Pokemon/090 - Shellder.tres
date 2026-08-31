@@ -91,6 +91,9 @@ pokedex_numbers = {
 category = "Pokémon Bivalvo"
 description = "La concha lo protege de cualquier tipo de
 ataque. Solo es vulnerable cuando se abre."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_kd2cg")
 footprint_sprite = SubResource("AtlasTexture_4tr51")
 battle_front_sprite = SubResource("AtlasTexture_5j3kv")

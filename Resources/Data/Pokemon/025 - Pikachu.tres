@@ -103,6 +103,9 @@ category = "Pokémon Ratón"
 description = "Los miembros de esta especie se saludan entre
 sí uniendo sus colas y transmitiéndose corriente
 eléctrica."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_y3xch")
 footprint_sprite = SubResource("AtlasTexture_h14ol")
 battle_front_sprite = SubResource("AtlasTexture_uus3m")

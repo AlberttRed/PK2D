@@ -94,6 +94,9 @@ category = "Pokémon Eléctrico"
 description = "Al desatarse una tormenta, se reúnen en torno
 a los árboles de mayor altura y esperan inmóviles
 a que caiga algún rayo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_afnga")
 footprint_sprite = SubResource("AtlasTexture_qj33e")
 battle_front_sprite = SubResource("AtlasTexture_ankw0")

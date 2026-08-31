@@ -99,6 +99,9 @@ category = "Pokémon Superpoder"
 description = "Tiene una complexión tan fuerte que nunca se
 cansa. Suele ayudar a la gente a cargar objetos
 pesados."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_b5x8u")
 footprint_sprite = SubResource("AtlasTexture_8vhyg")
 battle_front_sprite = SubResource("AtlasTexture_v35yo")

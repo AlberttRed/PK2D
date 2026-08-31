@@ -82,6 +82,9 @@ category = "Pokémon Hipnosis"
 description = "Conviene evitar el contacto visual en caso de
 encontrarse con este Pokémon, ya que puede
 hipnotizar con su péndulo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_l4l2j")
 footprint_sprite = SubResource("AtlasTexture_tbbh3")
 battle_front_sprite = SubResource("AtlasTexture_f08gy")

@@ -78,6 +78,9 @@ category = "Pokémon Llama"
 description = "Se cuenta que alguna vez ha iluminado el camino
 con sus alas flamígeras para rescatar a alguien
 que se había perdido en la montaña."
+battlerAltitude = 10
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_urmjp")
 footprint_sprite = SubResource("AtlasTexture_41jy4")
 battle_front_sprite = SubResource("AtlasTexture_qm2eg")

@@ -13,6 +13,9 @@ var _selection_bounce_hp_rest_y: float = 0.0
 var _selection_bounce_hp_active: bool = false
 var _selection_bounce_active: bool = false
 var _selection_bounce_elapsed: float = 0.0
+## Posición/escala del nodo Shadow tal como vienen del .tscn (FieldUI puede override por spot).
+var _shadow_rest_position: Vector2 = Vector2.ZERO
+var _shadow_rest_scale: Vector2 = Vector2.ONE
 
 ## Resaltado mientras eliges acción/movimiento (estilo juegos originales).
 const SELECTION_BOUNCE_OFFSET := 3.0
@@ -197,6 +200,43 @@ func _get_sprite_opaque_rect_in_spot() -> Rect2:
 ## BallGround no se usa aquí: tiene nudge de pokéball distinto al contacto visual.
 ## Luego aplica battlerPlayerY / battlerEnemyY y resta battlerAltitude.
 const SPRITE_SHADOW_CONTACT_Y_NUDGE := 6.0
+const SHADOW_SIZE_SCALE := {
+	1: 0.75,
+	2: 1.0,
+	3: 1.25,
+}
+
+
+func get_effective_shadow_size() -> int:
+	if pokemon == null or pokemon.base_data == null:
+		return 0
+	if pokemon.base_data.battle_shadow_size_override >= 0:
+		return pokemon.base_data.battle_shadow_size_override
+	if pokemon.base_data.base == null:
+		return 0
+	return maxi(0, pokemon.base_data.base.shadow_size)
+
+
+func should_show_battle_shadow() -> bool:
+	return get_effective_shadow_size() > 0
+
+
+func _apply_shadow_for_species() -> void:
+	if shadow == null:
+		return
+	shadow.position = _shadow_rest_position
+	shadow.scale = _shadow_rest_scale
+	var size := get_effective_shadow_size()
+	if size <= 0:
+		shadow.visible = false
+		return
+	var scale_factor: float = SHADOW_SIZE_SCALE.get(size, 1.0)
+	shadow.scale = _shadow_rest_scale * scale_factor
+	var shadow_x := 0
+	if pokemon != null and pokemon.base_data != null and pokemon.base_data.base != null:
+		shadow_x = pokemon.base_data.base.shadow_x
+	shadow.position = _shadow_rest_position + Vector2(float(shadow_x), 0.0)
+	shadow.visible = true
 
 func _align_sprite_to_ground() -> void:
 	if sprite == null or sprite.texture == null:
@@ -238,6 +278,9 @@ func _species_battler_y_nudge() -> float:
 
 func _ready() -> void:
 	index = 1 if name.contains("SpotA") else 2
+	if shadow != null:
+		_shadow_rest_position = shadow.position
+		_shadow_rest_scale = shadow.scale
 	_refresh_ball_ground_anchor(0.0)
 	set_process(false)
 
@@ -252,13 +295,12 @@ func load_active_pokemon(_pokemon: BattlePokemon, rules: BattleRules) -> void:
 	else:
 		sprite.texture = self.pokemon.get_front_sprite()
 
+	_apply_shadow_for_species()
 	_align_sprite_to_ground()
 	refresh_visual_anchors()
 
 	if not pokemon.status_changed.is_connected(_on_status_changed):
 		pokemon.status_changed.connect(_on_status_changed)
-	# Mostrar sombra si es salvaje
-	shadow.visible = self.pokemon.is_wild
 
 	# Mostrar sprite
 	sprite.visible = true
@@ -289,7 +331,7 @@ func set_pokemon_sprite_visible(is_visible: bool) -> void:
 	if pokemon == null:
 		return
 	sprite.visible = is_visible
-	shadow.visible = is_visible and pokemon.is_wild
+	shadow.visible = is_visible and should_show_battle_shadow()
 
 
 ## Registra Poison/Burn/etc. en el controlador de efectos al entrar en campo (estado ya cargado desde `Pokemon.major_status`).
@@ -308,10 +350,19 @@ func _register_persistent_ailment_effect_if_needed(bp: BattlePokemon) -> void:
 	BattleEffectController.add_pokemon_effect(bp, inst)
 
 
+func _reset_shadow_visual() -> void:
+	if shadow == null:
+		return
+	shadow.visible = false
+	shadow.position = _shadow_rest_position
+	shadow.scale = _shadow_rest_scale
+
+
 func clear() -> void:
 	stop_selection_bounce()
 	sprite.texture = null
 	sprite.position = Vector2.ZERO
+	_reset_shadow_visual()
 	hide()
 
 ## Remueve el Pokémon debilitado del battlespot y limpia la UI
@@ -324,7 +375,7 @@ func remove_pokemon() -> void:
 	sprite.texture = null
 	sprite.position = Vector2.ZERO
 	sprite.visible = false
-	shadow.visible = false
+	_reset_shadow_visual()
 	if hp_bar:
 		hp_bar.clear_ui()
 		hp_bar.visible = false

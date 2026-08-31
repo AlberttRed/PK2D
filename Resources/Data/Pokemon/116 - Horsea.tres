@@ -89,6 +89,9 @@ category = "Pokémon Dragón"
 description = "Nada con la gracilidad de un bailarín, creando
 remolinos a su paso, y juega con sus congéneres
 a ver quién forma el más grande."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ixas1")
 footprint_sprite = SubResource("AtlasTexture_4i5ei")
 battle_front_sprite = SubResource("AtlasTexture_36m83")

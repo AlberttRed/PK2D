@@ -79,6 +79,9 @@ category = "Pokémon Taladro"
 description = "Para mecer a sus crías, las coloca en los huecos
 que tiene entre las púas dorsales, momento
 durante el cual no secretan veneno."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ci1sh")
 footprint_sprite = SubResource("AtlasTexture_pg4tc")
 battle_front_sprite = SubResource("AtlasTexture_1sovg")

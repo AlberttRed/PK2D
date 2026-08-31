@@ -91,6 +91,9 @@ category = "Pokémon Dragón"
 description = "Su estrecho morro posee tal fuerza de succión
 que es capaz de aspirar presas de mayor tamaño
 y engullirlas enteras."
+battlerAltitude = 4
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_kq7rj")
 footprint_sprite = SubResource("AtlasTexture_b28ns")
 battle_front_sprite = SubResource("AtlasTexture_hcn8a")

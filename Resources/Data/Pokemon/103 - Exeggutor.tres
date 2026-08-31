@@ -83,6 +83,9 @@ category = "Pokémon Coco"
 description = "Puede lanzar ataques psíquicos de gran potencia
 si sus tres cabezas se ponen de acuerdo. Cuando
 se nubla el cielo, sus movimientos se ralentizan."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_aoe56")
 footprint_sprite = SubResource("AtlasTexture_5bbc7")
 battle_front_sprite = SubResource("AtlasTexture_v4omt")

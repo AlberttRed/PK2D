@@ -133,6 +133,9 @@ category = "Pokémon Imán"
 description = "Emite de forma constante una potente fuerza
 magnética que causa estragos en prácticamente
 cualquier ordenador al que se acerque."
+battlerAltitude = 10
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_s584a")
 footprint_sprite = SubResource("AtlasTexture_p1u4i")
 battle_front_sprite = SubResource("AtlasTexture_nym8q")

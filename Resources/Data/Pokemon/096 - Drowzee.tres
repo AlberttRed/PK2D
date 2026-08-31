@@ -89,6 +89,9 @@ category = "Pokémon Hipnosis"
 description = "Si se duerme siempre en compañía de un
 Pokémon de esta especie, puede mostrar
 sueños que haya ingerido con anterioridad."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_kksha")
 footprint_sprite = SubResource("AtlasTexture_tt74q")
 battle_front_sprite = SubResource("AtlasTexture_57gvn")

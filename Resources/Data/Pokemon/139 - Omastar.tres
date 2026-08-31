@@ -80,6 +80,9 @@ category = "Pokémon Espiral"
 description = "Posee unos colmillos afilados con los que puede
 partir piedras, pero solo ataca a presas que se
 hallan al alcance de sus tentáculos."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ui5el")
 footprint_sprite = SubResource("AtlasTexture_41pv8")
 battle_front_sprite = SubResource("AtlasTexture_gvxyt")

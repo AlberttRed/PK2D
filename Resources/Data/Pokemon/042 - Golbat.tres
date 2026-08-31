@@ -106,6 +106,9 @@ category = "Pokémon Murciélago"
 description = "Camina con soltura sobre sus pequeñas patas. Se
 acerca con sigilo a su presa mientras esta duerme
 y le clava los colmillos para chuparle la sangre."
+battlerAltitude = 26
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_wgh4v")
 footprint_sprite = SubResource("AtlasTexture_xc4ku")
 battle_front_sprite = SubResource("AtlasTexture_4fknp")

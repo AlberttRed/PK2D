@@ -98,6 +98,9 @@ pokedex_numbers = {
 category = "Pokémon Superpoder"
 description = "Siempre rebosante de energía, pasa el tiempo
 levantando piedras para hacerse aún más fuerte."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_an143")
 footprint_sprite = SubResource("AtlasTexture_e3mmm")
 battle_front_sprite = SubResource("AtlasTexture_g3nda")

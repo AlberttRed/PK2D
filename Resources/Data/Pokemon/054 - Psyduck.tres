@@ -101,6 +101,9 @@ category = "Pokémon Pato"
 description = "Sus dolores de cabeza empeoran a medida que
 aumenta su nivel de estrés. Su increíble poder
 psíquico puede causar estragos a su alrededor."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_vjf4y")
 footprint_sprite = SubResource("AtlasTexture_4ufin")
 battle_front_sprite = SubResource("AtlasTexture_s8yvd")

@@ -88,6 +88,9 @@ category = "Pokémon Llama"
 description = "Almacena parte del aire que inhala en la saca de
 fuego de su interior, que llega a calentarse a más
 de 1700 °C."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xe0ba")
 footprint_sprite = SubResource("AtlasTexture_715w4")
 battle_front_sprite = SubResource("AtlasTexture_ty01s")

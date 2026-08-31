@@ -43,6 +43,7 @@ var _input_enabled: bool = false
 var _background_stylebox: StyleBoxTexture = null
 
 @onready var _description_label: RichTextLabel = $Descripcion
+@onready var _items_viewport: Control = $ItemsViewport
 @onready var _items_container: VBoxContainer = $ItemsViewport/ItemsContainer
 @onready var _item_template: HBoxContainer = $ItemsViewport/ItemsContainer/ExitTemplate
 @onready var _selection_cursor: Sprite2D = $Select
@@ -317,8 +318,28 @@ func _apply_list_scroll(scroll_top: int, spacing_y: float) -> void:
 		_items_container.offset_top = _items_container_base_offset_top - (float(scroll_top) * spacing_y)
 
 
+func _clear_row_labels(row: Node) -> void:
+	for label_name in ["Name", "Quantity"]:
+		var label: Node = row.get_node_or_null(label_name)
+		if label != null and label.has_method("setText"):
+			label.setText("")
+
+
+func _sync_row_labels(row: Node) -> void:
+	for label_name in ["Name", "Quantity"]:
+		var label: Node = row.get_node_or_null(label_name)
+		if label != null and label.has_method("_sync_outline_visual_immediate"):
+			label._sync_outline_visual_immediate()
+
+
 func _render_items() -> void:
+	if _items_viewport:
+		_items_viewport.visible = false
+
 	for child in _items_container.get_children():
+		_clear_row_labels(child)
+		child.visible = false
+		_items_container.remove_child(child)
 		child.queue_free()
 	_reset_list_scroll()
 
@@ -346,7 +367,18 @@ func _render_items() -> void:
 
 		_items_container.add_child(row)
 
+	for child in _items_container.get_children():
+		_sync_row_labels(child)
+
 	_update_selection_visuals()
+	call_deferred("_show_items_viewport")
+
+
+func _show_items_viewport() -> void:
+	for child in _items_container.get_children():
+		_sync_row_labels(child)
+	if _items_viewport:
+		_items_viewport.visible = true
 
 func _get_list_row_spacing() -> float:
 	var row_height := LabelHGSS.MENU_ROW_HEIGHT

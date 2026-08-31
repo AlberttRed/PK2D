@@ -32,6 +32,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
 @export var use_fixed_rattata_vs_gastly: bool = false
+## Si true, combate salvaje 1vs1 con Player y WildPokemons (party del inspector o aleatorio).
+@export var use_wild_single_test: bool = false
 ## Si true, Pidgey solo lleva Látigo (útil para probar fallback si el movimiento bloqueado no es usable).
 @export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
@@ -49,6 +51,12 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_battle_ia_typing_test: bool = false
 ## Escenario del test de IA (ver guía en consola al arrancar).
 @export_enum("Type Advantage", "Avoid Immunity", "All Immune Random", "Wild Basic") var battle_ia_test_scenario: int = 0
+
+@export_group("Debug altitud / sombra (visual)")
+## 1vs1 salvaje: Machop vs especie configurable (probar battlerAltitude / sombra).
+@export var use_battler_altitude_test: bool = false
+## ID nacional del rival salvaje (74=Geodude, 92=Gastly, 25=Pikachu S1, 19=Rattata S2, 3=Venusaur S3…).
+@export_range(1, 151) var battler_altitude_test_wild_species_id: int = 74
 
 @export_group("Debug mensajes MOVE_FAIL (PBI 687)")
 ## Escenario natural Machop vs Gastly (inmunidad, protección, evasión, fallo de precisión).
@@ -73,6 +81,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_paralysis_ailment_animation_test: bool = false
 ## 1vs1 salvaje: Charmander (Supersónico) vs Squirtle — animación ailment Confusion.
 @export var use_confusion_ailment_animation_test: bool = false
+## 1vs1 salvaje: Butterfree (Supersónico + Polvo Veneno) vs Charmander — confusión y veneno.
+@export var use_supersonic_poison_powder_test: bool = false
 ## 1vs1 salvaje: Charmander vs Pidgey — fase 1 captura (lanzar ball → abrir/cerrar → rebotes).
 @export var use_capture_throw_animation_test: bool = false
 ## 1vs1 salvaje: Charizard (Gruñido + Placaje) vs Gyarados (Gruñido + Tornado) — animación Growl (sprites grandes).
@@ -238,8 +248,10 @@ func _ready() -> void:
 		_print_move_fail_no_target_test_guide()
 		await wildMoveFailNoTargetTestBattle()
 		return
-	if use_endless_random_battle_loop:
-		await _run_endless_random_battle_loop()
+	if use_battler_altitude_test:
+		_setup_battler_altitude_test_parties()
+		_print_battler_altitude_test_guide()
+		await wildBattlerAltitudeTestBattle()
 		return
 	if use_move_fail_message_test:
 		_setup_move_fail_message_test_parties()
@@ -291,6 +303,10 @@ func _ready() -> void:
 	if use_confusion_ailment_animation_test:
 		_print_confusion_ailment_animation_test_guide()
 		await wildConfusionAilmentAnimationTestBattle()
+		return
+	if use_supersonic_poison_powder_test:
+		_print_supersonic_poison_powder_test_guide()
+		await wildSupersonicPoisonPowderTestBattle()
 		return
 	if use_rain_weather_animation_test:
 		_print_rain_weather_animation_test_guide()
@@ -391,6 +407,12 @@ func _ready() -> void:
 		_print_rain_weather_test_guide()
 		await wildRainWeatherTestBattle()
 		return
+	if use_wild_single_test:
+		_setup_test_battler_parties()
+		_seed_test_capture_items()
+		print(">>> Combate salvaje SINGLE (Player vs WildPokemons).")
+		await wildSingleBattle()
+		return
 	if use_fixed_rattata_vs_gastly:
 		_setup_fixed_rattata_gastly_parties()
 	else:
@@ -416,8 +438,9 @@ func _ready() -> void:
 			print(">>> debug_zero_pp: todos los movimientos a 0 PP — pulsa LUCHAR para Forcejeo.")
 		await wildFixedRattataGastlyBattle()
 		return
-	# Sin flags de escenario: mismo bucle aleatorio infinito.
-	await _run_endless_random_battle_loop()
+	# Sin flags de escenario: bucle aleatorio infinito solo si está activado.
+	if use_endless_random_battle_loop:
+		await _run_endless_random_battle_loop()
 
 
 ## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
@@ -506,6 +529,21 @@ func wildMoveFailMessageTestBattle() -> void:
 	print(">>> Batalla MOVE_FAIL (1v1) terminada. Ganador: %s" % winner)
 
 
+func wildBattlerAltitudeTestBattle() -> void:
+	_setup_battler_altitude_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildBattlerAltitudeTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipantWild = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla altitud/sombra terminada. Ganador: %s" % winner)
+
+
 func wildMoveFailNoTargetTestBattle() -> void:
 	_setup_move_fail_no_target_test_parties()
 	var player_participant: BattleParticipant = _create_move_fail_no_target_player_participant()
@@ -531,6 +569,33 @@ func _setup_move_fail_message_test_parties() -> void:
 	if wildPokemons != null:
 		wildPokemons.party.clear()
 		wildPokemons.add_pokemon_to_party(_create_move_fail_test_enemy_instance())
+
+
+func _setup_battler_altitude_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_battler_altitude_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_battler_altitude_test_wild_instance())
+
+
+func _create_battler_altitude_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_battler_altitude_test_wild_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = battler_altitude_test_wild_species_id as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn._post_init()
+	return pkmn
 
 
 func _setup_move_fail_no_target_test_parties() -> void:
@@ -634,6 +699,17 @@ func _print_move_fail_message_test_guide() -> void:
 	print(">>>        (Hipnosis es estado y sí afecta a Fantasma; Placaje siempre daría inmunidad)")
 	print(">>> Turno 8+ — MISS_GLOBAL: Machop Hipnosis → repite hasta «¡El ataque de Machop falló!»")
 	print(">>> NO_TARGET: activa use_move_fail_no_target_test y relanza F6.")
+
+
+func _print_battler_altitude_test_guide() -> void:
+	var wild_name := PokemonsEnum.get_display_name(
+		battler_altitude_test_wild_species_id as PokemonsEnum.Values
+	)
+	print(
+		">>> [ALTITUD/SOMBRA] Machop vs %s salvaje (id=%d)"
+		% [wild_name, battler_altitude_test_wild_species_id]
+	)
+	print(">>> Cambia `battler_altitude_test_wild_species_id` (74=Geodude, 92=Gastly, 25=S1, 19=S2, 3=S3).")
 
 
 func _print_move_fail_no_target_test_guide() -> void:
@@ -839,6 +915,18 @@ func wildConfusionAilmentAnimationTestBattle() -> void:
 	var winner = await _start_test_battle(participants, rules)
 	debug_force_ailment_apply = prev_force
 	print(">>> Batalla animación Confusion terminada. Ganador: %s" % winner)
+
+
+func wildSupersonicPoisonPowderTestBattle() -> void:
+	var prev_force := debug_force_ailment_apply
+	debug_force_ailment_apply = true
+	var player_participant := _create_supersonic_poison_powder_test_player()
+	var wild_participant := _create_supersonic_poison_powder_test_wild()
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	debug_force_ailment_apply = prev_force
+	print(">>> Batalla Supersónico + Polvo Veneno terminada. Ganador: %s" % winner)
 
 
 func wildCaptureThrowAnimationTestBattle() -> void:
@@ -2236,6 +2324,45 @@ func _print_confusion_ailment_animation_test_guide() -> void:
 	print(">>> Test animación ailment Confusion: Charmander Nv.20 (Supersónico) vs Squirtle Nv.22 (Supersónico).")
 	print(">>> Ailment forzado: 5 pájaros orbitando sobre la cabeza + frames girando.")
 	print(">>> Desactiva use_confusion_ailment_animation_test para volver a otro flag.")
+
+
+func _create_supersonic_poison_powder_test_player() -> BattleParticipant:
+	var charmander := Pokemon.new()
+	charmander.pokemon_id = PokemonsEnum.Values.CHARMANDER as PokemonsEnum.Values
+	charmander.level = 15
+	charmander.is_wild = false
+	charmander.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.SCRATCH,
+	]
+	charmander._post_init()
+	var lead: BattlePokemon = charmander.to_battle_pokemon()
+	lead.controllable = true
+	var participant := BattleParticipant.new([lead])
+	participant.is_player = true
+	participant.name = "Jugador"
+	return participant
+
+
+func _create_supersonic_poison_powder_test_wild() -> BattleParticipant:
+	var butterfree := Pokemon.new()
+	butterfree.pokemon_id = PokemonsEnum.Values.BUTTERFREE as PokemonsEnum.Values
+	butterfree.level = 30
+	butterfree.is_wild = true
+	butterfree.custom_move_ids = [
+		MovesEnum.Values.SUPERSONIC,
+		MovesEnum.Values.POISON_POWDER,
+	]
+	butterfree._post_init()
+	var wild_bp: BattlePokemon = butterfree.to_battle_pokemon()
+	wild_bp.is_wild = true
+	return BattleParticipantWild.new([wild_bp])
+
+
+func _print_supersonic_poison_powder_test_guide() -> void:
+	print(">>> Test 1vs1 salvaje: Charmander Nv.15 vs Butterfree Nv.30 (rival más rápido, ataca primero).")
+	print(">>> Rival solo Supersónico y Polvo Veneno (IA random entre ambos). Ailments garantizados al acertar.")
+	print(">>> Desactiva use_supersonic_poison_powder_test para volver a otro flag.")
 
 
 func _create_capture_throw_animation_test_player() -> BattleParticipant:

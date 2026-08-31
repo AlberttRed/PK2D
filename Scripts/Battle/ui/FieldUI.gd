@@ -20,6 +20,11 @@ const FIELD_POKEBALL_Z := HP_BAR_CANVAS_Z - 1
 @onready var _player_base_sprite: Sprite2D = $PlayerBase/Sprite
 @onready var _enemy_base_sprite: Sprite2D = $EnemyBase/Sprite
 
+var _background_scroll_layer: Node2D = null
+var _background_scroll_tween: Tween = null
+var _background_rest_position: Vector2 = Vector2.ZERO
+var _intro_bg_tex_width: float = 512.0
+
 
 func _ready() -> void:
 	if player_party_bar != null:
@@ -67,10 +72,90 @@ func _apply_resolved_field_visuals(resolved: Dictionary) -> void:
 	var enemy_base: Texture2D = resolved.get("enemy_base")
 	if bg != null and _background_sprite != null:
 		_background_sprite.texture = bg
+		_background_rest_position = _background_sprite.position
+		_finish_intro_background_scroll()
 	if player_base != null and _player_base_sprite != null:
 		_player_base_sprite.texture = player_base
 	if enemy_base != null and _enemy_base_sprite != null:
 		_enemy_base_sprite.texture = enemy_base
+
+
+## Scroll horizontal del fondo durante reveal + slide de bases (ref. Gen 3).
+## Espejo a la izquierda, normal a la derecha; entra por el espejo y termina en el sprite por defecto.
+func start_intro_background_scroll(duration: float) -> void:
+	stop_intro_background_scroll()
+	if duration <= 0.0 or _background_sprite == null or _background_sprite.texture == null:
+		return
+	if not _setup_background_scroll_layer():
+		return
+	_background_sprite.visible = false
+	_intro_bg_tex_width = maxf(float(_background_sprite.texture.get_width()), 1.0)
+	_background_scroll_layer.position.x = _intro_bg_tex_width
+	_background_scroll_tween = create_tween()
+	_background_scroll_tween.tween_method(
+		_apply_intro_background_scroll_layer_x,
+		_intro_bg_tex_width,
+		0.0,
+		duration
+	)
+	_background_scroll_tween.finished.connect(_finish_intro_background_scroll, CONNECT_ONE_SHOT)
+
+
+func _apply_intro_background_scroll_layer_x(layer_x: float) -> void:
+	if _background_scroll_layer != null:
+		_background_scroll_layer.position.x = layer_x
+
+
+func stop_intro_background_scroll() -> void:
+	if _background_scroll_tween != null and _background_scroll_tween.is_valid():
+		_background_scroll_tween.kill()
+	_background_scroll_tween = null
+	_finish_intro_background_scroll()
+
+
+func _setup_background_scroll_layer() -> bool:
+	if _background_sprite == null or _background_sprite.texture == null:
+		return false
+	_background_rest_position = _background_sprite.position
+	var tex := _background_sprite.texture
+	var tex_width := maxf(float(tex.get_width()), 1.0)
+	_background_scroll_layer = Node2D.new()
+	_background_scroll_layer.name = "BackgroundScrollLayer"
+	_background_scroll_layer.z_as_relative = false
+	_background_scroll_layer.z_index = _background_sprite.z_index
+	add_child(_background_scroll_layer)
+	move_child(_background_scroll_layer, _background_sprite.get_index())
+
+	var mirror := Sprite2D.new()
+	mirror.texture = tex
+	mirror.centered = _background_sprite.centered
+	mirror.flip_v = _background_sprite.flip_v
+	mirror.flip_h = not _background_sprite.flip_h
+	mirror.scale = _background_sprite.scale
+	mirror.position = _background_rest_position + Vector2(-tex_width, 0.0)
+	_background_scroll_layer.add_child(mirror)
+
+	var normal := Sprite2D.new()
+	normal.texture = tex
+	normal.centered = _background_sprite.centered
+	normal.flip_v = _background_sprite.flip_v
+	normal.flip_h = _background_sprite.flip_h
+	normal.scale = _background_sprite.scale
+	normal.position = _background_rest_position
+	_background_scroll_layer.add_child(normal)
+	return true
+
+
+func _finish_intro_background_scroll() -> void:
+	if _background_scroll_layer != null and is_instance_valid(_background_scroll_layer):
+		_background_scroll_layer.position.x = 0.0
+	if _background_sprite != null:
+		_background_sprite.visible = true
+		_background_sprite.position = _background_rest_position
+	if _background_scroll_layer != null and is_instance_valid(_background_scroll_layer):
+		_background_scroll_layer.queue_free()
+	_background_scroll_layer = null
+	_background_scroll_tween = null
 
 
 ## HPBar siempre por encima de BattleAnimationLayer (balls, VFX).

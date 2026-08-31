@@ -88,6 +88,9 @@ category = "Pokémon Renacuajo"
 description = "No solo es un experto nadador, sino que también
 domina las artes marciales. Propina enérgicos
 puñetazos gracias a sus musculosos brazos."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_am0yl")
 footprint_sprite = SubResource("AtlasTexture_40qul")
 battle_front_sprite = SubResource("AtlasTexture_sob52")

@@ -86,6 +86,9 @@ pokedex_numbers = {
 category = "Pokémon Lagartija"
 description = "Este Pokémon nace con una llama en la punta de
 la cola. Si se le apagara, fallecería."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_y1hsa")
 footprint_sprite = SubResource("AtlasTexture_pb2ok")
 battle_front_sprite = SubResource("AtlasTexture_8hq38")

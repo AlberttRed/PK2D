@@ -103,6 +103,9 @@ category = "Pokémon Zorro"
 description = "Su pelaje se va volviendo más suave, lustroso
 y bello a medida que le crecen las seis colas.
 Al abrazarlo, emana una ligera calidez."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_p23jn")
 footprint_sprite = SubResource("AtlasTexture_pcf13")
 battle_front_sprite = SubResource("AtlasTexture_4bvca")

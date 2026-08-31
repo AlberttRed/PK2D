@@ -92,6 +92,9 @@ category = "Pokémon Ave Gemela"
 description = "Las diminutas alas apenas le permiten volar,
 pero puede correr a gran velocidad gracias a
 sus patas hiperdesarrolladas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_6qom5")
 footprint_sprite = SubResource("AtlasTexture_3bp02")
 battle_front_sprite = SubResource("AtlasTexture_hjcnx")

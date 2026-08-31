@@ -9,6 +9,7 @@
 script = ExtResource("2_ball")
 guaranteed_capture = true
 capture_ball_modifier = 255.0
+ball_sprite_id = "ball04"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jqbfu"]
 atlas = ExtResource("1_jqbfu")

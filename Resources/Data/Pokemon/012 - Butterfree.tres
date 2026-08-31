@@ -88,6 +88,9 @@ pokedex_numbers = {
 category = "Pokémon Mariposa"
 description = "Recoge néctar a diario y se lo adhiere al pelo de
 las patas para llevarlo a su nido."
+battlerAltitude = 18
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_4ex48")
 footprint_sprite = SubResource("AtlasTexture_nek4r")
 battle_front_sprite = SubResource("AtlasTexture_gpvir")

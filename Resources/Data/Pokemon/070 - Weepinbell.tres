@@ -89,6 +89,9 @@ category = "Pokémon Matamoscas"
 description = "Cuando tiene hambre, engulle a todo lo que
 se mueve. La pobre presa acaba disuelta en
 sus ácidos."
+battlerAltitude = 4
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_jt3lj")
 footprint_sprite = SubResource("AtlasTexture_bmv5e")
 battle_front_sprite = SubResource("AtlasTexture_uwoh4")

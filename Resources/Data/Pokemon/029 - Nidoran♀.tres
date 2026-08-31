@@ -84,6 +84,9 @@ category = "Pokémon Pin Veneno"
 description = "Parte las bayas con sus duros incisivos para
 comérselas. La punta del cuerno de las hembras
 es más redondeada que la de los machos."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_nwg44")
 footprint_sprite = SubResource("AtlasTexture_3w1e7")
 battle_front_sprite = SubResource("AtlasTexture_m2gpv")

@@ -88,6 +88,9 @@ category = "Pokémon Dormir"
 description = "Este Pokémon tiene un estómago a prueba de
 bomba, por lo que es capaz de ingerir incluso
 comida podrida o mohosa."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_62ves")
 footprint_sprite = SubResource("AtlasTexture_2o5th")
 battle_front_sprite = SubResource("AtlasTexture_qe4aj")

@@ -89,6 +89,9 @@ pokedex_numbers = {
 category = "Pokémon Semilla"
 description = "La luz del sol lo fortalece y hace que le crezca el
 capullo que tiene en el lomo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_rwgrd")
 footprint_sprite = SubResource("AtlasTexture_032fh")
 battle_front_sprite = SubResource("AtlasTexture_ijmqq")

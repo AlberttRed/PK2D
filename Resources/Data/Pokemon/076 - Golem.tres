@@ -91,6 +91,9 @@ category = "Pokémon Megatón"
 description = "Nada más mudar la piel, su cuerpo se vuelve
 blando y blanquecino, pero se endurece al poco
 tiempo de entrar en contacto con el aire."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ojv6q")
 footprint_sprite = SubResource("AtlasTexture_ql6va")
 battle_front_sprite = SubResource("AtlasTexture_gwkd1")

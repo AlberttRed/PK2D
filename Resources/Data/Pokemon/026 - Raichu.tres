@@ -94,6 +94,9 @@ category = "Pokémon Ratón"
 description = "Cuando ha descargado las bolsas de las mejillas,
 levanta la cola y absorbe la carga eléctrica que
 hay en el ambiente."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_i2c85")
 footprint_sprite = SubResource("AtlasTexture_f2p7h")
 battle_front_sprite = SubResource("AtlasTexture_2q13u")

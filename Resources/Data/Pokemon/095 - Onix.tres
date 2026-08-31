@@ -96,6 +96,9 @@ category = "Pokémon Serpiente Roca"
 description = "Perfora el suelo a una velocidad de 80 km/h
 girando y retorciendo su robusto y enorme
 cuerpo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ulrm6")
 footprint_sprite = SubResource("AtlasTexture_psj3i")
 battle_front_sprite = SubResource("AtlasTexture_gcjs8")

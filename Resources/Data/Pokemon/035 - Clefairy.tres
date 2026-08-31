@@ -96,6 +96,9 @@ pokedex_numbers = {
 category = "Pokémon Hada"
 description = "Su adorable grito y comportamiento lo hacen
 muy popular. Sin embargo, raramente se avista."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_5jk1w")
 footprint_sprite = SubResource("AtlasTexture_otifq")
 battle_front_sprite = SubResource("AtlasTexture_bl621")

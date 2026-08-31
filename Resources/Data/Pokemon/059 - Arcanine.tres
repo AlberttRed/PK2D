@@ -84,6 +84,9 @@ category = "Pokémon Leyenda"
 description = "Muchos han quedado cautivados por su belleza
 desde la antigüedad. Corre ágilmente como si
 tuviera alas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_sa0t8")
 footprint_sprite = SubResource("AtlasTexture_a4u3p")
 battle_front_sprite = SubResource("AtlasTexture_8fy2t")

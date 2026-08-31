@@ -88,6 +88,9 @@ pokedex_numbers = {
 category = "Pokémon Gas Venenoso"
 description = "Se nutre de aire contaminado. Al parecer, antaño
 eran mucho más numerosos en Galar."
+battlerAltitude = 8
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_gxrxl")
 footprint_sprite = SubResource("AtlasTexture_mvwx8")
 battle_front_sprite = SubResource("AtlasTexture_7ryun")

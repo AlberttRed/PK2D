@@ -85,6 +85,9 @@ category = "Pokémon Flor"
 description = "Cuanto mayores son sus pétalos, más tóxico es su
 polen. Le pesa la cabeza y le cuesta mantenerla
 erguida."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_4qyfm")
 footprint_sprite = SubResource("AtlasTexture_8tnaw")
 battle_front_sprite = SubResource("AtlasTexture_4dcu8")

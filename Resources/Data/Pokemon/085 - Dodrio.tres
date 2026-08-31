@@ -84,6 +84,9 @@ category = "Pokémon Ave Triple"
 description = "Este Pokémon surge al dividirse una de las
 cabezas de Doduo. Es capaz de correr por
 las praderas a 60 km/h."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_uit7x")
 footprint_sprite = SubResource("AtlasTexture_cj8xy")
 battle_front_sprite = SubResource("AtlasTexture_1i4bj")

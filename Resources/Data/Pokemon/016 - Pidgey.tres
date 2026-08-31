@@ -86,6 +86,9 @@ pokedex_numbers = {
 category = "Pokémon Pajarito"
 description = "Su docilidad es tal que suelen defenderse
 levantando arena en lugar de contraatacar."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_5x14k")
 footprint_sprite = SubResource("AtlasTexture_341a5")
 battle_front_sprite = SubResource("AtlasTexture_m5etn")

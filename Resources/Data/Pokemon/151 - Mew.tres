@@ -76,6 +76,9 @@ category = "Pokémon Nueva Especie"
 description = "Si se observa a través de un microscopio, puede
 distinguirse cuán corto, fino y delicado es el
 pelaje de este Pokémon."
+battlerAltitude = 12
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ekari")
 footprint_sprite = SubResource("AtlasTexture_xamw5")
 battle_front_sprite = SubResource("AtlasTexture_03pai")

@@ -88,6 +88,9 @@ category = "Pokémon Transporte"
 description = "Nada sin problema en aguas heladas gracias a la
 soberbia resistencia al frío que posee. Su tersa
 piel es ligeramente fría al tacto."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_bi58g")
 footprint_sprite = SubResource("AtlasTexture_5cp5j")
 battle_front_sprite = SubResource("AtlasTexture_wh6kt")

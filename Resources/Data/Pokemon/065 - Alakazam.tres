@@ -92,6 +92,9 @@ category = "Pokémon Psi"
 description = "Posee unos poderes psíquicos extraordinarios
 con los que, según se dice, creó las cucharas
 que lleva en las manos."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_0mvrj")
 footprint_sprite = SubResource("AtlasTexture_mjvd0")
 battle_front_sprite = SubResource("AtlasTexture_c7485")

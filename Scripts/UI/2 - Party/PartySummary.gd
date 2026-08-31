@@ -71,6 +71,10 @@ func loadGeneralInfo(pokemon: Pokemon) -> void:
 	generalInfo.get_node("Nivel").setText(str(pokemon.level))
 	generalInfo.get_node("Sprite").texture = pokemon.get_battle_front_sprite()
 
+	var ball_tex := PokeballItemEffect.get_summary_texture(pokemon.captured_ball_id)
+	if ball_tex != null:
+		generalInfo.get_node("Pokeball").texture = ball_tex
+
 
 func closeSummary(page: int) -> void:
 	pages[page].hide()

@@ -13,7 +13,7 @@ func can_apply() -> int:
 
 func check_effect_success():
 	effect_success = randf() < 0.2
-	
+
 func apply_phase(pokemon, phase: Phases, _ctx: BattlePhaseContext = null) -> void:
 	if phase != BattleEffect.Phases.ON_BEFORE_MOVE:
 		return

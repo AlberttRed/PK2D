@@ -104,6 +104,9 @@ category = "Pokémon Gas"
 description = "Cuando se tiene la sensación de ser observado
 en la oscuridad sin que haya nadie alrededor,
 seguro que es porque un Haunter anda cerca."
+battlerAltitude = 14
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_a4nse")
 footprint_sprite = SubResource("AtlasTexture_a4rfn")
 battle_front_sprite = SubResource("AtlasTexture_w6jdb")

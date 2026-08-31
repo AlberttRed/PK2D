@@ -104,6 +104,9 @@ pokedex_numbers = {
 category = "Pokémon Pez"
 description = "Este Pokémon débil y patético se limita a dejarse
 llevar por la corriente cuando esta tiene fuerza."
+battlerAltitude = 2
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_2nnyq")
 footprint_sprite = SubResource("AtlasTexture_qiq18")
 battle_front_sprite = SubResource("AtlasTexture_537ty")

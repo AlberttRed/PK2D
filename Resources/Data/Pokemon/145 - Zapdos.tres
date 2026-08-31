@@ -78,6 +78,9 @@ category = "Pokémon Eléctrico"
 description = "Una de las aves legendarias. Dicen que, cuando
 este Pokémon frota las alas, cae al instante un
 relámpago del cielo."
+battlerAltitude = 12
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_3kgpm")
 footprint_sprite = SubResource("AtlasTexture_gxyet")
 battle_front_sprite = SubResource("AtlasTexture_lt28c")

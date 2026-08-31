@@ -119,6 +119,9 @@ category = "Pokémon Atontado"
 description = "Hunde la cola en el agua y la usa cual caña de
 pescar. La sustancia dulce que secreta le sirve
 de cebo para atraer a sus presas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_qsn7q")
 footprint_sprite = SubResource("AtlasTexture_tju6i")
 battle_front_sprite = SubResource("AtlasTexture_wbrgy")

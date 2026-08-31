@@ -93,6 +93,9 @@ category = "Pokémon Pato"
 description = "Cuenta una antigua leyenda que los Golduck
 arrastraban a quienes contaminaran sus ríos al
 fondo de las aguas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_fcjoy")
 footprint_sprite = SubResource("AtlasTexture_iqe4n")
 battle_front_sprite = SubResource("AtlasTexture_qgeop")
