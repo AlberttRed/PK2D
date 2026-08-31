@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="TrainerData" load_steps=6 format=3 uid="uid://15sqbubj2mi7"]
 
 [ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_TrainerEasy.gd" id="1_d5acp"]
-[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="2_ftr5d"]
+[ext_resource type="Script" uid="uid://cotgo4ccshywo" path="res://Scripts/Resources/Classes/PokemonDefinition.gd" id="2_poke_def"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="3_7ftf7"]
 
 [sub_resource type="Resource" id="Resource_n0ay5"]
@@ -9,13 +9,13 @@ script = ExtResource("1_d5acp")
 metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_1ee48"]
-script = ExtResource("2_ftr5d")
+script = ExtResource("2_poke_def")
 pokemon_id = 25
 level = 1
 gender = 1
 ability_id = 19
 custom_move_ids = Array[int]([81, 40])
-metadata/_custom_type_script = "uid://d4mopscjx7rum"
+metadata/_custom_type_script = "uid://cotgo4ccshywo"
 
 [resource]
 script = ExtResource("3_7ftf7")
@@ -25,6 +25,6 @@ display_name = "Albert"
 ai_profile = SubResource("Resource_n0ay5")
 intro_text = "Vamos a luchar, payaso."
 defeat_text = "Soy más malo que mi puta madre."
-party_data = Array[ExtResource("2_ftr5d")]([SubResource("Resource_1ee48")])
+party_data = [SubResource("Resource_1ee48")]
 reward_money = 72
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

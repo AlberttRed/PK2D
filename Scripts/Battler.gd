@@ -47,10 +47,16 @@ func _ready() -> void:
 	_initialize_party()
 
 
+func _expects_trainer_data_from_event() -> bool:
+	## NPC trainers: el TrainerData se asigna desde StartBattleEventCommand al combatir.
+	return get_parent() is Trainer
+
+
 ## Carga la configuración desde TrainerData si existe
 func _load_from_trainer_data() -> void:
 	if trainer_data == null:
-		push_warning("Battler: No se ha asignado TrainerData. El Battler no tendrá datos configurados.")
+		if not _expects_trainer_data_from_event():
+			push_warning("Battler: No se ha asignado TrainerData. El Battler no tendrá datos configurados.")
 		return
 
 	# Inicializar TrainerData (carga TrainerClassData desde el enum)
