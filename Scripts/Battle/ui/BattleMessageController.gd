@@ -596,7 +596,7 @@ func get_no_target_message(user: BattlePokemon) -> Dictionary:
 func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dictionary:
 	if is_trainer_battle:
 		return {
-			"type": "wait",
+			"type": "display",
 			"text": "¡No puedes huir de un combate contra un Entrenador!", #Validado HGSS
 			"wait_time": 1.5
 		}
@@ -608,7 +608,7 @@ func get_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> Dict
 		}
 	else:
 		return {
-			"type": "wait",
+			"type": "display",
 			"text": "¡No puedes escapar!",
 			"wait_time": 1.5
 		}
