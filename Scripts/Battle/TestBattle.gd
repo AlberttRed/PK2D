@@ -32,6 +32,8 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export var use_fixed_substitute_test: bool = false
 ## Si true, lanza un 1vs1 salvaje fijo: Rattata Nv.20 vs Pidgey Nv.20 (pruebas ailments).
 @export var use_fixed_rattata_vs_gastly: bool = false
+## Si true, combate salvaje 1vs1 con Player y WildPokemons (party del inspector o aleatorio).
+@export var use_wild_single_test: bool = false
 ## Si true, Pidgey solo lleva Látigo (útil para probar fallback si el movimiento bloqueado no es usable).
 @export var debug_pidgey_status_only: bool = false
 ## true = Mordisco (retroceso 30%); false = Picotazo Veneno (veneno 30%).
@@ -393,6 +395,12 @@ func _ready() -> void:
 		_seed_test_capture_items()
 		_print_rain_weather_test_guide()
 		await wildRainWeatherTestBattle()
+		return
+	if use_wild_single_test:
+		_setup_test_battler_parties()
+		_seed_test_capture_items()
+		print(">>> Combate salvaje SINGLE (Player vs WildPokemons).")
+		await wildSingleBattle()
 		return
 	if use_fixed_rattata_vs_gastly:
 		_setup_fixed_rattata_gastly_parties()

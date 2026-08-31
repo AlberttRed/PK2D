@@ -10,9 +10,10 @@ script = ExtResource("1_tse6d")
 debug_rattata_test_bite = false
 debug_rattata_extended_volatiles = false
 battle_field_visuals_test_preset = 2
-use_endless_random_battle_loop = true
+use_endless_random_battle_loop = false
 use_wild_intro_grass_test = false
 use_supersonic_poison_powder_test = false
+use_wild_single_test = true
 
 [node name="Player" type="Node" parent="." unique_id=1369444140]
 script = ExtResource("3_bfl41")

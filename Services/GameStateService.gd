@@ -151,6 +151,7 @@ func _seed_test_bag_items() -> void:
 func _seed_test_party_placeholder() -> void:
 	var player_party: Party = get_party()
 	if player_party.count() > 0:
+		_assign_test_capture_balls(player_party)
 		return
 	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
 	var test_mons: Array[Vector2i] = [
@@ -170,6 +171,8 @@ func _seed_test_party_placeholder() -> void:
 			continue
 		mon.is_wild = false
 		mon.original_trainer = "Debug"
+		mon.capture_level = lvl
+		mon.captured_ball_id = _test_capture_ball_for_slot(added)
 		if player_party.add_pokemon(mon):
 			added += 1
 		else:
@@ -184,6 +187,21 @@ func _seed_test_party_placeholder() -> void:
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON
+
+
+## Alterna Poké Ball / Super Ball en el party de prueba (validar summary).
+func _test_capture_ball_for_slot(slot: int) -> String:
+	return "ball01" if slot % 2 == 1 else PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+
+
+func _assign_test_capture_balls(party: Party) -> void:
+	if party == null:
+		return
+	for i in range(party.count()):
+		var mon: Pokemon = party.get_pokemon(i)
+		if mon == null or mon.original_trainer != "Debug":
+			continue
+		mon.captured_ball_id = _test_capture_ball_for_slot(i)
 
 
 ## Rellena progreso de Pokédex de prueba (mezcla vistos/capturados) para validar UI.

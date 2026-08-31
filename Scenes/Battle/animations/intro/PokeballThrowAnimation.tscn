@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://cawf4bcvpi1g1"]
 
-[ext_resource type="Texture2D" uid="uid://daok4i3vj3hof" path="res://Sprites/Pictures/ball00.png" id="1_ball"]
-[ext_resource type="Texture2D" uid="uid://ryjt4yb0no2m" path="res://Sprites/Pictures/ball00_open.png" id="2_open"]
+[ext_resource type="Texture2D" path="res://Sprites/Pictures/ball00_throw.png" id="1_throw"]
 [ext_resource type="Shader" uid="uid://bepw5kmcyhxuu" path="res://Shaders/evolution_white.gdshader" id="3_white"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ball"]
@@ -31,22 +30,22 @@ tracks/1/path = NodePath("VisualRoot/Ball:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.28, 0.36),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 1.48),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.35, -0.15, 0.0]
+"values": [0.0, 0.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualRoot/Ball:texture")
+tracks/2/path = NodePath("VisualRoot/Ball:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 1.15),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.12, 0.28, 0.36, 1.15, 1.22, 1.29, 1.36, 1.42, 1.44, 1.45, 1.46, 1.48),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ExtResource("1_ball"), ExtResource("2_open")]
+"values": [0, 1, 2, 3, 3, 4, 5, 6, 7, 6, 5, 4, 3]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -108,22 +107,22 @@ tracks/1/path = NodePath("VisualRoot/Ball:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.58),
+"times": PackedFloat32Array(0, 0.93),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.0, 6.28319]
+"values": [0.0, 0.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualRoot/Ball:texture")
+tracks/2/path = NodePath("VisualRoot/Ball:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.58),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.145, 0.29, 0.435, 0.58, 0.65, 0.72, 0.79, 0.86, 0.88, 0.90, 0.91, 0.93),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ExtResource("1_ball"), ExtResource("2_open")]
+"values": [0, 1, 2, 3, 3, 4, 5, 6, 7, 6, 5, 4, 3]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -177,8 +176,10 @@ modulate = Color(1, 1, 1, 0)
 z_index = 1
 material = SubResource("ShaderMaterial_ball")
 position = Vector2(0, 0)
-scale = Vector2(1.1, 1.1)
-texture = ExtResource("2_open")
+scale = Vector2(1, 1)
+texture = ExtResource("1_throw")
+hframes = 1
+vframes = 15
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1006926588]
 libraries/ = SubResource("AnimationLibrary_default")

@@ -95,7 +95,10 @@ func visualize(ui: BattleUI) -> void:
 		else (target.battle_spot if target != null else null)
 	)
 	if spot != null:
-		_throw_visual = await CaptureThrowAnimation.play_throw(ui, spot)
+		var ball_id := PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+		if ball_effect != null:
+			ball_id = ball_effect.ball_sprite_id
+		_throw_visual = await CaptureThrowAnimation.play_throw(ui, spot, ball_id)
 
 	var shake_count := result.shakes
 	if ball_effect != null and ball_effect.guaranteed_capture:
@@ -250,4 +253,6 @@ func _clone_captured_pokemon(wild_bp: BattlePokemon) -> Pokemon:
 	var player_name := str(GameStateService.get_variable("PLAYER_NAME", "")).strip_edges()
 	if not player_name.is_empty():
 		mon.original_trainer = player_name
+	if ball_effect != null:
+		mon.captured_ball_id = ball_effect.ball_sprite_id
 	return mon

@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="Resource_ballfx"]
 script = ExtResource("2_ball")
 capture_ball_modifier = 1.0
+ball_sprite_id = "ball00"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vb8uj"]
 atlas = ExtResource("1_vb8uj")

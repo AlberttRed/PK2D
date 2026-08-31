@@ -4,12 +4,13 @@ class_name CaptureThrowAnimation
 ## Fase 1: lanzamiento → apertura/cierre en aire → caída con rebotes.
 ## Fase 2: `play_resolve` — balanceos (0–3), escape (abrir) o éxito (oscurecer + estrellas).
 
-const BALL_CLOSED := preload("res://Sprites/Pictures/ball00.png")
-const BALL_OPEN := preload("res://Sprites/Pictures/ball00_open.png")
+const CLOSE_FRAMES_SEC := 0.32
 const STAR_FRAMES := preload("res://Sprites/Batalla/Battle Animations/StarFrames.png")
 const SCENE_PATH := "res://Scenes/Battle/animations/capture/CaptureThrowAnimation.tscn"
 
 @onready var ball: Sprite2D = $Ball
+
+var _ball_sprite_id: String = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
 
 var _target_spot: BattleSpot = null
 var _throw_start: Vector2 = Vector2.ZERO
@@ -21,7 +22,11 @@ var _sprite_rest_modulate: Color = Color(1, 1, 1, 1)
 var _did_store_sprite_rest: bool = false
 
 
-static func play_throw(ui: BattleUI, target_spot: BattleSpot) -> CaptureThrowAnimation:
+static func play_throw(
+	ui: BattleUI,
+	target_spot: BattleSpot,
+	ball_sprite_id: String = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+) -> CaptureThrowAnimation:
 	if ui == null or target_spot == null:
 		return null
 	var layer: Node2D = ui.get_animation_layer()
@@ -34,6 +39,7 @@ static func play_throw(ui: BattleUI, target_spot: BattleSpot) -> CaptureThrowAni
 	var inst: CaptureThrowAnimation = packed.instantiate() as CaptureThrowAnimation
 	if inst == null:
 		return null
+	inst._ball_sprite_id = PokeballItemEffect.normalize_ball_sprite_id(ball_sprite_id)
 	layer.add_child(inst)
 	await inst.run(target_spot, ui)
 	return inst
@@ -61,10 +67,10 @@ func run(target_spot: BattleSpot, ui: BattleUI = null) -> void:
 	var apex := Vector2(lerpf(start.x, hover.x, 0.52), minf(start.y, hover.y) - 72.0)
 
 	ball.visible = true
-	ball.texture = BALL_CLOSED
+	ball.texture = PokeballThrowSpriteFrames.get_fly_frame(_ball_sprite_id, 0)
+	PokeballThrowSpriteFrames.apply_field_scale(ball)
 	ball.modulate = Color(1, 1, 1, 1)
-	ball.scale = Vector2.ONE
-	ball.rotation = 0.55
+	ball.rotation = 0.0
 	ball.position = start
 	# Absoluto: debajo del HPBar (z=6), como recall/throw de campo.
 	z_as_relative = false
@@ -72,11 +78,21 @@ func run(target_spot: BattleSpot, ui: BattleUI = null) -> void:
 
 	await _tween_throw(start, apex, hover)
 	await _tween_squash()
-	_open_ball()
-	# Todas las luces (flash, orbes, halo) mientras la ball está abierta.
+	ball.texture = PokeballThrowSpriteFrames.get_frame(_ball_sprite_id, PokeballThrowSpriteFrames.OPEN_START_FRAME)
+	var open_anim := _animate_open_frames_tween(1.12)
+	# Todas las luces (flash, orbes) mientras la ball está abierta.
 	await _flash_and_absorb_pokemon()
-	await _play_absorb_ring_halo()
+	var absorb_ring: Sprite2D = await _play_absorb_ring_halo_expand()
+	if open_anim != null and open_anim.is_running():
+		await open_anim.finished
+	var halo_shrink := _shrink_absorb_ring_halo(absorb_ring, CLOSE_FRAMES_SEC)
+	await _animate_close_frames_tween(CLOSE_FRAMES_SEC).finished
+	if halo_shrink != null and halo_shrink.is_running():
+		await halo_shrink.finished
+	if is_instance_valid(absorb_ring):
+		absorb_ring.queue_free()
 	_close_ball()
+	await _tween_gold_flash()
 	await get_tree().create_timer(0.08).timeout
 	await _tween_fall_and_bounce(hover)
 
@@ -132,9 +148,9 @@ func play_resolve(shake_count: int, success: bool) -> void:
 	if ball == null:
 		return
 
-	ball.texture = BALL_CLOSED
-	ball.rotation = 0.0
+	ball.texture = _closed_texture()
 	ball.scale = Vector2.ONE
+	ball.rotation = 0.0
 	ball.position = Vector2.ZERO
 	ball.modulate = Color(1, 1, 1, 1)
 	# Pivote en el borde inferior (contacto con el suelo) para inclinarse sin deslizar.
@@ -204,40 +220,67 @@ func play_wobble(index: int = 0) -> void:
 	ball.rotation = 0.0
 
 
-## Fallo: la ball se abre y el Pokémon sale como un send-in (blanco → color, crece).
+## Fallo: animación ball_fail + flash; el Pokémon sale como send-in (blanco → color, crece).
 func play_escape_open() -> void:
 	if ball == null:
 		return
 	ball.rotation = 0.0
-	ball.texture = BALL_OPEN
-	_apply_ball_bottom_pivot()
+	_reset_ball_ground_center()
+	ball.modulate = Color(1, 1, 1, 1)
+	ball.texture = PokeballFailSpriteFrames.get_frame(_ball_sprite_id, 0)
 
-	# Sprite listo; el enter arranca enseguida (sin pausa tras abrir).
-	restore_target_sprite()
 	if _target_spot != null and is_instance_valid(_target_spot):
 		_target_spot.set_pokemon_sprite_visible(false)
 
-	# Pop + fade de la ball en paralelo a la salida del Pokémon.
-	var ball_tw := create_tween()
-	ball_tw.tween_property(ball, "scale", Vector2(1.2, 0.88), 0.04)
-	ball_tw.tween_property(ball, "scale", Vector2.ONE, 0.06)
-	ball_tw.tween_property(ball, "modulate", Color(1, 1, 1, 0), 0.28)
-
+	const FAIL_SEC := 0.40
+	const ENTER_DELAY := 0.10
 	var layer := get_parent() as Node2D
-	if _target_spot != null and is_instance_valid(_target_spot):
-		await BattleAnimationUtils.pokemon_enter_spot(_target_spot, 0.42, 0.65, layer)
+	var done := {"fail": false, "enter": false}
+	_run_escape_fail(FAIL_SEC, done)
+	_run_escape_enter(layer, ENTER_DELAY, done)
+	while not (done.fail and done.enter):
+		if not is_instance_valid(self) or get_tree() == null:
+			return
+		await get_tree().process_frame
 
-	if is_instance_valid(ball_tw) and ball_tw.is_running():
-		await ball_tw.finished
 	ball.visible = false
 	ball.scale = Vector2.ONE
+	ball.modulate = Color(1, 1, 1, 1)
+	if _target_spot != null and is_instance_valid(_target_spot):
+		_target_spot.set_pokemon_sprite_visible(true)
+
+
+func _run_escape_fail(duration: float, done: Dictionary) -> void:
+	var tw := _animate_fail_frames_tween(duration)
+	if tw != null and tw.is_valid() and tw.is_running():
+		await tw.finished
+	done.fail = true
+
+
+func _run_escape_enter(layer: Node2D, delay: float, done: Dictionary) -> void:
+	await get_tree().create_timer(delay).timeout
+	_prepare_escape_enter_sprite()
+	if _target_spot != null and is_instance_valid(_target_spot):
+		await BattleAnimationUtils.pokemon_enter_spot(_target_spot, 0.42, 0.65, layer)
+	done.enter = true
+
+
+func _prepare_escape_enter_sprite() -> void:
+	if _target_spot == null or not is_instance_valid(_target_spot):
+		return
+	var spr: Sprite2D = _target_spot.sprite
+	if spr != null and is_instance_valid(spr) and _did_store_sprite_rest:
+		spr.position = _sprite_rest_pos
+		spr.scale = _sprite_rest_scale
+		spr.modulate = _sprite_rest_modulate
+	_target_spot.set_pokemon_sprite_visible(false)
 
 
 ## Éxito: oscurece, se inclina a la derecha y salen 3 estrellas hacia arriba.
 func play_capture_success_hold() -> void:
 	if ball == null:
 		return
-	ball.texture = BALL_CLOSED
+	ball.texture = _closed_texture()
 	ball.rotation = 0.0
 	const DARKEN_SEC := 0.175
 	const TILT_RIGHT := 0.2
@@ -353,10 +396,19 @@ func _tween_throw(start: Vector2, apex: Vector2, hover: Vector2) -> void:
 	_throw_apex = apex
 	_throw_hover = hover
 	var tw := create_tween()
-	tw.set_parallel(true)
-	tw.tween_method(_update_throw_bezier, 0.0, 1.0, DURATION)
-	tw.tween_property(ball, "rotation", 0.0, DURATION).from(0.7)
+	tw.tween_method(_update_throw_flight, 0.0, 1.0, DURATION)
 	await tw.finished
+
+
+func _update_throw_flight(t: float) -> void:
+	_update_throw_bezier(t)
+	if ball == null or not is_instance_valid(ball):
+		return
+	var fly_count := PokeballThrowSpriteFrames.FLY_FRAME_COUNT
+	var idx := clampi(int(t * float(fly_count)), 0, fly_count - 1)
+	if t >= 1.0:
+		idx = fly_count - 1
+	ball.texture = PokeballThrowSpriteFrames.get_fly_frame(_ball_sprite_id, idx)
 
 
 func _update_throw_bezier(t: float) -> void:
@@ -370,16 +422,69 @@ func _quad_bezier(p0: Vector2, p1: Vector2, p2: Vector2, t: float) -> Vector2:
 
 
 func _tween_squash() -> void:
+	var base := Vector2.ONE
 	var tw := create_tween()
-	tw.tween_property(ball, "scale", Vector2(1.4, 0.58), 0.07)
-	tw.tween_property(ball, "scale", Vector2(1.0, 1.0), 0.09)
+	tw.tween_property(ball, "scale", base * Vector2(1.4, 0.58), 0.07)
+	tw.tween_property(ball, "scale", base, 0.09)
 	await tw.finished
 
 
-func _open_ball() -> void:
-	ball.texture = BALL_OPEN
+func _animate_open_frames_tween(duration: float, reverse: bool = false) -> Tween:
+	var start_f := float(
+		PokeballThrowSpriteFrames.OPEN_END_FRAME
+		if reverse
+		else PokeballThrowSpriteFrames.OPEN_START_FRAME
+	)
+	var end_f := float(
+		PokeballThrowSpriteFrames.OPEN_START_FRAME
+		if reverse
+		else PokeballThrowSpriteFrames.OPEN_END_FRAME
+	)
+	var tw := create_tween()
+	tw.tween_method(
+		func(t: float) -> void:
+			if ball == null or not is_instance_valid(ball):
+				return
+			var idx := int(lerpf(start_f, end_f, t))
+			ball.texture = PokeballThrowSpriteFrames.get_frame(_ball_sprite_id, idx),
+		0.0,
+		1.0,
+		duration
+	)
+	return tw
+
+
+func _animate_close_frames_tween(duration: float = CLOSE_FRAMES_SEC) -> Tween:
+	return _animate_open_frames_tween(duration, true)
+
+
+func _reset_ball_ground_center() -> void:
+	if ball == null:
+		return
+	ball.centered = true
+	ball.offset = Vector2.ZERO
+	ball.position = Vector2.ZERO
 	ball.scale = Vector2.ONE
-	ball.rotation = 0.0
+
+
+func _animate_fail_frames_tween(duration: float) -> Tween:
+	var frame_count := PokeballFailSpriteFrames.TOTAL_FRAMES
+	var tw := create_tween()
+	tw.tween_method(
+		func(t: float) -> void:
+			if ball == null or not is_instance_valid(ball):
+				return
+			var idx := clampi(int(t * float(frame_count)), 0, frame_count - 1)
+			if t >= 1.0:
+				idx = frame_count - 1
+			var frame_tex := PokeballFailSpriteFrames.get_frame(_ball_sprite_id, idx)
+			if frame_tex != null:
+				ball.texture = frame_tex,
+		0.0,
+		1.0,
+		duration
+	).set_trans(Tween.TRANS_LINEAR)
+	return tw
 
 
 ## Tras abrir: flash grande (≈25) → orbes + centro más pequeño/menos blanco (≈26) + absorción.
@@ -655,10 +760,10 @@ func _get_orb_white_texture() -> Texture2D:
 	return _orb_white_tex
 
 
-## Anillo que sale de la ball tras absorber: crece, blanco → amarillo, se desvanece.
-func _play_absorb_ring_halo() -> void:
+## Anillo que sale de la ball tras absorber: crece (blanco → amarillo) y luego encoge al cerrar.
+func _play_absorb_ring_halo_expand() -> Sprite2D:
 	if ball == null:
-		return
+		return null
 	const START_SCALE := 0.55
 	const END_SCALE := 1.66
 	const DURATION := 0.33
@@ -679,28 +784,41 @@ func _play_absorb_ring_halo() -> void:
 
 	var tw := create_tween()
 	tw.set_parallel(true)
-	tw.tween_property(ring, "scale", Vector2(END_SCALE, END_SCALE), DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ring, "scale", Vector2(END_SCALE, END_SCALE), DURATION).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_OUT)
 	tw.tween_method(
 		func(t: float) -> void:
 			if not is_instance_valid(ring):
 				return
-			# Blanco → amarillo; alpha sube al inicio y baja al final.
 			var col := COL_WHITE.lerp(COL_YELLOW, t)
 			var a := 0.0
 			if t < 0.15:
 				a = lerpf(0.0, COL_WHITE.a, t / 0.15)
-			elif t < 0.65:
-				a = lerpf(COL_WHITE.a, COL_YELLOW.a, (t - 0.15) / 0.5)
 			else:
-				a = lerpf(COL_YELLOW.a, 0.0, (t - 0.65) / 0.35)
+				a = lerpf(COL_WHITE.a, COL_YELLOW.a, minf((t - 0.15) / 0.35, 1.0))
 			ring.modulate = Color(col.r, col.g, col.b, a),
 		0.0,
 		1.0,
 		DURATION
 	)
 	await tw.finished
-	if is_instance_valid(ring):
-		ring.queue_free()
+	return ring
+
+
+func _shrink_absorb_ring_halo(ring: Sprite2D, duration: float) -> Tween:
+	if ring == null or not is_instance_valid(ring):
+		return null
+	const END_SCALE := 0.35
+	var tw := create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(ring, "scale", Vector2(END_SCALE, END_SCALE), duration).set_trans(
+		Tween.TRANS_SINE
+	).set_ease(Tween.EASE_IN)
+	tw.tween_property(ring, "modulate:a", 0.0, duration).set_trans(Tween.TRANS_SINE).set_ease(
+		Tween.EASE_IN
+	)
+	return tw
 
 
 ## Textura de anillo (borde suave, interior vacío).
@@ -762,16 +880,21 @@ func _ball_content_center_offset() -> Vector2:
 
 
 func _close_ball() -> void:
-	ball.texture = BALL_CLOSED
+	ball.texture = _closed_texture()
 	ball.scale = Vector2.ONE
 	ball.rotation = 0.0
 
 
+func _closed_texture() -> Texture2D:
+	return PokeballItemEffect.get_battle_closed_texture(_ball_sprite_id)
+
+
 func _tween_gold_flash() -> void:
+	const GOLD_PEAK := Color(2.15, 1.75, 0.08, 1.0)
 	var tw := create_tween()
-	tw.tween_property(ball, "modulate", Color(1.55, 1.25, 0.35, 1.0), 0.14)
-	tw.tween_interval(0.08)
-	tw.tween_property(ball, "modulate", Color(1, 1, 1, 1), 0.28)
+	tw.tween_property(ball, "modulate", GOLD_PEAK, 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(0.16)
+	tw.tween_property(ball, "modulate", Color(1, 1, 1, 1), 0.38).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tw.finished
 
 

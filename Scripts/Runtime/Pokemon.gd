@@ -80,6 +80,7 @@ var original_trainer: String = "Red"
 var capture_date: String = ""
 var capture_route: String = ""
 var capture_level: int = 5
+var captured_ball_id: String = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
 var personality: String = ""
 
 # Experiencia
@@ -958,6 +959,7 @@ func to_serializable_state() -> Dictionary:
 		"capture_date": capture_date,
 		"capture_route": capture_route,
 		"capture_level": capture_level,
+		"captured_ball_id": captured_ball_id,
 		"personality": personality,
 	}
 
