@@ -86,6 +86,9 @@ category = "Pokémon Gato Fino"
 description = "Hace gala de un porte elegante y majestuoso.
 No congenia con los toscos Perrserker y ambos
 se profesan un mutuo desprecio."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_o7df1")
 footprint_sprite = SubResource("AtlasTexture_sfjkm")
 battle_front_sprite = SubResource("AtlasTexture_8kj7d")

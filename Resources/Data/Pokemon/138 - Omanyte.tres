@@ -88,6 +88,9 @@ category = "Pokémon Espiral"
 description = "Un Pokémon de la era prehistórica, ahora
 extinto. Solía nadar moviendo sus diez tentáculos
 para desplazarse por el agua como si flotara."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_lv2vc")
 footprint_sprite = SubResource("AtlasTexture_4ecxq")
 battle_front_sprite = SubResource("AtlasTexture_5bq86")

@@ -88,6 +88,9 @@ category = "Pokémon Serpiente"
 description = "La longitud de este Pokémon aumenta con el
 tiempo. Por la noche, se enrosca en las ramas
 de los árboles para descansar."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_0xqug")
 footprint_sprite = SubResource("AtlasTexture_4l25x")
 battle_front_sprite = SubResource("AtlasTexture_1ngj5")

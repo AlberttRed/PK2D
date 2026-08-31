@@ -98,6 +98,9 @@ category = "Pokémon Solitario"
 description = "Lleva puesto el cráneo de su difunta madre.
 A veces llora en sueños, pero cada lágrima
 vertida le hace más fuerte."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_i2e8u")
 footprint_sprite = SubResource("AtlasTexture_dvudq")
 battle_front_sprite = SubResource("AtlasTexture_du4m6")

@@ -85,6 +85,9 @@ pokedex_numbers = {
 category = "Pokémon Tortuguita"
 description = "Cuando se siente en peligro, se esconde en su
 caparazón y escupe chorros de agua por la boca."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_w27sx")
 footprint_sprite = SubResource("AtlasTexture_hdg2k")
 battle_front_sprite = SubResource("AtlasTexture_ukaop")

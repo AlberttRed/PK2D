@@ -100,6 +100,9 @@ category = "Pokémon Huevo"
 description = "Este Pokémon solía ser lento de reflejos, pero
 ha desarrollado una gran velocidad para evitar
 que le roben sus preciados huevos."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_foujt")
 footprint_sprite = SubResource("AtlasTexture_bmgyd")
 battle_front_sprite = SubResource("AtlasTexture_q7wru")

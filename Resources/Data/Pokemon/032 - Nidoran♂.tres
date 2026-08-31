@@ -82,6 +82,9 @@ pokedex_numbers = {
 category = "Pokémon Pin Veneno"
 description = "Pequeño pero valiente. Arriesgaría la vida en
 combate con tal de proteger a su compañera."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_lmrhs")
 footprint_sprite = SubResource("AtlasTexture_0jrkw")
 battle_front_sprite = SubResource("AtlasTexture_727jp")

@@ -85,6 +85,9 @@ category = "Pokémon Fósil"
 description = "Sus colmillos, afilados como sierras, pueden
 hacer trizas incluso la piel de Pokémon de tipo
 Acero."
+battlerAltitude = 24
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_nu7kh")
 footprint_sprite = SubResource("AtlasTexture_7oh68")
 battle_front_sprite = SubResource("AtlasTexture_ls34q")

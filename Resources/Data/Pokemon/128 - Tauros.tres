@@ -84,6 +84,9 @@ category = "Pokémon Toro Bravo"
 description = "Los Tauros que habitan en la región de Galar son
 de temperamento irascible y no permiten que los
 humanos monten en su lomo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_8jtqf")
 footprint_sprite = SubResource("AtlasTexture_c5atx")
 battle_front_sprite = SubResource("AtlasTexture_hpcfd")

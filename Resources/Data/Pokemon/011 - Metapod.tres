@@ -90,6 +90,9 @@ category = "Pokémon Capullo"
 description = "Aunque cuenta con una coraza muy dura, tiene
 un cuerpo bastante blando. Un ataque violento
 puede acabar con él."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_hq180")
 footprint_sprite = SubResource("AtlasTexture_ahhi8")
 battle_front_sprite = SubResource("AtlasTexture_sy0jy")

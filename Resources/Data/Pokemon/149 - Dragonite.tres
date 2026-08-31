@@ -88,6 +88,9 @@ category = "Pokémon Dragón"
 description = "Se lo conoce como el Avatar de la Mar. Muchos
 barcos lucen una talla de Dragonite como
 mascarón de proa."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_bv0vd")
 footprint_sprite = SubResource("AtlasTexture_rr1vo")
 battle_front_sprite = SubResource("AtlasTexture_fs1np")

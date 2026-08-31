@@ -90,6 +90,9 @@ pokedex_numbers = {
 category = "Pokémon Globo"
 description = "Se enorgullece de su pelaje fino y sedoso. El rizo
 de la frente, en especial, posee un tacto sublime."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_11aku")
 footprint_sprite = SubResource("AtlasTexture_p6k5x")
 battle_front_sprite = SubResource("AtlasTexture_dt3yc")

@@ -83,6 +83,9 @@ category = "Pokémon Apilahueso"
 description = "Al evolucionar, se ha fusionado con el cráneo de
 su madre y, además, ha adquirido un carácter
 agresivo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_gq8p1")
 footprint_sprite = SubResource("AtlasTexture_p8ykj")
 battle_front_sprite = SubResource("AtlasTexture_kuu4y")

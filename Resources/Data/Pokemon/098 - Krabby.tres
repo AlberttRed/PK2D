@@ -83,6 +83,9 @@ pokedex_numbers = {
 category = "Pokémon Cangrejo"
 description = "Ante el peligro, se camufla con las burbujas que
 desprende por la boca para parecer más grande."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_rveoj")
 footprint_sprite = SubResource("AtlasTexture_kterp")
 battle_front_sprite = SubResource("AtlasTexture_fek65")

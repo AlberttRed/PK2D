@@ -80,6 +80,9 @@ category = "Pokémon Armazón"
 description = "Se desconoce el motivo de la extinción de este
 feroz Pokémon prehistórico que habitaba en los
 cálidos mares de antaño."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_qdpgp")
 footprint_sprite = SubResource("AtlasTexture_f2y0h")
 battle_front_sprite = SubResource("AtlasTexture_vvi46")

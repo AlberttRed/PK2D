@@ -88,6 +88,9 @@ category = "Pokémon Lodo"
 description = "Huele tan mal que puede provocar desmayos.
 Su nariz se ha atrofiado de tal manera que
 ha perdido por completo el sentido del olfato."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_uwtll")
 footprint_sprite = SubResource("AtlasTexture_pjs8c")
 battle_front_sprite = SubResource("AtlasTexture_2m4th")

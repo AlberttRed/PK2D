@@ -94,6 +94,9 @@ category = "Pokémon Huevo"
 description = "Necesita contar con la totalidad de sus seis
 miembros para mantener la calma. Si desaparece
 uno siquiera, le entran ganas de salir huyendo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_qb2t8")
 footprint_sprite = SubResource("AtlasTexture_fmju1")
 battle_front_sprite = SubResource("AtlasTexture_5kub5")

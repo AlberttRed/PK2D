@@ -90,6 +90,9 @@ category = "Pokémon Topo"
 description = "Estos trillizos cavan a una profundidad de hasta
 100 km. Se desconoce el aspecto de la parte de
 sus cuerpos que se oculta bajo tierra."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_p5soh")
 footprint_sprite = SubResource("AtlasTexture_ei738")
 battle_front_sprite = SubResource("AtlasTexture_pqfvj")

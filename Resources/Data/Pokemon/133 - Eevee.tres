@@ -189,6 +189,9 @@ category = "Pokémon Evolución"
 description = "Su irregular estructura genética alberga el secreto
 de la capacidad que posee este Pokémon tan
 especial para adoptar evoluciones muy variadas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yaiog")
 footprint_sprite = SubResource("AtlasTexture_x1s00")
 battle_front_sprite = SubResource("AtlasTexture_yc4q4")

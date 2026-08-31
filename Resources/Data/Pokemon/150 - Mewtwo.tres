@@ -76,6 +76,9 @@ category = "Pokémon Genético"
 description = "Su ADN es casi el mismo que el de Mew.
 Sin embargo, su tamaño y carácter son muy
 diferentes."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_jlo0a")
 footprint_sprite = SubResource("AtlasTexture_5ftxm")
 battle_front_sprite = SubResource("AtlasTexture_t44jn")

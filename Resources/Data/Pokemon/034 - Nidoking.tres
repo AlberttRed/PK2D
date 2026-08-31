@@ -78,6 +78,9 @@ category = "Pokémon Taladro"
 description = "Presume de su hercúlea fuerza y combate
 vigorosamente con su robusta cola y su cuerno,
 con el que hasta puede pulverizar diamantes."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xkpqe")
 footprint_sprite = SubResource("AtlasTexture_awwv7")
 battle_front_sprite = SubResource("AtlasTexture_2i18u")

@@ -75,6 +75,9 @@ category = "Pokémon Puñetazo"
 description = "Sus puñetazos son capaces incluso de cortar el
 aire, aunque parece necesitar un descanso tras
 estar luchando durante 3 min."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_dx026")
 footprint_sprite = SubResource("AtlasTexture_jm4h6")
 battle_front_sprite = SubResource("AtlasTexture_u6tmn")

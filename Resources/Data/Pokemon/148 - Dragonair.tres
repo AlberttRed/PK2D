@@ -92,6 +92,9 @@ category = "Pokémon Dragón"
 description = "Acumula energía en las esferas de la cola para
 controlar el clima. La sutil aura que lo rodea le
 confiere un aspecto misterioso y místico."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_k58tx")
 footprint_sprite = SubResource("AtlasTexture_j4bqf")
 battle_front_sprite = SubResource("AtlasTexture_yxsjw")

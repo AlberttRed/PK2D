@@ -102,6 +102,9 @@ category = "Pokémon Imán"
 description = "Se nutre de electricidad. Puede flotar en el aire
 gracias a las ondas electromagnéticas que emite
 a través de las unidades de sus extremidades."
+battlerAltitude = 56
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xaqf4")
 footprint_sprite = SubResource("AtlasTexture_cr44r")
 battle_front_sprite = SubResource("AtlasTexture_7gthy")

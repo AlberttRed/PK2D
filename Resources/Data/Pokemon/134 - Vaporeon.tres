@@ -88,6 +88,9 @@ category = "Pokémon Burbuja"
 description = "La composición celular de su cuerpo es tan
 similar a la estructura molecular del agua que
 se vuelve invisible al fundirse en ella."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_aklxe")
 footprint_sprite = SubResource("AtlasTexture_wgf64")
 battle_front_sprite = SubResource("AtlasTexture_ksx5m")

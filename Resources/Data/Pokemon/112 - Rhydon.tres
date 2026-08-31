@@ -94,6 +94,9 @@ pokedex_numbers = {
 category = "Pokémon Taladro"
 description = "La piel le sirve de escudo protector. Puede vivir
 en lava líquida a 2000 °C."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ibshh")
 footprint_sprite = SubResource("AtlasTexture_0y44m")
 battle_front_sprite = SubResource("AtlasTexture_gep7g")

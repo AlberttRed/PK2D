@@ -93,6 +93,9 @@ category = "Pokémon Mono Cerdo"
 description = "Este ágil Pokémon vive en los árboles. Se enfada
 con facilidad y, cuando lo hace, se abalanza
 contra todo lo que se encuentre a su alrededor."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_igkwt")
 footprint_sprite = SubResource("AtlasTexture_rnduf")
 battle_front_sprite = SubResource("AtlasTexture_68trw")

@@ -96,6 +96,9 @@ category = "Pokémon Pajarito"
 description = "A la hora de proteger su territorio, compensa su
 incapacidad para volar a gran altura con una
 increíble velocidad."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_7nop7")
 footprint_sprite = SubResource("AtlasTexture_lxo5r")
 battle_front_sprite = SubResource("AtlasTexture_6dmep")

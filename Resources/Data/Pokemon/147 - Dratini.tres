@@ -92,6 +92,9 @@ category = "Pokémon Dragón"
 description = "Durante mucho tiempo se dudó de su existencia.
 La pequeña protuberancia de la frente es en
 realidad un cuerno incipiente."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_bho4q")
 footprint_sprite = SubResource("AtlasTexture_osteg")
 battle_front_sprite = SubResource("AtlasTexture_ir05t")

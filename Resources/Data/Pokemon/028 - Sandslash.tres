@@ -87,6 +87,9 @@ category = "Pokémon Ratón"
 description = "Trepa a los árboles con sus afiladas garras y deja
 caer bayas para los Sandshrew que esperan
 debajo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_jlxid")
 footprint_sprite = SubResource("AtlasTexture_yirdu")
 battle_front_sprite = SubResource("AtlasTexture_1vmus")

@@ -99,6 +99,9 @@ category = "Pokémon Roca"
 description = "Se suele encontrar en senderos de montaña y
 sitios parecidos. Conviene andar con cuidado
 para no pisarlo sin querer y provocar su enfado."
+battlerAltitude = 38
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_byu1q")
 footprint_sprite = SubResource("AtlasTexture_rbarx")
 battle_front_sprite = SubResource("AtlasTexture_ybf0n")

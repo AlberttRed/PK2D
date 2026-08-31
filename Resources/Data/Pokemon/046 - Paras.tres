@@ -94,6 +94,9 @@ category = "Pokémon Hongo"
 description = "Escarba en el suelo para extraer nutrientes de
 las raíces de los árboles, que las setas del lomo
 absorben después casi por completo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ppret")
 footprint_sprite = SubResource("AtlasTexture_p0b0e")
 battle_front_sprite = SubResource("AtlasTexture_pnve5")

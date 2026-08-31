@@ -87,6 +87,9 @@ category = "Pokémon Oruga"
 description = "El aguijón de la cabeza es muy puntiagudo.
 Se alimenta de hojas oculto en la espesura
 de bosques y praderas."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_slfyb")
 footprint_sprite = SubResource("AtlasTexture_g75t6")
 battle_front_sprite = SubResource("AtlasTexture_jjcdb")

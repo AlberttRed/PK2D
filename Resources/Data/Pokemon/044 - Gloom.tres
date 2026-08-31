@@ -100,6 +100,9 @@ pokedex_numbers = {
 category = "Pokémon Hierbajo"
 description = "Lo que parece baba es realmente un néctar muy
 pegajoso que se adhiere sin remisión al tocarlo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_74g36")
 footprint_sprite = SubResource("AtlasTexture_ffa4d")
 battle_front_sprite = SubResource("AtlasTexture_6vo60")

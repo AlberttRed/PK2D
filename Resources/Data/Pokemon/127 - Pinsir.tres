@@ -87,6 +87,9 @@ category = "Pokémon Escarabajo"
 description = "Usa la cornamenta a modo de pinza para atrapar
 a sus presas. Acto seguido, las parte por la mitad
 o las arroja lejos."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ivfs4")
 footprint_sprite = SubResource("AtlasTexture_5dsp7")
 battle_front_sprite = SubResource("AtlasTexture_nav5f")

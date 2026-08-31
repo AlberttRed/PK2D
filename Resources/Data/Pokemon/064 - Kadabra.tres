@@ -98,6 +98,9 @@ category = "Pokémon Psi"
 description = "La potencia de su telequinesis es inmensa.
 Acumula poder psíquico en la estrella de la
 frente como preparativo de cara a su evolución."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ci6x7")
 footprint_sprite = SubResource("AtlasTexture_uv2rr")
 battle_front_sprite = SubResource("AtlasTexture_mmk3e")

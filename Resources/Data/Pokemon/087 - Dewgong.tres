@@ -83,6 +83,9 @@ category = "Pokémon León Marino"
 description = "Su cuerpo es blanco como la nieve. Puede nadar
 plácidamente en mares gélidos gracias a su
 resistencia al frío."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_c632u")
 footprint_sprite = SubResource("AtlasTexture_cb1q5")
 battle_front_sprite = SubResource("AtlasTexture_vghew")

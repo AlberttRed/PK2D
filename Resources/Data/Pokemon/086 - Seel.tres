@@ -88,6 +88,9 @@ category = "Pokémon León Marino"
 description = "Le encantan los lugares gélidos y disfruta
 nadando en aguas a temperaturas en torno a
 los -10 °C."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yrmwc")
 footprint_sprite = SubResource("AtlasTexture_hq2qe")
 battle_front_sprite = SubResource("AtlasTexture_bg0pv")

@@ -97,6 +97,9 @@ category = "Pokémon Psi"
 description = "Puede teletransportarse mientras duerme. Se
 dice que, cuanto más profundo sea su sueño,
 mayor será la distancia a la que se desplace."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_8nang")
 footprint_sprite = SubResource("AtlasTexture_ptfel")
 battle_front_sprite = SubResource("AtlasTexture_f0d6s")

@@ -79,6 +79,9 @@ category = "Pokémon Bola"
 description = "Almacena tal cantidad de energía eléctrica en
 su cuerpo que el más leve impacto puede
 provocar una gran explosión."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_0quuy")
 footprint_sprite = SubResource("AtlasTexture_2h4j7")
 battle_front_sprite = SubResource("AtlasTexture_ulmur")

@@ -88,6 +88,9 @@ category = "Pokémon Armazón"
 description = "Se consideraba extinto, pero, al parecer, existen
 determinadas zonas en las que es posible hallar
 ejemplares con facilidad."
+battlerAltitude = 12
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_7ick4")
 footprint_sprite = SubResource("AtlasTexture_plbft")
 battle_front_sprite = SubResource("AtlasTexture_lb4i7")

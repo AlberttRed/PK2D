@@ -94,6 +94,9 @@ category = "Pokémon Clavos"
 description = "La cabeza no le da para retener más de una cosa.
 Si se pone a correr, se le olvida al instante por
 qué empezó a hacerlo."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_vck5m")
 footprint_sprite = SubResource("AtlasTexture_n1j5b")
 battle_front_sprite = SubResource("AtlasTexture_d8moe")

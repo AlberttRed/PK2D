@@ -102,6 +102,9 @@ category = "Pokémon Ratón"
 description = "Excava madrigueras profundas en las que vive.
 Parte con sus afiladas garras cualquier roca, por
 dura que sea, que le entorpezca el camino."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_h341n")
 footprint_sprite = SubResource("AtlasTexture_1vdin")
 battle_front_sprite = SubResource("AtlasTexture_3uj4h")

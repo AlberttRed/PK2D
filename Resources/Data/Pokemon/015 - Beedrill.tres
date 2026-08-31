@@ -85,6 +85,9 @@ category = "Pokémon Abeja Veneno"
 description = "Tiene tres aguijones venenosos, dos en las patas
 anteriores y uno en la parte baja del abdomen,
 con los que ataca a sus enemigos una y otra vez."
+battlerAltitude = 14
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_hm8ra")
 footprint_sprite = SubResource("AtlasTexture_lbbjg")
 battle_front_sprite = SubResource("AtlasTexture_kag7j")

@@ -87,6 +87,9 @@ pokedex_numbers = {
 category = "Pokémon Relámpago"
 description = "Acumula iones negativos de la atmósfera para
 lanzar rayos de 10 000 V de potencia."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_havef")
 footprint_sprite = SubResource("AtlasTexture_8jisc")
 battle_front_sprite = SubResource("AtlasTexture_di0qd")

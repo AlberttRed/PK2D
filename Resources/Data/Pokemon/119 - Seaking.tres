@@ -90,6 +90,9 @@ category = "Pokémon Pez Color"
 description = "Perfora las piedras del lecho del río con su
 cuerno para hacer un nido y que la corriente
 no arrastre sus huevos."
+battlerAltitude = 4
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yagql")
 footprint_sprite = SubResource("AtlasTexture_76ui6")
 battle_front_sprite = SubResource("AtlasTexture_1cjsj")

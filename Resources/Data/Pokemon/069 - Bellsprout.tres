@@ -88,6 +88,9 @@ category = "Pokémon Flor"
 description = "Prefiere lugares cálidos y húmedos. Atrapa
 pequeños Pokémon insectos con sus lianas para
 devorarlos."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_4xsun")
 footprint_sprite = SubResource("AtlasTexture_mad0o")
 battle_front_sprite = SubResource("AtlasTexture_63l18")

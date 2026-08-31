@@ -93,6 +93,9 @@ category = "Pokémon Perrito"
 description = "Extremadamente fiel, ladrará furioso a cualquiera
 que suponga una amenaza para su Entrenador
 con tal de defenderlo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_l7nm3")
 footprint_sprite = SubResource("AtlasTexture_eoi13")
 battle_front_sprite = SubResource("AtlasTexture_0xgnn")

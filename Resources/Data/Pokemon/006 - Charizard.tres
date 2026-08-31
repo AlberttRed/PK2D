@@ -84,6 +84,9 @@ category = "Pokémon Llama"
 description = "Sus potentes alas le permiten volar a una altura
 de 1400 m. Escupe llamaradas que llegan a
 alcanzar temperaturas elevadísimas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_4idnr")
 footprint_sprite = SubResource("AtlasTexture_i5pdt")
 battle_front_sprite = SubResource("AtlasTexture_rpf4v")

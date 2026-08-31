@@ -93,6 +93,9 @@ category = "Pokémon Mono Cerdo"
 description = "Solo se calma cuando no hay nadie cerca,
 por lo que llegar a ver ese momento resulta
 verdaderamente difícil."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_3uenw")
 footprint_sprite = SubResource("AtlasTexture_67vqx")
 battle_front_sprite = SubResource("AtlasTexture_r60oy")

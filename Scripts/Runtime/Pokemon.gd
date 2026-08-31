@@ -24,6 +24,8 @@ const PokemonEvolutionRowScr := preload("res://Scripts/Resources/Classes/Pokemon
 @export_enum("Sin indicar", "Macho", "Hembra", "Sin Género") var gender: int = 0
 @export var is_wild: bool = false
 @export var shiny: bool = false
+## -1 = usar `shadow_size` del PokemonData; 0-3 = forzar tamaño (debug / TestBattle).
+var battle_shadow_size_override: int = -1
 
 @export_group("IVs (Individual Values)")
 @export_range(0, 31) var hp_IVs: int = 0

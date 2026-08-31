@@ -88,6 +88,9 @@ pokedex_numbers = {
 category = "Pokémon Zorro"
 description = "Muy inteligente y vengativo. Agarrar una de sus
 colas podría traer 1000 años de mala suerte."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_x7dvk")
 footprint_sprite = SubResource("AtlasTexture_u7r44")
 battle_front_sprite = SubResource("AtlasTexture_epwfm")

@@ -75,6 +75,9 @@ category = "Pokémon Patada"
 description = "Encoge y estira las piernas a su antojo. De hecho,
 hasta puede propinar una patada a un rival que
 se encuentre lejos."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_pa1kt")
 footprint_sprite = SubResource("AtlasTexture_7uf5l")
 battle_front_sprite = SubResource("AtlasTexture_78fnv")

@@ -83,6 +83,9 @@ category = "Pokémon Cobra"
 description = "Se han llegado a identificar hasta seis
 variaciones distintas de los espeluznantes
 dibujos de su piel."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_rtorp")
 footprint_sprite = SubResource("AtlasTexture_ps6sf")
 battle_front_sprite = SubResource("AtlasTexture_ts5hb")

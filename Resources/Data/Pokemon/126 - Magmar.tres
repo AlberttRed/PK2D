@@ -94,6 +94,9 @@ category = "Pokémon Escupefuego"
 description = "Un Pokémon cuyo cuerpo está siempre envuelto
 en llamas. Es temido porque se lo considera un
 causante potencial de incendios."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_mir7a")
 footprint_sprite = SubResource("AtlasTexture_b72q4")
 battle_front_sprite = SubResource("AtlasTexture_213mn")

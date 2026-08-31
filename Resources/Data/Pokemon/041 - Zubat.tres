@@ -106,6 +106,9 @@ category = "Pokémon Murciélago"
 description = "Habitan en cuevas donde no llegan los rayos del
 sol. De día, se acurrucan unos junto a otros para
 entrar en calor mientras duermen."
+battlerAltitude = 30
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ceagx")
 footprint_sprite = SubResource("AtlasTexture_lbsx2")
 battle_front_sprite = SubResource("AtlasTexture_2kvy1")

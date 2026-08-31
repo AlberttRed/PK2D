@@ -92,6 +92,9 @@ category = "Pokémon Superpoder"
 description = "Puede dar varios puñetazos de una sola vez
 gracias a sus cuatro brazos. Golpea más rápido
 de lo que piensa."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_si4m4")
 footprint_sprite = SubResource("AtlasTexture_m02f7")
 battle_front_sprite = SubResource("AtlasTexture_haugd")

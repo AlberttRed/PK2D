@@ -81,6 +81,9 @@ category = "Pokémon Gas Venenoso"
 description = "Posee una capacidad de succión inferior a la del
 Weezing de Galar, pero las toxinas que genera
 son más potentes."
+battlerAltitude = 8
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xde0k")
 footprint_sprite = SubResource("AtlasTexture_fu0e6")
 battle_front_sprite = SubResource("AtlasTexture_k1gan")

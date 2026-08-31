@@ -96,6 +96,9 @@ category = "Pokémon Barrera"
 description = "Domina con maestría la pantomima. La barrera
 generada con las ondas que emite por los dedos
 le permite protegerse de numerosos ataques."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_0jqt7")
 footprint_sprite = SubResource("AtlasTexture_1eq45")
 battle_front_sprite = SubResource("AtlasTexture_834yb")

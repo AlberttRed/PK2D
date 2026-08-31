@@ -83,6 +83,9 @@ category = "Pokémon Forma Humana"
 description = "Los ejemplares que habitan en Galar poseen
 una voz tan delicada y hermosa que incluso
 cuentan con su propio grupo de admiradores."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_c5nal")
 footprint_sprite = SubResource("AtlasTexture_m5q8d")
 battle_front_sprite = SubResource("AtlasTexture_nlsar")

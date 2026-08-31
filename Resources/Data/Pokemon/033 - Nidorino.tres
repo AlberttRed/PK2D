@@ -84,6 +84,9 @@ category = "Pokémon Pin Veneno"
 description = "Es nervioso y agresivo por naturaleza. Cuando
 suben sus niveles de adrenalina, la concentración
 de toxinas en su veneno aumenta."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_sxlsc")
 footprint_sprite = SubResource("AtlasTexture_ltyja")
 battle_front_sprite = SubResource("AtlasTexture_fud8b")

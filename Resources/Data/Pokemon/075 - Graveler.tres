@@ -98,6 +98,9 @@ pokedex_numbers = {
 category = "Pokémon Roca"
 description = "Se le suele ver rodando montaña abajo. No evita
 los obstáculos, sino que los arrolla."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_wrn1e")
 footprint_sprite = SubResource("AtlasTexture_e4df6")
 battle_front_sprite = SubResource("AtlasTexture_g0hto")

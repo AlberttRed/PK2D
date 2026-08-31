@@ -106,6 +106,9 @@ category = "Pokémon Mantis"
 description = "El territorio de un Scyther se identifica fácilmente
 por el gran número de árboles talados de forma
 indiscriminada en una misma zona del bosque."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_xsv2i")
 footprint_sprite = SubResource("AtlasTexture_dft63")
 battle_front_sprite = SubResource("AtlasTexture_goor2")

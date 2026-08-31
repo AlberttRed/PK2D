@@ -97,6 +97,9 @@ pokedex_numbers = {
 category = "Pokémon Sombra"
 description = "Dicen que sale de la oscuridad para robarles el
 alma a los que se pierden por las montañas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_33ihl")
 footprint_sprite = SubResource("AtlasTexture_tga2j")
 battle_front_sprite = SubResource("AtlasTexture_ln7l6")

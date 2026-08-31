@@ -84,6 +84,9 @@ pokedex_numbers = {
 category = "Pokémon Semilla"
 description = "La flor que tiene en el lomo libera un delicado
 aroma, que tiene un efecto relajante en combate."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_we1d6")
 footprint_sprite = SubResource("AtlasTexture_stbn1")
 battle_front_sprite = SubResource("AtlasTexture_36aqj")

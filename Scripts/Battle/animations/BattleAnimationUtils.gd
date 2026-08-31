@@ -797,7 +797,7 @@ static func pokemon_enter_spot(
 		shadow != null
 		and is_instance_valid(shadow)
 		and spot.pokemon != null
-		and spot.pokemon.is_wild
+		and spot.should_show_battle_shadow()
 	)
 	var shadow_orig_pos := Vector2.ZERO
 	var shadow_half_h := 0.0

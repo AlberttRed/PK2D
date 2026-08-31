@@ -85,6 +85,9 @@ pokedex_numbers = {
 category = "Pokémon Enredadera"
 description = "Sus lianas despiden una fragancia peculiar.
 En cierta zona de Galar se usan como aderezo."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_6wpe4")
 footprint_sprite = SubResource("AtlasTexture_tx6gh")
 battle_front_sprite = SubResource("AtlasTexture_2xdmt")

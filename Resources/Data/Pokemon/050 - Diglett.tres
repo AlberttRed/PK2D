@@ -98,6 +98,9 @@ category = "Pokémon Topo"
 description = "Este Pokémon avanza horadando la tierra a poca
 profundidad. Resulta fácil localizarlo por los
 montículos que deja como rastro."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_yg634")
 footprint_sprite = SubResource("AtlasTexture_b7lxx")
 battle_front_sprite = SubResource("AtlasTexture_wbkwa")

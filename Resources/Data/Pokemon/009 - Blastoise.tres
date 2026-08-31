@@ -80,6 +80,9 @@ category = "Pokémon Armazón"
 description = "Dispara chorros de agua a través de los cañones
 de su caparazón, capaces de agujerear incluso el
 acero."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_umu18")
 footprint_sprite = SubResource("AtlasTexture_ljoxr")
 battle_front_sprite = SubResource("AtlasTexture_5yj5u")

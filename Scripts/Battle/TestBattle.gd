@@ -52,6 +52,12 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 ## Escenario del test de IA (ver guía en consola al arrancar).
 @export_enum("Type Advantage", "Avoid Immunity", "All Immune Random", "Wild Basic") var battle_ia_test_scenario: int = 0
 
+@export_group("Debug altitud / sombra (visual)")
+## 1vs1 salvaje: Machop vs especie configurable (probar battlerAltitude / sombra).
+@export var use_battler_altitude_test: bool = false
+## ID nacional del rival salvaje (74=Geodude, 92=Gastly, 25=Pikachu S1, 19=Rattata S2, 3=Venusaur S3…).
+@export_range(1, 151) var battler_altitude_test_wild_species_id: int = 74
+
 @export_group("Debug mensajes MOVE_FAIL (PBI 687)")
 ## Escenario natural Machop vs Gastly (inmunidad, protección, evasión, fallo de precisión).
 @export var use_move_fail_message_test: bool = false
@@ -241,6 +247,11 @@ func _ready() -> void:
 		_setup_move_fail_no_target_test_parties()
 		_print_move_fail_no_target_test_guide()
 		await wildMoveFailNoTargetTestBattle()
+		return
+	if use_battler_altitude_test:
+		_setup_battler_altitude_test_parties()
+		_print_battler_altitude_test_guide()
+		await wildBattlerAltitudeTestBattle()
 		return
 	if use_move_fail_message_test:
 		_setup_move_fail_message_test_parties()
@@ -518,6 +529,21 @@ func wildMoveFailMessageTestBattle() -> void:
 	print(">>> Batalla MOVE_FAIL (1v1) terminada. Ganador: %s" % winner)
 
 
+func wildBattlerAltitudeTestBattle() -> void:
+	_setup_battler_altitude_test_parties()
+	var player_participant: BattleParticipant = _create_fixed_player_participant()
+	if wildPokemons == null or wildPokemons.party.is_empty():
+		push_error("TestBattle: wildBattlerAltitudeTestBattle sin rival en WildPokemons.")
+		return
+	var wild_bp: BattlePokemon = wildPokemons.party[0].to_battle_pokemon()
+	wild_bp.is_wild = true
+	var wild_participant: BattleParticipantWild = BattleParticipantWild.new([wild_bp])
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_participant]
+	var winner = await _start_test_battle(participants, rules)
+	print(">>> Batalla altitud/sombra terminada. Ganador: %s" % winner)
+
+
 func wildMoveFailNoTargetTestBattle() -> void:
 	_setup_move_fail_no_target_test_parties()
 	var player_participant: BattleParticipant = _create_move_fail_no_target_player_participant()
@@ -543,6 +569,33 @@ func _setup_move_fail_message_test_parties() -> void:
 	if wildPokemons != null:
 		wildPokemons.party.clear()
 		wildPokemons.add_pokemon_to_party(_create_move_fail_test_enemy_instance())
+
+
+func _setup_battler_altitude_test_parties() -> void:
+	if player != null:
+		player.party.clear()
+		player.add_pokemon_to_party(_create_battler_altitude_test_player_instance())
+	if wildPokemons != null:
+		wildPokemons.party.clear()
+		wildPokemons.add_pokemon_to_party(_create_battler_altitude_test_wild_instance())
+
+
+func _create_battler_altitude_test_player_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = PokemonsEnum.Values.MACHOP as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = false
+	pkmn._post_init()
+	return pkmn
+
+
+func _create_battler_altitude_test_wild_instance() -> Pokemon:
+	var pkmn := Pokemon.new()
+	pkmn.pokemon_id = battler_altitude_test_wild_species_id as PokemonsEnum.Values
+	pkmn.level = 30
+	pkmn.is_wild = true
+	pkmn._post_init()
+	return pkmn
 
 
 func _setup_move_fail_no_target_test_parties() -> void:
@@ -646,6 +699,17 @@ func _print_move_fail_message_test_guide() -> void:
 	print(">>>        (Hipnosis es estado y sí afecta a Fantasma; Placaje siempre daría inmunidad)")
 	print(">>> Turno 8+ — MISS_GLOBAL: Machop Hipnosis → repite hasta «¡El ataque de Machop falló!»")
 	print(">>> NO_TARGET: activa use_move_fail_no_target_test y relanza F6.")
+
+
+func _print_battler_altitude_test_guide() -> void:
+	var wild_name := PokemonsEnum.get_display_name(
+		battler_altitude_test_wild_species_id as PokemonsEnum.Values
+	)
+	print(
+		">>> [ALTITUD/SOMBRA] Machop vs %s salvaje (id=%d)"
+		% [wild_name, battler_altitude_test_wild_species_id]
+	)
+	print(">>> Cambia `battler_altitude_test_wild_species_id` (74=Geodude, 92=Gastly, 25=S1, 19=S2, 3=S3).")
 
 
 func _print_move_fail_no_target_test_guide() -> void:

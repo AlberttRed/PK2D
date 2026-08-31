@@ -81,6 +81,9 @@ category = "Pokémon Pájaro"
 description = "Este Pokémon vuela a una velocidad de 2 mach
 en busca de presas. Sus grandes garras son armas
 muy peligrosas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_h5h8c")
 footprint_sprite = SubResource("AtlasTexture_k20yw")
 battle_front_sprite = SubResource("AtlasTexture_caf35")

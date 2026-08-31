@@ -88,6 +88,9 @@ category = "Pokémon Ratón"
 description = "Gracias a las pequeñas membranas de las patas
 traseras, puede nadar por los ríos para capturar
 presas."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_h48ut")
 footprint_sprite = SubResource("AtlasTexture_jujq3")
 battle_front_sprite = SubResource("AtlasTexture_12u2l")

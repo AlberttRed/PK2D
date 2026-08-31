@@ -87,6 +87,9 @@ category = "Pokémon Hongo"
 description = "Tras largo tiempo absorbiendo la energía del
 huésped, la seta parásita del lomo es la que
 parece controlar la voluntad de este Pokémon."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_rj6c0")
 footprint_sprite = SubResource("AtlasTexture_bg0d1")
 battle_front_sprite = SubResource("AtlasTexture_4f2c6")

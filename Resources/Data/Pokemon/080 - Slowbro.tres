@@ -92,6 +92,9 @@ category = "Pokémon Ermitaño"
 description = "Se volvió bípedo por el impacto que le causó la
 mordedura del Shellder. Si este se desprende,
 vuelve a convertirse en un Slowpoke."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_jf0w7")
 footprint_sprite = SubResource("AtlasTexture_aa1y0")
 battle_front_sprite = SubResource("AtlasTexture_v38uo")

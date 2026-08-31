@@ -95,6 +95,9 @@ category = "Pokémon Lodo"
 description = "Está hecho de lodo endurecido. Pocos se atreven
 a tocarlo debido a su pestilencia y composición
 nociva. Allá por donde pasa no crece la hierba."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_iti3u")
 footprint_sprite = SubResource("AtlasTexture_8625o")
 battle_front_sprite = SubResource("AtlasTexture_dr6cw")

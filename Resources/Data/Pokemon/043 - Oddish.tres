@@ -91,6 +91,9 @@ pokedex_numbers = {
 category = "Pokémon Hierbajo"
 description = "Durante el día, se agazapa en el frío subsuelo
 huyendo del sol. La luz de la luna le hace crecer."
+battlerAltitude = 0
+shadow_size = 1
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_ud7v7")
 footprint_sprite = SubResource("AtlasTexture_awfjq")
 battle_front_sprite = SubResource("AtlasTexture_sbfy1")

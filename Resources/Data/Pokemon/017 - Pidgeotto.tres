@@ -87,6 +87,9 @@ category = "Pokémon Pájaro"
 description = "Su extraordinaria vitalidad y resistencia le
 permiten cubrir grandes distancias del territorio
 que habita en busca de presas."
+battlerAltitude = 10
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_e54sf")
 footprint_sprite = SubResource("AtlasTexture_kt2ts")
 battle_front_sprite = SubResource("AtlasTexture_fcmfc")

@@ -102,6 +102,9 @@ category = "Pokémon Gas"
 description = "Con su cuerpo gaseoso puede colarse por donde
 quiera, aunque con un golpe de viento sale
 despedido."
+battlerAltitude = 18
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_nmfsp")
 footprint_sprite = SubResource("AtlasTexture_rp4gw")
 battle_front_sprite = SubResource("AtlasTexture_8b8eu")

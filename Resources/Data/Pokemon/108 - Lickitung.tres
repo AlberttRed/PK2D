@@ -91,6 +91,9 @@ category = "Pokémon Lametazo"
 description = "Se nutre principalmente de Pokémon insecto,
 a los que paraliza primero lamiéndolos con su
 larga lengua y luego engulle de un bocado."
+battlerAltitude = 0
+shadow_size = 3
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_v5yil")
 footprint_sprite = SubResource("AtlasTexture_e6wdv")
 battle_front_sprite = SubResource("AtlasTexture_1hvc1")

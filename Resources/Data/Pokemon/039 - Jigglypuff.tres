@@ -100,6 +100,9 @@ category = "Pokémon Globo"
 description = "Posee la capacidad de modular su voz a voluntad
 cambiando la longitud de onda para entonar una
 melodía misteriosa que provoca adormecimiento."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_thcda")
 footprint_sprite = SubResource("AtlasTexture_kae4e")
 battle_front_sprite = SubResource("AtlasTexture_vujyr")

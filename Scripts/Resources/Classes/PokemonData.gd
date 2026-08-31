@@ -74,7 +74,12 @@ class_name PokemonData
 
 @export var battlerPlayerY: int = 0
 @export var battlerEnemyY: int = 0
+## Altitud en combate (Essentials BES `BattlerAltitude`; sube el sprite sobre la sombra).
 @export var battlerAltitude: int = 0
+## Tamaño de sombra (Essentials v21 `ShadowSize`: 0=ninguna, 1-3=pequeña/mediana/grande).
+@export var shadow_size: int = 0
+## Desplazamiento X de la sombra (Essentials v21 `ShadowX`).
+@export var shadow_x: int = 0
 
 
 @export var icon_sprite : AtlasTexture

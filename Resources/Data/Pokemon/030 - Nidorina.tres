@@ -85,6 +85,9 @@ category = "Pokémon Pin Veneno"
 description = "Cuando el peligro se cierne sobre la manada,
 los miembros unen fuerzas para defenderse
 emitiendo un coro de ondas ultrasónicas."
+battlerAltitude = 0
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_f7hch")
 footprint_sprite = SubResource("AtlasTexture_n2aei")
 battle_front_sprite = SubResource("AtlasTexture_01jqx")

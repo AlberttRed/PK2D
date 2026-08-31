@@ -88,6 +88,9 @@ category = "Pokémon Pico"
 description = "Este Pokémon ha existido desde tiempos
 remotos. Al menor atisbo de peligro, alza el
 vuelo y huye."
+battlerAltitude = 10
+shadow_size = 2
+shadow_x = 0
 icon_sprite = SubResource("AtlasTexture_2y64h")
 footprint_sprite = SubResource("AtlasTexture_3si1a")
 battle_front_sprite = SubResource("AtlasTexture_ou73c")
