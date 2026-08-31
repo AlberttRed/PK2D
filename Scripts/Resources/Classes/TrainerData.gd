@@ -123,7 +123,7 @@ func _migrate_party_data() -> void:
 			var definition = _convert_pokemon_to_definition(pokemon_runtime)
 			if definition:
 				migrated_party.append(definition)
-				push_warning("TrainerData._migrate_party_data(): Migrado Pokemon a PokemonDefinition para trainer '%s'" % display_name)
+				print("TrainerData._migrate_party_data(): Migrado Pokemon a PokemonDefinition para trainer '%s'" % display_name)
 		else:
 			push_warning("TrainerData._migrate_party_data(): Elemento de tipo desconocido (%s) en party_data, saltando" % (item.get_class() if item else "null"))
 

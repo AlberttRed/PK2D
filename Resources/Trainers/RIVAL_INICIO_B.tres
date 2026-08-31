@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="TrainerData" format=3 uid="uid://cp4vsoken5pug"]
 
 [ext_resource type="Script" uid="uid://c4x2p6dx540kg" path="res://Scripts/Battle/core/Battle IAs/BattleIA_TrainerEasy.gd" id="1_2xdut"]
-[ext_resource type="Script" uid="uid://d4mopscjx7rum" path="res://Scripts/Runtime/Pokemon.gd" id="1_ydku7"]
+[ext_resource type="Script" uid="uid://cotgo4ccshywo" path="res://Scripts/Resources/Classes/PokemonDefinition.gd" id="1_poke_def"]
 [ext_resource type="Script" uid="uid://ddsodfhwbf6ce" path="res://Scripts/Resources/Classes/TrainerData.gd" id="2_2xdut"]
 
 [sub_resource type="Resource" id="Resource_pyeat"]
@@ -9,8 +9,9 @@ script = ExtResource("1_2xdut")
 metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_j3t2p"]
-script = ExtResource("1_ydku7")
-metadata/_custom_type_script = "uid://d4mopscjx7rum"
+script = ExtResource("1_poke_def")
+pokemon_id = 1
+metadata/_custom_type_script = "uid://cotgo4ccshywo"
 
 [resource]
 script = ExtResource("2_2xdut")

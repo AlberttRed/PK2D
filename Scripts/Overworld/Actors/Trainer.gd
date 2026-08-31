@@ -10,9 +10,9 @@ class_name Trainer
 ## - Integración con Battler para gestión de equipo Pokémon
 ##
 ## Uso:
-## 1. Asignar TrainerData en el inspector (se pasa automáticamente al Battler hijo)
-## 2. Configurar detection_range y transition_type
-## 3. El Trainer detectará automáticamente al jugador y iniciará la batalla
+## 1. Configurar StartBattleEventCommand.trainer_data en la página del evento
+## 2. El Battler hijo recibe TrainerData automáticamente al iniciar el combate
+## 3. Configurar detection_range y transition_type si aplica
 
 ## === CONFIGURACIÓN DE ENTRENADOR ===
 
