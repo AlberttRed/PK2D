@@ -251,8 +251,13 @@ static func duration_for_base_intro(
 
 
 static func play_for_ui(ui: BattleUI, rules: BattleRules, reveal_duration: float = 0.4) -> void:
+	if ui == null:
+		return
 	var intro_type := BattleWildIntroEnum.resolve_from_rules(rules)
-	if ui == null or intro_type == BattleWildIntroEnum.Values.NONE:
+	var duration := duration_for_base_intro(reveal_duration, intro_type)
+	if ui.field_ui != null:
+		ui.field_ui.start_intro_background_scroll(duration)
+	if intro_type == BattleWildIntroEnum.Values.NONE:
 		return
 	var overlay := WILD_INTRO_SCENE.instantiate() as BattleWildIntroOverlay
 	if overlay == null:
@@ -264,7 +269,7 @@ static func play_for_ui(ui: BattleUI, rules: BattleRules, reveal_duration: float
 		overlay.queue_free()
 		return
 	overlay.set_panel_top_y(_resolve_panel_top_y(ui))
-	overlay.play(duration_for_base_intro(reveal_duration, intro_type), reveal_duration)
+	overlay.play(duration, reveal_duration)
 	overlay.finished_playing.connect(_queue_free_overlay.bind(overlay), CONNECT_ONE_SHOT)
 
 
