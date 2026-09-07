@@ -23,6 +23,8 @@ static var _major_status_ailment_cache: Dictionary = {}
 @export var effect: Resource = null        # Script del PersistentBattleEffect asociado
 ## Animación visual al aplicar y al repetir el efecto (p. ej. burn). Solo presentación.
 @export var battle_animation: BattleAnimation = null
+## SFX al aplicar / residual / bloqueo de turno. Si es null, no suena.
+@export var battle_sfx: AudioStream = null
 
 func get_effect(_min_turn = null, _max_turn = null, _application_chance: int = 100):
 	return effect.new(self, _min_turn, _max_turn, _application_chance) if effect != null else null
@@ -36,6 +38,8 @@ func get_battle_animation() -> BattleAnimation:
 func play_battle_animation_on(ui: BattleUI, pokemon: BattlePokemon) -> void:
 	if ui == null or pokemon == null:
 		return
+	if battle_sfx != null:
+		AudioManager.play_sfx(battle_sfx)
 	var anim := get_battle_animation()
 	if anim == null:
 		return

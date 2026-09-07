@@ -14,6 +14,7 @@ var original_normal_style: StyleBox = null
 ]
 var current_pokemon: BattlePokemon
 var moves: Array[BattleMove] = []
+var _suppress_focus_sound: bool = false
 
 func _ready():
 	set_process_input(false)
@@ -52,19 +53,25 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 				initial_index = i
 				break
 	move_buttons[initial_index].grab_focus()
+	_suppress_focus_sound = true
 	visible = true
 	set_process_input(true)
+	await get_tree().process_frame
+	_suppress_focus_sound = false
 	var choice: BattleMoveChoice = await move_selected
 	set_process_input(false)
 	lock_visual_focus()
 	return choice
 
 func _on_move_pressed(index: int):
+	_play_select_sound()
 	var choice := BattleMoveChoice.new()
 	choice.move_index = index
 	move_selected.emit(choice)
 
 func _on_focus_entered(index: int):
+	if not _suppress_focus_sound:
+		_play_cursor_sound()
 	var move = moves[index]
 	# Guardar el índice en el Pokémon específico
 	current_pokemon.last_move_index = index
@@ -75,6 +82,7 @@ func _input(event: InputEvent):
 		_on_cancel_pressed()
 
 func _on_cancel_pressed():
+	_play_cancel_sound()
 	var choice := BattleMoveChoice.new()
 	choice.canceled = true
 	move_selected.emit(choice)
@@ -99,6 +107,18 @@ func update_move_info_panel(move: BattleMove):
 	else:
 		lbl_pps.add_theme_color_override("default_color", Color("585850"))
 		lbl_pps.add_theme_color_override("font_shadow_color", Color("A8B8B8"))
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
+
+
+func _play_select_sound() -> void:
+	AudioManager.play_ui_select()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()
 
 
 func lock_visual_focus():

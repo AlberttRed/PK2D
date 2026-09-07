@@ -65,6 +65,8 @@ func show_overworld_style_result_message(result: ItemUseResult) -> void:
 
 
 func show_party_result_message_and_close(ui: BattleUI, result: ItemUseResult, target_party_slot: int = -1) -> void:
+	if result != null and result.success:
+		AudioManager.play_ui_use_item_in_party()
 	if result == null or result.message.is_empty():
 		if ui != null and ui.has_method("show_party_item_result_and_close"):
 			if target_party_slot >= 0:

@@ -1205,6 +1205,9 @@ func set_active_map(map_scene: Node) -> void:
 	# Aplicar configuración de overlay asociada al mapa
 	_apply_overlay_settings(map_scene)
 
+	# Reproducir BGM del mapa activo
+	_apply_map_bgm(map_scene)
+
 	# Emitir cambio de grid activo
 	if context and grid:
 		context.emit_active_grid_changed(grid)
@@ -1282,6 +1285,43 @@ func _apply_overlay_settings(map_scene: Node) -> void:
 ## Reaplica la configuración de overlay para el mapa activo
 func refresh_overlay_settings() -> void:
 	_apply_overlay_settings(active_map)
+
+
+## Reaplica la BGM del mapa activo (p. ej. al terminar un combate).
+func refresh_map_bgm() -> void:
+	_apply_map_bgm(active_map)
+
+
+## Reproduce la BGM configurada en el mapa activo (o silencio si no tiene).
+func _apply_map_bgm(map_scene: Node) -> void:
+	if AudioManager.instance == null:
+		return
+
+	var bgm: AudioStream = null
+	var fade := 1.0
+
+	if map_scene is MapScene:
+		var settings := (map_scene as MapScene).get_bgm_settings()
+		bgm = settings.get("bgm") as AudioStream
+		fade = float(settings.get("fade", 1.0))
+	elif map_scene and map_scene.has_method("get_bgm_settings"):
+		var settings: Dictionary = map_scene.get_bgm_settings()
+		bgm = settings.get("bgm") as AudioStream
+		fade = float(settings.get("fade", 1.0))
+
+	fade = AudioManager.resolve_map_bgm_fade(fade)
+
+	if bgm == null:
+		if map_scene:
+			push_warning("WorldSystem: Mapa '%s' sin BGM configurada" % map_scene.name)
+		AudioManager.stop_bgm(fade)
+		return
+
+	if fade <= 0.0 or not AudioManager.is_bgm_playing():
+		AudioManager.play_bgm(bgm, 0.0)
+	else:
+		AudioManager.crossfade_bgm(bgm, fade)
+
 
 ## Encuentra el grid que contiene una posición global y retorna grid + tile convertido
 ## Optimizado: convierte una sola vez, evitando cálculos duplicados

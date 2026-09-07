@@ -48,12 +48,13 @@ func update_color() -> void:
 	else:
 		progress_bar.tint_progress = CONST.BATTLE.HPCOLORRED
 
-func animate_to(new_value: int) -> void:
+func animate_to(new_value: int, duration: float = -1.0) -> void:
+	var resolved_duration := animate_duration if duration < 0.0 else duration
 	var tween = create_tween()
 	tween.set_parallel(true)  # Animar barra y label al mismo tiempo
-	tween.tween_property(progress_bar, "value", new_value, animate_duration)
+	tween.tween_property(progress_bar, "value", new_value, resolved_duration)
 	if show_label:
-		tween.tween_method(set_label_value , current_value, new_value, animate_duration)
+		tween.tween_method(set_label_value , current_value, new_value, resolved_duration)
 	current_value = new_value
 	#tween.finished.connect(func(): updated.emit())
 	await tween.finished

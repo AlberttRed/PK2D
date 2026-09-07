@@ -16,6 +16,8 @@ class_name Main
 # Referencia a la sesión activa (GameSession)
 var active_session = null
 
+
+
 func _ready() -> void:
 	# Esperar un frame para asegurar que DisplayManager esté listo
 	await get_tree().process_frame

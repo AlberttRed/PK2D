@@ -10,7 +10,6 @@ metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_j3t2p"]
 script = ExtResource("1_poke_def")
-pokemon_id = 1
 metadata/_custom_type_script = "uid://cotgo4ccshywo"
 
 [resource]

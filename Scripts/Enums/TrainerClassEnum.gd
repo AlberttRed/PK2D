@@ -83,6 +83,10 @@ enum Values {
 	CUSTOM = 999
 }
 
+
+static func is_gym_leader(class_id: int) -> bool:
+	return class_id >= Values.GYM_LEADER_BROCK and class_id <= Values.GYM_LEADER_GIOVANNI
+
 ## Retorna el nombre legible de la clase de entrenador
 static func get_display_name(trainer_class: Values) -> String:
 	match trainer_class:

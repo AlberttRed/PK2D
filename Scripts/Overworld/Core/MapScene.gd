@@ -37,6 +37,12 @@ class_name MapScene
 ## Escenario de fondo en combates iniciados en este mapa (Essentials: BattleBack).
 @export var battle_back: BattleBackEnum.Values = BattleBackEnum.Values.FIELD
 
+@export_group("Audio")
+## Música de fondo del mapa (BGM). Vacío = sin tema asignado.
+@export var bgm: AudioStream
+## Duración del fade/crossfade al activar este mapa (0 = cambio instantáneo).
+@export_range(0.0, 8.0, 0.05) var bgm_fade: float = 1.0
+
 ## Referencia al grid de este mapa
 @onready var grid: OverworldGrid = $OverworldGrid
 
@@ -187,4 +193,12 @@ func get_overlay_settings() -> Dictionary:
 		"darkness": clampf(overlay_darkness, 0.0, 1.0),
 		"weather": overlay_weather,
 		"flashlight_required": overlay_flashlight_required,
+	}
+
+
+## Devuelve la configuración de BGM asociada a este mapa
+func get_bgm_settings() -> Dictionary:
+	return {
+		"bgm": bgm,
+		"fade": bgm_fade,
 	}

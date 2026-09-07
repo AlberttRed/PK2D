@@ -38,6 +38,8 @@ const FAMILY := MessageFamily.Values
 func _ready() -> void:
 	result_display.ui = self
 	visible = false
+	if message_box != null:
+		message_box.play_open_sound_on_show = false
 	if party_ui != null:
 		# Party en combate debe superponerse al campo (sprites/HPBars).
 		party_ui.z_index = 40
@@ -106,12 +108,12 @@ func position_battlespots_for_mode(
 ) -> void:
 	$FieldUI.position_battlespots_for_mode(mode, player_active_count, enemy_active_count)
 
-func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
+func show_action_selection(pokemon: BattlePokemon, preserve_action_focus: bool = false) -> BattleChoice:
 	# Bounce activo durante todo el flujo de este Pokémon (acciones → moves → target).
 	_start_action_selection_bounce(pokemon)
 
 	# Mostrar panel de acciones: LUCHAR, POKÉMON, MOCHILA, HUIR
-	var choice: BattleChoice = await show_action_menu_for(pokemon)
+	var choice: BattleChoice = await show_action_menu_for(pokemon, preserve_action_focus)
 
 	if choice.canceled:
 		# Doble: cancelar vuelve al Pokémon anterior; restaurar posición estándar.
@@ -137,13 +139,13 @@ func show_action_selection(pokemon: BattlePokemon) -> BattleChoice:
 				pokemon, BattleEffect.Phases.ON_VALIDATE_RUN, run_ctx
 			)
 			if run_ctx.validation != null and run_ctx.validation.rejected:
-				return await show_action_selection(pokemon)
+				return await show_action_selection(pokemon, true)
 		_clear_action_selection_bounce()
 		return choice
 
 	var move_choice: BattleMoveChoice = await show_move_selection(pokemon)
 	if move_choice.canceled:
-		return await show_action_selection(pokemon)
+		return await show_action_selection(pokemon, true)
 
 	# Turno de este Pokémon confirmado (incluye tras elegir target).
 	_clear_action_selection_bounce()
@@ -218,7 +220,7 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 
 		if bool(go_back_wrap[0]):
 			_battle_bag_ui.close()
-			return await show_action_selection(pokemon)
+			return await show_action_selection(pokemon, true)
 
 		picked_id = int(picked_wrap[0])
 		var item_data: ItemData = DatabaseService.get_item_by_id(picked_id)
@@ -606,12 +608,12 @@ func show_switch_selection(pokemon: BattlePokemon) -> BattleChoice:
 	party_ui.close()
 
 	if bool(selection_state["canceled"]):
-		return await show_action_selection(pokemon)
+		return await show_action_selection(pokemon, true)
 
 	var selected_slot: int = int(selection_state["selected_slot"])
 	var incoming_bp: BattlePokemon = switch_controller.get_battle_pokemon_at(selected_slot)
 	if incoming_bp == null:
-		return await show_action_selection(pokemon)
+		return await show_action_selection(pokemon, true)
 
 	var choice := BattleSwitchChoice.new()
 	choice.pokemon = pokemon
@@ -632,7 +634,7 @@ func resolve_player_forced_switch_after_faint(
 	actions_menu.hide()
 	moves_menu.hide()
 	target_selector_ui.hide()
-	message_box.hide()
+	# No ocultar MessageBox: en HGSS el «¡X se debilitó!» (o el prompt) sigue visible bajo el party.
 
 	var rules: BattleRules = side.battle_rules if side != null else null
 	if rules == null and battle_controller != null:
@@ -640,10 +642,10 @@ func resolve_player_forced_switch_after_faint(
 	var is_wild := rules != null and rules.type == BattleRules.BattleTypes.WILD
 
 	if is_wild:
-		var prompt_idx: int = await DisplayManager.show_message_with_choices(
+		# Prompt en el MessageBox de batalla (sin cerrarlo) + ChoiceBox encima.
+		var prompt_idx: int = await _show_battle_message_with_choices(
 			message_controller.get_use_next_pokemon_prompt_text(),
-			["Sí", "No"],
-			true
+			["Sí", "No"]
 		)
 		if prompt_idx != 0:
 			var escaped := await _attempt_battle_flee(fainted, false)
@@ -692,10 +694,10 @@ func handle_opponent_trainer_send_in_sequence(
 		if not player_side.participant_has_healthy_bench(active.participant):
 			continue
 		var player_name := _get_player_battle_name()
-		var switch_idx: int = await DisplayManager.show_message_with_choices(
+		# Mismo MessageBox de batalla (no el de DisplayManager) para no tapar/revelar «X sacará a Y».
+		var switch_idx: int = await _show_battle_message_with_choices(
 			"%s, ¿quieres cambiar de POKéMON?" % player_name,
-			["Sí", "No"],
-			true
+			["Sí", "No"]
 		)
 		if switch_idx != 0:
 			continue
@@ -851,7 +853,7 @@ func show_forced_switch_selection(
 	actions_menu.hide()
 	moves_menu.hide()
 	target_selector_ui.hide()
-	message_box.hide()
+	# MessageBox sigue con el texto de debilitamiento / prompt bajo el party.
 	party_ui.open_for_battle_switch_pick(-1, true)
 
 	var selection_state := {
@@ -923,12 +925,12 @@ func _show_party_switch_rejection_message(message: Dictionary) -> void:
 		party_ui.set_input_enabled(true)
 	await _await_menu_inputs_released()
 
-func show_action_menu_for(pokemon: BattlePokemon) -> BattleChoice:
+func show_action_menu_for(pokemon: BattlePokemon, preserve_focus: bool = false) -> BattleChoice:
 	if pokemon.battle_spot.has_previous_controllable_pokemon():
 		actions_menu.allow_cancel()
 	moves_menu.hide()
 	message_box.hide()
-	return await actions_menu.show_for(pokemon)
+	return await actions_menu.show_for(pokemon, preserve_focus)
 
 
 func show_moves_menu_for(pokemon: BattlePokemon) -> BattleChoice:
@@ -1278,7 +1280,30 @@ func show_ability_effect_message(user: BattlePokemon, target: BattlePokemon, abi
 
 # Mensajes de escape/huida
 func show_escape_message(is_trainer_battle: bool, escape_succeeded: bool) -> void:
-	await show_message_from_dict(message_controller.get_escape_message(is_trainer_battle, escape_succeeded))
+	var msg := message_controller.get_escape_message(is_trainer_battle, escape_succeeded)
+	if not is_trainer_battle and escape_succeeded:
+		var text := str(msg.get("text", ""))
+		_schedule_battle_flee_during_escape_message(text)
+		await message_box.show_custom(text, {
+			"waitInput": true,
+			"closeAtEnd": false,
+			"waitTime": 0.0,
+			"showIconAtEnd": bool(msg.get("showIconAtEnd", true)),
+		})
+		return
+	await show_message_from_dict(msg)
+
+
+## SFX de huida salvaje ~a mitad del tipeo del mensaje (no al terminar de escribir).
+func _schedule_battle_flee_during_escape_message(text: String) -> void:
+	const TYPING_SPEED := 5.0  # Mismo default que MessageBox.typingSpeed (ms por carácter / 100).
+	var char_count := text.length()
+	var half_typing_sec := maxf(0.08, (float(char_count) * TYPING_SPEED / 100.0) * 0.5)
+	(
+		func() -> void:
+			await get_tree().create_timer(half_typing_sec).timeout
+			AudioManager.play_battle_flee()
+	).call()
 
 # Mensajes de cambio de Pokémon
 func show_switch_message(trainer_name: String, pokemon_name: String) -> void:
@@ -1312,23 +1337,41 @@ func show_trainer_send_in_display(trainer_name: String, pokemon_name: String) ->
 
 # Mensaje de final de combate
 func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_participants: Array) -> void:
-	# Mostrar mensaje de victoria
-	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
+	# Entrenador: victoria justo antes de «¡Has vencido a...!».
+	# Salvaje/captura ya la arrancaron antes (EXP / ME de captura).
+	if (
+		winner_side == "player"
+		and rules != null
+		and rules.type == BattleRules.BattleTypes.TRAINER
+	):
+		AudioManager.play_battle_victory_bgm(rules, enemy_participants)
+		# 1) «¡Has vencido…!» (sin input; al terminar de escribir → trainer).
+		var win_msg: Dictionary = message_controller.get_battle_end_message(
+			winner_side, rules, enemy_participants
+		)
+		if not win_msg.is_empty():
+			await show_message_from_dict({
+				"type": "display",
+				"text": win_msg.get("text", ""),
+				"wait_time": 0.0,
+			})
+		# 2) Entrada automática del rival.
+		for i in enemy_participants.size():
+			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules, i)
+		# 3) Pausa antes del diálogo de derrota.
+		await get_tree().create_timer(1.0).timeout
 
-	# Si el jugador ganó contra entrenador(es): enter → defeat_message → exit por rival.
-	if winner_side == "player" and rules.type == BattleRules.BattleTypes.TRAINER:
+		# Diálogo de derrota del entrenador → salida.
 		for i in enemy_participants.size():
 			var participant = enemy_participants[i]
 			if participant == null or not participant is BattleParticipant:
 				continue
-			if participant.defeat_message.is_empty():
-				continue
-			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules, i)
-			await show_message_from_dict({
-				"type": "input",
-				"text": participant.defeat_message,
-				"showIconAtEnd": true
-			})
+			if not participant.defeat_message.is_empty():
+				await show_message_from_dict({
+					"type": "input",
+					"text": participant.defeat_message,
+					"showIconAtEnd": true
+				})
 			var trainer: Node2D = field_ui.get_enemy_trainer(i)
 			if trainer != null and is_instance_valid(trainer):
 				await BattleAnimationUtils.trainer_exit(
@@ -1337,6 +1380,10 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 					BattleFieldAnimations.TRAINER_EXIT_DURATION,
 					BattleFieldAnimations.TRAINER_EXIT_SLIDE
 				)
+		return
+
+	# Mostrar mensaje de victoria (salvaje vacío / derrota / empate)
+	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
 
 # Mensaje de debilitamiento
 func show_faint_message(pokemon: BattlePokemon) -> void:
@@ -1350,6 +1397,7 @@ func show_gained_exp_message(battle_pokemon: BattlePokemon, exp_gained: int) -> 
 
 func show_level_up_message(battle_pokemon: BattlePokemon, new_level: int) -> void:
 	print("¡%s subió al nivel %d!" % [battle_pokemon.get_name(), new_level])
+	AudioManager.play_battle_level_up()
 	await show_message_from_dict(message_controller.get_level_up_message(battle_pokemon, new_level))
 	clear_message_box()
 
@@ -1418,17 +1466,48 @@ func _remove_pending_move_entry(mon: Pokemon, move: Move, learned_level: int) ->
 			return
 
 
-func _show_runtime_message(text: String) -> void:
-	await show_message_from_dict({
+func _show_runtime_message(text: String, on_text_ready: Callable = Callable()) -> void:
+	var msg := {
 		"type": "input",
 		"text": text,
 		"showIconAtEnd": true,
-	})
+	}
+	if on_text_ready.is_valid():
+		msg["on_text_ready"] = on_text_ready
+	await show_message_from_dict(msg)
 	clear_message_box()
 
 
 func _show_runtime_choices(text: String, options: Array[String]) -> int:
-	await _show_runtime_message(text)
+	var selected_index: int = await _show_battle_message_with_choices(text, options)
+	clear_message_box()
+	return selected_index
+
+
+## Mensaje en el MessageBox de batalla + ChoiceBox; el texto permanece visible (closeAtEnd=false).
+func _show_battle_message_with_choices(text: String, options: Array[String]) -> int:
+	var choices_mode_active := true
+	var finished_callback := func() -> void:
+		if choices_mode_active and message_box.messageHasFinished:
+			message_box._finish_without_closing()
+
+	if not message_box.finishedAllText.is_connected(finished_callback):
+		message_box.finishedAllText.connect(finished_callback)
+
+	await message_box.show_custom(text, {
+		"waitInput": true,
+		"closeAtEnd": false,
+		"waitTime": 0.0,
+		"showIconAtEnd": false,
+	})
+
+	if choices_mode_active and message_box.messageHasFinished and message_box._is_processing_message:
+		message_box._finish_without_closing()
+
+	if message_box.finishedAllText.is_connected(finished_callback):
+		message_box.finishedAllText.disconnect(finished_callback)
+	choices_mode_active = false
+
 	return await DisplayManager.show_choices(options)
 
 
@@ -1535,9 +1614,18 @@ func show_previous_effect_message(
 func show_message_from_dict(msg: Dictionary) -> void:
 	if msg == null or msg.is_empty():
 		return
+	var on_text_ready: Callable = msg.get("on_text_ready", Callable())
 	match msg.type:
 		"input":
-			await message_box.show_input(msg.text, true)  # Batalla: mostrar icono al final
+			if on_text_ready.is_valid():
+				await message_box.show_custom(msg.text, {
+					"waitInput": true,
+					"closeAtEnd": false,
+					"showIconAtEnd": true,
+					"onTextVisibleReady": on_text_ready,
+				})
+			else:
+				await message_box.show_input(msg.text, true)  # Batalla: mostrar icono al final
 		"wait":
 			await message_box.show_wait(msg.text, msg.get("wait_time", 1.0))
 		"display":

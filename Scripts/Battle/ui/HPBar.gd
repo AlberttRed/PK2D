@@ -18,6 +18,17 @@ const SPRITE_PLAYER_DOUBLE = preload("res://Sprites/Pictures/battlePlayerBoxD.pn
 const SPRITE_ENEMY_SINGLE  = preload("res://Sprites/Pictures/battleFoeBoxS.png")
 const SPRITE_ENEMY_DOUBLE  = preload("res://Sprites/Pictures/battleFoeBoxD.png")
 const _PokemonExperienceGroup := preload("res://Scripts/Runtime/PokemonExperienceGroup.gd")
+## Réplica Essentials/Gen 3: la barra se mueve en unidades de medidor (0–96), no en EXP cruda.
+const EXP_BAR_GAUGE_SIZE := 96.0
+const EXP_BAR_ANIM_FPS := 60.0
+## Rápido (+4 u/frame) solo al llenar nivel con EXP masiva; trozos parciales van a mitad de velocidad (+2 u/frame).
+const EXP_BAR_FAST_STEP := 4.0
+const EXP_BAR_SLOW_STEP := 2.0
+## Escala de tiempo: el original va en frames de juego; aquí compensamos para que se sienta bien en tween.
+## Misma escala en ambos modos: la rapidez x2 viene solo del step (4 vs 2 u/frame).
+const EXP_BAR_FAST_TIME_SCALE := 2.5
+const EXP_BAR_SLOW_TIME_SCALE := 2.5
+const EXP_BAR_MIN_DURATION := 0.45
 
 func _ready() -> void:
 	# Misma escena que la barra de PS: no aplicar verde/amarillo/rojo al % (es trozo de EXP, no HP).
@@ -99,16 +110,38 @@ func update_exp(exp_value: int) -> void:
 	updated.emit()
 
 
+## Duración por trozo: rápido solo si `use_fast` y el trozo llena el nivel; si no, lento.
+func _exp_bar_segment_duration(
+	from_value: int,
+	to_value: int,
+	segment_max: int,
+	use_fast: bool = false
+) -> float:
+	if to_value <= from_value or segment_max <= 0:
+		return 0.0
+	var gauge_delta := float(to_value - from_value) / float(segment_max) * EXP_BAR_GAUGE_SIZE
+	var fills_to_max := to_value >= segment_max
+	var fast := fills_to_max and use_fast
+	var step := EXP_BAR_FAST_STEP if fast else EXP_BAR_SLOW_STEP
+	var frames := gauge_delta / step
+	var base_duration := frames / EXP_BAR_ANIM_FPS
+	var time_scale := EXP_BAR_FAST_TIME_SCALE if fast else EXP_BAR_SLOW_TIME_SCALE
+	return maxf(base_duration * time_scale, EXP_BAR_MIN_DURATION)
+
+
 ## EXP final ya está aplicada en runtime. Si hay subida, `level_up_message_fn(battle_pokemon, nivel_alcanzado)` se invoca tras cada nivel; la barra ya está reiniciada para ese nivel (antes del trozo EXP restante).
 func animate_exp_bar_gain(
 	previous_total_exp: int,
 	new_total_exp: int,
 	level_before_gain: int,
 	levels_gained: int,
+	gained_exp: int = 0,
 	level_up_message_fn: Callable = Callable()
 ) -> void:
 	var mon := pokemon.base_data
 	var target_level: int = mon.level
+	var level_span := mon.get_exp_bar_segment_values_for_level(previous_total_exp, level_before_gain).y
+	var use_fast_level_fills := levels_gained > 0 and gained_exp > level_span
 
 	# Nv.100: barra vacía y sin animación de subida.
 	if level_before_gain >= 100:
@@ -121,7 +154,12 @@ func animate_exp_bar_gain(
 		var from_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(previous_total_exp, level_before_gain)
 		var to_seg: Vector2i = mon.get_exp_bar_segment_values_for_level(new_total_exp, level_before_gain)
 		exp_bar.set_values(from_seg.x, from_seg.y)
-		await exp_bar.animate_to(to_seg.x)
+		AudioManager.play_battle_exp_gain()
+		await exp_bar.animate_to(
+			to_seg.x,
+			_exp_bar_segment_duration(from_seg.x, to_seg.x, from_seg.y)
+		)
+		AudioManager.stop_battle_exp_gain()
 		updated.emit()
 		return
 
@@ -137,7 +175,13 @@ func animate_exp_bar_gain(
 			var from_seg2: Vector2i = mon.get_exp_bar_segment_values_for_level(e, L)
 			var to_seg2: Vector2i = mon.get_exp_bar_segment_values_for_level(need, L)
 			exp_bar.set_values(from_seg2.x, from_seg2.y)
-			await exp_bar.animate_to(to_seg2.x)
+			AudioManager.play_battle_exp_gain()
+			await exp_bar.animate_to(
+				to_seg2.x,
+				_exp_bar_segment_duration(from_seg2.x, to_seg2.x, from_seg2.y, use_fast_level_fills)
+			)
+			AudioManager.stop_battle_exp_gain()
+			AudioManager.play_battle_exp_full()
 			e = need
 		var reached: int = L + 1
 		lbl_level.setText(str(reached))
@@ -153,7 +197,12 @@ func animate_exp_bar_gain(
 		var from_seg3: Vector2i = mon.get_exp_bar_segment_values_for_level(e, L)
 		var to_seg3: Vector2i = mon.get_exp_bar_segment_values_for_level(new_total_exp, L)
 		exp_bar.set_values(from_seg3.x, from_seg3.y)
-		await exp_bar.animate_to(to_seg3.x)
+		AudioManager.play_battle_exp_gain()
+		await exp_bar.animate_to(
+			to_seg3.x,
+			_exp_bar_segment_duration(from_seg3.x, to_seg3.x, from_seg3.y)
+		)
+		AudioManager.stop_battle_exp_gain()
 
 	refresh_panel_labels()
 	updated.emit()

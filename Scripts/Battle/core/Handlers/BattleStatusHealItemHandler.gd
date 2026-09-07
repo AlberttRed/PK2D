@@ -79,5 +79,5 @@ func _visualize(ui: BattleUI) -> void:
 		return
 	await show_item_used_battle_message(ui, _item_data)
 	if _status_fx != null:
-		_status_fx.visualize(ui)
+		await _status_fx.visualize(ui)
 	await show_battle_result_message(ui, item_use_result)

@@ -94,6 +94,27 @@ class_name PokemonData
 @export var overworld_spritesheet : AtlasTexture
 @export var overworld_shiny_spritesheet : AtlasTexture
 
+## Ruta opcional al grito (.ogg). Vacío = convención `Audio/SE/Cries/{INTERNAL_NAME}.ogg`.
+@export_file("*.ogg") var cry_override_path: String = ""
+
+const CRIES_DIR := "res://Audio/SE/Cries/"
+
+const _CRY_INTERNAL_NAME_ALIASES: Dictionary = {
+	"nidoran-m": "NIDORANmA",
+	"nidoran-f": "NIDORANfE",
+}
+
+
+## Ruta del grito de la especie (`Audio/SE/Cries/` + convención o override).
+func get_cry_path() -> String:
+	if cry_override_path != "":
+		return cry_override_path
+	var slug := internal_name.strip_edges()
+	if slug.is_empty():
+		return ""
+	var file_stem: String = str(_CRY_INTERNAL_NAME_ALIASES.get(slug, slug.to_upper().replace("-", "")))
+	return CRIES_DIR + file_stem + ".ogg"
+
 
 #
 #func make_wild(level: int):

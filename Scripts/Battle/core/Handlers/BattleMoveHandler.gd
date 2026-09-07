@@ -109,6 +109,7 @@ static func play_battle_animation_for_handlers(
 	# Sin spots no hay a quién animar (p. ej. solo NO_TARGET/IMMUNE).
 	if spots.is_empty():
 		return
+	_play_move_battle_sfx(move_ref)
 	if not move_ref.has_method("get_battle_animation"):
 		return
 	var anim: BattleAnimation = move_ref.get_battle_animation()
@@ -127,6 +128,7 @@ func will_visualize() -> bool:
 func _play_move_battle_animation(ui: BattleUI) -> void:
 	if ui == null or move == null:
 		return
+	_play_move_battle_sfx(move)
 	if not move.has_method("get_battle_animation"):
 		return
 	var anim: BattleAnimation = move.get_battle_animation()
@@ -136,6 +138,18 @@ func _play_move_battle_animation(ui: BattleUI) -> void:
 	var user_spot: BattleSpot = _resolve_user_spot_for_animation()
 	var target_spots: Array[BattleSpot] = _resolve_target_spots_for_animation()
 	await anim.play(layer, user_spot, target_spots)
+
+
+static func _play_move_battle_sfx(move_ref) -> void:
+	if move_ref == null or not move_ref.has_method("get_battle_sfx"):
+		return
+	var sfx: AudioStream = move_ref.get_battle_sfx()
+	if sfx == null:
+		return
+	var volume_db := 0.0
+	if move_ref.has_method("get_battle_sfx_volume_db"):
+		volume_db = float(move_ref.get_battle_sfx_volume_db())
+	AudioManager.play_sfx(sfx, AudioManager.BUS_SFX, volume_db)
 
 
 static func _resolve_user_spot_static(user_ref) -> BattleSpot:

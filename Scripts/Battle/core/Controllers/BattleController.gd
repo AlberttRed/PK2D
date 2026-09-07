@@ -360,6 +360,13 @@ func grant_experience_after_enemy_ko(defeated_enemy: BattlePokemon, action_execu
 		print("¡%s ha ganado %d Puntos de Experiencia!" % [bp.get_name(), po.gained_exp])
 		if ui == null:
 			continue
+		# Salvaje: victoria justo antes del primer mensaje de EXP (tras el KO final).
+		if (
+			rules.type == BattleRules.BattleTypes.WILD
+			and battle_finished()
+			and winner_side == "player"
+		):
+			AudioManager.play_battle_victory_bgm(rules, enemy_side.participants if enemy_side else [])
 		await ui.show_gained_exp_message(bp, po.gained_exp)
 		var lvl_res = level_ctx_by_bp.get(bp)
 		var lv_before: int = bp.base_data.level
@@ -388,7 +395,9 @@ func grant_experience_after_enemy_ko(defeated_enemy: BattlePokemon, action_execu
 			if lv_gained > 0 and lvl_res != null:
 				msg_cb = func(cb_bp: BattlePokemon, reached_level: int) -> void:
 					await ui.show_level_up_dialog_for_single_level(cb_bp, reached_level, lvl_res)
-			await spot.hp_bar.animate_exp_bar_gain(old_total, po.new_total_exp, lv_before, lv_gained, msg_cb)
+			await spot.hp_bar.animate_exp_bar_gain(
+				old_total, po.new_total_exp, lv_before, lv_gained, po.gained_exp, msg_cb
+			)
 		elif lv_gained > 0 and lvl_res != null:
 			await ui.show_level_up_dialog_sequence(bp, lvl_res)
 

@@ -344,7 +344,7 @@ func _confirm_selection() -> void:
 
 ## Cancela la selección (opcional, emite -1)
 func _cancel_selection() -> void:
-	_play_cancel_sound()
+	_play_select_sound()
 	choice_cancelled.emit()
 	choice_made.emit(-1)
 
@@ -377,11 +377,11 @@ func _disable_input() -> void:
 
 ## Callbacks de input
 func _on_input_up() -> void:
-	if _input_enabled:
+	if _input_enabled and visible:
 		_navigate_up()
 
 func _on_input_down() -> void:
-	if _input_enabled:
+	if _input_enabled and visible:
 		_navigate_down()
 
 func _on_input_accept() -> void:
@@ -390,18 +390,15 @@ func _on_input_accept() -> void:
 	_confirm_selection()
 
 func _on_input_cancel() -> void:
-	if _input_enabled:
+	if _input_enabled and visible:
 		_cancel_selection()
 
-## Efectos de sonido (placeholder - implementar cuando haya sistema de audio)
+## Efectos de sonido de UI
 func _play_cursor_sound() -> void:
-	# TODO: Reproducir sonido de cursor
-	pass
+	AudioManager.play_ui_cursor()
 
 func _play_select_sound() -> void:
-	# TODO: Reproducir sonido de selección
-	pass
+	AudioManager.play_ui_select()
 
 func _play_cancel_sound() -> void:
-	# TODO: Reproducir sonido de cancelación
-	pass
+	AudioManager.play_ui_cancel()

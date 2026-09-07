@@ -98,6 +98,7 @@ static func play_intro_trainers_enter(ui: BattleUI, rules: BattleRules) -> void:
 			ui,
 			BASE_ENTER_DURATION
 		)
+		_play_wild_enemy_intro_cries(ui, rules)
 		await show_wild_enemy_hp_bars(ui, rules)
 		return
 
@@ -148,6 +149,20 @@ static func hide_party_bars(ui: BattleUI, rules: BattleRules) -> void:
 
 
 ## Salvaje: tras el slide de bases, HP del rival antes del mensaje «X salvaje apareció».
+static func _play_wild_enemy_intro_cries(ui: BattleUI, rules: BattleRules) -> void:
+	if ui == null or ui.field_ui == null or ui.battle_controller == null:
+		return
+	if rules == null or rules.type != BattleRules.BattleTypes.WILD:
+		return
+	var spots := ui.field_ui.get_enemy_spots_for_mode(rules.mode)
+	var actives := ui.battle_controller.enemy_side.get_active_pokemons()
+	for i in mini(spots.size(), actives.size()):
+		var spot: BattleSpot = spots[i]
+		if spot == null or actives[i] == null:
+			continue
+		BattleAnimationUtils.play_spot_pokemon_cry(spot)
+
+
 static func show_wild_enemy_hp_bars(ui: BattleUI, rules: BattleRules) -> void:
 	if ui == null or ui.field_ui == null or ui.battle_controller == null:
 		return

@@ -284,12 +284,13 @@ func end_turn():
 		# Residual (veneno, clima…): faint inmediato; EXP/reemplazos más abajo.
 		await check_and_show_fainted(_first_living_active(battle_controller.player_side))
 	# EXP de todos los KO del turno (y residuales), luego reemplazos.
+	# IMPORTANTE: resolver EXP SIEMPRE, incluso si la batalla ya terminó,
+	# para que se muestren los mensajes de level-up y aprendizaje de movimientos.
 	await resolve_pending_experience()
 	if not battle_controller.finished:
 		await resolve_pending_forced_switches()
 	else:
 		_pending_forced_switches.clear()
-		_pending_exp_grants.clear()
 	turn_finished.emit(current_turn)
 
 func reset():

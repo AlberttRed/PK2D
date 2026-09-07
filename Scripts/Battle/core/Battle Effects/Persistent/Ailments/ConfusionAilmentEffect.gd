@@ -47,8 +47,9 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: BattleEffect.P
 	await ui.show_previous_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
 
 	if effect_success:
-		# Se golpeó a sí mismo
+		# Se golpeó a sí mismo (SFX junto al hit, como DamageEffect).
 		await ui.show_effect_message(MessageFamily.Values.AILMENT, pokemon, source.id)
+		AudioManager.play_battle_damage_effectiveness(1.0)
 		await pokemon.battle_spot.play_hit_animation()
 		await pokemon.battle_spot.apply_damage()
 

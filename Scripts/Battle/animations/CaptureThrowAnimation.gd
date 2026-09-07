@@ -76,9 +76,12 @@ func run(target_spot: BattleSpot, ui: BattleUI = null) -> void:
 	z_as_relative = false
 	z_index = FieldUI.FIELD_POKEBALL_Z
 
+	AudioManager.play_battle_throw()
 	await _tween_throw(start, apex, hover)
+	AudioManager.play_battle_ball_hit()
 	await _tween_squash()
 	ball.texture = PokeballThrowSpriteFrames.get_frame(_ball_sprite_id, PokeballThrowSpriteFrames.OPEN_START_FRAME)
+	AudioManager.play_battle_jump_to_ball()
 	var open_anim := _animate_open_frames_tween(1.12)
 	# Todas las luces (flash, orbes) mientras la ball está abierta.
 	await _flash_and_absorb_pokemon()
@@ -198,6 +201,7 @@ func _apply_ball_bottom_pivot() -> void:
 func play_wobble(index: int = 0) -> void:
 	if ball == null:
 		return
+	AudioManager.play_battle_ball_shake()
 	const TILT := 0.42
 	const HALF := 0.11
 	var tw := create_tween()
@@ -280,6 +284,7 @@ func _prepare_escape_enter_sprite() -> void:
 func play_capture_success_hold() -> void:
 	if ball == null:
 		return
+	AudioManager.play_battle_catch_click()
 	ball.texture = _closed_texture()
 	ball.rotation = 0.0
 	const DARKEN_SEC := 0.175
@@ -903,21 +908,25 @@ func _tween_fall_and_bounce(from_hover: Vector2) -> void:
 	var tw := create_tween()
 	# Caída al suelo.
 	tw.tween_property(ball, "position", Vector2(0, 0), 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(AudioManager.play_battle_ball_drop)
 	tw.tween_property(ball, "scale", Vector2(1.25, 0.7), 0.05)
 	tw.tween_property(ball, "scale", Vector2(1, 1), 0.06)
 	# Rebote 1.
 	tw.tween_property(ball, "position", Vector2(0, -26), 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(ball, "position", Vector2(0, 0), 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(AudioManager.play_battle_ball_drop)
 	tw.tween_property(ball, "scale", Vector2(1.18, 0.78), 0.04)
 	tw.tween_property(ball, "scale", Vector2(1, 1), 0.05)
 	# Rebote 2.
 	tw.tween_property(ball, "position", Vector2(0, -14), 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(ball, "position", Vector2(0, 0), 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(AudioManager.play_battle_ball_drop)
 	tw.tween_property(ball, "scale", Vector2(1.12, 0.85), 0.04)
 	tw.tween_property(ball, "scale", Vector2(1, 1), 0.04)
 	# Rebote 3.
 	tw.tween_property(ball, "position", Vector2(0, -7), 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(ball, "position", Vector2(0, 0), 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(AudioManager.play_battle_ball_drop)
 	tw.tween_property(ball, "scale", Vector2(1.08, 0.9), 0.03)
 	tw.tween_property(ball, "scale", Vector2(1, 1), 0.04)
 	await tw.finished

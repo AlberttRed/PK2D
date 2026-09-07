@@ -185,6 +185,16 @@ func get_battle_animation() -> BattleAnimation:
 		return null
 	return base.battle_animation
 
+func get_battle_sfx() -> AudioStream:
+	if base == null:
+		return null
+	return base.battle_sfx
+
+func get_battle_sfx_volume_db() -> float:
+	if base == null:
+		return 0.0
+	return base.battle_sfx_volume_db
+
 ## Helpers para características del movimiento
 func has_contact() -> bool:
 	"""Retorna true si el movimiento hace contacto físico"""

@@ -98,7 +98,7 @@ func _initial_row_index_for_canonical(canonical: int) -> int:
 
 ## Abre el menú de pausa. `initial_index` es el índice canónico (0=POKéDEX, 1=POKéMON, 2=MOCHILA…);
 ## si POKéDEX o POKéMON no están en pantalla, se ajusta a la primera fila visible.
-func open(initial_index: int = -1) -> void:
+func open(initial_index: int = -1, play_sfx: bool = true) -> void:
 	if visible:
 		return
 
@@ -134,15 +134,20 @@ func open(initial_index: int = -1) -> void:
 	modulate.a = 1.0
 	_enable_input()
 	_block_player_control()
+	if play_sfx:
+		_play_menu_open_sound()
 
 ## Cierra el menú de pausa
-func close() -> void:
+func close(play_sfx: bool = true) -> void:
 	if not visible:
 		return
 	_visible_indices.clear()
 
 	# Deshabilitar input
 	_disable_input()
+
+	if play_sfx:
+		_play_cancel_sound()
 
 	modulate.a = 1.0
 	# Ocultar el panel
@@ -270,7 +275,6 @@ func _confirm_selection() -> void:
 
 ## Cancela la selección (cierra el menú)
 func _cancel_selection() -> void:
-	_play_cancel_sound()
 	close()
 
 ## Habilita el manejo de input
@@ -336,15 +340,15 @@ func _unblock_player_control() -> void:
 	if dm:
 		dm.player_control_unblocked.emit()
 
-## Efectos de sonido (placeholder - implementar cuando haya sistema de audio)
+## Efectos de sonido de UI
 func _play_cursor_sound() -> void:
-	# TODO: Reproducir sonido de cursor
-	pass
+	AudioManager.play_ui_cursor()
 
 func _play_select_sound() -> void:
-	# TODO: Reproducir sonido de selección
-	pass
+	AudioManager.play_ui_select()
 
 func _play_cancel_sound() -> void:
-	# TODO: Reproducir sonido de cancelación
-	pass
+	AudioManager.play_ui_cancel()
+
+func _play_menu_open_sound() -> void:
+	AudioManager.play_ui_menu_open()

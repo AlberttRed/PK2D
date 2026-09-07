@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_wlbv3"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_udcio"]
 [ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/ScratchAnimation.tres" id="3_scratch_anim"]
+[ext_resource type="AudioStream" uid="uid://ck78ft7sgfnca" path="res://Audio/SE/Moves/Scratch.ogg" id="4_sfx"]
 
 [resource]
 resource_name = "10 - Arañazo"
@@ -23,3 +24,4 @@ target_id = 10
 meta_category_id = 0
 category = ExtResource("1_cmold")
 battle_animation = ExtResource("3_scratch_anim")
+battle_sfx = ExtResource("4_sfx")

@@ -32,6 +32,13 @@ const _SEARCH_ORDER_MODE_DESCRIPTIONS: Array[String] = [
 	"Vistos y atrapados: de mayor a menor altura.",
 	"Vistos y atrapados: de menor a mayor altura.",
 ]
+const _ENTRY_TRANSITION_FADE_OUT: float = 0.4
+const _ENTRY_TRANSITION_MOVE: float = 0.5
+const _ENTRY_TRANSITION_FADE_IN: float = 0.3
+const _SCREEN_TRANSITION_FADE_OUT: float = 0.3
+const _SCREEN_TRANSITION_FADE_IN: float = 0.3
+const _ENTRY_TRANSITION_OVERLAY_Z: int = 50
+const _ENTRY_TRANSITION_SPRITE_Z: int = 51
 
 enum ViewMode {
 	REGIONS,
@@ -123,6 +130,9 @@ var _search_data_options: Array[String] = []
 var _selected_search_data_index: int = 0
 var _search_data_focus: bool = false
 var _search_selected_option_by_level: Dictionary = {}
+var _entry_transition_overlay: ColorRect = null
+var _entry_transition_sprite: Sprite2D = null
+var _entry_transition_busy: bool = false
 
 
 func _ready() -> void:
@@ -151,6 +161,7 @@ func _ready() -> void:
 		else:
 			_title.text = "Pokédex"
 	_owner_white_material = _build_owner_white_material()
+	_setup_entry_transition_nodes()
 
 
 func setup(controller) -> void:
@@ -163,6 +174,7 @@ func open() -> void:
 		return
 	show()
 	set_process(true)
+	AudioManager.play_ui_pokedex_open()
 	_arrow_anim_time = 0.0
 	_reset_held_navigation()
 	_selected_index = 0
@@ -181,6 +193,7 @@ func open() -> void:
 func close() -> void:
 	if not visible:
 		return
+	_reset_entry_transition()
 	_disable_input()
 	set_process(false)
 	_reset_arrow_frames()
@@ -250,14 +263,16 @@ func _render() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not _input_enabled or not visible:
+	if not _input_enabled or not visible or _entry_transition_busy:
 		return
 	if event.is_action_pressed("f5"):
 		if _view_mode == ViewMode.LIST:
+			_play_cursor_sound()
 			_enter_search_mode()
 			get_viewport().set_input_as_handled()
 			return
 		if _view_mode == ViewMode.SEARCH:
+			_play_cancel_sound()
 			_enter_list_mode(true)
 			get_viewport().set_input_as_handled()
 			return
@@ -444,9 +459,12 @@ func _compute_scroll_top(item_count: int, selected_index: int) -> int:
 
 func _navigate_up() -> void:
 	if _view_mode == ViewMode.REGIONS:
+		var prev := _selected_region_index
 		_selected_region_index -= 1
 		if _selected_region_index < 0:
 			_selected_region_index = _REGION_EXIT_INDEX
+		if _selected_region_index != prev:
+			_play_cursor_sound()
 		_render_regions()
 		return
 	if _view_mode == ViewMode.ENTRY:
@@ -457,25 +475,34 @@ func _navigate_up() -> void:
 			_navigate_search_data(-1)
 			return
 		if not _search_targets.is_empty():
+			var prev_search := _selected_search_index
 			_selected_search_index -= 1
 			if _selected_search_index < 0:
 				_selected_search_index = _search_targets.size() - 1
+			if _selected_search_index != prev_search:
+				_play_cursor_sound()
 			_update_search_cursor_position()
 		return
 	var total: int = int(_controller.get_navigation_limit_count())
 	if total <= 0:
 		return
+	var prev_index := _selected_index
 	_selected_index -= 1
 	if _selected_index < 0:
 		_selected_index = total - 1
+	if _selected_index != prev_index:
+		_play_cursor_sound()
 	_render()
 
 
 func _navigate_down() -> void:
 	if _view_mode == ViewMode.REGIONS:
+		var prev := _selected_region_index
 		_selected_region_index += 1
 		if _selected_region_index > _REGION_EXIT_INDEX:
 			_selected_region_index = 0
+		if _selected_region_index != prev:
+			_play_cursor_sound()
 		_render_regions()
 		return
 	if _view_mode == ViewMode.ENTRY:
@@ -486,21 +513,28 @@ func _navigate_down() -> void:
 			_navigate_search_data(1)
 			return
 		if not _search_targets.is_empty():
+			var prev_search := _selected_search_index
 			_selected_search_index += 1
 			if _selected_search_index >= _search_targets.size():
 				_selected_search_index = 0
+			if _selected_search_index != prev_search:
+				_play_cursor_sound()
 			_update_search_cursor_position()
 		return
 	var total: int = int(_controller.get_navigation_limit_count())
 	if total <= 0:
 		return
+	var prev_index := _selected_index
 	_selected_index += 1
 	if _selected_index >= total:
 		_selected_index = 0
+	if _selected_index != prev_index:
+		_play_cursor_sound()
 	_render()
 
 
 func _request_back() -> void:
+	_play_cancel_sound()
 	back_requested.emit()
 
 
@@ -545,22 +579,23 @@ func _disable_input() -> void:
 
 
 func _on_input_up() -> void:
-	if _input_enabled:
+	if _input_enabled and not _entry_transition_busy:
 		_reset_held_navigation()
 		_navigate_up()
 
 
 func _on_input_down() -> void:
-	if _input_enabled:
+	if _input_enabled and not _entry_transition_busy:
 		_reset_held_navigation()
 		_navigate_down()
 
 
 func _on_input_left() -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _search_data_focus:
+			_play_cancel_sound()
 			_cancel_search_data_selection()
 		return
 	if _view_mode == ViewMode.ENTRY:
@@ -568,14 +603,16 @@ func _on_input_left() -> void:
 
 
 func _on_input_right() -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _selected_search_index == 5 or _selected_search_index == 7:
 			return
 		if _search_data_focus:
+			_play_select_sound()
 			_commit_search_data_selection()
 		else:
+			_play_cursor_sound()
 			_search_data_focus = true
 			_load_search_data_options_for_current_level()
 			_update_search_data_cursor_position()
@@ -585,7 +622,7 @@ func _on_input_right() -> void:
 
 
 func _on_input_accept() -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		return
 	if _view_mode == ViewMode.REGIONS:
 		_accept_region_selection()
@@ -595,34 +632,42 @@ func _on_input_accept() -> void:
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _selected_search_index == 5:
+			_play_select_sound()
 			await _execute_search_filters()
 			return
 		if _selected_search_index == 7:
+			_play_select_sound()
 			await _execute_search_sorting()
 			return
 		if _search_data_focus:
+			_play_select_sound()
 			_commit_search_data_selection()
 		else:
+			_play_cursor_sound()
 			_search_data_focus = true
 			_load_search_data_options_for_current_level()
 			_update_search_data_cursor_position()
 		return
 	if _view_mode == ViewMode.ENTRY:
 		if _active_detail_panel == DetailPanel.FORM:
+			_play_select_sound()
 			await _open_form_gender_choices()
 		return
 
 
 func _on_input_cancel() -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		return
 	if _view_mode == ViewMode.ENTRY:
-		_enter_list_mode(true)
+		_play_cancel_sound()
+		await _play_entry_close_transition()
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _search_data_focus:
+			_play_cancel_sound()
 			_cancel_search_data_selection()
 			return
+		_play_cancel_sound()
 		_enter_list_mode(true)
 		return
 	if _view_mode == ViewMode.LIST:
@@ -632,21 +677,25 @@ func _on_input_cancel() -> void:
 			_selected_index = 0
 			_render()
 			return
-		_enter_regions_mode()
+		_play_cancel_sound()
+		await _play_list_to_regions_transition()
 		return
 	_request_back()
 
 
 func _on_input_start() -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		return
 	if _view_mode == ViewMode.ENTRY:
-		_enter_list_mode(true)
+		_play_cancel_sound()
+		await _play_entry_close_transition()
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _search_data_focus:
+			_play_cancel_sound()
 			_cancel_search_data_selection()
 			return
+		_play_cancel_sound()
 		_enter_list_mode(true)
 		return
 	if _view_mode == ViewMode.LIST:
@@ -656,7 +705,8 @@ func _on_input_start() -> void:
 			_selected_index = 0
 			_render()
 			return
-		_enter_regions_mode()
+		_play_cancel_sound()
+		await _play_list_to_regions_transition()
 		return
 	_request_back()
 
@@ -668,7 +718,8 @@ func _accept_region_selection() -> void:
 	var result: Dictionary = _controller.try_select_region(_selected_region_index)
 	if not bool(result.get("ok", false)):
 		return
-	_enter_list_mode()
+	_play_select_sound()
+	await _play_regions_to_list_transition()
 
 
 func _accept_list_selection() -> void:
@@ -679,7 +730,264 @@ func _accept_list_selection() -> void:
 	var caught: bool = bool(entry.get("caught", false))
 	if not seen and not caught:
 		return
-	_enter_entry_mode()
+	_play_select_sound()
+	await _play_entry_open_transition()
+
+
+func _setup_entry_transition_nodes() -> void:
+	_entry_transition_overlay = ColorRect.new()
+	_entry_transition_overlay.name = "EntryTransitionOverlay"
+	_entry_transition_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_entry_transition_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_entry_transition_overlay.color = Color(0.0, 0.0, 0.0, 0.0)
+	_entry_transition_overlay.visible = false
+	_entry_transition_overlay.z_index = _ENTRY_TRANSITION_OVERLAY_Z
+	add_child(_entry_transition_overlay)
+
+	_entry_transition_sprite = Sprite2D.new()
+	_entry_transition_sprite.name = "EntryTransitionSprite"
+	_entry_transition_sprite.visible = false
+	_entry_transition_sprite.z_index = _ENTRY_TRANSITION_SPRITE_Z
+	_entry_transition_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(_entry_transition_sprite)
+
+
+func _reset_entry_transition() -> void:
+	_entry_transition_busy = false
+	if _entry_transition_overlay != null:
+		_entry_transition_overlay.visible = false
+		_entry_transition_overlay.color = Color(0.0, 0.0, 0.0, 0.0)
+	if _entry_transition_sprite != null:
+		_entry_transition_sprite.visible = false
+	if _entry_panel != null:
+		_entry_panel.modulate = Color.WHITE
+	if _detail_sprite != null:
+		_detail_sprite.visible = true
+	if _entry_sprite != null:
+		_entry_sprite.visible = true
+
+
+func _play_screen_fade_transition(switch_callback: Callable) -> void:
+	if _entry_transition_busy:
+		return
+	_entry_transition_busy = true
+	_disable_input()
+	_show_entry_transition_overlay(0.0)
+
+	var fade_out := create_tween()
+	fade_out.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		1.0,
+		_SCREEN_TRANSITION_FADE_OUT
+	)
+	await fade_out.finished
+
+	switch_callback.call()
+
+	var fade_in := create_tween()
+	fade_in.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		0.0,
+		_SCREEN_TRANSITION_FADE_IN
+	)
+	await fade_in.finished
+
+	_entry_transition_overlay.visible = false
+	_entry_transition_busy = false
+	_enable_input()
+
+
+func _play_regions_to_list_transition() -> void:
+	await _play_screen_fade_transition(_enter_list_mode)
+
+
+func _play_list_to_regions_transition() -> void:
+	await _play_screen_fade_transition(_enter_regions_mode)
+
+
+func _play_entry_open_transition() -> void:
+	if _entry_transition_busy:
+		return
+	if _detail_sprite == null or _entry_sprite == null:
+		_enter_entry_mode()
+		return
+	if _detail_sprite.texture == null:
+		_enter_entry_mode()
+		return
+
+	_entry_transition_busy = true
+	_disable_input()
+	_render_detail()
+
+	_prepare_transition_sprite_from(_detail_sprite)
+	_detail_sprite.visible = false
+	_show_entry_transition_overlay(0.0)
+
+	var fade_out := create_tween()
+	fade_out.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		1.0,
+		_ENTRY_TRANSITION_FADE_OUT
+	)
+	await fade_out.finished
+
+	_prepare_entry_mode_under_black()
+	var target_pos := _entry_sprite.global_position
+
+	var move := create_tween()
+	move.set_trans(Tween.TRANS_SINE)
+	move.set_ease(Tween.EASE_IN_OUT)
+	move.tween_property(
+		_entry_transition_sprite,
+		"global_position",
+		target_pos,
+		_ENTRY_TRANSITION_MOVE
+	)
+	await move.finished
+
+	var fade_in := create_tween()
+	fade_in.set_parallel(true)
+	fade_in.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		0.0,
+		_ENTRY_TRANSITION_FADE_IN
+	)
+	fade_in.tween_property(
+		_entry_panel,
+		"modulate:a",
+		1.0,
+		_ENTRY_TRANSITION_FADE_IN
+	)
+	await fade_in.finished
+
+	_finish_entry_transition_sprite_swap(_entry_sprite)
+	_entry_transition_overlay.visible = false
+	_entry_panel.modulate = Color.WHITE
+	_play_pokemon_cry_for_current()
+	_entry_transition_busy = false
+	_enable_input()
+
+
+func _play_entry_close_transition() -> void:
+	if _entry_transition_busy:
+		return
+	if _detail_sprite == null or _entry_sprite == null:
+		_enter_list_mode(true)
+		return
+	if _entry_sprite.texture == null:
+		_enter_list_mode(true)
+		return
+
+	_entry_transition_busy = true
+	_disable_input()
+
+	_prepare_transition_sprite_from(_entry_sprite)
+	_entry_sprite.visible = false
+	_show_entry_transition_overlay(_entry_transition_overlay.color.a)
+
+	var fade_out := create_tween()
+	fade_out.set_parallel(true)
+	fade_out.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		1.0,
+		_ENTRY_TRANSITION_FADE_OUT
+	)
+	fade_out.tween_property(
+		_entry_panel,
+		"modulate:a",
+		0.0,
+		_ENTRY_TRANSITION_FADE_OUT
+	)
+	await fade_out.finished
+
+	_enter_list_mode(true)
+	_render_detail()
+	var target_pos := _detail_sprite.global_position
+	_detail_sprite.visible = false
+
+	var move := create_tween()
+	move.set_trans(Tween.TRANS_SINE)
+	move.set_ease(Tween.EASE_IN_OUT)
+	move.tween_property(
+		_entry_transition_sprite,
+		"global_position",
+		target_pos,
+		_ENTRY_TRANSITION_MOVE
+	)
+	await move.finished
+
+	var fade_in := create_tween()
+	fade_in.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		0.0,
+		_ENTRY_TRANSITION_FADE_IN
+	)
+	await fade_in.finished
+
+	_finish_entry_transition_sprite_swap(_detail_sprite)
+	_entry_transition_overlay.visible = false
+	_entry_panel.modulate = Color.WHITE
+	_entry_transition_busy = false
+	_enable_input()
+
+
+func _prepare_transition_sprite_from(source: Sprite2D) -> void:
+	_entry_transition_sprite.texture = source.texture
+	_entry_transition_sprite.scale = source.scale
+	_entry_transition_sprite.offset = source.offset
+	_entry_transition_sprite.flip_h = source.flip_h
+	_entry_transition_sprite.flip_v = source.flip_v
+	_entry_transition_sprite.centered = source.centered
+	_entry_transition_sprite.global_position = source.global_position
+	_entry_transition_sprite.visible = true
+
+
+func _finish_entry_transition_sprite_swap(target: Sprite2D) -> void:
+	if target != null:
+		target.visible = true
+	_entry_transition_sprite.hide()
+
+
+func _show_entry_transition_overlay(alpha: float) -> void:
+	_entry_transition_overlay.color = Color(0.0, 0.0, 0.0, alpha)
+	_entry_transition_overlay.visible = true
+
+
+func _prepare_entry_mode_under_black() -> void:
+	_view_mode = ViewMode.ENTRY
+	_active_detail_panel = DetailPanel.ENTRY
+	$PokedexRegions.z_index = -1
+	$PokedexList.z_index = -1
+	_entry_panel.z_index = 0
+	_nest_panel.z_index = -1
+	_form_panel.z_index = -1
+	$PokedexRegions.hide()
+	$PokedexList.hide()
+	_search_panel.hide()
+	_nest_panel.hide()
+	_form_panel.hide()
+	if _regions_cursor != null:
+		_regions_cursor.hide()
+	if _search_cursor != null:
+		_search_cursor.hide()
+	if _search_data_cursor != null:
+		_search_data_cursor.hide()
+	_update_search_data_scroll_arrows()
+	if _up_arrow:
+		_up_arrow.visible = false
+	if _down_arrow:
+		_down_arrow.visible = false
+	_reset_arrow_frames()
+	_render_detail_panels()
+	_apply_active_detail_panel()
+	_entry_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	_entry_sprite.visible = false
 
 
 func _enter_regions_mode() -> void:
@@ -759,6 +1067,7 @@ func _enter_entry_mode() -> void:
 	_reset_arrow_frames()
 	_render_detail_panels()
 	_apply_active_detail_panel()
+	_play_pokemon_cry_for_current()
 
 
 func _enter_search_mode() -> void:
@@ -904,9 +1213,13 @@ func _apply_active_detail_panel() -> void:
 func _shift_detail_panel(direction: int) -> void:
 	if _form_gender_choice_open:
 		return
+	var prev_panel := _active_detail_panel
 	var idx: int = int(_active_detail_panel) + direction
 	idx = clampi(idx, int(DetailPanel.ENTRY), int(DetailPanel.FORM))
 	_active_detail_panel = idx as DetailPanel
+	if _active_detail_panel == prev_panel:
+		return
+	_play_change_page_sound()
 	_apply_active_detail_panel()
 
 
@@ -925,6 +1238,7 @@ func _navigate_discovered_in_detail(direction: int) -> void:
 	_selected_index = new_index
 	_render_detail_panels()
 	_apply_active_detail_panel()
+	_play_pokemon_cry_for_current()
 
 
 func _update_form_icon_animation(delta: float) -> void:
@@ -1095,7 +1409,7 @@ func _format_measure_value(value: float) -> String:
 
 
 func _update_held_navigation(delta: float) -> void:
-	if not _input_enabled:
+	if not _input_enabled or _entry_transition_busy:
 		_reset_held_navigation()
 		return
 	if _view_mode == ViewMode.ENTRY:
@@ -1402,11 +1716,15 @@ func _navigate_search_data(dir: int) -> void:
 	var total := _search_data_options.size()
 	if total <= 0:
 		return
+	var prev := _selected_search_data_index
 	_selected_search_data_index += dir
 	if _selected_search_data_index < 0:
 		_selected_search_data_index = total - 1
 	elif _selected_search_data_index >= total:
 		_selected_search_data_index = 0
+	if _selected_search_data_index == prev:
+		return
+	_play_cursor_sound()
 	_render_search_data_rows()
 	_update_search_data_scroll_arrows()
 	_update_search_data_cursor_position()
@@ -1512,6 +1830,37 @@ func _block_player_control() -> void:
 	var dm := DisplayManager.instance
 	if dm:
 		dm.player_control_blocked.emit()
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
+
+
+func _play_select_sound() -> void:
+	AudioManager.play_ui_select()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()
+
+
+func _play_change_page_sound() -> void:
+	AudioManager.play_ui_change_page()
+
+
+func _play_pokemon_cry_for_current() -> void:
+	if _controller == null:
+		return
+	var entry: Dictionary = _controller.get_list_entry(_selected_index)
+	if entry.is_empty():
+		return
+	var species_id: int = int(entry.get("species_id", 0))
+	if species_id <= 0:
+		return
+	var data := DatabaseService.get_pokemon(species_id) as PokemonData
+	if data == null:
+		return
+	AudioManager.play_pokemon_cry_from_data(data)
 
 
 func _unblock_player_control() -> void:
