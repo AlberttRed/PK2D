@@ -7,4 +7,5 @@ script = ExtResource("1_0mwap")
 id = 3
 internal_name = "brock"
 display_name = "BROCK"
+default_eyes_meet = 4
 metadata/_custom_type_script = "uid://rtl6lttslxe3"

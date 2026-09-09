@@ -52,6 +52,7 @@ static func prepare_intro_field(ui: BattleUI, rules: BattleRules) -> void:
 	var mode := BattleRules.BattleModes.SINGLE
 	if rules != null:
 		mode = rules.mode
+	ui.field_ui.apply_participant_trainer_sprites(ui.battle_controller)
 	ui.field_ui.hide_all_hp_bars(mode)
 	ui.field_ui.hide_all_party_bars()
 	ui.field_ui.apply_trainer_rest_positions(

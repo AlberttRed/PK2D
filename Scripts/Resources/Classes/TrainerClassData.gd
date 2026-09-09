@@ -35,6 +35,10 @@ class_name TrainerClassData
 ## Variante de base por defecto (INHERIT = resolver según backdrop).
 @export var default_base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.INHERIT
 
+@export_group("Overworld Audio")
+## BGM "Eyes Meet" por defecto al detectar al jugador (INHERIT = fallback por TrainerClassEnum).
+@export var default_eyes_meet: TrainerEyesMeetEnum.Values = TrainerEyesMeetEnum.Values.INHERIT
+
 ## IA por defecto para esta clase (opcional; se usa si el trainer no define ai_profile)
 @export var default_ai: TrainerBattleIA = null
 

@@ -1,6 +1,7 @@
-[gd_scene load_steps=116 format=4 uid="uid://bedo0lerujlsv"]
+[gd_scene load_steps=117 format=4 uid="uid://bedo0lerujlsv"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_k4cjq"]
+[ext_resource type="AudioStream" uid="uid://bhvagjix6fvqe" path="res://Audio/BGM/Pewter City.ogg" id="bgm_pewter"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_0cp18"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="3_8u74c"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_dtqm0"]
@@ -509,6 +510,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 [node name="MapScene" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_k4cjq")
+bgm = ExtResource("bgm_pewter")
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

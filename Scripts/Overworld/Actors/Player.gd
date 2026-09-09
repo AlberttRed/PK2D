@@ -266,6 +266,7 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.RIGHT: sprite.animation = "idle_right"
 		sprite.play()
 		set_meta("can_surf", true)
+		AudioManager.play_surfing_bgm()
 	else:
 		# Volver al sprite normal
 		_refresh_actor_style_frames()
@@ -281,6 +282,7 @@ func set_surfing_mode(enabled: bool) -> void:
 			Vector2.LEFT: sprite.frame = 1
 			Vector2.RIGHT: sprite.frame = 2
 		remove_meta("can_surf")
+		_restore_map_bgm_after_surf()
 
 ## Activa o desactiva el modo buceo (Essentials: rutas submarinas / MO Dive).
 func set_diving_mode(enabled: bool) -> void:
@@ -325,6 +327,7 @@ func start_surf() -> void:
 		add_child(splash)
 
 	set_movement_enabled(false)
+	AudioManager.play_overworld_surf()
 	_play_surf_jump_pose(direction_frame, -16)
 	sprite.z_index = 1
 	var jump_success: bool = await motion.jump_to_tile(front_tile, false, -16)
@@ -380,6 +383,7 @@ func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
 
 	set_movement_enabled(false)
 	motion.step_started.emit()
+	AudioManager.play_overworld_surf()
 	_play_surf_jump_pose(direction_frame, -16)
 	sprite.z_index = 1
 	var jump_success: bool = await motion.jump_to_tile(destination_tile, false, -8)
@@ -403,6 +407,13 @@ func end_surf(target_tile: Vector2i = Vector2i(-1, -1)) -> void:
 func _execute_end_surf_before_move(target_tile: Vector2i) -> void:
 	# Ejecutar end_surf y luego permitir el movimiento
 	await end_surf(target_tile)
+
+func _restore_map_bgm_after_surf() -> void:
+	if not context:
+		return
+	var world_system: WorldSystem = context.get_world_system()
+	if world_system:
+		world_system.refresh_map_bgm()
 
 func _play_surf_jump_pose(direction_frame: int, height: int) -> void:
 	var surf_jump_frames := _get_surf_jump_frames()

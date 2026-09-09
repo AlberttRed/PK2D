@@ -179,7 +179,7 @@ func play_overlay_for_pokemon(pokemon: Pokemon, visual_override: Variant = null)
 	if overlay_visual == null:
 		return
 
-	await DisplayManager.play_mo_overlay(overlay_visual)
+	await DisplayManager.play_mo_overlay(overlay_visual, pokemon)
 
 ## Verifica si el sistema está procesando una MO
 func is_busy() -> bool:

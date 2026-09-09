@@ -1,6 +1,7 @@
 [gd_scene load_steps=372 format=4 uid="uid://dff2il63qlukf"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_mjpg0"]
+[ext_resource type="AudioStream" uid="uid://bhvagjix6fvqe" path="res://Audio/BGM/Pewter City.ogg" id="bgm_pewter"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_1mahn"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_m4t7r"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_t3bta"]
@@ -2150,6 +2151,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Ciudad_Plateada" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_mjpg0")
+bgm = ExtResource("bgm_pewter")
 world_position = Vector2(-256, -5952)
 neighbors = Array[String](["Ruta_2"])
 

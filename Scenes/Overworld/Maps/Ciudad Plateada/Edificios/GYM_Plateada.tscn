@@ -1,6 +1,7 @@
 [gd_scene load_steps=101 format=4 uid="uid://6jesadgjg24s"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_ilgld"]
+[ext_resource type="AudioStream" uid="uid://doptu0yyhbpfv" path="res://Audio/BGM/Pokémon Gym.ogg" id="bgm_gym"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gddux"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="4_bj8l0"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="4_l5hhm"]
@@ -423,6 +424,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 [node name="GYM_Plateada" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_ilgld")
+bgm = ExtResource("bgm_gym")
 metadata/_edit_lock_ = true
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]

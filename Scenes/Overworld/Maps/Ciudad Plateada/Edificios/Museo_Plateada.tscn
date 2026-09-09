@@ -1,6 +1,7 @@
 [gd_scene load_steps=174 format=4 uid="uid://ntl1hurrl6j3"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_n3lnm"]
+[ext_resource type="AudioStream" uid="uid://bhvagjix6fvqe" path="res://Audio/BGM/Pewter City.ogg" id="bgm_pewter"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_e2j4m"]
 [ext_resource type="PackedScene" uid="uid://n1ky2xjh4xtv" path="res://Scenes/Overworld/Actors/NPC.tscn" id="4_bv6ef"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="4_cho7f"]
@@ -815,6 +816,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Museo_Plateada" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_n3lnm")
+bgm = ExtResource("bgm_pewter")
 metadata/_edit_lock_ = true
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]

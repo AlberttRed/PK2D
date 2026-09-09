@@ -40,7 +40,8 @@ class_name MapScene
 @export_group("Audio")
 ## Música de fondo del mapa (BGM). Vacío = sin tema asignado.
 @export var bgm: AudioStream
-## Duración del fade/crossfade al activar este mapa (0 = cambio instantáneo).
+## Duración del fade-out de la BGM anterior al activar este mapa (0 = cambio instantáneo).
+## La nueva BGM entra a volumen pleno cuando termina el fade (estilo Gen 3).
 @export_range(0.0, 8.0, 0.05) var bgm_fade: float = 1.0
 
 ## Referencia al grid de este mapa

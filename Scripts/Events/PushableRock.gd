@@ -42,6 +42,7 @@ func push(direction: Vector2) -> bool:
 
 	# Empujar la roca (mover suavemente)
 	is_moving = true
+	AudioManager.play_overworld_strength_push()
 	await _move_to_tile(next_tile, grid)
 	is_moving = false
 
@@ -96,7 +97,6 @@ func _move_to_tile(tile: Vector2i, grid: OverworldGrid) -> void:
 	# Esperar a que termine el movimiento
 	await tween.finished
 
-	# TODO: Reproducir sonido de roca moviéndose
 	# TODO: Verificar si la roca cayó en un agujero o presionó un switch
 
 ## Callback cuando el jugador colisiona con la roca

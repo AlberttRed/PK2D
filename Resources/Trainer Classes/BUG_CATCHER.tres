@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="TrainerClassData" load_steps=2 format=3 uid="uid://d1i0it140pyy1"]
+[gd_resource type="Resource" script_class="TrainerClassData" format=3 uid="uid://d1i0it140pyy1"]
 
+[ext_resource type="Texture2D" uid="uid://w55h0jeyixif" path="res://Resources/Trainers/trainer010.png" id="1_ifae2"]
 [ext_resource type="Script" uid="uid://rtl6lttslxe3" path="res://Scripts/Resources/Classes/TrainerClassData.gd" id="1_ybg7o"]
 
 [resource]
@@ -7,6 +8,6 @@ script = ExtResource("1_ybg7o")
 id = 2
 internal_name = "bug_catcher"
 display_name = "Cazabichos"
-reward_multiplier = 1.0
-description = ""
+default_battle_front_sprite = ExtResource("1_ifae2")
+default_eyes_meet = 1
 metadata/_custom_type_script = "uid://rtl6lttslxe3"

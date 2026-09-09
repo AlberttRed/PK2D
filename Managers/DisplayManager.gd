@@ -384,11 +384,11 @@ static func play_flash_reveal(target_darkness: float, duration: float = 0.55) ->
 		return
 	await overlay.play_flash_reveal(target_darkness, duration)
 
-static func play_mo_overlay(pokemon_visual: Variant = null) -> void:
+static func play_mo_overlay(pokemon_visual: Variant = null, pokemon: Pokemon = null) -> void:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
-	await instance._play_mo_overlay(pokemon_visual)
+	await instance._play_mo_overlay(pokemon_visual, pokemon)
 
 static func set_overlay_flashlight(enabled: bool, config: Dictionary = {}) -> void:
 	var overlay := get_overlay_layer()
@@ -753,7 +753,7 @@ func _restore_overworld_bgm() -> void:
 		ws.refresh_map_bgm()
 
 
-func _play_mo_overlay(pokemon_visual: Variant) -> void:
+func _play_mo_overlay(pokemon_visual: Variant, pokemon: Pokemon = null) -> void:
 	if MO_OVERLAY_SCENE == null:
 		push_error("DisplayManager: Escena de MOOverlay no disponible")
 		return
@@ -774,7 +774,7 @@ func _play_mo_overlay(pokemon_visual: Variant) -> void:
 	var previous_input_locked := input_locked
 	input_locked = true
 
-	await overlay.play(pokemon_visual)
+	await overlay.play(pokemon_visual, pokemon)
 
 	if is_instance_valid(overlay):
 		overlay.queue_free()

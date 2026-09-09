@@ -303,6 +303,8 @@ func try_step(d: Vector2) -> bool:
 	#If cannot move to next tile, stay in same position
 	if !can_step:
 		to = from
+		if actor.is_in_group("Player"):
+			AudioManager.play_overworld_player_bump()
 	else:
 		is_colliding = false
 

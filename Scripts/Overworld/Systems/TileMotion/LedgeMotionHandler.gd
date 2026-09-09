@@ -88,6 +88,7 @@ func _execute_ledge_jump(
 
 	# Emitir señal de inicio de salto
 	grid_motion.ledge_jump_started.emit()
+	AudioManager.play_overworld_player_jump()
 
 	# Ejecutar el salto usando jump_to_tile de GridMotion (async)
 	await grid_motion.jump_to_tile(landing_tile, true, -8)

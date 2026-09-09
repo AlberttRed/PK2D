@@ -8,4 +8,5 @@ script = ExtResource("1_ah3ek")
 internal_name = "rival"
 display_name = "Rival"
 default_battle_front_sprite = ExtResource("1_8gmk2")
+default_eyes_meet = 4
 metadata/_custom_type_script = "uid://rtl6lttslxe3"

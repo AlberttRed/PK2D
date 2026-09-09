@@ -60,7 +60,30 @@ func open_create(refresh_cb: Callable = Callable()) -> void:
 	refresh_callback = refresh_cb
 	was_new = true
 	original_resource_path = ""
-	current_trainer_data = TrainerData.new()
+	# En @tool, ClassName.new() suele fallar; duplicar un .tres o reload()+new().
+	current_trainer_data = null
+	for path in ["res://Resources/Trainers/TEST.tres", "res://Resources/Trainers/BROCK.tres"]:
+		if not ResourceLoader.exists(path):
+			continue
+		var loaded := load(path)
+		if loaded is TrainerData:
+			current_trainer_data = (loaded as TrainerData).duplicate(true) as TrainerData
+			if current_trainer_data:
+				current_trainer_data.resource_path = ""
+				current_trainer_data.resource_name = ""
+				current_trainer_data.party_data = []
+				current_trainer_data.battle_items = []
+				break
+	if current_trainer_data == null:
+		var trainer_script := load("res://Scripts/Resources/Classes/TrainerData.gd") as GDScript
+		if trainer_script:
+			if not trainer_script.can_instantiate():
+				trainer_script.reload()
+			if trainer_script.can_instantiate():
+				current_trainer_data = trainer_script.new() as TrainerData
+	if current_trainer_data == null:
+		push_error("TrainerEditorWindow: No se pudo crear TrainerData")
+		return
 	_reset_form()
 	if current_trainer_data != null:
 		current_trainer_data.trainer_id = _get_next_trainer_id()

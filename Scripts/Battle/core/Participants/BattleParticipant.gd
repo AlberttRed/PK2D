@@ -20,6 +20,9 @@ var ai_controller: BattleIA:
 	set(value):
 		set_ai_controller(value)
 var sprite_path: String = ""  # Opcional, si usás esto para mostrar el entrenador
+## Sprites de combate (front = enemigo, back = jugador/aliado). Null = dejar placeholder de escena.
+var battle_front_sprite: Texture2D = null
+var battle_back_sprite: Texture2D = null
 var is_trainer: bool = true  # Nuevo flag, por compatibilidad futura
 var side: BattleSide = null  # Se asigna desde el add_participant()
 

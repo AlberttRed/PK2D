@@ -59,6 +59,20 @@ const BATTLE_SFX_HEAL_HP_RESTORE_PATH := "res://Audio/SE/In-Battle Heal HP Resto
 ## Rip GBA de curación suele venir más bajo que throw/damage.
 const BATTLE_SFX_HEAL_HP_RESTORE_VOLUME_DB := 10.0
 
+## Overworld (#821): ledge, bump, MOs. Surf BGM/SFX opcionales hasta que existan los assets.
+const OVERWORLD_SFX_PLAYER_JUMP_PATH := "res://Audio/SE/Player jump.ogg"
+const OVERWORLD_SFX_PLAYER_BUMP_PATH := "res://Audio/SE/Player bump.ogg"
+const OVERWORLD_SFX_CUT_PATH := "res://Audio/SE/Cut.ogg"
+const OVERWORLD_SFX_STRENGTH_PUSH_PATH := "res://Audio/SE/Strength push.ogg"
+const OVERWORLD_SFX_ROCK_SMASH_PATH := "res://Audio/SE/Rock Smash.ogg"
+const OVERWORLD_SFX_SURF_PATH := "res://Audio/SE/Surf.ogg"
+const OVERWORLD_BGM_SURFING_PATH := "res://Audio/BGM/Surfing.ogg"
+const OVERWORLD_BGM_SURFING_FADE := 0.5
+const EYES_MEET_BGM_BOY_PATH := "res://Audio/BGM/Trainers' Eyes Meet (Boy).ogg"
+const EYES_MEET_BGM_GIRL_PATH := "res://Audio/BGM/Trainers' Eyes Meet (Girl).ogg"
+const EYES_MEET_BGM_ROCKET_PATH := "res://Audio/BGM/Trainers' Eyes Meet (Team Rocket).ogg"
+const EYES_MEET_BGM_FADE := 0.25
+
 @onready var _bgm_player_a: AudioStreamPlayer = $BGMPlayerA
 @onready var _bgm_player_b: AudioStreamPlayer = $BGMPlayerB
 @onready var _sfx_pool: Node = $SFXPool
@@ -69,6 +83,9 @@ var _active_bgm_player: AudioStreamPlayer
 var _inactive_bgm_player: AudioStreamPlayer
 var _current_bgm_stream: AudioStream = null
 var _bgm_tween: Tween = null
+## Stream pendiente tras un fade-out secuencial (estilo Gen 3: fade out → play hard).
+var _pending_bgm_stream: AudioStream = null
+var _pending_bgm_loop: bool = true
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _sfx_next_index: int = 0
 ## Evita reiniciar la fanfare de victoria varias veces en el mismo combate.
@@ -105,6 +122,14 @@ static func crossfade_bgm(stream: AudioStream, duration: float = 1.0, loop: bool
 		push_error("AudioManager: No hay instancia disponible")
 		return
 	instance._crossfade_bgm(stream, duration, loop)
+
+
+## Estilo Gen 3: la BGM actual hace fade-out; la nueva entra a volumen pleno al terminar.
+static func fade_out_then_play_bgm(stream: AudioStream, fade_out: float = 1.0, loop: bool = true) -> void:
+	if instance == null:
+		push_error("AudioManager: No hay instancia disponible")
+		return
+	instance._fade_out_then_play_bgm(stream, fade_out, loop)
 
 
 static func play_sfx(stream: AudioStream, bus: String = BUS_SFX, volume_db: float = 0.0) -> void:
@@ -189,6 +214,88 @@ static func play_ui_change_page() -> void:
 ## Usar objeto sobre un Pokémon desde el equipo (poción, antídoto, etc.).
 static func play_ui_use_item_in_party() -> void:
 	_play_ui_sfx(UI_SFX_USE_ITEM_IN_PARTY_PATH)
+
+
+## Salto de ledge / hop genérico de overworld.
+static func play_overworld_player_jump() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_PLAYER_JUMP_PATH)
+
+
+## Choque contra pared / obstáculo (bump).
+static func play_overworld_player_bump() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_PLAYER_BUMP_PATH)
+
+
+static func play_overworld_cut() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_CUT_PATH)
+
+
+static func play_overworld_strength_push() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_STRENGTH_PUSH_PATH)
+
+
+static func play_overworld_rock_smash() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_ROCK_SMASH_PATH)
+
+
+## Splash al entrar/salir del agua (opcional: no avisa si falta el archivo).
+static func play_overworld_surf() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_SURF_PATH, false)
+
+
+## BGM de Surf. No hace nada si aún no está el asset en Audio/BGM/Surfing.ogg.
+static func play_surfing_bgm(fade: float = OVERWORLD_BGM_SURFING_FADE) -> void:
+	if instance == null:
+		return
+	if not ResourceLoader.exists(OVERWORLD_BGM_SURFING_PATH):
+		return
+	var stream := instance._load_audio_stream(OVERWORLD_BGM_SURFING_PATH)
+	if stream == null:
+		return
+	if fade <= 0.0 or not is_bgm_playing():
+		play_bgm(stream, 0.0)
+	else:
+		fade_out_then_play_bgm(stream, fade)
+
+
+## BGM desde la exclamación del entrenador hasta el combate.
+static func play_eyes_meet_bgm(theme: TrainerEyesMeetEnum.Values, fade: float = EYES_MEET_BGM_FADE) -> void:
+	if instance == null:
+		return
+	var path := _eyes_meet_path(theme)
+	if path.is_empty():
+		return
+	var stream := instance._load_audio_stream(path)
+	if stream == null:
+		return
+	if fade <= 0.0 or not is_bgm_playing():
+		play_bgm(stream, 0.0)
+	else:
+		fade_out_then_play_bgm(stream, fade)
+
+
+static func _eyes_meet_path(theme: TrainerEyesMeetEnum.Values) -> String:
+	match theme:
+		TrainerEyesMeetEnum.Values.BOY:
+			return EYES_MEET_BGM_BOY_PATH
+		TrainerEyesMeetEnum.Values.GIRL:
+			return EYES_MEET_BGM_GIRL_PATH
+		TrainerEyesMeetEnum.Values.TEAM_ROCKET:
+			return EYES_MEET_BGM_ROCKET_PATH
+		_:
+			return ""
+
+
+static func _play_overworld_sfx(path: String, warn_if_missing: bool = true) -> void:
+	if instance == null or path.is_empty():
+		return
+	if not ResourceLoader.exists(path):
+		if warn_if_missing:
+			push_warning("AudioManager: Falta SFX overworld: %s" % path)
+		return
+	var stream := instance._load_audio_stream(path)
+	if stream != null:
+		play_sfx(stream, BUS_SFX)
 
 
 static func play_battle_flee() -> void:
@@ -432,6 +539,7 @@ func _play_bgm(stream: AudioStream, fade_in: float, loop: bool) -> void:
 	if _is_same_bgm(stream) and _active_bgm_player.playing:
 		return
 
+	_pending_bgm_stream = null
 	_kill_bgm_tween()
 	var prepared := _prepare_bgm_stream(stream, loop)
 	_current_bgm_stream = stream
@@ -455,6 +563,7 @@ func _play_bgm(stream: AudioStream, fade_in: float, loop: bool) -> void:
 
 func _stop_bgm(fade_out: float) -> void:
 	_stop_me()
+	_pending_bgm_stream = null
 	if not _active_bgm_player.playing and _current_bgm_stream == null:
 		return
 
@@ -473,6 +582,45 @@ func _stop_bgm(fade_out: float) -> void:
 	_bgm_tween.tween_callback(_on_bgm_fade_out_finished)
 
 
+## Fade-out de la actual; al terminar arranca la nueva sin fade-in (Gen 3 / mapas).
+func _fade_out_then_play_bgm(stream: AudioStream, fade_out: float, loop: bool) -> void:
+	if stream == null:
+		push_warning("AudioManager: fade_out_then_play_bgm recibió stream nulo")
+		return
+	if _is_same_bgm(stream) and _active_bgm_player.playing:
+		return
+
+	_kill_bgm_tween()
+	_pending_bgm_stream = stream
+	_pending_bgm_loop = loop
+
+	var duration := maxf(fade_out, 0.0)
+	if duration <= 0.0 or not _active_bgm_player.playing:
+		_pending_bgm_stream = null
+		_play_bgm(stream, 0.0, loop)
+		return
+
+	_bgm_tween = create_tween()
+	_tween_player_volume(_active_bgm_player, SILENT_DB, duration, _bgm_tween)
+	_bgm_tween.tween_callback(_on_fade_out_then_play_finished)
+
+
+func _on_fade_out_then_play_finished() -> void:
+	_active_bgm_player.stop()
+	_active_bgm_player.volume_db = BGM_BUS_VOLUME_DB
+	_inactive_bgm_player.stop()
+	_inactive_bgm_player.volume_db = BGM_BUS_VOLUME_DB
+	_bgm_tween = null
+
+	var next_stream := _pending_bgm_stream
+	var next_loop := _pending_bgm_loop
+	_pending_bgm_stream = null
+	_current_bgm_stream = null
+
+	if next_stream != null:
+		_play_bgm(next_stream, 0.0, next_loop)
+
+
 func _crossfade_bgm(stream: AudioStream, duration: float, loop: bool) -> void:
 	if stream == null:
 		push_warning("AudioManager: crossfade_bgm recibió stream nulo")
@@ -480,6 +628,7 @@ func _crossfade_bgm(stream: AudioStream, duration: float, loop: bool) -> void:
 	if _is_same_bgm(stream) and _active_bgm_player.playing:
 		return
 
+	_pending_bgm_stream = null
 	_kill_bgm_tween()
 	var prepared := _prepare_bgm_stream(stream, loop)
 	_current_bgm_stream = stream

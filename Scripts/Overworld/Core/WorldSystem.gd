@@ -1288,7 +1288,14 @@ func refresh_overlay_settings() -> void:
 
 
 ## Reaplica la BGM del mapa activo (p. ej. al terminar un combate).
+## Si el jugador sigue surfeando, mantiene la BGM de Surf.
 func refresh_map_bgm() -> void:
+	if AudioManager.instance == null:
+		return
+	var player := get_player()
+	if player and player.get("is_surfing") == true:
+		AudioManager.play_surfing_bgm()
+		return
 	_apply_map_bgm(active_map)
 
 
@@ -1320,7 +1327,7 @@ func _apply_map_bgm(map_scene: Node) -> void:
 	if fade <= 0.0 or not AudioManager.is_bgm_playing():
 		AudioManager.play_bgm(bgm, 0.0)
 	else:
-		AudioManager.crossfade_bgm(bgm, fade)
+		AudioManager.fade_out_then_play_bgm(bgm, fade)
 
 
 ## Encuentra el grid que contiene una posición global y retorna grid + tile convertido
