@@ -1,15 +1,29 @@
 extends Node2D
 
 const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
+const _AUDIO_MANAGER_SCENE := preload("res://Managers/AudioManager.tscn")
 
 @export_group("Bucle aleatorio infinito")
 ## Si true (o si no hay ningún otro flag de prueba), genera combates al azar sin parar.
 ## Salvaje/entrenador × single/doble × 1v1 o 2v2 trainers. Sin lógica de escenarios fijos.
 @export var use_endless_random_battle_loop: bool = true
+## Si true, el bucle infinito solo alterna salvaje/entrenador en SINGLE (sin doble).
+@export var endless_loop_single_only: bool = true
+## Si true (y single_only), solo combates TRAINER single (sin salvajes).
+@export var endless_loop_trainer_only: bool = false
+## Si true (y single_only), solo combates WILD single (sin entrenadores).
+@export var endless_loop_wild_only: bool = false
 ## Diferencia máxima de nivel entre cualquier par de Pokémon del combate (1–100).
 @export_range(0, 99) var endless_loop_max_level_gap: int = 5
+## Si true, el jugador usa siempre `endless_loop_player_level` (sin banda aleatoria).
+@export var endless_loop_use_fixed_player_level: bool = true
+@export_range(1, 100) var endless_loop_player_level: int = 30
+## Niveles por debajo del jugador para salvajes/rivales del bucle (mín. Nv. 1).
+@export_range(0, 50) var endless_loop_enemy_levels_below: int = 10
 ## Cantidad de cada ítem de prueba en la mochila de cada participante.
 @export_range(1, 99) var endless_loop_item_qty: int = 10
+## EXP fija por KO en TestBattle (0 = fórmula normal).
+@export var test_fixed_exp_per_ko: int = 0
 
 @export_group("Debug Psíquico + doble")
 ## Doble 1 trainer vs 1: Alakazam (Psíquico) para validar stat tras daño / KO y send-in sin prompt.
@@ -22,6 +36,10 @@ const _DISPLAY_MANAGER_SCENE := preload("res://Managers/DisplayManager.tscn")
 @export_group("Debug nivel 100")
 ## 1vs1 entrenador: tu Pokémon Nv.100 vs Rival débil (probar barra EXP vacía y EXP sin subir).
 @export var use_level_100_single_test: bool = false
+
+@export_group("Debug aprendizaje de movimiento")
+## Pikachu Nv.15 (4 movs, sin Quick Attack) vs Rattata débil — al vencer sube a Nv.16 y debe aprender Quick Attack.
+@export var use_move_learn_level_up_test: bool = false
 
 @export_group("Equipos de prueba")
 ## Si true, lanza 1vs1 salvaje con party jugador 2+ para probar cambio forzado por KO (AC1).
@@ -184,6 +202,7 @@ enum EndlessBattleKind {
 
 # Instanciado solo al ejecutar esta escena en solitario (F6); en juego normal ya existe vía Main.
 var _bootstrapped_display_manager: DisplayManager = null
+var _bootstrapped_audio_manager: AudioManager = null
 
 #Battlers
 @onready var player: Battler = $Player
@@ -193,7 +212,7 @@ var _bootstrapped_display_manager: DisplayManager = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if not await _ensure_display_manager():
+	if not await _ensure_test_runtime():
 		return
 	if use_wild_intro_grass_test:
 		_print_wild_intro_grass_test_guide()
@@ -242,6 +261,10 @@ func _ready() -> void:
 	if use_level_100_single_test:
 		_print_level_100_single_test_guide()
 		await level100SingleTestBattle()
+		return
+	if use_move_learn_level_up_test:
+		print(">>> Move learn test: Pikachu Nv.15 (4 movs, sin Quick Attack) vs Rattata Nv.5 — sube a Nv.16 y aprende Quick Attack.")
+		await movelearnLevelUpTestBattle()
 		return
 	if use_move_fail_no_target_test:
 		_setup_move_fail_no_target_test_parties()
@@ -443,7 +466,15 @@ func _ready() -> void:
 		await _run_endless_random_battle_loop()
 
 
-## Al ejecutar TestBattle.tscn directamente no existe Main/DisplayManager; lo creamos aquí.
+## Al ejecutar TestBattle.tscn directamente no existe Main; instanciamos servicios globales aquí.
+func _ensure_test_runtime() -> bool:
+	if not await _ensure_display_manager():
+		return false
+	if not await _ensure_audio_manager():
+		return false
+	return true
+
+
 func _ensure_display_manager() -> bool:
 	if DisplayManager.instance != null:
 		return true
@@ -459,6 +490,23 @@ func _ensure_display_manager() -> bool:
 		push_error("TestBattle: DisplayManager no registró singleton tras _ready")
 		return false
 	print("TestBattle: DisplayManager de prueba inicializado (escena ejecutada en solitario).")
+	return true
+
+
+func _ensure_audio_manager() -> bool:
+	if AudioManager.instance != null:
+		return true
+	_bootstrapped_audio_manager = _AUDIO_MANAGER_SCENE.instantiate() as AudioManager
+	if _bootstrapped_audio_manager == null:
+		push_error("TestBattle: no se pudo instanciar AudioManager.tscn")
+		return false
+	get_tree().root.add_child.call_deferred(_bootstrapped_audio_manager)
+	if not _bootstrapped_audio_manager.is_node_ready():
+		await _bootstrapped_audio_manager.ready
+	if AudioManager.instance == null:
+		push_error("TestBattle: AudioManager no registró singleton tras _ready")
+		return false
+	print("TestBattle: AudioManager de prueba inicializado (escena ejecutada en solitario).")
 	return true
 
 
@@ -1320,6 +1368,38 @@ func surfTripleKoDoubleTestBattle() -> void:
 	_apply_endless_loop_bags(participants)
 	var winner = await _start_test_battle(participants, rules)
 	print(">>> Batalla Surf multi-KO doble terminada. Ganador: %s" % winner)
+
+
+## Pikachu Nv.15 (4 movs completos) vs Rattata Nv.5 — al vencer sube a Nv.16 y aprende Double Team (flujo de olvido).
+func movelearnLevelUpTestBattle() -> void:
+	var pikachu := Pokemon.new()
+	pikachu.pokemon_id = PokemonsEnum.Values.PIKACHU as PokemonsEnum.Values
+	pikachu.level = 15
+	pikachu.is_wild = false
+	# Pikachu aprende QUICK_ATTACK al Nv.16. Lo dejamos fuera del equipo para forzar el
+	# flujo de aprendizaje con decisión (ya tiene 4 movs, sin hueco).
+	pikachu.custom_move_ids = [
+		MovesEnum.Values.TACKLE,
+		MovesEnum.Values.GROWL,
+		MovesEnum.Values.THUNDERBOLT,
+		MovesEnum.Values.DOUBLE_TEAM,
+	]
+	pikachu._post_init()
+	# EXP exacta del inicio de Nv.15 (MEDIUM: 15³ = 3375); con 721 EXP sube justo a Nv.16.
+	# Se asigna DESPUÉS de _post_init() porque este resetea totalExp a actualLevelExpBase.
+	pikachu.totalExp = 3375
+	var player_team: Array[BattlePokemon] = [pikachu.to_battle_pokemon()]
+	var player_participant := BattleParticipant.new(player_team)
+	player_participant.is_player = true
+	player_participant.name = "Jugador"
+	var wild_p := _create_fixed_wild_participant(PokemonsEnum.Values.RATTATA, 5)
+	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
+	var participants: Array[BattleParticipant] = [player_participant, wild_p]
+	# 721 = span exacto Nv.15→16 (MEDIUM) → sube 1 nivel y aprende Quick Attack.
+	ExperienceCalculator.debug_fixed_exp_per_ko_per_recipient = 721
+	var winner = await DisplayManager.start_battle(participants, rules)
+	ExperienceCalculator.debug_fixed_exp_per_ko_per_recipient = 0
+	print(">>> Move learn test terminado. Ganador: %s" % winner)
 
 
 func level100SingleTestBattle() -> void:
@@ -3574,11 +3654,32 @@ func wildRandomDoubleBattle():
 func _run_endless_random_battle_loop() -> void:
 	var battle_index := 0
 	print(">>> Bucle aleatorio infinito activo (gap nivel ≤ %d)." % endless_loop_max_level_gap)
-	print(">>> Formatos: wild/trainer × single/doble × 1v1 o 2v2 trainers. Sin flags de escenario.")
+	if endless_loop_single_only:
+		if endless_loop_trainer_only:
+			print(">>> Formatos: TRAINER SINGLE únicamente.")
+		elif endless_loop_wild_only:
+			print(">>> Formatos: WILD SINGLE únicamente.")
+		else:
+			print(">>> Formatos: wild/trainer SINGLE únicamente.")
+	else:
+		print(">>> Formatos: wild/trainer × single/doble × 1v1 o 2v2 trainers. Sin flags de escenario.")
 	while true:
 		battle_index += 1
 		var level_band := _roll_endless_level_band()
-		var kind: int = randi() % EndlessBattleKind.size()
+		var kind: int
+		if endless_loop_single_only:
+			if endless_loop_trainer_only:
+				kind = EndlessBattleKind.TRAINER_SINGLE
+			elif endless_loop_wild_only:
+				kind = EndlessBattleKind.WILD_SINGLE
+			else:
+				kind = (
+					EndlessBattleKind.WILD_SINGLE
+					if randi() % 2 == 0
+					else EndlessBattleKind.TRAINER_SINGLE
+				)
+		else:
+			kind = randi() % EndlessBattleKind.size()
 		var kind_name := _endless_battle_kind_name(kind)
 		print(
 			">>> [#%d] %s | niveles %d–%d"
@@ -3618,16 +3719,26 @@ func _endless_battle_kind_name(kind: int) -> String:
 
 ## Ventana [low, high] con high-low ≤ gap y dentro de 1–100.
 func _roll_endless_level_band() -> Vector2i:
+	if endless_loop_use_fixed_player_level:
+		var lv := clampi(endless_loop_player_level, 1, 100)
+		return Vector2i(lv, lv)
 	var gap := clampi(endless_loop_max_level_gap, 0, 99)
 	var low := randi_range(1, 100)
 	var high := mini(100, low + gap)
 	return Vector2i(low, high)
 
 
+func _enemy_level_band(player_band: Vector2i) -> Vector2i:
+	var offset := maxi(endless_loop_enemy_levels_below, 0)
+	var low := maxi(1, player_band.x - offset)
+	var high := maxi(low, player_band.y - offset)
+	return Vector2i(low, high)
+
+
 func _endless_wild_single(level_band: Vector2i) -> void:
 	var player_size := randi_range(1, 6)
 	var player_p := _create_random_player_participant_in_band(player_size, level_band)
-	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_SINGLE, level_band)
+	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_SINGLE, _enemy_level_band(level_band))
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.SINGLE)
 	var participants: Array[BattleParticipant] = [player_p, wild_p]
 	_apply_endless_loop_bags(participants)
@@ -3639,7 +3750,7 @@ func _endless_wild_single(level_band: Vector2i) -> void:
 func _endless_wild_double(level_band: Vector2i) -> void:
 	var player_size := randi_range(2, 6)
 	var player_p := _create_random_player_participant_in_band(player_size, level_band)
-	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_DOUBLE, level_band)
+	var wild_p := _create_random_wild_participant_in_band(WILD_PARTY_DOUBLE, _enemy_level_band(level_band))
 	var rules := BattleRules.new(BattleRules.BattleTypes.WILD, BattleRules.BattleModes.DOUBLE)
 	var participants: Array[BattleParticipant] = [player_p, wild_p]
 	_apply_endless_loop_bags(participants)
@@ -3652,7 +3763,7 @@ func _endless_trainer_single(level_band: Vector2i) -> void:
 	var player_size := randi_range(1, 6)
 	var enemy_size := randi_range(1, 6)
 	var player_p := _create_random_player_participant_in_band(player_size, level_band)
-	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, level_band, "Rival")
+	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, _enemy_level_band(level_band), "Rival")
 	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.SINGLE)
 	var participants: Array[BattleParticipant] = [player_p, enemy_p]
 	_apply_endless_loop_bags(participants)
@@ -3665,7 +3776,7 @@ func _endless_trainer_double_1v1(level_band: Vector2i) -> void:
 	var player_size := randi_range(2, 6)
 	var enemy_size := randi_range(2, 6)
 	var player_p := _create_random_player_participant_in_band(player_size, level_band)
-	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, level_band, "Rival")
+	var enemy_p := _create_random_trainer_participant_in_band(enemy_size, _enemy_level_band(level_band), "Rival")
 	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
 	var participants: Array[BattleParticipant] = [player_p, enemy_p]
 	_apply_endless_loop_bags(participants)
@@ -3683,8 +3794,8 @@ func _endless_trainer_double_2v2(level_band: Vector2i) -> void:
 	player_a.name = "Jugador"
 	var player_b := _create_random_trainer_participant_in_band(player_b_size, level_band, "Aliado")
 	player_b.joins_player_side = true
-	var enemy_a := _create_random_trainer_participant_in_band(enemy_a_size, level_band, "RivalA")
-	var enemy_b := _create_random_trainer_participant_in_band(enemy_b_size, level_band, "RivalB")
+	var enemy_a := _create_random_trainer_participant_in_band(enemy_a_size, _enemy_level_band(level_band), "RivalA")
+	var enemy_b := _create_random_trainer_participant_in_band(enemy_b_size, _enemy_level_band(level_band), "RivalB")
 	var rules := BattleRules.new(BattleRules.BattleTypes.TRAINER, BattleRules.BattleModes.DOUBLE)
 	var participants: Array[BattleParticipant] = [player_a, player_b, enemy_a, enemy_b]
 	_apply_endless_loop_bags(participants)
@@ -3788,6 +3899,7 @@ func singleTrainerBattle():
 
 
 func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRules) -> String:
+	ExperienceCalculator.debug_fixed_exp_per_ko_per_recipient = test_fixed_exp_per_ko
 	if debug_seed_persistent_effects:
 		BattleDebugEffectSeeder.enable()
 	if debug_zero_pp:
@@ -3795,6 +3907,7 @@ func _start_test_battle(participants: Array[BattleParticipant], rules: BattleRul
 	BattleDebugAilmentTest.force_ailment_apply = debug_force_ailment_apply
 	var winner: String = await DisplayManager.start_battle(participants, rules)
 	BattleDebugAilmentTest.force_ailment_apply = false
+	ExperienceCalculator.debug_fixed_exp_per_ko_per_recipient = 0
 	return winner
 
 

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cabw2fccq70uo" path="res://Scripts/Resources/Classes/MoveData.gd" id="1_yth3u"]
 [ext_resource type="Resource" uid="uid://sw6nw4833hji" path="res://Resources/Data/Types/01.tres" id="2_3383y"]
 [ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/LeerAnimation.tres" id="3_leer_anim"]
+[ext_resource type="AudioStream" uid="uid://c284kpet2p4aw" path="res://Audio/SE/Moves/Leer.ogg" id="4_sfx"]
 
 [resource]
 resource_name = "43 - Malicioso"
@@ -27,3 +28,4 @@ meta_category_id = 2
 meta_stat_chance = 100
 category = ExtResource("1_wc7ft")
 battle_animation = ExtResource("3_leer_anim")
+battle_sfx = ExtResource("4_sfx")

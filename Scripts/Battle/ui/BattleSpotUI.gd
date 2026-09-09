@@ -558,17 +558,84 @@ func play_heal_animation() -> void:
 	if not is_visible():
 		return
 
-	# Overlay verde que baja (como RPG Maker)
+	AudioManager.play_battle_heal_hp_restore()
+	const HEAL_DURATION := 2.0
+	var sparkles := _spawn_heal_sparkles(HEAL_DURATION)
+	# Overlay verde que sube + brillos (partículas; fácil de quitar si no convence).
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayHeal.png",
-		true,  # animate_up = false (baja)
-		2.0     # duración
+		true,  # animate_up = true (sube)
+		HEAL_DURATION
 	)
+	if is_instance_valid(sparkles):
+		sparkles.emitting = false
+		await get_tree().create_timer(sparkles.lifetime).timeout
+		if is_instance_valid(sparkles):
+			sparkles.queue_free()
+
+
+## Partículas de brillo alrededor del sprite mientras dura el overlay de curación.
+func _spawn_heal_sparkles(duration: float) -> CPUParticles2D:
+	var particles := CPUParticles2D.new()
+	particles.name = "HealSparkles"
+	particles.z_index = 8
+	particles.texture = load("res://Sprites/Batalla/Moves Animations/HealSparkle.png") as Texture2D
+	# Brillos blancos tipo estrella/cruz (no glow redondo verdoso).
+	var blend := CanvasItemMaterial.new()
+	blend.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	particles.material = blend
+	particles.amount = 22
+	particles.lifetime = 0.5
+	particles.preprocess = 0.12
+	particles.explosiveness = 0.05
+	particles.randomness = 0.65
+	particles.emitting = true
+	particles.one_shot = false
+	particles.local_coords = true
+	particles.direction = Vector2(0, -1)
+	particles.spread = 50.0
+	particles.gravity = Vector2(0, -14)
+	particles.initial_velocity_min = 20.0
+	particles.initial_velocity_max = 48.0
+	particles.scale_amount_min = 0.7
+	particles.scale_amount_max = 1.35
+	particles.color = Color(1.0, 1.0, 1.0, 1.0)
+	# Fade out manteniendo blanco puro.
+	var ramp := Gradient.new()
+	ramp.colors = PackedColorArray([
+		Color(1.0, 1.0, 1.0, 0.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 0.0),
+	])
+	ramp.offsets = PackedFloat32Array([0.0, 0.12, 0.55, 1.0])
+	particles.color_ramp = ramp
+
+	var emission_rect := _get_sprite_opaque_rect_in_spot()
+	if emission_rect.size.x > 1.0 and emission_rect.size.y > 1.0:
+		particles.position = emission_rect.get_center()
+		particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		particles.emission_rect_extents = emission_rect.size * 0.42
+	else:
+		particles.position = Vector2.ZERO
+		particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+		particles.emission_sphere_radius = 28.0
+
+	add_child(particles)
+	# Por si el await del overlay se cancela: auto-limpieza tras duración + lifetime.
+	get_tree().create_timer(duration + particles.lifetime + 0.1).timeout.connect(
+		func() -> void:
+			if is_instance_valid(particles):
+				particles.queue_free()
+	)
+	return particles
+
 
 func play_stat_up_animation() -> void:
 	if not is_visible():
 		return
 
+	AudioManager.play_battle_stat_increase()
 	# Overlay rojo que sube
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayStatUp.png",
@@ -580,6 +647,7 @@ func play_stat_down_animation() -> void:
 	if not is_visible():
 		return
 
+	AudioManager.play_battle_stat_decrease()
 	# Overlay azul que baja
 	await _play_overlay_animation(
 		"res://Sprites/Batalla/Moves Animations/OverlayStatDown.png",
@@ -639,6 +707,11 @@ func play_faint_animation() -> void:
 
 	var duration = 0.5
 
+	# Sombra primero (Gen 3: el Pokémon cae sin sombra); luego hundimiento del sprite.
+	if shadow and shadow.visible:
+		shadow.visible = false
+	AudioManager.play_battle_faint()
+
 	# Crear tween para hundimiento
 	var faint_tween := create_tween()
 	faint_tween.set_parallel(false)
@@ -666,10 +739,6 @@ func play_faint_animation() -> void:
 
 	# Ocultar completamente el sprite
 	sprite.visible = false
-
-	# Ocultar la sombra si existe y es visible
-	if shadow and shadow.visible:
-		shadow.visible = false
 
 	# Restaurar valores originales
 	sprite.position = original_position

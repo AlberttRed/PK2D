@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://djy5tdk6yi3oa"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_6iru3"]
+[ext_resource type="AudioStream" uid="uid://c8qg83i3wewwy" path="res://Audio/BGM/Route 1.ogg" id="2_f50xn"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_hhdvd"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_c2cvh"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_iq6t8"]
@@ -177,6 +178,7 @@ y_sort_enabled = true
 script = ExtResource("1_6iru3")
 world_position = Vector2(-64, -448)
 neighbors = Array[String](["Pueblo_Paleta", "Ciudad_Verde"])
+bgm = ExtResource("2_f50xn")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=221593048 groups=["OverworldGrid"]]
 y_sort_enabled = true

@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="AilmentData" load_steps=5 format=3 uid="uid://d3gp5fdyknbo7"]
+[gd_resource type="Resource" script_class="AilmentData" load_steps=6 format=3 uid="uid://d3gp5fdyknbo7"]
 
 [ext_resource type="Script" uid="uid://b1vlm4qgwlct4" path="res://Scripts/Battle/core/Battle Effects/Persistent/Ailments/PoisonAilmentEffect.gd" id="1_blhvb"]
 [ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="2_pnp0m"]
 [ext_resource type="Script" uid="uid://cenxuss2wgqt4" path="res://Scripts/Resources/Classes/AilmentData.gd" id="3_e7ob0"]
 [ext_resource type="Resource" path="res://Scenes/Battle/animations/ailments/PoisonAnimation.tres" id="4_poison_anim"]
+[ext_resource type="AudioStream" uid="uid://cnljvkn7y6ti0" path="res://Audio/SE/Ailments/Status Poisoned.ogg" id="5_sfx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g6qng"]
 atlas = ExtResource("2_pnp0m")
@@ -19,3 +20,4 @@ icon = SubResource("AtlasTexture_g6qng")
 is_persistent = true
 effect = ExtResource("1_blhvb")
 battle_animation = ExtResource("4_poison_anim")
+battle_sfx = ExtResource("5_sfx")

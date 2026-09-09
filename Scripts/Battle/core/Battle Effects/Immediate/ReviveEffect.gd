@@ -30,6 +30,7 @@ func visualize(_ui: BattleUI) -> void:
 		return
 	target.status_changed.emit()
 	if show_heal_animation and amount > 0:
+		await target.battle_spot.play_heal_animation()
 		await target.battle_spot.apply_heal(amount)
 	elif target.battle_spot.hp_bar != null:
 		target.battle_spot.hp_bar.sync_health_bar_from_pokemon()

@@ -814,6 +814,7 @@ static func pokemon_enter_spot(
 
 	var flash := _make_white_overlay(spr)
 	spr.add_child(flash)
+	AudioManager.play_battle_recall()
 
 	if show_shadow:
 		shadow.visible = true
@@ -877,6 +878,8 @@ static func pokemon_enter_spot(
 	if show_shadow:
 		tw.tween_property(shadow, "modulate:a", 1.0, scale_duration)
 	await tw.finished
+	# Cry cuando el sprite ya alcanzó su tamaño final (antes de esperar VFX residual).
+	play_spot_pokemon_cry(spot)
 	var vfx_end := maxf(float(fade_schedule.get("vfx_end", white_delay + white_fade)), _enter_vfx_max_duration())
 	await wait(spot, maxf(vfx_end - scale_duration, 0.0))
 
@@ -896,6 +899,12 @@ static func pokemon_enter_spot(
 		shadow.scale = orig_scale
 		shadow.position = shadow_orig_pos
 		shadow.modulate = Color(1, 1, 1, 1)
+
+
+static func play_spot_pokemon_cry(spot: BattleSpot) -> void:
+	if spot == null or spot.pokemon == null or spot.pokemon.base_data == null:
+		return
+	spot.pokemon.base_data.play_cry()
 
 
 ## Copia el sprite del spot como silueta blanca (hijo: hereda scale/position).
@@ -1167,6 +1176,7 @@ static func pokemon_exit_player_slide(
 	var move_shadow := shadow != null and is_instance_valid(shadow) and shadow.visible
 	if move_shadow:
 		shadow_orig = shadow.position
+	AudioManager.play_battle_recall()
 	var tw := spot.create_tween()
 	tw.set_parallel(true)
 	tw.tween_property(spr, "position", orig_pos + Vector2(-slide_distance, 0.0), duration).set_trans(
@@ -1254,6 +1264,7 @@ static func pokemon_exit_enemy_recall(spot: BattleSpot) -> void:
 	flash.name = "RecallWhiteFlash"
 	flash.modulate.a = 0.0
 	spr.add_child(flash)
+	AudioManager.play_battle_recall()
 	var tw_white := spot.create_tween()
 	tw_white.tween_property(flash, "modulate:a", 1.0, ENEMY_RECALL_WHITE_SEC).set_trans(
 		Tween.TRANS_SINE
@@ -1263,6 +1274,7 @@ static func pokemon_exit_enemy_recall(spot: BattleSpot) -> void:
 	# 3) Empieza el scale↓ y a la vez la ball se cierra.
 	if is_instance_valid(ball):
 		ball.texture = tex_closed
+	AudioManager.play_battle_jump_to_ball()
 
 	var tw_scale := spot.create_tween()
 	tw_scale.tween_method(

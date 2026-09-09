@@ -8,6 +8,14 @@
 position = Vector2(1, 2)
 script = ExtResource("1_tse6d")
 use_endless_random_battle_loop = true
+use_move_learn_level_up_test = false
+endless_loop_single_only = true
+endless_loop_trainer_only = false
+endless_loop_wild_only = true
+endless_loop_use_fixed_player_level = true
+endless_loop_player_level = 30
+endless_loop_enemy_levels_below = 10
+test_fixed_exp_per_ko = 0
 debug_rattata_test_bite = false
 debug_rattata_extended_volatiles = false
 use_battler_altitude_test = false

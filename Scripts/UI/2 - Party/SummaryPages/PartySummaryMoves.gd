@@ -190,29 +190,35 @@ func selectOption() -> void:
 	if mode == Modes.NORMAL:
 		setMode(Modes.DETAILED)
 		movePanels[0].grab_focus()
+		_play_select_sound()
 	elif mode == Modes.DETAILED:
 		if originMoveIndexSelected == null:
 			originMoveIndexSelected = moveIndex
 			setSelectedPanel()
+			_play_select_sound()
 		else:
 			if moveIndex != originMoveIndexSelected:
 				targetMoveIndexSelected = moveIndex
 				swapMoves(moves[originMoveIndexSelected], moves[targetMoveIndexSelected])
 				select()
+				_play_select_sound()
 	elif mode == Modes.LEARNING:
 		# Move0 (índice -1) = "mantener movimientos actuales" (equivale a cancelar aprendizaje).
 		moveIndexSelected = moveIndex
+		_play_select_sound()
 		moveSelected.emit()
 
 
 func cancelOption() -> void:
 	if mode == Modes.DETAILED:
+		_play_cancel_sound()
 		activePanel.release_focus()
 		setMode(Modes.NORMAL)
 		if originMoveIndexSelected != null:
 			unselect(movePanels[originMoveIndexSelected])
 			originMoveIndexSelected = null
 	elif mode == Modes.LEARNING:
+		_play_cancel_sound()
 		moveIndexSelected = -1
 		moveSelected.emit()
 
@@ -255,9 +261,9 @@ func onFocusChanged(control: Control) -> void:
 
 
 ## Navegación vertical entre movimientos (DisplayManager consume ui_up/down con el party abierto, así que no llega el foco automático).
-func navigate_move_focus(delta: int) -> void:
+func navigate_move_focus(delta: int) -> bool:
 	if mode != Modes.DETAILED and mode != Modes.LEARNING:
-		return
+		return false
 	var panels: Array[Panel] = []
 	for i in range(movePanels.size()):
 		if movePanels[i].visible:
@@ -266,7 +272,7 @@ func navigate_move_focus(delta: int) -> void:
 	if mode == Modes.LEARNING and learningMovePanel != null and learningMovePanel.visible:
 		panels.append(learningMovePanel)
 	if panels.is_empty():
-		return
+		return false
 	var pos_in_list: int = 0
 	if activePanel != null:
 		var found_pos: int = panels.find(activePanel)
@@ -275,8 +281,9 @@ func navigate_move_focus(delta: int) -> void:
 	var list_size: int = panels.size()
 	var new_pos: int = posmod(pos_in_list + delta, list_size)
 	if new_pos == pos_in_list:
-		return
+		return false
 	panels[new_pos].grab_focus()
+	return true
 
 
 func setSelectedPanel() -> void:
@@ -317,3 +324,11 @@ func setLearningPanel(active: bool) -> void:
 		loadMove(learningMovePanel, learningMove)
 	else:
 		learningMovePanel.focus_mode = FOCUS_NONE
+
+
+func _play_select_sound() -> void:
+	AudioManager.play_ui_select()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()

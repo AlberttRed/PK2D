@@ -1,6 +1,7 @@
 [gd_scene load_steps=84 format=4 uid="uid://dx5ysjvdkng4b"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_2apf5"]
+[ext_resource type="AudioStream" uid="uid://biwp83sn0ic2o" path="res://Audio/BGM/Pallet Town.ogg" id="bgm_pallet"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_fthu1"]
 [ext_resource type="TileSet" uid="uid://dr7bntiy6uqpb" path="res://Resources/Tilesets/Centro_Pokemon.tres" id="3_y6llx"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_4728y"]
@@ -385,6 +386,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Casa_Blue" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_2apf5")
+bgm = ExtResource("bgm_pallet")
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

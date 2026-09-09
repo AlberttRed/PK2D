@@ -895,6 +895,11 @@ func get_battle_back_sprite() -> AtlasTexture:
 func get_icon_sprite() -> AtlasTexture:
 	return base.icon_sprite
 
+
+func play_cry() -> void:
+	AudioManager.play_pokemon_cry(self)
+
+
 func get_overworld_sprite() -> Texture2D:
 	if shiny and base.overworld_shiny_spritesheet:
 		return base.overworld_shiny_spritesheet

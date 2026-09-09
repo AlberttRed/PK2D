@@ -41,6 +41,10 @@ var trainer_class: TrainerClassData  # Se carga desde trainer_class_id
 ## Variante de base bajo los Pokémon (INHERIT = clase → resolver por backdrop).
 @export var base_variant: BattleBaseVariantEnum.Values = BattleBaseVariantEnum.Values.INHERIT
 
+@export_group("Overworld Audio")
+## BGM "Eyes Meet" al detectar (INHERIT = clase → fallback por TrainerClassEnum).
+@export var eyes_meet: TrainerEyesMeetEnum.Values = TrainerEyesMeetEnum.Values.INHERIT
+
 ## === INTELIGENCIA ARTIFICIAL ===
 
 ## Perfil de IA para el combate (null = default_ai de la clase, o BattleIA_TrainerEasy)
@@ -244,6 +248,8 @@ func get_full_name() -> String:
 func get_battle_front_sprite() -> Texture2D:
 	if battle_front_sprite != null:
 		return battle_front_sprite
+	if trainer_class == null:
+		_load_trainer_class()
 	if trainer_class and trainer_class.default_battle_front_sprite != null:
 		return trainer_class.default_battle_front_sprite
 	return null
@@ -252,6 +258,8 @@ func get_battle_front_sprite() -> Texture2D:
 func get_battle_back_sprite() -> Texture2D:
 	if battle_back_sprite != null:
 		return battle_back_sprite
+	if trainer_class == null:
+		_load_trainer_class()
 	if trainer_class and trainer_class.default_battle_back_sprite != null:
 		return trainer_class.default_battle_back_sprite
 	return null
@@ -273,6 +281,17 @@ func get_base_variant_override() -> BattleBaseVariantEnum.Values:
 	if trainer_class and trainer_class.default_base_variant != BattleBaseVariantEnum.Values.INHERIT:
 		return trainer_class.default_base_variant
 	return BattleBaseVariantEnum.Values.INHERIT
+
+
+## Resuelve Eyes Meet: trainer → clase → fallback por TrainerClassEnum.
+func get_eyes_meet() -> TrainerEyesMeetEnum.Values:
+	if eyes_meet != TrainerEyesMeetEnum.Values.INHERIT:
+		return eyes_meet
+	if trainer_class == null:
+		_load_trainer_class()
+	if trainer_class and trainer_class.default_eyes_meet != TrainerEyesMeetEnum.Values.INHERIT:
+		return trainer_class.default_eyes_meet
+	return TrainerEyesMeetEnum.from_trainer_class(int(trainer_class_id))
 
 ## Retorna el texto de intro formateado
 func get_intro_message() -> String:
@@ -344,7 +363,7 @@ func has_valid_party() -> bool:
 ## Obtiene el identificador único del trainer desde el resource_path
 ## Retorna el nombre del archivo .res sin extensión (ej: "brock" de "res://Resources/Trainers/brock.tres")
 ## Si no hay resource_path, usa el campo resource_id como fallback
-## Si ambos están vacíos, lanza un error
+## Trainers embebidos (sin .tres): genera un id estable desde trainer_id / display_name
 func get_resource_id() -> String:
 	# Prioridad 1: Si hay resource_id configurado manualmente, usarlo
 	if not resource_id.is_empty():
@@ -358,9 +377,14 @@ func get_resource_id() -> String:
 			return file_name.substr(0, file_name.length() - 5)  # Quitar ".tres"
 		return file_name
 
-	# Si ambos están vacíos, lanzar error
-	push_error("TrainerData: No se pudo obtener resource_id - resource_path y resource_id están vacíos. Configura resource_id manualmente o guarda el TrainerData como archivo .tres")
-	return ""
+	# Embebido / sin archivo: no es error; id estable para tracking de combate
+	if trainer_id > 0:
+		return "embedded_%d" % trainer_id
+	var slug := display_name.strip_edges().to_lower().replace(" ", "_")
+	if not slug.is_empty():
+		return "embedded_%s" % slug
+	push_warning("TrainerData.get_resource_id(): trainer embebido sin id/nombre; usando fallback")
+	return "embedded_unknown"
 
 ## Debug: imprime información del entrenador
 func print_trainer_info() -> void:

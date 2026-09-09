@@ -35,7 +35,7 @@ func start_move_learning_flow(
 	if pokemon.movements.size() < 4:
 		pokemon.movements.append(move)
 		r.learned = true
-		await _show(show_message_fn, "¡%s aprendió %s!" % [pokemon.get_display_name(), move.get_move_name()])
+		await _show(show_message_fn, "¡%s aprendió %s!" % [pokemon.get_display_name(), move.get_move_name()], AudioManager.play_battle_level_up)
 		return r
 
 	while true:
@@ -73,18 +73,21 @@ func start_move_learning_flow(
 		var old_move: Move = pokemon.replace_move_at(selected_index, move)
 		r.learned = true
 		r.replaced_old_move = old_move
-		await _show(show_message_fn, "1, 2 y ... ... ... ¡puf!")
+		await _show(show_message_fn, "1, 2 y ... ... ... ¡puf!", AudioManager.play_battle_ball_hit)
 		if old_move != null:
 			await _show(show_message_fn, "%s olvidó %s." % [pokemon.get_display_name(), old_move.get_move_name()])
 		await _show(show_message_fn, "Y...")
-		await _show(show_message_fn, "¡%s aprendió %s!" % [pokemon.get_display_name(), move.get_move_name()])
+		await _show(show_message_fn, "¡%s aprendió %s!" % [pokemon.get_display_name(), move.get_move_name()], AudioManager.play_battle_level_up)
 		return r
 	return r
 
 
-func _show(show_message_fn: Callable, text: String) -> void:
+func _show(show_message_fn: Callable, text: String, on_text_ready: Callable = Callable()) -> void:
 	if show_message_fn.is_valid():
-		await show_message_fn.call(text)
+		if on_text_ready.is_valid():
+			await show_message_fn.call(text, on_text_ready)
+		else:
+			await show_message_fn.call(text)
 
 
 func _choose(show_choices_fn: Callable, text: String, options: Array[String]) -> int:

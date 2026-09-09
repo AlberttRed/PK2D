@@ -410,6 +410,44 @@ func capture_trainer_rest_positions() -> void:
 			t.set_meta("trainer_rest_pos", t.position)
 
 
+## Aplica sprites de entrenador desde los participantes (trainer → clase → placeholder de escena).
+func apply_participant_trainer_sprites(battle_controller: BattleController) -> void:
+	if battle_controller == null:
+		return
+	if battle_controller.player_side != null:
+		var player_parts: Array = battle_controller.player_side.participants
+		for i in range(mini(player_parts.size(), 2)):
+			var participant: BattleParticipant = player_parts[i]
+			if participant == null or not participant.is_trainer:
+				continue
+			var tex: Texture2D = participant.battle_back_sprite
+			if tex == null:
+				tex = participant.battle_front_sprite
+			_apply_texture_to_trainer_root(get_player_trainer(i), tex)
+	if battle_controller.enemy_side != null:
+		var enemy_parts: Array = battle_controller.enemy_side.participants
+		for i in range(mini(enemy_parts.size(), 2)):
+			var participant: BattleParticipant = enemy_parts[i]
+			if participant == null or not participant.is_trainer:
+				continue
+			_apply_texture_to_trainer_root(get_enemy_trainer(i), participant.battle_front_sprite)
+
+
+func _apply_texture_to_trainer_root(trainer_root: Node2D, texture: Texture2D) -> void:
+	if trainer_root == null or texture == null:
+		return
+	var spr := trainer_root.get_node_or_null("Sprite") as Sprite2D
+	if spr == null:
+		return
+	spr.texture = texture
+	var tw := texture.get_width()
+	var th := maxi(texture.get_height(), 1)
+	# Hojas horizontales (p. ej. trback 640x128 → 5 frames); front 128x128 → 1.
+	spr.hframes = maxi(tw / th, 1)
+	spr.vframes = 1
+	spr.frame = 0
+
+
 ## Muestra trainers ya colocados en la base (antes del slide de la base).
 func reveal_intro_trainers(
 	rules: BattleRules,

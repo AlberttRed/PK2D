@@ -127,6 +127,7 @@ func _play_animation(target: Node) -> void:
 		push_warning("CutAction: No hay animación disponible")
 		return
 
+	AudioManager.play_overworld_cut()
 	# Reproducir y esperar
 	actor_animator.play(anim_name)
 	await actor_animator.sprite.animation_finished

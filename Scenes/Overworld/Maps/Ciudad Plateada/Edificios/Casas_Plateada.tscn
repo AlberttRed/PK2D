@@ -1,6 +1,7 @@
 [gd_scene load_steps=74 format=4 uid="uid://bbxkyr6wh7s7h"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_rne5y"]
+[ext_resource type="AudioStream" uid="uid://bhvagjix6fvqe" path="res://Audio/BGM/Pewter City.ogg" id="bgm_pewter"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_mq4ig"]
 [ext_resource type="TileSet" uid="uid://dr7bntiy6uqpb" path="res://Resources/Tilesets/Centro_Pokemon.tres" id="3_oktwy"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_6n4xl"]
@@ -400,6 +401,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Casas_Plateada" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_rne5y")
+bgm = ExtResource("bgm_pewter")
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

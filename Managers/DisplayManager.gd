@@ -65,6 +65,8 @@ var _pending_bag_ui_navigation_state: Dictionary = {}
 var _skip_pause_open_on_party_close: bool = false
 ## Party → bolsa → usar ítem: cerramos bolsa y mostramos feedback con party visible (no reapertura diferida duplicada).
 var _suppress_party_resume_after_bag_close: bool = false
+## Cierre interno de mochila (reapertura tras party): no ejecutar lógica de _on_bag_closed.
+var _suppress_bag_closed_effects: bool = false
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
@@ -382,11 +384,11 @@ static func play_flash_reveal(target_darkness: float, duration: float = 0.55) ->
 		return
 	await overlay.play_flash_reveal(target_darkness, duration)
 
-static func play_mo_overlay(pokemon_visual: Variant = null) -> void:
+static func play_mo_overlay(pokemon_visual: Variant = null, pokemon: Pokemon = null) -> void:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
-	await instance._play_mo_overlay(pokemon_visual)
+	await instance._play_mo_overlay(pokemon_visual, pokemon)
 
 static func set_overlay_flashlight(enabled: bool, config: Dictionary = {}) -> void:
 	var overlay := get_overlay_layer()
@@ -557,6 +559,8 @@ func _start_battle(participants: Array[BattleParticipant], rules: BattleRules, f
 		else:
 			enemy_participants.append(participant)
 
+	AudioManager.play_battle_bgm(rules, enemy_participants)
+
 	# Emitir señal de inicio de batalla
 	battle_started.emit()
 
@@ -677,6 +681,9 @@ func _on_battle_finished(_winner_side: String) -> void:
 	if _winner_side == "enemy":
 		await _apply_defeat_respawn_warp()
 
+	_restore_overworld_bgm()
+	await get_tree().create_timer(AudioManager.BATTLE_EXIT_BGM_FADE).timeout
+
 	await _run_pending_evolutions_post_battle()
 
 	# Revelar overworld solo cuando ya no hay evolución pendiente ni UI encima del negro.
@@ -735,7 +742,18 @@ func _apply_defeat_respawn_warp() -> void:
 		ws.force_sync_to_gamestate()
 
 
-func _play_mo_overlay(pokemon_visual: Variant) -> void:
+func _restore_overworld_bgm() -> void:
+	var ctx := _resolve_overworld_context()
+	if ctx == null:
+		# No hay overworld (p.ej. TestBattle): parar el BGM de batalla directamente.
+		AudioManager.stop_bgm(AudioManager.BATTLE_EXIT_BGM_FADE)
+		return
+	var ws: Node = ctx.get_world_system()
+	if ws != null and ws.has_method("refresh_map_bgm"):
+		ws.refresh_map_bgm()
+
+
+func _play_mo_overlay(pokemon_visual: Variant, pokemon: Pokemon = null) -> void:
 	if MO_OVERLAY_SCENE == null:
 		push_error("DisplayManager: Escena de MOOverlay no disponible")
 		return
@@ -756,7 +774,7 @@ func _play_mo_overlay(pokemon_visual: Variant) -> void:
 	var previous_input_locked := input_locked
 	input_locked = true
 
-	await overlay.play(pokemon_visual)
+	await overlay.play(pokemon_visual, pokemon)
 
 	if is_instance_valid(overlay):
 		overlay.queue_free()
@@ -968,7 +986,7 @@ func _open_pokedex_ui(with_screen_fade: bool = true) -> void:
 		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 
 	_pokedex_controller = POKEDEX_CONTROLLER_SCRIPT.new()
 	_pokedex_ui.setup(_pokedex_controller)
@@ -995,7 +1013,7 @@ func _transition_fade_pokedex_to_pause_menu() -> void:
 func _on_pokedex_closed() -> void:
 	_pokedex_controller = null
 	if pause_menu and not pause_menu.visible:
-		pause_menu.open(0) # Mantener cursor en "POKéDEX"
+		pause_menu.open(0, false) # Mantener cursor en "POKéDEX"
 	_on_ui_visibility_changed()
 
 func _on_pause_bag_requested() -> void:
@@ -1022,7 +1040,7 @@ func _open_party_ui(with_screen_fade: bool = true) -> void:
 		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 
 	var context := _resolve_overworld_context()
 	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
@@ -1067,7 +1085,7 @@ func _on_party_closed() -> void:
 	_party_controller = null
 	_resume_party_focus_slot = -1
 	if pause_menu and not pause_menu.visible:
-		pause_menu.open(1)
+		pause_menu.open(1, false)
 	_on_ui_visibility_changed()
 
 
@@ -1078,14 +1096,35 @@ func _fade_close_party_reopen_bag_overworld() -> void:
 	_close_party_ui()
 	await _await_ui_control_hidden(_party_ui)
 	_skip_pause_open_on_party_close = false
-	_open_bag_ui(false)
-	if _bag_ui != null and _bag_ui.visible and not _pending_bag_ui_navigation_state.is_empty():
-		if _bag_ui.has_method("restore_navigation_state"):
-			_bag_ui.restore_navigation_state(_pending_bag_ui_navigation_state)
-			if _bag_ui.has_method("refresh_from_controller"):
-				_bag_ui.refresh_from_controller()
-	_pending_bag_ui_navigation_state.clear()
+	_reopen_bag_after_party_flow()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+
+func _reopen_bag_after_party_flow() -> void:
+	if _bag_ui == null:
+		return
+	_close_message()
+	if choice_box != null and choice_box.visible:
+		choice_box.hide()
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+	var nav_state: Dictionary = _pending_bag_ui_navigation_state.duplicate(true)
+	_pending_bag_ui_navigation_state.clear()
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
+	_bag_ui.setup(_bag_controller)
+	_suppress_bag_closed_effects = true
+	if _bag_ui.visible:
+		_bag_ui.close()
+	_suppress_bag_closed_effects = false
+	_bag_ui.open()
+	if not nav_state.is_empty():
+		if _bag_ui.has_method("restore_navigation_state"):
+			_bag_ui.restore_navigation_state(nav_state)
+		if _bag_ui.has_method("refresh_from_controller"):
+			_bag_ui.refresh_from_controller()
+	_on_ui_visibility_changed()
 
 
 func _on_party_use_item_requested(slot_index: int) -> void:
@@ -1102,7 +1141,7 @@ func _transition_fade_party_to_bag_for_use_item() -> void:
 	await _await_ui_control_hidden(_party_ui)
 	_closing_party_to_open_bag_for_item = false
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 	var context := _resolve_overworld_context()
 	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
 	_bag_controller.configure_party_item_flow(slot)
@@ -1123,7 +1162,7 @@ func _deferred_reopen_party_after_bag() -> void:
 		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 		return
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 	var context := _resolve_overworld_context()
 	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
 	_party_ui.setup(_party_controller)
@@ -1136,6 +1175,9 @@ func _open_bag_ui(with_screen_fade: bool = true) -> void:
 	if _party_ui != null and _party_ui.visible:
 		return
 	if _bag_ui != null and _bag_ui.visible:
+		if _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(true)
+		_on_ui_visibility_changed()
 		return
 
 	if _bag_ui == null:
@@ -1146,7 +1188,7 @@ func _open_bag_ui(with_screen_fade: bool = true) -> void:
 		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 
 	var context := _resolve_overworld_context()
 	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
@@ -1175,6 +1217,9 @@ func _transition_fade_bag_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
+	if _suppress_bag_closed_effects:
+		_on_ui_visibility_changed()
+		return
 	var resume_party_slot := -1
 	if _bag_controller != null and _bag_controller.party_target_slot >= 0:
 		resume_party_slot = _bag_controller.party_target_slot
@@ -1192,7 +1237,7 @@ func _on_bag_closed() -> void:
 		_on_ui_visibility_changed()
 		return
 	if pause_menu and not pause_menu.visible:
-		pause_menu.open(2) # Mantener cursor en "MOCHILA"
+		pause_menu.open(2, false) # Mantener cursor en "MOCHILA"
 	_on_ui_visibility_changed()
 
 func _on_bag_use_requested(item_id: int) -> void:
@@ -1209,7 +1254,7 @@ func _open_party_for_pending_bag_item_after_bag_close() -> void:
 		return
 
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 
 	var context := _resolve_overworld_context()
 	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
@@ -1340,7 +1385,7 @@ func _party_bag_flow_use_item_show_feedback_on_party(item_id: int, restore_bag_i
 
 	if resume_slot >= 0:
 		if pause_menu and pause_menu.visible:
-			pause_menu.close()
+			pause_menu.close(false)
 		var context_pb := _resolve_overworld_context()
 		_party_controller = PARTY_CONTROLLER_SCRIPT.new(context_pb)
 		_party_ui.setup(_party_controller)
@@ -1640,7 +1685,7 @@ func _open_save_ui() -> void:
 		return
 
 	if pause_menu and pause_menu.visible:
-		pause_menu.close()
+		pause_menu.close(false)
 
 	var context := _resolve_overworld_context()
 	_save_menu_controller = SAVE_MENU_CONTROLLER_SCRIPT.new(context, 0)
@@ -1732,7 +1777,7 @@ func _close_all_save_related_ui() -> void:
 func _on_save_ui_closed() -> void:
 	_save_menu_controller = null
 	if _reopen_pause_after_save_ui_close and pause_menu and not pause_menu.visible:
-		pause_menu.open(4)
+		pause_menu.open(4, false)
 	_reopen_pause_after_save_ui_close = true
 	_on_ui_visibility_changed()
 

@@ -383,6 +383,9 @@ func _start_battle_sequence() -> void:
 	# Pausar movimiento del trainer
 	_pause_movement()
 
+	# Eyes Meet desde el momento de la exclamación hasta el BGM de combate
+	_play_eyes_meet_bgm_from_page()
+
 	# 1. Mostrar exclamación
 	await _show_exclamation()
 
@@ -394,6 +397,18 @@ func _start_battle_sequence() -> void:
 	# 3. Buscar StartBattleEventCommand en la página activa e iniciar batalla
 	await _initiate_battle_from_page()
 
+
+## Reproduce Eyes Meet según TrainerData de la página (clase → override).
+func _play_eyes_meet_bgm_from_page() -> void:
+	if not current_page:
+		return
+	var battle_command = current_page.get_battle_command()
+	if not battle_command or not battle_command.trainer_data:
+		return
+	var trainer_data: TrainerData = battle_command.trainer_data
+	trainer_data.initialize()
+	var theme := trainer_data.get_eyes_meet()
+	AudioManager.play_eyes_meet_bgm(theme)
 
 ## Muestra la exclamación sobre el trainer
 func _show_exclamation() -> void:

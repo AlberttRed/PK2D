@@ -275,6 +275,9 @@ func request_use_item(item_id: int) -> Dictionary:
 			feedback = "%s\n%s" % [item_label_f, result.message]
 	else:
 		feedback = result.message
+		# Poción / antídoto / etc. aplicados desde el equipo.
+		if list_use_context == ItemEnums.UseContext.PARTY_MENU or party_target_slot >= 0:
+			AudioManager.play_ui_use_item_in_party()
 
 	return {
 		"ok": result.success,

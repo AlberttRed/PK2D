@@ -360,13 +360,43 @@ func _update_trainer_buttons_state() -> void:
 	else:
 		trainer_edit_button.tooltip_text = "No hay trainer para editar."
 
+func _instantiate_blank_trainer_data() -> TrainerData:
+	# En @tool, GDScript.new()/can_instantiate() suelen fallar por scripts "shallow".
+	# 1) Duplicar un .tres ya cargado y limpiarlo → instancia válida embebida.
+	for path in ["res://Resources/Trainers/TEST.tres", "res://Resources/Trainers/BROCK.tres"]:
+		if not ResourceLoader.exists(path):
+			continue
+		var loaded := load(path)
+		if loaded is TrainerData:
+			var copy := (loaded as TrainerData).duplicate(true) as TrainerData
+			if copy == null:
+				continue
+			copy.resource_path = ""
+			copy.resource_name = ""
+			copy.party_data = []
+			copy.battle_items = []
+			return copy
+	# 2) Fallback: forzar recompilación del script y new().
+	var trainer_script := load("res://Scripts/Resources/Classes/TrainerData.gd") as GDScript
+	if trainer_script == null:
+		return null
+	if not trainer_script.can_instantiate():
+		trainer_script.reload()
+	if trainer_script.can_instantiate():
+		return trainer_script.new() as TrainerData
+	return null
+
 func _on_new_embedded_trainer() -> void:
 	if not command:
 		return
-	var trainer := TrainerData.new()
+	var trainer := _instantiate_blank_trainer_data()
+	if trainer == null:
+		_show_error_dialog("No se pudo crear TrainerData embebido")
+		return
 	trainer.trainer_id = 1
 	trainer.trainer_class_id = TrainerClassEnum.Values.POKEMON_TRAINER
 	trainer.display_name = "Entrenador embebido"
+	trainer.resource_id = "embedded_1"
 	trainer.reward_money = 1000
 	command.trainer_data = trainer
 	_update_trainer_data_display()

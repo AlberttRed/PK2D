@@ -128,6 +128,12 @@ func get_weather() -> WeatherData:
 func get_battle_animation() -> BattleAnimation:
 	return base_data.get_battle_animation()
 
+func get_battle_sfx() -> AudioStream:
+	return base_data.get_battle_sfx()
+
+func get_battle_sfx_volume_db() -> float:
+	return base_data.get_battle_sfx_volume_db()
+
 func get_stat_changes() -> Dictionary[StatsEnum.Values, int]:
 	return base_data.get_stat_changes()
 

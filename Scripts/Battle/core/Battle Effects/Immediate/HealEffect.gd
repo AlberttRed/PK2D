@@ -21,4 +21,5 @@ func visualize(_ui: BattleUI) -> void:
 	if amount <= 0 or target == null or target.battle_spot == null:
 		return
 	if show_heal_animation:
+		await target.battle_spot.play_heal_animation()
 		await target.battle_spot.apply_heal(amount)

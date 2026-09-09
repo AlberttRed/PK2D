@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://c1amvh7rkmkou"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_q1be6"]
+[ext_resource type="AudioStream" uid="uid://bgo23iufumxdq" path="res://Audio/BGM/Oak Pokémon Lab.ogg" id="bgm_lab"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_gbfid"]
 [ext_resource type="TileSet" uid="uid://dr7bntiy6uqpb" path="res://Resources/Tilesets/Centro_Pokemon.tres" id="3_vuiic"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_k1guk"]
@@ -2306,6 +2307,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Laboratorio" type="Node2D" unique_id=1124150211]
 y_sort_enabled = true
 script = ExtResource("1_q1be6")
+bgm = ExtResource("bgm_lab")
 is_indoor = true
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=1666541743 groups=["OverworldGrid"]]

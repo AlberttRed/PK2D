@@ -3,7 +3,7 @@ extends RefCounted
 class_name ExperienceCalculator
 
 ## PROVISIONAL — pruebas rápidas: si no es 0, cada receptor gana esta EXP por cada rival KO (ignora la fórmula).
-const DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT: int = 0
+static var debug_fixed_exp_per_ko_per_recipient: int = 0
 
 ## Resultado por Pokémon tras aplicar EXP (antes de la subida de nivel en otro paso).
 class ParticipantOutcome extends RefCounted:
@@ -74,16 +74,16 @@ static func grant_for_defeated_enemies(
 		var base_y := _resolve_base_experience(bp)
 		var lv: int = bp.get_level()
 		var per := _raw_exp_per_participant(base_y, lv, recipients.size(), is_trainer_battle)
-		if DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT > 0:
-			per = DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT
+		if debug_fixed_exp_per_ko_per_recipient > 0:
+			per = debug_fixed_exp_per_ko_per_recipient
 		result.last_raw_yield_per_participant = per
 		for rec_bp: BattlePokemon in recipients:
 			if rec_bp == null:
 				continue
 			gains[rec_bp] = int(gains.get(rec_bp, 0)) + per
 
-	if DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT > 0:
-		print("ExperienceCalculator: MODO PROVISIONAL — %d EXP por KO y receptor (DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT)" % DEBUG_FIXED_EXP_PER_KO_PER_RECIPIENT)
+	if debug_fixed_exp_per_ko_per_recipient > 0:
+		print("ExperienceCalculator: MODO PROVISIONAL — %d EXP por KO y receptor (debug_fixed_exp_per_ko_per_recipient)" % debug_fixed_exp_per_ko_per_recipient)
 	print("ExperienceCalculator: repartiendo EXP — KOs=%d, participantes=%d, último trozo/part=%d (trainer=%s)" % [
 		defeated.size(), recipients.size(), result.last_raw_yield_per_participant, str(is_trainer_battle)
 	])

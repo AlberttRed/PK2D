@@ -33,6 +33,7 @@ var waitTime:float = 0.0
 var waitInput:bool = true
 var closeAtEnd:bool = true
 var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aunque no haya más mensajes (batalla)
+@export var play_open_sound_on_show: bool = true
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var _current_theme: MessageBoxTheme = null  ## Tema actualmente aplicado
@@ -456,6 +457,23 @@ func startText():
 		_on_text_visible_ready = Callable()
 		cb.call()
 
+## Sonido al avanzar texto/mensaje (no al cerrar). Basado en estado, no en la flecha visible.
+func _should_play_continue_sound_on_accept() -> bool:
+	if not waitInput:
+		return false
+	# Cerrar el cuadro → sin sonido
+	if messageHasFinished and closeAtEnd:
+		return false
+	# Último mensaje sin cerrar (closeAtEnd=false) → sin sonido
+	if messageHasFinished and isLastMessage:
+		return false
+	return true
+
+
+func _play_message_continue_sound() -> void:
+	if _should_play_continue_sound_on_accept():
+		AudioManager.play_ui_select()
+
 func selectOption(): #(ui_accept)
 	print("selected")
 
@@ -471,6 +489,7 @@ func selectOption(): #(ui_accept)
 				close()
 			elif not isLastMessage:
 				# closeAtEnd = false y hay más mensajes → Continuar al siguiente
+				_play_message_continue_sound()
 				resumeText()
 			else:
 				# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
@@ -480,6 +499,7 @@ func selectOption(): #(ui_accept)
 			pass#SPEED UP TEXT
 		else:
 			if waitInput:
+				_play_message_continue_sound()
 				resumeText()
 
 func cancelOption(): #(ui_cancel)
@@ -495,6 +515,7 @@ func cancelOption(): #(ui_cancel)
 			if closeAtEnd:
 				close()
 			elif not isLastMessage:
+				_play_message_continue_sound()
 				resumeText()
 			else:
 				# closeAtEnd = false y es último mensaje → Finalizar sin cerrar
@@ -637,6 +658,8 @@ func showMessage(message = null):
 	$AnimationPlayer2.stop()
 	$next.hide()
 	self.show()
+	if play_open_sound_on_show:
+		AudioManager.play_ui_select()
 
 	# Esperar frame para que el layout se calcule y podamos obtener el número de líneas
 	await get_tree().process_frame

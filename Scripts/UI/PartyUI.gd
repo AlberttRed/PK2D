@@ -14,6 +14,7 @@ signal battle_switch_rejected(message: Dictionary)
 
 const SLOT_COUNT: int = 6
 const CANCEL_INDEX: int = 6
+const _SUMMARY_FADE_DURATION: float = 0.35
 
 @export var style_salir: StyleBox
 @export var style_salir_sel: StyleBox
@@ -411,10 +412,12 @@ func _focus_move(side: Side) -> void:
 			var up_slot: int = _first_occupied_salir_up()
 			if up_slot >= 0:
 				pokemon_panels[up_slot].grab_focus()
+				_play_cursor_sound()
 		elif side == SIDE_LEFT:
 			var left_slot: int = _first_occupied_salir_left()
 			if left_slot >= 0:
 				pokemon_panels[left_slot].grab_focus()
+				_play_cursor_sound()
 		return
 	var slot: int = _get_party_slot_from_focus()
 	if slot < 0 or slot >= SLOT_COUNT:
@@ -427,6 +430,7 @@ func _focus_move(side: Side) -> void:
 		salir.grab_focus()
 	else:
 		pokemon_panels[target].grab_focus()
+	_play_cursor_sound()
 
 
 func _on_Salir_focus_entered() -> void:
@@ -528,29 +532,32 @@ func _on_input_cancel() -> void:
 	if _suppress_input:
 		return
 	if _bag_item_target_pick_mode:
+		_play_cancel_sound()
 		# DisplayManager funde a negro y cierra (evita un frame a juego desnudo).
 		bag_item_target_cancelled.emit()
 		return
 	if _battle_switch_pick_mode:
 		if _battle_force_switch:
 			return
+		_play_cancel_sound()
 		battle_switch_cancelled.emit()
 		return
 	if _switch_mode:
 		_exit_switch_mode()
 		_set_help_text("Elige a un Pokémon.")
 		return
-	back_requested.emit()
+	_request_back()
 
 
 func _on_input_start() -> void:
 	if _bag_item_target_pick_mode and _can_handle_party_input():
+		_play_cancel_sound()
 		bag_item_target_cancelled.emit()
 		return
 	if _battle_switch_pick_mode and _can_handle_party_input():
 		if _battle_force_switch:
 			return
-			return
+		_play_cancel_sound()
 		battle_switch_cancelled.emit()
 		return
 	if _switch_mode and _can_handle_party_input():
@@ -558,7 +565,7 @@ func _on_input_start() -> void:
 		_set_help_text("Elige a un Pokémon.")
 		return
 	if _can_handle_party_input():
-		back_requested.emit()
+		_request_back()
 
 
 func _handle_accept_async() -> void:
@@ -572,6 +579,7 @@ func _handle_accept_async() -> void:
 			return
 		if not _controller.is_slot_occupied(slot):
 			return
+		_play_select_sound()
 		bag_item_target_selected.emit(slot)
 		return
 
@@ -579,14 +587,15 @@ func _handle_accept_async() -> void:
 		if slot == CANCEL_INDEX:
 			if _battle_force_switch:
 				return
-			else:
-				battle_switch_cancelled.emit()
+			_play_cancel_sound()
+			battle_switch_cancelled.emit()
 			return
 		if slot < 0 or slot >= SLOT_COUNT:
 			return
 		if not _controller.is_slot_occupied(slot):
 			_set_help_text("No hay ningún Pokémon en ese slot.")
 			return
+		_play_select_sound()
 		await _handle_battle_switch_choice_menu(slot)
 		return
 
@@ -615,6 +624,7 @@ func _handle_accept_async() -> void:
 			return
 		var pa: PartyPokemonPanel = pokemon_panels[origin]
 		var pb: PartyPokemonPanel = pokemon_panels[target]
+		_play_select_sound()
 		_suppress_input = true
 		await _party_await_both_swapped_out(pa, pb)
 		var swap_res: Dictionary = _controller.try_swap_slots(origin, target)
@@ -635,91 +645,109 @@ func _handle_accept_async() -> void:
 		return
 
 	if slot == CANCEL_INDEX:
-		back_requested.emit()
+		_confirm_back()
 		return
 	if slot < 0 or slot >= SLOT_COUNT:
 		return
 	if not _controller.is_slot_occupied(slot):
 		return
 
-	var entries: Array[Dictionary] = _controller.build_action_menu_entries(slot)
-	if entries.is_empty():
-		return
-	var labels: Array[String] = []
-	for e: Dictionary in entries:
-		labels.append(str(e.get("label", "")))
+	_play_select_sound()
+	await _run_party_action_menu(slot)
 
-	var slot_view: Dictionary = _controller.get_slot_view(slot)
-	var mon_name: String = str(slot_view.get("display_name", "Pokémon"))
-	_set_help_text("¿Qué hacer con %s?" % mon_name)
 
-	_suppress_input = true
-	var idx: int = await DisplayManager.show_party_action_choices(labels)
-	_suppress_input = false
-
-	if idx < 0 or idx >= entries.size():
-		_set_help_text("Elige a un Pokémon.")
-		return
-	var action: StringName = entries[idx].get("id", &"") as StringName
-	match action:
-		&"summary":
-			await _open_hgss_summary(slot)
+func _run_party_action_menu(slot: int) -> void:
+	while true:
+		var entries: Array[Dictionary] = _controller.build_action_menu_entries(slot)
+		if entries.is_empty():
+			_set_help_text("Elige a un Pokémon.")
 			return
-		&"switch":
-			_enter_switch_mode(slot)
+		var labels: Array[String] = []
+		for e: Dictionary in entries:
+			labels.append(str(e.get("label", "")))
+
+		var slot_view: Dictionary = _controller.get_slot_view(slot)
+		var mon_name: String = str(slot_view.get("display_name", "Pokémon"))
+		_set_help_text("¿Qué hacer con %s?" % mon_name)
+
+		_suppress_input = true
+		var idx: int = await DisplayManager.show_party_action_choices(labels)
+		_suppress_input = false
+
+		if idx < 0 or idx >= entries.size():
+			_set_help_text("Elige a un Pokémon.")
 			return
-		&"use_item":
-			_set_help_text("¿Qué quieres hacer con él?")
-			_suppress_input = true
-			var item_sub: Array[String] = ["Usar", "Dar", "Salir"]
-			var sub_idx: int = await DisplayManager.show_party_action_choices(item_sub)
-			_suppress_input = false
-			if sub_idx < 0 or sub_idx >= item_sub.size():
+		var action: StringName = entries[idx].get("id", &"") as StringName
+		match action:
+			&"summary":
+				await _open_hgss_summary(slot)
+				if not _controller.is_slot_occupied(slot):
+					_set_help_text("Elige a un Pokémon.")
+					return
+				_grab_slot_focus(slot)
+				continue
+			&"switch":
+				_enter_switch_mode(slot)
+				return
+			&"use_item":
+				_set_help_text("¿Qué quieres hacer con él?")
+				_suppress_input = true
+				var item_sub: Array[String] = ["Usar", "Dar", "Salir"]
+				var sub_idx: int = await DisplayManager.show_party_action_choices(item_sub)
+				_suppress_input = false
+				if sub_idx < 0 or sub_idx >= item_sub.size():
+					_set_help_text("Elige a un Pokémon.")
+					return
+				match sub_idx:
+					0:
+						use_item_requested.emit(slot)
+					1:
+						_suppress_input = true
+						await DisplayManager.show_message("Dar: pendiente de implementar.", {
+							"waitInput": false,
+							"closeAtEnd": true,
+							"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+							"typingMode": "instant"
+						})
+						_suppress_input = false
+						_set_help_text("Elige a un Pokémon.")
+					2:
+						_set_help_text("Elige a un Pokémon.")
+				return
+			&"cancel":
 				_set_help_text("Elige a un Pokémon.")
 				return
-			match sub_idx:
-				0:
-					use_item_requested.emit(slot)
-				1:
-					_suppress_input = true
-					await DisplayManager.show_message("Dar: pendiente de implementar.", {
-						"waitInput": false,
-						"closeAtEnd": true,
-						"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-						"typingMode": "instant"
-					})
-					_suppress_input = false
-					_set_help_text("Elige a un Pokémon.")
-				2:
-					_set_help_text("Elige a un Pokémon.")
-			return
-		&"cancel":
-			pass
-	_set_help_text("Elige a un Pokémon.")
+		_set_help_text("Elige a un Pokémon.")
+		return
 
 
 func _handle_battle_switch_choice_menu(slot: int) -> void:
 	var slot_view: Dictionary = _controller.get_slot_view(slot)
 	var mon_name: String = str(slot_view.get("display_name", "Pokémon"))
-	_set_help_text("¿Qué hacer con %s?" % mon_name)
-	_suppress_input = true
-	var idx: int = await DisplayManager.show_party_action_choices(["Cambio", "Datos", "Salir"])
-	_suppress_input = false
+	while true:
+		_set_help_text("¿Qué hacer con %s?" % mon_name)
+		_suppress_input = true
+		var idx: int = await DisplayManager.show_party_action_choices(["Cambio", "Datos", "Salir"])
+		_suppress_input = false
 
-	match idx:
-		0:
-			if not _controller.is_selectable_switch_slot(slot):
-				battle_switch_rejected.emit(_controller.get_invalid_switch_message(slot))
+		match idx:
+			0:
+				if not _controller.is_selectable_switch_slot(slot):
+					battle_switch_rejected.emit(_controller.get_invalid_switch_message(slot))
+					_reset_battle_switch_help_text()
+					return
+				battle_switch_slot_selected.emit(slot)
+				return
+			1:
+				await _open_hgss_summary(slot)
+				if not _controller.is_slot_occupied(slot):
+					_reset_battle_switch_help_text()
+					return
+				_grab_slot_focus(slot)
+				continue
+			_:
 				_reset_battle_switch_help_text()
 				return
-			battle_switch_slot_selected.emit(slot)
-			return
-		1:
-			await _open_hgss_summary(slot)
-			return
-		_:
-			_reset_battle_switch_help_text()
-			return
 
 
 func _open_hgss_summary(slot: int) -> void:
@@ -733,11 +761,23 @@ func _open_hgss_summary(slot: int) -> void:
 
 	_in_hgss_summary = true
 	_disable_input()
+
+	await DisplayManager.fade_in(_SUMMARY_FADE_DURATION)
+
 	summary.loadedParty = members
 	summary.movingIndex = slot
 	summary.loadPokemonInfo(mon)
 	summary.showSummary(PartySummary.DATA)
-	await summary.closed
+
+	await DisplayManager.fade_out(_SUMMARY_FADE_DURATION)
+	summary.reveal_with_cry()
+
+	await summary.close_requested
+
+	await DisplayManager.fade_in(_SUMMARY_FADE_DURATION)
+	summary.dismiss()
+	await DisplayManager.fade_out(_SUMMARY_FADE_DURATION)
+
 	_in_hgss_summary = false
 	_suppress_input = false
 	_refresh_slots()
@@ -763,3 +803,25 @@ func _unblock_player_control() -> void:
 	var dm := DisplayManager.instance
 	if dm:
 		dm.player_control_unblocked.emit()
+
+
+func _request_back() -> void:
+	_play_cancel_sound()
+	back_requested.emit()
+
+
+func _confirm_back() -> void:
+	_play_select_sound()
+	back_requested.emit()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
+
+
+func _play_select_sound() -> void:
+	AudioManager.play_ui_select()

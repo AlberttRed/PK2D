@@ -24,6 +24,9 @@ var move_up_button: Button = null
 var move_down_button: Button = null
 var accept_button: Button = null
 
+## Evita reconstruir el panel derecho al actualizar solo la etiqueta del Tree
+var _ignore_condition_selected: bool = false
+
 # Controles específicos por tipo de condición
 var flag_scope_option: OptionButton = null
 var flag_name_edit: LineEdit = null
@@ -75,6 +78,7 @@ func _ready() -> void:
 
 	condition_tree = Tree.new()
 	condition_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	condition_tree.focus_mode = Control.FOCUS_CLICK
 	condition_tree.item_selected.connect(_on_condition_selected)
 	condition_tree.item_activated.connect(_on_condition_activated)
 	left_panel.add_child(condition_tree)
@@ -529,11 +533,6 @@ func _show_trainer_defeated_properties(trainer_cond: TrainerDefeatedCondition) -
 	var flag_name_edit = LineEdit.new()
 	flag_name_edit.text = trainer_cond.flag_name
 	flag_name_edit.placeholder_text = "Ej: rival_inicio_c_defeated (debe coincidir con defeated_flag del StartBattleEventCommand)"
-	flag_name_edit.text_changed.connect(func(text: String):
-		var trimmed_text = text.strip_edges()
-		trainer_cond.flag_name = trimmed_text
-		_refresh_condition_tree()
-	)
 	flag_name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_container.add_child(flag_name_edit)
 	properties_panel.add_child(name_container)
@@ -546,13 +545,12 @@ func _show_trainer_defeated_properties(trainer_cond: TrainerDefeatedCondition) -
 	validation_label.text = "⚠ El nombre del flag no puede estar vacío"
 	properties_panel.add_child(validation_label)
 
-	# Conectar para actualizar la validación en tiempo real
 	flag_name_edit.text_changed.connect(func(text: String):
 		var trimmed_text = text.strip_edges()
 		trainer_cond.flag_name = trimmed_text
 		if validation_label:
 			validation_label.visible = trimmed_text.is_empty()
-		_refresh_condition_tree()
+		_update_selected_condition_label(trainer_cond)
 	)
 
 	# Info
@@ -607,8 +605,29 @@ func _show_has_item_properties(item_cond: EventCondition) -> void:
 	_populate_has_item_options()
 	_select_has_item_id(int(item_cond.item_id))
 
+## Actualiza solo el texto del ítem seleccionado en el árbol, sin reconstruir el panel
+## (evita perder el foco del LineEdit al escribir).
+func _update_selected_condition_label(cond: EventCondition) -> void:
+	var selected_item = condition_tree.get_selected() if condition_tree else null
+	if selected_item == null or cond == null:
+		return
+	var focus_owner := get_viewport().gui_get_focus_owner() as Control
+	var caret := -1
+	if focus_owner is LineEdit:
+		caret = (focus_owner as LineEdit).caret_column
+	_ignore_condition_selected = true
+	selected_item.set_text(0, _get_condition_display_text(cond))
+	_ignore_condition_selected = false
+	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner is LineEdit:
+		var line := focus_owner as LineEdit
+		line.grab_focus()
+		if caret >= 0:
+			line.caret_column = mini(caret, line.text.length())
+
 ## Se llama cuando se selecciona una condición en el árbol
 func _on_condition_selected() -> void:
+	if _ignore_condition_selected:
+		return
 	var selected_item = condition_tree.get_selected()
 	if not selected_item:
 		_clear_properties_panel()
@@ -932,8 +951,7 @@ func _on_flag_scope_changed(index: int) -> void:
 
 	var flag_cond = cond as FlagCondition
 	flag_cond.scope = FlagCondition.Scope.GLOBAL if index == 0 else FlagCondition.Scope.SELF
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(flag_cond))
+	_update_selected_condition_label(flag_cond)
 
 func _on_flag_name_changed(_text: String) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -950,8 +968,7 @@ func _on_flag_name_changed(_text: String) -> void:
 
 	var flag_cond = cond as FlagCondition
 	flag_cond.flag_name = flag_name_edit.text
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(flag_cond))
+	_update_selected_condition_label(flag_cond)
 
 func _on_flag_value_changed(pressed: bool) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -969,8 +986,7 @@ func _on_flag_value_changed(pressed: bool) -> void:
 	var flag_cond = cond as FlagCondition
 	flag_cond.expected_value = pressed
 	flag_value_check.text = "Valor esperado: %s" % ("true" if pressed else "false")
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(flag_cond))
+	_update_selected_condition_label(flag_cond)
 
 ## Callbacks para VariableCondition
 func _on_variable_name_changed(_text: String) -> void:
@@ -988,8 +1004,7 @@ func _on_variable_name_changed(_text: String) -> void:
 
 	var var_cond = cond as VariableCondition
 	var_cond.variable_name = variable_name_edit.text
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(var_cond))
+	_update_selected_condition_label(var_cond)
 
 func _on_variable_operator_changed(index: int) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -1006,8 +1021,7 @@ func _on_variable_operator_changed(index: int) -> void:
 
 	var var_cond = cond as VariableCondition
 	var_cond.operator = index
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(var_cond))
+	_update_selected_condition_label(var_cond)
 
 func _on_variable_value_changed(_text: String) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -1024,8 +1038,7 @@ func _on_variable_value_changed(_text: String) -> void:
 
 	var var_cond = cond as VariableCondition
 	var_cond.compare_value = _parse_value(variable_value_edit.text)
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(var_cond))
+	_update_selected_condition_label(var_cond)
 
 ## Callbacks para GroupCondition
 func _on_group_mode_changed(index: int) -> void:
@@ -1043,8 +1056,7 @@ func _on_group_mode_changed(index: int) -> void:
 
 	var group_cond = cond as GroupCondition
 	group_cond.mode = GroupCondition.Mode.ALL if index == 0 else GroupCondition.Mode.ANY
-	# Solo actualizar el texto del item sin refrescar todo el árbol
-	selected_item.set_text(0, _get_condition_display_text(group_cond))
+	_update_selected_condition_label(group_cond)
 
 func _on_group_add_child_pressed() -> void:
 	# Abrir el menú de selección de tipo
@@ -1066,7 +1078,7 @@ func _on_actor_position_name_changed(new_text: String) -> void:
 
 	var pos_cond = cond as ActorPositionCondition
 	pos_cond.actor_name = new_text.strip_edges()
-	_refresh_condition_tree()
+	_update_selected_condition_label(pos_cond)
 
 func _on_actor_position_direction_changed(index: int) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -1083,7 +1095,7 @@ func _on_actor_position_direction_changed(index: int) -> void:
 
 	var pos_cond = cond as ActorPositionCondition
 	pos_cond.direction = index
-	_refresh_condition_tree()
+	_update_selected_condition_label(pos_cond)
 
 ## Callbacks para NotCondition
 func _on_not_edit_child_pressed() -> void:
@@ -1167,7 +1179,7 @@ func _on_has_item_item_selected(index: int) -> void:
 		return
 	var item_cond = cond
 	item_cond.item_id = int(_has_item_ids_by_index[index])
-	selected_item.set_text(0, _get_condition_display_text(item_cond))
+	_update_selected_condition_label(item_cond)
 
 func _on_has_item_quantity_changed(value: float) -> void:
 	var selected_item = condition_tree.get_selected()
@@ -1181,7 +1193,7 @@ func _on_has_item_quantity_changed(value: float) -> void:
 		return
 	var item_cond = cond
 	item_cond.quantity = maxi(1, int(value))
-	selected_item.set_text(0, _get_condition_display_text(item_cond))
+	_update_selected_condition_label(item_cond)
 
 func _on_has_item_picker_pressed() -> void:
 	if not Engine.is_editor_hint():

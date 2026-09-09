@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://cyx8eodebjaio"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vte67"]
+[ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_ly0om"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="3_fjuff"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_ig604"]
@@ -442,6 +443,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="MapScene" type="Node2D" unique_id=631711350]
 y_sort_enabled = true
 script = ExtResource("1_vte67")
+bgm = ExtResource("bgm_center")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=740588001 groups=["OverworldGrid"]]
 y_sort_enabled = true

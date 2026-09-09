@@ -1,6 +1,7 @@
 [gd_scene load_steps=188 format=4 uid="uid://kknly2sw8nn1"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vvr7d"]
+[ext_resource type="AudioStream" uid="uid://dkhsdbhorcuj5" path="res://Audio/BGM/Route 3.ogg" id="bgm_route3"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_kdrk2"]
 [ext_resource type="TileSet" uid="uid://bo4svjmq1mi66" path="res://Resources/Tilesets/Outside_tileset.tres" id="3_6tpau"]
 [ext_resource type="PackedScene" uid="uid://djlq7fvr2w1qk" path="res://Scenes/Overworld/Core/MapAreaEncounters.tscn" id="3_b4mmo"]
@@ -893,6 +894,7 @@ metadata/_custom_type_script = "uid://bgq1jwxt4ade5"
 [node name="Ruta_22" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_vvr7d")
+bgm = ExtResource("bgm_route3")
 world_position = Vector2(-1792, -2432)
 neighbors = Array[String](["Ciudad_Verde"])
 

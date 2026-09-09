@@ -45,6 +45,10 @@ class_name MoveData
 
 ## Animación visual de combate (nullable). Solo presentación; no afecta la lógica.
 @export var battle_animation: BattleAnimation = null
+## SFX del movimiento al reproducir la animación. Si es null, no suena.
+@export var battle_sfx: AudioStream = null
+## Offset de volumen del SFX (muchos rips GBA vienen más bajos que el resto de SE de batalla).
+@export var battle_sfx_volume_db: float = 10.0
 
 func _init():
 	add_user_signal("move_done")

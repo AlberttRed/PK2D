@@ -3,6 +3,7 @@ extends Control
 class_name PartySummary
 
 signal closed
+signal close_requested
 
 enum {
 	DATA,
@@ -38,6 +39,10 @@ func showSummary(page: int) -> void:
 	show()
 	generalInfo.show()
 	pages[page].open()
+
+
+func reveal_with_cry() -> void:
+	_play_pokemon_cry_for_current()
 
 
 func loadPokemonInfo(pokemon: Pokemon) -> void:
@@ -80,12 +85,16 @@ func closeSummary(page: int) -> void:
 	pages[page].hide()
 
 
-func close() -> void:
+func dismiss() -> void:
 	summaryIndex = 0
 	hide()
 	for page: Panel in pages:
 		page.hide()
 	closed.emit()
+
+
+func close() -> void:
+	dismiss()
 
 
 func showGeneralInfo(_visible: bool) -> void:
@@ -99,7 +108,8 @@ func selectOption() -> void:
 func cancelOption() -> void:
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
 		return
-	close()
+	_play_cancel_sound()
+	close_requested.emit()
 
 
 func moveLeft() -> void:
@@ -109,6 +119,7 @@ func moveLeft() -> void:
 		summaryIndex -= 1
 		pages[summaryIndex].open()
 		pages[summaryIndex + 1].hide()
+		_play_cursor_sound()
 
 
 func moveRight() -> void:
@@ -118,22 +129,26 @@ func moveRight() -> void:
 		summaryIndex += 1
 		pages[summaryIndex].open()
 		pages[summaryIndex - 1].hide()
+		_play_cursor_sound()
 
 
 func moveUp() -> void:
 	if activePage != null and activePage.name == "MOVES" and (activePage.mode == activePage.Modes.DETAILED or activePage.mode == activePage.Modes.LEARNING):
-		activePage.call("navigate_move_focus", -1)
+		if activePage.navigate_move_focus(-1):
+			_play_cursor_sound()
 		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
 		return
 	if visible and movingIndex > 0:
 		movingIndex -= 1
 		loadPokemonInfo(loadedParty[movingIndex])
+		_play_pokemon_cry_for_current()
 
 
 func moveDown() -> void:
 	if activePage != null and activePage.name == "MOVES" and (activePage.mode == activePage.Modes.DETAILED or activePage.mode == activePage.Modes.LEARNING):
-		activePage.call("navigate_move_focus", 1)
+		if activePage.navigate_move_focus(1):
+			_play_cursor_sound()
 		return
 	if activePage != null and activePage.name == "MOVES" and activePage.mode != activePage.Modes.NORMAL:
 		return
@@ -142,6 +157,7 @@ func moveDown() -> void:
 	if movingIndex < loadedParty.size() - 1:
 		movingIndex += 1
 		loadPokemonInfo(loadedParty[movingIndex])
+		_play_pokemon_cry_for_current()
 
 
 func _on_visibility_changed() -> void:
@@ -168,3 +184,17 @@ func _on_visibility_changed() -> void:
 			dm.input_up.disconnect(moveUp)
 		if dm.input_down.is_connected(moveDown):
 			dm.input_down.disconnect(moveDown)
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
+
+
+func _play_pokemon_cry_for_current() -> void:
+	if loadedParty.is_empty() or movingIndex < 0 or movingIndex >= loadedParty.size():
+		return
+	loadedParty[movingIndex].play_cry()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()

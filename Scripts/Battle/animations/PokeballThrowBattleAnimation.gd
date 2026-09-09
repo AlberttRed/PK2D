@@ -12,8 +12,27 @@ func play(
 	var landing := _first_target(target_spots)
 	if landing == null:
 		landing = user_spot
+	var is_enemy := (
+		landing != null
+		and landing.side != null
+		and landing.side.type == BattleSide.Types.ENEMY
+	)
+	if not is_enemy:
+		AudioManager.play_battle_throw()
+	if is_enemy and animation_layer != null and is_instance_valid(animation_layer):
+		_schedule_ball_drop_sfx(animation_layer, ENEMY_THROW_LAND_SEC)
 	animation_name = _resolve_throw_clip(landing)
 	await super.play(animation_layer, user_spot, target_spots)
+
+
+## Aterrizaje de la ball rival (ref. throw_enemy @ PokeballThrowAnimation.tscn, t=0.36).
+const ENEMY_THROW_LAND_SEC := 0.36
+
+
+static func _schedule_ball_drop_sfx(layer: Node, delay_sec: float) -> void:
+	var tw := layer.create_tween()
+	tw.tween_interval(delay_sec)
+	tw.tween_callback(AudioManager.play_battle_ball_drop)
 
 
 func _prepare_instance(

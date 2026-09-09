@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Move Categories/DamageAilmentMoveCategory.tres" id="dmg_ail_cat"]
 [ext_resource type="Resource" path="res://Resources/Data/Ailments/FLINCH.tres" id="flinch_ail"]
 [ext_resource type="Resource" path="res://Scenes/Battle/animations/moves/BiteAnimation.tres" id="bite_anim"]
+[ext_resource type="AudioStream" uid="uid://c1opi2fb02xwu" path="res://Audio/SE/Moves/Bite.ogg" id="bite_sfx"]
 
 [sub_resource type="Resource" id="Resource_w7xa6"]
 script = ExtResource("2_iev2e")
@@ -37,3 +38,4 @@ ailment_id = 22
 ailment = ExtResource("flinch_ail")
 category = ExtResource("dmg_ail_cat")
 battle_animation = ExtResource("bite_anim")
+battle_sfx = ExtResource("bite_sfx")

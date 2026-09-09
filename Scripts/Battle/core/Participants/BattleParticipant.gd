@@ -3,6 +3,7 @@ extends RefCounted
 class_name BattleParticipant
 
 var trainer_id: int = -1  # -1 o algún valor especial para salvajes
+var trainer_class_id: int = -1  # TrainerClassEnum.Values; -1 si no aplica (salvajes)
 var trainer_resource_id: String = ""  # Identificador único del trainer (nombre del .res sin extensión)
 var is_player: bool = false
 ## Si true, combate en el lado del jugador aunque no sea humano (aliado con IA).
@@ -19,6 +20,9 @@ var ai_controller: BattleIA:
 	set(value):
 		set_ai_controller(value)
 var sprite_path: String = ""  # Opcional, si usás esto para mostrar el entrenador
+## Sprites de combate (front = enemigo, back = jugador/aliado). Null = dejar placeholder de escena.
+var battle_front_sprite: Texture2D = null
+var battle_back_sprite: Texture2D = null
 var is_trainer: bool = true  # Nuevo flag, por compatibilidad futura
 var side: BattleSide = null  # Se asigna desde el add_participant()
 

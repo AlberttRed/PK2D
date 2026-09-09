@@ -7,6 +7,8 @@ const MAX_DURATION: int = 5
 
 var _finished: bool = false
 var _turns_remaining: int = 0
+## True si este tick de fin de turno aplicó daño residual (para visualizar aunque cause KO).
+var _pending_residual_damage: bool = false
 
 
 func _init(_source, _min_turns = null, _max_turns = null, _application_chance: int = 100) -> void:
@@ -48,6 +50,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 		return
 
 	applied = true
+	_pending_residual_damage = false
 
 	if _should_end():
 		_finished = true
@@ -62,6 +65,7 @@ func apply_phase(pokemon: BattlePokemon, phase: Phases, ctx: BattlePhaseContext 
 	trap_damage.is_critical = false
 	trap_damage.effectiveness = 1.0
 	pokemon.take_damage(trap_damage)
+	_pending_residual_damage = true
 
 	_turns_remaining -= 1
 	if _turns_remaining <= 0:
@@ -85,21 +89,26 @@ func visualize_phase(pokemon: BattlePokemon, ui: BattleUI, phase: Phases, ctx: B
 	if phase != BattleEffect.Phases.ON_END_BATTLE_TURN or not applied:
 		return
 
-	if _should_end():
+	# El atrapador se fue / debilitó: liberar sin daño residual.
+	if _should_end() and not _pending_residual_damage:
 		await ui.show_end_effect_message(
 			MessageFamily.Values.AILMENT, pokemon, source.id, null, source_move_id
 		)
 		return
 
-	if pokemon.is_fainted():
+	# Sin daño este tick (p.ej. ya estaba debilitado antes del residual).
+	if not _pending_residual_damage:
 		return
 
+	# Mostrar mensaje + barra aunque el residual cause KO (como el veneno).
 	await ui.show_effect_message(
 		MessageFamily.Values.AILMENT, pokemon, source.id, source_move_id
 	)
-	await pokemon.battle_spot.apply_damage()
+	if pokemon.battle_spot != null:
+		await pokemon.battle_spot.apply_damage()
 
-	if has_finished():
+	# Liberación por duración solo si sigue en pie; si KO, el faint lo muestra el turno.
+	if has_finished() and not pokemon.is_fainted():
 		await ui.show_end_effect_message(
 			MessageFamily.Values.AILMENT, pokemon, source.id, null, source_move_id
 		)

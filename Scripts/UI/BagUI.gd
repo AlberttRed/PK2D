@@ -27,10 +27,8 @@ const _POCKET_BAG_SPRITES: Dictionary = {
 	ItemEnums.Pocket.BATTLE_ITEMS: preload("res://Sprites/UI/Bag/bag7.PNG"),
 	ItemEnums.Pocket.KEY_ITEMS: preload("res://Sprites/UI/Bag/bag8.PNG")
 }
-## Filas visibles en la ventana de lista (comportamiento HGSS: el cursor llega a la 7.ª y luego hace scroll la lista).
+## Filas visibles en la ventana de lista (comportamiento HGSS: scroll al salir por arriba/abajo del viewport).
 const _LIST_VISIBLE_ROWS: int = 7
-## Índice (0-based) de la última fila visible donde el cursor puede “pararse” antes de empezar a scrollear.
-const _LIST_CURSOR_ANCHOR_INDEX: int = _LIST_VISIBLE_ROWS - 1
 ## Recorrido vertical del indicador de lista (track del slider), en coordenadas de escena.
 const _SLIDER_Y_MAX: float = 199.0
 const _ARROW_ANIM_FPS: float = 18.0
@@ -58,6 +56,7 @@ var _background_stylebox: StyleBoxTexture = null
 var _pocket_label = null
 var _selection_cursor_base_y: float = 0.0
 var _items_container_base_offset_top: float = 14.0
+var _list_scroll_top: int = 0
 var _slider_base_x: float = 0.0
 var _slider_y_min: float = 83.0
 var _arrow_anim_time: float = 0.0
@@ -147,6 +146,7 @@ func open() -> void:
 
 func close() -> void:
 	if not visible:
+		_disable_input()
 		return
 
 	_persist_session_navigation()
@@ -156,6 +156,7 @@ func close() -> void:
 	hide()
 	_unblock_player_control()
 	closed.emit()
+
 
 func set_input_enabled(value: bool) -> void:
 	if value:
@@ -309,6 +310,7 @@ func _update_list_scroll_arrows(scroll_top: int, item_count: int) -> void:
 		_down_arrow.frame = 0
 
 func _reset_list_scroll() -> void:
+	_list_scroll_top = 0
 	if _items_container:
 		_items_container.offset_top = _items_container_base_offset_top
 
@@ -388,13 +390,16 @@ func _get_list_row_spacing() -> float:
 	return row_height + separation
 
 func _compute_list_scroll_top(item_count: int, selected_index: int) -> int:
-	if item_count <= 0:
-		return 0
-	if item_count <= _LIST_VISIBLE_ROWS:
+	if item_count <= 0 or item_count <= _LIST_VISIBLE_ROWS:
+		_list_scroll_top = 0
 		return 0
 	var max_scroll_top: int = max(item_count - _LIST_VISIBLE_ROWS, 0)
-	var desired_top: int = selected_index - _LIST_CURSOR_ANCHOR_INDEX
-	return clampi(desired_top, 0, max_scroll_top)
+	if selected_index < _list_scroll_top:
+		_list_scroll_top = selected_index
+	elif selected_index >= _list_scroll_top + _LIST_VISIBLE_ROWS:
+		_list_scroll_top = selected_index - _LIST_VISIBLE_ROWS + 1
+	_list_scroll_top = clampi(_list_scroll_top, 0, max_scroll_top)
+	return _list_scroll_top
 
 func _update_selection_visuals() -> void:
 	if _current_items.is_empty():
@@ -412,7 +417,7 @@ func _update_selection_visuals() -> void:
 		var scroll_top := _compute_list_scroll_top(_current_items.size(), _selected_item_index)
 		_update_list_scroll_arrows(scroll_top, _current_items.size())
 		_apply_list_scroll(scroll_top, spacing_y)
-		var cursor_row := mini(_selected_item_index, _LIST_CURSOR_ANCHOR_INDEX)
+		var cursor_row := _selected_item_index - scroll_top
 		_selection_cursor.position.y = _selection_cursor_base_y + (float(cursor_row) * spacing_y)
 
 	if _slider:
@@ -440,18 +445,26 @@ func _update_selection_visuals() -> void:
 func _navigate_up() -> void:
 	if _current_items.is_empty():
 		return
+	var prev := _selected_item_index
 	_selected_item_index -= 1
 	if _selected_item_index < 0:
 		_selected_item_index = _current_items.size() - 1
+	if _selected_item_index != prev:
+		_play_cursor_sound()
 	_update_selection_visuals()
+
 
 func _navigate_down() -> void:
 	if _current_items.is_empty():
 		return
+	var prev := _selected_item_index
 	_selected_item_index += 1
 	if _selected_item_index >= _current_items.size():
 		_selected_item_index = 0
+	if _selected_item_index != prev:
+		_play_cursor_sound()
 	_update_selection_visuals()
+
 
 func _next_pocket() -> void:
 	if _pockets.is_empty():
@@ -459,7 +472,9 @@ func _next_pocket() -> void:
 	var prev_pocket := _pockets[_current_pocket_index]
 	_remember_selection_for_pocket(prev_pocket)
 	_current_pocket_index = (_current_pocket_index + 1) % _pockets.size()
+	_play_cursor_sound()
 	_refresh_current_pocket()
+
 
 func _previous_pocket() -> void:
 	if _pockets.is_empty():
@@ -469,6 +484,7 @@ func _previous_pocket() -> void:
 	_current_pocket_index -= 1
 	if _current_pocket_index < 0:
 		_current_pocket_index = _pockets.size() - 1
+	_play_cursor_sound()
 	_refresh_current_pocket()
 
 func _confirm_selection() -> void:
@@ -480,21 +496,21 @@ func _confirm_selection() -> void:
 		return
 	if not selected_item.is_usable_overworld:
 		return
+	_play_select_sound()
 	use_requested.emit(int(selected_item.item_id))
 
+
 func _request_back() -> void:
+	_play_cancel_sound()
 	back_requested.emit()
 
 func _enable_input() -> void:
-	if _input_enabled:
-		return
-	_input_enabled = true
-
 	var dm := DisplayManager.instance
-	if not dm:
+	if dm == null:
 		push_error("BagUI: DisplayManager no disponible para gestionar input.")
 		return
-
+	_disconnect_display_manager_input(dm)
+	_input_enabled = true
 	dm.input_up.connect(_on_input_up)
 	dm.input_down.connect(_on_input_down)
 	dm.input_left.connect(_on_input_left)
@@ -503,15 +519,16 @@ func _enable_input() -> void:
 	dm.input_cancel.connect(_on_input_cancel)
 	dm.input_start.connect(_on_input_start)
 
+
 func _disable_input() -> void:
-	if not _input_enabled:
-		return
 	_input_enabled = false
-
 	var dm := DisplayManager.instance
-	if not dm:
+	if dm == null:
 		return
+	_disconnect_display_manager_input(dm)
 
+
+func _disconnect_display_manager_input(dm: DisplayManager) -> void:
 	if dm.input_up.is_connected(_on_input_up):
 		dm.input_up.disconnect(_on_input_up)
 	if dm.input_down.is_connected(_on_input_down):
@@ -527,33 +544,41 @@ func _disable_input() -> void:
 	if dm.input_start.is_connected(_on_input_start):
 		dm.input_start.disconnect(_on_input_start)
 
+
 func _on_input_up() -> void:
 	if _input_enabled:
 		_navigate_up()
+
 
 func _on_input_down() -> void:
 	if _input_enabled:
 		_navigate_down()
 
+
 func _on_input_left() -> void:
 	if _input_enabled:
 		_previous_pocket()
+
 
 func _on_input_right() -> void:
 	if _input_enabled:
 		_next_pocket()
 
+
 func _on_input_accept() -> void:
 	if _input_enabled:
 		_confirm_selection()
+
 
 func _on_input_cancel() -> void:
 	if _input_enabled:
 		_request_back()
 
+
 func _on_input_start() -> void:
 	if _input_enabled:
 		_request_back()
+
 
 func _block_player_control() -> void:
 	var dm := DisplayManager.instance
@@ -569,3 +594,15 @@ func _ensure_pocket_label() -> void:
 	_pocket_label = get_node_or_null("PocketLabel")
 	if _pocket_label == null:
 		push_warning("BagUI: Falta el nodo 'PocketLabel' en la escena BAG.tscn.")
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
+
+
+func _play_select_sound() -> void:
+	AudioManager.play_ui_select()
+
+
+func _play_cancel_sound() -> void:
+	AudioManager.play_ui_cancel()

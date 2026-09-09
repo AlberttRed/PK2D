@@ -40,6 +40,7 @@ func visualize(_ui: BattleUI) -> void:
 	)
 
 	if hp_loss > 0:
+		AudioManager.play_battle_damage_effectiveness(effectiveness)
 		await spot.play_hit_animation()
 		pokemon.hp = maxi(pokemon.hp - hp_loss, 0)
 		pokemon.fainted = pokemon.hp <= 0

@@ -8,14 +8,21 @@
 script = ExtResource("1_1ee48")
 metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
-[sub_resource type="Resource" id="Resource_1ee48"]
+[sub_resource type="Resource" id="Resource_nyei7"]
 script = ExtResource("1_poke_def")
 pokemon_id = 13
 level = 6
 gender = 1
 ability_id = 19
 custom_move_ids = Array[int]([81, 40])
-metadata/_custom_type_script = "uid://cotgo4ccshywo"
+
+[sub_resource type="Resource" id="Resource_yf8ot"]
+script = ExtResource("1_poke_def")
+pokemon_id = 10
+level = 6
+gender = 1
+nature_id = 0
+custom_move_ids = Array[int]([33, 81])
 
 [resource]
 script = ExtResource("2_jck04")
@@ -28,6 +35,6 @@ intro_text = "¡Eh! ¡Tienes POKÉMON!
 ¡Sí! 
 ¡Al ataque!"
 defeat_text = "¡No! ¡Mi CATERPIE no pudo más!"
-party_data = [SubResource("Resource_1ee48")]
+party_data = [SubResource("Resource_nyei7"), SubResource("Resource_yf8ot")]
 reward_money = 72
 metadata/_custom_type_script = "uid://ddsodfhwbf6ce"

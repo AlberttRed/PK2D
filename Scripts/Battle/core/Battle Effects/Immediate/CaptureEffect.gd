@@ -147,8 +147,10 @@ func _actor_name() -> String:
 
 
 func _show_success_dialogue(ui: BattleUI) -> void:
+	# Jingle de captura; al terminar arranca sola la victoria salvaje.
+	AudioManager.play_battle_capture_success_me()
 	var lines: Array[String] = ["¡Ya está!", "¡%s atrapado!" % result.target_display_name]
-	await _show_multiline_dialogue(ui, lines, 1.2)
+	await _show_multiline_dialogue(ui, lines, 2.2)
 
 
 func _show_failure_dialogue(ui: BattleUI, completed_shakes: int) -> void:
