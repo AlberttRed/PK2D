@@ -40,6 +40,70 @@
 [ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="40_jt555"]
 [ext_resource type="Script" uid="uid://desogu22oifhh" path="res://Scripts/Events/Commands/ConditionalCommand.gd" id="41_7h5rv"]
 
+[ext_resource type="Script" uid="uid://cps859sndcmda1" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
+[ext_resource type="AudioStream" uid="uid://jrxjb6khu71v" path="res://Audio/SE/Door enter.ogg" id="99_doorenter"]
+
+
+[sub_resource type="Resource" id="Resource_ps_Resource_ls4or"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_dikfi"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_sdq0m"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_h8xna"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_6wwu8"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_lvj4o"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_wip0w"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_apnlw"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_iw6ja"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_j0m60"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_x60o1"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_Resource_ueevc"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorenter")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
 [sub_resource type="Resource" id="Resource_k5h1m"]
 script = ExtResource("8_ucjtc")
 message = "PISTAS ENTRENADOR"
@@ -602,7 +666,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_ls4or"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_yhavc")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_g5s5r"), SubResource("Resource_7nytq"), SubResource("Resource_uimyx"), SubResource("Resource_1se0a"), SubResource("Resource_pyc3c"), SubResource("Resource_8vom0"), SubResource("Resource_3a788"), SubResource("Resource_jxcxb"), SubResource("Resource_kb5np"), SubResource("Resource_da16f")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_ls4or"), SubResource("Resource_g5s5r"), SubResource("Resource_7nytq"), SubResource("Resource_uimyx"), SubResource("Resource_1se0a"), SubResource("Resource_pyc3c"), SubResource("Resource_8vom0"), SubResource("Resource_3a788"), SubResource("Resource_jxcxb"), SubResource("Resource_kb5np"), SubResource("Resource_da16f")])
 root_condition = SubResource("Resource_5fx16")
 sprite_frames = SubResource("SpriteFrames_kc0e2")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -715,7 +779,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_dikfi"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_ys6bm")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_s2mvs"), SubResource("Resource_gokjg"), SubResource("Resource_lgan3"), SubResource("Resource_armw3"), SubResource("Resource_2nvdb")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_dikfi"), SubResource("Resource_s2mvs"), SubResource("Resource_gokjg"), SubResource("Resource_lgan3"), SubResource("Resource_armw3"), SubResource("Resource_2nvdb")])
 root_condition = SubResource("Resource_2122l")
 through = true
 sprite_frames = SubResource("SpriteFrames_jut6q")
@@ -857,7 +921,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_sdq0m"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_s4emo")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_einme"), SubResource("Resource_fbwa5"), SubResource("Resource_2cpfj"), SubResource("Resource_80bhx"), SubResource("Resource_2uj7h"), SubResource("Resource_sig8n"), SubResource("Resource_qwjem"), SubResource("Resource_otenk"), SubResource("Resource_darlf"), SubResource("Resource_fjdtp")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_sdq0m"), SubResource("Resource_einme"), SubResource("Resource_fbwa5"), SubResource("Resource_2cpfj"), SubResource("Resource_80bhx"), SubResource("Resource_2uj7h"), SubResource("Resource_sig8n"), SubResource("Resource_qwjem"), SubResource("Resource_otenk"), SubResource("Resource_darlf"), SubResource("Resource_fjdtp")])
 root_condition = SubResource("Resource_qrh6s")
 sprite_frames = SubResource("SpriteFrames_07l46")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
@@ -970,7 +1034,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_h8xna"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_shjs6")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ejwin"), SubResource("Resource_mxrcx"), SubResource("Resource_r8utr"), SubResource("Resource_kausy"), SubResource("Resource_vbubt")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_h8xna"), SubResource("Resource_ejwin"), SubResource("Resource_mxrcx"), SubResource("Resource_r8utr"), SubResource("Resource_kausy"), SubResource("Resource_vbubt")])
 root_condition = SubResource("Resource_rd78e")
 through = true
 sprite_frames = SubResource("SpriteFrames_eby2p")
@@ -1096,7 +1160,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_6wwu8"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_4ef3q")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_7lbhw"), SubResource("Resource_6oa5o"), SubResource("Resource_2vr7j"), SubResource("Resource_tkji0"), SubResource("Resource_b0osh"), SubResource("Resource_hgaxj"), SubResource("Resource_jut6q"), SubResource("Resource_m37ea"), SubResource("Resource_b2u22"), SubResource("Resource_kjp51")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_6wwu8"), SubResource("Resource_7lbhw"), SubResource("Resource_6oa5o"), SubResource("Resource_2vr7j"), SubResource("Resource_tkji0"), SubResource("Resource_b0osh"), SubResource("Resource_hgaxj"), SubResource("Resource_jut6q"), SubResource("Resource_m37ea"), SubResource("Resource_b2u22"), SubResource("Resource_kjp51")])
 root_condition = SubResource("Resource_263dw")
 initial_animation = "default"
 sprite_frames = SubResource("SpriteFrames_2uj7h")
@@ -1194,7 +1258,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_lvj4o"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_mr6ds")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_wk481"), SubResource("Resource_fh73b"), SubResource("Resource_fs2ce"), SubResource("Resource_6s1ak"), SubResource("Resource_q8b1b")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_lvj4o"), SubResource("Resource_wk481"), SubResource("Resource_fh73b"), SubResource("Resource_fs2ce"), SubResource("Resource_6s1ak"), SubResource("Resource_q8b1b")])
 root_condition = SubResource("Resource_6ixw3")
 through = true
 initial_animation = "default_back"
@@ -1322,7 +1386,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_wip0w"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_7gtdr")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ckipd"), SubResource("Resource_uiuxr"), SubResource("Resource_ipw37"), SubResource("Resource_unuf8"), SubResource("Resource_crimx"), SubResource("Resource_i7rcv"), SubResource("Resource_yd271"), SubResource("Resource_63u7j"), SubResource("Resource_kc0e2"), SubResource("Resource_mq0ar")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_wip0w"), SubResource("Resource_ckipd"), SubResource("Resource_uiuxr"), SubResource("Resource_ipw37"), SubResource("Resource_unuf8"), SubResource("Resource_crimx"), SubResource("Resource_i7rcv"), SubResource("Resource_yd271"), SubResource("Resource_63u7j"), SubResource("Resource_kc0e2"), SubResource("Resource_mq0ar")])
 root_condition = SubResource("Resource_iq8ni")
 initial_animation = "default"
 sprite_frames = SubResource("SpriteFrames_b2u22")
@@ -1420,7 +1484,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_apnlw"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_lvbqv")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_2a1qe"), SubResource("Resource_qshy3"), SubResource("Resource_w57cd"), SubResource("Resource_qbki1"), SubResource("Resource_thcdl")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_apnlw"), SubResource("Resource_2a1qe"), SubResource("Resource_qshy3"), SubResource("Resource_w57cd"), SubResource("Resource_qbki1"), SubResource("Resource_thcdl")])
 root_condition = SubResource("Resource_wswgc")
 through = true
 initial_animation = "default_back"
@@ -1564,7 +1628,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_iw6ja"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_ncn2y")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_jfuqw"), SubResource("Resource_qfg68"), SubResource("Resource_eby2p"), SubResource("Resource_chtsm"), SubResource("Resource_83oef"), SubResource("Resource_x0h4y"), SubResource("Resource_fc56a"), SubResource("Resource_g4dsp"), SubResource("Resource_iov4f"), SubResource("Resource_rw7rc")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_iw6ja"), SubResource("Resource_jfuqw"), SubResource("Resource_qfg68"), SubResource("Resource_eby2p"), SubResource("Resource_chtsm"), SubResource("Resource_83oef"), SubResource("Resource_x0h4y"), SubResource("Resource_fc56a"), SubResource("Resource_g4dsp"), SubResource("Resource_iov4f"), SubResource("Resource_rw7rc")])
 root_condition = SubResource("Resource_jkdti")
 initial_animation = "default"
 sprite_frames = SubResource("SpriteFrames_f2n3b")
@@ -1646,7 +1710,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_j0m60"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_mpcsm")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_uh0rj"), SubResource("Resource_f4454"), SubResource("Resource_1b1kw"), SubResource("Resource_y0bxg"), SubResource("Resource_dxevo")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_j0m60"), SubResource("Resource_uh0rj"), SubResource("Resource_f4454"), SubResource("Resource_1b1kw"), SubResource("Resource_y0bxg"), SubResource("Resource_dxevo")])
 root_condition = SubResource("Resource_0o0yw")
 through = true
 initial_animation = "default_back"
@@ -1774,7 +1838,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_x60o1"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_ucheu")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_m85q7"), SubResource("Resource_uo0xv"), SubResource("Resource_u6l8v"), SubResource("Resource_lpem7"), SubResource("Resource_l4m4n"), SubResource("Resource_lhd38"), SubResource("Resource_tyadn"), SubResource("Resource_ggsb1"), SubResource("Resource_71jl8"), SubResource("Resource_8pl30")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_x60o1"), SubResource("Resource_m85q7"), SubResource("Resource_uo0xv"), SubResource("Resource_u6l8v"), SubResource("Resource_lpem7"), SubResource("Resource_l4m4n"), SubResource("Resource_lhd38"), SubResource("Resource_tyadn"), SubResource("Resource_ggsb1"), SubResource("Resource_71jl8"), SubResource("Resource_8pl30")])
 root_condition = SubResource("Resource_1kpb1")
 initial_animation = "default"
 sprite_frames = SubResource("SpriteFrames_bg67c")
@@ -1872,7 +1936,7 @@ metadata/_custom_type_script = "uid://d3rkctbb4gj2y"
 [sub_resource type="Resource" id="Resource_ueevc"]
 script = ExtResource("6_k5h1m")
 trigger = SubResource("Resource_7l20i")
-commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_1rjie"), SubResource("Resource_kh46p"), SubResource("Resource_38bab"), SubResource("Resource_07ih4"), SubResource("Resource_b43h0")])
+commands = Array[ExtResource("7_xlpb3")]([SubResource("Resource_ps_Resource_ueevc"), SubResource("Resource_1rjie"), SubResource("Resource_kh46p"), SubResource("Resource_38bab"), SubResource("Resource_07ih4"), SubResource("Resource_b43h0")])
 root_condition = SubResource("Resource_yc10a")
 through = true
 initial_animation = "default_back"

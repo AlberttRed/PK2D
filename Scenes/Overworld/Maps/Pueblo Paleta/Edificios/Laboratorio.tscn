@@ -47,6 +47,13 @@
 [ext_resource type="Script" uid="uid://cndauysvy7s3h" path="res://Scripts/Resources/SwitchCase.gd" id="37_vuiic"]
 [ext_resource type="Script" uid="uid://bnkrdjikt6sl3" path="res://Scripts/Events/Commands/SwitchCommand.gd" id="38_ekydi"]
 [ext_resource type="Texture2D" uid="uid://smfk0yytw8ys" path="res://Sprites/Overworlds/Misc/Pokedex.png" id="42_qicpj"]
+[ext_resource type="Script" uid="uid://cps859sndcmda1" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="43_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="44_doorexit"]
+
+[sub_resource type="Resource" id="Resource_ps_exit"]
+script = ExtResource("43_plays")
+sound = ExtResource("44_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_2h6y0"]
 script = ExtResource("7_j1fmg")
@@ -84,7 +91,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_m4xa2"]
 script = ExtResource("5_qy02h")
 trigger = SubResource("Resource_ypu55")
-commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_2h6y0"), SubResource("Resource_dxc84"), SubResource("Resource_q2wcx"), SubResource("Resource_pg46y"), SubResource("Resource_fskyq")])
+commands = Array[ExtResource("6_kmtv5")]([SubResource("Resource_ps_exit"), SubResource("Resource_2h6y0"), SubResource("Resource_dxc84"), SubResource("Resource_q2wcx"), SubResource("Resource_pg46y"), SubResource("Resource_fskyq")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_077yi"]

@@ -898,6 +898,16 @@ func _get_command_detail_text(command: EventCommand) -> String:
 			anim_str = "(sin animación)"
 		return "%s: %s" % [target_str, anim_str]
 
+	# PlaySoundCommand: mostrar archivo y bus
+	if command is PlaySoundCommand:
+		var sound_cmd = command as PlaySoundCommand
+		var sound_str: String = "(sin sonido)"
+		if sound_cmd.sound != null:
+			var sound_path: String = sound_cmd.sound.resource_path
+			sound_str = sound_path.get_file() if not sound_path.is_empty() else "(stream)"
+		var wait_str: String = " wait" if sound_cmd.wait_until_finished else ""
+		return "%s [%s]%s" % [sound_str, sound_cmd.bus, wait_str]
+
 	# ShowPortraitCommand: mostrar tipo (Pokémon/Textura) y nombre
 	if command is ShowPortraitCommand:
 		var portrait_cmd = command as ShowPortraitCommand
@@ -2704,6 +2714,8 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_use_mo_editor(command, page_index, false, -1)
 	elif command is PlayAnimationCommand:
 		_open_play_animation_editor(command, page_index, false, -1)
+	elif command is PlaySoundCommand:
+		_open_play_sound_editor(command, page_index, false, -1)
 	elif command is MoveNPCCommand:
 		_open_move_npc_editor(command, page_index, false, -1)
 	elif command is SetTriggerCommand:
@@ -4111,7 +4123,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"StartBattleEvent", "Warp", "ShowChoices", "Conditional",
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
-		"MoveNPC", "PlayAnimation", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
+		"MoveNPC", "PlayAnimation", "PlaySound", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
 		"ClosePortrait", "FollowActor", "UseMO", "SetTrigger"
 	]
 
@@ -4465,6 +4477,8 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 					_open_use_mo_editor(target_command, page_index, true, command_index)
 				elif target_command is PlayAnimationCommand:
 					_open_play_animation_editor(target_command, page_index, true, command_index)
+				elif target_command is PlaySoundCommand:
+					_open_play_sound_editor(target_command, page_index, true, command_index)
 				elif target_command is MoveNPCCommand:
 					_open_move_npc_editor(target_command, page_index, true, command_index)
 				elif target_command is SetTriggerCommand:
@@ -7337,6 +7351,61 @@ func _on_play_animation_command_edited(command: PlayAnimationCommand, page_index
 			commands_tree.deselect_all()
 			_update_buttons_state(page_index, false, false, false, false, false)
 	_refresh_inspector()
+
+## Abre el editor para PlaySoundCommand
+func _open_play_sound_editor(command: PlaySoundCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un PlaySoundCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/play_sound_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de PlaySoundCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: PlaySoundCommand): _on_play_sound_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_play_sound_command_edited(command: PlaySoundCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
 
 ## Abre el editor para MoveNPCCommand
 func _open_move_npc_editor(command: MoveNPCCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:

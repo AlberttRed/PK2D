@@ -132,11 +132,12 @@ static func fade_out_then_play_bgm(stream: AudioStream, fade_out: float = 1.0, l
 	instance._fade_out_then_play_bgm(stream, fade_out, loop)
 
 
-static func play_sfx(stream: AudioStream, bus: String = BUS_SFX, volume_db: float = 0.0) -> void:
+## Reproduce un SFX en el pool. Devuelve el player usado (o null) para poder esperar a `finished`.
+static func play_sfx(stream: AudioStream, bus: String = BUS_SFX, volume_db: float = 0.0) -> AudioStreamPlayer:
 	if instance == null:
 		push_error("AudioManager: No hay instancia disponible")
-		return
-	instance._play_sfx(stream, bus, volume_db)
+		return null
+	return instance._play_sfx(stream, bus, volume_db)
 
 
 static func set_bus_volume(bus_name: String, value: float) -> void:
@@ -751,13 +752,13 @@ func _setup_sfx_pool() -> void:
 			_sfx_players.append(player)
 
 
-func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0) -> void:
+func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0) -> AudioStreamPlayer:
 	if stream == null:
 		push_warning("AudioManager: play_sfx recibió stream nulo")
-		return
+		return null
 	if _sfx_players.is_empty():
 		push_warning("AudioManager: Pool de SFX vacío")
-		return
+		return null
 
 	var resolved_bus := bus if AudioServer.get_bus_index(bus) >= 0 else BUS_SFX
 	var player := _get_available_sfx_player()
@@ -765,6 +766,7 @@ func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0) -> void
 	player.volume_db = volume_db
 	player.stream = stream
 	player.play()
+	return player
 
 
 func _get_available_sfx_player() -> AudioStreamPlayer:

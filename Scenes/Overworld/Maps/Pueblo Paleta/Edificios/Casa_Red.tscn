@@ -19,6 +19,13 @@
 [ext_resource type="Texture2D" uid="uid://bc40k67ye0why" path="res://Sprites/Overworlds/Characters/NPC 28.png" id="13_w55lx"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="18_lih7u"]
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="19_mmm4h"]
+[ext_resource type="Script" uid="uid://cps859sndcmda1" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="20_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="21_doorexit"]
+
+[sub_resource type="Resource" id="Resource_ps_exit"]
+script = ExtResource("20_plays")
+sound = ExtResource("21_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_snhv5"]
 script = ExtResource("7_w55lx")
@@ -56,7 +63,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_do1di"]
 script = ExtResource("5_7lm0v")
 trigger = SubResource("Resource_1bb6e")
-commands = Array[ExtResource("6_8qtck")]([SubResource("Resource_snhv5"), SubResource("Resource_11cix"), SubResource("Resource_duue3"), SubResource("Resource_hoqt6"), SubResource("Resource_vs8p4")])
+commands = Array[ExtResource("6_8qtck")]([SubResource("Resource_ps_exit"), SubResource("Resource_snhv5"), SubResource("Resource_11cix"), SubResource("Resource_duue3"), SubResource("Resource_hoqt6"), SubResource("Resource_vs8p4")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_s7rb7"]
