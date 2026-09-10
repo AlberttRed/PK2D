@@ -265,6 +265,27 @@ static func fade_in(duration: float = 0.3) -> void:
 		return
 	await instance.fade_layer.fade_in(duration)
 
+
+## Fade con máscara de pantalla.
+## to_black=true: cubrir a negro (como FadeCommand IN). to_black=false: revelar (OUT).
+## DOOR usa wipe horizontal + velo oscuro→claro. Si falla la máscara, fallback a fade sólido.
+static func fade_with_mask(to_black: bool, mask: ScreenTransitionEnum.Type, duration: float = 0.5) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	var ok: bool
+	if ScreenTransitionEnum.is_door(mask):
+		ok = await instance.fade_layer.play_door_transition(to_black, duration)
+	else:
+		var path := ScreenTransitionEnum.to_mask_path(mask)
+		ok = await instance.fade_layer.play_mask_transition(path, to_black, duration)
+	if ok:
+		return
+	if to_black:
+		await instance.fade_layer.fade_in(duration)
+	else:
+		await instance.fade_layer.fade_out(duration)
+
 ## Verifica si está en fade
 static func is_fading() -> bool:
 	if instance == null:

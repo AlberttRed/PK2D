@@ -881,11 +881,14 @@ func _get_command_detail_text(command: EventCommand) -> String:
 			species_name = "Pokemon #%d" % int(pokemon_def.pokemon_id)
 		return "%s - Nv.%d" % [species_name, int(pokemon_def.level)]
 
-	# FadeCommand: mostrar IN/OUT y tiempo
+	# FadeCommand: mostrar IN/OUT, efecto y tiempo
 	if command is FadeCommand:
 		var fade_cmd = command as FadeCommand
 		var fade_type_str = "IN" if fade_cmd.mode == FadeCommand.FadeMode.IN else "OUT"
-		return "%s (%.2fs)" % [fade_type_str, fade_cmd.duration]
+		var effect_str = "solid"
+		if fade_cmd.effect == FadeCommand.FadeEffect.MASK:
+			effect_str = ScreenTransitionEnum.get_display_name(fade_cmd.mask)
+		return "%s %s (%.2fs)" % [fade_type_str, effect_str, fade_cmd.duration]
 
 	# PlayAnimationCommand: mostrar target y nombre de animación
 	if command is PlayAnimationCommand:
