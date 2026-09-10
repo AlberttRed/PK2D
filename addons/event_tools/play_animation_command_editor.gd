@@ -14,17 +14,19 @@ var _event_node: Node = null
 var original_target_name: String = ""
 var original_animation_name: String = ""
 var original_wait_until_finished: bool = true
+var original_speed_scale: float = 1.0
 
 # Referencias a los controles
 var target_option: OptionButton = null
 var page_option: OptionButton = null
 var animation_option: OptionButton = null
 var wait_check: CheckBox = null
+var speed_spinbox: SpinBox = null
 var accept_button: Button = null
 
 func _ready() -> void:
 	title = "Editar PlayAnimationCommand"
-	size = Vector2(500, 350)
+	size = Vector2(500, 400)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -89,6 +91,22 @@ func _ready() -> void:
 	wait_check.text = "Esperar hasta que termine"
 	wait_check.button_pressed = true
 	vbox.add_child(wait_check)
+
+	var speed_container = HBoxContainer.new()
+	var speed_label = Label.new()
+	speed_label.text = "Velocidad:"
+	speed_label.custom_minimum_size.x = 200
+	speed_container.add_child(speed_label)
+
+	speed_spinbox = SpinBox.new()
+	speed_spinbox.min_value = 0.1
+	speed_spinbox.max_value = 5.0
+	speed_spinbox.step = 0.1
+	speed_spinbox.value = 1.0
+	speed_spinbox.suffix = "x"
+	speed_spinbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	speed_container.add_child(speed_spinbox)
+	vbox.add_child(speed_container)
 
 	# Botones
 	var buttons_container = HBoxContainer.new()
@@ -397,6 +415,7 @@ func load_command(cmd: PlayAnimationCommand) -> void:
 	original_target_name = cmd.target_name
 	original_animation_name = cmd.animation_name
 	original_wait_until_finished = cmd.wait_until_finished
+	original_speed_scale = cmd.speed_scale
 
 	# Asegurar que los eventos estén poblados antes de seleccionar
 	if target_option:
@@ -410,6 +429,8 @@ func load_command(cmd: PlayAnimationCommand) -> void:
 	# Actualizar wait_check
 	if wait_check:
 		wait_check.button_pressed = cmd.wait_until_finished
+	if speed_spinbox:
+		speed_spinbox.value = cmd.speed_scale
 
 ## Helper: Establece la selección del target
 func _set_target_selection(target_name: String) -> void:
@@ -532,6 +553,8 @@ func _apply_values_to_command() -> void:
 	# Wait until finished
 	if wait_check:
 		command.wait_until_finished = wait_check.button_pressed
+	if speed_spinbox:
+		command.speed_scale = float(speed_spinbox.value)
 
 ## Restaura los valores originales del comando
 func _restore_original_values() -> void:
@@ -541,11 +564,14 @@ func _restore_original_values() -> void:
 	command.target_name = original_target_name
 	command.animation_name = original_animation_name
 	command.wait_until_finished = original_wait_until_finished
+	command.speed_scale = original_speed_scale
 
 	# Restaurar UI
 	_set_target_selection(original_target_name)
 	if wait_check:
 		wait_check.button_pressed = original_wait_until_finished
+	if speed_spinbox:
+		speed_spinbox.value = original_speed_scale
 
 ## Se llama cuando se presiona Aceptar
 func _on_accept_pressed() -> void:

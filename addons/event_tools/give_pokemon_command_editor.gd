@@ -8,17 +8,19 @@ var command = null
 var definition_editor_script: GDScript = null
 
 var original_show_message: bool = true
+var original_play_obtain_sound: bool = true
 var original_pokemon_def: PokemonDefinition = null
 var original_message_template: String = "¡Obtuviste a [pokemon]!"
 
 var pokemon_summary_label: Label = null
 var edit_pokemon_button: Button = null
 var show_message_check: CheckBox = null
+var play_obtain_sound_check: CheckBox = null
 var message_template_text_edit: TextEdit = null
 
 func _ready() -> void:
 	title = "Editar GivePokemonCommand"
-	size = Vector2(640, 430)
+	size = Vector2(640, 470)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -64,6 +66,11 @@ func _setup_ui() -> void:
 	show_message_check.button_pressed = true
 	vbox.add_child(show_message_check)
 
+	play_obtain_sound_check = CheckBox.new()
+	play_obtain_sound_check.text = "Reproducir sonido de obtención (key item)"
+	play_obtain_sound_check.button_pressed = true
+	vbox.add_child(play_obtain_sound_check)
+
 	var msg_label := Label.new()
 	msg_label.text = "Mensaje personalizable (primero):"
 	vbox.add_child(msg_label)
@@ -103,12 +110,15 @@ func load_command(cmd) -> void:
 		return
 	command = cmd
 	original_show_message = bool(cmd.show_message)
+	original_play_obtain_sound = bool(cmd.play_obtain_sound)
 	original_pokemon_def = cmd.pokemon_def.duplicate(true) if cmd.pokemon_def != null else null
 	original_message_template = str(cmd.message_template)
 	if command.pokemon_def == null:
 		command.pokemon_def = _create_default_definition()
 	if show_message_check:
 		show_message_check.button_pressed = bool(command.show_message)
+	if play_obtain_sound_check:
+		play_obtain_sound_check.button_pressed = bool(command.play_obtain_sound)
 	if message_template_text_edit:
 		message_template_text_edit.text = str(command.message_template)
 	_update_summary()
@@ -158,6 +168,7 @@ func _apply_values_to_command() -> void:
 	if command == null:
 		return
 	command.show_message = show_message_check.button_pressed if show_message_check else true
+	command.play_obtain_sound = play_obtain_sound_check.button_pressed if play_obtain_sound_check else true
 	command.message_template = message_template_text_edit.text if message_template_text_edit else "¡Obtuviste a [pokemon]!"
 	if command.pokemon_def == null:
 		command.pokemon_def = _create_default_definition()
@@ -166,6 +177,7 @@ func _restore_original_values() -> void:
 	if command == null:
 		return
 	command.show_message = original_show_message
+	command.play_obtain_sound = original_play_obtain_sound
 	command.pokemon_def = original_pokemon_def.duplicate(true) if original_pokemon_def != null else null
 	command.message_template = original_message_template
 

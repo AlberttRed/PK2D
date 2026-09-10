@@ -6,6 +6,7 @@ class_name GiveItemCommand
 @export var item_id: int = 0
 @export_range(1, 999, 1) var quantity: int = 1
 @export var show_message: bool = true
+@export var play_obtain_sound: bool = true
 @export_multiline var message_template: String = "¡Obtuviste [item]!"
 
 func execute(context: Node) -> void:
@@ -22,6 +23,10 @@ func execute(context: Node) -> void:
 		push_warning("GiveItemCommand: no se pudo añadir item_id=%d (cantidad=%d)." % [item_id, safe_quantity])
 		context.continue_execution()
 		return
+
+	if play_obtain_sound:
+		var is_key := int(item_data.pocket) == ItemEnums.Pocket.KEY_ITEMS
+		AudioManager.play_obtain_item_me(is_key)
 
 	if show_message:
 		var player_name := str(GameStateService.get_variable("PLAYER_NAME", "PLAYER")).strip_edges()

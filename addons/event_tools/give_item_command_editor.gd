@@ -11,18 +11,20 @@ var command = null
 var original_item_id: int = 0
 var original_quantity: int = 1
 var original_show_message: bool = true
+var original_play_obtain_sound: bool = true
 var original_message_template: String = "¡Obtuviste [item]!"
 
 var item_option: OptionButton = null
 var item_picker_button: Button = null
 var quantity_spin: SpinBox = null
 var show_message_check: CheckBox = null
+var play_obtain_sound_check: CheckBox = null
 var message_template_text_edit: TextEdit = null
 var _item_ids_by_option_index: Array[int] = []
 
 func _ready() -> void:
 	title = "Editar GiveItemCommand"
-	size = Vector2(640, 420)
+	size = Vector2(640, 460)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -79,6 +81,11 @@ func _setup_ui() -> void:
 	show_message_check.button_pressed = true
 	vbox.add_child(show_message_check)
 
+	play_obtain_sound_check = CheckBox.new()
+	play_obtain_sound_check.text = "Reproducir sonido de obtención (key item / ítem)"
+	play_obtain_sound_check.button_pressed = true
+	vbox.add_child(play_obtain_sound_check)
+
 	var msg_label := Label.new()
 	msg_label.text = "Mensaje personalizable:"
 	vbox.add_child(msg_label)
@@ -123,6 +130,7 @@ func load_command(cmd) -> void:
 	original_item_id = cmd.item_id
 	original_quantity = cmd.quantity
 	original_show_message = cmd.show_message
+	original_play_obtain_sound = bool(cmd.play_obtain_sound)
 	original_message_template = str(cmd.message_template)
 
 	_reload_items()
@@ -131,6 +139,8 @@ func load_command(cmd) -> void:
 		quantity_spin.value = maxi(1, cmd.quantity)
 	if show_message_check:
 		show_message_check.button_pressed = cmd.show_message
+	if play_obtain_sound_check:
+		play_obtain_sound_check.button_pressed = bool(cmd.play_obtain_sound)
 	if message_template_text_edit:
 		message_template_text_edit.text = str(cmd.message_template)
 
@@ -223,6 +233,7 @@ func _apply_values_to_command() -> void:
 	command.item_id = selected_item_id
 	command.quantity = int(quantity_spin.value) if quantity_spin else 1
 	command.show_message = show_message_check.button_pressed if show_message_check else true
+	command.play_obtain_sound = play_obtain_sound_check.button_pressed if play_obtain_sound_check else true
 	command.message_template = message_template_text_edit.text if message_template_text_edit else "¡Obtuviste [item]!"
 
 func _restore_original_values() -> void:
@@ -231,6 +242,7 @@ func _restore_original_values() -> void:
 	command.item_id = original_item_id
 	command.quantity = original_quantity
 	command.show_message = original_show_message
+	command.play_obtain_sound = original_play_obtain_sound
 	command.message_template = original_message_template
 
 func _on_accept_pressed() -> void:

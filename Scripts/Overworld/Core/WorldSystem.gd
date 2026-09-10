@@ -1288,20 +1288,60 @@ func refresh_overlay_settings() -> void:
 
 
 ## Reaplica la BGM del mapa activo (p. ej. al terminar un combate).
-## Si el jugador sigue surfeando, mantiene la BGM de Surf.
-func refresh_map_bgm() -> void:
+## Prioridad: hold de evento > Surf > BGM del mapa.
+## Si immediate=true, entra a volumen pleno sin fade.
+func refresh_map_bgm(immediate: bool = false) -> void:
 	if AudioManager.instance == null:
+		return
+	if AudioManager.is_event_bgm_held():
+		AudioManager.resume_held_event_bgm(0.0)
 		return
 	var player := get_player()
 	if player and player.get("is_surfing") == true:
-		AudioManager.play_surfing_bgm()
+		AudioManager.play_surfing_bgm(0.0 if immediate else AudioManager.OVERWORLD_BGM_SURFING_FADE)
 		return
-	_apply_map_bgm(active_map)
+	_apply_map_bgm(active_map, immediate)
+
+
+## Tras StopBGM: fade-out de la actual (fade_out; 0 = corte) y luego mapa/Surf a volumen pleno.
+## No espera el fade (fire-and-forget). El hold de evento debe estar liberado antes.
+func restore_map_bgm_after_event_stop(fade_out: float = 0.0) -> void:
+	if AudioManager.instance == null:
+		return
+	var stream := _resolve_restorable_overworld_bgm()
+	var dur := maxf(fade_out, 0.0)
+	if stream == null:
+		AudioManager.stop_bgm(dur)
+		return
+	if dur <= 0.0:
+		AudioManager.play_bgm(stream, 0.0)
+	else:
+		AudioManager.fade_out_then_play_bgm(stream, dur)
+
+
+func _resolve_restorable_overworld_bgm() -> AudioStream:
+	var player := get_player()
+	if player and player.get("is_surfing") == true:
+		if ResourceLoader.exists(AudioManager.OVERWORLD_BGM_SURFING_PATH):
+			return load(AudioManager.OVERWORLD_BGM_SURFING_PATH) as AudioStream
+		return null
+
+	var map_scene := active_map
+	if map_scene is MapScene:
+		var settings := (map_scene as MapScene).get_bgm_settings()
+		return settings.get("bgm") as AudioStream
+	if map_scene and map_scene.has_method("get_bgm_settings"):
+		var settings: Dictionary = map_scene.get_bgm_settings()
+		return settings.get("bgm") as AudioStream
+	return null
 
 
 ## Reproduce la BGM configurada en el mapa activo (o silencio si no tiene).
-func _apply_map_bgm(map_scene: Node) -> void:
+func _apply_map_bgm(map_scene: Node, immediate: bool = false) -> void:
 	if AudioManager.instance == null:
+		return
+	if AudioManager.is_event_bgm_held():
+		AudioManager.resume_held_event_bgm(0.0)
 		return
 
 	var bgm: AudioStream = null
@@ -1316,7 +1356,10 @@ func _apply_map_bgm(map_scene: Node) -> void:
 		bgm = settings.get("bgm") as AudioStream
 		fade = float(settings.get("fade", 1.0))
 
-	fade = AudioManager.resolve_map_bgm_fade(fade)
+	if immediate:
+		fade = 0.0
+	else:
+		fade = AudioManager.resolve_map_bgm_fade(fade)
 
 	if bgm == null:
 		if map_scene:

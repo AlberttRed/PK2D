@@ -533,6 +533,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_g5s5r"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_7nytq"]
@@ -554,6 +555,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_pyc3c"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_8vom0"]
@@ -674,6 +676,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_s2mvs"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_gokjg"]
@@ -696,6 +699,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_2nvdb"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_2122l"]
@@ -788,6 +792,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_einme"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_fbwa5"]
@@ -809,6 +814,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_2uj7h"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_sig8n"]
@@ -929,6 +935,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_ejwin"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_mxrcx"]
@@ -951,6 +958,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_vbubt"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_rd78e"]
@@ -1043,6 +1051,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_7lbhw"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_6oa5o"]
@@ -1064,6 +1073,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_b0osh"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_hgaxj"]
@@ -1169,6 +1179,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_wk481"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_fh73b"]
@@ -1191,6 +1202,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_q8b1b"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_6ixw3"]
@@ -1269,6 +1281,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_ckipd"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_uiuxr"]
@@ -1290,6 +1303,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_crimx"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_i7rcv"]
@@ -1395,6 +1409,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_2a1qe"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_qshy3"]
@@ -1417,6 +1432,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_thcdl"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_wswgc"]
@@ -1495,6 +1511,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_jfuqw"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_qfg68"]
@@ -1516,6 +1533,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_83oef"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_x0h4y"]
@@ -1637,6 +1655,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_uh0rj"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_f4454"]
@@ -1659,6 +1678,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_dxevo"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_0o0yw"]
@@ -1721,6 +1741,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_m85q7"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_uo0xv"]
@@ -1742,6 +1763,7 @@ metadata/_custom_type_script = "uid://biam3qn6qasrt"
 [sub_resource type="Resource" id="Resource_l4m4n"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_lhd38"]
@@ -1847,6 +1869,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_1rjie"]
 script = ExtResource("23_j3qv8")
 animation_name = "default"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_kh46p"]
@@ -1869,6 +1892,7 @@ metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 [sub_resource type="Resource" id="Resource_b43h0"]
 script = ExtResource("23_j3qv8")
 animation_name = "default_back"
+speed_scale = 1.5
 metadata/_custom_type_script = "uid://cg8k2pm5n7qrt"
 
 [sub_resource type="Resource" id="Resource_yc10a"]

@@ -7,6 +7,8 @@ class_name PlaySoundCommand
 @export var bus: String = "SFX"
 @export var wait_until_finished: bool = false
 @export var volume_db: float = 0.0
+## Si true, pausa la BGM y la reanuda al terminar el sonido (fanfares). Puertas/SFX cortos: false.
+@export var pause_bgm: bool = false
 
 ## Timeout de seguridad por encima de la duración del stream (acceptance: no colgar el evento).
 const WAIT_TIMEOUT_PADDING := 0.5
@@ -29,7 +31,7 @@ func execute(context: Node) -> void:
 			context.continue_execution()
 		return
 
-	_sfx_player = AudioManager.play_sfx(sound, bus, volume_db)
+	_sfx_player = AudioManager.play_sfx(sound, bus, volume_db, pause_bgm)
 
 	if not wait_until_finished:
 		return

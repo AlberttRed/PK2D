@@ -12,17 +12,19 @@ var original_sound: AudioStream = null
 var original_bus: String = "SFX"
 var original_wait_until_finished: bool = false
 var original_volume_db: float = 0.0
+var original_pause_bgm: bool = false
 
 var sound_path_label: Label = null
 var bus_option: OptionButton = null
 var wait_check: CheckBox = null
+var pause_bgm_check: CheckBox = null
 var volume_spinbox: SpinBox = null
 var _pending_sound: AudioStream = null
 
 
 func _ready() -> void:
 	title = "Editar PlaySoundCommand"
-	size = Vector2(520, 280)
+	size = Vector2(520, 320)
 	unresizable = false
 	always_on_top = false
 	exclusive = true
@@ -103,6 +105,11 @@ func _ready() -> void:
 	wait_check.button_pressed = false
 	vbox.add_child(wait_check)
 
+	pause_bgm_check = CheckBox.new()
+	pause_bgm_check.text = "Pausar música de fondo mientras suena"
+	pause_bgm_check.button_pressed = false
+	vbox.add_child(pause_bgm_check)
+
 	var buttons_container = HBoxContainer.new()
 	buttons_container.alignment = BoxContainer.ALIGNMENT_END
 	buttons_container.add_theme_constant_override("separation", 10)
@@ -130,6 +137,7 @@ func load_command(cmd: PlaySoundCommand) -> void:
 	original_bus = cmd.bus
 	original_wait_until_finished = cmd.wait_until_finished
 	original_volume_db = cmd.volume_db
+	original_pause_bgm = cmd.pause_bgm
 	_pending_sound = cmd.sound
 
 	_update_sound_label()
@@ -138,6 +146,8 @@ func load_command(cmd: PlaySoundCommand) -> void:
 		volume_spinbox.value = cmd.volume_db
 	if wait_check:
 		wait_check.button_pressed = cmd.wait_until_finished
+	if pause_bgm_check:
+		pause_bgm_check.button_pressed = cmd.pause_bgm
 
 
 func _select_bus_option(bus_name: String) -> void:
@@ -201,6 +211,7 @@ func _apply_values_to_command() -> void:
 	command.sound = _pending_sound
 	command.bus = bus_option.get_item_text(bus_option.selected) if bus_option else "SFX"
 	command.wait_until_finished = wait_check.button_pressed if wait_check else false
+	command.pause_bgm = pause_bgm_check.button_pressed if pause_bgm_check else false
 	command.volume_db = volume_spinbox.value if volume_spinbox else 0.0
 
 
@@ -210,6 +221,7 @@ func _restore_original_values() -> void:
 	command.sound = original_sound
 	command.bus = original_bus
 	command.wait_until_finished = original_wait_until_finished
+	command.pause_bgm = original_pause_bgm
 	command.volume_db = original_volume_db
 
 

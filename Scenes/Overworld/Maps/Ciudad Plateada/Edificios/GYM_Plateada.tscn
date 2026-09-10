@@ -1,4 +1,4 @@
-[gd_scene load_steps=101 format=4 uid="uid://6jesadgjg24s"]
+[gd_scene load_steps=104 format=4 uid="uid://6jesadgjg24s"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_ilgld"]
 [ext_resource type="AudioStream" uid="uid://doptu0yyhbpfv" path="res://Audio/BGM/Pokémon Gym.ogg" id="bgm_gym"]
@@ -35,6 +35,13 @@
 [ext_resource type="Script" uid="uid://c8x7m2n4p5q6r" path="res://Scripts/Events/Conditions/TrainerDefeatedCondition.gd" id="19_nygvm"]
 [ext_resource type="PackedScene" uid="uid://c8a7yxm1qw8kb" path="res://Scenes/Overworld/Actors/Trainer.tscn" id="24_nd1qa"]
 [ext_resource type="Script" uid="uid://cn8qak2x7m4q5" path="res://Scripts/Overworld/Actors/Trainer.gd" id="25_ppbnc"]
+[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
+
+[sub_resource type="Resource" id="Resource_ps_exit_gym"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_p8wcn"]
 script = ExtResource("12_5hyyh")
@@ -258,7 +265,7 @@ initial_animation = "down_left"
 [sub_resource type="Resource" id="Resource_g21i3"]
 script = ExtResource("14_5hyyh")
 mode = 0
-duration = 0.3
+duration = 0.4
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_5hyyh"]
@@ -281,7 +288,8 @@ metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_agmev"]
 script = ExtResource("14_5hyyh")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_x0qxi"]
@@ -291,7 +299,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_euigi"]
 script = ExtResource("7_hslhc")
 trigger = SubResource("Resource_x0qxi")
-commands = Array[ExtResource("8_air0d")]([SubResource("Resource_g21i3"), SubResource("Resource_5hyyh"), SubResource("Resource_k2w4l"), SubResource("Resource_3wjj5"), SubResource("Resource_agmev")])
+commands = Array[ExtResource("8_air0d")]([SubResource("Resource_ps_exit_gym"), SubResource("Resource_g21i3"), SubResource("Resource_5hyyh"), SubResource("Resource_k2w4l"), SubResource("Resource_3wjj5"), SubResource("Resource_agmev")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_1jnn7"]

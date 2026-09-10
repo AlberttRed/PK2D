@@ -3,6 +3,7 @@ class_name GivePokemonCommand
 
 @export var pokemon_def: PokemonDefinition = null
 @export var show_message: bool = true
+@export var play_obtain_sound: bool = true
 @export_multiline var message_template: String = "¡Obtuviste a [pokemon]!"
 
 func execute(context: Node) -> void:
@@ -20,6 +21,9 @@ func execute(context: Node) -> void:
 	var party_controller := PartyController.new()
 	var added_to_party := party_controller.add_pokemon(pokemon)
 	var stored_successfully := added_to_party
+
+	if play_obtain_sound:
+		AudioManager.play_obtain_item_me(true)
 
 	if show_message:
 		var player_name := str(GameStateService.get_variable("PLAYER_NAME", "PLAYER")).strip_edges()

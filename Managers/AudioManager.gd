@@ -25,6 +25,8 @@ const BATTLE_VICTORY_BGM_TRAINER_PATH := "res://Audio/BGM/Victory (Trainer) Cut.
 const BATTLE_VICTORY_BGM_GYM_PATH := "res://Audio/BGM/Victory (Gym Leader) Cut.ogg"
 const BATTLE_ME_CAPTURE_SUCCESS_PATH := "res://Audio/ME/Battle capture success.ogg"
 const BATTLE_EXIT_BGM_FADE := 0.35
+const ME_OBTAIN_ITEM_PATH := "res://Audio/ME/Obtained an Item.ogg"
+const ME_OBTAIN_KEY_ITEM_PATH := "res://Audio/ME/Obtained a Key Item.ogg"
 
 const UI_SFX_CURSOR_PATH := "res://Audio/SE/GUI sel cursor.ogg"
 const UI_SFX_MENU_OPEN_PATH := "res://Audio/SE/GUI menu open.ogg"
@@ -66,6 +68,7 @@ const OVERWORLD_SFX_CUT_PATH := "res://Audio/SE/Cut.ogg"
 const OVERWORLD_SFX_STRENGTH_PUSH_PATH := "res://Audio/SE/Strength push.ogg"
 const OVERWORLD_SFX_ROCK_SMASH_PATH := "res://Audio/SE/Rock Smash.ogg"
 const OVERWORLD_SFX_SURF_PATH := "res://Audio/SE/Surf.ogg"
+const OVERWORLD_SFX_EXCLAIM_PATH := "res://Audio/SE/Exclaim.ogg"
 const OVERWORLD_BGM_SURFING_PATH := "res://Audio/BGM/Surfing.ogg"
 const OVERWORLD_BGM_SURFING_FADE := 0.5
 const EYES_MEET_BGM_BOY_PATH := "res://Audio/BGM/Trainers' Eyes Meet (Boy).ogg"
@@ -91,6 +94,13 @@ var _sfx_next_index: int = 0
 ## Evita reiniciar la fanfare de victoria varias veces en el mismo combate.
 var _battle_victory_started: bool = false
 var _me_finished_cb: Callable = Callable()
+## Hold de BGM de evento: sobrevive warps y se restaura tras combate hasta StopBGM.
+var _event_bgm_held: bool = false
+var _held_event_bgm: AudioStream = null
+var _held_event_bgm_loop: bool = true
+## Refcount: BGM en pausa mientras suena un ME/SFX de jingle (PlaySound, obtain item…).
+var _jingle_pause_refcount: int = 0
+var _me_holds_jingle_pause: bool = false
 
 
 func _ready() -> void:
@@ -133,11 +143,12 @@ static func fade_out_then_play_bgm(stream: AudioStream, fade_out: float = 1.0, l
 
 
 ## Reproduce un SFX en el pool. Devuelve el player usado (o null) para poder esperar a `finished`.
-static func play_sfx(stream: AudioStream, bus: String = BUS_SFX, volume_db: float = 0.0) -> AudioStreamPlayer:
+## Si pause_bgm=true, pausa la BGM y la reanuda al terminar el SFX (p. ej. PlaySoundCommand).
+static func play_sfx(stream: AudioStream, bus: String = BUS_SFX, volume_db: float = 0.0, pause_bgm: bool = false) -> AudioStreamPlayer:
 	if instance == null:
 		push_error("AudioManager: No hay instancia disponible")
 		return null
-	return instance._play_sfx(stream, bus, volume_db)
+	return instance._play_sfx(stream, bus, volume_db, pause_bgm)
 
 
 static func set_bus_volume(bus_name: String, value: float) -> void:
@@ -173,10 +184,68 @@ static func play_battle_capture_success_me() -> void:
 	instance._play_battle_capture_success_me()
 
 
+## ME genérico (no corta la BGM). Fire-and-forget.
+static func play_me(stream: AudioStream) -> void:
+	if instance == null:
+		push_error("AudioManager: No hay instancia disponible")
+		return
+	instance._play_me(stream)
+
+
+## Fanfare al obtener ítem (Gen 3): key item vs resto.
+static func play_obtain_item_me(is_key_item: bool = false) -> void:
+	if instance == null:
+		push_error("AudioManager: No hay instancia disponible")
+		return
+	var path := ME_OBTAIN_KEY_ITEM_PATH if is_key_item else ME_OBTAIN_ITEM_PATH
+	var stream := instance._load_audio_stream(path)
+	if stream == null:
+		return
+	instance._play_me(stream)
+
+
 static func is_bgm_playing() -> bool:
 	if instance == null:
 		return false
 	return instance._is_bgm_playing()
+
+
+## Activa el hold de BGM de evento (PlayBGM con persist_across_maps).
+static func set_event_bgm_hold(stream: AudioStream, loop: bool = true) -> void:
+	if instance == null:
+		push_error("AudioManager: No hay instancia disponible")
+		return
+	if stream == null:
+		push_warning("AudioManager: set_event_bgm_hold recibió stream nulo")
+		return
+	instance._event_bgm_held = true
+	instance._held_event_bgm = stream
+	instance._held_event_bgm_loop = loop
+
+
+## Libera el hold (StopBGM / PlayBGM sin persist).
+static func clear_event_bgm_hold() -> void:
+	if instance == null:
+		return
+	instance._event_bgm_held = false
+	instance._held_event_bgm = null
+	instance._held_event_bgm_loop = true
+
+
+static func is_event_bgm_held() -> bool:
+	if instance == null:
+		return false
+	return instance._event_bgm_held and instance._held_event_bgm != null
+
+
+## Reponer BGM del hold (p. ej. post-combate). No-op si ya suena el mismo stream.
+static func resume_held_event_bgm(fade_in: float = 0.0) -> void:
+	if instance == null:
+		push_error("AudioManager: No hay instancia disponible")
+		return
+	if not is_event_bgm_held():
+		return
+	instance._play_bgm(instance._held_event_bgm, fade_in, instance._held_event_bgm_loop)
 
 
 static func resolve_map_bgm_fade(map_fade: float) -> float:
@@ -242,6 +311,11 @@ static func play_overworld_rock_smash() -> void:
 ## Splash al entrar/salir del agua (opcional: no avisa si falta el archivo).
 static func play_overworld_surf() -> void:
 	_play_overworld_sfx(OVERWORLD_SFX_SURF_PATH, false)
+
+
+## Exclamación al detectar un entrenador (!).
+static func play_overworld_exclaim() -> void:
+	_play_overworld_sfx(OVERWORLD_SFX_EXCLAIM_PATH)
 
 
 ## BGM de Surf. No hace nada si aún no está el asset en Audio/BGM/Surfing.ogg.
@@ -475,12 +549,28 @@ func _play_battle_capture_success_me() -> void:
 	_me_player.play()
 
 
+## ME overworld / UI: pausa la BGM y la reanuda al terminar.
+func _play_me(stream: AudioStream) -> void:
+	if stream == null:
+		push_warning("AudioManager: play_me recibió stream nulo")
+		return
+	_stop_me()
+	_acquire_jingle_pause()
+	_me_holds_jingle_pause = true
+	if not _me_player.finished.is_connected(_on_me_player_finished):
+		_me_player.finished.connect(_on_me_player_finished)
+	_me_player.stream = _prepare_bgm_stream(stream, false)
+	_me_player.volume_db = BGM_BUS_VOLUME_DB
+	_me_player.play()
+
+
 func _on_capture_success_me_finished() -> void:
 	# Tras el jingle de captura: victoria salvaje (Gen 3/4).
 	_play_battle_victory_bgm(null, [])
 
 
 func _on_me_player_finished() -> void:
+	_release_me_jingle_pause()
 	var cb := _me_finished_cb
 	_me_finished_cb = Callable()
 	if cb.is_valid():
@@ -489,10 +579,49 @@ func _on_me_player_finished() -> void:
 
 func _stop_me() -> void:
 	_me_finished_cb = Callable()
+	_release_me_jingle_pause()
 	if _me_player == null:
 		return
 	if _me_player.playing:
 		_me_player.stop()
+
+
+func _release_me_jingle_pause() -> void:
+	if not _me_holds_jingle_pause:
+		return
+	_me_holds_jingle_pause = false
+	_release_jingle_pause()
+
+
+func _acquire_jingle_pause() -> void:
+	if _jingle_pause_refcount == 0:
+		_set_bgm_stream_paused(true)
+	_jingle_pause_refcount += 1
+
+
+func _release_jingle_pause() -> void:
+	if _jingle_pause_refcount <= 0:
+		return
+	_jingle_pause_refcount -= 1
+	if _jingle_pause_refcount == 0:
+		_set_bgm_stream_paused(false)
+
+
+func _clear_jingle_pause() -> void:
+	_jingle_pause_refcount = 0
+	_me_holds_jingle_pause = false
+	_set_bgm_stream_paused(false)
+
+
+func _set_bgm_stream_paused(paused: bool) -> void:
+	for player in [_active_bgm_player, _inactive_bgm_player]:
+		if player == null:
+			continue
+		if paused:
+			if player.playing:
+				player.stream_paused = true
+		else:
+			player.stream_paused = false
 
 
 func _resolve_battle_bgm(rules: BattleRules, enemy_participants: Array) -> AudioStream:
@@ -542,6 +671,7 @@ func _play_bgm(stream: AudioStream, fade_in: float, loop: bool) -> void:
 
 	_pending_bgm_stream = null
 	_kill_bgm_tween()
+	_clear_jingle_pause()
 	var prepared := _prepare_bgm_stream(stream, loop)
 	_current_bgm_stream = stream
 
@@ -565,6 +695,7 @@ func _play_bgm(stream: AudioStream, fade_in: float, loop: bool) -> void:
 func _stop_bgm(fade_out: float) -> void:
 	_stop_me()
 	_pending_bgm_stream = null
+	_clear_jingle_pause()
 	if not _active_bgm_player.playing and _current_bgm_stream == null:
 		return
 
@@ -631,6 +762,7 @@ func _crossfade_bgm(stream: AudioStream, duration: float, loop: bool) -> void:
 
 	_pending_bgm_stream = null
 	_kill_bgm_tween()
+	_clear_jingle_pause()
 	var prepared := _prepare_bgm_stream(stream, loop)
 	_current_bgm_stream = stream
 
@@ -752,7 +884,7 @@ func _setup_sfx_pool() -> void:
 			_sfx_players.append(player)
 
 
-func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0) -> AudioStreamPlayer:
+func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0, pause_bgm: bool = false) -> AudioStreamPlayer:
 	if stream == null:
 		push_warning("AudioManager: play_sfx recibió stream nulo")
 		return null
@@ -762,11 +894,29 @@ func _play_sfx(stream: AudioStream, bus: String, volume_db: float = 0.0) -> Audi
 
 	var resolved_bus := bus if AudioServer.get_bus_index(bus) >= 0 else BUS_SFX
 	var player := _get_available_sfx_player()
+	_release_sfx_jingle_pause_if_held(player)
 	player.bus = resolved_bus
 	player.volume_db = volume_db
 	player.stream = stream
+	if pause_bgm:
+		_acquire_jingle_pause()
+		player.set_meta("pauses_bgm", true)
+		player.finished.connect(_on_sfx_jingle_finished.bind(player), CONNECT_ONE_SHOT)
 	player.play()
 	return player
+
+
+func _on_sfx_jingle_finished(player: AudioStreamPlayer) -> void:
+	_release_sfx_jingle_pause_if_held(player)
+
+
+func _release_sfx_jingle_pause_if_held(player: AudioStreamPlayer) -> void:
+	if player == null:
+		return
+	if not player.has_meta("pauses_bgm") or not bool(player.get_meta("pauses_bgm")):
+		return
+	player.set_meta("pauses_bgm", false)
+	_release_jingle_pause()
 
 
 func _get_available_sfx_player() -> AudioStreamPlayer:
