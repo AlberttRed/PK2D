@@ -43,7 +43,11 @@ func _ready() -> void:
 
 	_setup_ui()
 	definition_editor_script = load("res://addons/event_tools/pokemon_definition_editor_window.gd") as GDScript
-	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	trainer_editor_scene = ResourceLoader.load(
+		"res://addons/database_editor/trainer_editor_window.tscn",
+		"",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as PackedScene
 
 func _setup_ui() -> void:
 	var vbox = VBoxContainer.new()
@@ -283,41 +287,45 @@ func _on_battle_type_changed(index: int) -> void:
 func _on_select_trainer_data() -> void:
 	if not command:
 		return
+	if not Engine.is_editor_hint():
+		return
 
-	# Crear un EditorFileDialog para seleccionar archivos TrainerData
-	var file_dialog = EditorFileDialog.new()
-	file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	file_dialog.current_dir = "res://Resources/Trainers/"
-	file_dialog.add_filter("*.tres", "TrainerData")
-	file_dialog.title = "Seleccionar TrainerData"
+	var initial_selection = null
+	if command.trainer_data != null:
+		if command.trainer_data.resource_path != "":
+			initial_selection = command.trainer_data.resource_path
+		elif command.trainer_data.trainer_id > 0:
+			initial_selection = command.trainer_data.trainer_id
 
-	# Conectar la señal de selección de archivo
-	file_dialog.file_selected.connect(func(path: String):
-		var trainer_data = load(path) as TrainerData
-		if trainer_data:
-			command.trainer_data = trainer_data
-			_update_trainer_data_display()
-
-			# Si el flag está vacío, generar uno basado en el TrainerData
-			if defeated_flag_line_edit and defeated_flag_line_edit.text.strip_edges().is_empty():
-				var default_flag = _generate_default_flag()
-				defeated_flag_line_edit.text = default_flag
-				command.defeated_flag = default_flag
-
-			print("StartBattleEventCommandEditor: TrainerData seleccionado: ", path)
-		else:
-			push_error("StartBattleEventCommandEditor: El archivo seleccionado no es un TrainerData válido")
-		file_dialog.queue_free()
+	var picker_window = ResourcePickerAPI.open_trainer_picker(
+		initial_selection,
+		_on_trainer_picker_selected,
+		Callable()
 	)
+	if picker_window == null:
+		push_warning("StartBattleEventCommandEditor: No se pudo abrir el selector de trainers.")
 
-	# Conectar la señal de cancelación
-	file_dialog.canceled.connect(func():
-		file_dialog.queue_free()
-	)
+func _on_trainer_picker_selected(result: ResourcePickerResult) -> void:
+	if result == null or command == null:
+		return
 
-	# Añadir el diálogo a la escena y mostrarlo
-	add_child(file_dialog)
-	file_dialog.popup_centered_ratio(0.7)
+	var trainer_data: TrainerData = null
+	if result.resource is TrainerData:
+		trainer_data = result.resource
+	elif result.resource_path != "":
+		trainer_data = load(result.resource_path) as TrainerData
+
+	if trainer_data == null:
+		push_error("StartBattleEventCommandEditor: El recurso seleccionado no es un TrainerData válido")
+		return
+
+	command.trainer_data = trainer_data
+	_update_trainer_data_display()
+
+	if defeated_flag_line_edit and defeated_flag_line_edit.text.strip_edges().is_empty():
+		var default_flag = _generate_default_flag()
+		defeated_flag_line_edit.text = default_flag
+		command.defeated_flag = default_flag
 
 ## Limpia el TrainerData
 func _on_clear_trainer_data() -> void:
@@ -338,8 +346,7 @@ func _update_trainer_data_display() -> void:
 			var embedded_name := str(command.trainer_data.get("display_name")).strip_edges()
 			if embedded_name.is_empty():
 				embedded_name = "Trainer embebido"
-			var embedded_id := int(command.trainer_data.get("trainer_id"))
-			trainer_data_label.text = "%s (embebido, ID %d)" % [embedded_name, embedded_id]
+			trainer_data_label.text = "%s (embebido)" % embedded_name
 	else:
 		trainer_data_label.text = "(Ninguno)"
 	_update_trainer_buttons_state()
@@ -393,10 +400,11 @@ func _on_new_embedded_trainer() -> void:
 	if trainer == null:
 		_show_error_dialog("No se pudo crear TrainerData embebido")
 		return
-	trainer.trainer_id = 1
+	# trainer_id se asigna automáticamente al abrir el editor embebido.
+	trainer.trainer_id = 0
 	trainer.trainer_class_id = TrainerClassEnum.Values.POKEMON_TRAINER
 	trainer.display_name = "Entrenador embebido"
-	trainer.resource_id = "embedded_1"
+	trainer.resource_id = ""
 	trainer.reward_money = 1000
 	command.trainer_data = trainer
 	_update_trainer_data_display()

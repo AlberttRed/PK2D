@@ -70,7 +70,11 @@ func _ready() -> void:
 	pokemon_editor_scene = load("res://addons/database_editor/pokemon_editor_window.tscn")
 	move_editor_scene = load("res://addons/database_editor/move_editor_window.tscn")
 	item_editor_scene = load("res://addons/database_editor/item_editor_window.tscn")
-	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	trainer_editor_scene = ResourceLoader.load(
+		"res://addons/database_editor/trainer_editor_window.tscn",
+		"",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as PackedScene
 	type_editor_scene = load("res://addons/database_editor/type_editor_window.tscn")
 	ailment_editor_scene = load("res://addons/database_editor/ailment_editor_window.tscn")
 	ability_editor_scene = load("res://addons/database_editor/ability_editor_window.tscn")
@@ -1169,6 +1173,63 @@ func _configure_picker_tabs(resource_type: ResourceType) -> void:
 
 	# Ocultar botones de acción en modo picker
 	_hide_action_buttons_in_picker_mode()
+
+	_wire_picker_list_activation()
+	call_deferred("_focus_picker_search")
+
+## Devuelve la pestaña activa según el tipo de recurso en modo picker.
+func _get_picker_tab_node() -> Control:
+	match picker_resource_type:
+		ResourceType.POKEMON:
+			return pokemon_tab
+		ResourceType.MOVE:
+			return move_tab
+		ResourceType.ITEM:
+			return item_tab
+		ResourceType.TRAINER:
+			return trainer_tab
+		ResourceType.TYPE:
+			return type_tab
+		ResourceType.AILMENT:
+			return ailment_tab
+		ResourceType.ABILITY:
+			return ability_tab
+		ResourceType.WEATHER:
+			return weather_tab
+	return null
+
+## Enfoca el buscador al abrir el picker (escribir sin clic previo).
+func _focus_picker_search() -> void:
+	if not is_picker_mode:
+		return
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var tab_node := _get_picker_tab_node()
+	if tab_node == null:
+		return
+	var search := tab_node.get_node_or_null("VBoxContainer/SearchContainer/SearchLineEdit") as LineEdit
+	if search:
+		search.grab_focus()
+
+## Doble clic (o Enter en la lista) confirma la selección como el botón "Seleccionar".
+func _wire_picker_list_activation() -> void:
+	if not is_picker_mode:
+		return
+	var tab_node := _get_picker_tab_node()
+	if tab_node == null:
+		return
+	var resource_list := tab_node.get_node_or_null("VBoxContainer/ContentContainer/LeftPanel/ResourceList") as ItemList
+	if resource_list == null:
+		return
+	if resource_list.has_meta("picker_activation_wired"):
+		return
+	resource_list.set_meta("picker_activation_wired", true)
+	resource_list.item_activated.connect(_on_picker_item_activated)
+
+func _on_picker_item_activated(_index: int) -> void:
+	if not is_picker_mode or selected_resource == null:
+		return
+	_on_picker_select_pressed()
 
 ## Establece la selección inicial en modo picker
 func _set_initial_selection(selection) -> void:
@@ -2325,7 +2386,11 @@ func _refresh_item_tab() -> void:
 
 ## Abre el editor de Trainers en modo Create
 func _open_trainer_editor_create() -> void:
-	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	trainer_editor_scene = ResourceLoader.load(
+		"res://addons/database_editor/trainer_editor_window.tscn",
+		"",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as PackedScene
 	if not trainer_editor_scene:
 		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
 		return
@@ -2345,7 +2410,11 @@ func _open_trainer_editor_create() -> void:
 
 ## Abre el editor de Trainers en modo Edit
 func _open_trainer_editor_edit(trainer_data: Resource, trainer_path: String = "") -> void:
-	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	trainer_editor_scene = ResourceLoader.load(
+		"res://addons/database_editor/trainer_editor_window.tscn",
+		"",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as PackedScene
 	if not trainer_editor_scene:
 		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
 		return
@@ -2365,7 +2434,11 @@ func _open_trainer_editor_edit(trainer_data: Resource, trainer_path: String = ""
 
 ## Abre el editor de Trainers en modo Duplicate
 func _open_trainer_editor_duplicate(trainer_data: Resource, trainer_path: String = "") -> void:
-	trainer_editor_scene = load("res://addons/database_editor/trainer_editor_window.tscn")
+	trainer_editor_scene = ResourceLoader.load(
+		"res://addons/database_editor/trainer_editor_window.tscn",
+		"",
+		ResourceLoader.CACHE_MODE_IGNORE
+	) as PackedScene
 	if not trainer_editor_scene:
 		push_error("DatabaseEditor: No se pudo cargar trainer_editor_window.tscn")
 		return
@@ -2583,8 +2656,8 @@ func _on_trainer_item_selected(index: int, tab_node: Control) -> void:
 			if entry != null:
 				definitions_count += 1
 	_add_section_header(detail_container, "INFORMACIÓN DEL TRAINER")
-	_add_detail_row(detail_container, "ID", str(trainer_data.trainer_id))
 	_add_detail_row(detail_container, "Nombre", trainer_data.display_name)
+	_add_detail_row(detail_container, "Archivo", file_path.get_file())
 	_add_detail_row(detail_container, "Clase", TrainerClassEnum.get_display_name(trainer_data.trainer_class_id))
 	_add_detail_row(detail_container, "Equipo", "%d Pokémon" % definitions_count)
 	_add_detail_row(detail_container, "Dinero", "$%d" % trainer_data.reward_money)

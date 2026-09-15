@@ -61,6 +61,13 @@ func is_full() -> bool:
 	return _members.size() >= MAX_SIZE
 
 
+## Cura a todos los miembros (blanqueo / Centro Pokémon).
+func heal_all() -> void:
+	for mon in _members:
+		if mon != null:
+			mon.fully_heal()
+
+
 ## Array de diccionarios planos (sin rutas); rehidrata vía PokemonRuntimeSerde.
 func to_serializable_data() -> Array[Dictionary]:
 	var data: Array[Dictionary] = []

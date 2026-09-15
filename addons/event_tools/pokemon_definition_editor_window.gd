@@ -308,7 +308,13 @@ func _add_gender_row(parent: VBoxContainer) -> OptionButton:
 	return option
 
 func _add_nature_row(parent: VBoxContainer) -> OptionButton:
-	return _add_enum_option_row(parent, "Naturaleza", NaturesEnum.Values)
+	var option := _add_enum_option_row(parent, "Naturaleza", NaturesEnum.Values)
+	# NONE = se genera al azar al crear el Pokémon (no "sin naturaleza").
+	for i in range(option.item_count):
+		if option.get_item_id(i) == int(NaturesEnum.Values.NONE):
+			option.set_item_text(i, "Aleatorio")
+			break
+	return option
 
 func _add_ability_row(parent: VBoxContainer) -> OptionButton:
 	return _add_enum_option_row(parent, "Habilidad", AbilitiesEnum.Values)

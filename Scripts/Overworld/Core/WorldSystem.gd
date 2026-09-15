@@ -1205,8 +1205,8 @@ func set_active_map(map_scene: Node) -> void:
 	# Aplicar configuración de overlay asociada al mapa
 	_apply_overlay_settings(map_scene)
 
-	# Reproducir BGM del mapa activo
-	_apply_map_bgm(map_scene)
+	# BGM: respetar hold de evento / Surf / mapa (vía refresh_map_bgm)
+	refresh_map_bgm()
 
 	# Emitir cambio de grid activo
 	if context and grid:
@@ -1342,6 +1342,10 @@ func _apply_map_bgm(map_scene: Node, immediate: bool = false) -> void:
 		return
 	if AudioManager.is_event_bgm_held():
 		AudioManager.resume_held_event_bgm(0.0)
+		return
+	var player := get_player()
+	if player and player.get("is_surfing") == true:
+		AudioManager.play_surfing_bgm(0.0 if immediate else AudioManager.OVERWORLD_BGM_SURFING_FADE)
 		return
 
 	var bgm: AudioStream = null

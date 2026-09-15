@@ -168,6 +168,11 @@ layout_mode = 2
 custom_minimum_size = Vector2(130, 0)
 text = "Editar"
 
+[node name="DuplicatePokemonButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(130, 0)
+text = "Duplicar"
+
 [node name="RemovePokemonButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons"]
 layout_mode = 2
 custom_minimum_size = Vector2(130, 0)

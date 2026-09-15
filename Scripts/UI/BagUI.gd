@@ -586,6 +586,8 @@ func _block_player_control() -> void:
 		dm.player_control_blocked.emit()
 
 func _unblock_player_control() -> void:
+	if DisplayManager.is_battle_active():
+		return
 	var dm := DisplayManager.instance
 	if dm:
 		dm.player_control_unblocked.emit()

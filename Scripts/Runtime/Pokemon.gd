@@ -912,6 +912,17 @@ func get_overworld_sprite() -> Texture2D:
 func has_full_health() -> bool:
 	return hp_actual == get_final_stat(StatsEnum.Values.HP)
 
+
+## Cura completa estilo Centro Pokémon / blanqueo: PS, estado y PP.
+func fully_heal() -> void:
+	hp_actual = get_final_stat(StatsEnum.Values.HP)
+	major_status = CONST.STATUS.OK
+	for mvar in movements:
+		var mv: Move = mvar as Move
+		if mv != null:
+			mv.restore_pp()
+
+
 func hasItemEquipped(item_id: int) -> bool:
 	return held_item_id == item_id
 
