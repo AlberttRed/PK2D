@@ -1,4 +1,4 @@
-[gd_scene load_steps=126 format=4 uid="uid://4s667ycn2n6t"]
+[gd_scene load_steps=130 format=4 uid="uid://4s667ycn2n6t"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_1k5j4"]
 [ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
@@ -25,11 +25,23 @@
 [ext_resource type="Texture2D" uid="uid://dae2n5x8ut0tu" path="res://Sprites/Overworlds/Characters/NPC 27.png" id="22_p413b"]
 [ext_resource type="Texture2D" uid="uid://bd6qlu35cd6ak" path="res://Sprites/Overworlds/Characters/Pokemon 03.png" id="23_hoq1i"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="24_p413b"]
+[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
+
+[sub_resource type="Resource" id="Resource_ps_exit_ce2"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_exit_ce1"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_wv4mj"]
 script = ExtResource("7_a4gk0")
 mode = 0
-duration = 0.3
+duration = 0.4
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_vsbsi"]
@@ -52,7 +64,8 @@ metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_w8kxy"]
 script = ExtResource("7_a4gk0")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_ctrvy"]
@@ -62,7 +75,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_oioqy"]
 script = ExtResource("5_vsbsi")
 trigger = SubResource("Resource_ctrvy")
-commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_wv4mj"), SubResource("Resource_vsbsi"), SubResource("Resource_00hv8"), SubResource("Resource_a4gk0"), SubResource("Resource_w8kxy")])
+commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_ps_exit_ce1"), SubResource("Resource_wv4mj"), SubResource("Resource_vsbsi"), SubResource("Resource_00hv8"), SubResource("Resource_a4gk0"), SubResource("Resource_w8kxy")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_mrq3g"]
@@ -244,7 +257,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_iwgcq"]
 script = ExtResource("7_a4gk0")
 mode = 0
-duration = 0.3
+duration = 0.4
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_rv2o2"]
@@ -267,7 +280,8 @@ metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_kldo2"]
 script = ExtResource("7_a4gk0")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_lmb3k"]
@@ -277,7 +291,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_77mtl"]
 script = ExtResource("5_vsbsi")
 trigger = SubResource("Resource_lmb3k")
-commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_iwgcq"), SubResource("Resource_rv2o2"), SubResource("Resource_oc8dp"), SubResource("Resource_yiks4"), SubResource("Resource_kldo2")])
+commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_ps_exit_ce2"), SubResource("Resource_iwgcq"), SubResource("Resource_rv2o2"), SubResource("Resource_oc8dp"), SubResource("Resource_yiks4"), SubResource("Resource_kldo2")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_cvx7x"]

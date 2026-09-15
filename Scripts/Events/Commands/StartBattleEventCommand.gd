@@ -143,7 +143,13 @@ func execute(context: Node) -> void:
 	# Resetear flags del Trainer (si existe) para permitir nuevas detecciones
 	_reset_trainer_flags(context)
 
-	# Continuar con el siguiente comando
+	# Blanqueo: el jugador ya no está en el mapa del evento; no ejecutar post-batalla.
+	if _battle_winner == "enemy":
+		if context != null and context.has_method("finish_page"):
+			await context.finish_page()
+		return
+
+	# Continuar con el siguiente comando (victoria / captura / etc.)
 	context.continue_execution()
 
 
@@ -199,6 +205,8 @@ func _show_trainer_intro_message() -> void:
 
 	# Inicializar TrainerData para obtener el mensaje
 	trainer_data.initialize()
+	# Misma BGM de enfrentamiento que al detectar al pasar cerca (Eyes Meet).
+	AudioManager.play_eyes_meet_bgm(trainer_data.get_eyes_meet())
 	var intro_text = trainer_data.get_intro_message()
 
 	if intro_text.is_empty():

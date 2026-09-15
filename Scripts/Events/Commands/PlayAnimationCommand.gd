@@ -7,9 +7,12 @@ class_name PlayAnimationCommand
 @export var target_name: String = ""
 @export var animation_name: String = ""
 @export var wait_until_finished: bool = true
+## Multiplicador de velocidad (1.0 = normal, 2.0 = doble). Se restaura a 1.0 al terminar si wait.
+@export_range(0.1, 5.0, 0.1) var speed_scale: float = 1.0
 
 var _actor_animator: ActorAnimator = null
 var _context: Node = null
+var _previous_speed_scale: float = 1.0
 
 func execute(context: Node) -> void:
 	_context = context
@@ -46,9 +49,10 @@ func execute(context: Node) -> void:
 		context.continue_execution()
 		return
 
-	print("PlayAnimationCommand: Reproduciendo animación '%s' en '%s' (wait=%s)" % [animation_name, target.name, wait_until_finished])
+	print("PlayAnimationCommand: Reproduciendo animación '%s' en '%s' (wait=%s, speed=%.1f)" % [animation_name, target.name, wait_until_finished, speed_scale])
 
-	# Reproducir la animación
+	_previous_speed_scale = _actor_animator.sprite.speed_scale if _actor_animator.sprite else 1.0
+	_actor_animator.set_speed_scale(maxf(speed_scale, 0.1))
 	_actor_animator.play(animation_name)
 
 	# Si wait_until_finished está activado, esperar a que termine
@@ -57,7 +61,7 @@ func execute(context: Node) -> void:
 		if not _actor_animator.sprite.animation_finished.is_connected(_on_animation_finished):
 			_actor_animator.sprite.animation_finished.connect(_on_animation_finished)
 	else:
-		# Continuar inmediatamente sin esperar
+		# Continuar inmediatamente sin esperar (no restauramos speed aquí: la animación sigue)
 		context.continue_execution()
 
 ## Callback cuando la animación termina
@@ -66,6 +70,7 @@ func _on_animation_finished() -> void:
 		# Desconectar la señal para evitar fugas de memoria
 		if _actor_animator.sprite.animation_finished.is_connected(_on_animation_finished):
 			_actor_animator.sprite.animation_finished.disconnect(_on_animation_finished)
+		_actor_animator.set_speed_scale(_previous_speed_scale)
 
 	if _context:
 		print("PlayAnimationCommand: Animación '%s' completada" % animation_name)

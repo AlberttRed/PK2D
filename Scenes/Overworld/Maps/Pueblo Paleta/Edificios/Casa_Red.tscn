@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://c0wo0k68yn6wi"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_s0bkc"]
-[ext_resource type="AudioStream" uid="uid://biwp83sn0ic2o" path="res://Audio/BGM/Pallet Town.ogg" id="bgm_pallet"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_tca3o"]
 [ext_resource type="TileSet" uid="uid://dr7bntiy6uqpb" path="res://Resources/Tilesets/Centro_Pokemon.tres" id="3_gw6f8"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_actcd"]
@@ -19,44 +18,53 @@
 [ext_resource type="Texture2D" uid="uid://bc40k67ye0why" path="res://Sprites/Overworlds/Characters/NPC 28.png" id="13_w55lx"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="18_lih7u"]
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="19_mmm4h"]
+[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="20_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="21_doorexit"]
+[ext_resource type="AudioStream" uid="uid://biwp83sn0ic2o" path="res://Audio/BGM/Pallet Town.ogg" id="bgm_pallet"]
 
 [sub_resource type="Resource" id="Resource_snhv5"]
-script = ExtResource("7_w55lx")
-mode = 0
-duration = 0.3
-metadata/_custom_type_script = "uid://k6r0axpkwn50"
+script = ExtResource("20_plays")
+sound = ExtResource("21_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_11cix"]
+script = ExtResource("7_w55lx")
+mode = 0
+duration = 0.4
+metadata/_custom_type_script = "uid://k6r0axpkwn50"
+
+[sub_resource type="Resource" id="Resource_duue3"]
 script = ExtResource("8_hx57r")
 target_type = 1
 visible = false
 metadata/_custom_type_script = "uid://biam3qn6qasrt"
 
-[sub_resource type="Resource" id="Resource_duue3"]
+[sub_resource type="Resource" id="Resource_hoqt6"]
 script = ExtResource("9_s7rb7")
 flag_name = "flash_on"
 flag_value = false
 metadata/_custom_type_script = "uid://bh0fcni6ucxkx"
 
-[sub_resource type="Resource" id="Resource_hoqt6"]
+[sub_resource type="Resource" id="Resource_vs8p4"]
 script = ExtResource("10_gw6f8")
 target_scene = "Pueblo_Paleta"
 target_tile = Vector2i(4, 5)
 metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
-[sub_resource type="Resource" id="Resource_vs8p4"]
+[sub_resource type="Resource" id="Resource_1bb6e"]
 script = ExtResource("7_w55lx")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
-[sub_resource type="Resource" id="Resource_1bb6e"]
+[sub_resource type="Resource" id="Resource_do1di"]
 script = ExtResource("12_mmm4h")
 metadata/_custom_type_script = "uid://cenpvman6ylsr"
 
-[sub_resource type="Resource" id="Resource_do1di"]
+[sub_resource type="Resource" id="Resource_5g847"]
 script = ExtResource("5_7lm0v")
-trigger = SubResource("Resource_1bb6e")
-commands = Array[ExtResource("6_8qtck")]([SubResource("Resource_snhv5"), SubResource("Resource_11cix"), SubResource("Resource_duue3"), SubResource("Resource_hoqt6"), SubResource("Resource_vs8p4")])
+trigger = SubResource("Resource_do1di")
+commands = Array[ExtResource("6_8qtck")]([SubResource("Resource_snhv5"), SubResource("Resource_11cix"), SubResource("Resource_duue3"), SubResource("Resource_hoqt6"), SubResource("Resource_vs8p4"), SubResource("Resource_1bb6e")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_s7rb7"]
@@ -320,8 +328,8 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="Casa_Red" type="Node2D" unique_id=87675376]
 y_sort_enabled = true
 script = ExtResource("1_s0bkc")
-bgm = ExtResource("bgm_pallet")
 is_indoor = true
+bgm = ExtResource("bgm_pallet")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=449039326 groups=["OverworldGrid"]]
 y_sort_enabled = true
@@ -355,7 +363,7 @@ metadata/_edit_lock_ = true
 
 [node name="Exit" parent="OverworldGrid/Events" unique_id=1128389579 instance=ExtResource("4_actcd")]
 position = Vector2(112, 240)
-pages = Array[ExtResource("5_7lm0v")]([SubResource("Resource_do1di")])
+pages = Array[ExtResource("5_7lm0v")]([SubResource("Resource_5g847")])
 
 [node name="Stairs" parent="OverworldGrid/Events" unique_id=1871294665 instance=ExtResource("4_actcd")]
 position = Vector2(336, 16)

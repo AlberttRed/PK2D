@@ -1,4 +1,4 @@
-[gd_scene load_steps=174 format=4 uid="uid://ntl1hurrl6j3"]
+[gd_scene load_steps=178 format=4 uid="uid://ntl1hurrl6j3"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_n3lnm"]
 [ext_resource type="AudioStream" uid="uid://bhvagjix6fvqe" path="res://Audio/BGM/Pewter City.ogg" id="bgm_pewter"]
@@ -30,6 +30,18 @@
 [ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="24_ju0j2"]
 [ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="25_6bxgy"]
 [ext_resource type="Script" uid="uid://bh0fcni6ucxkx" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="26_ju0j2"]
+[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
+[ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
+
+[sub_resource type="Resource" id="Resource_ps_exit_mu2"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
+[sub_resource type="Resource" id="Resource_ps_exit_mu1"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
 
 [sub_resource type="Resource" id="Resource_cwpkq"]
 script = ExtResource("9_5fi37")
@@ -740,7 +752,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_ck4db"]
 script = ExtResource("22_0bu7b")
 mode = 0
-duration = 0.3
+duration = 0.4
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_n25fy"]
@@ -761,7 +773,8 @@ metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_mtoyd"]
 script = ExtResource("22_0bu7b")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_0mogq"]
@@ -771,13 +784,13 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_00b1m"]
 script = ExtResource("6_l7exr")
 trigger = SubResource("Resource_0mogq")
-commands = Array[ExtResource("7_0it1x")]([SubResource("Resource_ck4db"), SubResource("Resource_n25fy"), SubResource("Resource_c3r7o"), SubResource("Resource_cfmmx"), SubResource("Resource_mtoyd")])
+commands = Array[ExtResource("7_0it1x")]([SubResource("Resource_ps_exit_mu1"), SubResource("Resource_ck4db"), SubResource("Resource_n25fy"), SubResource("Resource_c3r7o"), SubResource("Resource_cfmmx"), SubResource("Resource_mtoyd")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_wna2n"]
 script = ExtResource("22_0bu7b")
 mode = 0
-duration = 0.3
+duration = 0.4
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_y5frd"]
@@ -800,7 +813,8 @@ metadata/_custom_type_script = "uid://c5vehg44neoyq"
 
 [sub_resource type="Resource" id="Resource_ai28h"]
 script = ExtResource("22_0bu7b")
-duration = 0.3
+effect = 1
+duration = 0.6
 metadata/_custom_type_script = "uid://k6r0axpkwn50"
 
 [sub_resource type="Resource" id="Resource_716de"]
@@ -810,7 +824,7 @@ metadata/_custom_type_script = "uid://cenpvman6ylsr"
 [sub_resource type="Resource" id="Resource_mbqut"]
 script = ExtResource("6_l7exr")
 trigger = SubResource("Resource_716de")
-commands = Array[ExtResource("7_0it1x")]([SubResource("Resource_wna2n"), SubResource("Resource_y5frd"), SubResource("Resource_r7dvw"), SubResource("Resource_lsm3w"), SubResource("Resource_ai28h")])
+commands = Array[ExtResource("7_0it1x")]([SubResource("Resource_ps_exit_mu2"), SubResource("Resource_wna2n"), SubResource("Resource_y5frd"), SubResource("Resource_r7dvw"), SubResource("Resource_lsm3w"), SubResource("Resource_ai28h")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [node name="Museo_Plateada" type="Node2D"]

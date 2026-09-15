@@ -22,7 +22,9 @@
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="18_pswiv"]
 [ext_resource type="Texture2D" uid="uid://coqylrlf7wps" path="res://Sprites/Overworlds/Characters/trchar037.png" id="19_qbd0d"]
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="20_jsjcp"]
+[ext_resource type="Script" uid="uid://bdiagxcow5bbo" path="res://Scripts/Events/Commands/GiveItemCommand.gd" id="21_8gfau"]
 [ext_resource type="Texture2D" uid="uid://b14yxsjbtgmh" path="res://Sprites/Overworlds/Misc/item_sprite.png" id="22_pswiv"]
+[ext_resource type="Script" uid="uid://bgcnb3pt4dxi7" path="res://Scripts/Events/Commands/SetSelfSwitchCommand.gd" id="22_r55ey"]
 [ext_resource type="PackedScene" uid="uid://c8a7yxm1qw8kb" path="res://Scenes/Overworld/Actors/Trainer.tscn" id="23_wehsa"]
 [ext_resource type="Texture2D" uid="uid://dqwosbe04hlbi" path="res://Sprites/Overworlds/Characters/trchar010.png" id="25_8w476"]
 [ext_resource type="Script" uid="uid://qm4ouivf82wo" path="res://Scripts/Events/Commands/StartBattleEventCommand.gd" id="25_smyca"]
@@ -405,22 +407,214 @@ trigger = SubResource("Resource_de5l1")
 commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_ah3yj")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_02uhs"]
-script = ExtResource("18_pswiv")
-message = "(Placeholder objeto)"
-frame_style = 1
+[sub_resource type="Resource" id="Resource_ic8aw"]
+script = ExtResource("21_8gfau")
+item_id = 4
+message_template = "¡[player] encontró [item]!"
 
-[sub_resource type="Resource" id="Resource_6bf2m"]
+[sub_resource type="Resource" id="Resource_d6hjg"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_th3if"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_majft"]
 script = ExtResource("20_jsjcp")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_t4ikl"]
+[sub_resource type="Resource" id="Resource_urfir"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_6bf2m")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_02uhs")])
+trigger = SubResource("Resource_majft")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_ic8aw"), SubResource("Resource_d6hjg")])
+root_condition = SubResource("Resource_th3if")
 sprite_texture = ExtResource("22_pswiv")
 frame_size = Vector2(32, 32)
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_qfpgx"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_bn0pj"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_qfpgx")
+through = true
+
+[sub_resource type="Resource" id="Resource_kjsuy"]
+script = ExtResource("21_8gfau")
+item_id = 17
+message_template = "¡[player] encontró [item]!"
+
+[sub_resource type="Resource" id="Resource_plcvg"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_fdkec"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_cf6xc"]
+script = ExtResource("20_jsjcp")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_ob6td"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_cf6xc")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_kjsuy"), SubResource("Resource_plcvg")])
+root_condition = SubResource("Resource_fdkec")
+sprite_texture = ExtResource("22_pswiv")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_l6uov"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_0u8fx"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_l6uov")
+through = true
+
+[sub_resource type="Resource" id="Resource_70yof"]
+script = ExtResource("21_8gfau")
+item_id = 18
+message_template = "¡[player] encontró [item]!"
+
+[sub_resource type="Resource" id="Resource_aqmk6"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_o63ad"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_4yu1f"]
+script = ExtResource("20_jsjcp")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_s6ulk"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_4yu1f")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_70yof"), SubResource("Resource_aqmk6")])
+root_condition = SubResource("Resource_o63ad")
+sprite_texture = ExtResource("22_pswiv")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_ll4e7"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_qbfog"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_ll4e7")
+through = true
+
+[sub_resource type="Resource" id="Resource_02uhs"]
+script = ExtResource("21_8gfau")
+item_id = 17
+message_template = "¡[player] encontró [item]!"
+
+[sub_resource type="Resource" id="Resource_6bf2m"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_t4ikl"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_538r6"]
+script = ExtResource("20_jsjcp")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_kpnv0"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_538r6")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_02uhs"), SubResource("Resource_6bf2m")])
+root_condition = SubResource("Resource_t4ikl")
+sprite_texture = ExtResource("22_pswiv")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_voll8"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_j3s77"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_voll8")
+through = true
+
+[sub_resource type="Resource" id="Resource_krpmt"]
+script = ExtResource("21_8gfau")
+item_id = 18
+message_template = "¡[player] encontró [item]!"
+
+[sub_resource type="Resource" id="Resource_4o01c"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_jfqcj"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_erw7o"]
+script = ExtResource("20_jsjcp")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_jbqaj"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_erw7o")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_krpmt"), SubResource("Resource_4o01c")])
+root_condition = SubResource("Resource_jfqcj")
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_sd1yl"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_gbbeg"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_sd1yl")
+through = true
+
+[sub_resource type="Resource" id="Resource_kkcna"]
+script = ExtResource("21_8gfau")
+item_id = 17
+message_template = "¡[player] encontró [item]!"
+
+[sub_resource type="Resource" id="Resource_5c0kk"]
+script = ExtResource("22_r55ey")
+
+[sub_resource type="Resource" id="Resource_yx6la"]
+script = ExtResource("12_6jlxt")
+flag_name = "A"
+scope = 1
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_0spt3"]
+script = ExtResource("20_jsjcp")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_akhnm"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_0spt3")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_kkcna"), SubResource("Resource_5c0kk")])
+root_condition = SubResource("Resource_yx6la")
+through = true
+frame_size = Vector2(32, 32)
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_m32xq"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_p2xaw"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_m32xq")
+through = true
 
 [sub_resource type="Resource" id="Resource_krom5"]
 script = ExtResource("18_pswiv")
@@ -565,20 +759,59 @@ commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_dxjil")])
 root_condition = SubResource("Resource_vixwc")
 initial_direction = 2
 preserve_direction_on_sprite_match = true
+sprite_texture = ExtResource("25_8w476")
+is_spritesheet = true
+initial_animation = "down_left"
 
 [sub_resource type="Resource" id="Resource_cbjq0"]
-script = ExtResource("25_smyca")
-battle_type = 1
-trainer_data = ExtResource("26_6d4rm")
+script = ExtResource("28_mg6yn")
+metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_jgu3e"]
+script = ExtResource("29_u11ci")
+pokemon_id = 10
+level = 7
+gender = 1
+nature_id = 0
+ability_id = 19
+custom_move_ids = Array[int]([81, 33])
+
+[sub_resource type="Resource" id="Resource_08b5s"]
+script = ExtResource("29_u11ci")
+pokemon_id = 10
+level = 8
+gender = 1
+nature_id = 0
+ability_id = 19
+custom_move_ids = Array[int]([81, 33])
+
+[sub_resource type="Resource" id="Resource_smkjo"]
+script = ExtResource("30_8gfau")
+trainer_id = 1
+trainer_class_id = 2
+display_name = "Antón"
+resource_id = "embedded_1"
+ai_profile = SubResource("Resource_cbjq0")
+intro_text = "No soy especialmente grande, ¡pero tampoco soy ningún enclenque!"
+defeat_text = "Vaya, pues se ve que tampoco soy demasiado fuerte..."
+party_data = [SubResource("Resource_jgu3e"), SubResource("Resource_08b5s")]
+reward_money = 96
+metadata/_custom_type_script = "uid://ddsodfhwbf6ce"
+
+[sub_resource type="Resource" id="Resource_x7mt2"]
+script = ExtResource("25_smyca")
+battle_type = 1
+trainer_data = SubResource("Resource_smkjo")
+defeated_flag = "cazabichos_anton_defeated"
+
+[sub_resource type="Resource" id="Resource_pldko"]
 script = ExtResource("20_jsjcp")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_08b5s"]
+[sub_resource type="Resource" id="Resource_f3cyj"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_jgu3e")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_cbjq0")])
+trigger = SubResource("Resource_pldko")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_x7mt2")])
 enable_trainer_detection = true
 detection_range = 4
 movement_type = 3
@@ -587,20 +820,84 @@ is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_n2uj8"]
+script = ExtResource("18_pswiv")
+message = "Así no hay forma de ahorrar..."
+
+[sub_resource type="Resource" id="Resource_e582s"]
+script = ExtResource("12_6jlxt")
+flag_name = "cazabichos_anton_defeated"
+
+[sub_resource type="Resource" id="Resource_2qoql"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_e22qq"]
+script = ExtResource("5_2bxl0")
+trigger = SubResource("Resource_2qoql")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_n2uj8")])
+root_condition = SubResource("Resource_e582s")
+sprite_texture = ExtResource("25_8w476")
+is_spritesheet = true
+initial_animation = "down_left"
+
 [sub_resource type="Resource" id="Resource_ydsc4"]
-script = ExtResource("25_smyca")
-battle_type = 1
-trainer_data = ExtResource("26_6d4rm")
-defeated_flag = "cazabichos_jano2_defeated"
+script = ExtResource("28_mg6yn")
+metadata/_custom_type_script = "uid://c4x2p6dx540kg"
 
 [sub_resource type="Resource" id="Resource_lxhno"]
+script = ExtResource("29_u11ci")
+pokemon_id = 11
+level = 7
+gender = 1
+nature_id = 0
+ability_id = 61
+custom_move_ids = Array[int]([106])
+
+[sub_resource type="Resource" id="Resource_3f6iq"]
+script = ExtResource("29_u11ci")
+pokemon_id = 10
+level = 7
+gender = 1
+nature_id = 0
+ability_id = 19
+custom_move_ids = Array[int]([81, 33])
+
+[sub_resource type="Resource" id="Resource_bjvev"]
+script = ExtResource("29_u11ci")
+pokemon_id = 11
+level = 7
+gender = 1
+nature_id = 0
+ability_id = 61
+custom_move_ids = Array[int]([106])
+
+[sub_resource type="Resource" id="Resource_pamjq"]
+script = ExtResource("30_8gfau")
+trainer_id = 1
+trainer_class_id = 2
+display_name = "Carmelo"
+resource_id = "embedded_1"
+ai_profile = SubResource("Resource_ydsc4")
+intro_text = "¿Sabes que los POKÉMON evolucionan?"
+defeat_text = "¡Oh! ¡He perdido!"
+party_data = [SubResource("Resource_lxhno"), SubResource("Resource_3f6iq"), SubResource("Resource_bjvev")]
+reward_money = 84
+metadata/_custom_type_script = "uid://ddsodfhwbf6ce"
+
+[sub_resource type="Resource" id="Resource_xqb0c"]
+script = ExtResource("25_smyca")
+battle_type = 1
+trainer_data = SubResource("Resource_pamjq")
+defeated_flag = "cazabichos_carmelo_defeated"
+
+[sub_resource type="Resource" id="Resource_mhh5v"]
 script = ExtResource("20_jsjcp")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_3f6iq"]
+[sub_resource type="Resource" id="Resource_s5a3a"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_lxhno")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_ydsc4")])
+trigger = SubResource("Resource_mhh5v")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_xqb0c")])
 detection_range = 4
 initial_direction = 0
 sprite_texture = ExtResource("25_8w476")
@@ -608,42 +905,67 @@ is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_mhh5v"]
-script = ExtResource("18_pswiv")
-message = "Ouch"
-
-[sub_resource type="Resource" id="Resource_s5a3a"]
-script = ExtResource("26_204p0")
-flag_name = "cazabichos_jano2_defeated"
-
 [sub_resource type="Resource" id="Resource_5y4tx"]
-script = ExtResource("20_jsjcp")
+script = ExtResource("18_pswiv")
+message = "Los POKÉMON evolucionan muy rápido. ¡Son geniales!"
 
 [sub_resource type="Resource" id="Resource_lya8w"]
+script = ExtResource("26_204p0")
+flag_name = "cazabichos_carmelo_defeated"
+
+[sub_resource type="Resource" id="Resource_q515a"]
+script = ExtResource("20_jsjcp")
+
+[sub_resource type="Resource" id="Resource_hnsxs"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_5y4tx")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_mhh5v")])
-root_condition = SubResource("Resource_s5a3a")
+trigger = SubResource("Resource_q515a")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_5y4tx")])
+root_condition = SubResource("Resource_lya8w")
 initial_direction = 0
 preserve_direction_on_sprite_match = true
 sprite_texture = ExtResource("25_8w476")
 is_spritesheet = true
 initial_animation = "down_left"
 
-[sub_resource type="Resource" id="Resource_bjvev"]
+[sub_resource type="Resource" id="Resource_e3g5r"]
+script = ExtResource("28_mg6yn")
+metadata/_custom_type_script = "uid://c4x2p6dx540kg"
+
+[sub_resource type="Resource" id="Resource_gwixd"]
+script = ExtResource("29_u11ci")
+pokemon_id = 13
+level = 9
+gender = 1
+nature_id = 0
+ability_id = 19
+custom_move_ids = Array[int]([81, 33])
+
+[sub_resource type="Resource" id="Resource_1osag"]
+script = ExtResource("30_8gfau")
+trainer_id = 6
+trainer_class_id = 2
+display_name = "Sami"
+ai_profile = SubResource("Resource_e3g5r")
+intro_text = "¡Eh, espera! ¿Por qué tienes tanta prisa?"
+defeat_text = "¡Me rindo! ¡Eres demasiado fuerte!"
+party_data = [SubResource("Resource_gwixd")]
+reward_money = 108
+metadata/_custom_type_script = "uid://ddsodfhwbf6ce"
+
+[sub_resource type="Resource" id="Resource_81s31"]
 script = ExtResource("25_smyca")
 battle_type = 1
-trainer_data = ExtResource("26_6d4rm")
-defeated_flag = "cazabichos_jano3_defeated"
+trainer_data = SubResource("Resource_1osag")
+defeated_flag = "cazabichos_sami_defeated"
 
-[sub_resource type="Resource" id="Resource_pamjq"]
+[sub_resource type="Resource" id="Resource_lxmso"]
 script = ExtResource("20_jsjcp")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_xqb0c"]
+[sub_resource type="Resource" id="Resource_f6mwc"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_pamjq")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_bjvev")])
+trigger = SubResource("Resource_lxmso")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_81s31")])
 enable_trainer_detection = true
 detection_range = 4
 initial_direction = 2
@@ -652,22 +974,22 @@ is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_q515a"]
+[sub_resource type="Resource" id="Resource_b5nnt"]
 script = ExtResource("18_pswiv")
-message = "Ouch"
+message = "¡A veces puedes encontrar cosas en el suelo! ¡Estoy buscando los objetos que se me cayeron!"
 
-[sub_resource type="Resource" id="Resource_hnsxs"]
+[sub_resource type="Resource" id="Resource_elfht"]
 script = ExtResource("26_204p0")
-flag_name = "cazabichos_jano3_defeated"
+flag_name = "cazabichos_sami_defeated"
 
-[sub_resource type="Resource" id="Resource_e3g5r"]
+[sub_resource type="Resource" id="Resource_bry0u"]
 script = ExtResource("20_jsjcp")
 
-[sub_resource type="Resource" id="Resource_gwixd"]
+[sub_resource type="Resource" id="Resource_gblek"]
 script = ExtResource("5_2bxl0")
-trigger = SubResource("Resource_e3g5r")
-commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_q515a")])
-root_condition = SubResource("Resource_hnsxs")
+trigger = SubResource("Resource_bry0u")
+commands = Array[ExtResource("6_vi4lt")]([SubResource("Resource_b5nnt")])
+root_condition = SubResource("Resource_elfht")
 initial_direction = 2
 preserve_direction_on_sprite_match = true
 sprite_texture = ExtResource("25_8w476")
@@ -799,19 +1121,27 @@ pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_brqp4")])
 
 [node name="Objeto1" parent="OverworldGrid/Events" unique_id=1720530940 instance=ExtResource("4_uwgfy")]
 position = Vector2(-208, -304)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_t4ikl")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_urfir"), SubResource("Resource_bn0pj")])
 
 [node name="Objeto2" parent="OverworldGrid/Events" unique_id=781977549 instance=ExtResource("4_uwgfy")]
 position = Vector2(1200, 304)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_t4ikl")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_ob6td"), SubResource("Resource_0u8fx")])
 
 [node name="Objeto3" parent="OverworldGrid/Events" unique_id=1941105215 instance=ExtResource("4_uwgfy")]
 position = Vector2(912, -944)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_t4ikl")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_s6ulk"), SubResource("Resource_qbfog")])
 
 [node name="Objeto4" parent="OverworldGrid/Events" unique_id=1859016493 instance=ExtResource("4_uwgfy")]
 position = Vector2(304, -528)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_t4ikl")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_kpnv0"), SubResource("Resource_j3s77")])
+
+[node name="Objeto5" parent="OverworldGrid/Events" unique_id=1671462080 instance=ExtResource("4_uwgfy")]
+position = Vector2(528, 208)
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_jbqaj"), SubResource("Resource_gbbeg")])
+
+[node name="Objeto6" parent="OverworldGrid/Events" unique_id=64363050 instance=ExtResource("4_uwgfy")]
+position = Vector2(-272, -912)
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_akhnm"), SubResource("Resource_p2xaw")])
 
 [node name="Chico2" parent="OverworldGrid/Events" unique_id=1828018221 instance=ExtResource("16_xb837")]
 position = Vector2(1072, 240)
@@ -827,15 +1157,15 @@ pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_vofsb"), SubResourc
 
 [node name="Cazabichos3" parent="OverworldGrid/Events" unique_id=497374138 instance=ExtResource("23_wehsa")]
 position = Vector2(1008, -1424)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_08b5s")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_f3cyj"), SubResource("Resource_e22qq")])
 
 [node name="Cazabichos4" parent="OverworldGrid/Events" unique_id=313417212 instance=ExtResource("23_wehsa")]
 position = Vector2(144, -1456)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_3f6iq"), SubResource("Resource_lya8w")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_s5a3a"), SubResource("Resource_hnsxs")])
 
 [node name="Cazabichos5" parent="OverworldGrid/Events" unique_id=671717178 instance=ExtResource("23_wehsa")]
 position = Vector2(-144, -912)
-pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_xqb0c"), SubResource("Resource_gwixd")])
+pages = Array[ExtResource("5_2bxl0")]([SubResource("Resource_f6mwc"), SubResource("Resource_gblek")])
 
 [node name="MapAreaEncounters" parent="." unique_id=1333449230 instance=ExtResource("3_qqe0s")]
 

@@ -1438,7 +1438,10 @@ func _run_move_learning_for_level(bp: BattlePokemon, level_reached: int, lvl_res
 		var learned_move: Move = learned_var as Move
 		if learned_move == null:
 			continue
-		await _show_runtime_message("¡%s aprendió %s!" % [bp.base_data.get_display_name(), learned_move.get_move_name()])
+		await _show_runtime_message(
+			"¡%s aprendió %s!" % [bp.base_data.get_display_name(), learned_move.get_move_name()],
+			AudioManager.play_battle_level_up
+		)
 	for mv_var in move_res.pending_moves:
 		var pending_move: Move = mv_var as Move
 		if pending_move == null:

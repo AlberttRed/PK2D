@@ -151,6 +151,8 @@ func stop():
 			Vector2.RIGHT: sprite.frame = 2
 
 func _unhandled_input(event: InputEvent) -> void:
+	if DisplayManager.is_battle_active():
+		return
 	if not movement_enabled:
 		return
 

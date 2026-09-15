@@ -1,6 +1,6 @@
-## Enum para tipos de transición de batalla
-## Define las máscaras de transición disponibles en res://Sprites/Transiciones/
-class_name BattleTransitionEnum
+## Máscaras de transición de pantalla (combate, puertas, warps, cutscenes…).
+## Assets en res://Sprites/Transiciones/
+class_name ScreenTransitionEnum
 
 enum Type {
 	BATTLE1,           ## Transición clásica 1
@@ -12,7 +12,9 @@ enum Type {
 	HEXATR,            ## Transición hexagonal
 	HEXATRC,           ## Transición hexagonal centrada
 	HEXATZR,           ## Transición hexagonal zoom rotada
-	WIPE_VERTICAL      ## Limpieza vertical reflejada
+	WIPE_VERTICAL,     ## Wipe reflejado: abre centro → arriba/abajo
+	WIPE_HORIZONTAL,   ## Wipe reflejado: abre centro → izquierda/derecha
+	DOOR               ## Puerta Gen 3: wipe horizontal + oscurecido→claro
 }
 
 ## Convierte el enum a la ruta del archivo de máscara
@@ -38,11 +40,17 @@ static func to_mask_path(type: Type) -> String:
 			return "res://Sprites/Transiciones/hexatzr.png"
 		Type.WIPE_VERTICAL:
 			return "res://Sprites/Transiciones/wipe-vertical-reflected.png"
+		Type.WIPE_HORIZONTAL, Type.DOOR:
+			return "res://Sprites/Transiciones/wipe-horizontal-reflected.png"
 		_:
 			return "res://Sprites/Transiciones/battle1.png"
 
+## True si la transición es compuesta (wipe + dim), no solo máscara.
+static func is_door(type: Type) -> bool:
+	return type == Type.DOOR
+
 ## Retorna el nombre legible del tipo de transición
-static func get_name(type: Type) -> String:
+static func get_display_name(type: Type) -> String:
 	match type:
 		Type.BATTLE1: return "Battle 1"
 		Type.BATTLE2: return "Battle 2"
@@ -54,5 +62,15 @@ static func get_name(type: Type) -> String:
 		Type.HEXATRC: return "Hexagonal Centrada"
 		Type.HEXATZR: return "Hexagonal Zoom"
 		Type.WIPE_VERTICAL: return "Wipe Vertical"
+		Type.WIPE_HORIZONTAL: return "Wipe Horizontal"
+		Type.DOOR: return "Door"
 		_: return "Unknown"
 
+## Todos los valores del enum (para editores)
+static func all_types() -> Array[Type]:
+	return [
+		Type.BATTLE1, Type.BATTLE2, Type.BATTLE3, Type.BATTLE4,
+		Type.NORMAL01, Type.NORMAL02,
+		Type.HEXATR, Type.HEXATRC, Type.HEXATZR,
+		Type.WIPE_VERTICAL, Type.WIPE_HORIZONTAL, Type.DOOR,
+	]

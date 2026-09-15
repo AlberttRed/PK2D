@@ -155,52 +155,148 @@ func play_battle_transition(texture_path: String, duration: float = 1.0) -> void
 	# (En los juegos originales, se oculta al empezar el fade con máscara)
 	DisplayManager.request_hide_overworld_messagebox()
 
-	visible = true
-
-	# Cargar y configurar la textura de transición
-	var texture = load(texture_path)
-	if texture == null:
-		push_error("FadeLayer: No se pudo cargar la textura de transición: " + texture_path)
+	var ok := await _run_mask_transition(texture_path, true, duration)
+	if not ok:
+		# Fallback: pantalla negra sólida
+		color = Color.BLACK
+		modulate.a = 1.0
+		visible = true
 		is_fading = false
 		return
 
-	# Mantener el FadeLayer opaco pero con color transparente durante la transición
-	modulate.a = 1.0
-	color = Color.TRANSPARENT
+	transition_finished.emit()
 
-	# Configurar el shader con la textura de máscara
+
+## Transición genérica con máscara (puertas, warps, eventos…).
+## cover=true: visible → negro (progress 0→1). cover=false: negro → visible (1→0).
+## Devuelve false si no se pudo cargar la máscara.
+func play_mask_transition(texture_path: String, cover: bool, duration: float = 0.5) -> bool:
+	if is_fading:
+		return false
+	is_fading = true
+	var ok := await _run_mask_transition(texture_path, cover, duration)
+	if ok:
+		fade_finished.emit()
+	else:
+		is_fading = false
+	return ok
+
+
+## Puerta Gen 3: wipe horizontal + velo oscuro que aclara (reveal) o se oscurece (cover).
+const DOOR_MASK_PATH := "res://Sprites/Transiciones/wipe-horizontal-reflected.png"
+const DOOR_DIM_ALPHA := 0.55
+
+
+func play_door_transition(cover: bool, duration: float = 0.55) -> bool:
+	if is_fading:
+		return false
+	is_fading = true
+	var ok := await _run_door_transition(cover, duration)
+	if ok:
+		fade_finished.emit()
+	else:
+		is_fading = false
+	return ok
+
+
+func _run_door_transition(cover: bool, duration: float) -> bool:
+	var texture := load(DOOR_MASK_PATH) as Texture2D
+	if texture == null:
+		push_warning("FadeLayer: No se pudo cargar la máscara DOOR: %s" % DOOR_MASK_PATH)
+		return false
+
+	var dur := maxf(duration, 0.0)
+	visible = true
+	color = Color.BLACK
+
 	transition_shader.set_shader_parameter("transition_mask", texture)
-	transition_shader.set_shader_parameter("progress", 0.0)
-	transition_shader.set_shader_parameter("smoothness", 0.01)  # Suavizado para transiciones graduales
+	transition_shader.set_shader_parameter("smoothness", 0.01)
 
-	# El overlay será visible y el shader se encarga del efecto
+	var from_progress := 0.0 if cover else 1.0
+	var to_progress := 1.0 if cover else 0.0
+	transition_shader.set_shader_parameter("progress", from_progress)
 	transition_overlay.modulate.a = 1.0
 	transition_overlay.visible = true
 
-	# Animar el shader desde 0.0 hasta 1.0, exactamente el rango de la máscara
-	# Ahora es visible desde el inicio, no necesitamos valores negativos
-	var tween = create_tween()
-	tween.tween_method(
+	# Velo: en reveal empieza oscurecido y aclara; en cover parte claro y oscurece.
+	if cover:
+		modulate.a = 0.0
+	else:
+		modulate.a = DOOR_DIM_ALPHA
+
+	var wipe_tween := create_tween()
+	wipe_tween.tween_method(
 		func(value: float): transition_shader.set_shader_parameter("progress", value),
-		0.0,   # Empezar desde el inicio de la máscara
-		1.0,   # Terminar al final de la máscara
-		duration
+		from_progress,
+		to_progress,
+		dur
 	).set_trans(Tween.TRANS_LINEAR)
 
-	await tween.finished
+	var dim_tween := create_tween()
+	if cover:
+		dim_tween.tween_property(self, "modulate:a", 1.0, dur).set_trans(Tween.TRANS_LINEAR)
+	else:
+		dim_tween.tween_property(self, "modulate:a", 0.0, dur).set_trans(Tween.TRANS_LINEAR)
 
-	# Ocultar el overlay de transición
+	await wipe_tween.finished
+	if dim_tween.is_running():
+		await dim_tween.finished
+
 	transition_overlay.visible = false
-
-	# Restaurar el color negro para mantener la pantalla en negro
-	color = Color.BLACK
-
-	# La pantalla queda en negro - NO hacemos fade_out aquí
-	# El fade_out se hará manualmente cuando el combate esté listo
+	if cover:
+		color = Color.BLACK
+		modulate.a = 1.0
+		visible = true
+	else:
+		visible = false
+		color = Color.BLACK
+		modulate.a = 1.0
 
 	is_fading = false
-	transition_finished.emit()
-	# SignalManager.battle_transition_finished.emit()  # DEPRECATED
+	return true
+
+
+## Ejecuta la máscara. El caller debe gestionar `is_fading` (excepto el clear final en éxito).
+func _run_mask_transition(texture_path: String, cover: bool, duration: float) -> bool:
+	var texture := load(texture_path) as Texture2D
+	if texture == null:
+		push_warning("FadeLayer: No se pudo cargar la máscara de transición: %s" % texture_path)
+		return false
+
+	visible = true
+	modulate.a = 1.0
+	color = Color.TRANSPARENT
+
+	transition_shader.set_shader_parameter("transition_mask", texture)
+	transition_shader.set_shader_parameter("smoothness", 0.01)
+
+	var from_progress := 0.0 if cover else 1.0
+	var to_progress := 1.0 if cover else 0.0
+	transition_shader.set_shader_parameter("progress", from_progress)
+
+	transition_overlay.modulate.a = 1.0
+	transition_overlay.visible = true
+
+	var tween := create_tween()
+	tween.tween_method(
+		func(value: float): transition_shader.set_shader_parameter("progress", value),
+		from_progress,
+		to_progress,
+		maxf(duration, 0.0)
+	).set_trans(Tween.TRANS_LINEAR)
+	await tween.finished
+
+	transition_overlay.visible = false
+	if cover:
+		color = Color.BLACK
+		visible = true
+	else:
+		visible = false
+		color = Color.BLACK
+
+	is_fading = false
+	return true
+
 
 const BATTLE_REVEAL_TEXTURE := "res://Sprites/Transiciones/wipe-vertical-reflected.png"
 ## Gen 3: wipe abre a mitad, pausa con overlay visible, y termina de abrir.

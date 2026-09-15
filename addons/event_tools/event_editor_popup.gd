@@ -862,7 +862,8 @@ func _get_command_detail_text(command: EventCommand) -> String:
 		var item_id := int(command.item_id)
 		var item_name := _get_item_name_for_editor(item_id)
 		var qty := maxi(1, int(command.quantity))
-		return "%s x%d" % [item_name, qty]
+		var sound_str: String = "" if bool(command.play_obtain_sound) else " (sin sonido)"
+		return "%s x%d%s" % [item_name, qty, sound_str]
 
 	# TakeItemCommand: mostrar item y cantidad
 	if _is_command_type(command, "TakeItemCommand"):
@@ -879,13 +880,17 @@ func _get_command_detail_text(command: EventCommand) -> String:
 		var species_name := PokemonsEnum.get_display_name(int(pokemon_def.pokemon_id))
 		if species_name.strip_edges().is_empty():
 			species_name = "Pokemon #%d" % int(pokemon_def.pokemon_id)
-		return "%s - Nv.%d" % [species_name, int(pokemon_def.level)]
+		var sound_str_poke: String = "" if bool(command.play_obtain_sound) else " (sin sonido)"
+		return "%s - Nv.%d%s" % [species_name, int(pokemon_def.level), sound_str_poke]
 
-	# FadeCommand: mostrar IN/OUT y tiempo
+	# FadeCommand: mostrar IN/OUT, efecto y tiempo
 	if command is FadeCommand:
 		var fade_cmd = command as FadeCommand
 		var fade_type_str = "IN" if fade_cmd.mode == FadeCommand.FadeMode.IN else "OUT"
-		return "%s (%.2fs)" % [fade_type_str, fade_cmd.duration]
+		var effect_str = "solid"
+		if fade_cmd.effect == FadeCommand.FadeEffect.MASK:
+			effect_str = ScreenTransitionEnum.get_display_name(fade_cmd.mask)
+		return "%s %s (%.2fs)" % [fade_type_str, effect_str, fade_cmd.duration]
 
 	# PlayAnimationCommand: mostrar target y nombre de animación
 	if command is PlayAnimationCommand:
@@ -896,7 +901,44 @@ func _get_command_detail_text(command: EventCommand) -> String:
 		var anim_str = anim_cmd.animation_name
 		if anim_str.is_empty():
 			anim_str = "(sin animación)"
-		return "%s: %s" % [target_str, anim_str]
+		var speed_str: String = ""
+		if not is_equal_approx(anim_cmd.speed_scale, 1.0):
+			speed_str = " %.1fx" % anim_cmd.speed_scale
+		return "%s: %s%s" % [target_str, anim_str, speed_str]
+
+	# PlaySoundCommand: mostrar archivo y bus
+	if command is PlaySoundCommand:
+		var sound_cmd = command as PlaySoundCommand
+		var sound_str: String = "(sin sonido)"
+		if sound_cmd.sound != null:
+			var sound_path: String = sound_cmd.sound.resource_path
+			sound_str = sound_path.get_file() if not sound_path.is_empty() else "(stream)"
+		var wait_str: String = " wait" if sound_cmd.wait_until_finished else ""
+		var pause_str: String = " pauseBGM" if sound_cmd.pause_bgm else ""
+		return "%s [%s]%s%s" % [sound_str, sound_cmd.bus, wait_str, pause_str]
+
+	# PlayBGMCommand: mostrar archivo y modo
+	if command is PlayBGMCommand:
+		var bgm_cmd = command as PlayBGMCommand
+		var bgm_str: String = "(sin BGM)"
+		if bgm_cmd.bgm != null:
+			var bgm_path: String = bgm_cmd.bgm.resource_path
+			bgm_str = bgm_path.get_file() if not bgm_path.is_empty() else "(stream)"
+		var mode_str := "fade"
+		match bgm_cmd.transition_mode:
+			PlayBGMCommand.TransitionMode.CROSSFADE:
+				mode_str = "crossfade"
+			PlayBGMCommand.TransitionMode.FADE_OUT_THEN_PLAY:
+				mode_str = "fade→play"
+			_:
+				mode_str = "fade"
+		var persist_str: String = " persist" if bgm_cmd.persist_across_maps else ""
+		return "%s [%s %.1fs]%s" % [bgm_str, mode_str, bgm_cmd.fade_duration, persist_str]
+
+	# StopBGMCommand
+	if command is StopBGMCommand:
+		var stop_cmd = command as StopBGMCommand
+		return "fade_out %.1fs" % stop_cmd.fade_out
 
 	# ShowPortraitCommand: mostrar tipo (Pokémon/Textura) y nombre
 	if command is ShowPortraitCommand:
@@ -2704,6 +2746,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_use_mo_editor(command, page_index, false, -1)
 	elif command is PlayAnimationCommand:
 		_open_play_animation_editor(command, page_index, false, -1)
+	elif command is PlaySoundCommand:
+		_open_play_sound_editor(command, page_index, false, -1)
+	elif command is PlayBGMCommand:
+		_open_play_bgm_editor(command, page_index, false, -1)
+	elif command is StopBGMCommand:
+		_open_stop_bgm_editor(command, page_index, false, -1)
 	elif command is MoveNPCCommand:
 		_open_move_npc_editor(command, page_index, false, -1)
 	elif command is SetTriggerCommand:
@@ -4111,7 +4159,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"StartBattleEvent", "Warp", "ShowChoices", "Conditional",
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
-		"MoveNPC", "PlayAnimation", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
+		"MoveNPC", "PlayAnimation", "PlaySound", "PlayBGM", "StopBGM", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
 		"ClosePortrait", "FollowActor", "UseMO", "SetTrigger"
 	]
 
@@ -4465,6 +4513,12 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 					_open_use_mo_editor(target_command, page_index, true, command_index)
 				elif target_command is PlayAnimationCommand:
 					_open_play_animation_editor(target_command, page_index, true, command_index)
+				elif target_command is PlaySoundCommand:
+					_open_play_sound_editor(target_command, page_index, true, command_index)
+				elif target_command is PlayBGMCommand:
+					_open_play_bgm_editor(target_command, page_index, true, command_index)
+				elif target_command is StopBGMCommand:
+					_open_stop_bgm_editor(target_command, page_index, true, command_index)
 				elif target_command is MoveNPCCommand:
 					_open_move_npc_editor(target_command, page_index, true, command_index)
 				elif target_command is SetTriggerCommand:
@@ -7337,6 +7391,171 @@ func _on_play_animation_command_edited(command: PlayAnimationCommand, page_index
 			commands_tree.deselect_all()
 			_update_buttons_state(page_index, false, false, false, false, false)
 	_refresh_inspector()
+
+## Abre el editor para PlaySoundCommand
+func _open_play_sound_editor(command: PlaySoundCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un PlaySoundCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/play_sound_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de PlaySoundCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: PlaySoundCommand): _on_play_sound_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_play_sound_command_edited(command: PlaySoundCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para PlayBGMCommand
+func _open_play_bgm_editor(command: PlayBGMCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un PlayBGMCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/play_bgm_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de PlayBGMCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: PlayBGMCommand): _on_play_bgm_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_play_bgm_command_edited(command: PlayBGMCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para StopBGMCommand
+func _open_stop_bgm_editor(command: StopBGMCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un StopBGMCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/stop_bgm_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de StopBGMCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: StopBGMCommand): _on_stop_bgm_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_stop_bgm_command_edited(command: StopBGMCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
 
 ## Abre el editor para MoveNPCCommand
 func _open_move_npc_editor(command: MoveNPCCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:

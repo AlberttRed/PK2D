@@ -265,11 +265,38 @@ static func fade_in(duration: float = 0.3) -> void:
 		return
 	await instance.fade_layer.fade_in(duration)
 
+
+## Fade con máscara de pantalla.
+## to_black=true: cubrir a negro (como FadeCommand IN). to_black=false: revelar (OUT).
+## DOOR usa wipe horizontal + velo oscuro→claro. Si falla la máscara, fallback a fade sólido.
+static func fade_with_mask(to_black: bool, mask: ScreenTransitionEnum.Type, duration: float = 0.5) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	var ok: bool
+	if ScreenTransitionEnum.is_door(mask):
+		ok = await instance.fade_layer.play_door_transition(to_black, duration)
+	else:
+		var path := ScreenTransitionEnum.to_mask_path(mask)
+		ok = await instance.fade_layer.play_mask_transition(path, to_black, duration)
+	if ok:
+		return
+	if to_black:
+		await instance.fade_layer.fade_in(duration)
+	else:
+		await instance.fade_layer.fade_out(duration)
+
 ## Verifica si está en fade
 static func is_fading() -> bool:
 	if instance == null:
 		return false
 	return instance._is_fading()
+
+
+## True mientras la escena de combate está activa (intro, turnos, submenús de batalla).
+static func is_battle_active() -> bool:
+	return instance != null and instance.BattleNew.visible
+
 
 ## Inicia una batalla y devuelve el ganador
 static func start_battle(participants: Array[BattleParticipant], rules: BattleRules, from_event: bool = false) -> String:
@@ -708,6 +735,10 @@ func _on_battle_finished(_winner_side: String) -> void:
 func _apply_defeat_respawn_warp() -> void:
 	if GameStateService == null:
 		return
+	# En Gen 3 el equipo se cura al blanquear (Casa / Centro).
+	var party = GameStateService.get_party()
+	if party != null and party.has_method("heal_all"):
+		party.heal_all()
 	var ctx := _resolve_overworld_context()
 	if ctx == null:
 		push_warning("DisplayManager._apply_defeat_respawn_warp: OverworldContext no disponible")
@@ -740,6 +771,23 @@ func _apply_defeat_respawn_warp() -> void:
 		grid.set_player_facing_direction(fac, player)
 	if ws.has_method("force_sync_to_gamestate"):
 		ws.force_sync_to_gamestate()
+	# Solo en blanqueo: alinear `indoor` con el mapa destino (no en warps de puerta,
+	# que usan el flag temporalmente para la animación de salida).
+	_sync_indoor_flag_after_defeat_respawn(ws)
+
+
+## Sincroniza el flag global `indoor` con `MapScene.is_indoor` del mapa activo.
+func _sync_indoor_flag_after_defeat_respawn(ws: Node) -> void:
+	if ws == null or not ws.has_method("get_active_map"):
+		return
+	var active_map = ws.get_active_map()
+	if active_map == null:
+		return
+	var is_indoor := false
+	if "is_indoor" in active_map:
+		is_indoor = bool(active_map.is_indoor)
+	GameStateService.set_event_flag("indoor", is_indoor)
+	print("DisplayManager: derrota — flag indoor=%s (mapa %s)" % [is_indoor, active_map.name])
 
 
 func _restore_overworld_bgm() -> void:

@@ -415,6 +415,8 @@ func _show_exclamation() -> void:
 	if not exclamation_sprite:
 		return
 
+	AudioManager.play_overworld_exclaim()
+
 	# Crear sprite de exclamación temporal
 	_exclamation_node = AnimatedSprite2D.new()
 	_exclamation_node.sprite_frames = exclamation_sprite

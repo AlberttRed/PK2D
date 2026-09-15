@@ -17,6 +17,7 @@ var save_embedded_mode: bool = false
 var party_entries: Array[Dictionary] = []
 var trainer_classes: Array[Dictionary] = []
 
+@onready var id_container: HBoxContainer = $VBoxContainer/ScrollContainer/Content/GeneralSection/IdContainer
 @onready var id_spin: SpinBox = $VBoxContainer/ScrollContainer/Content/GeneralSection/IdContainer/IdSpinBox
 @onready var class_option: OptionButton = get_node_or_null("VBoxContainer/ScrollContainer/Content/GeneralSection/ClassContainer/ClassOptionButton")
 @onready var class_spin_fallback: SpinBox = get_node_or_null("VBoxContainer/ScrollContainer/Content/GeneralSection/ClassContainer/ClassSpinBox")
@@ -32,6 +33,9 @@ var trainer_classes: Array[Dictionary] = []
 @onready var add_pokemon_button: Button = $VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons/AddPokemonButton
 @onready var edit_pokemon_button: Button = $VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons/EditPokemonButton
 @onready var remove_pokemon_button: Button = $VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons/RemovePokemonButton
+var duplicate_pokemon_button: Button = null
+
+const MAX_PARTY_SIZE := 6
 
 @onready var save_button: Button = $VBoxContainer/BottomButtons/SaveButton
 @onready var cancel_button: Button = $VBoxContainer/BottomButtons/CancelButton
@@ -50,9 +54,29 @@ func _ready() -> void:
 	party_list.item_selected.connect(_on_party_item_selected)
 	add_pokemon_button.pressed.connect(_on_add_pokemon_pressed)
 	edit_pokemon_button.pressed.connect(_on_edit_pokemon_pressed)
+	_ensure_duplicate_pokemon_button()
+	if duplicate_pokemon_button:
+		duplicate_pokemon_button.pressed.connect(_on_duplicate_pokemon_pressed)
 	remove_pokemon_button.pressed.connect(_on_remove_pokemon_pressed)
 	if class_option != null:
 		_load_trainer_classes()
+
+## Garantiza el botón Duplicar (por si la PackedScene en caché del editor aún no lo incluye).
+func _ensure_duplicate_pokemon_button() -> void:
+	var buttons := get_node_or_null("VBoxContainer/ScrollContainer/Content/PartySection/PartyContent/PartyButtons") as VBoxContainer
+	if buttons == null:
+		return
+	duplicate_pokemon_button = buttons.get_node_or_null("DuplicatePokemonButton") as Button
+	if duplicate_pokemon_button != null:
+		return
+	duplicate_pokemon_button = Button.new()
+	duplicate_pokemon_button.name = "DuplicatePokemonButton"
+	duplicate_pokemon_button.text = "Duplicar"
+	duplicate_pokemon_button.custom_minimum_size = Vector2(130, 0)
+	# Insertar entre Editar y Eliminar.
+	var insert_at := remove_pokemon_button.get_index() if remove_pokemon_button else buttons.get_child_count()
+	buttons.add_child(duplicate_pokemon_button)
+	buttons.move_child(duplicate_pokemon_button, insert_at)
 
 func open_create(refresh_cb: Callable = Callable()) -> void:
 	current_mode = EditorMode.CREATE
@@ -86,9 +110,9 @@ func open_create(refresh_cb: Callable = Callable()) -> void:
 		return
 	_reset_form()
 	if current_trainer_data != null:
-		current_trainer_data.trainer_id = _get_next_trainer_id()
-		id_spin.value = current_trainer_data.trainer_id
+		_assign_next_trainer_id()
 		display_name_line.text = "Nuevo Entrenador %d" % int(id_spin.value)
+	_configure_id_ui()
 	title = "Trainer Editor - Crear"
 	popup_centered(Vector2i(820, 720))
 
@@ -101,6 +125,7 @@ func open_edit(trainer_data: Resource, refresh_cb: Callable = Callable(), resour
 	current_trainer_data = trainer_data
 	print("[TrainerEditorWindow] open_edit path=%s class=%s" % [original_resource_path, current_trainer_data.get_class() if current_trainer_data else "null"])
 	_load_from_trainer(current_trainer_data)
+	_configure_id_ui()
 	title = "Trainer Editor - Editar"
 	popup_centered(Vector2i(820, 720))
 
@@ -114,8 +139,9 @@ func open_duplicate(trainer_data: Resource, refresh_cb: Callable = Callable(), _
 	current_trainer_data = trainer_data.duplicate(true)
 	original_resource_path = ""
 	_load_from_trainer(current_trainer_data)
-	id_spin.value = _get_next_trainer_id()
+	_assign_next_trainer_id()
 	display_name_line.text = "%s Copia" % display_name_line.text
+	_configure_id_ui()
 	title = "Trainer Editor - Duplicar"
 	popup_centered(Vector2i(820, 720))
 
@@ -127,8 +153,26 @@ func open_edit_embedded(trainer_data: Resource, refresh_cb: Callable = Callable(
 	original_resource_path = ""
 	current_trainer_data = trainer_data
 	_load_from_trainer(current_trainer_data)
+	# Embebidos sin ID: asignar uno interno automáticamente.
+	if current_trainer_data != null and int(current_trainer_data.get("trainer_id")) <= 0:
+		_assign_next_trainer_id()
+	_configure_id_ui()
 	title = "Trainer Editor - Editar (Embebido)"
 	popup_centered(Vector2i(820, 720))
+
+## ID interno: oculto al crear/duplicar/embebido; visible solo lectura al editar un .tres.
+func _configure_id_ui() -> void:
+	if id_container == null or id_spin == null:
+		return
+	var show_readonly := (current_mode == EditorMode.EDIT and not save_embedded_mode)
+	id_container.visible = show_readonly
+	id_spin.editable = false
+
+func _assign_next_trainer_id() -> void:
+	var next_id := _get_next_trainer_id()
+	id_spin.value = next_id
+	if current_trainer_data != null:
+		current_trainer_data.set("trainer_id", next_id)
 
 func _reset_form() -> void:
 	id_spin.value = 1
@@ -212,6 +256,9 @@ func _on_party_item_selected(index: int) -> void:
 		return
 
 func _on_add_pokemon_pressed() -> void:
+	if party_entries.size() >= MAX_PARTY_SIZE:
+		_show_warning("El equipo ya tiene el máximo de %d Pokémon." % MAX_PARTY_SIZE)
+		return
 	if not Engine.is_editor_hint():
 		_show_warning("El selector de Pokémon solo está disponible en editor.")
 		return
@@ -239,6 +286,25 @@ func _on_edit_pokemon_pressed() -> void:
 		party_list.select(idx)
 	, "Editar PokemonDefinition")
 
+func _on_duplicate_pokemon_pressed() -> void:
+	var selected := party_list.get_selected_items()
+	if selected.is_empty():
+		_show_warning("Selecciona un Pokémon del equipo para duplicar.")
+		return
+	if party_entries.size() >= MAX_PARTY_SIZE:
+		_show_warning("El equipo ya tiene el máximo de %d Pokémon." % MAX_PARTY_SIZE)
+		return
+	var idx: int = selected[0]
+	if idx < 0 or idx >= party_entries.size():
+		return
+	var copy := party_entries[idx].duplicate(true)
+	# Arrays anidados (movimientos) también se clonan.
+	if copy.has("custom_move_ids") and copy["custom_move_ids"] is Array:
+		copy["custom_move_ids"] = (copy["custom_move_ids"] as Array).duplicate()
+	party_entries.insert(idx + 1, copy)
+	_refresh_party_list()
+	party_list.select(idx + 1)
+
 func _on_remove_pokemon_pressed() -> void:
 	var selected := party_list.get_selected_items()
 	if selected.is_empty():
@@ -251,6 +317,9 @@ func _on_remove_pokemon_pressed() -> void:
 
 func _on_pokemon_picker_selected(result: ResourcePickerResult) -> void:
 	if result == null:
+		return
+	if party_entries.size() >= MAX_PARTY_SIZE:
+		_show_warning("El equipo ya tiene el máximo de %d Pokémon." % MAX_PARTY_SIZE)
 		return
 
 	var pokemon_id := int(result.resource_id)
