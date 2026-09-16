@@ -37,6 +37,8 @@ const POKEDEX_CONTROLLER_SCRIPT = preload("res://Scripts/UI/PokedexController.gd
 const SAVE_MENU_CONTROLLER_SCRIPT = preload("res://Scripts/UI/SaveMenuController.gd")
 # === VARIABLES ===
 var fading: bool = false
+## Hold: EventSystem no arranca páginas nuevas hasta soltarlo (blanqueo → tras fade_out).
+var _hold_overworld_events: bool = false
 var next = false
 var input_locked := false
 var pressed_actions := {}
@@ -291,6 +293,11 @@ static func is_fading() -> bool:
 	if instance == null:
 		return false
 	return instance._is_fading()
+
+
+## True mientras hay hold de arranque de eventos (p. ej. derrota hasta revelar el mapa).
+static func blocks_event_start() -> bool:
+	return instance != null and instance._hold_overworld_events
 
 
 ## True mientras la escena de combate está activa (intro, turnos, submenús de batalla).
@@ -701,11 +708,12 @@ func _on_battle_finished(_winner_side: String) -> void:
 	_battle_winner = _winner_side
 
 	# Fundido a negro: oculta la batalla; mantenemos pantalla negra hasta evoluciones (si hay).
-	await fade_layer.fade_in(0.3)
+	await fade_layer.fade_in(1.0)
 
 	BattleNew.cleanup_battle()
 
 	if _winner_side == "enemy":
+		_hold_overworld_events = true
 		await _apply_defeat_respawn_warp()
 
 	_restore_overworld_bgm()
@@ -713,17 +721,28 @@ func _on_battle_finished(_winner_side: String) -> void:
 
 	await _run_pending_evolutions_post_battle()
 
+	# Mantener negro un momento antes de revelar el overworld.
+	await get_tree().create_timer(1.0).timeout
+
 	# Revelar overworld solo cuando ya no hay evolución pendiente ni UI encima del negro.
 	await fade_layer.fade_out(0.3)
+
+	if _winner_side == "enemy":
+		_hold_overworld_events = false
+		_flush_overworld_event_queue()
 
 	# Emitir señal de batalla terminada (señal de DisplayManager)
 	battle_finished.emit(_winner_side)
 
 	# Solo desbloquear control del jugador si el combate NO fue iniciado desde un evento
 	# Si fue desde un evento, el EventController se encargará de desbloquear cuando termine
+	# En derrota: si el autorun del CP ya bloqueó, no liberar aquí (lo hará al terminar la página).
 	if not _battle_from_event:
-		player_control_unblocked.emit()
-		print("DisplayManager: Combate no iniciado desde evento, desbloqueando control del jugador")
+		if _winner_side == "enemy" and _is_overworld_event_busy():
+			print("DisplayManager: Derrota — autorun activo, no se desbloquea el control aquí")
+		else:
+			player_control_unblocked.emit()
+			print("DisplayManager: Combate no iniciado desde evento, desbloqueando control del jugador")
 	else:
 		print("DisplayManager: Combate iniciado desde evento, NO desbloqueando control (EventController lo manejará)")
 
@@ -735,6 +754,8 @@ func _on_battle_finished(_winner_side: String) -> void:
 func _apply_defeat_respawn_warp() -> void:
 	if GameStateService == null:
 		return
+	# Autorun del CP: con hold activo se encola y no arranca hasta soltar tras fade_out.
+	GameStateService.set_variable(GameStateService.VAR_DEFEATED, true)
 	# En Gen 3 el equipo se cura al blanquear (Casa / Centro).
 	var party = GameStateService.get_party()
 	if party != null and party.has_method("heal_all"):
@@ -788,6 +809,23 @@ func _sync_indoor_flag_after_defeat_respawn(ws: Node) -> void:
 		is_indoor = bool(active_map.is_indoor)
 	GameStateService.set_event_flag("indoor", is_indoor)
 	print("DisplayManager: derrota — flag indoor=%s (mapa %s)" % [is_indoor, active_map.name])
+
+
+func _is_overworld_event_busy() -> bool:
+	var ctx := _resolve_overworld_context()
+	if ctx == null:
+		return false
+	var es = ctx.get_event_system() if ctx.has_method("get_event_system") else null
+	return es != null and es.has_method("is_any_controller_busy") and es.is_any_controller_busy()
+
+
+func _flush_overworld_event_queue() -> void:
+	var ctx := _resolve_overworld_context()
+	if ctx == null:
+		return
+	var es = ctx.get_event_system() if ctx.has_method("get_event_system") else null
+	if es != null and es.has_method("flush_queue"):
+		es.flush_queue()
 
 
 func _restore_overworld_bgm() -> void:

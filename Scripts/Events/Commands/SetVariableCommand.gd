@@ -32,8 +32,9 @@ func execute(_context: Node) -> void:
 		push_warning("SetVariableCommand: variable_name está vacío")
 		return
 
+	var resolved_value: Variant = _coerce_value(value, variable_type)
 	# Validar que el tipo del valor coincida con el tipo seleccionado
-	if not _validate_type(value, variable_type):
+	if not _validate_type(resolved_value, variable_type):
 		push_error("SetVariableCommand: El valor '%s' (tipo: %s) no es compatible con el tipo seleccionado '%s'" % [value, _get_type_name_from_value(value), _get_type_name(variable_type)])
 		return
 
@@ -41,12 +42,19 @@ func execute(_context: Node) -> void:
 	if defer_until_warp:
 		GameStateService.defer_change("variable", {
 			"name": variable_name,
-			"value": value
+			"value": resolved_value
 		})
 		return
 
 	# Establecer variable en GameStateService inmediatamente
-	GameStateService.set_variable(variable_name, value)
+	GameStateService.set_variable(variable_name, resolved_value)
+
+
+## Godot a menudo serializa bool ausente como int 0; aceptar 0/1 → false/true.
+func _coerce_value(raw: Variant, expected_type: VariableType) -> Variant:
+	if expected_type == VariableType.BOOL and typeof(raw) == TYPE_INT:
+		return raw != 0
+	return raw
 
 ## Valida que el tipo del valor coincida con el tipo seleccionado
 func _validate_type(value: Variant, expected_type: VariableType) -> bool:
@@ -97,4 +105,3 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return true
-

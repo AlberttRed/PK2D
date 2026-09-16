@@ -77,13 +77,21 @@ func enqueue_page(page: EventPage, autorun_priority: bool) -> void:
 	# Intentar arrancar si el controlador está libre
 	_try_start_next()
 
-## Arranca la siguiente página si el controlador está libre
+## Arranca la siguiente página si el controlador está libre y no hay hold.
 func _try_start_next() -> void:
-	if controller and not controller.is_busy() and not page_queue.is_empty():
-		var next_page: EventPage = page_queue.pop_front()
-		# Emitir señal local de comienzo
-		event_started.emit(next_page.source_event)
-		controller.start_page(next_page)
+	if not controller or controller.is_busy() or page_queue.is_empty():
+		return
+	if DisplayManager.blocks_event_start():
+		return
+	var next_page: EventPage = page_queue.pop_front()
+	# Emitir señal local de comienzo
+	event_started.emit(next_page.source_event)
+	controller.start_page(next_page)
+
+
+## Tras soltar un hold: intenta despachar lo encolado.
+func flush_queue() -> void:
+	_try_start_next()
 
 ## Al terminar una página, emitir la señal local y arrancar la siguiente
 func _on_page_finished(_page: EventPage) -> void:

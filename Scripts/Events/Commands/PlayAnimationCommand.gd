@@ -10,71 +10,56 @@ class_name PlayAnimationCommand
 ## Multiplicador de velocidad (1.0 = normal, 2.0 = doble). Se restaura a 1.0 al terminar si wait.
 @export_range(0.1, 5.0, 0.1) var speed_scale: float = 1.0
 
-var _actor_animator: ActorAnimator = null
-var _context: Node = null
-var _previous_speed_scale: float = 1.0
-
 func execute(context: Node) -> void:
-	_context = context
-
 	# Validar que se proporcionó un nombre de animación
 	if animation_name.is_empty():
 		push_warning("PlayAnimationCommand: No se especificó un nombre de animación")
-		context.continue_execution()
+		_finish_if_async(context)
 		return
 
 	# Resolver el target y buscar el ActorAnimator
 	var target = _resolve_target(context, target_name)
 	if not target:
 		push_warning("PlayAnimationCommand: No se pudo resolver el target")
-		context.continue_execution()
+		_finish_if_async(context)
 		return
 
-	_actor_animator = _find_actor_animator_in_node(target)
+	var actor_animator := _find_actor_animator_in_node(target)
 
-	if not _actor_animator:
+	if not actor_animator:
 		push_warning("PlayAnimationCommand: El target '%s' no tiene un ActorAnimator. El comando se omite." % target.name)
-		context.continue_execution()
+		_finish_if_async(context)
 		return
 
 	# Verificar que el ActorAnimator tiene un sprite válido
-	if not _actor_animator.sprite or not _actor_animator.sprite.sprite_frames:
+	if not actor_animator.sprite or not actor_animator.sprite.sprite_frames:
 		push_warning("PlayAnimationCommand: El ActorAnimator no tiene un sprite o SpriteFrames configurado")
-		context.continue_execution()
+		_finish_if_async(context)
 		return
 
 	# Verificar que la animación existe
-	if not _actor_animator.sprite.sprite_frames.has_animation(animation_name):
+	if not actor_animator.sprite.sprite_frames.has_animation(animation_name):
 		push_warning("PlayAnimationCommand: La animación '%s' no existe en el SpriteFrames del target '%s'" % [animation_name, target.name])
-		context.continue_execution()
+		_finish_if_async(context)
 		return
 
 	print("PlayAnimationCommand: Reproduciendo animación '%s' en '%s' (wait=%s, speed=%.1f)" % [animation_name, target.name, wait_until_finished, speed_scale])
 
-	_previous_speed_scale = _actor_animator.sprite.speed_scale if _actor_animator.sprite else 1.0
-	_actor_animator.set_speed_scale(maxf(speed_scale, 0.1))
-	_actor_animator.play(animation_name)
+	var previous_speed_scale: float = actor_animator.sprite.speed_scale
+	actor_animator.set_speed_scale(maxf(speed_scale, 0.1))
+	actor_animator.play(animation_name)
 
-	# Si wait_until_finished está activado, esperar a que termine
+	# Con wait: await dentro de execute() para que funcione también dentro de ramas
+	# (ShowChoices / Conditional). Sin wait: síncrono — EventController avanza solo.
 	if wait_until_finished:
-		# Conectar a la señal animation_finished del AnimatedSprite2D
-		if not _actor_animator.sprite.animation_finished.is_connected(_on_animation_finished):
-			_actor_animator.sprite.animation_finished.connect(_on_animation_finished)
-	else:
-		# Continuar inmediatamente sin esperar (no restauramos speed aquí: la animación sigue)
+		await actor_animator.sprite.animation_finished
+		actor_animator.set_speed_scale(previous_speed_scale)
+		print("PlayAnimationCommand: Animación '%s' completada" % animation_name)
 		context.continue_execution()
 
-## Callback cuando la animación termina
-func _on_animation_finished() -> void:
-	if _actor_animator and _actor_animator.sprite:
-		# Desconectar la señal para evitar fugas de memoria
-		if _actor_animator.sprite.animation_finished.is_connected(_on_animation_finished):
-			_actor_animator.sprite.animation_finished.disconnect(_on_animation_finished)
-		_actor_animator.set_speed_scale(_previous_speed_scale)
-
-	if _context:
-		print("PlayAnimationCommand: Animación '%s' completada" % animation_name)
-		_context.continue_execution()
+func _finish_if_async(context: Node) -> void:
+	if wait_until_finished:
+		context.continue_execution()
 
 ## Resuelve el target donde buscar el ActorAnimator
 func _resolve_target(context: Node, name: String) -> Node2D:
@@ -141,4 +126,3 @@ func is_async() -> bool:
 
 func is_safe_for_parallel() -> bool:
 	return false
-

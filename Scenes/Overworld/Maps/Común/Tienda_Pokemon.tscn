@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://cyx8eodebjaio"]
 
 [ext_resource type="Script" uid="uid://ck52lpbkjcvk3" path="res://Scripts/Overworld/Core/MapScene.gd" id="1_vte67"]
-[ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
 [ext_resource type="Script" uid="uid://dpvawxyt7k0n7" path="res://Scripts/Overworld/Core/OverworldGrid.gd" id="2_ly0om"]
 [ext_resource type="TileSet" uid="uid://2tdhwcxo0ldq" path="res://Resources/Tilesets/Indoor_tileset.tres" id="3_fjuff"]
 [ext_resource type="PackedScene" uid="uid://da2qg21ij71cs" path="res://Scenes/Events/Event.tscn" id="4_ig604"]
@@ -24,13 +23,9 @@
 [ext_resource type="Texture2D" uid="uid://coqylrlf7wps" path="res://Sprites/Overworlds/Characters/trchar037.png" id="20_8ubyu"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="21_2b3q2"]
 [ext_resource type="Texture2D" uid="uid://c7oaek6l7eslq" path="res://Sprites/Overworlds/Characters/NPC 05.png" id="23_2b3q2"]
-[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
 [ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
-
-[sub_resource type="Resource" id="Resource_ps_exit_ti2"]
-script = ExtResource("99_plays")
-sound = ExtResource("99_doorexit")
-metadata/_custom_type_script = "uid://cps859sndcmda1"
+[ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
+[ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
 
 [sub_resource type="Resource" id="Resource_ps_exit_ti1"]
 script = ExtResource("99_plays")
@@ -316,6 +311,11 @@ trigger = SubResource("Resource_8x0j8")
 commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_uf3oo"), SubResource("Resource_yn6wc")])
 root_condition = SubResource("Resource_rmhn2")
 
+[sub_resource type="Resource" id="Resource_ps_exit_ti2"]
+script = ExtResource("99_plays")
+sound = ExtResource("99_doorexit")
+metadata/_custom_type_script = "uid://cps859sndcmda1"
+
 [sub_resource type="Resource" id="Resource_5ilk0"]
 script = ExtResource("7_s0w8o")
 mode = 0
@@ -457,6 +457,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [node name="MapScene" type="Node2D" unique_id=631711350]
 y_sort_enabled = true
 script = ExtResource("1_vte67")
+is_indoor = true
 bgm = ExtResource("bgm_center")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=740588001 groups=["OverworldGrid"]]

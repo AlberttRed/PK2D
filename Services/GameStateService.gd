@@ -10,6 +10,10 @@ const DEFAULT_SAVE_SLOT: int = 0
 ## Último “Centro Pokémon” / punto de blanqueo por defecto (partidas antiguas sin `respawn_point` o dato inválido).
 const DEFAULT_RESPAWN_MAP_ID: String = "Pueblo_Paleta"
 const DEFAULT_RESPAWN_POSITION: Vector2i = Vector2i(1, 0)
+## Variable global sincronizada con `respawn_point.tag` (condiciones de autorun, etc.).
+const VAR_RESPAWN_TAG: String = "RESPAWN_TAG"
+## Variable global: true tras blanqueo por derrota (autorun de Centro Pokémon, etc.).
+const VAR_DEFEATED: String = "defeated"
 ## Flag global: el jugador ya tiene la Pokédex (entradas de menú de pausa, etc.).
 const FLAG_HAS_POKEDEX: String = "HAS_POKEDEX"
 
@@ -38,6 +42,7 @@ var respawn_point: Dictionary = {
 	"map_id": "",
 	"position": Vector2i.ZERO,
 	"facing": Vector2.DOWN,
+	"tag": "",
 }
 ## Dinero del jugador (PBI 587). Solo modelo + save; sin tiendas aún.
 var money: int = 0
@@ -246,10 +251,12 @@ func get_respawn_point() -> Dictionary:
 		mid = DEFAULT_RESPAWN_MAP_ID
 	var pos: Vector2i = _variant_to_vector2i(respawn_point.get("position", DEFAULT_RESPAWN_POSITION), DEFAULT_RESPAWN_POSITION)
 	var fac: Vector2 = _variant_to_vector2(respawn_point.get("facing", Vector2.DOWN), Vector2.DOWN)
+	var tag: String = str(respawn_point.get("tag", ""))
 	return {
 		"map_id": mid,
 		"position": pos,
 		"facing": fac,
+		"tag": tag,
 	}
 
 ## Retorna el valor de un flag global
@@ -379,7 +386,7 @@ func set_facing_direction(direction: Vector2) -> void:
 	facing_dir = direction
 
 
-func set_respawn_point(map_id: String, position: Vector2i, facing: Vector2 = Vector2.DOWN) -> void:
+func set_respawn_point(map_id: String, position: Vector2i, facing: Vector2 = Vector2.DOWN, tag: String = "") -> void:
 	if map_id.is_empty():
 		push_warning("GameStateService.set_respawn_point: map_id vacío, se ignora")
 		return
@@ -387,10 +394,12 @@ func set_respawn_point(map_id: String, position: Vector2i, facing: Vector2 = Vec
 		"map_id": map_id,
 		"position": position,
 		"facing": facing,
+		"tag": tag,
 	}
+	_sync_respawn_tag_variable()
 
 
-## Acepta diccionario con al menos `map_id`, `position` (Vector2i o {x,y}), `facing` opcional.
+## Acepta diccionario con al menos `map_id`, `position` (Vector2i o {x,y}), `facing`/`tag` opcionales.
 func set_respawn_point_data(data: Dictionary) -> void:
 	var m := str(data.get("map_id", ""))
 	if m.is_empty():
@@ -398,7 +407,13 @@ func set_respawn_point_data(data: Dictionary) -> void:
 		return
 	var p: Vector2i = _variant_to_vector2i(data.get("position", Vector2i.ZERO), Vector2i.ZERO)
 	var f: Vector2 = _variant_to_vector2(data.get("facing", Vector2.DOWN), Vector2.DOWN)
-	set_respawn_point(m, p, f)
+	var t: String = str(data.get("tag", ""))
+	set_respawn_point(m, p, f, t)
+
+
+## Copia `respawn_point.tag` a la variable global `RESPAWN_TAG` (para VariableCondition).
+func _sync_respawn_tag_variable() -> void:
+	set_variable(VAR_RESPAWN_TAG, str(respawn_point.get("tag", "")))
 
 
 func get_money() -> int:
@@ -426,6 +441,30 @@ func remove_money(amount: int) -> bool:
 		return false
 	money -= amount
 	return true
+
+
+## Pérdida de dinero al blanquear (Gen 3/4): base por medallas × nivel más alto del equipo,
+## limitado al saldo actual. Devuelve la cantidad realmente perdida.
+func apply_blackout_money_loss() -> int:
+	var loss := _calculate_blackout_money_loss()
+	loss = mini(loss, money)
+	if loss > 0:
+		money -= loss
+	return loss
+
+
+func _calculate_blackout_money_loss() -> int:
+	# Bases por número de medallas (0–8), misma tabla que Gen III/IV.
+	const BASE_BY_BADGES: Array[int] = [8, 16, 24, 36, 48, 60, 80, 100, 120]
+	var badges := clampi(int(get_variable("BADGE_COUNT", 0)), 0, 8)
+	var base_payout: int = BASE_BY_BADGES[badges]
+	var max_level := 1
+	var party_ref: Party = get_party()
+	if party_ref != null:
+		for mon in party_ref.get_all():
+			if mon != null:
+				max_level = maxi(max_level, clampi(int(mon.level), 1, 100))
+	return base_payout * max_level
 
 
 func _normalize_money_value(value: Variant) -> int:
@@ -781,6 +820,7 @@ func _build_save_payload() -> Dictionary:
 			"map_id": str(rp.get("map_id", current_map_id)),
 			"position": _vector2i_to_dict(_variant_to_vector2i(rp.get("position", current_position), current_position)),
 			"facing": _vector2_to_dict(_variant_to_vector2(rp.get("facing", facing_dir), facing_dir)),
+			"tag": str(rp.get("tag", "")),
 		},
 		"party": get_party_save_data(),
 		"pending_pc_pokemon": get_pending_pc_pokemon_save_data(),
@@ -818,7 +858,8 @@ func _apply_save_payload(save_data: Dictionary) -> void:
 		else:
 			var rp_pos := _variant_to_vector2i(respawn_data.get("position", DEFAULT_RESPAWN_POSITION), DEFAULT_RESPAWN_POSITION)
 			var rp_facing := _variant_to_vector2(respawn_data.get("facing", Vector2.DOWN), Vector2.DOWN)
-			set_respawn_point(rp_map, rp_pos, rp_facing)
+			var rp_tag := str(respawn_data.get("tag", ""))
+			set_respawn_point(rp_map, rp_pos, rp_facing, rp_tag)
 
 	var bag_any: Variant = save_data.get("bag", [])
 	if bag_any is Array:

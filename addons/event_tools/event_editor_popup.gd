@@ -940,6 +940,27 @@ func _get_command_detail_text(command: EventCommand) -> String:
 		var stop_cmd = command as StopBGMCommand
 		return "fade_out %.1fs" % stop_cmd.fade_out
 
+	# HealPartyCommand: sin parámetros
+	if command is HealPartyCommand:
+		return "cura party"
+
+	# PokemonCenterHealCommand
+	if command is PokemonCenterHealCommand:
+		var heal_cmd = command as PokemonCenterHealCommand
+		var anchor_label: String = heal_cmd.machine_event_name
+		if anchor_label.is_empty():
+			anchor_label = "(evento actual)"
+		return "%s bolas=(%.0f,%.0f) monitor=(%.0f,%.0f)" % [
+			anchor_label,
+			heal_cmd.sprite_offset.x, heal_cmd.sprite_offset.y,
+			heal_cmd.monitor_offset.x, heal_cmd.monitor_offset.y
+		]
+
+	# SetRespawnCommand
+	if command is SetRespawnCommand:
+		var rp_cmd = command as SetRespawnCommand
+		return "%s @ (%d,%d) tag='%s'" % [rp_cmd.map_id, rp_cmd.target_tile.x, rp_cmd.target_tile.y, rp_cmd.tag]
+
 	# ShowPortraitCommand: mostrar tipo (Pokémon/Textura) y nombre
 	if command is ShowPortraitCommand:
 		var portrait_cmd = command as ShowPortraitCommand
@@ -2138,7 +2159,7 @@ func _on_sprite_button_pressed(page_index: int) -> void:
 		return
 
 	add_child(editor_window)
-	editor_window.load_page(page)
+	editor_window.load_page(page, event_node)
 	editor_window.sprite_edited.connect(func(): _on_page_sprite_edited(page_index))
 	editor_window.cancelled.connect(func(): editor_window.queue_free())
 
@@ -2752,6 +2773,12 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_play_bgm_editor(command, page_index, false, -1)
 	elif command is StopBGMCommand:
 		_open_stop_bgm_editor(command, page_index, false, -1)
+	elif command is HealPartyCommand:
+		_open_heal_party_editor(command, page_index, false, -1)
+	elif command is PokemonCenterHealCommand:
+		_open_pokemon_center_heal_editor(command, page_index, false, -1)
+	elif command is SetRespawnCommand:
+		_open_set_respawn_editor(command, page_index, false, -1)
 	elif command is MoveNPCCommand:
 		_open_move_npc_editor(command, page_index, false, -1)
 	elif command is SetTriggerCommand:
@@ -4160,7 +4187,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
 		"MoveNPC", "PlayAnimation", "PlaySound", "PlayBGM", "StopBGM", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
-		"ClosePortrait", "FollowActor", "UseMO", "SetTrigger"
+		"HealParty", "PokemonCenterHeal", "SetRespawn", "ClosePortrait", "CloseMessage", "FollowActor", "UseMO", "SetTrigger"
 	]
 
 	var dialog = Window.new()
@@ -4519,6 +4546,12 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 					_open_play_bgm_editor(target_command, page_index, true, command_index)
 				elif target_command is StopBGMCommand:
 					_open_stop_bgm_editor(target_command, page_index, true, command_index)
+				elif target_command is HealPartyCommand:
+					_open_heal_party_editor(target_command, page_index, true, command_index)
+				elif target_command is PokemonCenterHealCommand:
+					_open_pokemon_center_heal_editor(target_command, page_index, true, command_index)
+				elif target_command is SetRespawnCommand:
+					_open_set_respawn_editor(target_command, page_index, true, command_index)
 				elif target_command is MoveNPCCommand:
 					_open_move_npc_editor(target_command, page_index, true, command_index)
 				elif target_command is SetTriggerCommand:
@@ -7544,6 +7577,173 @@ func _open_stop_bgm_editor(command: StopBGMCommand, page_index: int, is_new_comm
 	editor_window.popup_centered()
 
 func _on_stop_bgm_command_edited(command: StopBGMCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para HealPartyCommand
+func _open_heal_party_editor(command: HealPartyCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un HealPartyCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/heal_party_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de HealPartyCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: HealPartyCommand): _on_heal_party_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_heal_party_command_edited(command: HealPartyCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para PokemonCenterHealCommand
+func _open_pokemon_center_heal_editor(command: PokemonCenterHealCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un PokemonCenterHealCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/pokemon_center_heal_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de PokemonCenterHealCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.event_node = event_node
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: PokemonCenterHealCommand): _on_pokemon_center_heal_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_pokemon_center_heal_command_edited(command: PokemonCenterHealCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para SetRespawnCommand
+func _open_set_respawn_editor(command: SetRespawnCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un SetRespawnCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/set_respawn_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de SetRespawnCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.event_node = event_node
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: SetRespawnCommand): _on_set_respawn_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_set_respawn_command_edited(command: SetRespawnCommand, page_index: int) -> void:
 	if not command:
 		return
 	_mark_as_changed()

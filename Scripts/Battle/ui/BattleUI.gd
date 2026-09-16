@@ -1382,7 +1382,18 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 				)
 		return
 
-	# Mostrar mensaje de victoria (salvaje vacío / derrota / empate)
+	# Derrota del jugador: secuencia de blanqueo + pérdida de dinero
+	if winner_side == "enemy":
+		var player_name := "PLAYER"
+		var money_lost := 0
+		if GameStateService != null:
+			player_name = str(GameStateService.get_variable("PLAYER_NAME", "PLAYER"))
+			money_lost = GameStateService.apply_blackout_money_loss()
+		for msg in message_controller.get_player_defeat_messages(player_name, money_lost):
+			await show_message_from_dict(msg)
+		return
+
+	# Victoria salvaje (vacío) / empate / otros
 	await show_message_from_dict(message_controller.get_battle_end_message(winner_side, rules, enemy_participants))
 
 # Mensaje de debilitamiento
@@ -1620,15 +1631,17 @@ func show_message_from_dict(msg: Dictionary) -> void:
 	var on_text_ready: Callable = msg.get("on_text_ready", Callable())
 	match msg.type:
 		"input":
+			# Por defecto en batalla se muestra icono; el dict puede anularlo (último mensaje de blanqueo).
+			var show_icon_at_end: bool = bool(msg.get("showIconAtEnd", true))
 			if on_text_ready.is_valid():
 				await message_box.show_custom(msg.text, {
 					"waitInput": true,
 					"closeAtEnd": false,
-					"showIconAtEnd": true,
+					"showIconAtEnd": show_icon_at_end,
 					"onTextVisibleReady": on_text_ready,
 				})
 			else:
-				await message_box.show_input(msg.text, true)  # Batalla: mostrar icono al final
+				await message_box.show_input(msg.text, show_icon_at_end)
 		"wait":
 			await message_box.show_wait(msg.text, msg.get("wait_time", 1.0))
 		"display":

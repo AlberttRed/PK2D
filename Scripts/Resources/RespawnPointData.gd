@@ -6,6 +6,8 @@ class_name RespawnPointData
 var map_id: String = ""
 var position: Vector2i = Vector2i.ZERO
 var facing: Vector2 = Vector2.DOWN
+## Etiqueta libre de contexto (mostrador CP, etc.).
+var tag: String = ""
 
 
 func to_save_dictionary() -> Dictionary:
@@ -13,6 +15,7 @@ func to_save_dictionary() -> Dictionary:
 		"map_id": map_id,
 		"position": {"x": position.x, "y": position.y},
 		"facing": {"x": facing.x, "y": facing.y},
+		"tag": tag,
 	}
 
 
@@ -41,4 +44,5 @@ static func from_save_dictionary(
 		o.facing = Vector2(float(fd.get("x", default_facing.x)), float(fd.get("y", default_facing.y)))
 	else:
 		o.facing = default_facing
+	o.tag = str(d.get("tag", ""))
 	return o
