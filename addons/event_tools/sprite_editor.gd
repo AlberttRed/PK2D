@@ -20,6 +20,8 @@ var actor_style_button: Button = null
 var actor_style_label: Label = null
 var sprite_frames_button: Button = null
 var sprite_frames_label: Label = null
+var animations_button: Button = null
+var regenerate_button: Button = null
 var sprite_texture_button: Button = null
 var sprite_texture_label: Label = null
 var is_spritesheet_check: CheckBox = null
@@ -209,6 +211,27 @@ func _create_preview_panel() -> void:
 	next_frame_button.pressed.connect(_on_next_frame)
 	frame_nav_container.add_child(next_frame_button)
 
+	preview_controls_container.add_child(HSeparator.new())
+
+	var edit_anims_label = Label.new()
+	edit_anims_label.text = "Editar animaciones"
+	edit_anims_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	preview_controls_container.add_child(edit_anims_label)
+
+	animations_button = Button.new()
+	animations_button.text = "Animaciones"
+	animations_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	animations_button.tooltip_text = "Abre el editor nativo del SpriteFrames de esta página (materializa desde textura/sheet si hace falta)."
+	animations_button.pressed.connect(_on_animations_pressed)
+	preview_controls_container.add_child(animations_button)
+
+	regenerate_button = Button.new()
+	regenerate_button.text = "Re-generar desde textura"
+	regenerate_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	regenerate_button.tooltip_text = "Vuelve a generar SpriteFrames desde la textura/sheet y reemplaza el recurso de la página."
+	regenerate_button.pressed.connect(_on_regenerate_pressed)
+	preview_controls_container.add_child(regenerate_button)
+
 func _create_actor_style_section() -> void:
 	var section = _create_section("Actor Style (Prioridad 1)")
 
@@ -241,10 +264,10 @@ func _create_actor_style_section() -> void:
 	section.add_child(actor_style_label)
 
 func _create_sprite_frames_section() -> void:
-	var section = _create_section("Sprite Frames (Prioridad 3)")
+	var section = _create_section("Sprite Frames")
 
 	var info_label = Label.new()
-	info_label.text = "SpriteFrames manual para casos personalizados. Se usa si no hay ActorStyle ni SpriteTexture configurado como spritesheet."
+	info_label.text = "Recurso editable de animaciones. Si está asignado, tiene prioridad sobre regenerar desde la textura/sheet. ActorStyle desactiva la edición aquí."
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.7))
 	section.add_child(info_label)
@@ -277,10 +300,10 @@ func _create_sprite_frames_section() -> void:
 	section.add_child(sprite_frames_label)
 
 func _create_sprite_texture_section() -> void:
-	var section = _create_section("Sprite Texture (Prioridad 2)")
+	var section = _create_section("Sprite Texture")
 
 	var info_label = Label.new()
-	info_label.text = "Textura del sprite. Si 'Es Spritesheet' está activado, genera animaciones automáticamente desde un spritesheet 4x4. Si no, se usa como imagen simple estática."
+	info_label.text = "Textura del sprite. Con 'Es Spritesheet' se puede materializar a SpriteFrames (botón Animaciones / Re-generar). Si la página ya tiene SpriteFrames, ese recurso manda en preview y en juego."
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.7))
 	section.add_child(info_label)
@@ -309,7 +332,7 @@ func _create_sprite_texture_section() -> void:
 
 	# Checkbox para is_spritesheet
 	is_spritesheet_check = CheckBox.new()
-	is_spritesheet_check.text = "Es Spritesheet (genera animaciones automáticamente)"
+	is_spritesheet_check.text = "Es Spritesheet 4x4 (origen para materializar / re-generar)"
 	is_spritesheet_check.toggled.connect(_on_is_spritesheet_toggled)
 	is_spritesheet_check.toggled.connect(func(_pressed): _update_preview())
 	section.add_child(is_spritesheet_check)
@@ -455,16 +478,19 @@ func _on_file_selected(path: String) -> void:
 			_update_frame_size_visibility()
 
 	_update_preview()
+	_update_animations_buttons_state()
 
 func _on_clear_actor_style() -> void:
 	if page:
 		page.actor_style = null
 		_update_actor_style_label()
+		_update_animations_buttons_state()
 
 func _on_clear_sprite_frames() -> void:
 	if page:
 		page.sprite_frames = null
 		_update_sprite_frames_label()
+		_update_animations_buttons_state()
 
 func _on_clear_sprite_texture() -> void:
 	if page:
@@ -476,6 +502,7 @@ func _on_clear_sprite_texture() -> void:
 			is_spritesheet_check.button_pressed = false
 		# Actualizar visibilidad de frame_size (ocultar cuando no hay textura)
 		_update_frame_size_visibility()
+		_update_animations_buttons_state()
 
 func _update_actor_style_label() -> void:
 	if actor_style_label:
@@ -522,6 +549,7 @@ func _on_is_spritesheet_toggled(pressed: bool) -> void:
 	if page:
 		page.is_spritesheet = pressed
 	_update_frame_size_visibility()
+	_update_animations_buttons_state()
 
 ## Actualiza la visibilidad del contenedor de frame_size
 func _update_frame_size_visibility() -> void:
@@ -613,6 +641,7 @@ func _update_controls() -> void:
 
 	# Actualizar vista previa
 	_update_preview()
+	_update_animations_buttons_state()
 
 	# Cargar frame inicial seleccionado (solo para eventos normales, después de actualizar la vista previa)
 	if not _is_npc_or_trainer() and current_sprite_frames:
@@ -656,6 +685,7 @@ func _on_create_sprite_frames() -> void:
 	# Actualizar la UI
 	_update_sprite_frames_label()
 	_update_preview()
+	_update_animations_buttons_state()
 
 	# Mostrar un mensaje informativo al usuario
 	var info_dialog = AcceptDialog.new()
@@ -728,18 +758,15 @@ func _update_preview() -> void:
 	# Obtener los SpriteFrames según la prioridad
 	current_sprite_frames = _get_current_sprite_frames()
 
-	if current_sprite_frames:
+	if current_sprite_frames and _sprite_frames_has_content(current_sprite_frames):
 		# Actualizar el dropdown de animaciones
 		_update_animation_dropdown()
 
 		# Mostrar el frame actual
 		_show_current_frame()
 	else:
-		# Si no hay SpriteFrames, mostrar la textura directamente
-		var preview_texture: Texture2D = null
-		if page.sprite_texture and not page.is_spritesheet:
-			preview_texture = page.sprite_texture
-
+		# Fallback: mostrar la textura completa si existe (aunque falle la generación de sheet)
+		var preview_texture: Texture2D = page.sprite_texture
 		if preview_texture:
 			preview_texture_rect.texture = preview_texture
 			preview_texture_rect.visible = true
@@ -747,14 +774,14 @@ func _update_preview() -> void:
 			preview_texture_rect.texture = null
 			preview_texture_rect.visible = false
 
-		# Ocultar controles si no hay SpriteFrames
+		# Ocultar controles de frames si no hay SpriteFrames válidos
 		_set_controls_visible(false)
 
 func _get_current_sprite_frames() -> SpriteFrames:
 	if not page:
 		return null
 
-	# Prioridad 1: ActorStyle
+	# Prioridad 1: ActorStyle (preview del walk/run pack)
 	if page.actor_style:
 		var frames: SpriteFrames = null
 		if page.actor_style.walk_frames:
@@ -765,18 +792,184 @@ func _get_current_sprite_frames() -> SpriteFrames:
 			frames = page.actor_style.bike_frames
 		return frames
 
-	# Prioridad 2: SpriteTexture con is_spritesheet
-	if page.sprite_texture and page.is_spritesheet:
-		return SpriteFramesGenerator.generate_from_4x4_spritesheet(
-			page.sprite_texture,
-			page.frame_size
-		)
-
-	# Prioridad 3: SpriteFrames manual
-	if page.sprite_frames:
+	# Prioridad 2: SpriteFrames persistido con contenido
+	if page.sprite_frames and _sprite_frames_has_content(page.sprite_frames):
 		return page.sprite_frames
 
-	return null
+	# Prioridad 3: generar en el @tool (no delegar a EventPage: más fiable en el editor)
+	return _build_frames_from_texture_sources()
+
+
+func _update_animations_buttons_state() -> void:
+	if animations_button == null:
+		return
+	var has_style := page != null and page.actor_style != null
+	var has_frames := page != null and page.sprite_frames != null and _sprite_frames_has_content(page.sprite_frames)
+	var can_materialize := page != null and page.sprite_texture != null
+
+	if has_style:
+		animations_button.disabled = true
+		animations_button.tooltip_text = "No disponible con ActorStyle. Quita el ActorStyle para editar SpriteFrames de la página."
+	elif has_frames or can_materialize:
+		animations_button.disabled = false
+		animations_button.tooltip_text = "Abre el editor nativo del SpriteFrames de esta página (materializa desde textura/sheet si hace falta)."
+	else:
+		animations_button.disabled = true
+		animations_button.tooltip_text = "Asigna una textura o un SpriteFrames para poder editar animaciones."
+
+	if regenerate_button:
+		if has_style:
+			regenerate_button.disabled = true
+			regenerate_button.tooltip_text = "No disponible con ActorStyle."
+		elif can_materialize:
+			regenerate_button.disabled = false
+			regenerate_button.tooltip_text = "Vuelve a generar SpriteFrames desde la textura/sheet y reemplaza el recurso de la página."
+		else:
+			regenerate_button.disabled = true
+			regenerate_button.tooltip_text = "Necesitas una textura/sheet de origen para re-generar."
+
+
+func _on_animations_pressed() -> void:
+	if not page or page.actor_style:
+		return
+	var frames: SpriteFrames = null
+	if page.sprite_frames and _sprite_frames_has_content(page.sprite_frames):
+		frames = page.sprite_frames
+	else:
+		frames = _materialize_sprite_frames()
+		if frames == null:
+			var detail := "page.sprite_texture=%s is_spritesheet=%s" % [
+				str(page.sprite_texture != null),
+				str(page.is_spritesheet) if page else "?"
+			]
+			_show_info_dialog(
+				"Sin fuente",
+				"No se pudo materializar SpriteFrames desde la textura.\n%s\nRevisa que la textura cargue y, si es sheet 4x4, que 'Es Spritesheet' esté activo." % detail
+			)
+			return
+	_open_sprite_frames_now(frames)
+
+
+func _on_regenerate_pressed() -> void:
+	if not page or page.actor_style:
+		return
+	if page.sprite_texture == null:
+		_show_info_dialog("Sin textura", "Asigna una Sprite Texture para poder re-generar.")
+		return
+
+	if page.sprite_frames != null and _sprite_frames_has_content(page.sprite_frames):
+		var confirm := ConfirmationDialog.new()
+		confirm.title = "Re-generar SpriteFrames"
+		confirm.dialog_text = "Esto reemplazará el SpriteFrames de la página con uno nuevo generado desde la textura/sheet.\nSe perderán animaciones o cambios custom. ¿Continuar?"
+		confirm.confirmed.connect(func():
+			_do_regenerate_sprite_frames()
+			confirm.queue_free()
+		)
+		confirm.canceled.connect(func(): confirm.queue_free())
+		add_child(confirm)
+		confirm.popup_centered()
+		return
+
+	_do_regenerate_sprite_frames()
+
+
+func _do_regenerate_sprite_frames() -> void:
+	var generated := _build_frames_from_texture_sources()
+	if generated == null:
+		_show_info_dialog("Error", "No se pudo generar SpriteFrames desde la textura actual.")
+		return
+	page.sprite_frames = generated
+	_notify_page_changed()
+	_update_sprite_frames_label()
+	_update_preview()
+	_update_animations_buttons_state()
+
+
+## Materializa y asigna page.sprite_frames desde textura/sheet (o vacío si no hay fuente).
+func _materialize_sprite_frames() -> SpriteFrames:
+	if not page:
+		return null
+	if page.sprite_frames != null:
+		return page.sprite_frames
+	var generated := _build_frames_from_texture_sources()
+	if generated == null:
+		return null
+	page.sprite_frames = generated
+	_notify_page_changed()
+	_update_sprite_frames_label()
+	_update_preview()
+	_update_animations_buttons_state()
+	return page.sprite_frames
+
+
+func _build_frames_from_texture_sources() -> SpriteFrames:
+	if not page:
+		return null
+	var tex: Texture2D = page.sprite_texture
+	if tex == null:
+		return null
+	var size: Vector2 = page.frame_size if page.frame_size != Vector2.ZERO else Vector2(32, 48)
+
+	# Sheet 4x4: generar en el editor con la clase global (mismo path que runtime).
+	if page.is_spritesheet:
+		var generated: SpriteFrames = SpriteFramesGenerator.generate_from_4x4_spritesheet(tex, size)
+		if generated:
+			return generated
+
+	# Sin sheet: NPC → set de idle/walk; evento → frame simple.
+	if _is_npc_or_trainer() and page.has_method("_generate_npc_sprite_frames"):
+		var npc_frames: SpriteFrames = page.call("_generate_npc_sprite_frames", tex, size)
+		if npc_frames:
+			return npc_frames
+	if page.has_method("_generate_simple_sprite_frames"):
+		var simple_frames: SpriteFrames = page.call("_generate_simple_sprite_frames", tex, size)
+		if simple_frames:
+			return simple_frames
+
+	# Fallback mínimo: una animación con la textura completa
+	var frames := SpriteFrames.new()
+	if not frames.has_animation("idle"):
+		frames.add_animation("idle")
+	frames.set_animation_loop("idle", true)
+	frames.clear("idle")
+	frames.add_frame("idle", tex)
+	return frames
+
+
+func _sprite_frames_has_content(frames: SpriteFrames) -> bool:
+	if frames == null:
+		return false
+	for anim_name in frames.get_animation_names():
+		if frames.get_frame_count(anim_name) > 0:
+			return true
+	return false
+
+
+func _notify_page_changed() -> void:
+	if page and page.has_method("property_list_changed_notify"):
+		page.property_list_changed_notify()
+	# Godot 4: emitir cambio en el recurso embebido de la escena
+	if page:
+		page.emit_changed()
+
+
+func _open_sprite_frames_now(frames: SpriteFrames) -> void:
+	if frames == null:
+		return
+	# Preferir el editor de recurso dedicado (SpriteFrames) si está disponible
+	if EditorInterface.has_method("edit_resource"):
+		EditorInterface.edit_resource(frames)
+	else:
+		EditorInterface.inspect_object(frames)
+
+
+func _show_info_dialog(title_text: String, body: String) -> void:
+	var info_dialog = AcceptDialog.new()
+	info_dialog.title = title_text
+	info_dialog.dialog_text = body
+	add_child(info_dialog)
+	info_dialog.popup_centered(Vector2i(420, 160))
+	info_dialog.confirmed.connect(func(): info_dialog.queue_free())
 
 func _update_animation_dropdown() -> void:
 	if not animation_dropdown or not current_sprite_frames:

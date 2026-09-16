@@ -681,11 +681,8 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_parti
 					"showIconAtEnd": true
 				}
 		"enemy":
-			return {
-				"type": "input",
-				"text": "Te has quedado sin Pokémon. Has perdido el combate.",
-				"showIconAtEnd": true
-			}
+			# Usar get_player_defeat_messages(); este dict queda por compatibilidad.
+			return {}
 		"draw":
 			return {
 				"type": "input",
@@ -698,3 +695,32 @@ func get_battle_end_message(winner_side: String, rules: BattleRules, enemy_parti
 				"text": "El combate ha terminado.",
 				"showIconAtEnd": true
 			}
+
+
+## Secuencia de blanqueo (Gen 3/4 ES): wait input + icono; el último sin icono.
+func get_player_defeat_messages(player_name: String, money_lost: int) -> Array[Dictionary]:
+	var display_name := player_name.strip_edges()
+	if display_name.is_empty():
+		display_name = "PLAYER"
+	return [
+		{
+			"type": "input",
+			"text": "¡A %s no le quedan POKéMON!" % display_name,
+			"showIconAtEnd": true
+		},
+		{
+			"type": "input",
+			"text": "¡%s se ha asustado y ha perdido %d$!..." % [display_name, money_lost],
+			"showIconAtEnd": true
+		},
+		{
+			"type": "input",
+			"text": "... ... ... ...",
+			"showIconAtEnd": true
+		},
+		{
+			"type": "input",
+			"text": "¡%s está fuera de combate!" % display_name,
+			"showIconAtEnd": false
+		},
+	]

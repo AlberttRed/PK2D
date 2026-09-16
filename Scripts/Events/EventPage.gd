@@ -123,30 +123,37 @@ var source_event: Event = null
 ## Por defecto es 0 (primer frame)
 @export var initial_frame: int = 0
 
-## SpriteFrames manual para casos personalizados
+## SpriteFrames manual / materializado desde textura o sheet.
+## Si está asignado, tiene prioridad sobre regenerar desde `sprite_texture` (fuente de verdad editable).
 @export var sprite_frames: SpriteFrames = null
 
 ## Si true, este evento mostrará reflejo en el agua cuando esté sobre tiles de agua
 @export var has_water_reflection: bool = false
 
-## Obtiene los SpriteFrames (generados automáticamente o asignados manualmente)
-## event_node: Nodo Event opcional para detectar si es NPC y generar animaciones apropiadas
+## Obtiene los SpriteFrames (asignados o generados automáticamente).
+## event_node: Nodo Event opcional para detectar si es NPC y generar animaciones apropiadas.
+## Prioridad: ActorStyle (null aquí) → sprite_frames persistido → generar desde textura/sheet.
 func get_sprite_frames(event_node: Node = null) -> SpriteFrames:
 	if actor_style:
 		return null
-	if sprite_texture and is_spritesheet:
-		return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
+	# Recurso persistido gana: tras materializar no se regenera el sheet automáticamente.
 	if sprite_frames:
 		return sprite_frames
+	return build_generated_sprite_frames(event_node)
+
+
+## Genera un SpriteFrames nuevo desde textura/sheet (no lo asigna a la página).
+## Usado por runtime (si no hay sprite_frames) y por event_tools al materializar / re-generar.
+func build_generated_sprite_frames(event_node: Node = null) -> SpriteFrames:
+	if sprite_texture and is_spritesheet:
+		return SpriteFramesGenerator.generate_from_4x4_spritesheet(sprite_texture, frame_size)
 	if sprite_texture:
-		# Si es un NPC y no es spritesheet, generar frames con animaciones de NPC
 		if event_node:
 			var script = event_node.get_script()
 			if script and script.resource_path.ends_with("NPC.gd"):
 				return _generate_npc_sprite_frames(sprite_texture, frame_size)
 			elif event_node.has_method("get_movement_type"):
 				return _generate_npc_sprite_frames(sprite_texture, frame_size)
-		# Para eventos normales, generar frames simples
 		return _generate_simple_sprite_frames(sprite_texture, frame_size)
 	return null
 
