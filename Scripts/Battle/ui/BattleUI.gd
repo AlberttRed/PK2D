@@ -269,6 +269,15 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 					"typingMode": "typing",
 				})
 				continue
+			# Gen 3: party + PC llenos → mensaje en mochila, sin gastar ball ni turno.
+			if GameStateService != null and GameStateService.is_party_and_pc_full():
+				await DisplayManager.show_message("¡La CAJA está llena!", {
+					"waitInput": true,
+					"closeAtEnd": true,
+					"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+					"typingMode": "typing",
+				})
+				continue
 
 		if _battle_item_needs_ally_party_pick(selected_item_data):
 			var last_party_focus_slot: int = -1
@@ -435,6 +444,14 @@ func show_party_item_result_and_close(message_text: String, target_party_slot: i
 func _is_pokeball_choice_usable(_actor: BattlePokemon, item_data: ItemData, choice: BattleBagChoice) -> bool:
 	if item_data == null or item_data.kind != ItemEnums.Kind.POKEBALL:
 		return true
+	if GameStateService != null and GameStateService.is_party_and_pc_full():
+		await DisplayManager.show_message("¡La CAJA está llena!", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+			"typingMode": "typing",
+		})
+		return false
 	var ball_eff: PokeballItemEffect = PokeballItemEffect.resolve_for_item(item_data)
 	if ball_eff == null:
 		return false

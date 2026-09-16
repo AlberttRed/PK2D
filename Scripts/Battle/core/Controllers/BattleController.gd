@@ -453,7 +453,7 @@ func _finalize_successful_capture() -> void:
 	var registration: Dictionary = CaptureRegistrationService.register_captured_pokemon(
 		successful_capture.captured_pokemon
 	)
-	var dest: Variant = registration.get("destination", CaptureRegistrationService.Destination.PENDING_STORAGE)
+	var dest: Variant = registration.get("destination", CaptureRegistrationService.Destination.FAILED)
 	# Party: solo «¡Ya está! / atrapado!» (CaptureEffect); sin mensajes extra.
 	if dest == CaptureRegistrationService.Destination.PARTY:
 		return

@@ -4,16 +4,17 @@ class_name CaptureRegistrationService
 enum Destination {
 	PARTY,
 	PC,
-	PENDING_STORAGE,
+	FAILED,
 }
 
-## Registra un Pokémon capturado en party, PC o cola temporal.
+## Registra un Pokémon capturado en party o PC.
 ## En combate, los mensajes extra de PC los muestra BattleController (no el de party).
+## Si party y PC están llenos, la ball ya se bloquea en BagUI; esto es red de seguridad.
 static func register_captured_pokemon(pokemon: Pokemon) -> Dictionary:
 	if pokemon == null:
 		return {
 			"ok": false,
-			"destination": Destination.PENDING_STORAGE,
+			"destination": Destination.FAILED,
 			"display_name": "",
 			"box_name": "",
 			"message": "No se pudo registrar el Pokémon capturado.",
@@ -49,11 +50,10 @@ static func register_captured_pokemon(pokemon: Pokemon) -> Dictionary:
 			"message": "",
 		}
 
-	GameStateService.add_pending_pc_pokemon(pokemon)
 	return {
-		"ok": true,
-		"destination": Destination.PENDING_STORAGE,
+		"ok": false,
+		"destination": Destination.FAILED,
 		"display_name": display_name,
 		"box_name": "",
-		"message": "¡%s fue guardado en espera (PC lleno)." % display_name,
+		"message": "¡La CAJA está llena!",
 	}

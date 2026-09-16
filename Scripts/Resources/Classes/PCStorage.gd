@@ -1,12 +1,16 @@
 extends RefCounted
 class_name PCStorage
 
-## Almacenamiento Pokémon del PC (cajas + slots). Solo modelo en memoria (PBI #825).
-## Persistencia → #826. UI → #828.
+## Almacenamiento Pokémon del PC (cajas + slots). Persistencia vía GameStateService (#826).
+## UI → #828.
+
+const POKEMON_SERDE_SCRIPT = preload("res://Scripts/Runtime/PokemonRuntimeSerde.gd")
 
 ## Gen 3/4: 14 cajas × 30 slots.
 const BOX_COUNT: int = 14
 const SLOTS_PER_BOX: int = 30
+
+var _pokemon_serde = POKEMON_SERDE_SCRIPT.new()
 
 ## Cada entrada: { "name": String, "slots": Array } con `slots.size() == SLOTS_PER_BOX`
 ## (elementos `Pokemon` o `null`).
@@ -20,6 +24,55 @@ func _init() -> void:
 func clear() -> void:
 	_boxes.clear()
 	_ensure_boxes()
+
+
+## Array de cajas: [{ "name": String, "slots": Array }] — slot vacío = null, ocupado = dict plano.
+func to_serializable_data() -> Array[Dictionary]:
+	_ensure_boxes()
+	var out: Array[Dictionary] = []
+	for box in _boxes:
+		var slots_out: Array = []
+		slots_out.resize(SLOTS_PER_BOX)
+		var slots: Array = box.get("slots", [])
+		for s in range(SLOTS_PER_BOX):
+			var mon = slots[s] if s < slots.size() else null
+			if mon != null and mon is Pokemon:
+				slots_out[s] = (mon as Pokemon).to_serializable_state()
+			else:
+				slots_out[s] = null
+		out.append({
+			"name": str(box.get("name", "")),
+			"slots": slots_out,
+		})
+	return out
+
+
+## Restaura cajas desde save. Entradas de más se ignoran; faltantes → vacías con nombre por defecto.
+func load_serializable_data(boxes_data: Array) -> void:
+	clear()
+	var limit := mini(boxes_data.size(), BOX_COUNT)
+	for i in range(limit):
+		var entry_any: Variant = boxes_data[i]
+		if not (entry_any is Dictionary):
+			continue
+		var entry: Dictionary = entry_any
+		var box_name := str(entry.get("name", "")).strip_edges()
+		if not box_name.is_empty():
+			set_box_name(i, box_name)
+		var slots_any: Variant = entry.get("slots", [])
+		if not (slots_any is Array):
+			continue
+		var slots_in: Array = slots_any
+		for s in range(mini(slots_in.size(), SLOTS_PER_BOX)):
+			var slot_any: Variant = slots_in[s]
+			if slot_any == null:
+				continue
+			if not (slot_any is Dictionary):
+				continue
+			var mon: Pokemon = _pokemon_serde.deserialize(slot_any) as Pokemon
+			if mon == null:
+				continue
+			set_pokemon(i, s, mon)
 
 
 func get_box_count() -> int:
@@ -193,3 +246,29 @@ func _find_free_in_box(box_index: int) -> int:
 		if slots[s] == null:
 			return s
 	return -1
+
+
+## Debug: resumen de cajas ocupadas (nombre + Pokémon por slot).
+func debug_print_boxes() -> void:
+	_ensure_boxes()
+	var lines: PackedStringArray = []
+	lines.append("PCStorage: %d / %d ocupados" % [get_occupied_count(), get_capacity()])
+	for b in range(_boxes.size()):
+		var slots: Array = _boxes[b].get("slots", [])
+		var occupied_lines: PackedStringArray = []
+		for s in range(slots.size()):
+			var mon = slots[s]
+			if mon == null:
+				continue
+			var p := mon as Pokemon
+			var label := "?"
+			if p != null:
+				label = "%s Lv.%d" % [p.get_display_name(), int(p.level)]
+			occupied_lines.append("  slot %d: %s" % [s + 1, label])
+		if occupied_lines.is_empty():
+			continue
+		lines.append("[%s] (%d):" % [get_box_name(b), occupied_lines.size()])
+		lines.append_array(occupied_lines)
+	if lines.size() == 1:
+		lines.append("  (todas las cajas vacías)")
+	print("\n".join(lines))
