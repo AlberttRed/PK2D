@@ -2,6 +2,7 @@ extends Node
 
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
 const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
+const PC_STORAGE_SCRIPT = preload("res://Scripts/Resources/Classes/PCStorage.gd")
 const POKEDEX_SCRIPT = preload("res://Scripts/Runtime/Pokedex.gd")
 const POKEMON_RUNTIME_SERDE = preload("res://Scripts/Runtime/PokemonRuntimeSerde.gd")
 const SAVE_VERSION: int = 1
@@ -68,6 +69,9 @@ var bag = BAG_SCRIPT.new()
 # Equipo del jugador (máx. 6 Pokémon); sin dependencia de UI
 var party = PARTY_SCRIPT.new()
 
+## PC de Pokémon (cajas). Persistencia en #826.
+var pc_storage = PC_STORAGE_SCRIPT.new()
+
 ## Pokémon capturados en espera de PC (fallback cuando el almacenamiento no está listo).
 var pending_pc_pokemon: Array[Dictionary] = []
 
@@ -98,6 +102,7 @@ func initialize_new_game() -> void:
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
+	pc_storage = PC_STORAGE_SCRIPT.new()
 	pending_pc_pokemon.clear()
 	pokedex = POKEDEX_SCRIPT.new()
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
@@ -301,6 +306,13 @@ func get_party():
 	if party == null:
 		party = PARTY_SCRIPT.new()
 	return party
+
+
+## Almacenamiento PC (cajas). Sin UI todavía (#825).
+func get_pc_storage():
+	if pc_storage == null:
+		pc_storage = PC_STORAGE_SCRIPT.new()
+	return pc_storage
 
 
 ## Equipo leído solo del JSON del slot (no modifica el party en memoria). Para UI, p. ej. iconos en «Continuar».
@@ -1004,6 +1016,8 @@ func get_state_summary() -> String:
 	summary += "Self-switches: %s\n" % event_self_flags
 	summary += "Bag entries: %d\n" % get_bag_save_data().size()
 	summary += "Party Pokémon: %d\n" % get_party().count()
+	summary += "PC occupied: %d / %d\n" % [get_pc_storage().get_occupied_count(), get_pc_storage().get_capacity()]
+	summary += "Pending PC: %d\n" % get_pending_pc_pokemon_count()
 	summary += "Pokédex vistos: %d\n" % get_pokedex().get_seen_count()
 	summary += "Pokédex capturados: %d\n" % get_pokedex().get_caught_count()
 	return summary

@@ -453,6 +453,29 @@ func _finalize_successful_capture() -> void:
 	var registration: Dictionary = CaptureRegistrationService.register_captured_pokemon(
 		successful_capture.captured_pokemon
 	)
+	var dest: Variant = registration.get("destination", CaptureRegistrationService.Destination.PENDING_STORAGE)
+	# Party: solo «¡Ya está! / atrapado!» (CaptureEffect); sin mensajes extra.
+	if dest == CaptureRegistrationService.Destination.PARTY:
+		return
+
+	var display_name: String = str(registration.get("display_name", "")).strip_edges()
+	if display_name.is_empty() and successful_capture.captured_pokemon != null:
+		display_name = successful_capture.captured_pokemon.get_display_name()
+
+	if dest == CaptureRegistrationService.Destination.PC:
+		var box_name: String = str(registration.get("box_name", ""))
+		await ui.show_message_from_dict({
+			"type": "input",
+			"text": "%s fue enviado al PC de BILL." % display_name,
+			"showIconAtEnd": true,
+		})
+		await ui.show_message_from_dict({
+			"type": "display",
+			"text": "Se ha guardado en la CAJA \"%s\"." % box_name,
+			"wait_time": 1.5,
+		})
+		return
+
 	var message: String = str(registration.get("message", ""))
 	if message.is_empty():
 		return

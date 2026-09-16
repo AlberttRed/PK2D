@@ -186,10 +186,18 @@ func add_pokemon(pokemon: Pokemon) -> bool:
 	return _party_model().add_pokemon(pokemon)
 
 
-## Envía un Pokémon al PC.
-## Placeholder hasta implementar almacenamiento de cajas.
+## Envía un Pokémon al PC (primer hueco libre). False si no hay espacio o falla.
 func send_to_pc(pokemon: Pokemon) -> bool:
 	if pokemon == null:
 		return false
-	push_warning("PartyController.send_to_pc: PC no implementado todavía.")
-	return false
+	_ensure_pokemon_ready(pokemon)
+	if GameStateService == null:
+		push_warning("PartyController.send_to_pc: GameStateService no disponible")
+		return false
+	var pc = GameStateService.get_pc_storage()
+	if pc == null or not pc.has_method("add_pokemon"):
+		push_warning("PartyController.send_to_pc: PCStorage no disponible")
+		return false
+	if not pc.has_space():
+		return false
+	return pc.add_pokemon(pokemon)
