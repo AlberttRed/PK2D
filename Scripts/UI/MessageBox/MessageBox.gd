@@ -80,6 +80,26 @@ func _ready():
 func setText(_text):
 	label.text = _text
 
+## Sustituye el texto visible de golpe (sin typing ni wait). Útil para ayudas de menú.
+func set_help_text_instant(text: String) -> void:
+	hide_wait_indicator()
+	setText(text)
+	if label:
+		label.visible_characters = -1
+	if not visible:
+		show()
+	_adjust_container_size()
+
+## Para la animación Idle (fuerza visible=true) y oculta el indicador.
+func hide_wait_indicator() -> void:
+	if animation_player and animation_player.is_playing():
+		animation_player.stop()
+	if wait_indicator:
+		wait_indicator.visible = false
+		wait_indicator.hide()
+	elif has_node("next"):
+		$next.hide()
+
 func show_custom(text: String, config := {}):
 	waitInput = config.get("waitInput", true)
 	closeAtEnd = config.get("closeAtEnd", true)
@@ -639,7 +659,9 @@ func _finishedMessage():
 				_update_wait_indicator_inline(_current_theme)
 			$AnimationPlayer2.play("Idle")
 		else:
-			wait_indicator.visible = false
+			hide_wait_indicator()
+	else:
+		hide_wait_indicator()
 
 func showMessage(message = null):
 	_is_processing_message = true
@@ -655,8 +677,7 @@ func showMessage(message = null):
 	label.text = getNextMessage()
 	# CRÍTICO: Establecer visible_characters a 0 inmediatamente para evitar que se vea el texto completo durante un frame
 	label.visible_characters = 0
-	$AnimationPlayer2.stop()
-	$next.hide()
+	hide_wait_indicator()
 	self.show()
 	if play_open_sound_on_show:
 		AudioManager.play_ui_select()
@@ -692,8 +713,7 @@ func close():
 	# Deshabilitar input para evitar múltiples llamadas
 	disable_input_handling()
 
-	$AnimationPlayer2.stop()
-	$next.hide()
+	hide_wait_indicator()
 	scroll.scroll_vertical = 0
 	if closeAtEnd:
 		hide()
@@ -719,8 +739,7 @@ func _finish_without_closing() -> void:
 	var current_text = label.text
 
 	# Ocultar icono next
-	$AnimationPlayer2.stop()
-	$next.hide()
+	hide_wait_indicator()
 
 	# Hacer limpieza completa (reutiliza código de clear)
 	# Esto desconecta señales, resetea variables, marca _is_processing_message = false

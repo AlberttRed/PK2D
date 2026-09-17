@@ -40,7 +40,9 @@ var _visible_indices: Array[int] = []
 @onready var cursor: Sprite2D = $Cursor
 
 ## Padding bajo la última opción (dentro del panel), además del margin_bottom del MarginContainer.
-const PANEL_EXTRA_BOTTOM_MARGIN := 4.0
+const PANEL_EXTRA_BOTTOM_MARGIN := 0.0
+## Y del cursor desde el top de la fila (mismo criterio que ChoiceBox).
+const CURSOR_Y_IN_ROW := 6.0
 
 
 ## Flag para evitar múltiples inputs
@@ -226,7 +228,7 @@ func _update_cursor_position() -> void:
 		return
 
 	var row := options_container.get_child(selected_index) as Control
-	var cursor_y := row.global_position.y + row.size.y * 0.5 - global_position.y + 2.0
+	var cursor_y := row.global_position.y - global_position.y + CURSOR_Y_IN_ROW
 	cursor.position = Vector2(24.0, cursor_y)
 
 ## Navega hacia arriba en las opciones

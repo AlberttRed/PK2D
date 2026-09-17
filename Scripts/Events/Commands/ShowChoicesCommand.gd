@@ -42,6 +42,11 @@ class_name ShowChoicesCommand
 ## El bucle solo termina cuando se selecciona el branch de cancelar o se pulsa cancelar
 @export var loop_until_cancel: bool = false
 
+## Si false, el ChoiceBox permanece abierto tras seleccionar (como `close_at_end` del MessageBox).
+## Útil para mostrar un mensaje de error sin cerrar el menú. Cerrar con DisplayManager.close_choices()
+## o al terminar este comando.
+@export var close_choices_at_end: bool = true
+
 @export_group("Optional")
 
 ## (Opcional) Nombre de variable global donde guardar el resultado (índice seleccionado)
@@ -63,6 +68,7 @@ func execute(context: Node) -> void:
 
 	# Bucle principal (se repite si loop_until_cancel está activo)
 	var should_loop: bool = true
+	var choices_session_open: bool = false
 	while should_loop:
 		should_loop = false  # Por defecto, no repetir
 
@@ -71,9 +77,14 @@ func execute(context: Node) -> void:
 		for branch in branches:
 			options.append(branch.label)
 
-		# Mostrar mensaje con opciones usando DisplayManager
-		# Siempre pasar close_at_end=false para dejar que el branch decida
-		_selected_index = await DisplayManager.show_message_with_choices(message, options, false)
+		# close_at_end del MessageBox = false: el branch decide con close_previous_message
+		if choices_session_open and not close_choices_at_end:
+			_selected_index = await DisplayManager.await_choices(false)
+		else:
+			_selected_index = await DisplayManager.show_message_with_choices(
+				message, options, false, close_choices_at_end
+			)
+			choices_session_open = not close_choices_at_end
 
 		# Si se pulsa cancelar y hay cancel_branch_index configurado, usar ese branch
 		if _selected_index == -1 and cancel_branch_index >= 0 and cancel_branch_index < branches.size():
@@ -143,6 +154,8 @@ func execute(context: Node) -> void:
 			DisplayManager.close_message()
 		else:
 			push_error("ShowChoicesCommand: Índice seleccionado fuera de rango: %d" % _selected_index)
+
+	DisplayManager.close_choices()
 
 	# Continuar con el siguiente comando del evento principal
 	print("ShowChoicesCommand: Finalizando, continuando ejecución del evento")

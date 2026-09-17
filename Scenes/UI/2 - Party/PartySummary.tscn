@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ijai45vsjrfk" path="res://Scripts/UI/2 - Party/PartySummary.gd" id="1_re5et"]
 [ext_resource type="Texture2D" uid="uid://c8kpj8jre1qao" path="res://Sprites/UI/Party/male_icon.png" id="3_h6xl0"]
 [ext_resource type="Texture2D" uid="uid://b6hiwscxkv33j" path="res://Sprites/UI/Party/summaryball00.png" id="4_tua3y"]
-[ext_resource type="Texture2D" uid="uid://drlqj155r5faq" path="res://Sprites/Pictures/battleStatuses.png" id="6_q0ixx"]
+[ext_resource type="Texture2D" uid="uid://0vjpc0xouqih" path="res://Sprites/Pictures/battleStatuses.png" id="6_q0ixx"]
 [ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="7_li5g0"]
 [ext_resource type="Texture2D" uid="uid://danwumq4xmbxq" path="res://Sprites/UI/Party/summary1.png" id="8_omywj"]
 [ext_resource type="Texture2D" uid="uid://bwtv36mb8w2lm" path="res://Sprites/UI/Party/types.png" id="9_wfs1f"]

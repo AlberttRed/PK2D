@@ -226,6 +226,23 @@ static func create_menu_row(text: String) -> LabelHGSS:
 	return label
 
 
+func _strip_leading_align_bbcode(s: String) -> String:
+	# El inspector suele llevar ya [center]/[left]/[right] para la preview;
+	# setText antepone el de `align` y un tag duplicado crea un párrafo vacío que
+	# empuja el texto fuera de labels bajos (p.ej. botones PC Equipo/Salir).
+	var t := s
+	while true:
+		var stripped := false
+		for tag in ["[center]", "[left]", "[right]"]:
+			if t.begins_with(tag):
+				t = t.substr(tag.length())
+				stripped = true
+				break
+		if not stripped:
+			break
+	return t
+
+
 func setText(_text):
 	var prefix := "[left]"
 	match align:
@@ -233,7 +250,7 @@ func setText(_text):
 			prefix = "[center]"
 		2:
 			prefix = "[right]"
-	_apply_full_richtext(prefix + str(_text))
+	_apply_full_richtext(prefix + _strip_leading_align_bbcode(str(_text)))
 
 
 func updateNextLine():

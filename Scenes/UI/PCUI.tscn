@@ -1,0 +1,232 @@
+[gd_scene format=3 uid="uid://cesw5xutsmgo2"]
+
+[ext_resource type="Texture2D" uid="uid://226it5nxk1qm" path="res://Sprites/UI/PC/boxbg.png" id="1_3fq3p"]
+[ext_resource type="Texture2D" uid="uid://c86uk76131b4h" path="res://Sprites/UI/PC/box0.png" id="1_5t4a7"]
+[ext_resource type="Script" uid="uid://biufn5pgtnlkk" path="res://Scripts/UI/PCUI.gd" id="2_pcui"]
+[ext_resource type="Texture2D" uid="uid://c3ovgmbdoxj3i" path="res://Sprites/UI/PC/overlay_main.png" id="3_pe5e7"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="4_x0imx"]
+[ext_resource type="Texture2D" uid="uid://c8kpj8jre1qao" path="res://Sprites/UI/Party/male_icon.png" id="5_iyxkp"]
+[ext_resource type="Texture2D" uid="uid://bwtv36mb8w2lm" path="res://Sprites/UI/Party/types.png" id="5_rwxld"]
+[ext_resource type="Texture2D" uid="uid://bg3jekl6dawi0" path="res://Sprites/Pictures/Nv_icon_black.png" id="6_42h8w"]
+[ext_resource type="Texture2D" uid="uid://c4llr0gst3evk" path="res://Sprites/Batalla/007.png" id="7_8uxdb"]
+[ext_resource type="Texture2D" uid="uid://k6b55hyq3npq" path="res://Sprites/UI/PC/markings.png" id="8_p1yev"]
+[ext_resource type="Texture2D" uid="uid://c2xah24st4soy" path="res://Sprites/UI/PC/overlay_party.png" id="11_pe5e7"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ii1ck"]
+texture = ExtResource("1_3fq3p")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5t4a7"]
+texture = ExtResource("3_pe5e7")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_42h8w"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iyxkp"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n4n3u"]
+texture = ExtResource("1_5t4a7")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3fq3p"]
+texture = ExtResource("11_pe5e7")
+
+[node name="PCUI" type="Panel" unique_id=1036020114]
+custom_minimum_size = Vector2(512, 384)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ii1ck")
+script = ExtResource("2_pcui")
+metadata/_edit_lock_ = true
+
+[node name="Info" type="Panel" parent="." unique_id=545395009]
+custom_minimum_size = Vector2(512, 384)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_5t4a7")
+metadata/_edit_lock_ = true
+
+[node name="Nickname" parent="Info" unique_id=639224546 instance=ExtResource("4_x0imx")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 170.0
+offset_bottom = 38.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[left]Nickname"
+metadata/_edit_lock_ = true
+
+[node name="Genero" type="Sprite2D" parent="Info" unique_id=1191914565]
+position = Vector2(154.00002, 24.000006)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("5_iyxkp")
+metadata/_edit_lock_ = true
+
+[node name="lblNivel" type="Sprite2D" parent="Info" unique_id=724901756]
+position = Vector2(19, 251)
+texture = ExtResource("6_42h8w")
+metadata/_edit_lock_ = true
+
+[node name="Sprite" type="Sprite2D" parent="Info" unique_id=1041737280]
+position = Vector2(90, 134)
+texture = ExtResource("7_8uxdb")
+metadata/_edit_lock_ = true
+
+[node name="Nivel" parent="Info" unique_id=1009905287 instance=ExtResource("4_x0imx")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 30.0
+offset_top = 234.0
+offset_right = 70.0
+offset_bottom = 264.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[left]100"
+metadata/_edit_lock_ = true
+
+[node name="Markings" type="Sprite2D" parent="Info" unique_id=1988732714]
+position = Vector2(118, 248)
+texture = ExtResource("8_p1yev")
+vframes = 4
+metadata/_edit_lock_ = true
+
+[node name="Tipo1" type="Panel" parent="Info" unique_id=1704218671]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 0
+offset_left = 18.0
+offset_top = 272.0
+offset_right = 82.0
+offset_bottom = 272.0
+size_flags_horizontal = 6
+theme_override_styles/panel = SubResource("StyleBoxEmpty_42h8w")
+metadata/_edit_lock_ = true
+
+[node name="dTipo1" type="Sprite2D" parent="Info/Tipo1" unique_id=1148339573]
+position = Vector2(32, 14)
+texture = ExtResource("5_rwxld")
+vframes = 24
+frame = 11
+metadata/_edit_lock_ = true
+
+[node name="Tipo2" type="Panel" parent="Info" unique_id=1811467628]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 0
+offset_left = 90.0
+offset_top = 272.0
+offset_right = 154.0
+offset_bottom = 272.0
+size_flags_horizontal = 6
+theme_override_styles/panel = SubResource("StyleBoxEmpty_iyxkp")
+metadata/_edit_lock_ = true
+
+[node name="dTipo2" type="Sprite2D" parent="Info/Tipo2" unique_id=683373079]
+position = Vector2(32, 14)
+texture = ExtResource("5_rwxld")
+vframes = 24
+metadata/_edit_lock_ = true
+
+[node name="Habilidad" parent="Info" unique_id=883514599 instance=ExtResource("4_x0imx")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 306.0
+offset_right = 166.0
+offset_bottom = 336.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]Habilidad"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="Objeto" parent="Info" unique_id=1849043528 instance=ExtResource("4_x0imx")]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 342.0
+offset_right = 166.0
+offset_bottom = 372.0
+theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
+theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
+text = "[center]Objeto"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="Equipo" parent="Info" unique_id=755207801 instance=ExtResource("4_x0imx")]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 326.0
+offset_right = 348.0
+offset_bottom = 360.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "[center]EQUIPO:  0"
+align = 1
+
+[node name="Salir" parent="Info" unique_id=1910272134 instance=ExtResource("4_x0imx")]
+layout_mode = 0
+offset_left = 392.0
+offset_top = 326.0
+offset_right = 500.0
+offset_bottom = 360.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "[center]SALIR"
+align = 1
+
+[node name="Box" type="Panel" parent="." unique_id=257457536]
+custom_minimum_size = Vector2(324, 296)
+layout_mode = 0
+offset_left = 185.0
+offset_top = 20.0
+offset_right = 509.0
+offset_bottom = 316.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Nombre" parent="Box" unique_id=1165752183 instance=ExtResource("4_x0imx")]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 8.0
+offset_right = 272.0
+offset_bottom = 42.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "[center]CAJA 1"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="Slots" type="Control" parent="Box" unique_id=1619042099]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Party" type="Panel" parent="." unique_id=1529603566]
+visible = false
+custom_minimum_size = Vector2(172, 352)
+layout_mode = 0
+offset_left = 182.0
+offset_top = 34.0
+offset_right = 354.0
+offset_bottom = 386.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_3fq3p")
+metadata/_edit_lock_ = true
+
+[node name="Salir" parent="Party" unique_id=339177192 instance=ExtResource("4_x0imx")]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 238.0
+offset_right = 148.0
+offset_bottom = 276.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
+text = "[center]SALIR"
+align = 1

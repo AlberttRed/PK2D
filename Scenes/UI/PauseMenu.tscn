@@ -28,9 +28,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 34
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 28
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_bottom = 8
 metadata/_edit_lock_ = true
 
 [node name="OptionsContainer" type="VBoxContainer" parent="MarginContainer"]
@@ -40,6 +40,6 @@ metadata/_edit_lock_ = true
 
 [node name="Cursor" type="Sprite2D" parent="."]
 texture_filter = 1
-position = Vector2(24, 30)
+position = Vector2(24, 34)
 texture = ExtResource("4_arrow")
 metadata/_edit_lock_ = true

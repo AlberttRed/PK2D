@@ -32,7 +32,9 @@ var options: Array[String] = []
 @onready var cursor: Sprite2D = $Cursor
 
 ## Padding bajo la última opción (dentro del panel), además del margin_bottom del MarginContainer.
-const PANEL_EXTRA_BOTTOM_MARGIN := 4.0
+const PANEL_EXTRA_BOTTOM_MARGIN := 0.0
+## Y del cursor desde el top de la fila (texto TOP + MENU_TEXT_RISE; no el centro geométrico de 34px).
+const CURSOR_Y_IN_ROW := 6.0
 
 ## Viewport de diseño HGSS sobre el que están calibrados los inset de ChoiceBox.tscn.
 const DESIGN_VIEWPORT := Vector2(512.0, 384.0)
@@ -202,6 +204,50 @@ func show_choices(choice_options: Array[String]) -> int:
 	return await _complete_choice_session()
 
 
+## Abre el menú y deja el panel visible tras elegir (el caller cierra con `close_choices`).
+func open_choices_keep_open(choice_options: Array[String]) -> bool:
+	if not _setup_choice_rows(choice_options):
+		push_error("ChoiceBox: No se pueden mostrar opciones vacías")
+		return false
+
+	modulate.a = 0.0
+	show()
+
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	_fit_panel_height_to_content()
+	_update_cursor_position()
+
+	modulate.a = 1.0
+	_enable_input()
+	return true
+
+
+## Espera una selección sin ocultar el panel.
+func await_choice_keep_open() -> int:
+	if not visible:
+		return -1
+	if not _input_enabled:
+		_enable_input()
+	var choice: int = await choice_made
+	_disable_input()
+	return choice
+
+
+func set_menu_input_enabled(enabled: bool) -> void:
+	if enabled:
+		_enable_input()
+	else:
+		_disable_input()
+
+
+func close_choices() -> void:
+	_disable_input()
+	modulate.a = 1.0
+	hide()
+
+
 ## Monta filas y tamaño provisional; invisible hasta el callback del MessageBox (misma aparición que el texto).
 func begin_coordinated_choice(choice_options: Array[String]) -> void:
 	if not _setup_choice_rows(choice_options):
@@ -316,7 +362,8 @@ func _update_cursor_position() -> void:
 		return
 
 	var row := options_container.get_child(selected_index) as Control
-	var cursor_y := row.global_position.y + row.size.y * 0.5 - global_position.y + 2.0
+	# Por fila seleccionada: anclar al top de la fila + offset óptico del texto (no mid de MENU_ROW_HEIGHT).
+	var cursor_y := row.global_position.y - global_position.y + CURSOR_Y_IN_ROW
 	cursor.position = Vector2(24.0, cursor_y)
 
 ## Navega hacia arriba en las opciones
@@ -355,10 +402,14 @@ func _enable_input() -> void:
 	if not dm:
 		push_error("ChoiceBox: DisplayManager no disponible para gestionar input")
 		return
-	dm.input_up.connect(_on_input_up)
-	dm.input_down.connect(_on_input_down)
-	dm.input_accept.connect(_on_input_accept)
-	dm.input_cancel.connect(_on_input_cancel)
+	if not dm.input_up.is_connected(_on_input_up):
+		dm.input_up.connect(_on_input_up)
+	if not dm.input_down.is_connected(_on_input_down):
+		dm.input_down.connect(_on_input_down)
+	if not dm.input_accept.is_connected(_on_input_accept):
+		dm.input_accept.connect(_on_input_accept)
+	if not dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.connect(_on_input_cancel)
 
 ## Deshabilita el manejo de input
 func _disable_input() -> void:

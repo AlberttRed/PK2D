@@ -91,10 +91,10 @@ func initialize_new_game() -> void:
 	current_position = Vector2i(27, 4)  # Posición por defecto en el mapa (coordenada de tile)
 	facing_dir = Vector2.UP
 	if debug_mode:
-		# Spawn clásico de debug para iterar rápido: Pueblo Paleta.
-		current_map_id = "Pueblo_Paleta"
-		current_position = Vector2i(1, 0)
-		facing_dir = Vector2.DOWN
+		# Spawn en Centro Pokémon para iterar PC / curación rápido.
+		current_map_id = "Centro_Pokemon"
+		current_position = Vector2i(-29, -10)
+		facing_dir = Vector2.UP
 	money = 0
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
@@ -108,6 +108,7 @@ func initialize_new_game() -> void:
 		_seed_test_pokedex_progress()
 		_seed_test_bag_items()
 		_seed_test_party_placeholder()
+		_seed_test_pc_box_full()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
@@ -159,10 +160,9 @@ func _seed_test_party_placeholder() -> void:
 	if player_party.count() > 0:
 		_assign_test_capture_balls(player_party)
 		return
-	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
+	# [species_id, level] — 4 en equipo (hueco libre para SACAR del PC).
 	var test_mons: Array[Vector2i] = [
-		Vector2i(1, 15), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
-		# Vector2i(143, 9),  # Snorlax (último añadido; descomentar para 6º slot)
+		Vector2i(1, 15), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11),
 	]
 	var added := 0
 	for spec: Vector2i in test_mons:
@@ -193,6 +193,42 @@ func _seed_test_party_placeholder() -> void:
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON
+
+
+## Llena la caja 0 del PC (30 slots) como en la captura de referencia:
+## Poliwhirl→Shellder (species 61–90, orden dex Gen 1).
+func _seed_test_pc_box_full() -> void:
+	var storage = get_pc_storage()
+	if storage == null:
+		return
+	if storage.get_occupied_count() > 0:
+		return
+	# Misma secuencia que AlmacenamientoPkm.webp (Caja 3 de la captura).
+	var species_ids: Array[int] = [
+		61, 62, 63, 64, 65, 66,  # Poliwhirl … Machop
+		67, 68, 69, 70, 71, 72,  # Machoke … Tentacool
+		73, 74, 75, 76, 77, 78,  # Tentacruel … Rapidash
+		79, 80, 81, 82, 83, 84,  # Slowpoke … Doduo
+		85, 86, 87, 88, 89, 90,  # Dodrio … Shellder
+	]
+	var added := 0
+	for slot in range(mini(species_ids.size(), PCStorage.SLOTS_PER_BOX)):
+		var species_id: int = species_ids[slot]
+		if DatabaseService.get_pokemon(species_id) == null:
+			push_warning("GameStateService: species_id=%d no existe; slot PC %d vacío." % [species_id, slot])
+			continue
+		var lvl := 50 if species_id == 62 else (5 + (slot % 20))
+		var mon := Pokemon.new(species_id, lvl, 0, 0, 0, true)
+		if mon == null or mon.base == null:
+			continue
+		mon.is_wild = false
+		mon.original_trainer = "Debug"
+		mon.capture_level = lvl
+		mon.captured_ball_id = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+		if storage.set_pokemon(0, slot, mon):
+			added += 1
+	storage.set_box_name(0, "CAJA 3")
+	print("GameStateService: PC caja de prueba (ref) con %d Pokémon." % added)
 
 
 ## Alterna Poké Ball / Super Ball en el party de prueba (validar summary).

@@ -26,6 +26,7 @@
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="24_aaslx"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="24_p413b"]
 [ext_resource type="Script" uid="uid://x5n6m43woa33" path="res://Scripts/Events/Commands/PokemonCenterHealCommand.gd" id="25_pcheal"]
+[ext_resource type="Script" uid="uid://vzr46spd8qwrs" path="res://Scripts/Events/Commands/OpenPCCommand.gd" id="25_openpc"]
 [ext_resource type="Script" uid="uid://df5ec264to6uq" path="res://Scripts/Events/Commands/SetRespawnCommand.gd" id="26_setrp"]
 [ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="27_uwtg1"]
 [ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="28_bq1xk"]
@@ -623,9 +624,7 @@ commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_setrp_cp"), SubR
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_qt1r8"]
-script = ExtResource("14_103ep")
-message = "(Placeholder PC)"
-frame_style = 1
+script = ExtResource("25_openpc")
 
 [sub_resource type="Resource" id="Resource_jeris"]
 script = ExtResource("15_103ep")
