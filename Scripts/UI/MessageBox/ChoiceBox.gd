@@ -56,6 +56,8 @@ var _base_offset_right: float = 0
 var _base_offset_bottom: float = 0
 
 var _anchor: ChoiceAnchor = ChoiceAnchor.SCENE_DEFAULT
+## Extra (px diseño 512×384) sumado al inset inferior en anclas bottom/middle-right (p. ej. dejar hueco al MessageBox del PC).
+var _extra_bottom_inset: float = 0.0
 ## PARTY_MENU
 var _party_right_edge_x: float = 0.0
 var _party_bottom_y: float = 0.0
@@ -126,6 +128,15 @@ func clear_corner_anchor() -> void:
 	_anchor = ChoiceAnchor.SCENE_DEFAULT
 
 
+## Hueco extra bajo el panel (diseño 512×384). 0 = solo CORNER_INSET_BOTTOM.
+func set_extra_bottom_inset(px: float) -> void:
+	_extra_bottom_inset = maxf(0.0, px)
+
+
+func clear_extra_bottom_inset() -> void:
+	_extra_bottom_inset = 0.0
+
+
 ## Compatibilidad: mochila usa esquina superior izquierda fija.
 func set_fixed_top_left_position(enabled: bool, top_left: Vector2 = Vector2.ZERO) -> void:
 	if enabled:
@@ -169,14 +180,14 @@ func _apply_sized_panel_layout(panel_width: float, panel_height: float) -> void:
 			offset_bottom = mt + panel_height
 		ChoiceAnchor.BOTTOM_LEFT:
 			var ml := CORNER_INSET_LEFT * s.x
-			var mb := CORNER_INSET_BOTTOM * s.y
+			var mb := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
 			offset_left = ml
 			offset_right = ml + panel_width
 			offset_bottom = vp.y - mb
 			offset_top = offset_bottom - panel_height
 		ChoiceAnchor.BOTTOM_RIGHT:
 			var mr := CORNER_INSET_RIGHT * s.x
-			var mb := CORNER_INSET_BOTTOM * s.y
+			var mb := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
 			offset_right = vp.x - mr
 			offset_left = offset_right - panel_width
 			offset_bottom = vp.y - mb
@@ -185,8 +196,14 @@ func _apply_sized_panel_layout(panel_width: float, panel_height: float) -> void:
 			var mr2 := CORNER_INSET_RIGHT * s.x
 			offset_right = vp.x - mr2
 			offset_left = offset_right - panel_width
-			offset_top = (vp.y - panel_height) * 0.5
-			offset_bottom = offset_top + panel_height
+			if _extra_bottom_inset > 0.0:
+				# Con MessageBox abajo (PC): anclar por el borde inferior, no centrar.
+				var mb2 := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
+				offset_bottom = vp.y - mb2
+				offset_top = offset_bottom - panel_height
+			else:
+				offset_top = (vp.y - panel_height) * 0.5
+				offset_bottom = offset_top + panel_height
 	_base_offset_right = offset_right
 	_base_offset_bottom = offset_bottom
 

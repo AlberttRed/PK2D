@@ -225,6 +225,30 @@ func _apply_scroll_margins_from_theme(messagebox_theme: MessageBoxTheme) -> void
 	scroll.offset_right = dr
 	scroll.offset_top = dt
 	scroll.offset_bottom = db
+	fit_scroll_width_to_panel()
+
+
+## Si el panel es más estrecho que el MSG a pantalla completa, ajusta offset_right del scroll.
+func fit_scroll_width_to_panel() -> void:
+	if scroll == null:
+		return
+	var panel_w: float = size.x
+	if panel_w < 8.0:
+		panel_w = custom_minimum_size.x
+	if panel_w < 8.0:
+		return
+	var left_m: float = scroll.offset_left
+	var scene_right: float = float(_scene_scroll_defaults.get("right", 465.0)) if not _scene_scroll_defaults.is_empty() else 465.0
+	# En escena 512px, offset_right=465 → inset ~47 (hueco para marco/indicador a pantalla completa).
+	var full_right_inset: float = maxf(16.0, 512.0 - scene_right)
+	# En paneles estrechos (PC/caja) ese inset deja poco texto útil y fuerza wraps prematuros.
+	var right_inset: float = full_right_inset
+	if panel_w < 480.0:
+		right_inset = maxf(left_m, 16.0)
+	var max_right: float = panel_w - right_inset
+	if max_right <= left_m + 8.0:
+		max_right = panel_w - 16.0
+	scroll.offset_right = max_right
 	_sync_text_container_width_to_scroll()
 
 

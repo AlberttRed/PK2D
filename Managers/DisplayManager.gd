@@ -75,11 +75,19 @@ var _suppress_bag_closed_effects: bool = false
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
+## MessageBox estrecho al ancho de la caja mientras el PC está abierto.
+var _pc_msg_layout_saved: bool = false
+var _pc_msg_saved_layout: Dictionary = {}
+var _pc_msg_saved_scroll: Dictionary = {}
 
 ## Viewport base del UI overworld/pausa (MessageBox anclado en píxeles de escena).
 const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
 const _MSG_BAR_SAFE_MARGIN_PX := 2.0
 const _MSG_BAR_HEIGHT_PX := 96.0
+## Ancho del panel Box en PCUI.tscn (offset_left/right 185→509).
+const _PC_MSG_LEFT_PX := 185.0
+const _PC_MSG_RIGHT_PX := 509.0
+const _PC_CHOICE_GAP_ABOVE_MSG_PX := 8.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
 ## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
 const _UI_FADE_COVER_Z: int = 220
@@ -535,6 +543,7 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	var cfg := config.duplicate()
 	if not "frameStyle" in cfg:
 		cfg["frameStyle"] = MessageBoxFrameStyle.Values.HGSS
+	var used_pc_layout := _push_pc_msg_layout_if_needed()
 	# Si hay choices abiertos, no deben consumir el mismo ui_accept que el MessageBox.
 	var paused_choices := false
 	if choice_box != null and choice_box.visible:
@@ -543,6 +552,10 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	await msg.show_custom(text, cfg)
 	if paused_choices and choice_box != null and choice_box.visible:
 		choice_box.set_menu_input_enabled(true)
+	# Si el mensaje se cerró solo (closeAtEnd), restaurar layout del PC.
+	if used_pc_layout and msg != null and not msg.visible:
+		_pop_pc_msg_layout()
+
 
 func _show_choices(options: Array[String], close_at_end: bool = true) -> int:
 	if options.is_empty():
@@ -582,6 +595,8 @@ func _push_corner_choice_layout(anchor: ChoiceBox.ChoiceAnchor) -> void:
 	_corner_choice_layout_saved = true
 	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	if _is_pc_ui_open():
+		choice_box.set_extra_bottom_inset(_pc_choice_bottom_clearance())
 	choice_box.set_corner_anchor(anchor)
 
 
@@ -591,8 +606,80 @@ func _pop_corner_choice_layout() -> void:
 	_restore_choice_box_layout(_corner_choice_saved_layout)
 	if choice_box != null:
 		choice_box.clear_corner_anchor()
+		choice_box.clear_extra_bottom_inset()
 	_corner_choice_saved_layout = {}
 	_corner_choice_layout_saved = false
+
+
+func _is_pc_ui_open() -> bool:
+	return _pc_ui != null and _pc_ui.visible
+
+
+func _pc_choice_bottom_clearance() -> float:
+	var gap: float = _PC_CHOICE_GAP_ABOVE_MSG_PX
+	if msg != null and msg.visible and msg.size.y > 8.0:
+		return msg.size.y + gap
+	return _MSG_BAR_HEIGHT_PX + gap
+
+
+func _push_pc_msg_layout_if_needed() -> bool:
+	if not _is_pc_ui_open() or msg == null:
+		return _pc_msg_layout_saved
+	if _pc_msg_layout_saved:
+		# El tema puede reescribir el scroll; reajustar al ancho estrecho sin tocar la altura.
+		msg.fit_scroll_width_to_panel()
+		return true
+	_pc_msg_saved_layout = _snapshot_msg_panel_layout()
+	if msg.scroll != null:
+		_pc_msg_saved_scroll = {
+			"left": msg.scroll.offset_left,
+			"right": msg.scroll.offset_right,
+			"top": msg.scroll.offset_top,
+			"bottom": msg.scroll.offset_bottom,
+		}
+	_apply_pc_msg_box_rect()
+	_pc_msg_layout_saved = true
+	return true
+
+
+func _apply_pc_msg_box_rect() -> void:
+	if msg == null:
+		return
+	var vh: float = _MSG_VIEWPORT_BASE.y
+	var bar_h: float = _MSG_BAR_HEIGHT_PX
+	var left_x: float = _PC_MSG_LEFT_PX
+	var right_x: float = _PC_MSG_RIGHT_PX
+	var bar_w: float = right_x - left_x
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(bar_w, bar_h)
+	msg.offset_left = left_x
+	msg.offset_top = vh - bar_h
+	msg.offset_right = right_x
+	msg.offset_bottom = vh
+	msg.size = Vector2(bar_w, bar_h)
+	msg.fit_scroll_width_to_panel()
+
+
+func _pop_pc_msg_layout() -> void:
+	if not _pc_msg_layout_saved or msg == null:
+		_pc_msg_layout_saved = false
+		return
+	_restore_msg_panel_layout(_pc_msg_saved_layout)
+	if msg.scroll != null and not _pc_msg_saved_scroll.is_empty():
+		msg.scroll.offset_left = float(_pc_msg_saved_scroll.get("left", 32.0))
+		msg.scroll.offset_right = float(_pc_msg_saved_scroll.get("right", 465.0))
+		msg.scroll.offset_top = float(_pc_msg_saved_scroll.get("top", 16.0))
+		msg.scroll.offset_bottom = float(_pc_msg_saved_scroll.get("bottom", 79.0))
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
+	_pc_msg_saved_layout = {}
+	_pc_msg_saved_scroll = {}
+	_pc_msg_layout_saved = false
 
 
 func _show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true, close_choices_at_end: bool = true) -> int:
@@ -618,6 +705,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	# closeAtEnd: false para mantener el mensaje visible cuando se muestren las opciones
 	# Iniciar show_custom y esperar a que termine
 	# frameStyle: HGSS (0) por defecto para aplicar el tema y mostrar el icono
+	_push_pc_msg_layout_if_needed()
 	await msg.show_custom(text, {
 		"waitInput": true,  # true para esperar input entre líneas
 		"closeAtEnd": false,
@@ -652,6 +740,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 		msg.hide()
 		msg.clear()
 		msg.restore_expanded_height()
+		_pop_pc_msg_layout()
 
 	return selected_index
 
@@ -660,6 +749,7 @@ func _close_message() -> void:
 		msg.hide()
 		msg.clear()
 		msg.restore_expanded_height()
+	_pop_pc_msg_layout()
 
 func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
@@ -1273,6 +1363,8 @@ func _open_pc_ui(
 	# Cubrir también MSG/ChoiceBox mientras se restaura el menú de BILL.
 	fade_layer.z_index = _UI_FADE_COVER_Z
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	_close_message()
+	_close_choices()
 	if _pc_ui.visible:
 		_pc_ui.hide()
 	_on_ui_visibility_changed()
