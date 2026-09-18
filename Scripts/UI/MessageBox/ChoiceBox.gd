@@ -13,6 +13,7 @@ enum ChoiceAnchor {
 	TOP_RIGHT,
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT,
+	MIDDLE_RIGHT,
 	PARTY_MENU,
 	BAG_TOP_LEFT,
 }
@@ -180,6 +181,12 @@ func _apply_sized_panel_layout(panel_width: float, panel_height: float) -> void:
 			offset_left = offset_right - panel_width
 			offset_bottom = vp.y - mb
 			offset_top = offset_bottom - panel_height
+		ChoiceAnchor.MIDDLE_RIGHT:
+			var mr2 := CORNER_INSET_RIGHT * s.x
+			offset_right = vp.x - mr2
+			offset_left = offset_right - panel_width
+			offset_top = (vp.y - panel_height) * 0.5
+			offset_bottom = offset_top + panel_height
 	_base_offset_right = offset_right
 	_base_offset_bottom = offset_bottom
 

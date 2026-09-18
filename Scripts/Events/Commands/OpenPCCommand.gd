@@ -119,56 +119,17 @@ func _open_bill_pc() -> void:
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 	})
 
-	while true:
-		var choice: int = await _prompt_bill_menu()
-		if choice < 0 or choice == BillOption.SEE_YA:
-			break
-		match choice:
-			BillOption.WITHDRAW:
-				await DisplayManager.open_pc(PCUI.Mode.WITHDRAW)
-			BillOption.DEPOSIT:
-				await DisplayManager.open_pc(PCUI.Mode.DEPOSIT)
-			BillOption.MOVE:
-				await DisplayManager.open_pc(PCUI.Mode.MOVE)
-			BillOption.MOVE_ITEMS:
-				await DisplayManager.open_pc(PCUI.Mode.MOVE_ITEMS)
-
-
-func _is_party_full() -> bool:
-	if GameStateService == null:
-		return false
-	var party: Party = GameStateService.get_party()
-	return party != null and party.is_full()
-
-
-func _prompt_bill_menu() -> int:
 	var dm := DisplayManager.instance
 	if dm == null or dm.choice_box == null:
-		return -1
+		return
 	var cb: ChoiceBox = dm.choice_box
-
-	await DisplayManager.show_message(BILL_HELP[0], {
-		"waitInput": false,
-		"closeAtEnd": false,
-		"showIconAtEnd": false,
-		"typingMode": MessageBox.TypingMode.INSTANT,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
-	})
-	DisplayManager.set_message_help_instant(BILL_HELP[0])
 
 	var on_change := func(idx: int) -> void:
 		if idx >= 0 and idx < BILL_HELP.size():
 			DisplayManager.set_message_help_instant(BILL_HELP[idx])
 
-	if not cb.selection_changed.is_connected(on_change):
-		cb.selection_changed.connect(on_change)
-
-	# close_at_end=false: el menú permanece abierto (errores inline, p. ej. equipo lleno).
-	var selected: int = await DisplayManager.show_choices_corner(
-		BILL_OPTIONS,
-		ChoiceBox.ChoiceAnchor.TOP_LEFT,
-		false
-	)
+	await _show_bill_menu(cb, on_change, 0)
+	var selected: int = await DisplayManager.await_choices(false)
 
 	while true:
 		if selected < 0 or selected == BillOption.SEE_YA:
@@ -186,17 +147,63 @@ func _prompt_bill_menu() -> int:
 			selected = await DisplayManager.await_choices(false)
 			continue
 
+		# El ChoiceBox es único: cerrarlo bajo el negro al abrir el PC; restaurarlo al salir.
 		if cb.selection_changed.is_connected(on_change):
 			cb.selection_changed.disconnect(on_change)
-		DisplayManager.close_choices()
-		DisplayManager.close_message()
-		return selected
+		var restore_idx := selected
+		DisplayManager.set_choice_input_enabled(false)
+
+		var cleanup := func() -> void:
+			DisplayManager.close_choices()
+			DisplayManager.close_message()
+
+		var prepare := _prepare_bill_menu_after_pc.bind(cb, on_change, restore_idx)
+
+		match selected:
+			BillOption.WITHDRAW:
+				await DisplayManager.open_pc(PCUI.Mode.WITHDRAW, 0, prepare, cleanup)
+			BillOption.DEPOSIT:
+				await DisplayManager.open_pc(PCUI.Mode.DEPOSIT, 0, prepare, cleanup)
+			BillOption.MOVE:
+				await DisplayManager.open_pc(PCUI.Mode.MOVE, 0, prepare, cleanup)
+			BillOption.MOVE_ITEMS:
+				await DisplayManager.open_pc(PCUI.Mode.MOVE_ITEMS, 0, prepare, cleanup)
+
+		selected = await DisplayManager.await_choices(false)
 
 	if cb.selection_changed.is_connected(on_change):
 		cb.selection_changed.disconnect(on_change)
 	DisplayManager.close_choices()
 	DisplayManager.close_message()
-	return selected
+
+
+func _prepare_bill_menu_after_pc(cb: ChoiceBox, on_change: Callable, restore_idx: int) -> void:
+	await _show_bill_menu(cb, on_change, restore_idx)
+	DisplayManager.set_choice_input_enabled(false)
+
+
+func _is_party_full() -> bool:
+	if GameStateService == null:
+		return false
+	var party: Party = GameStateService.get_party()
+	return party != null and party.is_full()
+
+
+func _show_bill_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> void:
+	var idx := clampi(initial_idx, 0, BILL_OPTIONS.size() - 1)
+	if not cb.selection_changed.is_connected(on_change):
+		cb.selection_changed.connect(on_change)
+	cb.set_next_initial_index(idx)
+	await DisplayManager.show_message(BILL_HELP[idx], {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+	})
+	DisplayManager.set_message_help_instant(BILL_HELP[idx])
+	DisplayManager.hide_message_wait_indicator()
+	await DisplayManager.open_choices_corner(BILL_OPTIONS, ChoiceBox.ChoiceAnchor.TOP_LEFT)
 
 
 func _show_stub(label: String) -> void:

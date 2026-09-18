@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://c4llr0gst3evk" path="res://Sprites/Batalla/007.png" id="7_8uxdb"]
 [ext_resource type="Texture2D" uid="uid://k6b55hyq3npq" path="res://Sprites/UI/PC/markings.png" id="8_p1yev"]
 [ext_resource type="Texture2D" uid="uid://c2xah24st4soy" path="res://Sprites/UI/PC/overlay_party.png" id="11_pe5e7"]
+[ext_resource type="Texture2D" uid="uid://bako7smqe7842" path="res://Sprites/UI/PC/cursor_point_1.png" id="12_cursor1"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ii1ck"]
 texture = ExtResource("1_3fq3p")
@@ -81,10 +82,10 @@ metadata/_edit_lock_ = true
 [node name="Nivel" parent="Info" unique_id=1009905287 instance=ExtResource("4_x0imx")]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 0
-offset_left = 30.0
-offset_top = 234.0
-offset_right = 70.0
-offset_bottom = 264.0
+offset_left = 31.0
+offset_top = 232.0
+offset_right = 71.0
+offset_bottom = 262.0
 theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
 theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
 text = "[left]100"
@@ -208,6 +209,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Cursor" type="Sprite2D" parent="Box" unique_id=1619042100]
+z_index = 10
+position = Vector2(10, -2)
+texture = ExtResource("12_cursor1")
+centered = false
 
 [node name="Party" type="Panel" parent="." unique_id=1529603566]
 visible = false

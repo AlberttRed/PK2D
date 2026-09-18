@@ -159,6 +159,7 @@ func _seed_test_party_placeholder() -> void:
 	var player_party: Party = get_party()
 	if player_party.count() > 0:
 		_assign_test_capture_balls(player_party)
+		_assign_test_held_items_party(player_party)
 		return
 	# [species_id, level] — 4 en equipo (hueco libre para SACAR del PC).
 	var test_mons: Array[Vector2i] = [
@@ -193,6 +194,7 @@ func _seed_test_party_placeholder() -> void:
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON
+	_assign_test_held_items_party(player_party)
 
 
 ## Llena la caja 0 del PC (30 slots) como en la captura de referencia:
@@ -202,8 +204,9 @@ func _seed_test_pc_box_full() -> void:
 	if storage == null:
 		return
 	if storage.get_occupied_count() > 0:
+		_assign_test_held_items_pc(storage)
 		return
-	# Misma secuencia que AlmacenamientoPkm.webp (Caja 3 de la captura).
+	# Misma secuencia que AlmacenamientoPkm.webp (contenido de referencia).
 	var species_ids: Array[int] = [
 		61, 62, 63, 64, 65, 66,  # Poliwhirl … Machop
 		67, 68, 69, 70, 71, 72,  # Machoke … Tentacool
@@ -227,8 +230,41 @@ func _seed_test_pc_box_full() -> void:
 		mon.captured_ball_id = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
 		if storage.set_pokemon(0, slot, mon):
 			added += 1
-	storage.set_box_name(0, "CAJA 3")
+	storage.set_box_name(0, "CAJA 1")
 	print("GameStateService: PC caja de prueba (ref) con %d Pokémon." % added)
+	_assign_test_held_items_pc(storage)
+
+
+## Objetos held de prueba (MOVER OBJETOS / PC). Sin integrar aún el flujo completo de held items.
+func _assign_test_held_items_party(party: Party) -> void:
+	if party == null:
+		return
+	# Squirtle → Restos; Charmander → Banda Focus. Bulbasaur/Pikachu sin objeto.
+	var held_by_slot: Dictionary = {1: 211, 2: 252}
+	for slot in held_by_slot.keys():
+		var mon: Pokemon = party.get_pokemon(int(slot))
+		if mon == null:
+			continue
+		mon.held_item_id = int(held_by_slot[slot])
+
+
+func _assign_test_held_items_pc(storage) -> void:
+	if storage == null:
+		return
+	# Algunos slots de la caja 0 con held item (resto semitransparente en MOVER OBJETOS).
+	var held_by_slot: Dictionary = {
+		0: 211,   # Restos
+		3: 132,   # Baya Aranja
+		7: 252,   # Banda Focus
+		12: 219,  # Imán
+		20: 226,  # Carbón
+		25: 216,  # Semilla Milagro
+	}
+	for slot in held_by_slot.keys():
+		var mon: Pokemon = storage.get_pokemon(0, int(slot))
+		if mon == null:
+			continue
+		mon.held_item_id = int(held_by_slot[slot])
 
 
 ## Alterna Poké Ball / Super Ball en el party de prueba (validar summary).

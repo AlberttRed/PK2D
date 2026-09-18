@@ -81,6 +81,8 @@ const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
 const _MSG_BAR_SAFE_MARGIN_PX := 2.0
 const _MSG_BAR_HEIGHT_PX := 96.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
+## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
+const _UI_FADE_COVER_Z: int = 220
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -301,11 +303,34 @@ static func hide_message_wait_indicator() -> void:
 	instance.msg.hide_wait_indicator()
 
 ## Abre la UI del PC (cajas). `mode` = PCUI.Mode. Espera hasta cerrar.
-static func open_pc(mode: int = 0, box_index: int = 0) -> void:
+## `prepare_before_reveal`: Callable async; en negro tras cerrar el PC (p. ej. restaurar menú BILL).
+## `cleanup_under_cover`: Callable async; en negro al abrir, antes de montar el PC (p. ej. cerrar choices).
+static func open_pc(
+	mode: int = 0,
+	box_index: int = 0,
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
-	await instance._open_pc_ui(mode, box_index)
+	await instance._open_pc_ui(mode, box_index, prepare_before_reveal, cleanup_under_cover)
+
+
+## Abre el ChoiceBox en esquina sin esperar selección (`close_choices` / `await_choices` después).
+static func open_choices_corner(options: Array[String], anchor: ChoiceBox.ChoiceAnchor) -> bool:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return false
+	if options.is_empty():
+		push_error("DisplayManager.open_choices_corner: opciones vacías")
+		return false
+	if anchor == ChoiceBox.ChoiceAnchor.PARTY_MENU or anchor == ChoiceBox.ChoiceAnchor.BAG_TOP_LEFT:
+		push_error("DisplayManager.open_choices_corner: usa el flujo de party/mochila.")
+		return false
+	if anchor != ChoiceBox.ChoiceAnchor.SCENE_DEFAULT:
+		instance._push_corner_choice_layout(anchor)
+	return await instance.choice_box.open_choices_keep_open(options)
 
 ## Hace fade out (de visible a negro)
 static func fade_out(duration: float = 0.3) -> void:
@@ -626,6 +651,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	if close_at_end:
 		msg.hide()
 		msg.clear()
+		msg.restore_expanded_height()
 
 	return selected_index
 
@@ -633,6 +659,7 @@ func _close_message() -> void:
 	if msg.visible:
 		msg.hide()
 		msg.clear()
+		msg.restore_expanded_height()
 
 func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
@@ -1216,7 +1243,12 @@ func _await_ui_control_hidden(ctrl: Control) -> void:
 		await get_tree().process_frame
 
 
-func _open_pc_ui(mode: int = 0, box_index: int = 0) -> void:
+func _open_pc_ui(
+	mode: int = 0,
+	box_index: int = 0,
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
 	if _pc_ui == null:
 		push_error("DisplayManager: Nodo PCUI no disponible en la escena.")
 		return
@@ -1227,17 +1259,27 @@ func _open_pc_ui(mode: int = 0, box_index: int = 0) -> void:
 	if _bag_ui != null and _bag_ui.visible:
 		return
 
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	if cleanup_under_cover.is_valid():
+		await cleanup_under_cover.call()
 	_pc_ui.setup(null)
 	_pc_ui.open(mode as PCUI.Mode, box_index)
 	_on_ui_visibility_changed()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
 	await _pc_ui.closed
+	# Cubrir también MSG/ChoiceBox mientras se restaura el menú de BILL.
+	fade_layer.z_index = _UI_FADE_COVER_Z
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	if _pc_ui.visible:
 		_pc_ui.hide()
 	_on_ui_visibility_changed()
+	if prepare_before_reveal.is_valid():
+		await prepare_before_reveal.call()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
 
 
 func _on_pc_ui_closed() -> void:
