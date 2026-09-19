@@ -3026,8 +3026,7 @@ func _open_move_items_menu() -> void:
 			0:
 				_try_start_take_item()
 			1:
-				# MOCHILA: pendientes held items.
-				pass
+				await _send_mon_item_to_bag(mon)
 			2:
 				await _show_held_item_info(mon)
 			_:
@@ -3038,6 +3037,77 @@ func _open_move_items_menu() -> void:
 				await _give_held_item_from_bag()
 			_:
 				pass  # SALIR
+
+
+## MOVE_ITEMS → MOCHILA: held del mon → bag (encoge + "Ya está en la MOCHILA.").
+func _send_mon_item_to_bag(mon: Pokemon) -> void:
+	if mon == null or mon.held_item_id <= 0:
+		return
+	if GameStateService == null or DatabaseService == null:
+		return
+	var item_id := mon.held_item_id
+	_input_enabled = false
+
+	var bag: Bag = GameStateService.get_bag()
+	var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
+	if bag == null or item_data == null:
+		_input_enabled = true
+		return
+
+	var stack_limit := int(item_data.stack_limit)
+	if stack_limit > 0 and bag.get_quantity(item_id) >= stack_limit:
+		await DisplayManager.show_message("La MOCHILA está llena.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		})
+		if visible:
+			_input_enabled = true
+		return
+
+	# Encoger el icono del objeto en el slot (mismo feel que soltar a la mochila).
+	_item_preview_suppress_pop = true
+	_refresh_item_preview()
+	if _item_preview != null and is_instance_valid(_item_preview) and _item_preview.visible:
+		await _animate_release_shrink(_item_preview, ITEM_BAG_SHRINK_TIME)
+	if not visible:
+		return
+
+	if bag.add_item(item_id, 1) <= 0:
+		await DisplayManager.show_message("La MOCHILA está llena.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		})
+		_refresh_item_preview()
+		if visible:
+			_input_enabled = true
+		return
+
+	mon.held_item_id = 0
+	_hide_item_preview()
+	refresh()
+	_refresh_info_panel()
+	_refresh_item_preview()
+
+	await DisplayManager.show_message("Ya está en la MOCHILA.", {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"playConfirmSound": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"expandHeight": true,
+	})
+	if visible:
+		_input_enabled = true
 
 
 ## Abre la mochila, elige un objeto y se lo asigna al mon bajo el cursor (OBJETO / DAR).
