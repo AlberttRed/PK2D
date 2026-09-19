@@ -25,8 +25,8 @@
 [ext_resource type="Texture2D" uid="uid://bd6qlu35cd6ak" path="res://Sprites/Overworlds/Characters/Pokemon 03.png" id="23_hoq1i"]
 [ext_resource type="Script" uid="uid://yevlmfdmhfhn" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="24_aaslx"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="24_p413b"]
+[ext_resource type="Script" uid="uid://coqr8i34fqjyy" path="res://Scripts/Events/Commands/OpenPCCommand.gd" id="25_openpc"]
 [ext_resource type="Script" uid="uid://x5n6m43woa33" path="res://Scripts/Events/Commands/PokemonCenterHealCommand.gd" id="25_pcheal"]
-[ext_resource type="Script" uid="uid://vzr46spd8qwrs" path="res://Scripts/Events/Commands/OpenPCCommand.gd" id="25_openpc"]
 [ext_resource type="Script" uid="uid://df5ec264to6uq" path="res://Scripts/Events/Commands/SetRespawnCommand.gd" id="26_setrp"]
 [ext_resource type="Script" uid="uid://cg8k2pm5n7qrt" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="27_uwtg1"]
 [ext_resource type="Script" uid="uid://ylkiydorpj8u" path="res://Scripts/Events/Conditions/EventCondition.gd" id="28_bq1xk"]
@@ -36,6 +36,9 @@
 [ext_resource type="Script" uid="uid://dpmp7j5ersp8t" path="res://Scripts/Events/Conditions/VariableCondition.gd" id="30_hauiv"]
 [ext_resource type="Script" uid="uid://bprbbdhn4jhfb" path="res://Scripts/Events/Conditions/GroupCondition.gd" id="31_726or"]
 [ext_resource type="Script" uid="uid://bo2o8u1n57ga5" path="res://Scripts/Events/Triggers/AutorunTrigger.gd" id="32_fjq7u"]
+[ext_resource type="AudioStream" uid="uid://dy0rtwu6u3e8k" path="res://Audio/SE/PC open.ogg" id="36_oib3l"]
+[ext_resource type="Texture2D" uid="uid://c4qyllj8c33qt" path="res://Sprites/Eventos/PC opening.png" id="37_whqti"]
+[ext_resource type="AudioStream" uid="uid://n2lt446cyk1g" path="res://Audio/SE/PC close.ogg" id="38_qt1r8"]
 [ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
 [ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
 [ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
@@ -623,17 +626,90 @@ trigger = SubResource("Resource_d1f5e")
 commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_setrp_cp"), SubResource("Resource_dcvci"), SubResource("Resource_6ldqv"), SubResource("Resource_nsowf"), SubResource("Resource_8ikdk")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_qt1r8"]
+[sub_resource type="Resource" id="Resource_chkoc"]
+script = ExtResource("99_plays")
+sound = ExtResource("36_oib3l")
+volume_db = 10.0
+
+[sub_resource type="Resource" id="Resource_lgfut"]
+script = ExtResource("27_uwtg1")
+animation_name = "power_on"
+
+[sub_resource type="Resource" id="Resource_54mcx"]
 script = ExtResource("25_openpc")
 
-[sub_resource type="Resource" id="Resource_jeris"]
+[sub_resource type="Resource" id="Resource_ysm4x"]
+script = ExtResource("99_plays")
+sound = ExtResource("38_qt1r8")
+volume_db = 10.0
+
+[sub_resource type="Resource" id="Resource_cip5i"]
+script = ExtResource("27_uwtg1")
+animation_name = "power_off"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kj7dr"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3v0b4"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yqr64"]
+atlas = ExtResource("37_whqti")
+region = Rect2(32, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6oj0v"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7eei"]
+atlas = ExtResource("37_whqti")
+region = Rect2(32, 0, 32, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qiyfk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kj7dr")
+}],
+"loop": 0,
+"name": &"power_off",
+"speed": 7.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v0b4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yqr64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6oj0v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7eei")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v0b4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7eei")
+}],
+"loop": 0,
+"name": &"power_on",
+"speed": 7.5
+}]
+
+[sub_resource type="Resource" id="Resource_lsa0u"]
 script = ExtResource("15_103ep")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_o0bdg"]
+[sub_resource type="Resource" id="Resource_po5os"]
 script = ExtResource("5_vsbsi")
-trigger = SubResource("Resource_jeris")
-commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_qt1r8")])
+trigger = SubResource("Resource_lsa0u")
+commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_chkoc"), SubResource("Resource_lgfut"), SubResource("Resource_54mcx"), SubResource("Resource_ysm4x"), SubResource("Resource_cip5i")])
+sprite_frames = SubResource("SpriteFrames_qiyfk")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_qnur6"]
@@ -724,6 +800,19 @@ script = ExtResource("5_vsbsi")
 trigger = SubResource("Resource_o40n5")
 sprite_texture = ExtResource("21_p413b")
 is_spritesheet = true
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_qt1r8"]
+script = ExtResource("25_openpc")
+
+[sub_resource type="Resource" id="Resource_jeris"]
+script = ExtResource("15_103ep")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_o0bdg"]
+script = ExtResource("5_vsbsi")
+trigger = SubResource("Resource_jeris")
+commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_qt1r8")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_cvx7x"]
@@ -1308,7 +1397,7 @@ pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_063o8")])
 
 [node name="PC" parent="OverworldGrid/Events" unique_id=98522863 instance=ExtResource("4_wv4mj")]
 position = Vector2(-784, -528)
-pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_o0bdg")])
+pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_po5os")])
 
 [node name="Mapa1" parent="OverworldGrid/Events" unique_id=312325009 instance=ExtResource("4_wv4mj")]
 position = Vector2(-752, -528)

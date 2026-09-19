@@ -205,6 +205,10 @@ func _on_player_control_blocked() -> void:
 
 ## Maneja el desbloqueo del control del jugador
 func _on_player_control_unblocked() -> void:
+	# UI (mochila/party/pausa) emite unblock al cerrar; no debe pisar un bloqueo de evento.
+	if _control_block_count > 0:
+		movement_enabled = false
+		return
 	set_movement_enabled(true)
 
 func set_facing_direction(new_direction:Vector2):

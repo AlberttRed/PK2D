@@ -51,6 +51,9 @@ var battle_shadow_size_override: int = -1
 
 @export_group("Otros")
 @export var held_item_id: int = 0
+## Marcas del PC (Gen 4+ con color): 6 formas × valor 0..3 (0 = gris/apagada).
+## Orden: círculo, triángulo, cuadrado, corazón, estrella, diamante.
+@export var markings: Array[int] = [0, 0, 0, 0, 0, 0]
 
 @export_group("Moveset (Movimientos)")
 ## Define hasta 4 movimientos personalizados (IDs).
@@ -927,6 +930,56 @@ func hasItemEquipped(item_id: int) -> bool:
 	return held_item_id == item_id
 
 
+const MARKING_COUNT: int = 6
+const MARKING_COLOR_COUNT: int = 4
+
+
+func ensure_markings_size() -> void:
+	while markings.size() < MARKING_COUNT:
+		markings.append(0)
+	if markings.size() > MARKING_COUNT:
+		markings.resize(MARKING_COUNT)
+	for i in range(MARKING_COUNT):
+		markings[i] = clampi(int(markings[i]), 0, MARKING_COLOR_COUNT - 1)
+
+
+func get_marking(index: int) -> int:
+	ensure_markings_size()
+	if index < 0 or index >= MARKING_COUNT:
+		return 0
+	return int(markings[index])
+
+
+func set_marking(index: int, color: int) -> void:
+	ensure_markings_size()
+	if index < 0 or index >= MARKING_COUNT:
+		return
+	markings[index] = clampi(color, 0, MARKING_COLOR_COUNT - 1)
+
+
+func cycle_marking(index: int) -> int:
+	var next_color := (get_marking(index) + 1) % MARKING_COLOR_COUNT
+	set_marking(index, next_color)
+	return next_color
+
+
+func get_markings_copy() -> Array[int]:
+	ensure_markings_size()
+	var out: Array[int] = []
+	for i in range(MARKING_COUNT):
+		out.append(int(markings[i]))
+	return out
+
+
+func set_markings_from(values: Array) -> void:
+	ensure_markings_size()
+	for i in range(MARKING_COUNT):
+		if i < values.size():
+			markings[i] = clampi(int(values[i]), 0, MARKING_COLOR_COUNT - 1)
+		else:
+			markings[i] = 0
+
+
 const SERIALIZE_VERSION: int = 1
 
 
@@ -967,6 +1020,7 @@ func to_serializable_state() -> Dictionary:
 		"ability_id": int(ability_id),
 		"ability_slot": ability_slot,
 		"held_item_id": held_item_id,
+		"markings": get_markings_copy(),
 		"custom_move_ids": move_ids,
 		"hp_actual": hp_actual,
 		"move_pp_actual": pp_snapshot,

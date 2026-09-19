@@ -25,6 +25,9 @@ signal selection_changed(index: int)
 ## Índice de la opción actualmente seleccionada
 var selected_index: int = 0
 
+## Si true, confirmar/cancelar no reproducen SFX (el caller lo gestiona).
+var suppress_confirm_sfx: bool = false
+
 ## Array de opciones disponibles
 var options: Array[String] = []
 
@@ -473,6 +476,8 @@ func _play_cursor_sound() -> void:
 	AudioManager.play_ui_cursor()
 
 func _play_select_sound() -> void:
+	if suppress_confirm_sfx:
+		return
 	AudioManager.play_ui_select()
 
 func _play_cancel_sound() -> void:

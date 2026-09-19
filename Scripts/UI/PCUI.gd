@@ -26,6 +26,16 @@ const _SEL_USE_CURRENT: int = -100
 const PARTY_SLOT_COUNT: int = 6
 ## Índice del botón SALIR dentro del panel Party (tras los 6 slots).
 const SEL_PARTY_EXIT: int = 6
+## Panel Marks: 0..5 formas, 6 confirmar, 7 cancelar.
+const MARKS_SHAPE_COUNT: int = 6
+const MARKS_SEL_CONFIRM: int = 6
+const MARKS_SEL_CANCEL: int = 7
+const MARKS_COLS: int = 3
+const MARKINGS_TEX: Texture2D = preload("res://Sprites/UI/PC/markings.png")
+## Separación horizontal entre iconos en Info/Markings.
+const INFO_MARK_SPACING := 16.0
+## Ajuste de la mano en el panel Marks (dedo sobre el símbolo / botón).
+const MARKS_CURSOR_NUDGE := Vector2(16, 0)
 
 ## Centro del slot 0 — calibrado con el Sprite2D de ejemplo en la escena.
 @export var grid_origin: Vector2 = Vector2(42, 62)
@@ -64,7 +74,6 @@ const ITEM_PREVIEW_SCALE := 0.6
 const ITEM_HELD_SCALE := 0.8
 ## Desplazamiento de la mano entre slots / chrome.
 const CURSOR_SLIDE_TIME := 0.24
-const ITEM_PREVIEW_SLIDE_TIME := CURSOR_SLIDE_TIME
 ## Aparición / encogido del icono de objeto: mismo tiempo que el slide de la mano.
 const ITEM_PREVIEW_POP_TIME := CURSOR_SLIDE_TIME
 ## Mantener dirección: espera antes del 1er repeat, luego slide + pequeño hueco.
@@ -74,6 +83,20 @@ const ITEM_HAND_TRAVEL := 0.28
 const ITEM_SWAP_TRAVEL := 0.4
 const RELEASE_SHRINK_TIME := 1.5
 const ITEM_BAG_SHRINK_TIME := 0.75
+## Flechas del panel SALTAR / Box (cada una hacia su lado; al final teleport).
+const CHOOSE_ARROW_BOB_PX := 6.0
+## Segundos por ciclo (~25% más lento que el doble de velocidad).
+const CHOOSE_ARROW_BOB_PERIOD := 0.367
+## Nudge de ArrowL/R al cambiar de caja desde el nombre.
+const BOX_ARROW_NUDGE_PX := 5.0
+const BOX_ARROW_NUDGE_TIME := 0.12
+const BOX_WALLPAPER_PATH := "res://Sprites/UI/PC/box_%d.png"
+const INFO_DEPIXEL_SHADER: Shader = preload("res://Shaders/UI/pc_sprite_depixel.gdshader")
+## Pasos de despixelado al enfocar un mon (FRLG).
+const INFO_DEPIXEL_STEPS: Array[float] = [16.0, 8.0, 4.0, 2.0, 1.0]
+const INFO_DEPIXEL_STEP_TIME := 0.055
+## Empuje inicial abajo-derecha; vuelve al rest durante el despixelado.
+const INFO_DEPIXEL_NUDGE := Vector2(4, 4)
 
 ## Centros de los 6 óvalos en overlay_party.png (medidos en el atlas).
 const PARTY_ICON_POS: Array[Vector2] = [
@@ -112,6 +135,8 @@ enum HandState {
 @onready var _party_panel: Panel = $Party
 @onready var _party_salir_label = $Party/Salir
 @onready var _cursor: Sprite2D = $Box/Cursor
+@onready var _box_arrow_l: Sprite2D = $Box/ArrowL
+@onready var _box_arrow_r: Sprite2D = $Box/ArrowR
 @onready var _box_panel: Panel = $Box
 @onready var _info_nickname = $Info/Nickname
 @onready var _info_gender: Sprite2D = $Info/Genero
@@ -119,6 +144,15 @@ enum HandState {
 @onready var _info_level = $Info/Nivel
 @onready var _info_lvl_icon: Sprite2D = $Info/lblNivel
 @onready var _info_markings: Sprite2D = $Info/Markings
+@onready var _marks_panel: Panel = $Marks
+@onready var _marks_confirm_label = $Marks/Confirmar
+@onready var _marks_cancel_label = $Marks/Cancelar
+var _marks_shape_sprites: Array[Sprite2D] = []
+@onready var _choose_panel: Panel = $Choose
+@onready var _choose_caja_label = $Choose/Caja
+@onready var _choose_espacio_label = $Choose/Espacio
+@onready var _choose_arrow1: Sprite2D = $Choose/Arrow1
+@onready var _choose_arrow2: Sprite2D = $Choose/Arrow2
 @onready var _info_type1: Sprite2D = $Info/Tipo1/dTipo1
 @onready var _info_type2_panel: Control = $Info/Tipo2
 @onready var _info_type2: Sprite2D = $Info/Tipo2/dTipo2
@@ -178,6 +212,34 @@ var _in_summary: bool = false
 var _box_clip: Control = null
 var _box_slide_tween: Tween = null
 var _box_sliding: bool = false
+## Editor de marcas (panel Marks).
+var _marks_open: bool = false
+var _marks_sel: int = 0
+var _marks_col: int = 0
+var _marks_draft: Array[int] = [0, 0, 0, 0, 0, 0]
+var _marks_target: Pokemon = null
+var _info_mark_sprites: Array[Sprite2D] = []
+## Panel SALTAR (elegir caja).
+var _choose_open: bool = false
+var _choose_box_index: int = 0
+var _choose_arrow_t: float = 0.0
+var _choose_arrow1_rest: Vector2 = Vector2.ZERO
+var _choose_arrow2_rest: Vector2 = Vector2.ZERO
+## Cache de texturas de fondo de caja (wallpaper_id → Texture2D).
+var _box_wallpaper_textures: Dictionary = {}
+## Modo FONDO: elegir wallpaper con ArrowL/R del Box.
+var _wallpaper_edit_open: bool = false
+var _wallpaper_edit_original: int = 0
+var _wallpaper_edit_current: int = 0
+var _box_arrow_l_rest: Vector2 = Vector2.ZERO
+var _box_arrow_r_rest: Vector2 = Vector2.ZERO
+var _wallpaper_arrow_t: float = 0.0
+var _box_arrow_nudge_tween: Tween = null
+var _info_depixel_mat: ShaderMaterial = null
+var _info_depixel_tween: Tween = null
+var _info_sprite_focus_id: int = 0
+var _info_sprite_rest: Vector2 = Vector2.ZERO
+var _info_sprite_rest_ready: bool = false
 
 
 func _ready() -> void:
@@ -190,14 +252,44 @@ func _ready() -> void:
 	_ensure_swap_sprite()
 	_ensure_item_preview()
 	_ensure_summary()
+	_ensure_info_mark_sprites()
 	_setup_box_clip()
+	_cache_marks_shape_sprites()
 	if _party_panel:
 		_party_rest_position = _party_panel.position
+		_party_panel.z_as_relative = false
+		_party_panel.z_index = 15
 		_party_panel.visible = false
 		_party_open = false
+	if _marks_panel:
+		_marks_panel.visible = false
+		_marks_open = false
+	if _choose_panel:
+		_choose_panel.visible = false
+		_choose_open = false
+		if _choose_arrow1:
+			_choose_arrow1_rest = _choose_arrow1.position
+		if _choose_arrow2:
+			_choose_arrow2_rest = _choose_arrow2.position
 	if _cursor:
 		_cursor.centered = false
+		_cursor.z_index = 20
+		_cursor.z_as_relative = false
 		_cursor.hide()
+	if _box_arrow_l:
+		_box_arrow_l_rest = _box_arrow_l.position
+	if _box_arrow_r:
+		_box_arrow_r_rest = _box_arrow_r.position
+
+
+func _cache_marks_shape_sprites() -> void:
+	_marks_shape_sprites.clear()
+	if _marks_panel == null:
+		return
+	for path in ["Circle", "Triangle", "Square", "Heart", "Star", "Diamond"]:
+		var n: Node = _marks_panel.get_node_or_null(path)
+		if n is Sprite2D:
+			_marks_shape_sprites.append(n as Sprite2D)
 
 
 func setup(_controller = null) -> void:
@@ -220,6 +312,9 @@ func open(mode: Mode = Mode.WITHDRAW, box_index: int = 0) -> void:
 		if _party_open:
 			_party_panel.move_to_front()
 	_release_held_visual(false)
+	_close_marks_panel(false)
+	_close_choose_panel(false)
+	_close_wallpaper_edit(false)
 	refresh()
 	_cursor_index = 0
 	_party_sel = 0
@@ -248,6 +343,9 @@ func close() -> void:
 	_kill_party_tween()
 	_kill_box_slide_tween()
 	_clear_selection_outline()
+	_close_marks_panel(false)
+	_close_choose_panel(false)
+	_close_wallpaper_edit(false)
 	if _party_panel:
 		_party_panel.visible = false
 		_party_panel.position = _party_rest_position
@@ -268,6 +366,10 @@ func close() -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	if _choose_open:
+		_process_choose_arrow_bob(delta)
+	if _wallpaper_edit_open:
+		_process_wallpaper_arrow_bob(delta)
 	match _hand_state:
 		HandState.GRABBING:
 			_process_grab(delta)
@@ -342,7 +444,14 @@ func _process_cursor_hold_repeat(delta: float) -> void:
 		return
 	_dir_hold_time = 0.0
 	_dir_repeat_ready = true
-	_move_cursor(dir.x, dir.y)
+	if _choose_open:
+		_move_choose_box(dir.x)
+	elif _wallpaper_edit_open:
+		_move_wallpaper_edit(dir.x)
+	elif _marks_open:
+		_move_marks_cursor(dir.x, dir.y)
+	else:
+		_move_cursor(dir.x, dir.y)
 
 
 func refresh() -> void:
@@ -359,6 +468,7 @@ func refresh() -> void:
 
 	_box_index = clampi(_box_index, 0, storage.get_box_count() - 1)
 	_set_box_name_text(storage.get_box_name(_box_index))
+	_apply_box_wallpaper(storage.get_box_wallpaper(_box_index))
 
 	var party_count := 0
 	if GameStateService != null:
@@ -410,7 +520,8 @@ func _apply_slot_positions() -> void:
 	for i in range(_slot_sprites.size()):
 		var col: int = i % COLS
 		var row: int = int(i / COLS)
-		_slot_sprites[i].position = grid_origin + Vector2(float(col) * cell_size.x, float(row) * cell_size.y)
+		var center := grid_origin + Vector2(float(col) * cell_size.x, float(row) * cell_size.y)
+		_slot_sprites[i].position = center
 
 
 func _ensure_party_slots() -> void:
@@ -461,7 +572,10 @@ func _refresh_party_icons() -> void:
 
 
 ## En MOVER OBJETOS: sin objeto → semitransparente; con objeto → opaco.
+## En FONDO: todos semitransparentes para ver el wallpaper.
 func _icon_modulate_for_pokemon(mon: Pokemon) -> Color:
+	if _wallpaper_edit_open:
+		return Color(1, 1, 1, 0.4)
 	if _mode != Mode.MOVE_ITEMS or mon == null:
 		return Color.WHITE
 	if mon.held_item_id > 0:
@@ -485,6 +599,33 @@ func _set_box_name_text(box_name: String) -> void:
 		_box_name_label.setText(box_name)
 	else:
 		_box_name_label.text = "[center]%s" % box_name
+
+
+func _get_box_wallpaper_texture(wallpaper_id: int) -> Texture2D:
+	var id := posmod(wallpaper_id, PCStorage.WALLPAPER_COUNT)
+	if _box_wallpaper_textures.has(id):
+		return _box_wallpaper_textures[id] as Texture2D
+	var path := BOX_WALLPAPER_PATH % id
+	var tex: Texture2D = load(path) as Texture2D
+	if tex != null:
+		_box_wallpaper_textures[id] = tex
+	return tex
+
+
+func _apply_box_wallpaper(wallpaper_id: int) -> void:
+	if _box_panel == null:
+		return
+	var tex := _get_box_wallpaper_texture(wallpaper_id)
+	if tex == null:
+		return
+	var current := _box_panel.get_theme_stylebox("panel")
+	var style: StyleBoxTexture
+	if current is StyleBoxTexture:
+		style = (current as StyleBoxTexture).duplicate() as StyleBoxTexture
+	else:
+		style = StyleBoxTexture.new()
+	style.texture = tex
+	_box_panel.add_theme_stylebox_override("panel", style)
 
 
 func _set_equipo_count(count: int) -> void:
@@ -538,6 +679,34 @@ func _setup_box_clip() -> void:
 	parent.move_child(_box_clip, idx)
 	_box_panel.reparent(_box_clip)
 	_box_panel.position = Vector2.ZERO
+	_detach_box_arrows_to_clip()
+
+
+## ArrowL/R quedan fijos en BoxClip; solo el panel (fondo) hace slide.
+func _detach_box_arrows_to_clip() -> void:
+	if _box_clip == null:
+		return
+	for arrow in [_box_arrow_l, _box_arrow_r]:
+		if arrow == null or not is_instance_valid(arrow):
+			continue
+		if arrow.get_parent() == _box_clip:
+			continue
+		# Misma posición local: Box está en (0,0) dentro del clip.
+		var local_pos: Vector2 = arrow.position
+		arrow.reparent(_box_clip, false)
+		arrow.position = local_pos
+		arrow.z_index = 5
+		arrow.z_as_relative = false
+	_raise_box_arrows()
+
+
+func _raise_box_arrows() -> void:
+	if _box_clip == null:
+		return
+	if _box_arrow_l != null and is_instance_valid(_box_arrow_l) and _box_arrow_l.get_parent() == _box_clip:
+		_box_clip.move_child(_box_arrow_l, -1)
+	if _box_arrow_r != null and is_instance_valid(_box_arrow_r) and _box_arrow_r.get_parent() == _box_clip:
+		_box_clip.move_child(_box_arrow_r, -1)
 
 
 func _kill_box_slide_tween() -> void:
@@ -557,7 +726,8 @@ func _attach_hand_to(parent: Node) -> void:
 		return
 	if _cursor != null and is_instance_valid(_cursor) and _cursor.get_parent() != parent:
 		_cursor.reparent(parent, false)
-		_cursor.z_index = 10
+		_cursor.z_index = 20
+		_cursor.z_as_relative = false
 	if _held_sprite != null and is_instance_valid(_held_sprite) and _held_sprite.get_parent() != parent:
 		_held_sprite.reparent(parent, false)
 		_held_sprite.z_index = 9
@@ -581,11 +751,14 @@ func _open_party_panel(
 	restore_input: bool = true,
 	keep_hand_pos: bool = false,
 	slide_time: float = PARTY_SLIDE_TIME,
-	attach_hand: bool = true
+	attach_hand: bool = true,
+	play_sfx: bool = true
 ) -> void:
 	if _party_panel == null or _party_open:
 		return
 	_input_enabled = false
+	if play_sfx:
+		_play_cursor_sound()
 	_kill_party_tween()
 	_party_open = true
 	_refresh_party_icons()
@@ -598,6 +771,8 @@ func _open_party_panel(
 		_party_sel = 0
 	var start_y: float = size.y
 	_party_panel.position = Vector2(_party_rest_position.x, start_y)
+	_party_panel.z_as_relative = false
+	_party_panel.z_index = 15
 	_party_panel.visible = true
 	_party_panel.move_to_front()
 	if attach_hand:
@@ -628,17 +803,21 @@ func _close_party_panel(
 	restore_input: bool = true,
 	focus_after: int = SEL_PARTY,
 	slide_time: float = PARTY_SLIDE_TIME,
-	snap_cursor: bool = true
+	snap_cursor: bool = true,
+	play_sfx: bool = true
 ) -> void:
 	if _party_panel == null or not _party_open:
 		return
 	_input_enabled = false
+	if play_sfx:
+		_play_cursor_sound()
 	_kill_party_tween()
 	# La mano no debe bajar con el panel: anclarla al Box manteniendo su sitio en pantalla.
 	if _box_panel:
 		if _cursor != null and is_instance_valid(_cursor):
 			_cursor.reparent(_box_panel, true)
-			_cursor.z_index = 10
+			_cursor.z_index = 20
+			_cursor.z_as_relative = false
 		if _held_sprite != null and is_instance_valid(_held_sprite):
 			_held_sprite.reparent(_box_panel, true)
 			_held_sprite.z_index = 9
@@ -673,7 +852,8 @@ func _attach_hand_keep_global(parent: Node) -> void:
 		return
 	if _cursor != null and is_instance_valid(_cursor) and _cursor.get_parent() != parent:
 		_cursor.reparent(parent, true)
-		_cursor.z_index = 10
+		_cursor.z_index = 20
+		_cursor.z_as_relative = false
 	if _held_sprite != null and is_instance_valid(_held_sprite) and _held_sprite.get_parent() != parent:
 		_held_sprite.reparent(parent, true)
 		_held_sprite.z_index = 9
@@ -802,12 +982,19 @@ func _refresh_info_panel() -> void:
 	_set_label_text(_info_level, str(mon.level))
 	if _info_lvl_icon:
 		_info_lvl_icon.show()
-	if _info_markings:
-		_info_markings.show()
+	_refresh_info_markings(mon)
 
 	if _info_sprite:
-		_info_sprite.texture = mon.get_battle_front_sprite()
-		_info_sprite.visible = _info_sprite.texture != null
+		var tex: Texture2D = mon.get_battle_front_sprite()
+		var focus_id := mon.get_instance_id()
+		_info_sprite.texture = tex
+		_info_sprite.visible = tex != null
+		if tex != null and focus_id != _info_sprite_focus_id:
+			_info_sprite_focus_id = focus_id
+			_play_info_sprite_depixel()
+		elif tex == null:
+			_info_sprite_focus_id = 0
+			_kill_info_depixel_tween()
 
 	if _info_gender:
 		match mon.gender:
@@ -880,14 +1067,17 @@ func _set_item_label_style(has_item: bool) -> void:
 
 
 func _clear_info_panel() -> void:
+	_info_sprite_focus_id = 0
+	_kill_info_depixel_tween()
+	_set_info_depixel_block(1.0)
+	_reset_info_sprite_pos()
 	_set_label_text(_info_nickname, "")
 	_set_label_text(_info_level, "")
 	_set_label_text(_info_ability, "")
 	_set_label_text(_info_item, "")
 	if _info_lvl_icon:
 		_info_lvl_icon.hide()
-	if _info_markings:
-		_info_markings.hide()
+	_hide_info_markings()
 	if _info_sprite:
 		_info_sprite.texture = null
 		_info_sprite.hide()
@@ -898,6 +1088,240 @@ func _clear_info_panel() -> void:
 		_info_type1.hide()
 	if _info_type2_panel:
 		_info_type2_panel.hide()
+
+
+func _ensure_info_sprite_rest() -> void:
+	if _info_sprite_rest_ready or _info_sprite == null:
+		return
+	_info_sprite_rest = _info_sprite.position
+	_info_sprite_rest_ready = true
+
+
+func _reset_info_sprite_pos() -> void:
+	_ensure_info_sprite_rest()
+	if _info_sprite != null and _info_sprite_rest_ready:
+		_info_sprite.position = _info_sprite_rest
+
+
+func _ensure_info_depixel_material() -> void:
+	if _info_sprite == null:
+		return
+	if _info_depixel_mat != null:
+		if _info_sprite.material != _info_depixel_mat:
+			_info_sprite.material = _info_depixel_mat
+		return
+	_info_depixel_mat = ShaderMaterial.new()
+	_info_depixel_mat.shader = INFO_DEPIXEL_SHADER
+	_info_depixel_mat.set_shader_parameter("block_size", 1.0)
+	_info_sprite.material = _info_depixel_mat
+	_info_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+
+func _set_info_depixel_block(block: float) -> void:
+	_ensure_info_depixel_material()
+	if _info_depixel_mat == null:
+		return
+	var b := maxf(block, 1.0)
+	_info_depixel_mat.set_shader_parameter("block_size", b)
+	# Sin mosaico: quitar material para muestreo nativo del AtlasTexture.
+	if b <= 1.0 and _info_sprite != null:
+		_info_sprite.material = null
+
+
+func _kill_info_depixel_tween() -> void:
+	if _info_depixel_tween != null and is_instance_valid(_info_depixel_tween):
+		_info_depixel_tween.kill()
+	_info_depixel_tween = null
+
+
+func _play_info_sprite_depixel() -> void:
+	_ensure_info_depixel_material()
+	_ensure_info_sprite_rest()
+	_kill_info_depixel_tween()
+	if _info_sprite == null or _info_sprite.texture == null:
+		_set_info_depixel_block(1.0)
+		_reset_info_sprite_pos()
+		return
+	# Forzar material al arrancar (pudo haberse quitado al terminar el paso 1).
+	_info_sprite.material = _info_depixel_mat
+	_info_sprite.position = _info_sprite_rest + INFO_DEPIXEL_NUDGE
+	_set_info_depixel_block(INFO_DEPIXEL_STEPS[0])
+	var total_time := INFO_DEPIXEL_STEP_TIME * float(INFO_DEPIXEL_STEPS.size() - 1)
+	_info_depixel_tween = create_tween()
+	_info_depixel_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_info_depixel_tween.set_parallel(true)
+	_info_depixel_tween.tween_property(
+		_info_sprite, "position", _info_sprite_rest, total_time
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	for i in range(1, INFO_DEPIXEL_STEPS.size()):
+		var block: float = INFO_DEPIXEL_STEPS[i]
+		var delay := INFO_DEPIXEL_STEP_TIME * float(i)
+		_info_depixel_tween.tween_callback(_set_info_depixel_block.bind(block)).set_delay(delay)
+
+
+func _ensure_info_mark_sprites() -> void:
+	if _info_markings == null:
+		return
+	if _info_mark_sprites.size() == MARKS_SHAPE_COUNT:
+		return
+	# El nodo Markings actúa de ancla (posición de escena = centro de la tira 96px).
+	_info_markings.texture = null
+	for c in _info_markings.get_children():
+		if c is Sprite2D:
+			c.queue_free()
+	_info_mark_sprites.clear()
+	var start_x := -((MARKS_SHAPE_COUNT - 1) * INFO_MARK_SPACING) * 0.5
+	for i in range(MARKS_SHAPE_COUNT):
+		var spr := Sprite2D.new()
+		spr.name = "Mark%d" % i
+		spr.centered = true
+		spr.texture = MARKINGS_TEX
+		spr.hframes = 6
+		spr.vframes = 4
+		spr.position = Vector2(start_x + float(i) * INFO_MARK_SPACING, 0.0)
+		spr.frame = i
+		_info_markings.add_child(spr)
+		_info_mark_sprites.append(spr)
+
+
+func _marking_frame(shape: int, color: int) -> int:
+	return clampi(shape, 0, MARKS_SHAPE_COUNT - 1) + clampi(color, 0, Pokemon.MARKING_COLOR_COUNT - 1) * MARKS_SHAPE_COUNT
+
+
+func _apply_marking_frames(sprites: Array[Sprite2D], colors: Array) -> void:
+	for i in range(mini(sprites.size(), MARKS_SHAPE_COUNT)):
+		var color := 0
+		if i < colors.size():
+			color = clampi(int(colors[i]), 0, Pokemon.MARKING_COLOR_COUNT - 1)
+		sprites[i].frame = _marking_frame(i, color)
+
+
+func _refresh_info_markings(mon: Pokemon) -> void:
+	_ensure_info_mark_sprites()
+	if _info_markings == null:
+		return
+	_info_markings.show()
+	_apply_marking_frames(_info_mark_sprites, mon.get_markings_copy())
+
+
+func _hide_info_markings() -> void:
+	if _info_markings:
+		_info_markings.hide()
+
+
+func _apply_marks_panel_frames() -> void:
+	_apply_marking_frames(_marks_shape_sprites, _marks_draft)
+
+
+func _marks_cursor_position(sel: int = -1) -> Vector2:
+	var s := _marks_sel if sel < 0 else sel
+	var off := cursor_offset + MARKS_CURSOR_NUDGE
+	if s >= 0 and s < MARKS_SHAPE_COUNT and s < _marks_shape_sprites.size():
+		var spr: Sprite2D = _marks_shape_sprites[s]
+		if spr != null:
+			return spr.position + off
+	if s == MARKS_SEL_CONFIRM and _marks_confirm_label:
+		var r: Rect2 = _marks_confirm_label.get_rect()
+		return r.position + r.size * 0.5 + off
+	if s == MARKS_SEL_CANCEL and _marks_cancel_label:
+		var r2: Rect2 = _marks_cancel_label.get_rect()
+		return r2.position + r2.size * 0.5 + off
+	return Vector2(52, 46) + off
+
+
+func _open_marks_panel() -> void:
+	var mon: Pokemon = _get_cursor_pokemon()
+	if mon == null or _marks_panel == null:
+		return
+	_input_enabled = false
+	_reset_cursor_hold_repeat()
+	_marks_target = mon
+	_marks_draft = mon.get_markings_copy()
+	_marks_sel = 0
+	_marks_col = 0
+	_marks_open = true
+	_marks_panel.visible = true
+	_marks_panel.move_to_front()
+	_apply_marks_panel_frames()
+	_refresh_info_panel()
+	_attach_hand_to(_marks_panel)
+	_update_cursor_visual(false)
+	_input_enabled = true
+
+
+func _close_marks_panel(restore_hand: bool = true) -> void:
+	_marks_open = false
+	_marks_target = null
+	_marks_draft = [0, 0, 0, 0, 0, 0]
+	_marks_sel = 0
+	_marks_col = 0
+	if _marks_panel:
+		_marks_panel.visible = false
+	if not restore_hand:
+		return
+	if _party_open:
+		_attach_hand_to(_party_panel)
+	else:
+		_attach_hand_to(_box_panel)
+	_update_cursor_visual(false)
+	_refresh_info_panel()
+
+
+func _confirm_marks_panel() -> void:
+	_play_cursor_sound()
+	if _marks_target != null:
+		_marks_target.set_markings_from(_marks_draft)
+	_close_marks_panel(true)
+
+
+func _cancel_marks_panel() -> void:
+	_play_cursor_sound()
+	_close_marks_panel(true)
+
+
+func _move_marks_cursor(dx: int, dy: int) -> void:
+	var prev := _marks_sel
+	var sel := _marks_sel
+	if sel < MARKS_SHAPE_COUNT:
+		_marks_col = sel % MARKS_COLS
+		if dx < 0 and (sel % MARKS_COLS) > 0:
+			sel -= 1
+		elif dx > 0 and (sel % MARKS_COLS) < MARKS_COLS - 1:
+			sel += 1
+		if dy < 0 and sel >= MARKS_COLS:
+			sel -= MARKS_COLS
+		elif dy > 0:
+			if sel < MARKS_COLS:
+				sel += MARKS_COLS
+			else:
+				sel = MARKS_SEL_CONFIRM
+	elif sel == MARKS_SEL_CONFIRM:
+		if dy > 0:
+			sel = MARKS_SEL_CANCEL
+		elif dy < 0:
+			sel = MARKS_COLS + clampi(_marks_col, 0, MARKS_COLS - 1)
+	elif sel == MARKS_SEL_CANCEL:
+		if dy < 0:
+			sel = MARKS_SEL_CONFIRM
+	_marks_sel = sel
+	if _marks_sel < MARKS_SHAPE_COUNT:
+		_marks_col = _marks_sel % MARKS_COLS
+	_update_cursor_visual()
+	if _marks_sel != prev:
+		_play_cursor_sound()
+
+
+func _on_marks_accept() -> void:
+	if _marks_sel < MARKS_SHAPE_COUNT:
+		var color := int(_marks_draft[_marks_sel]) if _marks_sel < _marks_draft.size() else 0
+		color = (color + 1) % Pokemon.MARKING_COLOR_COUNT
+		_marks_draft[_marks_sel] = color
+		_apply_marks_panel_frames()
+		return
+	if _marks_sel == MARKS_SEL_CONFIRM:
+		_confirm_marks_panel()
+		return
+	_cancel_marks_panel()
 
 
 func _slot_center(index: int) -> Vector2:
@@ -929,6 +1353,9 @@ func _chrome_target_center(sel: int) -> Vector2:
 
 
 func _cursor_rest_position(sel: int = _SEL_USE_CURRENT) -> Vector2:
+	if _marks_open:
+		var ms := _marks_sel if sel == _SEL_USE_CURRENT else sel
+		return _marks_cursor_position(ms)
 	if _party_open:
 		var ps := _party_sel if sel == _SEL_USE_CURRENT else sel
 		return _party_arrow_position(ps)
@@ -1070,34 +1497,13 @@ func _show_item_preview(key: String, texture: Texture2D, pos: Vector2, parent: N
 	)
 
 
-## Desplaza el preview entre slots (mismo sprite; retargeteable si cambias rápido).
-func _slide_item_preview_to(key: String, texture: Texture2D, pos: Vector2, parent: Node) -> void:
-	_ensure_item_preview()
-	_kill_item_preview_tween()
-	if parent != null and _item_preview.get_parent() != parent:
-		var gpos := _item_preview.global_position
-		_item_preview.reparent(parent, false)
-		_item_preview.global_position = gpos
-	_item_preview_key = key
-	_item_preview.texture = texture
-	_item_preview.scale = Vector2(ITEM_PREVIEW_SCALE, ITEM_PREVIEW_SCALE)
-	_item_preview.show()
-	if _item_preview_suppress_pop:
-		_item_preview_suppress_pop = false
-		_item_preview.position = pos
-		return
-	_item_preview_tween = create_tween()
-	_item_preview_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	_item_preview_tween.set_trans(Tween.TRANS_SINE)
-	_item_preview_tween.set_ease(Tween.EASE_IN_OUT)
-	_item_preview_tween.tween_property(_item_preview, "position", pos, ITEM_PREVIEW_SLIDE_TIME)
+func _await_item_preview_pop() -> void:
+	if _item_preview_tween != null and is_instance_valid(_item_preview_tween):
+		await _item_preview_tween.finished
 
 
 func _refresh_item_preview() -> void:
 	_ensure_item_preview()
-	if _mode != Mode.MOVE_ITEMS:
-		_hide_item_preview()
-		return
 	# También con objeto en mano: ver el del mon bajo el cursor (p. ej. antes de CAMBIO).
 	if _hand_state != HandState.IDLE and _hand_state != HandState.HOLDING:
 		_hide_item_preview()
@@ -1125,17 +1531,16 @@ func _refresh_item_preview() -> void:
 	var pos := _item_preview_anchor()
 
 	if key == _item_preview_key and _item_preview.visible:
-		# Mismo foco: si no hay tween, fijar pos; si hay slide, retarget.
-		if _item_preview_tween != null and is_instance_valid(_item_preview_tween):
-			_slide_item_preview_to(key, item.icon, pos, parent)
-		else:
+		# Mismo foco: si no hay tween, fijar pos.
+		if _item_preview_tween == null or not is_instance_valid(_item_preview_tween):
 			_item_preview.position = pos
 		return
 
-	# Ya visible en otro slot → deslizar (como el cursor), sin teleport.
+	# Otro slot: dejar el icono anterior encogiendo en su sitio y pop en el nuevo.
+	# (sin deslizar el sprite con el cursor)
 	if _item_preview.visible and not _item_preview_key.is_empty() and not _item_preview_suppress_pop:
-		_slide_item_preview_to(key, item.icon, pos, parent)
-		return
+		_spawn_item_preview_shrink_ghost()
+		_hide_item_preview()
 
 	_show_item_preview(key, item.icon, pos, parent)
 
@@ -1191,6 +1596,10 @@ func _update_cursor_frame() -> void:
 		HandState.IDLE:
 			var use_point2 := int(_cursor_anim_t / CURSOR_ANIM_PERIOD) % 2 == 1
 			_cursor.texture = CURSOR_POINT_2 if use_point2 else CURSOR_POINT_1
+
+
+func _play_cursor_sound() -> void:
+	AudioManager.play_ui_cursor()
 
 
 func _sync_held_to_cursor() -> void:
@@ -1421,7 +1830,7 @@ func _return_held_to_party_panel() -> void:
 	if _party_open:
 		return
 	_input_enabled = false
-	await _open_party_panel(false, false, PARTY_SLIDE_TIME, false)
+	await _open_party_panel(false, false, PARTY_SLIDE_TIME, false, false)
 	if not visible or _hand_state != HandState.HOLDING:
 		_input_enabled = true
 		return
@@ -1444,7 +1853,7 @@ func _return_held_to_box_panel() -> void:
 	_input_enabled = false
 	var dest_box: int = _held_from_box if _held_from_box >= 0 else _box_index
 	var dest_slot: int = _held_from_slot if _held_from_slot >= 0 else 0
-	await _close_party_panel(false, dest_slot, PARTY_SLIDE_TIME, false)
+	await _close_party_panel(false, dest_slot, PARTY_SLIDE_TIME, false, false)
 	if not visible:
 		return
 	if dest_box != _box_index:
@@ -1495,6 +1904,7 @@ func _try_start_place() -> void:
 func _start_release(target_slot: int, commit_move: bool, to_party: bool) -> void:
 	if _hand_state != HandState.HOLDING:
 		return
+	_play_cursor_sound()
 	_release_origin_slot = _held_from_slot
 	_release_origin_was_party = _held_from_party
 	_release_origin_box = _held_from_box if not _held_from_party else -1
@@ -1545,6 +1955,8 @@ func _start_release(target_slot: int, commit_move: bool, to_party: bool) -> void
 				if target_slot < _slot_sprites.size() and _slot_sprites[target_slot]:
 					_slot_sprites[target_slot].hide()
 
+	# El icono de objeto del destino se va con el mon (no al terminar el swap).
+	_hide_item_preview()
 	_hand_state = HandState.RELEASING
 	if _cursor:
 		_cursor.texture = CURSOR_GRAB
@@ -1746,7 +2158,9 @@ func _try_start_grab() -> void:
 	_grab_elapsed = 0.0
 	_hand_state = HandState.GRABBING
 	_cursor.texture = CURSOR_GRAB
+	_hide_item_preview()
 	_refresh_info_panel()
+	_play_cursor_sound()
 
 
 ## MOVER OBJETOS → QUITAR: agarra el icono del item (el mon permanece).
@@ -1970,9 +2384,21 @@ func _move_cursor(dx: int, dy: int) -> void:
 	# Sin diagonales aunque lleguen ambos ejes.
 	if dx != 0 and dy != 0:
 		dx = 0
+	if _marks_open:
+		_move_marks_cursor(dx, dy)
+		return
+	if _choose_open:
+		if dx != 0:
+			_move_choose_box(dx)
+		return
+	if _wallpaper_edit_open:
+		if dx != 0:
+			_move_wallpaper_edit(dx)
+		return
 	if _party_open:
 		_move_party_cursor(dx, dy)
 		return
+	var prev_sel := _cursor_index
 	var sel := _cursor_index
 	if dy < 0:
 		# UP
@@ -2018,20 +2444,40 @@ func _move_cursor(dx: int, dy: int) -> void:
 	_cursor_index = sel
 	_update_cursor_visual()
 	_refresh_info_panel()
+	if _cursor_index != prev_sel:
+		_play_cursor_sound()
 
 
 func _shift_box(dx: int) -> void:
 	if dx == 0 or _box_sliding:
 		return
-	var count: int = PCStorage.BOX_COUNT
-	if GameStateService != null:
-		var storage: PCStorage = GameStateService.get_pc_storage()
-		if storage != null:
-			count = storage.get_box_count()
+	var count: int = _box_count()
 	if count <= 1:
 		return
 	var new_index: int = posmod(_box_index + dx, count)
 	if new_index == _box_index:
+		return
+	_play_cursor_sound()
+	await _animate_box_change(new_index, dx)
+
+
+## Salto a una caja concreta; `slide_dir` >0 derecha, <0 izquierda.
+func _jump_to_box(target_index: int, slide_dir: int) -> void:
+	if _box_sliding:
+		return
+	var count := _box_count()
+	if count <= 1:
+		return
+	target_index = posmod(target_index, count)
+	if target_index == _box_index:
+		return
+	if slide_dir == 0:
+		slide_dir = 1 if target_index > _box_index else -1
+	await _animate_box_change(target_index, slide_dir)
+
+
+func _animate_box_change(new_index: int, slide_dir: int) -> void:
+	if slide_dir == 0 or _box_sliding:
 		return
 	if _box_panel == null:
 		_box_index = new_index
@@ -2045,6 +2491,7 @@ func _shift_box(dx: int) -> void:
 	_kill_box_slide_tween()
 	_kill_cursor_slide_tween()
 	_reset_cursor_hold_repeat()
+	_nudge_box_name_arrow(slide_dir)
 
 	# Clip solo durante el slide; mano en PCUI para no recortarla.
 	if _box_clip:
@@ -2063,8 +2510,8 @@ func _shift_box(dx: int) -> void:
 		width = _box_clip.size.x
 	if width <= 0.0:
 		width = 324.0
-	# dx > 0 (caja derecha): actual sale a la izq, nueva entra desde la der.
-	var slide_sign: float = -1.0 if dx > 0 else 1.0
+	# slide_dir > 0 (caja derecha): actual sale a la izq, nueva entra desde la der.
+	var slide_sign: float = -1.0 if slide_dir > 0 else 1.0
 
 	var outgoing: Panel = _box_panel.duplicate() as Panel
 	if _box_clip:
@@ -2073,7 +2520,7 @@ func _shift_box(dx: int) -> void:
 		add_child(outgoing)
 	outgoing.position = Vector2.ZERO
 	outgoing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for child_name in ["Cursor", "HeldIcon", "SwapIcon", "ItemPreview"]:
+	for child_name in ["Cursor", "HeldIcon", "SwapIcon", "ItemPreview", "ArrowL", "ArrowR"]:
 		var n: Node = outgoing.get_node_or_null(child_name)
 		if n is CanvasItem:
 			(n as CanvasItem).hide()
@@ -2082,6 +2529,7 @@ func _shift_box(dx: int) -> void:
 	refresh()
 	_box_panel.position = Vector2(-slide_sign * width, 0.0)
 	_box_panel.move_to_front()
+	_raise_box_arrows()
 
 	_box_slide_tween = create_tween()
 	_box_slide_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
@@ -2102,6 +2550,8 @@ func _shift_box(dx: int) -> void:
 	if _box_clip:
 		_box_clip.clip_contents = false
 	_box_sliding = false
+	if not _wallpaper_edit_open:
+		_reset_box_arrows_to_rest()
 	if visible and not _in_summary:
 		_input_enabled = true
 		_update_cursor_visual(false)
@@ -2109,6 +2559,7 @@ func _shift_box(dx: int) -> void:
 
 
 func _move_party_cursor(dx: int, dy: int) -> void:
+	var prev := _party_sel
 	var sel := _party_sel
 	if sel == SEL_PARTY_EXIT:
 		if dy < 0:
@@ -2133,6 +2584,8 @@ func _move_party_cursor(dx: int, dy: int) -> void:
 	_party_sel = sel
 	_update_cursor_visual()
 	_refresh_info_panel()
+	if _party_sel != prev:
+		_play_cursor_sound()
 
 
 func _connect_input(enabled: bool) -> void:
@@ -2170,6 +2623,16 @@ func _connect_input(enabled: bool) -> void:
 func _on_input_cancel() -> void:
 	if not _input_enabled or not visible or _in_summary:
 		return
+	if _wallpaper_edit_open:
+		_cancel_wallpaper_edit()
+		return
+	if _choose_open:
+		_play_cursor_sound()
+		_close_choose_panel(true)
+		return
+	if _marks_open:
+		_cancel_marks_panel()
+		return
 	if _hand_state == HandState.GRABBING or _hand_state == HandState.RELEASING:
 		return
 	if _hand_state == HandState.HOLDING:
@@ -2186,6 +2649,7 @@ func _on_input_cancel() -> void:
 		if _party_sel == SEL_PARTY_EXIT:
 			# DEJAR: Salir vuelve al menú de BILL; resto: cierra el panel.
 			if _mode == Mode.DEPOSIT:
+				_play_cursor_sound()
 				close()
 			else:
 				await _close_party_panel()
@@ -2193,6 +2657,7 @@ func _on_input_cancel() -> void:
 		_party_sel = SEL_PARTY_EXIT
 		_update_cursor_visual()
 		_refresh_info_panel()
+		_play_cursor_sound()
 		return
 	# En modo cursor: B salta a SALIR; si ya estás ahí, cierra.
 	if _cursor_index == SEL_CLOSE:
@@ -2201,10 +2666,20 @@ func _on_input_cancel() -> void:
 	_cursor_index = SEL_CLOSE
 	_update_cursor_visual()
 	_refresh_info_panel()
+	_play_cursor_sound()
 
 
 func _on_input_accept() -> void:
 	if not _input_enabled or not visible or _in_summary:
+		return
+	if _wallpaper_edit_open:
+		_confirm_wallpaper_edit()
+		return
+	if _choose_open:
+		await _confirm_choose_panel()
+		return
+	if _marks_open:
+		_on_marks_accept()
 		return
 	if _hand_state == HandState.GRABBING or _hand_state == HandState.RELEASING:
 		return
@@ -2216,6 +2691,7 @@ func _on_input_accept() -> void:
 				return
 			# DEJAR: Salir vuelve al menú de BILL; resto: cierra el panel.
 			if _mode == Mode.DEPOSIT:
+				_play_cursor_sound()
 				close()
 			else:
 				await _close_party_panel()
@@ -2248,11 +2724,263 @@ func _on_input_accept() -> void:
 			await _open_party_panel()
 			return
 		SEL_BOX_NAME:
-			# Cambio de caja: siguientes pasos.
+			await _open_box_name_menu()
 			return
 	if _get_cursor_pokemon() == null:
 		return
 	await _on_pokemon_selected()
+
+
+func _open_box_name_menu() -> void:
+	if _hand_state != HandState.IDLE:
+		return
+	_play_cursor_sound()
+	_input_enabled = false
+	var idx: int = await DisplayManager.show_choices_corner(
+		["SALTAR", "FONDO", "NOMBRE", "SALIR"],
+		ChoiceBox.ChoiceAnchor.MIDDLE_RIGHT
+	)
+	_input_enabled = true
+	if not visible or idx < 0:
+		return
+	match idx:
+		0:
+			_open_choose_panel()
+		1:
+			await _open_wallpaper_edit()
+		2:
+			# NOMBRE: pendientes.
+			pass
+		_:
+			pass  # SALIR
+
+
+func _open_wallpaper_edit() -> void:
+	if _wallpaper_edit_open or _hand_state != HandState.IDLE:
+		return
+	_input_enabled = false
+	_reset_cursor_hold_repeat()
+	_hide_item_preview()
+
+	var storage: PCStorage = null
+	if GameStateService != null:
+		storage = GameStateService.get_pc_storage()
+	_wallpaper_edit_original = 0
+	if storage != null:
+		_wallpaper_edit_original = storage.get_box_wallpaper(_box_index)
+	_wallpaper_edit_current = _wallpaper_edit_original
+
+	await DisplayManager.show_message("Selecciona un fondo.", {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"expandHeight": true,
+	})
+	DisplayManager.hide_message_wait_indicator()
+	if not visible:
+		return
+
+	_wallpaper_edit_open = true
+	_kill_box_arrow_nudge_tween()
+	_reset_box_arrows_to_rest()
+	_wallpaper_arrow_t = 0.0
+	_apply_box_wallpaper(_wallpaper_edit_current)
+	refresh()  # aplica semitransparencia a iconos
+	_input_enabled = true
+
+
+func _close_wallpaper_edit(restore_original: bool) -> void:
+	if not _wallpaper_edit_open:
+		_reset_box_arrows_to_rest()
+		return
+	_wallpaper_edit_open = false
+	_wallpaper_arrow_t = 0.0
+	_reset_box_arrows_to_rest()
+	DisplayManager.close_message()
+	if restore_original:
+		_apply_box_wallpaper(_wallpaper_edit_original)
+	elif GameStateService != null:
+		var storage: PCStorage = GameStateService.get_pc_storage()
+		if storage != null:
+			storage.set_box_wallpaper(_box_index, _wallpaper_edit_current)
+	refresh()
+
+
+func _confirm_wallpaper_edit() -> void:
+	if not _wallpaper_edit_open:
+		return
+	_play_cursor_sound()
+	_close_wallpaper_edit(false)
+
+
+func _cancel_wallpaper_edit() -> void:
+	if not _wallpaper_edit_open:
+		return
+	_play_cursor_sound()
+	_close_wallpaper_edit(true)
+
+
+func _move_wallpaper_edit(dx: int) -> void:
+	if dx == 0 or not _wallpaper_edit_open:
+		return
+	_wallpaper_edit_current = posmod(
+		_wallpaper_edit_current + dx, PCStorage.WALLPAPER_COUNT
+	)
+	_apply_box_wallpaper(_wallpaper_edit_current)
+	_play_cursor_sound()
+
+
+func _reset_box_arrows_to_rest() -> void:
+	_kill_box_arrow_nudge_tween()
+	if _box_arrow_l:
+		_box_arrow_l.position = _box_arrow_l_rest
+	if _box_arrow_r:
+		_box_arrow_r.position = _box_arrow_r_rest
+
+
+func _kill_box_arrow_nudge_tween() -> void:
+	if _box_arrow_nudge_tween != null and is_instance_valid(_box_arrow_nudge_tween):
+		_box_arrow_nudge_tween.kill()
+	_box_arrow_nudge_tween = null
+
+
+## Pequeño empujón HGSS al cambiar de caja desde el nombre.
+func _nudge_box_name_arrow(dx: int) -> void:
+	if dx == 0 or _wallpaper_edit_open:
+		return
+	var arrow: Sprite2D = _box_arrow_r if dx > 0 else _box_arrow_l
+	var rest: Vector2 = _box_arrow_r_rest if dx > 0 else _box_arrow_l_rest
+	if arrow == null:
+		return
+	_kill_box_arrow_nudge_tween()
+	arrow.position = rest
+	var out_x := rest.x + (BOX_ARROW_NUDGE_PX if dx > 0 else -BOX_ARROW_NUDGE_PX)
+	_box_arrow_nudge_tween = create_tween()
+	_box_arrow_nudge_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_box_arrow_nudge_tween.set_trans(Tween.TRANS_SINE)
+	_box_arrow_nudge_tween.tween_property(arrow, "position:x", out_x, BOX_ARROW_NUDGE_TIME) \
+		.set_ease(Tween.EASE_OUT)
+	_box_arrow_nudge_tween.tween_property(arrow, "position:x", rest.x, BOX_ARROW_NUDGE_TIME) \
+		.set_ease(Tween.EASE_IN)
+
+
+func _process_wallpaper_arrow_bob(delta: float) -> void:
+	if _box_arrow_l == null or _box_arrow_r == null:
+		return
+	_wallpaper_arrow_t += delta
+	var phase := fposmod(_wallpaper_arrow_t / CHOOSE_ARROW_BOB_PERIOD, 1.0)
+	var left1 := _box_arrow_l_rest.x - CHOOSE_ARROW_BOB_PX
+	var right1 := _box_arrow_l_rest.x + CHOOSE_ARROW_BOB_PX
+	var left2 := _box_arrow_r_rest.x - CHOOSE_ARROW_BOB_PX
+	var right2 := _box_arrow_r_rest.x + CHOOSE_ARROW_BOB_PX
+	# ArrowL ← ; ArrowR →
+	_box_arrow_l.position = Vector2(lerpf(right1, left1, phase), _box_arrow_l_rest.y)
+	_box_arrow_r.position = Vector2(lerpf(left2, right2, phase), _box_arrow_r_rest.y)
+
+
+func _box_count() -> int:
+	if GameStateService != null:
+		var storage: PCStorage = GameStateService.get_pc_storage()
+		if storage != null:
+			return storage.get_box_count()
+	return PCStorage.BOX_COUNT
+
+
+func _open_choose_panel() -> void:
+	if _choose_panel == null or _choose_open:
+		return
+	_input_enabled = false
+	_reset_cursor_hold_repeat()
+	_choose_box_index = _box_index
+	_choose_open = true
+	_choose_panel.visible = true
+	_choose_panel.move_to_front()
+	_refresh_choose_panel()
+	_start_choose_arrow_bob()
+	_input_enabled = true
+
+
+func _close_choose_panel(_restore_hand: bool = true) -> void:
+	_choose_open = false
+	_stop_choose_arrow_bob()
+	if _choose_panel:
+		_choose_panel.visible = false
+
+
+func _refresh_choose_panel() -> void:
+	var storage: PCStorage = null
+	if GameStateService != null:
+		storage = GameStateService.get_pc_storage()
+	var box_name := "CAJA"
+	var used_n := 0
+	var total_n := PCStorage.SLOTS_PER_BOX
+	if storage != null:
+		_choose_box_index = clampi(_choose_box_index, 0, storage.get_box_count() - 1)
+		box_name = storage.get_box_name(_choose_box_index)
+		used_n = storage.get_box_occupied_count(_choose_box_index)
+		total_n = storage.get_slots_per_box()
+	_set_label_text(_choose_caja_label, box_name)
+	_set_label_text(_choose_espacio_label, "%d/%d" % [used_n, total_n])
+
+
+func _move_choose_box(dx: int) -> void:
+	if dx == 0 or not _choose_open:
+		return
+	var count := _box_count()
+	if count <= 1:
+		return
+	var prev := _choose_box_index
+	_choose_box_index = posmod(_choose_box_index + dx, count)
+	_refresh_choose_panel()
+	if _choose_box_index != prev:
+		_play_cursor_sound()
+
+
+func _confirm_choose_panel() -> void:
+	if not _choose_open:
+		return
+	_play_cursor_sound()
+	var target := _choose_box_index
+	_close_choose_panel(false)
+	if target == _box_index:
+		return
+	# Índice mayor → derecha; menor → izquierda (sin wrap corto).
+	var slide_dir := 1 if target > _box_index else -1
+	await _jump_to_box(target, slide_dir)
+
+
+func _start_choose_arrow_bob() -> void:
+	if _choose_arrow1 == null or _choose_arrow2 == null:
+		return
+	_choose_arrow1_rest = _choose_arrow1.position
+	_choose_arrow2_rest = _choose_arrow2.position
+	_choose_arrow_t = 0.0
+
+
+func _stop_choose_arrow_bob() -> void:
+	_choose_arrow_t = 0.0
+	if _choose_arrow1:
+		_choose_arrow1.position = _choose_arrow1_rest
+	if _choose_arrow2:
+		_choose_arrow2.position = _choose_arrow2_rest
+
+
+func _process_choose_arrow_bob(delta: float) -> void:
+	if _choose_arrow1 == null or _choose_arrow2 == null:
+		return
+	_choose_arrow_t += delta
+	# 0→1: cada flecha hacia su lado; al reiniciar, teleport al origen.
+	var phase := fposmod(_choose_arrow_t / CHOOSE_ARROW_BOB_PERIOD, 1.0)
+	var left1 := _choose_arrow1_rest.x - CHOOSE_ARROW_BOB_PX
+	var right1 := _choose_arrow1_rest.x + CHOOSE_ARROW_BOB_PX
+	var left2 := _choose_arrow2_rest.x - CHOOSE_ARROW_BOB_PX
+	var right2 := _choose_arrow2_rest.x + CHOOSE_ARROW_BOB_PX
+	# Arrow1 (izq): se mueve hacia la izquierda.
+	_choose_arrow1.position = Vector2(lerpf(right1, left1, phase), _choose_arrow1_rest.y)
+	# Arrow2 (der): se mueve hacia la derecha.
+	_choose_arrow2.position = Vector2(lerpf(left2, right2, phase), _choose_arrow2_rest.y)
 
 
 func _on_pokemon_selected() -> void:
@@ -2271,6 +2999,7 @@ func _open_move_items_menu() -> void:
 	if mon == null:
 		return
 	_input_enabled = false
+	_play_cursor_sound()
 	var outline_spr: Sprite2D = _get_focused_mon_sprite()
 	_set_selection_outline(outline_spr, true)
 
@@ -2306,10 +3035,101 @@ func _open_move_items_menu() -> void:
 	else:
 		match idx:
 			0:
-				# DAR: pendientes held items.
-				pass
+				await _give_held_item_from_bag()
 			_:
 				pass  # SALIR
+
+
+## Abre la mochila, elige un objeto y se lo asigna al mon bajo el cursor (OBJETO / DAR).
+func _give_held_item_from_bag() -> void:
+	var mon: Pokemon = _get_cursor_pokemon()
+	if mon == null or GameStateService == null:
+		return
+	_input_enabled = false
+	# En MOVER OBJETOS, DAR ya implica la mochila; el prompt solo en OBJETO del menú.
+	if _mode != Mode.MOVE_ITEMS:
+		await DisplayManager.show_message(
+			"¿Qué objeto le das a %s?" % mon.get_display_name(),
+			{
+				"waitInput": true,
+				"closeAtEnd": true,
+				"showIconAtEnd": false,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"typingMode": MessageBox.TypingMode.INSTANT,
+				"expandHeight": true,
+			}
+		)
+		if not visible:
+			return
+	_hide_overlays_for_bag()
+	var item_id: int = await DisplayManager.pick_held_item_from_bag()
+	if not visible:
+		return
+	if item_id <= 0:
+		_restore_overlays_after_bag()
+		_input_enabled = true
+		_refresh_info_panel()
+		_refresh_item_preview()
+		return
+
+	var bag: Bag = GameStateService.get_bag()
+	if bag == null:
+		_restore_overlays_after_bag()
+		_input_enabled = true
+		return
+	var removed: int = bag.remove_item(item_id, 1)
+	if removed < 1:
+		_restore_overlays_after_bag()
+		await DisplayManager.show_message("No tienes ese objeto.", {
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		})
+		if visible:
+			_input_enabled = true
+		return
+
+	# Si ya llevaba algo, vuelve a la mochila.
+	if mon.held_item_id > 0:
+		bag.add_item(mon.held_item_id, 1)
+	mon.held_item_id = item_id
+	_restore_overlays_after_bag()
+	refresh()
+	_refresh_info_panel()
+	_refresh_item_preview()
+	await _await_item_preview_pop()
+
+	var mon_name := mon.get_display_name()
+	var given_name := _item_display_name(item_id)
+	await DisplayManager.show_message("¡%s ahora lleva %s!" % [mon_name, given_name], {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"expandHeight": true,
+	})
+	if visible:
+		_input_enabled = true
+
+
+func _hide_overlays_for_bag() -> void:
+	_clear_selection_outline()
+	_kill_cursor_slide_tween()
+	if _cursor:
+		_cursor.hide()
+	_hide_item_preview()
+	if _held_sprite:
+		_held_sprite.hide()
+
+
+func _restore_overlays_after_bag() -> void:
+	if not visible:
+		return
+	_update_cursor_visual(false)
+	if _cursor:
+		_cursor.show()
 
 
 ## Holding un objeto: al elegir un mon, menú DAR/CAMBIO (no coloca solo).
@@ -2402,6 +3222,7 @@ func _show_held_item_info(mon: Pokemon) -> void:
 
 func _open_pokemon_action_menu() -> void:
 	_input_enabled = false
+	_play_cursor_sound()
 	var outline_spr: Sprite2D = _get_focused_mon_sprite()
 	_set_selection_outline(outline_spr, true)
 	var options: Array[String] = _pokemon_menu_options()
@@ -2427,11 +3248,116 @@ func _open_pokemon_action_menu() -> void:
 			await _open_summary_for_selection()
 		PkmnMenuAction.RELEASE:
 			await _run_release_sequence()
-		PkmnMenuAction.ITEM, PkmnMenuAction.MARK:
-			# Stub: siguientes pasos.
-			pass
+		PkmnMenuAction.ITEM:
+			await _on_objeto_selected()
+		PkmnMenuAction.MARK:
+			_open_marks_panel()
 		_:
 			pass
+
+
+## OBJETO: sin held → mochila; con held → confirmar quitar a la mochila.
+func _on_objeto_selected() -> void:
+	var mon: Pokemon = _get_cursor_pokemon()
+	if mon == null:
+		return
+	if mon.held_item_id > 0:
+		await _confirm_remove_held_item_to_bag(mon)
+	else:
+		await _give_held_item_from_bag()
+
+
+## Si el mon ya lleva objeto: Sí → a la mochila; No → cancelar.
+func _confirm_remove_held_item_to_bag(mon: Pokemon) -> void:
+	if mon == null or mon.held_item_id <= 0:
+		return
+	var item_id := mon.held_item_id
+	var mon_name := mon.get_display_name()
+	var item_name := _item_display_name(item_id)
+	_input_enabled = false
+	var outline_spr: Sprite2D = _get_focused_mon_sprite()
+	_set_selection_outline(outline_spr, true)
+
+	await DisplayManager.show_message(
+		"%s tiene %s.\n¿Quieres quitárselo?" % [mon_name, item_name],
+		{
+			"waitInput": false,
+			"closeAtEnd": false,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		}
+	)
+	DisplayManager.hide_message_wait_indicator()
+
+	var dm := DisplayManager.instance
+	if dm != null and dm.choice_box != null:
+		dm.choice_box.set_next_initial_index(1)  # No
+	var choice: int = await DisplayManager.show_choices_corner(
+		["Sí", "No"],
+		ChoiceBox.ChoiceAnchor.BOTTOM_RIGHT
+	)
+	DisplayManager.close_message()
+
+	if not visible:
+		return
+	if choice != 0:
+		_set_selection_outline(outline_spr, false)
+		_input_enabled = true
+		return
+
+	if GameStateService == null or DatabaseService == null:
+		_set_selection_outline(outline_spr, false)
+		_input_enabled = true
+		return
+	var bag: Bag = GameStateService.get_bag()
+	var item_data: ItemData = DatabaseService.get_item_by_id(item_id)
+	if bag == null or item_data == null:
+		_set_selection_outline(outline_spr, false)
+		_input_enabled = true
+		return
+	var stack_limit := int(item_data.stack_limit)
+	if stack_limit > 0 and bag.get_quantity(item_id) >= stack_limit:
+		await DisplayManager.show_message("La MOCHILA está llena.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		})
+		_set_selection_outline(outline_spr, false)
+		if visible:
+			_input_enabled = true
+		return
+	if bag.add_item(item_id, 1) <= 0:
+		await DisplayManager.show_message("La MOCHILA está llena.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+		})
+		_set_selection_outline(outline_spr, false)
+		if visible:
+			_input_enabled = true
+		return
+
+	# Encoger el icono en el slot antes de quitarlo del mon.
+	_item_preview_suppress_pop = true
+	_refresh_item_preview()
+	_dismiss_item_preview_animated()
+	await get_tree().create_timer(ITEM_PREVIEW_POP_TIME, true, false, true).timeout
+
+	mon.held_item_id = 0
+	_set_selection_outline(outline_spr, false)
+	refresh()
+	_refresh_info_panel()
+	_refresh_item_preview()
+	if visible:
+		_input_enabled = true
 
 
 func _run_release_sequence() -> void:
@@ -2754,7 +3680,7 @@ func _run_withdraw_sequence() -> void:
 
 	# Party sube solo; la mano se queda en el slot hasta que el panel esté listo.
 	var withdraw_slide := PARTY_SLIDE_TIME * 0.5
-	await _open_party_panel(false, false, withdraw_slide, false)
+	await _open_party_panel(false, false, withdraw_slide, false, false)
 	if not visible or _hand_state != HandState.HOLDING:
 		_input_enabled = true
 		return
@@ -2772,7 +3698,7 @@ func _run_withdraw_sequence() -> void:
 		return
 
 	# Panel baja; la mano se queda quieta y luego vuelve andando al slot origen.
-	await _close_party_panel(false, origin_slot, withdraw_slide, false)
+	await _close_party_panel(false, origin_slot, withdraw_slide, false, false)
 	if not visible:
 		return
 	_cursor_index = origin_slot
@@ -2832,7 +3758,7 @@ func _run_deposit_sequence() -> void:
 		return
 
 	# Party baja; la mano se queda y luego va al hueco libre de la caja.
-	await _close_party_panel(false, dest_slot, deposit_slide, false)
+	await _close_party_panel(false, dest_slot, deposit_slide, false, false)
 	if not visible or _hand_state != HandState.HOLDING:
 		_input_enabled = true
 		return
@@ -2853,7 +3779,7 @@ func _run_deposit_sequence() -> void:
 		return
 
 	# Vuelve al party en el primer slot.
-	await _open_party_panel(false, false, deposit_slide, true)
+	await _open_party_panel(false, false, deposit_slide, true, false)
 	if not visible:
 		return
 	_party_sel = 0
@@ -2894,6 +3820,8 @@ func _animate_hand_to(target: Vector2, duration: float) -> void:
 func _on_input_up() -> void:
 	if not _input_enabled or not visible:
 		return
+	if _choose_open or _wallpaper_edit_open:
+		return
 	if _read_orthogonal_move_dir() != Vector2i(0, -1):
 		return
 	_dir_hold_vec = Vector2i(0, -1)
@@ -2904,6 +3832,8 @@ func _on_input_up() -> void:
 
 func _on_input_down() -> void:
 	if not _input_enabled or not visible:
+		return
+	if _choose_open or _wallpaper_edit_open:
 		return
 	if _read_orthogonal_move_dir() != Vector2i(0, 1):
 		return
@@ -2916,6 +3846,30 @@ func _on_input_down() -> void:
 func _on_input_left() -> void:
 	if not _input_enabled or not visible:
 		return
+	if _wallpaper_edit_open:
+		if _read_orthogonal_move_dir() != Vector2i(-1, 0):
+			return
+		_dir_hold_vec = Vector2i(-1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_wallpaper_edit(-1)
+		return
+	if _choose_open:
+		if _read_orthogonal_move_dir() != Vector2i(-1, 0):
+			return
+		_dir_hold_vec = Vector2i(-1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_choose_box(-1)
+		return
+	if _marks_open:
+		if _read_orthogonal_move_dir() != Vector2i(-1, 0):
+			return
+		_dir_hold_vec = Vector2i(-1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_marks_cursor(-1, 0)
+		return
 	# Holding en columna izquierda del box → abrir party (inverso de salir del party).
 	if (
 		not _party_open
@@ -2927,7 +3881,7 @@ func _on_input_left() -> void:
 		_input_enabled = false
 		_reset_cursor_hold_repeat()
 		# Party sube solo; la mano se queda y luego va al slot (como SACAR).
-		await _open_party_panel(false, false, PARTY_SLIDE_TIME, false)
+		await _open_party_panel(false, false, PARTY_SLIDE_TIME, false, false)
 		if not visible or _hand_state != HandState.HOLDING:
 			_input_enabled = true
 			return
@@ -2953,6 +3907,30 @@ func _on_input_left() -> void:
 func _on_input_right() -> void:
 	if not _input_enabled or not visible:
 		return
+	if _wallpaper_edit_open:
+		if _read_orthogonal_move_dir() != Vector2i(1, 0):
+			return
+		_dir_hold_vec = Vector2i(1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_wallpaper_edit(1)
+		return
+	if _choose_open:
+		if _read_orthogonal_move_dir() != Vector2i(1, 0):
+			return
+		_dir_hold_vec = Vector2i(1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_choose_box(1)
+		return
+	if _marks_open:
+		if _read_orthogonal_move_dir() != Vector2i(1, 0):
+			return
+		_dir_hold_vec = Vector2i(1, 0)
+		_dir_hold_time = 0.0
+		_dir_repeat_ready = false
+		_move_marks_cursor(1, 0)
+		return
 	# Holding en columna derecha del party → salir al box (sin pulsar SALIR).
 	if (
 		_party_open
@@ -2965,7 +3943,7 @@ func _on_input_right() -> void:
 		_reset_cursor_hold_repeat()
 		var box_row: int = clampi(int(_party_sel / 2), 0, ROWS - 1)
 		var box_slot: int = box_row * COLS
-		await _close_party_panel(false, box_slot, PARTY_SLIDE_TIME, false)
+		await _close_party_panel(false, box_slot, PARTY_SLIDE_TIME, false, false)
 		if not visible or _hand_state != HandState.HOLDING:
 			_input_enabled = true
 			return

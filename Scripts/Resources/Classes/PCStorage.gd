@@ -9,11 +9,13 @@ const POKEMON_SERDE_SCRIPT = preload("res://Scripts/Runtime/PokemonRuntimeSerde.
 ## Gen 3/4: 14 cajas × 30 slots.
 const BOX_COUNT: int = 14
 const SLOTS_PER_BOX: int = 30
+## Fondos `Sprites/UI/PC/box_0.png` … `box_39.png`.
+const WALLPAPER_COUNT: int = 40
 
 var _pokemon_serde = POKEMON_SERDE_SCRIPT.new()
 
-## Cada entrada: { "name": String, "slots": Array } con `slots.size() == SLOTS_PER_BOX`
-## (elementos `Pokemon` o `null`).
+## Cada entrada: { "name": String, "wallpaper": int, "slots": Array }
+## con `slots.size() == SLOTS_PER_BOX` (elementos `Pokemon` o `null`).
 var _boxes: Array[Dictionary] = []
 
 
@@ -42,6 +44,7 @@ func to_serializable_data() -> Array[Dictionary]:
 				slots_out[s] = null
 		out.append({
 			"name": str(box.get("name", "")),
+			"wallpaper": int(box.get("wallpaper", 0)),
 			"slots": slots_out,
 		})
 	return out
@@ -59,6 +62,8 @@ func load_serializable_data(boxes_data: Array) -> void:
 		var box_name := str(entry.get("name", "")).strip_edges()
 		if not box_name.is_empty():
 			set_box_name(i, box_name)
+		if entry.has("wallpaper"):
+			set_box_wallpaper(i, int(entry.get("wallpaper", i)))
 		var slots_any: Variant = entry.get("slots", [])
 		if not (slots_any is Array):
 			continue
@@ -111,6 +116,23 @@ func get_box_name(box_index: int) -> String:
 	return str(_boxes[box_index].get("name", ""))
 
 
+func get_box_occupied_count(box_index: int) -> int:
+	if not _is_valid_box(box_index):
+		return 0
+	var n := 0
+	var slots: Array = _boxes[box_index]["slots"]
+	for mon in slots:
+		if mon != null:
+			n += 1
+	return n
+
+
+func get_box_free_slot_count(box_index: int) -> int:
+	if not _is_valid_box(box_index):
+		return 0
+	return SLOTS_PER_BOX - get_box_occupied_count(box_index)
+
+
 func set_box_name(box_index: int, new_name: String) -> bool:
 	if not _is_valid_box(box_index):
 		return false
@@ -118,6 +140,19 @@ func set_box_name(box_index: int, new_name: String) -> bool:
 	if trimmed.is_empty():
 		trimmed = "CAJA %d" % (box_index + 1)
 	_boxes[box_index]["name"] = trimmed
+	return true
+
+
+func get_box_wallpaper(box_index: int) -> int:
+	if not _is_valid_box(box_index):
+		return 0
+	return int(_boxes[box_index].get("wallpaper", box_index % WALLPAPER_COUNT))
+
+
+func set_box_wallpaper(box_index: int, wallpaper_id: int) -> bool:
+	if not _is_valid_box(box_index):
+		return false
+	_boxes[box_index]["wallpaper"] = posmod(wallpaper_id, WALLPAPER_COUNT)
 	return true
 
 
@@ -206,6 +241,7 @@ func _ensure_boxes() -> void:
 		var i := _boxes.size()
 		_boxes.append({
 			"name": "CAJA %d" % (i + 1),
+			"wallpaper": i % WALLPAPER_COUNT,
 			"slots": _make_empty_slots(),
 		})
 	# Normalizar por si quedó estado corrupto.
@@ -213,6 +249,10 @@ func _ensure_boxes() -> void:
 		var box: Dictionary = _boxes[i]
 		if not box.has("name") or str(box["name"]).is_empty():
 			box["name"] = "CAJA %d" % (i + 1)
+		if not box.has("wallpaper"):
+			box["wallpaper"] = i % WALLPAPER_COUNT
+		else:
+			box["wallpaper"] = posmod(int(box["wallpaper"]), WALLPAPER_COUNT)
 		var slots: Array = box.get("slots", [])
 		if slots.size() != SLOTS_PER_BOX:
 			var fixed := _make_empty_slots()

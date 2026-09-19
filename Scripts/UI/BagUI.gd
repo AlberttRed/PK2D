@@ -66,6 +66,8 @@ var _item_icon_back_texture: Texture2D = null
 var _pocket_list_index_by_pocket: Dictionary = {}
 ## Última posición de la mochila (bolsillo + cursor por bolsillo) entre aperturas en la misma sesión.
 static var _session_navigation: Dictionary = {}
+## PC / DAR: A confirma el objeto para llevar (no el menú Usar).
+var _hold_pick_mode: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -147,12 +149,14 @@ func open() -> void:
 func close() -> void:
 	if not visible:
 		_disable_input()
+		_hold_pick_mode = false
 		return
 
 	_persist_session_navigation()
 	_disable_input()
 	set_process(false)
 	_reset_arrow_frames()
+	_hold_pick_mode = false
 	hide()
 	_unblock_player_control()
 	closed.emit()
@@ -163,6 +167,14 @@ func set_input_enabled(value: bool) -> void:
 		_enable_input()
 	else:
 		_disable_input()
+
+
+func set_hold_pick_mode(enabled: bool) -> void:
+	_hold_pick_mode = enabled
+
+
+func is_hold_pick_mode() -> bool:
+	return _hold_pick_mode
 
 
 ## Tras mutar el Bag (p. ej. consumir ítem); sin señales globales.
@@ -493,6 +505,10 @@ func _confirm_selection() -> void:
 	var selected_item = _current_items[_selected_item_index]
 	if selected_item.is_exit:
 		_request_back()
+		return
+	if _hold_pick_mode:
+		_play_select_sound()
+		use_requested.emit(int(selected_item.item_id))
 		return
 	if not selected_item.is_usable_overworld:
 		return

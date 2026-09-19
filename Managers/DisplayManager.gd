@@ -72,6 +72,9 @@ var _skip_pause_open_on_party_close: bool = false
 var _suppress_party_resume_after_bag_close: bool = false
 ## Cierre interno de mochila (reapertura tras party): no ejecutar lógica de _on_bag_closed.
 var _suppress_bag_closed_effects: bool = false
+## PC → DAR/OBJETO: elegir un ítem de la mochila para held.
+var _bag_hold_pick_active: bool = false
+var _bag_hold_pick_result: int = -1
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
@@ -91,6 +94,8 @@ const _PC_CHOICE_GAP_ABOVE_MSG_PX := 8.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
 ## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
 const _UI_FADE_COVER_Z: int = 220
+## Bag sobre PC (sprites del party/cursor usan z_index > 0 y quedarían encima si Bag=0).
+const _BAG_OVER_PC_Z: int = 50
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -323,6 +328,14 @@ static func open_pc(
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance._open_pc_ui(mode, box_index, prepare_before_reveal, cleanup_under_cover)
+
+
+## PC: abre la mochila para elegir un objeto a dar (held). Devuelve item_id o -1 si cancela.
+static func pick_held_item_from_bag() -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	return await instance._pick_held_item_from_bag()
 
 
 ## Abre el ChoiceBox en esquina sin esperar selección (`close_choices` / `await_choices` después).
@@ -1351,18 +1364,26 @@ func _open_pc_ui(
 
 	var fade_z := fade_layer.z_index
 	fade_layer.z_index = _UI_FADE_COVER_Z
-	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	# Abrir: fade sólido a negro → revelar PC con máscara (inversa del cierre).
+	const PC_MASK_CLOSE := "res://Sprites/Transiciones/PC/computertrclose.png"
+	const PC_MASK_DUR := 0.8
+	const PC_SOLID_FADE_DUR := 0.4
+	await fade_layer.fade_in(PC_SOLID_FADE_DUR)
 	if cleanup_under_cover.is_valid():
 		await cleanup_under_cover.call()
 	_pc_ui.setup(null)
 	_pc_ui.open(mode as PCUI.Mode, box_index)
 	_on_ui_visibility_changed()
-	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	AudioManager.play_ui_pc_access()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, false, PC_MASK_DUR):
+		await fade_layer.fade_out(PC_SOLID_FADE_DUR)
 	fade_layer.z_index = fade_z
 	await _pc_ui.closed
-	# Cubrir también MSG/ChoiceBox mientras se restaura el menú de BILL.
+	# Cerrar: máscara PC a negro → fade sólido de vuelta al overworld.
 	fade_layer.z_index = _UI_FADE_COVER_Z
-	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	AudioManager.play_ui_pc_close()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, true, PC_MASK_DUR):
+		await fade_layer.fade_in(PC_SOLID_FADE_DUR)
 	_close_message()
 	_close_choices()
 	if _pc_ui.visible:
@@ -1370,8 +1391,9 @@ func _open_pc_ui(
 	_on_ui_visibility_changed()
 	if prepare_before_reveal.is_valid():
 		await prepare_before_reveal.call()
-	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	await fade_layer.fade_out(PC_SOLID_FADE_DUR)
 	fade_layer.z_index = fade_z
+	_on_ui_visibility_changed()
 
 
 func _on_pc_ui_closed() -> void:
@@ -1560,6 +1582,11 @@ func _close_bag_ui() -> void:
 	_bag_ui.close()
 
 func _on_bag_back_requested() -> void:
+	if _bag_hold_pick_active:
+		if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(false)
+		await _finish_bag_hold_pick(-1)
+		return
 	await _transition_fade_bag_to_pause_menu()
 
 
@@ -1570,7 +1597,7 @@ func _transition_fade_bag_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
-	if _suppress_bag_closed_effects:
+	if _suppress_bag_closed_effects or _bag_hold_pick_active:
 		_on_ui_visibility_changed()
 		return
 	var resume_party_slot := -1
@@ -1594,7 +1621,102 @@ func _on_bag_closed() -> void:
 	_on_ui_visibility_changed()
 
 func _on_bag_use_requested(item_id: int) -> void:
+	if _bag_hold_pick_active:
+		if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(false)
+		if not _can_give_as_held_item(item_id):
+			if msg != null:
+				msg.move_to_front()
+			await _show_message_with_config("No se puede dar ese objeto.", {
+				"waitInput": true,
+				"closeAtEnd": true,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"typingMode": MessageBox.TypingMode.INSTANT,
+				"expandHeight": true,
+			})
+			if _bag_ui != null and _bag_ui.visible:
+				_bag_ui.move_to_front()
+				if _bag_ui.has_method("set_input_enabled"):
+					_bag_ui.set_input_enabled(true)
+			return
+		await _finish_bag_hold_pick(item_id)
+		return
 	await _run_bag_item_use_flow(item_id)
+
+
+## True si el ítem puede equiparse como held (no claves / MT-MO).
+func _can_give_as_held_item(item_id: int) -> bool:
+	if item_id <= 0 or DatabaseService == null:
+		return false
+	var item: ItemData = DatabaseService.get_item_by_id(item_id)
+	if item == null:
+		return false
+	if int(item.pocket) == ItemEnums.Pocket.KEY_ITEMS:
+		return false
+	if int(item.pocket) == ItemEnums.Pocket.TM_HM:
+		return false
+	if int(item.kind) == ItemEnums.Kind.KEY:
+		return false
+	if int(item.kind) == ItemEnums.Kind.TM_HM:
+		return false
+	return true
+
+
+## Abre mochila sobre el PC y espera selección (o cancelar). Devuelve item_id o -1.
+func _pick_held_item_from_bag() -> int:
+	if _bag_ui == null:
+		push_error("DisplayManager._pick_held_item_from_bag: BagUI no disponible")
+		return -1
+	if _bag_ui.visible or _bag_hold_pick_active:
+		return -1
+
+	_bag_hold_pick_active = true
+	_bag_hold_pick_result = -1
+
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
+	_bag_ui.setup(_bag_controller)
+	_bag_ui.set_hold_pick_mode(true)
+	_bag_ui.z_index = _BAG_OVER_PC_Z
+	_bag_ui.move_to_front()
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
+
+	while _bag_hold_pick_active:
+		await get_tree().process_frame
+
+	return _bag_hold_pick_result
+
+
+func _finish_bag_hold_pick(item_id: int) -> void:
+	_bag_hold_pick_result = item_id
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	_suppress_bag_closed_effects = true
+	_close_bag_ui()
+	await _await_ui_control_hidden(_bag_ui)
+	_suppress_bag_closed_effects = false
+	_bag_controller = null
+	_bag_hold_pick_active = false
+	if _bag_ui != null:
+		_bag_ui.z_index = 0
+	if _pc_ui != null and _pc_ui.visible:
+		_pc_ui.move_to_front()
+	_on_ui_visibility_changed()
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
 
 
 ## Tras cerrar la bolsa bajo negro: abre party (mochila → party) y descubre. Sin fade_in previo (ya estamos a negro).
@@ -2154,6 +2276,8 @@ func _update_game_pause_state() -> void:
 		(_party_ui != null and _party_ui.visible) or
 		(_pokedex_ui != null and _pokedex_ui.visible) or
 		(_save_ui != null and _save_ui.visible) or
+		(_pc_ui != null and _pc_ui.visible) or
+		(_evolution_ui != null and _evolution_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

@@ -516,7 +516,15 @@ func _update_sprite_frames_label() -> void:
 	if sprite_frames_label:
 		if page and page.sprite_frames:
 			var resource_path = page.sprite_frames.resource_path
-			sprite_frames_label.text = "SpriteFrames: " + resource_path
+			if resource_path.is_empty():
+				var n_anims := page.sprite_frames.get_animation_names().size()
+				var has_content := _sprite_frames_has_content(page.sprite_frames)
+				if has_content:
+					sprite_frames_label.text = "SpriteFrames: embebido (%d anim.)" % n_anims
+				else:
+					sprite_frames_label.text = "SpriteFrames: embebido (vacío — usa Animaciones)"
+			else:
+				sprite_frames_label.text = "SpriteFrames: " + resource_path
 		else:
 			sprite_frames_label.text = "Ninguno"
 
@@ -804,15 +812,19 @@ func _update_animations_buttons_state() -> void:
 	if animations_button == null:
 		return
 	var has_style := page != null and page.actor_style != null
-	var has_frames := page != null and page.sprite_frames != null and _sprite_frames_has_content(page.sprite_frames)
+	# Vacío (Crear) también cuenta: hay que poder abrirlo para añadir frames.
+	var has_frames_resource := page != null and page.sprite_frames != null
 	var can_materialize := page != null and page.sprite_texture != null
 
 	if has_style:
 		animations_button.disabled = true
 		animations_button.tooltip_text = "No disponible con ActorStyle. Quita el ActorStyle para editar SpriteFrames de la página."
-	elif has_frames or can_materialize:
+	elif has_frames_resource or can_materialize:
 		animations_button.disabled = false
-		animations_button.tooltip_text = "Abre el editor nativo del SpriteFrames de esta página (materializa desde textura/sheet si hace falta)."
+		if has_frames_resource and not _sprite_frames_has_content(page.sprite_frames):
+			animations_button.tooltip_text = "Abre el SpriteFrames de la página (aún vacío: añade animaciones/frames ahí)."
+		else:
+			animations_button.tooltip_text = "Abre el editor nativo del SpriteFrames de esta página (materializa desde textura/sheet si hace falta)."
 	else:
 		animations_button.disabled = true
 		animations_button.tooltip_text = "Asigna una textura o un SpriteFrames para poder editar animaciones."
@@ -833,7 +845,8 @@ func _on_animations_pressed() -> void:
 	if not page or page.actor_style:
 		return
 	var frames: SpriteFrames = null
-	if page.sprite_frames and _sprite_frames_has_content(page.sprite_frames):
+	# Abrir el recurso asignado aunque esté vacío (p. ej. tras "Crear").
+	if page.sprite_frames != null:
 		frames = page.sprite_frames
 	else:
 		frames = _materialize_sprite_frames()

@@ -97,10 +97,23 @@ func _prompt_root_menu(player_name: String) -> int:
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 	})
 	DisplayManager.hide_message_wait_indicator()
+	var cb: ChoiceBox = null
+	if DisplayManager.instance != null:
+		cb = DisplayManager.instance.choice_box
+	if cb != null:
+		cb.suppress_confirm_sfx = true
 	var choice: int = await DisplayManager.show_choices_corner(
 		options,
 		ChoiceBox.ChoiceAnchor.TOP_LEFT
 	)
+	if cb != null:
+		cb.suppress_confirm_sfx = false
+	if choice == RootOption.BILL:
+		AudioManager.play_ui_pc_access()
+	elif choice >= 0:
+		AudioManager.play_ui_select()
+	elif choice < 0:
+		AudioManager.play_ui_cancel()
 	DisplayManager.close_message()
 	return choice
 
@@ -110,12 +123,15 @@ func _open_bill_pc() -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
+		"playOpenSound": false,
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 	})
 	await DisplayManager.show_message("Acceso al Sistema de Almacenamiento de POKéMON concedido.", {
 		"waitInput": true,
 		"closeAtEnd": true,
 		"showIconAtEnd": true,
+		"playOpenSound": false,
+		"playConfirmSound": true,
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 	})
 
@@ -198,6 +214,7 @@ func _show_bill_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> vo
 		"waitInput": false,
 		"closeAtEnd": false,
 		"showIconAtEnd": false,
+		"playOpenSound": false,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 	})

@@ -34,6 +34,8 @@ var waitInput:bool = true
 var closeAtEnd:bool = true
 var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aunque no haya más mensajes (batalla)
 @export var play_open_sound_on_show: bool = true
+## Si true, al confirmar un mensaje con closeAtEnd suena el accept (por defecto no).
+var play_confirm_sound_on_close: bool = false
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var _current_theme: MessageBoxTheme = null  ## Tema actualmente aplicado
@@ -142,8 +144,24 @@ func show_custom(text: String, config := {}):
 	var cb: Variant = config.get("onTextVisibleReady", Callable())
 	_on_text_visible_ready = cb if cb is Callable else Callable()
 
+	var prev_open_sound := play_open_sound_on_show
+	if "playOpenSound" in config:
+		play_open_sound_on_show = bool(config["playOpenSound"])
+	elif "play_open_sound" in config:
+		play_open_sound_on_show = bool(config["play_open_sound"])
+
+	var prev_confirm_sound := play_confirm_sound_on_close
+	if "playConfirmSound" in config:
+		play_confirm_sound_on_close = bool(config["playConfirmSound"])
+	elif "play_confirm_sound" in config:
+		play_confirm_sound_on_close = bool(config["play_confirm_sound"])
+	else:
+		play_confirm_sound_on_close = false
+
 	await showMessage(text)
 
+	play_open_sound_on_show = prev_open_sound
+	play_confirm_sound_on_close = prev_confirm_sound
 	_on_text_visible_ready = Callable()
 
 func show_input(text: String, show_icon_at_end: bool = false):
@@ -541,6 +559,8 @@ func selectOption(): #(ui_accept)
 			# Lógica de cierre:
 			if closeAtEnd:
 				# closeAtEnd = true → Siempre cerrar
+				if play_confirm_sound_on_close:
+					AudioManager.play_ui_select()
 				close()
 			elif not isLastMessage:
 				# closeAtEnd = false y hay más mensajes → Continuar al siguiente
@@ -568,6 +588,8 @@ func cancelOption(): #(ui_cancel)
 		if waitInput:
 			# Lógica de cierre (igual que selectOption):
 			if closeAtEnd:
+				if play_confirm_sound_on_close:
+					AudioManager.play_ui_select()
 				close()
 			elif not isLastMessage:
 				_play_message_continue_sound()
