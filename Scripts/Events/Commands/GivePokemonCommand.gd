@@ -64,8 +64,8 @@ func execute(context: Node) -> void:
 				"frameStyle": MessageBoxFrameStyle.Values.HGSS
 			})
 			var sent_to_pc := party_controller.send_to_pc(pokemon)
-			stored_successfully = sent_to_pc
 			if sent_to_pc:
+				stored_successfully = true
 				await DisplayManager.show_message("¡%s fue enviado al PC!" % pokemon_name, {
 					"waitInput": true,
 					"closeAtEnd": true,
@@ -74,13 +74,16 @@ func execute(context: Node) -> void:
 					"frameStyle": MessageBoxFrameStyle.Values.HGSS
 				})
 			else:
-				await DisplayManager.show_message("No se pudo enviar %s al PC." % pokemon_name, {
+				await DisplayManager.show_message("¡La CAJA está llena!", {
 					"waitInput": true,
 					"closeAtEnd": true,
 					"waitTime": 0.0,
 					"showIconAtEnd": false,
-					"frameStyle": MessageBoxFrameStyle.Values.FIRERED
+					"frameStyle": MessageBoxFrameStyle.Values.HGSS
 				})
+	elif not added_to_party:
+		# Sin mensajes: party → PC; si no hay sitio, se pierde el regalo.
+		stored_successfully = party_controller.send_to_pc(pokemon)
 
 	if stored_successfully:
 		_register_in_pokedex(pokemon)

@@ -100,6 +100,8 @@ func can_use(context: ItemUseContext) -> bool:
 		return false
 	if context.battle_controller.rules.type != BattleRules.BattleTypes.WILD:
 		return false
+	if GameStateService != null and GameStateService.is_party_and_pc_full():
+		return false
 	return _is_capturable_target(context)
 
 
@@ -114,6 +116,9 @@ func apply(context: ItemUseContext) -> ItemUseResult:
 
 	if context.battle_controller.rules.type != BattleRules.BattleTypes.WILD:
 		return ItemUseResult.failure_blocked("¡No puedes capturar el Pokémon de otro entrenador!")
+
+	if GameStateService != null and GameStateService.is_party_and_pc_full():
+		return ItemUseResult.failure_blocked("¡La CAJA está llena!")
 
 	if not _is_capturable_target(context):
 		return ItemUseResult.failure_blocked("No hay un Pokémon salvaje capturable.")

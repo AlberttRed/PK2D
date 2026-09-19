@@ -59,6 +59,9 @@ var _bag_dialog_saved_msg_layout: Dictionary = {}
 var _bag_dialog_saved_choice_layout: Dictionary = {}
 var _party_action_choice_layout_saved: bool = false
 var _party_action_saved_choice_layout: Dictionary = {}
+## Layout de esquina pendiente de restaurar tras `show_choices_corner(..., close_at_end=false)`.
+var _corner_choice_layout_saved: bool = false
+var _corner_choice_saved_layout: Dictionary = {}
 ## Mochila (pausa) → «Usar» ítem que requiere Pokémon: id pendiente hasta elegir objetivo en party.
 var _pending_bag_item_id: int = -1
 ## Estado de navegación de mochila (bolsillo + índice) al pasar a selección de objetivo en Party.
@@ -69,15 +72,30 @@ var _skip_pause_open_on_party_close: bool = false
 var _suppress_party_resume_after_bag_close: bool = false
 ## Cierre interno de mochila (reapertura tras party): no ejecutar lógica de _on_bag_closed.
 var _suppress_bag_closed_effects: bool = false
+## PC → DAR/OBJETO: elegir un ítem de la mochila para held.
+var _bag_hold_pick_active: bool = false
+var _bag_hold_pick_result: int = -1
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
+## MessageBox estrecho al ancho de la caja mientras el PC está abierto.
+var _pc_msg_layout_saved: bool = false
+var _pc_msg_saved_layout: Dictionary = {}
+var _pc_msg_saved_scroll: Dictionary = {}
 
 ## Viewport base del UI overworld/pausa (MessageBox anclado en píxeles de escena).
 const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
 const _MSG_BAR_SAFE_MARGIN_PX := 2.0
 const _MSG_BAR_HEIGHT_PX := 96.0
+## Ancho del panel Box en PCUI.tscn (offset_left/right 185→509).
+const _PC_MSG_LEFT_PX := 185.0
+const _PC_MSG_RIGHT_PX := 509.0
+const _PC_CHOICE_GAP_ABOVE_MSG_PX := 8.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
+## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
+const _UI_FADE_COVER_Z: int = 220
+## Bag sobre PC (sprites del party/cursor usan z_index > 0 y quedarían encima si Bag=0).
+const _BAG_OVER_PC_Z: int = 50
 
 # === NODOS ===
 @onready var msg: MessageBox = $MSG
@@ -89,6 +107,7 @@ const _UI_SCREEN_FADE_DURATION: float = 0.2
 @onready var _pokedex_ui = $PokedexUI
 @onready var _save_ui = $SaveUI
 @onready var _evolution_ui = $EvolutionUI
+@onready var _pc_ui = $PCUI
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
@@ -118,6 +137,8 @@ func _ready() -> void:
 		_pokedex_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _save_ui:
 		_save_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _pc_ui:
+		_pc_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -170,6 +191,11 @@ func _ready() -> void:
 		if _save_ui.has_signal("visibility_changed"):
 			_save_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
+	if _pc_ui:
+		_pc_ui.closed.connect(_on_pc_ui_closed)
+		if _pc_ui.has_signal("visibility_changed"):
+			_pc_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
 		BattleNew.visibility_changed.connect(_on_ui_visibility_changed)
@@ -191,52 +217,75 @@ static func show_message(text: String, config: Dictionary = {}) -> void:
 		return
 	await instance._show_message_with_config(text, config)
 
-## Muestra opciones y devuelve el índice seleccionado
-static func show_choices(options: Array[String]) -> int:
+## Muestra opciones y devuelve el índice seleccionado.
+## close_at_end: si false, el ChoiceBox permanece abierto (cerrar con `close_choices`).
+static func show_choices(options: Array[String], close_at_end: bool = true) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
-	return await instance._show_choices(options)
+	return await instance._show_choices(options, close_at_end)
 
 
 ## Menú de acciones del party: borde derecho alineado al viewport (diseño 512×384), crece hacia la izquierda.
-static func show_party_action_choices(options: Array[String]) -> int:
+static func show_party_action_choices(options: Array[String], close_at_end: bool = true) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
 	instance._push_party_action_choice_layout()
-	var idx: int = await instance._show_choices(options)
-	instance._pop_party_action_choice_layout()
+	var idx: int = await instance._show_choices(options, close_at_end)
+	if close_at_end:
+		instance._pop_party_action_choice_layout()
 	return idx
 
 
 ## Opciones con anclaje a una esquina del viewport (`ChoiceBox.ChoiceAnchor`; PARTY_MENU/BAG tienen flujo propio).
-static func show_choices_corner(options: Array[String], anchor: ChoiceBox.ChoiceAnchor) -> int:
+## close_at_end: si false, permanece abierto; el layout de esquina se restaura en `close_choices`.
+static func show_choices_corner(options: Array[String], anchor: ChoiceBox.ChoiceAnchor, close_at_end: bool = true) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
 	if anchor == ChoiceBox.ChoiceAnchor.SCENE_DEFAULT:
-		return await instance._show_choices(options)
+		return await instance._show_choices(options, close_at_end)
 	if anchor == ChoiceBox.ChoiceAnchor.PARTY_MENU or anchor == ChoiceBox.ChoiceAnchor.BAG_TOP_LEFT:
 		push_error("DisplayManager.show_choices_corner: usa show_party_action_choices o el flujo de mochila.")
 		return -1
-	var saved: Dictionary = instance._snapshot_choice_box_layout()
-	instance.choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	instance.choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	instance.choice_box.set_corner_anchor(anchor)
-	var idx: int = await instance._show_choices(options)
-	instance._restore_choice_box_layout(saved)
-	instance.choice_box.clear_corner_anchor()
+	instance._push_corner_choice_layout(anchor)
+	var idx: int = await instance._show_choices(options, close_at_end)
+	if close_at_end:
+		instance._pop_corner_choice_layout()
 	return idx
 
 
-## Muestra un mensaje seguido de opciones
-## close_at_end: Si true, cierra el MessageBox después de la selección. Si false, lo mantiene visible.
-static func show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true) -> int:
+## Espera otra selección sobre un ChoiceBox ya abierto (tras `close_at_end=false`).
+static func await_choices(close_at_end: bool = true) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
-	return await instance._show_message_with_choices(text, options, close_at_end)
+	return await instance._await_choices(close_at_end)
+
+
+## Cierra el ChoiceBox si está abierto y restaura layout pendiente (esquina / party action).
+static func close_choices() -> void:
+	if instance == null:
+		return
+	instance._close_choices()
+
+
+## Activa/desactiva el input del ChoiceBox visible (p. ej. mientras un mensaje espera A).
+static func set_choice_input_enabled(enabled: bool) -> void:
+	if instance == null or instance.choice_box == null:
+		return
+	instance.choice_box.set_menu_input_enabled(enabled)
+
+
+## Muestra un mensaje seguido de opciones.
+## close_at_end: cierra el MessageBox tras la selección.
+## close_choices_at_end: cierra el ChoiceBox tras la selección (si false, usar `close_choices`).
+static func show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true, close_choices_at_end: bool = true) -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	return await instance._show_message_with_choices(text, options, close_at_end, close_choices_at_end)
 
 
 ## Menú de acción de objeto de mochila (Usar/Tirar/Salir) con el mismo layout coordinado de overworld.
@@ -252,6 +301,57 @@ static func close_message() -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	instance._close_message()
+
+## Cambia el texto del MessageBox de golpe (sin efecto de escritura). Para ayudas de menú.
+static func set_message_help_instant(text: String) -> void:
+	if instance == null or instance.msg == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	instance.msg.set_help_text_instant(text)
+
+## Oculta el indicador de espera del MessageBox (p. ej. ayudas estáticas del PC).
+static func hide_message_wait_indicator() -> void:
+	if instance == null or instance.msg == null:
+		return
+	instance.msg.hide_wait_indicator()
+
+## Abre la UI del PC (cajas). `mode` = PCUI.Mode. Espera hasta cerrar.
+## `prepare_before_reveal`: Callable async; en negro tras cerrar el PC (p. ej. restaurar menú BILL).
+## `cleanup_under_cover`: Callable async; en negro al abrir, antes de montar el PC (p. ej. cerrar choices).
+static func open_pc(
+	mode: int = 0,
+	box_index: int = 0,
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._open_pc_ui(mode, box_index, prepare_before_reveal, cleanup_under_cover)
+
+
+## PC: abre la mochila para elegir un objeto a dar (held). Devuelve item_id o -1 si cancela.
+static func pick_held_item_from_bag() -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return -1
+	return await instance._pick_held_item_from_bag()
+
+
+## Abre el ChoiceBox en esquina sin esperar selección (`close_choices` / `await_choices` después).
+static func open_choices_corner(options: Array[String], anchor: ChoiceBox.ChoiceAnchor) -> bool:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return false
+	if options.is_empty():
+		push_error("DisplayManager.open_choices_corner: opciones vacías")
+		return false
+	if anchor == ChoiceBox.ChoiceAnchor.PARTY_MENU or anchor == ChoiceBox.ChoiceAnchor.BAG_TOP_LEFT:
+		push_error("DisplayManager.open_choices_corner: usa el flujo de party/mochila.")
+		return false
+	if anchor != ChoiceBox.ChoiceAnchor.SCENE_DEFAULT:
+		instance._push_corner_choice_layout(anchor)
+	return await instance.choice_box.open_choices_keep_open(options)
 
 ## Hace fade out (de visible a negro)
 static func fade_out(duration: float = 0.3) -> void:
@@ -456,18 +556,146 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	var cfg := config.duplicate()
 	if not "frameStyle" in cfg:
 		cfg["frameStyle"] = MessageBoxFrameStyle.Values.HGSS
+	var used_pc_layout := _push_pc_msg_layout_if_needed()
+	# Si hay choices abiertos, no deben consumir el mismo ui_accept que el MessageBox.
+	var paused_choices := false
+	if choice_box != null and choice_box.visible:
+		choice_box.set_menu_input_enabled(false)
+		paused_choices = true
 	await msg.show_custom(text, cfg)
+	if paused_choices and choice_box != null and choice_box.visible:
+		choice_box.set_menu_input_enabled(true)
+	# Si el mensaje se cerró solo (closeAtEnd), restaurar layout del PC.
+	if used_pc_layout and msg != null and not msg.visible:
+		_pop_pc_msg_layout()
 
-func _show_choices(options: Array[String]) -> int:
+
+func _show_choices(options: Array[String], close_at_end: bool = true) -> int:
 	if options.is_empty():
 		push_error("DisplayManager._show_choices: Array de opciones vacío")
 		return -1
 
-	var selected_index = await choice_box.show_choices(options)
+	if close_at_end:
+		return await choice_box.show_choices(options)
 
+	if not await choice_box.open_choices_keep_open(options):
+		return -1
+	return await choice_box.await_choice_keep_open()
+
+
+func _await_choices(close_at_end: bool = true) -> int:
+	if choice_box == null or not choice_box.visible:
+		push_error("DisplayManager._await_choices: no hay ChoiceBox abierto")
+		return -1
+	var selected_index: int = await choice_box.await_choice_keep_open()
+	if close_at_end:
+		_close_choices()
 	return selected_index
 
-func _show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true) -> int:
+
+func _close_choices() -> void:
+	if choice_box != null:
+		choice_box.close_choices()
+	_pop_corner_choice_layout()
+	if _party_action_choice_layout_saved:
+		_pop_party_action_choice_layout()
+
+
+func _push_corner_choice_layout(anchor: ChoiceBox.ChoiceAnchor) -> void:
+	if _corner_choice_layout_saved:
+		_pop_corner_choice_layout()
+	_corner_choice_saved_layout = _snapshot_choice_box_layout()
+	_corner_choice_layout_saved = true
+	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	if _is_pc_ui_open():
+		choice_box.set_extra_bottom_inset(_pc_choice_bottom_clearance())
+	choice_box.set_corner_anchor(anchor)
+
+
+func _pop_corner_choice_layout() -> void:
+	if not _corner_choice_layout_saved:
+		return
+	_restore_choice_box_layout(_corner_choice_saved_layout)
+	if choice_box != null:
+		choice_box.clear_corner_anchor()
+		choice_box.clear_extra_bottom_inset()
+	_corner_choice_saved_layout = {}
+	_corner_choice_layout_saved = false
+
+
+func _is_pc_ui_open() -> bool:
+	return _pc_ui != null and _pc_ui.visible
+
+
+func _pc_choice_bottom_clearance() -> float:
+	var gap: float = _PC_CHOICE_GAP_ABOVE_MSG_PX
+	if msg != null and msg.visible and msg.size.y > 8.0:
+		return msg.size.y + gap
+	return _MSG_BAR_HEIGHT_PX + gap
+
+
+func _push_pc_msg_layout_if_needed() -> bool:
+	if not _is_pc_ui_open() or msg == null:
+		return _pc_msg_layout_saved
+	if _pc_msg_layout_saved:
+		# El tema puede reescribir el scroll; reajustar al ancho estrecho sin tocar la altura.
+		msg.fit_scroll_width_to_panel()
+		return true
+	_pc_msg_saved_layout = _snapshot_msg_panel_layout()
+	if msg.scroll != null:
+		_pc_msg_saved_scroll = {
+			"left": msg.scroll.offset_left,
+			"right": msg.scroll.offset_right,
+			"top": msg.scroll.offset_top,
+			"bottom": msg.scroll.offset_bottom,
+		}
+	_apply_pc_msg_box_rect()
+	_pc_msg_layout_saved = true
+	return true
+
+
+func _apply_pc_msg_box_rect() -> void:
+	if msg == null:
+		return
+	var vh: float = _MSG_VIEWPORT_BASE.y
+	var bar_h: float = _MSG_BAR_HEIGHT_PX
+	var left_x: float = _PC_MSG_LEFT_PX
+	var right_x: float = _PC_MSG_RIGHT_PX
+	var bar_w: float = right_x - left_x
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(bar_w, bar_h)
+	msg.offset_left = left_x
+	msg.offset_top = vh - bar_h
+	msg.offset_right = right_x
+	msg.offset_bottom = vh
+	msg.size = Vector2(bar_w, bar_h)
+	msg.fit_scroll_width_to_panel()
+
+
+func _pop_pc_msg_layout() -> void:
+	if not _pc_msg_layout_saved or msg == null:
+		_pc_msg_layout_saved = false
+		return
+	_restore_msg_panel_layout(_pc_msg_saved_layout)
+	if msg.scroll != null and not _pc_msg_saved_scroll.is_empty():
+		msg.scroll.offset_left = float(_pc_msg_saved_scroll.get("left", 32.0))
+		msg.scroll.offset_right = float(_pc_msg_saved_scroll.get("right", 465.0))
+		msg.scroll.offset_top = float(_pc_msg_saved_scroll.get("top", 16.0))
+		msg.scroll.offset_bottom = float(_pc_msg_saved_scroll.get("bottom", 79.0))
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
+	_pc_msg_saved_layout = {}
+	_pc_msg_saved_scroll = {}
+	_pc_msg_layout_saved = false
+
+
+func _show_message_with_choices(text: String, options: Array[String], close_at_end: bool = true, close_choices_at_end: bool = true) -> int:
 	if options.is_empty():
 		push_error("DisplayManager._show_message_with_choices: Array de opciones vacío")
 		return -1
@@ -490,6 +718,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	# closeAtEnd: false para mantener el mensaje visible cuando se muestren las opciones
 	# Iniciar show_custom y esperar a que termine
 	# frameStyle: HGSS (0) por defecto para aplicar el tema y mostrar el icono
+	_push_pc_msg_layout_if_needed()
 	await msg.show_custom(text, {
 		"waitInput": true,  # true para esperar input entre líneas
 		"closeAtEnd": false,
@@ -513,7 +742,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	var final_scroll_position = msg.scroll.scroll_vertical
 
 	# Mostrar las opciones (el MessageBox permanece visible de fondo)
-	var selected_index = await choice_box.show_choices(options)
+	var selected_index = await _show_choices(options, close_choices_at_end)
 
 	# Restaurar la posición del scroll después de mostrar las opciones
 	# para asegurar que el texto se mantenga en la posición final
@@ -523,6 +752,8 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	if close_at_end:
 		msg.hide()
 		msg.clear()
+		msg.restore_expanded_height()
+		_pop_pc_msg_layout()
 
 	return selected_index
 
@@ -530,12 +761,14 @@ func _close_message() -> void:
 	if msg.visible:
 		msg.hide()
 		msg.clear()
+		msg.restore_expanded_height()
+	_pop_pc_msg_layout()
 
 func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible) || (_pc_ui != null and _pc_ui.visible)
 
 
 func _start_evolution_impl(
@@ -972,7 +1205,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible):
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible) and not (_pc_ui != null and _pc_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -1003,7 +1236,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not (_pc_ui != null and _pc_ui.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -1047,7 +1280,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_ui != null and _pc_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -1113,10 +1346,66 @@ func _await_ui_control_hidden(ctrl: Control) -> void:
 		await get_tree().process_frame
 
 
+func _open_pc_ui(
+	mode: int = 0,
+	box_index: int = 0,
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
+	if _pc_ui == null:
+		push_error("DisplayManager: Nodo PCUI no disponible en la escena.")
+		return
+	if _pc_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _bag_ui != null and _bag_ui.visible:
+		return
+
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	# Abrir: fade sólido a negro → revelar PC con máscara (inversa del cierre).
+	const PC_MASK_CLOSE := "res://Sprites/Transiciones/PC/computertrclose.png"
+	const PC_MASK_DUR := 0.8
+	const PC_SOLID_FADE_DUR := 0.4
+	await fade_layer.fade_in(PC_SOLID_FADE_DUR)
+	if cleanup_under_cover.is_valid():
+		await cleanup_under_cover.call()
+	_pc_ui.setup(null)
+	_pc_ui.open(mode as PCUI.Mode, box_index)
+	_on_ui_visibility_changed()
+	AudioManager.play_ui_pc_access()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, false, PC_MASK_DUR):
+		await fade_layer.fade_out(PC_SOLID_FADE_DUR)
+	fade_layer.z_index = fade_z
+	await _pc_ui.closed
+	# Cerrar: máscara PC a negro → fade sólido de vuelta al overworld.
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	AudioManager.play_ui_pc_close()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, true, PC_MASK_DUR):
+		await fade_layer.fade_in(PC_SOLID_FADE_DUR)
+	_close_message()
+	_close_choices()
+	if _pc_ui.visible:
+		_pc_ui.hide()
+	_on_ui_visibility_changed()
+	if prepare_before_reveal.is_valid():
+		await prepare_before_reveal.call()
+	await fade_layer.fade_out(PC_SOLID_FADE_DUR)
+	fade_layer.z_index = fade_z
+	_on_ui_visibility_changed()
+
+
+func _on_pc_ui_closed() -> void:
+	_on_ui_visibility_changed()
+
+
 func _open_party_ui(with_screen_fade: bool = true) -> void:
 	if _bag_ui != null and _bag_ui.visible:
 		return
 	if _party_ui != null and _party_ui.visible:
+		return
+	if _pc_ui != null and _pc_ui.visible:
 		return
 	if _party_ui == null:
 		push_error("DisplayManager: Nodo PartyUI no disponible en la escena.")
@@ -1293,6 +1582,11 @@ func _close_bag_ui() -> void:
 	_bag_ui.close()
 
 func _on_bag_back_requested() -> void:
+	if _bag_hold_pick_active:
+		if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(false)
+		await _finish_bag_hold_pick(-1)
+		return
 	await _transition_fade_bag_to_pause_menu()
 
 
@@ -1303,7 +1597,7 @@ func _transition_fade_bag_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
-	if _suppress_bag_closed_effects:
+	if _suppress_bag_closed_effects or _bag_hold_pick_active:
 		_on_ui_visibility_changed()
 		return
 	var resume_party_slot := -1
@@ -1327,7 +1621,102 @@ func _on_bag_closed() -> void:
 	_on_ui_visibility_changed()
 
 func _on_bag_use_requested(item_id: int) -> void:
+	if _bag_hold_pick_active:
+		if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(false)
+		if not _can_give_as_held_item(item_id):
+			if msg != null:
+				msg.move_to_front()
+			await _show_message_with_config("No se puede dar ese objeto.", {
+				"waitInput": true,
+				"closeAtEnd": true,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"typingMode": MessageBox.TypingMode.INSTANT,
+				"expandHeight": true,
+			})
+			if _bag_ui != null and _bag_ui.visible:
+				_bag_ui.move_to_front()
+				if _bag_ui.has_method("set_input_enabled"):
+					_bag_ui.set_input_enabled(true)
+			return
+		await _finish_bag_hold_pick(item_id)
+		return
 	await _run_bag_item_use_flow(item_id)
+
+
+## True si el ítem puede equiparse como held (no claves / MT-MO).
+func _can_give_as_held_item(item_id: int) -> bool:
+	if item_id <= 0 or DatabaseService == null:
+		return false
+	var item: ItemData = DatabaseService.get_item_by_id(item_id)
+	if item == null:
+		return false
+	if int(item.pocket) == ItemEnums.Pocket.KEY_ITEMS:
+		return false
+	if int(item.pocket) == ItemEnums.Pocket.TM_HM:
+		return false
+	if int(item.kind) == ItemEnums.Kind.KEY:
+		return false
+	if int(item.kind) == ItemEnums.Kind.TM_HM:
+		return false
+	return true
+
+
+## Abre mochila sobre el PC y espera selección (o cancelar). Devuelve item_id o -1.
+func _pick_held_item_from_bag() -> int:
+	if _bag_ui == null:
+		push_error("DisplayManager._pick_held_item_from_bag: BagUI no disponible")
+		return -1
+	if _bag_ui.visible or _bag_hold_pick_active:
+		return -1
+
+	_bag_hold_pick_active = true
+	_bag_hold_pick_result = -1
+
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
+	_bag_ui.setup(_bag_controller)
+	_bag_ui.set_hold_pick_mode(true)
+	_bag_ui.z_index = _BAG_OVER_PC_Z
+	_bag_ui.move_to_front()
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
+
+	while _bag_hold_pick_active:
+		await get_tree().process_frame
+
+	return _bag_hold_pick_result
+
+
+func _finish_bag_hold_pick(item_id: int) -> void:
+	_bag_hold_pick_result = item_id
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+	_suppress_bag_closed_effects = true
+	_close_bag_ui()
+	await _await_ui_control_hidden(_bag_ui)
+	_suppress_bag_closed_effects = false
+	_bag_controller = null
+	_bag_hold_pick_active = false
+	if _bag_ui != null:
+		_bag_ui.z_index = 0
+	if _pc_ui != null and _pc_ui.visible:
+		_pc_ui.move_to_front()
+	_on_ui_visibility_changed()
+	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	fade_layer.z_index = fade_z
 
 
 ## Tras cerrar la bolsa bajo negro: abre party (mochila → party) y descubre. Sin fade_in previo (ya estamos a negro).
@@ -1887,6 +2276,8 @@ func _update_game_pause_state() -> void:
 		(_party_ui != null and _party_ui.visible) or
 		(_pokedex_ui != null and _pokedex_ui.visible) or
 		(_save_ui != null and _save_ui.visible) or
+		(_pc_ui != null and _pc_ui.visible) or
+		(_evolution_ui != null and _evolution_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)
 	)

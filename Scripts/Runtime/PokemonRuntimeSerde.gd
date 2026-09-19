@@ -34,6 +34,11 @@ func deserialize(data: Dictionary) -> Pokemon:
 	mon.ability_id = int(data.get("ability_id", int(mon.ability_id))) as AbilitiesEnum.Values
 	mon.ability_slot = int(data.get("ability_slot", mon.ability_slot))
 	mon.held_item_id = int(data.get("held_item_id", 0))
+	var marks_raw: Variant = data.get("markings", [])
+	if marks_raw is Array:
+		mon.set_markings_from(marks_raw as Array)
+	else:
+		mon.ensure_markings_size()
 
 	var restored_moves: Array[MovesEnum.Values] = []
 	for x in data.get("custom_move_ids", []):

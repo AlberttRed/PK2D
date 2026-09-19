@@ -2,6 +2,7 @@ extends Node
 
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
 const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
+const PC_STORAGE_SCRIPT = preload("res://Scripts/Resources/Classes/PCStorage.gd")
 const POKEDEX_SCRIPT = preload("res://Scripts/Runtime/Pokedex.gd")
 const POKEMON_RUNTIME_SERDE = preload("res://Scripts/Runtime/PokemonRuntimeSerde.gd")
 const SAVE_VERSION: int = 1
@@ -68,8 +69,8 @@ var bag = BAG_SCRIPT.new()
 # Equipo del jugador (máx. 6 Pokémon); sin dependencia de UI
 var party = PARTY_SCRIPT.new()
 
-## Pokémon capturados en espera de PC (fallback cuando el almacenamiento no está listo).
-var pending_pc_pokemon: Array[Dictionary] = []
+## PC de Pokémon (cajas). Persistido en save/load (#826).
+var pc_storage = PC_STORAGE_SCRIPT.new()
 
 # Pokédex global del jugador (por species_id)
 var pokedex = POKEDEX_SCRIPT.new()
@@ -90,15 +91,15 @@ func initialize_new_game() -> void:
 	current_position = Vector2i(27, 4)  # Posición por defecto en el mapa (coordenada de tile)
 	facing_dir = Vector2.UP
 	if debug_mode:
-		# Spawn clásico de debug para iterar rápido: Pueblo Paleta.
-		current_map_id = "Pueblo_Paleta"
-		current_position = Vector2i(1, 0)
-		facing_dir = Vector2.DOWN
+		# Spawn en Centro Pokémon para iterar PC / curación rápido.
+		current_map_id = "Centro_Pokemon"
+		current_position = Vector2i(-29, -10)
+		facing_dir = Vector2.UP
 	money = 0
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
-	pending_pc_pokemon.clear()
+	pc_storage = PC_STORAGE_SCRIPT.new()
 	pokedex = POKEDEX_SCRIPT.new()
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
 	active_pokedex_id = "kanto"
@@ -107,6 +108,7 @@ func initialize_new_game() -> void:
 		_seed_test_pokedex_progress()
 		_seed_test_bag_items()
 		_seed_test_party_placeholder()
+		_seed_test_pc_box_full()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
@@ -157,11 +159,11 @@ func _seed_test_party_placeholder() -> void:
 	var player_party: Party = get_party()
 	if player_party.count() > 0:
 		_assign_test_capture_balls(player_party)
+		_assign_test_held_items_party(player_party)
 		return
-	# [species_id, level] — Bulbasaur, Squirtle, Charmander, Pikachu, Eevee (+ Snorlax comentado: 5 en equipo).
+	# [species_id, level] — 4 en equipo (hueco libre para SACAR del PC).
 	var test_mons: Array[Vector2i] = [
-		Vector2i(1, 15), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11), Vector2i(133, 10),
-		# Vector2i(143, 9),  # Snorlax (último añadido; descomentar para 6º slot)
+		Vector2i(1, 15), Vector2i(7, 12), Vector2i(4, 13), Vector2i(25, 11),
 	]
 	var added := 0
 	for spec: Vector2i in test_mons:
@@ -192,6 +194,77 @@ func _seed_test_party_placeholder() -> void:
 		var pika: Pokemon = player_party.get_pokemon(3)
 		if pika != null and pika.hp_actual > 0:
 			pika.major_status = CONST.STATUS.POISON
+	_assign_test_held_items_party(player_party)
+
+
+## Llena la caja 0 del PC (30 slots) como en la captura de referencia:
+## Poliwhirl→Shellder (species 61–90, orden dex Gen 1).
+func _seed_test_pc_box_full() -> void:
+	var storage = get_pc_storage()
+	if storage == null:
+		return
+	if storage.get_occupied_count() > 0:
+		_assign_test_held_items_pc(storage)
+		return
+	# Misma secuencia que AlmacenamientoPkm.webp (contenido de referencia).
+	var species_ids: Array[int] = [
+		61, 62, 63, 64, 65, 66,  # Poliwhirl … Machop
+		67, 68, 69, 70, 71, 72,  # Machoke … Tentacool
+		73, 74, 75, 76, 77, 78,  # Tentacruel … Rapidash
+		79, 80, 81, 82, 83, 84,  # Slowpoke … Doduo
+		85, 86, 87, 88, 89, 90,  # Dodrio … Shellder
+	]
+	var added := 0
+	for slot in range(mini(species_ids.size(), PCStorage.SLOTS_PER_BOX)):
+		var species_id: int = species_ids[slot]
+		if DatabaseService.get_pokemon(species_id) == null:
+			push_warning("GameStateService: species_id=%d no existe; slot PC %d vacío." % [species_id, slot])
+			continue
+		var lvl := 50 if species_id == 62 else (5 + (slot % 20))
+		var mon := Pokemon.new(species_id, lvl, 0, 0, 0, true)
+		if mon == null or mon.base == null:
+			continue
+		mon.is_wild = false
+		mon.original_trainer = "Debug"
+		mon.capture_level = lvl
+		mon.captured_ball_id = PokeballItemEffect.DEFAULT_BALL_SPRITE_ID
+		if storage.set_pokemon(0, slot, mon):
+			added += 1
+	storage.set_box_name(0, "CAJA 1")
+	print("GameStateService: PC caja de prueba (ref) con %d Pokémon." % added)
+	_assign_test_held_items_pc(storage)
+
+
+## Objetos held de prueba (MOVER OBJETOS / PC). Sin integrar aún el flujo completo de held items.
+func _assign_test_held_items_party(party: Party) -> void:
+	if party == null:
+		return
+	# Squirtle → Restos; Charmander → Banda Focus. Bulbasaur/Pikachu sin objeto.
+	var held_by_slot: Dictionary = {1: 211, 2: 252}
+	for slot in held_by_slot.keys():
+		var mon: Pokemon = party.get_pokemon(int(slot))
+		if mon == null:
+			continue
+		mon.held_item_id = int(held_by_slot[slot])
+
+
+func _assign_test_held_items_pc(storage) -> void:
+	if storage == null:
+		return
+	# Algunos slots de la caja 0 con held item (resto semitransparente en MOVER OBJETOS).
+	var held_by_slot: Dictionary = {
+		0: 211,   # Restos
+		3: 132,   # Baya Aranja
+		7: 252,   # Banda Focus
+		12: 219,  # Imán
+		20: 226,  # Carbón
+		25: 216,  # Semilla Milagro
+	}
+	for slot in held_by_slot.keys():
+		var mon: Pokemon = storage.get_pokemon(0, int(slot))
+		if mon == null:
+			continue
+		mon.held_item_id = int(held_by_slot[slot])
 
 
 ## Alterna Poké Ball / Super Ball en el party de prueba (validar summary).
@@ -301,6 +374,34 @@ func get_party():
 	if party == null:
 		party = PARTY_SCRIPT.new()
 	return party
+
+
+## Almacenamiento PC (cajas). Sin UI todavía (#828).
+func get_pc_storage():
+	if pc_storage == null:
+		pc_storage = PC_STORAGE_SCRIPT.new()
+	return pc_storage
+
+
+## Serializa cajas del PC (nombres + slots) para save.
+func get_pc_storage_save_data() -> Array[Dictionary]:
+	return get_pc_storage().to_serializable_data()
+
+
+## Restaura cajas desde save. Array vacío / ausente → PC vacío con capacidad por defecto.
+func load_pc_storage_save_data(boxes_data: Array) -> void:
+	get_pc_storage().load_serializable_data(boxes_data)
+
+
+## True si el equipo está lleno y no hay hueco en el PC (Gen 3: bloquea Poké Ball).
+func is_party_and_pc_full() -> bool:
+	var player_party: Party = get_party()
+	if player_party == null or not player_party.is_full():
+		return false
+	var pc = get_pc_storage()
+	if pc == null:
+		return true
+	return not pc.has_space()
 
 
 ## Equipo leído solo del JSON del slot (no modifica el party en memoria). Para UI, p. ej. iconos en «Continuar».
@@ -624,28 +725,6 @@ func load_party_save_data(entries: Array[Dictionary]) -> void:
 	get_party().load_serializable_data(entries)
 
 
-func add_pending_pc_pokemon(pokemon: Pokemon) -> void:
-	if pokemon == null:
-		return
-	pending_pc_pokemon.append(pokemon.to_serializable_state())
-	print("GameStateService: Pokémon en cola de PC pendiente (total=%d)." % pending_pc_pokemon.size())
-
-
-func get_pending_pc_pokemon_count() -> int:
-	return pending_pc_pokemon.size()
-
-
-func get_pending_pc_pokemon_save_data() -> Array[Dictionary]:
-	return pending_pc_pokemon.duplicate(true)
-
-
-func load_pending_pc_pokemon_save_data(entries: Array[Dictionary]) -> void:
-	pending_pc_pokemon.clear()
-	for entry in entries:
-		if entry is Dictionary:
-			pending_pc_pokemon.append(entry)
-
-
 ## Serializa la Pokédex para guardado futuro.
 func get_pokedex_save_data() -> Dictionary:
 	return get_pokedex().to_serializable_data()
@@ -801,6 +880,7 @@ func load_game(slot_id: int = DEFAULT_SAVE_SLOT) -> bool:
 	_apply_save_payload(save_data)
 	var path := get_save_path(slot_id)
 	print("GameStateService.load_game: slot=%d cargado desde %s (save_version=%d)." % [slot_id, path, save_version])
+	get_pc_storage().debug_print_boxes()
 	return true
 
 
@@ -823,7 +903,7 @@ func _build_save_payload() -> Dictionary:
 			"tag": str(rp.get("tag", "")),
 		},
 		"party": get_party_save_data(),
-		"pending_pc_pokemon": get_pending_pc_pokemon_save_data(),
+		"pc_storage": get_pc_storage_save_data(),
 		"bag": get_bag_save_data(),
 		"pokedex": get_pokedex_save_data(),
 		"pokedex_registry": get_pokedex_registry_save_data(),
@@ -881,15 +961,11 @@ func _apply_save_payload(save_data: Dictionary) -> void:
 	else:
 		load_party_save_data([])
 
-	var pending_pc_any: Variant = save_data.get("pending_pc_pokemon", [])
-	if pending_pc_any is Array:
-		var safe_pending: Array[Dictionary] = []
-		for entry_any in pending_pc_any:
-			if entry_any is Dictionary:
-				safe_pending.append(entry_any)
-		load_pending_pc_pokemon_save_data(safe_pending)
+	var pc_any: Variant = save_data.get("pc_storage", [])
+	if pc_any is Array:
+		load_pc_storage_save_data(pc_any)
 	else:
-		load_pending_pc_pokemon_save_data([])
+		load_pc_storage_save_data([])
 
 	var pokedex_any: Variant = save_data.get("pokedex", {})
 	var raw_pokedex: Dictionary = pokedex_any if pokedex_any is Dictionary else {}
@@ -1004,6 +1080,7 @@ func get_state_summary() -> String:
 	summary += "Self-switches: %s\n" % event_self_flags
 	summary += "Bag entries: %d\n" % get_bag_save_data().size()
 	summary += "Party Pokémon: %d\n" % get_party().count()
+	summary += "PC occupied: %d / %d\n" % [get_pc_storage().get_occupied_count(), get_pc_storage().get_capacity()]
 	summary += "Pokédex vistos: %d\n" % get_pokedex().get_seen_count()
 	summary += "Pokédex capturados: %d\n" % get_pokedex().get_caught_count()
 	return summary

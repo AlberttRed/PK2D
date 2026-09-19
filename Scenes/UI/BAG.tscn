@@ -21,7 +21,7 @@ base_font = ExtResource("9_font")
 
 [sub_resource type="FontVariation" id="FontVariation_bag_list"]
 base_font = ExtResource("9_font")
-spacing_top = -6
+spacing_top = 6
 
 [sub_resource type="Theme" id="Theme_bag_label"]
 default_font = SubResource("FontVariation_bag")

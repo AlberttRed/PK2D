@@ -13,6 +13,7 @@ enum ChoiceAnchor {
 	TOP_RIGHT,
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT,
+	MIDDLE_RIGHT,
 	PARTY_MENU,
 	BAG_TOP_LEFT,
 }
@@ -24,6 +25,9 @@ signal selection_changed(index: int)
 ## Índice de la opción actualmente seleccionada
 var selected_index: int = 0
 
+## Si true, confirmar/cancelar no reproducen SFX (el caller lo gestiona).
+var suppress_confirm_sfx: bool = false
+
 ## Array de opciones disponibles
 var options: Array[String] = []
 
@@ -32,7 +36,9 @@ var options: Array[String] = []
 @onready var cursor: Sprite2D = $Cursor
 
 ## Padding bajo la última opción (dentro del panel), además del margin_bottom del MarginContainer.
-const PANEL_EXTRA_BOTTOM_MARGIN := 4.0
+const PANEL_EXTRA_BOTTOM_MARGIN := 0.0
+## Y del cursor desde el top de la fila (texto TOP + MENU_TEXT_RISE; no el centro geométrico de 34px).
+const CURSOR_Y_IN_ROW := 6.0
 
 ## Viewport de diseño HGSS sobre el que están calibrados los inset de ChoiceBox.tscn.
 const DESIGN_VIEWPORT := Vector2(512.0, 384.0)
@@ -53,6 +59,8 @@ var _base_offset_right: float = 0
 var _base_offset_bottom: float = 0
 
 var _anchor: ChoiceAnchor = ChoiceAnchor.SCENE_DEFAULT
+## Extra (px diseño 512×384) sumado al inset inferior en anclas bottom/middle-right (p. ej. dejar hueco al MessageBox del PC).
+var _extra_bottom_inset: float = 0.0
 ## PARTY_MENU
 var _party_right_edge_x: float = 0.0
 var _party_bottom_y: float = 0.0
@@ -123,6 +131,15 @@ func clear_corner_anchor() -> void:
 	_anchor = ChoiceAnchor.SCENE_DEFAULT
 
 
+## Hueco extra bajo el panel (diseño 512×384). 0 = solo CORNER_INSET_BOTTOM.
+func set_extra_bottom_inset(px: float) -> void:
+	_extra_bottom_inset = maxf(0.0, px)
+
+
+func clear_extra_bottom_inset() -> void:
+	_extra_bottom_inset = 0.0
+
+
 ## Compatibilidad: mochila usa esquina superior izquierda fija.
 func set_fixed_top_left_position(enabled: bool, top_left: Vector2 = Vector2.ZERO) -> void:
 	if enabled:
@@ -166,18 +183,30 @@ func _apply_sized_panel_layout(panel_width: float, panel_height: float) -> void:
 			offset_bottom = mt + panel_height
 		ChoiceAnchor.BOTTOM_LEFT:
 			var ml := CORNER_INSET_LEFT * s.x
-			var mb := CORNER_INSET_BOTTOM * s.y
+			var mb := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
 			offset_left = ml
 			offset_right = ml + panel_width
 			offset_bottom = vp.y - mb
 			offset_top = offset_bottom - panel_height
 		ChoiceAnchor.BOTTOM_RIGHT:
 			var mr := CORNER_INSET_RIGHT * s.x
-			var mb := CORNER_INSET_BOTTOM * s.y
+			var mb := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
 			offset_right = vp.x - mr
 			offset_left = offset_right - panel_width
 			offset_bottom = vp.y - mb
 			offset_top = offset_bottom - panel_height
+		ChoiceAnchor.MIDDLE_RIGHT:
+			var mr2 := CORNER_INSET_RIGHT * s.x
+			offset_right = vp.x - mr2
+			offset_left = offset_right - panel_width
+			if _extra_bottom_inset > 0.0:
+				# Con MessageBox abajo (PC): anclar por el borde inferior, no centrar.
+				var mb2 := (CORNER_INSET_BOTTOM + _extra_bottom_inset) * s.y
+				offset_bottom = vp.y - mb2
+				offset_top = offset_bottom - panel_height
+			else:
+				offset_top = (vp.y - panel_height) * 0.5
+				offset_bottom = offset_top + panel_height
 	_base_offset_right = offset_right
 	_base_offset_bottom = offset_bottom
 
@@ -200,6 +229,50 @@ func show_choices(choice_options: Array[String]) -> int:
 	_enable_input()
 
 	return await _complete_choice_session()
+
+
+## Abre el menú y deja el panel visible tras elegir (el caller cierra con `close_choices`).
+func open_choices_keep_open(choice_options: Array[String]) -> bool:
+	if not _setup_choice_rows(choice_options):
+		push_error("ChoiceBox: No se pueden mostrar opciones vacías")
+		return false
+
+	modulate.a = 0.0
+	show()
+
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	_fit_panel_height_to_content()
+	_update_cursor_position()
+
+	modulate.a = 1.0
+	_enable_input()
+	return true
+
+
+## Espera una selección sin ocultar el panel.
+func await_choice_keep_open() -> int:
+	if not visible:
+		return -1
+	if not _input_enabled:
+		_enable_input()
+	var choice: int = await choice_made
+	_disable_input()
+	return choice
+
+
+func set_menu_input_enabled(enabled: bool) -> void:
+	if enabled:
+		_enable_input()
+	else:
+		_disable_input()
+
+
+func close_choices() -> void:
+	_disable_input()
+	modulate.a = 1.0
+	hide()
 
 
 ## Monta filas y tamaño provisional; invisible hasta el callback del MessageBox (misma aparición que el texto).
@@ -316,7 +389,8 @@ func _update_cursor_position() -> void:
 		return
 
 	var row := options_container.get_child(selected_index) as Control
-	var cursor_y := row.global_position.y + row.size.y * 0.5 - global_position.y + 2.0
+	# Por fila seleccionada: anclar al top de la fila + offset óptico del texto (no mid de MENU_ROW_HEIGHT).
+	var cursor_y := row.global_position.y - global_position.y + CURSOR_Y_IN_ROW
 	cursor.position = Vector2(24.0, cursor_y)
 
 ## Navega hacia arriba en las opciones
@@ -355,10 +429,14 @@ func _enable_input() -> void:
 	if not dm:
 		push_error("ChoiceBox: DisplayManager no disponible para gestionar input")
 		return
-	dm.input_up.connect(_on_input_up)
-	dm.input_down.connect(_on_input_down)
-	dm.input_accept.connect(_on_input_accept)
-	dm.input_cancel.connect(_on_input_cancel)
+	if not dm.input_up.is_connected(_on_input_up):
+		dm.input_up.connect(_on_input_up)
+	if not dm.input_down.is_connected(_on_input_down):
+		dm.input_down.connect(_on_input_down)
+	if not dm.input_accept.is_connected(_on_input_accept):
+		dm.input_accept.connect(_on_input_accept)
+	if not dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.connect(_on_input_cancel)
 
 ## Deshabilita el manejo de input
 func _disable_input() -> void:
@@ -398,6 +476,8 @@ func _play_cursor_sound() -> void:
 	AudioManager.play_ui_cursor()
 
 func _play_select_sound() -> void:
+	if suppress_confirm_sfx:
+		return
 	AudioManager.play_ui_select()
 
 func _play_cancel_sound() -> void:

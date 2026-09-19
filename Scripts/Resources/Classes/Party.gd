@@ -32,6 +32,20 @@ func remove_pokemon(index: int) -> Pokemon:
 	return _members.pop_at(index)
 
 
+## Sustituye el miembro en `index` (0..count-1). Devuelve el anterior, o null si falla.
+func replace_pokemon(index: int, pokemon: Pokemon) -> Pokemon:
+	if pokemon == null:
+		return null
+	if pokemon.base == null:
+		push_warning("Party.replace_pokemon: Pokémon sin inicializar (base == null)")
+		return null
+	if index < 0 or index >= _members.size():
+		return null
+	var prev: Pokemon = _members[index]
+	_members[index] = pokemon
+	return prev
+
+
 func swap_slots(i: int, j: int) -> void:
 	if i == j:
 		return

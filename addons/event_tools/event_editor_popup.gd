@@ -944,6 +944,10 @@ func _get_command_detail_text(command: EventCommand) -> String:
 	if command is HealPartyCommand:
 		return "cura party"
 
+	# OpenPCCommand: menú raíz del PC
+	if command is OpenPCCommand:
+		return "menú PC"
+
 	# PokemonCenterHealCommand
 	if command is PokemonCenterHealCommand:
 		var heal_cmd = command as PokemonCenterHealCommand
@@ -4187,7 +4191,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
 		"MoveNPC", "PlayAnimation", "PlaySound", "PlayBGM", "StopBGM", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
-		"HealParty", "PokemonCenterHeal", "SetRespawn", "ClosePortrait", "CloseMessage", "FollowActor", "UseMO", "SetTrigger"
+		"HealParty", "PokemonCenterHeal", "OpenPC", "SetRespawn", "ClosePortrait", "CloseMessage", "FollowActor", "UseMO", "SetTrigger"
 	]
 
 	var dialog = Window.new()

@@ -33,6 +33,8 @@ const UI_SFX_MENU_OPEN_PATH := "res://Audio/SE/GUI menu open.ogg"
 const UI_SFX_POKEDEX_OPEN_PATH := "res://Audio/SE/GUI pokedex open.ogg"
 const UI_SFX_SUMMARY_CHANGE_PAGE_PATH := "res://Audio/SE/GUI summary change page.ogg"
 const UI_SFX_USE_ITEM_IN_PARTY_PATH := "res://Audio/SE/Use item in party.ogg"
+const UI_SFX_PC_ACCESS_PATH := "res://Audio/SE/PC access.ogg"
+const UI_SFX_PC_CLOSE_PATH := "res://Audio/SE/PC close.ogg"
 const BATTLE_SFX_FLEE_PATH := "res://Audio/SE/Battle flee.ogg"
 ## El .ogg de huida viene muy bajo frente al resto de SFX de batalla.
 const BATTLE_SFX_FLEE_VOLUME_DB := 10.0
@@ -284,6 +286,16 @@ static func play_ui_change_page() -> void:
 ## Usar objeto sobre un Pokémon desde el equipo (poción, antídoto, etc.).
 static func play_ui_use_item_in_party() -> void:
 	_play_ui_sfx(UI_SFX_USE_ITEM_IN_PARTY_PATH)
+
+
+## Acceso al sistema de almacenamiento (menú PC de BILL → cajas).
+static func play_ui_pc_access() -> void:
+	_play_ui_sfx(UI_SFX_PC_ACCESS_PATH)
+
+
+## Cierre del almacenamiento (máscara computer al salir del PC).
+static func play_ui_pc_close() -> void:
+	_play_ui_sfx(UI_SFX_PC_CLOSE_PATH)
 
 
 ## Salto de ledge / hop genérico de overworld.

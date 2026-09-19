@@ -34,12 +34,24 @@ var waitInput:bool = true
 var closeAtEnd:bool = true
 var showIconAtEnd:bool = false  ## Si true, muestra el icono "next" al final aunque no haya más mensajes (batalla)
 @export var play_open_sound_on_show: bool = true
+## Si true, al confirmar un mensaje con closeAtEnd suena el accept (por defecto no).
+var play_confirm_sound_on_close: bool = false
 var _is_processing_message: bool = false  ## Flag para evitar race conditions
 var _is_scrolling: bool = false  ## Flag para indicar si se está haciendo scroll
 var _current_theme: MessageBoxTheme = null  ## Tema actualmente aplicado
 var _typing_mode: TypingMode = TypingMode.TYPING
 ## Tras `writeText()` (texto ya visible: instant o último carácter). p. ej. revelar ChoiceBox a la par.
 var _on_text_visible_ready: Callable = Callable()
+## Si true, el panel crece en altura para mostrar todas las líneas (sin paginar a 2).
+var _expand_height: bool = false
+var _height_layout_saved: bool = false
+var _saved_panel_min_size: Vector2 = Vector2.ZERO
+var _saved_panel_size: Vector2 = Vector2.ZERO
+var _saved_scroll_offset_bottom: float = 79.0
+var _saved_panel_offset_top: float = 0.0
+var _saved_panel_offset_bottom: float = 0.0
+var _saved_grow_vertical: int = Control.GROW_DIRECTION_BEGIN
+var _saved_panel_bottom_edge: float = -1.0
 var _bag_dialog_text_layout_saved: bool = false
 var _bag_dialog_saved_scroll: Dictionary = {}
 var _bag_dialog_saved_rtl_states: Array[Dictionary] = []
@@ -80,11 +92,32 @@ func _ready():
 func setText(_text):
 	label.text = _text
 
+## Sustituye el texto visible de golpe (sin typing ni wait). Útil para ayudas de menú.
+func set_help_text_instant(text: String) -> void:
+	hide_wait_indicator()
+	setText(text)
+	if label:
+		label.visible_characters = -1
+	if not visible:
+		show()
+	_adjust_container_size()
+
+## Para la animación Idle (fuerza visible=true) y oculta el indicador.
+func hide_wait_indicator() -> void:
+	if animation_player and animation_player.is_playing():
+		animation_player.stop()
+	if wait_indicator:
+		wait_indicator.visible = false
+		wait_indicator.hide()
+	elif has_node("next"):
+		$next.hide()
+
 func show_custom(text: String, config := {}):
 	waitInput = config.get("waitInput", true)
 	closeAtEnd = config.get("closeAtEnd", true)
 	waitTime = config.get("waitTime", 0.0)
 	showIconAtEnd = config.get("showIconAtEnd", false)
+	_expand_height = bool(config.get("expandHeight", false))
 
 	var tm: Variant = config.get("typingMode", TypingMode.TYPING)
 	if tm is TypingMode:
@@ -111,8 +144,24 @@ func show_custom(text: String, config := {}):
 	var cb: Variant = config.get("onTextVisibleReady", Callable())
 	_on_text_visible_ready = cb if cb is Callable else Callable()
 
+	var prev_open_sound := play_open_sound_on_show
+	if "playOpenSound" in config:
+		play_open_sound_on_show = bool(config["playOpenSound"])
+	elif "play_open_sound" in config:
+		play_open_sound_on_show = bool(config["play_open_sound"])
+
+	var prev_confirm_sound := play_confirm_sound_on_close
+	if "playConfirmSound" in config:
+		play_confirm_sound_on_close = bool(config["playConfirmSound"])
+	elif "play_confirm_sound" in config:
+		play_confirm_sound_on_close = bool(config["play_confirm_sound"])
+	else:
+		play_confirm_sound_on_close = false
+
 	await showMessage(text)
 
+	play_open_sound_on_show = prev_open_sound
+	play_confirm_sound_on_close = prev_confirm_sound
 	_on_text_visible_ready = Callable()
 
 func show_input(text: String, show_icon_at_end: bool = false):
@@ -194,6 +243,30 @@ func _apply_scroll_margins_from_theme(messagebox_theme: MessageBoxTheme) -> void
 	scroll.offset_right = dr
 	scroll.offset_top = dt
 	scroll.offset_bottom = db
+	fit_scroll_width_to_panel()
+
+
+## Si el panel es más estrecho que el MSG a pantalla completa, ajusta offset_right del scroll.
+func fit_scroll_width_to_panel() -> void:
+	if scroll == null:
+		return
+	var panel_w: float = size.x
+	if panel_w < 8.0:
+		panel_w = custom_minimum_size.x
+	if panel_w < 8.0:
+		return
+	var left_m: float = scroll.offset_left
+	var scene_right: float = float(_scene_scroll_defaults.get("right", 465.0)) if not _scene_scroll_defaults.is_empty() else 465.0
+	# En escena 512px, offset_right=465 → inset ~47 (hueco para marco/indicador a pantalla completa).
+	var full_right_inset: float = maxf(16.0, 512.0 - scene_right)
+	# En paneles estrechos (PC/caja) ese inset deja poco texto útil y fuerza wraps prematuros.
+	var right_inset: float = full_right_inset
+	if panel_w < 480.0:
+		right_inset = maxf(left_m, 16.0)
+	var max_right: float = panel_w - right_inset
+	if max_right <= left_m + 8.0:
+		max_right = panel_w - 16.0
+	scroll.offset_right = max_right
 	_sync_text_container_width_to_scroll()
 
 
@@ -486,6 +559,8 @@ func selectOption(): #(ui_accept)
 			# Lógica de cierre:
 			if closeAtEnd:
 				# closeAtEnd = true → Siempre cerrar
+				if play_confirm_sound_on_close:
+					AudioManager.play_ui_select()
 				close()
 			elif not isLastMessage:
 				# closeAtEnd = false y hay más mensajes → Continuar al siguiente
@@ -513,6 +588,8 @@ func cancelOption(): #(ui_cancel)
 		if waitInput:
 			# Lógica de cierre (igual que selectOption):
 			if closeAtEnd:
+				if play_confirm_sound_on_close:
+					AudioManager.play_ui_select()
 				close()
 			elif not isLastMessage:
 				_play_message_continue_sound()
@@ -639,7 +716,9 @@ func _finishedMessage():
 				_update_wait_indicator_inline(_current_theme)
 			$AnimationPlayer2.play("Idle")
 		else:
-			wait_indicator.visible = false
+			hide_wait_indicator()
+	else:
+		hide_wait_indicator()
 
 func showMessage(message = null):
 	_is_processing_message = true
@@ -655,22 +734,29 @@ func showMessage(message = null):
 	label.text = getNextMessage()
 	# CRÍTICO: Establecer visible_characters a 0 inmediatamente para evitar que se vea el texto completo durante un frame
 	label.visible_characters = 0
-	$AnimationPlayer2.stop()
-	$next.hide()
-	self.show()
+	hide_wait_indicator()
+
+	if _expand_height:
+		# Layout invisible: medir y crecer antes de revelar (evita el salto).
+		modulate.a = 0.0
+		show()
+		label.visible_characters = -1
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_fit_panel_height_to_all_lines()
+		label.visible_characters = 0
+		scroll.scroll_vertical = 0
+		modulate.a = 1.0
+	else:
+		_restore_panel_height_if_needed()
+		show()
+		await get_tree().process_frame
+		label.visible_characters = 0
+		_adjust_container_size()
+		scroll.scroll_vertical = 0
+
 	if play_open_sound_on_show:
 		AudioManager.play_ui_select()
-
-	# Esperar frame para que el layout se calcule y podamos obtener el número de líneas
-	await get_tree().process_frame
-	# Asegurar que visible_characters sigue en 0 después del frame (por si algo lo cambió)
-	label.visible_characters = 0
-
-	# Calcular y ajustar el tamaño del Container y los RichTextLabel según el número de líneas
-	_adjust_container_size()
-
-	# Forzar scroll a 0 después de ajustar el tamaño
-	scroll.scroll_vertical = 0
 
 	await startText()
 
@@ -692,11 +778,11 @@ func close():
 	# Deshabilitar input para evitar múltiples llamadas
 	disable_input_handling()
 
-	$AnimationPlayer2.stop()
-	$next.hide()
+	hide_wait_indicator()
 	scroll.scroll_vertical = 0
 	if closeAtEnd:
 		hide()
+		_restore_panel_height_if_needed()
 
 	# CRÍTICO: Marcar como no procesando ANTES de emitir finished
 	_is_processing_message = false
@@ -719,8 +805,7 @@ func _finish_without_closing() -> void:
 	var current_text = label.text
 
 	# Ocultar icono next
-	$AnimationPlayer2.stop()
-	$next.hide()
+	hide_wait_indicator()
 
 	# Hacer limpieza completa (reutiliza código de clear)
 	# Esto desconecta señales, resetea variables, marca _is_processing_message = false
@@ -756,10 +841,15 @@ func clear():
 	actualMessageIndex = 0
 	_is_processing_message = false  ## CRÍTICO: Resetear flag
 	_on_text_visible_ready = Callable()
+	_expand_height = false
+	# No restaurar altura aquí: con closeAtEnd=false el texto sigue visible
+	# y recuperaría el alto de 2 líneas. Se restaura al ocultar o en el siguiente mensaje.
+	modulate.a = 1.0
 
 ## Limpia y oculta el MessageBox (llamado después de una batalla)
 func cleanup_and_hide() -> void:
 	clear()
+	_restore_panel_height_if_needed()
 	hide()
 
 
@@ -802,6 +892,90 @@ func _adjust_container_size() -> void:
 	label3.size.y = required_height
 
 	_bag_apply_inner_text_width()
+
+
+## Crece el panel hacia arriba para mostrar todas las líneas (p. ej. INFO. de objetos).
+func _fit_panel_height_to_all_lines() -> void:
+	if not is_node_ready() or scroll == null or label == null:
+		return
+	if not _height_layout_saved:
+		_saved_panel_min_size = custom_minimum_size
+		_saved_panel_size = size
+		_saved_scroll_offset_bottom = scroll.offset_bottom
+		_saved_panel_offset_top = offset_top
+		_saved_panel_offset_bottom = offset_bottom
+		_saved_grow_vertical = grow_vertical
+		_saved_panel_bottom_edge = position.y + size.y
+		_height_layout_saved = true
+
+	_adjust_container_size()
+	var line_count: int = maxi(1, label.get_line_count())
+	# Sin paginar: todas las líneas visibles de golpe.
+	label.nextLineStop = maxi(line_count, 1)
+
+	# Preferir altura real del texto; el min del container de escena (120) no debe forzar 2 líneas.
+	var content_h: float = float(label.get_content_height())
+	if content_h < 8.0:
+		var fs: int = label.get_theme_font_size("normal_font_size")
+		if fs <= 0:
+			fs = 26
+		var line_sep: int = label.get_theme_constant("line_separation")
+		content_h = float(line_count) * float(fs + maxi(line_sep, 0))
+	content_h = maxf(content_h, container.custom_minimum_size.y)
+
+	var top_m: float = scroll.offset_top
+	var default_h: float = _saved_panel_min_size.y if _saved_panel_min_size.y > 0.0 else 96.0
+	var bottom_m: float = maxf(8.0, default_h - _saved_scroll_offset_bottom)
+	var new_panel_h: float = top_m + content_h + bottom_m
+	var new_scroll_bottom: float = new_panel_h - bottom_m
+
+	scroll.offset_bottom = new_scroll_bottom
+	_set_panel_height_pinned_bottom(new_panel_h)
+
+
+## Cambia el alto del panel manteniendo el borde inferior (encoge/crece hacia arriba).
+func _set_panel_height_pinned_bottom(new_panel_h: float) -> void:
+	var parent_h: float = size.y
+	var parent_ctrl := get_parent() as Control
+	if parent_ctrl != null:
+		parent_h = parent_ctrl.size.y
+	elif get_viewport() != null:
+		parent_h = get_viewport().get_visible_rect().size.y
+
+	var bottom_edge: float = _saved_panel_bottom_edge
+	if bottom_edge < 0.0:
+		bottom_edge = position.y + size.y
+		_saved_panel_bottom_edge = bottom_edge
+
+	var top_y: float = bottom_edge - new_panel_h
+	custom_minimum_size.y = new_panel_h
+	grow_vertical = Control.GROW_DIRECTION_BEGIN
+	# Offsets según anclas (bottom-wide o top-left absoluto).
+	offset_top = top_y - anchor_top * parent_h
+	offset_bottom = bottom_edge - anchor_bottom * parent_h
+	size.y = new_panel_h
+	# Reafirmar por si set_size movió el rect.
+	offset_top = top_y - anchor_top * parent_h
+	offset_bottom = bottom_edge - anchor_bottom * parent_h
+
+
+func _restore_panel_height_if_needed() -> void:
+	if not _height_layout_saved:
+		return
+	custom_minimum_size = _saved_panel_min_size
+	size = _saved_panel_size
+	offset_top = _saved_panel_offset_top
+	offset_bottom = _saved_panel_offset_bottom
+	grow_vertical = _saved_grow_vertical as Control.GrowDirection
+	if scroll != null:
+		scroll.offset_bottom = _saved_scroll_offset_bottom
+	_saved_panel_bottom_edge = -1.0
+	_height_layout_saved = false
+
+
+## Restaura el alto por defecto del panel (p. ej. al cerrar desde DisplayManager).
+func restore_expanded_height() -> void:
+	_restore_panel_height_if_needed()
 
 func updateScroll(startingPosition:int, finalPosition:int):
 #### Sprite:position

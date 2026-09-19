@@ -8,9 +8,16 @@ class_name FadeLayer
 signal fade_finished
 signal transition_finished
 
+## Transición CRT del PC (FRLG): punto → línea → apertura vertical.
+const PC_CRT_SHADER: Shader = preload("res://Shaders/UI/pc_crt_transition.gdshader")
+const PC_CRT_DURATION := 0.42
+const PC_CRT_LINE_END := 0.32
+
 var is_fading: bool = false
 var transition_overlay: ColorRect = null
 var transition_shader: ShaderMaterial = null
+var _pc_crt_mat: ShaderMaterial = null
+var _pc_crt_prev_mat: Material = null
 
 func _ready():
 	# Configurar el FadeLayer
@@ -582,3 +589,63 @@ func flash_white_and_release_mask(
 	modulate.a = 1.0
 	z_index = prev_z
 	is_fading = false
+
+
+## Transición CRT del PC (FRLG): punto → línea blanca → apertura vertical.
+## `to_black=true`: cierra (1→0). `to_black=false`: abre (0→1).
+func play_pc_crt_transition(to_black: bool, duration: float = PC_CRT_DURATION) -> void:
+	if is_fading:
+		return
+	is_fading = true
+	_ensure_pc_crt_material()
+
+	visible = true
+	color = Color.TRANSPARENT
+	modulate.a = 1.0
+
+	_pc_crt_prev_mat = transition_overlay.material
+	transition_overlay.material = _pc_crt_mat
+	_pc_crt_mat.set_shader_parameter("line_end", PC_CRT_LINE_END)
+	_pc_crt_mat.set_shader_parameter("line_half_uv", 0.0035)
+	_pc_crt_mat.set_shader_parameter("rim_uv", 0.007)
+
+	var from_p := 1.0 if to_black else 0.0
+	var to_p := 0.0 if to_black else 1.0
+	_pc_crt_mat.set_shader_parameter("progress", from_p)
+	transition_overlay.modulate.a = 1.0
+	transition_overlay.visible = true
+
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_method(_set_pc_crt_progress, from_p, to_p, maxf(duration, 0.0)) \
+		.set_trans(Tween.TRANS_LINEAR)
+	await tw.finished
+
+	transition_overlay.visible = false
+	if _pc_crt_prev_mat != null:
+		transition_overlay.material = _pc_crt_prev_mat
+	_pc_crt_prev_mat = null
+
+	if to_black:
+		color = Color.BLACK
+		modulate.a = 1.0
+		visible = true
+	else:
+		visible = false
+		color = Color.BLACK
+		modulate.a = 1.0
+
+	is_fading = false
+	fade_finished.emit()
+
+
+func _ensure_pc_crt_material() -> void:
+	if _pc_crt_mat != null:
+		return
+	_pc_crt_mat = ShaderMaterial.new()
+	_pc_crt_mat.shader = PC_CRT_SHADER
+
+
+func _set_pc_crt_progress(value: float) -> void:
+	if _pc_crt_mat != null:
+		_pc_crt_mat.set_shader_parameter("progress", value)

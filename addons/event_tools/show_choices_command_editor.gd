@@ -16,6 +16,7 @@ var original_message: String = ""
 var original_store_result_in: String = ""
 var original_cancel_branch_index: int = -1
 var original_loop_until_cancel: bool = false
+var original_close_choices_at_end: bool = true
 
 # Referencias a los controles
 var message_edit: TextEdit = null
@@ -28,6 +29,7 @@ var edit_branch_button: Button = null
 var store_result_edit: LineEdit = null
 var cancel_branch_option: OptionButton = null
 var loop_check: CheckBox = null
+var close_choices_check: CheckBox = null
 var accept_button: Button = null
 
 # Cache de branches (índice del ItemList -> ChoiceBranch)
@@ -139,6 +141,12 @@ func _ready() -> void:
 	loop_check.text = "Repetir hasta cancelar (loop)"
 	loop_check.tooltip_text = "Si está activo, después de ejecutar cualquier opción (excepto cancelar), el diálogo se repite"
 	vbox.add_child(loop_check)
+
+	close_choices_check = CheckBox.new()
+	close_choices_check.text = "Cerrar opciones al seleccionar (close_choices_at_end)"
+	close_choices_check.tooltip_text = "Si se desactiva, el menú de opciones permanece abierto tras elegir (como close_at_end del MessageBox). Ideal para mensajes de error inline."
+	close_choices_check.button_pressed = true
+	vbox.add_child(close_choices_check)
 
 	vbox.add_child(HSeparator.new())
 
@@ -366,6 +374,7 @@ func load_command(cmd: ShowChoicesCommand) -> void:
 	original_store_result_in = cmd.store_result_in
 	original_cancel_branch_index = cmd.cancel_branch_index
 	original_loop_until_cancel = cmd.loop_until_cancel
+	original_close_choices_at_end = cmd.close_choices_at_end
 	original_branches = []
 	for branch in cmd.branches:
 		if branch:
@@ -398,6 +407,8 @@ func load_command(cmd: ShowChoicesCommand) -> void:
 	# Cargar loop
 	if loop_check:
 		loop_check.button_pressed = cmd.loop_until_cancel
+	if close_choices_check:
+		close_choices_check.button_pressed = cmd.close_choices_at_end
 
 	_update_buttons_state()
 
@@ -416,6 +427,8 @@ func _apply_values_to_command() -> void:
 	# Aplicar loop
 	if loop_check:
 		command.loop_until_cancel = loop_check.button_pressed
+	if close_choices_check:
+		command.close_choices_at_end = close_choices_check.button_pressed
 
 	# Crear un nuevo array para evitar el error de "read-only"
 	var new_branches: Array[ChoiceBranch] = []
@@ -456,6 +469,8 @@ func _restore_original_values() -> void:
 	# Restaurar loop
 	if loop_check:
 		loop_check.button_pressed = original_loop_until_cancel
+	if close_choices_check:
+		close_choices_check.button_pressed = original_close_choices_at_end
 
 	_update_buttons_state()
 
