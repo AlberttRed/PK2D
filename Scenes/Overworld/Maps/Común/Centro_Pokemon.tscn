@@ -712,6 +712,92 @@ commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_chkoc"), SubReso
 sprite_frames = SubResource("SpriteFrames_qiyfk")
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
+[sub_resource type="Resource" id="Resource_qt1r8"]
+script = ExtResource("99_plays")
+sound = ExtResource("36_oib3l")
+volume_db = 10.0
+
+[sub_resource type="Resource" id="Resource_jeris"]
+script = ExtResource("27_uwtg1")
+animation_name = "power_on"
+
+[sub_resource type="Resource" id="Resource_o0bdg"]
+script = ExtResource("25_openpc")
+
+[sub_resource type="Resource" id="Resource_kj7dr"]
+script = ExtResource("99_plays")
+sound = ExtResource("38_qt1r8")
+volume_db = 10.0
+
+[sub_resource type="Resource" id="Resource_3v0b4"]
+script = ExtResource("27_uwtg1")
+animation_name = "power_off"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qiyfk"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lsa0u"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_po5os"]
+atlas = ExtResource("37_whqti")
+region = Rect2(32, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yicir"]
+atlas = ExtResource("37_whqti")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hevv"]
+atlas = ExtResource("37_whqti")
+region = Rect2(32, 0, 32, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7kriq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qiyfk")
+}],
+"loop": 0,
+"name": &"power_off",
+"speed": 7.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lsa0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_po5os")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yicir")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hevv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lsa0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hevv")
+}],
+"loop": 0,
+"name": &"power_on",
+"speed": 7.5
+}]
+
+[sub_resource type="Resource" id="Resource_twdcj"]
+script = ExtResource("15_103ep")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_cyhqc"]
+script = ExtResource("5_vsbsi")
+trigger = SubResource("Resource_twdcj")
+commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_qt1r8"), SubResource("Resource_jeris"), SubResource("Resource_o0bdg"), SubResource("Resource_kj7dr"), SubResource("Resource_3v0b4")])
+sprite_frames = SubResource("SpriteFrames_7kriq")
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
 [sub_resource type="Resource" id="Resource_qnur6"]
 script = ExtResource("14_103ep")
 message = "MAPA"
@@ -800,19 +886,6 @@ script = ExtResource("5_vsbsi")
 trigger = SubResource("Resource_o40n5")
 sprite_texture = ExtResource("21_p413b")
 is_spritesheet = true
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_qt1r8"]
-script = ExtResource("25_openpc")
-
-[sub_resource type="Resource" id="Resource_jeris"]
-script = ExtResource("15_103ep")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_o0bdg"]
-script = ExtResource("5_vsbsi")
-trigger = SubResource("Resource_jeris")
-commands = Array[ExtResource("6_00hv8")]([SubResource("Resource_qt1r8")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
 [sub_resource type="Resource" id="Resource_cvx7x"]
@@ -1399,6 +1472,10 @@ pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_063o8")])
 position = Vector2(-784, -528)
 pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_po5os")])
 
+[node name="PC2" parent="OverworldGrid/Events" unique_id=1250052175 instance=ExtResource("4_wv4mj")]
+position = Vector2(80, -528)
+pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_cyhqc")])
+
 [node name="Mapa1" parent="OverworldGrid/Events" unique_id=312325009 instance=ExtResource("4_wv4mj")]
 position = Vector2(-752, -528)
 pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_7x44d")])
@@ -1422,10 +1499,6 @@ pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_77mtl")])
 [node name="EnfermeraJoy2" parent="OverworldGrid/Events" unique_id=396128638 instance=ExtResource("12_oioqy")]
 position = Vector2(-48, -496)
 pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_r7lib")])
-
-[node name="PC2" parent="OverworldGrid/Events" unique_id=1349561962 instance=ExtResource("4_wv4mj")]
-position = Vector2(80, -528)
-pages = Array[ExtResource("5_vsbsi")]([SubResource("Resource_o0bdg")])
 
 [node name="Mapa3" parent="OverworldGrid/Events" unique_id=260151582 instance=ExtResource("4_wv4mj")]
 position = Vector2(112, -528)
