@@ -23,6 +23,9 @@
 [ext_resource type="Texture2D" uid="uid://coqylrlf7wps" path="res://Sprites/Overworlds/Characters/trchar037.png" id="20_8ubyu"]
 [ext_resource type="Texture2D" uid="uid://cxc71jalpy1ty" path="res://Sprites/Overworlds/Characters/trchar042.png" id="21_2b3q2"]
 [ext_resource type="Texture2D" uid="uid://c7oaek6l7eslq" path="res://Sprites/Overworlds/Characters/NPC 05.png" id="23_2b3q2"]
+[ext_resource type="Script" uid="uid://ch4akkraje3b0" path="res://Scripts/Events/Commands/OpenShopCommand.gd" id="26_wufiy"]
+[ext_resource type="Resource" uid="uid://wxl8iusc8yg0" path="res://Resources/Shops/mart_ciudad_verde.tres" id="27_xbcl4"]
+[ext_resource type="Resource" uid="uid://b578b1acd0c34" path="res://Resources/Shops/mart_ciudad_plateada.tres" id="28_xbcl4"]
 [ext_resource type="AudioStream" uid="uid://cnr4ihg8eppv6" path="res://Audio/SE/Door exit.ogg" id="99_doorexit"]
 [ext_resource type="Script" uid="uid://cnovvmc2hdydy" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="99_plays"]
 [ext_resource type="AudioStream" uid="uid://bgegdogfpdvv0" path="res://Audio/BGM/Pokémon Center.ogg" id="bgm_center"]
@@ -225,57 +228,14 @@ trigger = SubResource("Resource_pdfqs")
 commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_xboth")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_qx74u"]
-script = ExtResource("18_hkery")
-target_name = "Tendero"
-path = Array[int]([5])
-
-[sub_resource type="Resource" id="Resource_58w2r"]
-script = ExtResource("14_hkery")
-message = "(Placeholder tienda)"
-
-[sub_resource type="Resource" id="Resource_wvkqx"]
-script = ExtResource("15_j1o81")
-metadata/_custom_type_script = "uid://cgcgdh5botek0"
-
-[sub_resource type="Resource" id="Resource_aw44u"]
-script = ExtResource("5_mqcfa")
-trigger = SubResource("Resource_wvkqx")
-commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_qx74u"), SubResource("Resource_58w2r")])
-metadata/_custom_type_script = "uid://ddybtc0beib3h"
-
-[sub_resource type="Resource" id="Resource_kgp6g"]
-script = ExtResource("18_hkery")
-target_name = "Tendero"
-path = Array[int]([5])
-
-[sub_resource type="Resource" id="Resource_airpq"]
-script = ExtResource("14_hkery")
-message = "¡Bueno, gracias!
-¡Saluda al PROF. OAK de mi parte!"
-
-[sub_resource type="Resource" id="Resource_2h0wm"]
-script = ExtResource("16_lwj17")
-flag_name = "HAS_POKEDEX"
-expected_value = false
-
-[sub_resource type="Resource" id="Resource_0uoai"]
-script = ExtResource("15_j1o81")
-
-[sub_resource type="Resource" id="Resource_tdpnj"]
-script = ExtResource("5_mqcfa")
-trigger = SubResource("Resource_0uoai")
-commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_kgp6g"), SubResource("Resource_airpq")])
-root_condition = SubResource("Resource_2h0wm")
-
 [sub_resource type="Resource" id="Resource_082hx"]
 script = ExtResource("18_hkery")
 target_name = "Tendero"
-path = Array[int]([7])
+path = Array[int]([5])
 
 [sub_resource type="Resource" id="Resource_76e11"]
-script = ExtResource("14_hkery")
-message = "(Placeholder tienda)"
+script = ExtResource("26_wufiy")
+shop_data = ExtResource("27_xbcl4")
 
 [sub_resource type="Resource" id="Resource_3xqeg"]
 script = ExtResource("15_j1o81")
@@ -290,7 +250,7 @@ metadata/_custom_type_script = "uid://ddybtc0beib3h"
 [sub_resource type="Resource" id="Resource_uf3oo"]
 script = ExtResource("18_hkery")
 target_name = "Tendero"
-path = Array[int]([7])
+path = Array[int]([5])
 
 [sub_resource type="Resource" id="Resource_yn6wc"]
 script = ExtResource("14_hkery")
@@ -310,6 +270,49 @@ script = ExtResource("5_mqcfa")
 trigger = SubResource("Resource_8x0j8")
 commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_uf3oo"), SubResource("Resource_yn6wc")])
 root_condition = SubResource("Resource_rmhn2")
+
+[sub_resource type="Resource" id="Resource_btkd8"]
+script = ExtResource("18_hkery")
+target_name = "Tendero"
+path = Array[int]([7])
+
+[sub_resource type="Resource" id="Resource_4c714"]
+script = ExtResource("26_wufiy")
+shop_data = ExtResource("27_xbcl4")
+
+[sub_resource type="Resource" id="Resource_8ktjm"]
+script = ExtResource("15_j1o81")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_tobxn"]
+script = ExtResource("5_mqcfa")
+trigger = SubResource("Resource_8ktjm")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_btkd8"), SubResource("Resource_4c714")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_tomfr"]
+script = ExtResource("18_hkery")
+target_name = "Tendero"
+path = Array[int]([7])
+
+[sub_resource type="Resource" id="Resource_18n1q"]
+script = ExtResource("14_hkery")
+message = "¡Bueno, gracias!
+¡Saluda al PROF. OAK de mi parte!"
+
+[sub_resource type="Resource" id="Resource_0evjm"]
+script = ExtResource("16_lwj17")
+flag_name = "HAS_POKEDEX"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_p5pao"]
+script = ExtResource("15_j1o81")
+
+[sub_resource type="Resource" id="Resource_2smf3"]
+script = ExtResource("5_mqcfa")
+trigger = SubResource("Resource_p5pao")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_tomfr"), SubResource("Resource_18n1q")])
+root_condition = SubResource("Resource_0evjm")
 
 [sub_resource type="Resource" id="Resource_ps_exit_ti2"]
 script = ExtResource("99_plays")
@@ -369,48 +372,91 @@ is_spritesheet = true
 initial_animation = "down_left"
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_2b3q2"]
+[sub_resource type="Resource" id="Resource_qx74u"]
 script = ExtResource("18_hkery")
 target_name = "Tendero"
-path = Array[int]([7])
+path = Array[int]([5])
 
-[sub_resource type="Resource" id="Resource_x6clr"]
-script = ExtResource("14_hkery")
-message = "(Placeholder tienda)"
+[sub_resource type="Resource" id="Resource_58w2r"]
+script = ExtResource("26_wufiy")
+shop_data = ExtResource("28_xbcl4")
 
-[sub_resource type="Resource" id="Resource_eieb0"]
+[sub_resource type="Resource" id="Resource_wvkqx"]
 script = ExtResource("15_j1o81")
 metadata/_custom_type_script = "uid://cgcgdh5botek0"
 
-[sub_resource type="Resource" id="Resource_e2sks"]
+[sub_resource type="Resource" id="Resource_aw44u"]
 script = ExtResource("5_mqcfa")
-trigger = SubResource("Resource_eieb0")
-commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_2b3q2"), SubResource("Resource_x6clr")])
+trigger = SubResource("Resource_wvkqx")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_qx74u"), SubResource("Resource_58w2r")])
 metadata/_custom_type_script = "uid://ddybtc0beib3h"
 
-[sub_resource type="Resource" id="Resource_ypwin"]
+[sub_resource type="Resource" id="Resource_kgp6g"]
 script = ExtResource("18_hkery")
 target_name = "Tendero"
-path = Array[int]([7])
+path = Array[int]([5])
 
-[sub_resource type="Resource" id="Resource_34il6"]
+[sub_resource type="Resource" id="Resource_airpq"]
 script = ExtResource("14_hkery")
 message = "¡Bueno, gracias!
 ¡Saluda al PROF. OAK de mi parte!"
 
-[sub_resource type="Resource" id="Resource_mo1s6"]
+[sub_resource type="Resource" id="Resource_2h0wm"]
 script = ExtResource("16_lwj17")
 flag_name = "HAS_POKEDEX"
 expected_value = false
 
-[sub_resource type="Resource" id="Resource_w68ui"]
+[sub_resource type="Resource" id="Resource_0uoai"]
 script = ExtResource("15_j1o81")
 
-[sub_resource type="Resource" id="Resource_seroc"]
+[sub_resource type="Resource" id="Resource_tdpnj"]
 script = ExtResource("5_mqcfa")
-trigger = SubResource("Resource_w68ui")
-commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_ypwin"), SubResource("Resource_34il6")])
-root_condition = SubResource("Resource_mo1s6")
+trigger = SubResource("Resource_0uoai")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_kgp6g"), SubResource("Resource_airpq")])
+root_condition = SubResource("Resource_2h0wm")
+
+[sub_resource type="Resource" id="Resource_x6clr"]
+script = ExtResource("18_hkery")
+target_name = "Tendero"
+path = Array[int]([7])
+
+[sub_resource type="Resource" id="Resource_eieb0"]
+script = ExtResource("26_wufiy")
+shop_data = ExtResource("28_xbcl4")
+
+[sub_resource type="Resource" id="Resource_e2sks"]
+script = ExtResource("15_j1o81")
+metadata/_custom_type_script = "uid://cgcgdh5botek0"
+
+[sub_resource type="Resource" id="Resource_ypwin"]
+script = ExtResource("5_mqcfa")
+trigger = SubResource("Resource_e2sks")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_x6clr"), SubResource("Resource_eieb0")])
+metadata/_custom_type_script = "uid://ddybtc0beib3h"
+
+[sub_resource type="Resource" id="Resource_34il6"]
+script = ExtResource("18_hkery")
+target_name = "Tendero"
+path = Array[int]([7])
+
+[sub_resource type="Resource" id="Resource_mo1s6"]
+script = ExtResource("14_hkery")
+message = "¡Bueno, gracias!
+¡Saluda al PROF. OAK de mi parte!"
+
+[sub_resource type="Resource" id="Resource_w68ui"]
+script = ExtResource("16_lwj17")
+flag_name = "HAS_POKEDEX"
+expected_value = false
+
+[sub_resource type="Resource" id="Resource_seroc"]
+script = ExtResource("15_j1o81")
+
+[sub_resource type="Resource" id="Resource_h0jqq"]
+script = ExtResource("5_mqcfa")
+trigger = SubResource("Resource_seroc")
+commands = Array[ExtResource("6_mxop5")]([SubResource("Resource_34il6"), SubResource("Resource_mo1s6")])
+root_condition = SubResource("Resource_w68ui")
 
 [sub_resource type="Resource" id="Resource_e0odw"]
 script = ExtResource("14_hkery")
@@ -579,11 +625,11 @@ pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_xbehu")])
 
 [node name="Tienda1" parent="OverworldGrid/Events" unique_id=1975775194 instance=ExtResource("4_ig604")]
 position = Vector2(-176, 16)
-pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_aw44u"), SubResource("Resource_tdpnj")])
+pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_i6jti"), SubResource("Resource_qalck")])
 
 [node name="Tienda2" parent="OverworldGrid/Events" unique_id=1988177221 instance=ExtResource("4_ig604")]
 position = Vector2(-144, -16)
-pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_i6jti"), SubResource("Resource_qalck")])
+pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_tobxn"), SubResource("Resource_2smf3")])
 
 [node name="Exit_CiudadPlateada" parent="OverworldGrid/Events" unique_id=1381445127 instance=ExtResource("4_ig604")]
 position = Vector2(624, 144)
@@ -667,7 +713,7 @@ pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_aw44u"), SubResourc
 
 [node name="Tienda4" parent="OverworldGrid/Events" unique_id=597370312 instance=ExtResource("4_ig604")]
 position = Vector2(592, -16)
-pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_e2sks"), SubResource("Resource_seroc")])
+pages = Array[ExtResource("5_mqcfa")]([SubResource("Resource_ypwin"), SubResource("Resource_h0jqq")])
 
 [node name="Chico2" parent="OverworldGrid/Events" unique_id=1799610318 instance=ExtResource("12_patbx")]
 position = Vector2(688, 16)

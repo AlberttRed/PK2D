@@ -462,7 +462,16 @@ func _begin_buy(entry) -> void:
 		return
 
 	_refresh_money()
-	await _show_mart_message("¡Aquí tienes!\nMuchas gracias.", true)
+	await DisplayManager.show_message("¡Aquí tienes!\nMuchas gracias.", {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playConfirmSound": true,
+		"fullWidth": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.TYPING,
+		"onTextVisibleReady": func() -> void: AudioManager.play_ui_mart_register(),
+	})
 	if visible:
 		_rebuild_list()
 	_finish_transaction()
@@ -515,7 +524,7 @@ func _confirm_yes_no(prompt: String) -> bool:
 		"showIconAtEnd": false,
 		"fullWidth": true,
 		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-		"typingMode": MessageBox.TypingMode.INSTANT,
+		"typingMode": MessageBox.TypingMode.TYPING,
 	})
 	DisplayManager.hide_message_wait_indicator()
 	var choice: int = await DisplayManager.show_choices_corner(

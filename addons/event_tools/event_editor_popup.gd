@@ -948,6 +948,18 @@ func _get_command_detail_text(command: EventCommand) -> String:
 	if command is OpenPCCommand:
 		return "menú PC"
 
+	# OpenShopCommand: menú tienda
+	if command is OpenShopCommand:
+		var shop_cmd = command as OpenShopCommand
+		if shop_cmd.shop_data != null:
+			var label: String = shop_cmd.shop_data.display_name
+			if label.is_empty():
+				label = shop_cmd.shop_data.shop_id
+			if label.is_empty():
+				label = "ShopData"
+			return label
+		return "(sin tienda)"
+
 	# PokemonCenterHealCommand
 	if command is PokemonCenterHealCommand:
 		var heal_cmd = command as PokemonCenterHealCommand
@@ -2781,6 +2793,8 @@ func _on_edit_command_pressed(page_index: int) -> void:
 		_open_heal_party_editor(command, page_index, false, -1)
 	elif command is PokemonCenterHealCommand:
 		_open_pokemon_center_heal_editor(command, page_index, false, -1)
+	elif command is OpenShopCommand:
+		_open_open_shop_editor(command, page_index, false, -1)
 	elif command is SetRespawnCommand:
 		_open_set_respawn_editor(command, page_index, false, -1)
 	elif command is MoveNPCCommand:
@@ -4191,7 +4205,7 @@ func _show_add_command_dialog(page_index: int, destination_metadata: Dictionary 
 		"Switch", "Wait", "Fade", "SetWeather", "SetDarkness",
 		"SetFlashlight", "BlockPlayer", "UnblockPlayer", "SetEventThrough",
 		"MoveNPC", "PlayAnimation", "PlaySound", "PlayBGM", "StopBGM", "SetActorVisibility", "ShowPortrait", "GiveItem", "TakeItem", "GivePokemon",
-		"HealParty", "PokemonCenterHeal", "OpenPC", "SetRespawn", "ClosePortrait", "CloseMessage", "FollowActor", "UseMO", "SetTrigger"
+		"HealParty", "PokemonCenterHeal", "OpenPC", "OpenShop", "SetRespawn", "ClosePortrait", "CloseMessage", "FollowActor", "UseMO", "SetTrigger"
 	]
 
 	var dialog = Window.new()
@@ -4554,6 +4568,8 @@ func _select_and_open_command_editor(tree: Tree, target_command: EventCommand, p
 					_open_heal_party_editor(target_command, page_index, true, command_index)
 				elif target_command is PokemonCenterHealCommand:
 					_open_pokemon_center_heal_editor(target_command, page_index, true, command_index)
+				elif target_command is OpenShopCommand:
+					_open_open_shop_editor(target_command, page_index, true, command_index)
 				elif target_command is SetRespawnCommand:
 					_open_set_respawn_editor(target_command, page_index, true, command_index)
 				elif target_command is MoveNPCCommand:
@@ -7636,6 +7652,61 @@ func _open_heal_party_editor(command: HealPartyCommand, page_index: int, is_new_
 	editor_window.popup_centered()
 
 func _on_heal_party_command_edited(command: HealPartyCommand, page_index: int) -> void:
+	if not command:
+		return
+	_mark_as_changed()
+	var page = _get_page(page_index)
+	if page:
+		var commands_tree = _get_commands_tree_for_page(page_index)
+		if commands_tree:
+			_update_commands_tree(commands_tree, page, page_index)
+			commands_tree.deselect_all()
+			_update_buttons_state(page_index, false, false, false, false, false)
+	_refresh_inspector()
+	current_command_editor = null
+
+## Abre el editor para OpenShopCommand
+func _open_open_shop_editor(command: OpenShopCommand, page_index: int, is_new_command: bool = false, command_index: int = -1) -> void:
+	if not command:
+		push_error("Event Editor: No se proporcionó un OpenShopCommand válido")
+		return
+
+	if current_command_editor and is_instance_valid(current_command_editor):
+		current_command_editor.queue_free()
+		current_command_editor = null
+
+	await get_tree().process_frame
+
+	var editor_script = load("res://addons/event_tools/open_shop_command_editor.gd")
+	if not editor_script:
+		push_error("Event Editor: No se encontró el script del editor de OpenShopCommand")
+		return
+
+	var editor_window = editor_script.new()
+	if not editor_window:
+		push_error("Event Editor: No se pudo crear la instancia del editor")
+		return
+
+	add_child(editor_window)
+	current_command_editor = editor_window
+	editor_window.load_command(command)
+	editor_window.command_edited.connect(func(cmd: OpenShopCommand): _on_open_shop_command_edited(cmd, page_index))
+
+	if is_new_command:
+		editor_window.cancelled.connect(func():
+			_on_new_command_cancelled(page_index, command_index)
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+	else:
+		editor_window.cancelled.connect(func():
+			current_command_editor = null
+			editor_window.queue_free()
+		)
+
+	editor_window.popup_centered()
+
+func _on_open_shop_command_edited(command: OpenShopCommand, page_index: int) -> void:
 	if not command:
 		return
 	_mark_as_changed()

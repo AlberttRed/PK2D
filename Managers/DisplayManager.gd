@@ -448,7 +448,7 @@ static func open_bag_for_pc_deposit(
 
 
 ## Abre la UI de tienda (compra) con un `ShopData`. Espera hasta cerrar.
-## Venta → `open_bag_for_sell`. Menú raíz Comprar/Vender/Salir → #836.
+## Venta → `open_bag_for_sell`. Menú raíz → OpenShopCommand.
 static func open_poke_mart(shop: ShopData, with_screen_fade: bool = true) -> void:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
@@ -2871,6 +2871,7 @@ func _run_bag_sell_item_flow(item_id: int) -> void:
 		"fullWidth": true,
 		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 		"typingMode": MessageBox.TypingMode.TYPING,
+		"onTextVisibleReady": func() -> void: AudioManager.play_ui_mart_register(),
 	})
 	if _bag_ui != null and _bag_ui.has_method("refresh_from_controller"):
 		_bag_ui.refresh_from_controller()
