@@ -1,4 +1,4 @@
-[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://c0ibdnbf0jmel"]
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://c0ibdnbf0jmel"]
 
 [ext_resource type="Texture2D" uid="uid://tvpt51n80prt" path="res://Sprites/UI/Message Skins/signskin.png" id="1_nntv2"]
 

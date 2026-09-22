@@ -17,3 +17,5 @@ description = "Cuerda larga y resistente que sirve para huir de cuevas y sitios 
 icon = SubResource("AtlasTexture_y6kk7")
 item_category_id = 11
 category = ExtResource("1_8ols6")
+buy_price = 550
+sell_price = 275

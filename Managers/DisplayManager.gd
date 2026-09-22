@@ -77,6 +77,8 @@ var _bag_hold_pick_active: bool = false
 var _bag_hold_pick_result: int = -1
 ## PC → DEJAR OBJETO: sesión de depósito desde la mochila.
 var _bag_pc_deposit_active: bool = false
+## Tienda → Vender: sesión de venta desde la mochila (#834; command → #836).
+var _bag_sell_active: bool = false
 ## PC ítems → DAR: elegir Pokémon del party para held desde el depósito.
 var _party_give_pick_active: bool = false
 var _party_give_pick_result: int = -1
@@ -86,8 +88,23 @@ var _qty_pick_active: bool = false
 var _qty_prompt_layout_active: bool = false
 var _qty_pick_value: int = 1
 var _qty_pick_max: int = 1
+var _qty_unit_price: int = 0
 var _qty_arrow_anim_time: float = 0.0
 const _QTY_ARROW_ANIM_FPS: float = 18.0
+const _QTY_DEFAULT_OFFSET_LEFT := -145.0
+const _QTY_DEFAULT_OFFSET_TOP := -95.0
+const _QTY_DEFAULT_OFFSET_RIGHT := -1.0
+const _QTY_DEFAULT_OFFSET_BOTTOM := 0.0
+const _QTY_DEFAULT_MIN_WIDTH := 144.0
+## Mart: picker encima de la franja verde, alineado por abajo con Llevas (y=278 → −106).
+const _QTY_MART_OFFSET_LEFT := -240.0
+const _QTY_MART_OFFSET_RIGHT := -8.0
+const _QTY_MART_OFFSET_BOTTOM := -106.0
+const _QTY_MART_HEIGHT := 94.0
+const _QTY_PRICE_MIN_WIDTH := 240.0
+const _QTY_DEFAULT_ARROW_X := 72.0
+## Con precio: flechas centradas sobre la cantidad (izquierda).
+const _QTY_PRICE_ARROW_X := 42.0
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
@@ -145,11 +162,13 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var _evolution_ui = $EvolutionUI
 @onready var _pc_storage_ui = $PCStorageUI
 @onready var _pc_items_ui = $PCItemsUI
+@onready var _poke_mart_ui = $PokeMartUI
 @onready var _quantity_picker: Control = $QuantityPicker
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 
 @onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
+@onready var _qty_price_label: RichTextLabel = $QuantityPicker/Container/Price
 @onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
 @onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
 
@@ -183,6 +202,8 @@ func _ready() -> void:
 		_pc_storage_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _pc_items_ui:
 		_pc_items_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _poke_mart_ui:
+		_poke_mart_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _quantity_picker:
 		_quantity_picker.process_mode = Node.PROCESS_MODE_ALWAYS
 		_quantity_picker.hide()
@@ -247,6 +268,11 @@ func _ready() -> void:
 		_pc_items_ui.closed.connect(_on_pc_items_ui_closed)
 		if _pc_items_ui.has_signal("visibility_changed"):
 			_pc_items_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _poke_mart_ui:
+		_poke_mart_ui.closed.connect(_on_poke_mart_ui_closed)
+		if _poke_mart_ui.has_signal("visibility_changed"):
+			_poke_mart_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -421,12 +447,35 @@ static func open_bag_for_pc_deposit(
 	await instance._open_bag_for_pc_deposit(prepare_before_reveal, cleanup_under_cover)
 
 
-## QuantityPicker: cantidad 1..max, o 0 si cancela. Si max<=1 no pregunta (devuelve max).
-static func prompt_quantity(max_qty: int, prompt: String = "¿Qué cantidad?") -> int:
+## Abre la UI de tienda (compra) con un `ShopData`. Espera hasta cerrar.
+## Venta → `open_bag_for_sell`. Menú raíz Comprar/Vender/Salir → #836.
+static func open_poke_mart(shop: ShopData, with_screen_fade: bool = true) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._open_poke_mart_ui(shop, with_screen_fade)
+
+
+## Abre la mochila en modo venta (misma UI que el menú). Espera hasta cerrar. (#834 → #836)
+static func open_bag_for_sell(with_screen_fade: bool = true) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._open_bag_for_sell(with_screen_fade)
+
+
+## QuantityPicker: cantidad 1..max, o 0 si cancela.
+## Sin `unit_price`: si max<=1 no pregunta. Con precio (mart) siempre muestra el picker + total.
+static func prompt_quantity(
+	max_qty: int,
+	prompt: String = "¿Qué cantidad?",
+	unit_price: int = 0,
+	frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.FIRERED
+) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return 0
-	return await instance._prompt_quantity(max_qty, prompt)
+	return await instance._prompt_quantity(max_qty, prompt, unit_price, frame_style)
 
 
 ## PC: abre la mochila para elegir un objeto a dar (held). Devuelve item_id o -1 si cancela.
@@ -805,6 +854,11 @@ func _push_corner_choice_layout(anchor: ChoiceBox.ChoiceAnchor) -> void:
 	# En PC ítems el menú va a la altura del texto, junto al mensaje.
 	if _is_pc_storage_ui_open():
 		choice_box.set_extra_bottom_inset(_pc_choice_bottom_clearance())
+	elif (_poke_mart_ui != null and _poke_mart_ui.visible) or _bag_sell_active:
+		# Misma altura inferior que el QuantityPicker del mart.
+		choice_box.set_extra_bottom_inset(
+			absf(_QTY_MART_OFFSET_BOTTOM) - ChoiceBox.CORNER_INSET_BOTTOM
+		)
 	elif _is_pc_items_ui_open():
 		choice_box.clear_extra_bottom_inset()
 	choice_box.set_corner_anchor(anchor)
@@ -1254,7 +1308,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible) || (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible) || (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible)
 
 
 func _start_evolution_impl(
@@ -1691,7 +1745,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)):
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -1722,7 +1776,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not battle_message_box_visible and not battle_modal_ui_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -1766,7 +1820,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 # === CALLBACKS DEL PAUSE MENU ===
@@ -1942,32 +1996,131 @@ func _on_pc_items_ui_closed() -> void:
 	_on_ui_visibility_changed()
 
 
-## QuantityPicker compartido. Devuelve 1..max o 0 si cancela. Si max<=1 no pregunta.
-func _prompt_quantity(max_qty: int, prompt: String) -> int:
-	if max_qty <= 1:
-		return maxi(max_qty, 1)
+func _open_poke_mart_ui(shop: ShopData, with_screen_fade: bool = true) -> void:
+	if _poke_mart_ui == null:
+		push_error("DisplayManager: Nodo PokeMartUI no disponible en la escena.")
+		return
+	if shop == null:
+		push_error("DisplayManager: open_poke_mart requiere un ShopData.")
+		return
+	if _poke_mart_ui.visible:
+		return
+	if _bag_ui != null and _bag_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _pc_storage_ui != null and _pc_storage_ui.visible:
+		return
+	if _pc_items_ui != null and _pc_items_ui.visible:
+		return
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	_poke_mart_ui.move_to_front()
+	_poke_mart_ui.open(shop)
+	_on_ui_visibility_changed()
+
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+	await _poke_mart_ui.closed
+	_on_ui_visibility_changed()
+
+
+func _on_poke_mart_ui_closed() -> void:
+	_on_ui_visibility_changed()
+
+
+## Mochila en modo venta (UI normal + panel dinero). Espera hasta cerrar.
+func _open_bag_for_sell(with_screen_fade: bool = true) -> void:
+	if _bag_ui == null:
+		push_error("DisplayManager: Nodo BagUI no disponible en la escena.")
+		return
+	if _bag_ui.visible or _bag_sell_active:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+	if _poke_mart_ui != null and _poke_mart_ui.visible:
+		return
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	_bag_sell_active = true
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
+	_bag_ui.setup(_bag_controller)
+	if _bag_ui.has_method("set_sell_mode"):
+		_bag_ui.set_sell_mode(true)
+	_bag_ui.move_to_front()
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+	await _bag_ui.closed
+	_bag_sell_active = false
+	_bag_controller = null
+	_on_ui_visibility_changed()
+
+
+## QuantityPicker compartido. Devuelve 1..max o 0 si cancela.
+## Sin precio: si max<=1 no pregunta. Con `unit_price` > 0 (mart) siempre muestra el picker.
+## Mart: MSG a ancho completo abajo; picker a la altura de Llevas (cantidad izq, precio der).
+func _prompt_quantity(
+	max_qty: int,
+	prompt: String,
+	unit_price: int = 0,
+	frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.FIRERED
+) -> int:
+	if max_qty <= 0:
+		return 0
+	if unit_price <= 0 and max_qty <= 1:
+		return 1
 	if _qty_pick_active:
 		return 0
 	if _quantity_picker == null:
 		push_error("DisplayManager._prompt_quantity: QuantityPicker no disponible")
 		return 0
 
-	var qty_reserve := _PC_ITEMS_QTY_RESERVE_PX
-	qty_reserve = absf(_quantity_picker.offset_left)
-	if qty_reserve < 8.0:
-		qty_reserve = maxf(_quantity_picker.size.x, _quantity_picker.custom_minimum_size.x)
-		if qty_reserve < 8.0:
-			qty_reserve = _PC_ITEMS_QTY_RESERVE_PX
+	_qty_unit_price = maxi(unit_price, 0)
+	var is_mart := _qty_unit_price > 0
+	_apply_quantity_picker_price_layout(is_mart)
 
-	_qty_prompt_layout_active = true
-	set_pc_items_message_side_reserve(qty_reserve)
-	await _show_message_with_config(prompt, {
-		"waitInput": false,
-		"closeAtEnd": false,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-		"typingMode": MessageBox.TypingMode.INSTANT,
-	})
+	if is_mart:
+		# Mart/venta: mensaje full-width; tipado; picker fuera del MSG.
+		await _show_message_with_config(prompt, {
+			"waitInput": false,
+			"closeAtEnd": false,
+			"showIconAtEnd": false,
+			"fullWidth": true,
+			"frameStyle": frame_style,
+			"typingMode": MessageBox.TypingMode.TYPING,
+		})
+	else:
+		var qty_reserve := absf(_quantity_picker.offset_left)
+		if qty_reserve < 8.0:
+			qty_reserve = maxf(_quantity_picker.size.x, _quantity_picker.custom_minimum_size.x)
+			if qty_reserve < 8.0:
+				qty_reserve = _PC_ITEMS_QTY_RESERVE_PX
+		_qty_prompt_layout_active = true
+		set_pc_items_message_side_reserve(qty_reserve)
+		await _show_message_with_config(prompt, {
+			"waitInput": false,
+			"closeAtEnd": false,
+			"showIconAtEnd": false,
+			"frameStyle": frame_style,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+		})
 	hide_message_wait_indicator()
 
 	_qty_pick_max = max_qty
@@ -1986,8 +2139,10 @@ func _prompt_quantity(max_qty: int, prompt: String) -> int:
 
 	var picked: int = await _quantity_picked
 	_qty_pick_active = false
+	_qty_unit_price = 0
 	_disconnect_qty_picker_input()
 	_quantity_picker.hide()
+	_apply_quantity_picker_price_layout(false)
 	_close_message()
 	clear_pc_items_message_side_reserve()
 	_qty_prompt_layout_active = false
@@ -1997,10 +2152,62 @@ func _prompt_quantity(max_qty: int, prompt: String) -> int:
 	return picked
 
 
+func _apply_quantity_picker_price_layout(with_price: bool) -> void:
+	if _quantity_picker == null:
+		return
+	var container: Control = _quantity_picker.get_node_or_null("Container") as Control
+	if with_price:
+		# Mart: cantidad izquierda, precio derecha; panel a altura Llevas.
+		_quantity_picker.custom_minimum_size.x = _QTY_PRICE_MIN_WIDTH
+		_quantity_picker.offset_left = _QTY_MART_OFFSET_LEFT
+		_quantity_picker.offset_right = _QTY_MART_OFFSET_RIGHT
+		_quantity_picker.offset_bottom = _QTY_MART_OFFSET_BOTTOM
+		_quantity_picker.offset_top = _QTY_MART_OFFSET_BOTTOM - _QTY_MART_HEIGHT
+		if container:
+			container.offset_left = 12.0
+			container.offset_right = _QTY_PRICE_MIN_WIDTH - 12.0
+		if _qty_amount_label:
+			_qty_amount_label.offset_left = 4.0
+			_qty_amount_label.offset_right = 90.0
+			_qty_amount_label.set("align", 0)
+		if _qty_price_label:
+			_qty_price_label.visible = true
+			_qty_price_label.offset_left = 96.0
+			_qty_price_label.offset_right = 200.0
+			_qty_price_label.set("align", 2)
+		if _qty_up_arrow:
+			_qty_up_arrow.position.x = _QTY_PRICE_ARROW_X
+		if _qty_down_arrow:
+			_qty_down_arrow.position.x = _QTY_PRICE_ARROW_X
+	else:
+		_quantity_picker.custom_minimum_size.x = _QTY_DEFAULT_MIN_WIDTH
+		_quantity_picker.offset_left = _QTY_DEFAULT_OFFSET_LEFT
+		_quantity_picker.offset_right = _QTY_DEFAULT_OFFSET_RIGHT
+		_quantity_picker.offset_top = _QTY_DEFAULT_OFFSET_TOP
+		_quantity_picker.offset_bottom = _QTY_DEFAULT_OFFSET_BOTTOM
+		if container:
+			container.offset_left = 12.0
+			container.offset_right = 132.0
+		if _qty_amount_label:
+			_qty_amount_label.offset_left = 35.0
+			_qty_amount_label.offset_right = 134.0
+		if _qty_price_label:
+			_qty_price_label.visible = false
+		if _qty_up_arrow:
+			_qty_up_arrow.position.x = _QTY_DEFAULT_ARROW_X
+		if _qty_down_arrow:
+			_qty_down_arrow.position.x = _QTY_DEFAULT_ARROW_X
+
+
 func _refresh_quantity_picker_label() -> void:
 	if _qty_amount_label == null:
 		return
-	var text := "x%03d" % _qty_pick_value
+	# Mart (con precio): x08 / x10. PC: x001.
+	var text: String
+	if _qty_unit_price > 0:
+		text = "x%02d" % _qty_pick_value
+	else:
+		text = "x%03d" % _qty_pick_value
 	if _qty_amount_label.has_method("setText"):
 		_qty_amount_label.setText(text)
 	else:
@@ -2013,6 +2220,37 @@ func _refresh_quantity_picker_label() -> void:
 			(child as RichTextLabel).visible_ratio = 1.0
 	if _qty_amount_label.has_method("_sync_outline_visual_immediate"):
 		_qty_amount_label._sync_outline_visual_immediate()
+
+	if _qty_price_label != null and _qty_unit_price > 0:
+		var total := _qty_unit_price * _qty_pick_value
+		var price_text := "$%s" % _format_qty_thousands(total)
+		if _qty_price_label.has_method("setText"):
+			_qty_price_label.setText(price_text)
+		else:
+			_qty_price_label.text = price_text
+		_qty_price_label.visible_characters = -1
+		_qty_price_label.visible_ratio = 1.0
+		for child in _qty_price_label.get_children():
+			if child is RichTextLabel:
+				(child as RichTextLabel).visible_characters = -1
+				(child as RichTextLabel).visible_ratio = 1.0
+		if _qty_price_label.has_method("_sync_outline_visual_immediate"):
+			_qty_price_label._sync_outline_visual_immediate()
+
+
+func _format_qty_thousands(amount: int) -> String:
+	var n := absi(amount)
+	var s := str(n)
+	var out := ""
+	var i := 0
+	for c_i in range(s.length() - 1, -1, -1):
+		if i > 0 and i % 3 == 0:
+			out = "," + out
+		out = s[c_i] + out
+		i += 1
+	if amount < 0:
+		out = "-" + out
+	return out
 
 
 func _qty_change(delta: int) -> void:
@@ -2366,6 +2604,12 @@ func _on_bag_back_requested() -> void:
 		# Mantener visible para la máscara CRT (igual que PCItemsUI).
 		_bag_ui.close(true)
 		return
+	if _bag_sell_active:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+		_close_bag_ui()
+		await _await_ui_control_hidden(_bag_ui)
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+		return
 	await _transition_fade_bag_to_pause_menu()
 
 
@@ -2376,7 +2620,7 @@ func _transition_fade_bag_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
-	if _suppress_bag_closed_effects or _bag_hold_pick_active or _bag_pc_deposit_active:
+	if _suppress_bag_closed_effects or _bag_hold_pick_active or _bag_pc_deposit_active or _bag_sell_active:
 		_on_ui_visibility_changed()
 		return
 	var resume_party_slot := -1
@@ -2422,6 +2666,9 @@ func _on_bag_use_requested(item_id: int) -> void:
 		return
 	if _bag_pc_deposit_active:
 		await _run_pc_deposit_item_flow(item_id)
+		return
+	if _bag_sell_active:
+		await _run_bag_sell_item_flow(item_id)
 		return
 	await _run_bag_item_use_flow(item_id)
 
@@ -2534,6 +2781,146 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 		_bag_ui.move_to_front()
 		if _bag_ui.has_method("set_input_enabled"):
 			_bag_ui.set_input_enabled(true)
+
+
+## Venta desde mochila (tienda). Mensajes FRLG; qty si hay más de 1 unidad.
+func _run_bag_sell_item_flow(item_id: int) -> void:
+	if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(false)
+	if _bag_ui != null and _bag_ui.has_method("set_browse_details_visible"):
+		_bag_ui.set_browse_details_visible(false)
+	if _bag_ui != null and _bag_ui.has_method("set_money_panel_visible"):
+		_bag_ui.set_money_panel_visible(true)
+	if msg != null:
+		msg.move_to_front()
+
+	var item_data: ItemData = null
+	if DatabaseService != null:
+		item_data = DatabaseService.get_item_by_id(item_id)
+	var item_name := "OBJETO"
+	if item_data != null:
+		item_name = item_data.get_display_name()
+
+	if item_data == null or not item_data.is_sellable():
+		await _show_message_with_config("¿%s? No, lo siento.\nNo puedo comprar eso." % item_name, {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"playConfirmSound": true,
+			"fullWidth": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.TYPING,
+		})
+		_restore_bag_after_sell_step()
+		return
+
+	if GameStateService == null:
+		_restore_bag_after_sell_step()
+		return
+	var bag: Bag = GameStateService.get_bag()
+	if bag == null:
+		_restore_bag_after_sell_step()
+		return
+
+	var owned := int(bag.get_quantity(item_id))
+	if owned <= 0:
+		_restore_bag_after_sell_step()
+		return
+
+	var unit_price := int(item_data.sell_price)
+	var qty := 1
+	if owned > 1:
+		qty = await _prompt_quantity(
+			owned,
+			"¿%s?\n¿Cuántas unidades quieres vender?" % item_name,
+			unit_price,
+			MessageBoxFrameStyle.Values.FIRERED
+		)
+		if qty <= 0 or not _bag_sell_active:
+			_restore_bag_after_sell_step()
+			return
+
+	var total := unit_price * qty
+	var total_text := _format_bag_sell_money(total)
+	var confirm := "Puedo pagarte %s.\n¿Te parece bien?" % total_text
+	var accepted := await _confirm_bag_sell_yes_no(confirm)
+	if not accepted or not _bag_sell_active:
+		_restore_bag_after_sell_step()
+		return
+
+	if not ShopData.sell_item(item_id, qty):
+		await _show_message_with_config("No se pudo completar la venta.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"playConfirmSound": true,
+			"fullWidth": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.TYPING,
+		})
+		_restore_bag_after_sell_step()
+		return
+
+	if _bag_ui != null and _bag_ui.has_method("refresh_money"):
+		_bag_ui.refresh_money()
+	await _show_message_with_config("Recibiste %s por la venta." % total_text, {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playConfirmSound": true,
+		"fullWidth": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.TYPING,
+	})
+	if _bag_ui != null and _bag_ui.has_method("refresh_from_controller"):
+		_bag_ui.refresh_from_controller()
+	_restore_bag_after_sell_step()
+
+
+func _confirm_bag_sell_yes_no(prompt: String) -> bool:
+	var options: Array[String] = ["SÍ", "NO"]
+	await _show_message_with_config(prompt, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"fullWidth": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.TYPING,
+	})
+	hide_message_wait_indicator()
+	var choice: int = await show_choices_corner(
+		options,
+		ChoiceBox.ChoiceAnchor.BOTTOM_RIGHT
+	)
+	_close_message()
+	return choice == 0
+
+
+func _format_bag_sell_money(amount: int) -> String:
+	var n := absi(amount)
+	var s := str(n)
+	var out := ""
+	var i := 0
+	for c_i in range(s.length() - 1, -1, -1):
+		if i > 0 and i % 3 == 0:
+			out = "," + out
+		out = s[c_i] + out
+		i += 1
+	if amount < 0:
+		out = "-" + out
+	return "$%s" % out
+
+
+func _restore_bag_after_sell_step() -> void:
+	if _bag_ui == null or not _bag_ui.visible or not _bag_sell_active:
+		return
+	if _bag_ui.has_method("set_money_panel_visible"):
+		_bag_ui.set_money_panel_visible(false)
+	if _bag_ui.has_method("set_browse_details_visible"):
+		_bag_ui.set_browse_details_visible(true)
+	_bag_ui.move_to_front()
+	if _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(true)
 
 
 ## True si el ítem puede equiparse como held (no claves / MT-MO).
@@ -3426,6 +3813,7 @@ func _update_game_pause_state() -> void:
 		(_pokedex_ui != null and _pokedex_ui.visible) or
 		(_save_ui != null and _save_ui.visible) or
 		(_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or
+		(_poke_mart_ui != null and _poke_mart_ui.visible) or
 		(_evolution_ui != null and _evolution_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)

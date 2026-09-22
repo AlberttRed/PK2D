@@ -26,4 +26,6 @@ item_category_id = 27
 category = ExtResource("1_5v1tt")
 allowed_contexts = 7
 target_type = 1
+buy_price = 300
+sell_price = 150
 effect = SubResource("Resource_xaeg8")

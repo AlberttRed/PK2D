@@ -1,0 +1,375 @@
+[gd_scene format=3 uid="uid://yhc1eyvh3xfi"]
+
+[ext_resource type="Texture2D" uid="uid://1t1x5bgru8g4" path="res://Sprites/UI/Mart/martScreen.png" id="1_cjjrl"]
+[ext_resource type="StyleBox" uid="uid://c7vjqce51w73c" path="res://Resources/UI/MessageBox/Message Styles/Gold_MessageBox_Style.tres" id="2_hwafo"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="3_yat62"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="4_yat62"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="5_hwafo"]
+[ext_resource type="Texture2D" uid="uid://uughwx3qye3u" path="res://Sprites/UI/Bag/itemBack.png" id="6_hwafo"]
+[ext_resource type="Texture2D" uid="uid://dc31k6udo1jn0" path="res://Sprites/UI/Mart/martSel.png" id="7_pda0g"]
+[ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="8_hij1p"]
+[ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="9_sml0u"]
+[ext_resource type="Script" uid="uid://3u068upyfs76" path="res://Scripts/UI/PokeMartUI.gd" id="10_mart"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n4n3u"]
+texture = ExtResource("1_cjjrl")
+
+[sub_resource type="FontVariation" id="FontVariation_bag_list"]
+base_font = ExtResource("4_yat62")
+spacing_top = 6
+
+[sub_resource type="Theme" id="Theme_pda0g"]
+default_font = SubResource("FontVariation_bag_list")
+default_font_size = 26
+
+[sub_resource type="FontVariation" id="FontVariation_bag"]
+base_font = ExtResource("4_yat62")
+
+[sub_resource type="Theme" id="Theme_epkvu"]
+default_font = SubResource("FontVariation_bag")
+default_font_size = 26
+
+[node name="PokeMartUI" type="Panel" unique_id=885440667]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_n4n3u")
+script = ExtResource("10_mart")
+metadata/_edit_lock_ = true
+
+[node name="Dinero" type="Panel" parent="." unique_id=2025095503]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 186.0
+offset_bottom = 84.0
+theme_override_styles/panel = ExtResource("2_hwafo")
+
+[node name="Jugador" parent="Dinero" unique_id=1697394388 instance=ExtResource("3_yat62")]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 11.0
+offset_right = 198.0
+offset_bottom = 42.0
+text = "[left]Dinero:"
+
+[node name="Data" parent="Dinero" unique_id=1120003916 instance=ExtResource("3_yat62")]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 37.0
+offset_right = 167.0
+offset_bottom = 71.0
+text = "[right]$3,000"
+horizontal_alignment = 2
+align = 2
+
+[node name="Mochila" type="Panel" parent="." unique_id=739551128]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 220.0
+offset_right = 186.0
+offset_bottom = 278.0
+theme_override_styles/panel = ExtResource("2_hwafo")
+
+[node name="MarginContainer" type="MarginContainer" parent="Mochila" unique_id=1183491983]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -76.5
+offset_top = -17.0
+offset_right = 78.5
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsList" type="VBoxContainer" parent="Mochila/MarginContainer" unique_id=1418605784]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+
+[node name="ItemCount" type="HBoxContainer" parent="Mochila/MarginContainer/StatsList" unique_id=1432807904]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" parent="Mochila/MarginContainer/StatsList/ItemCount" unique_id=893554780 instance=ExtResource("3_yat62")]
+clip_contents = false
+layout_mode = 2
+size_flags_stretch_ratio = 15.0
+text = "[left]En Mochila:"
+
+[node name="Data" parent="Mochila/MarginContainer/StatsList/ItemCount" unique_id=114472074 instance=ExtResource("3_yat62")]
+layout_mode = 2
+size_flags_stretch_ratio = 3.0
+text = "[right]42"
+horizontal_alignment = 2
+align = 2
+
+[node name="Llevas" type="Panel" parent="." unique_id=941272370]
+visible = false
+layout_mode = 0
+offset_left = 6.0
+offset_top = 220.0
+offset_right = 261.0
+offset_bottom = 278.0
+theme_override_styles/panel = ExtResource("2_hwafo")
+
+[node name="MarginContainer" type="MarginContainer" parent="Llevas" unique_id=253797009]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.5
+offset_top = -17.0
+offset_right = 21.5
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsList" type="VBoxContainer" parent="Llevas/MarginContainer" unique_id=1834701845]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+
+[node name="ItemCount" type="HBoxContainer" parent="Llevas/MarginContainer/StatsList" unique_id=642935864]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" parent="Llevas/MarginContainer/StatsList/ItemCount" unique_id=1978995231 instance=ExtResource("3_yat62")]
+clip_contents = false
+layout_mode = 2
+size_flags_stretch_ratio = 15.0
+text = "[left]LLEVAS:"
+
+[node name="Data" parent="Llevas/MarginContainer/StatsList/ItemCount" unique_id=16888199 instance=ExtResource("3_yat62")]
+layout_mode = 2
+size_flags_stretch_ratio = 3.0
+text = "[right]42"
+horizontal_alignment = 2
+align = 2
+
+[node name="ItemsViewport" type="Control" parent="." unique_id=382929451]
+clip_contents = true
+anchors_preset = 0
+offset_left = 212.0
+offset_top = 14.0
+offset_right = 494.0
+offset_bottom = 255.0
+metadata/_edit_lock_ = true
+
+[node name="ItemsContainer" type="VBoxContainer" parent="ItemsViewport" unique_id=122347034]
+layout_mode = 1
+anchors_preset = -1
+offset_top = 14.0
+offset_right = 282.0
+offset_bottom = 264.0
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+
+[node name="ExitTemplate" type="HBoxContainer" parent="ItemsViewport/ItemsContainer" unique_id=1925152124]
+custom_minimum_size = Vector2(282, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+metadata/_edit_lock_ = true
+
+[node name="Name" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1396627936]
+custom_minimum_size = Vector2(0, 34)
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("5_hwafo")
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=301126389]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=1116190233]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Quantity" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1415868809]
+custom_minimum_size = Vector2(72, 34)
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("5_hwafo")
+align = 2
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=1925622687]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=427725923]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pda0g")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Descripcion" type="RichTextLabel" parent="." unique_id=1038622913]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 295.0
+offset_right = 516.0
+offset_bottom = 383.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_epkvu")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+tab_size = 2
+script = ExtResource("5_hwafo")
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="Descripcion" unique_id=1124246327]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epkvu")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="Descripcion" unique_id=1620591234]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epkvu")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "La Poké Ball definitiva. Atrapa cualquier Pokémon salvaje y no falla nunca."
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Item_Sprite" type="Sprite2D" parent="." unique_id=898796016]
+position = Vector2(36, 334)
+scale = Vector2(1.0833333, 1.0833329)
+texture = ExtResource("6_hwafo")
+metadata/_edit_lock_ = true
+
+[node name="Select" type="Sprite2D" parent="." unique_id=19215484]
+position = Vector2(352, 46)
+texture = ExtResource("7_pda0g")
+
+[node name="U_Arrow" type="Sprite2D" parent="." unique_id=1136974192]
+position = Vector2(347, 14)
+texture = ExtResource("8_hij1p")
+hframes = 8
+metadata/_edit_lock_ = true
+
+[node name="D_Arrow" type="Sprite2D" parent="." unique_id=457882649]
+position = Vector2(347, 266)
+texture = ExtResource("9_sml0u")
+hframes = 8
+metadata/_edit_lock_ = true

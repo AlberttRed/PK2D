@@ -69,6 +69,11 @@ static var _session_navigation: Dictionary = {}
 ## PC / DAR: A confirma el objeto para llevar (no el menú Usar).
 var _hold_pick_mode: bool = false
 var _pc_deposit_mode: bool = false
+## Tienda → Vender: A confirma el objeto para vender (#834; command → #836).
+var _sell_mode: bool = false
+
+@onready var _money_panel: Control = get_node_or_null("Dinero")
+@onready var _money_data = get_node_or_null("Dinero/Data")
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -152,6 +157,8 @@ func close(keep_visible: bool = false) -> void:
 		_disable_input()
 		_hold_pick_mode = false
 		_pc_deposit_mode = false
+		_sell_mode = false
+		_set_money_panel_visible(false)
 		return
 
 	_persist_session_navigation()
@@ -160,6 +167,8 @@ func close(keep_visible: bool = false) -> void:
 	_reset_arrow_frames()
 	_hold_pick_mode = false
 	_pc_deposit_mode = false
+	_sell_mode = false
+	_set_money_panel_visible(false)
 	if not keep_visible:
 		hide()
 	_unblock_player_control()
@@ -189,6 +198,71 @@ func is_pc_deposit_mode() -> bool:
 	return _pc_deposit_mode
 
 
+func set_sell_mode(enabled: bool) -> void:
+	_sell_mode = enabled
+	# El panel dinero solo se muestra al seleccionar un ítem (flujo de venta).
+	if not enabled:
+		_set_money_panel_visible(false)
+
+
+func is_sell_mode() -> bool:
+	return _sell_mode
+
+
+func refresh_money() -> void:
+	var amount := 0
+	if GameStateService != null:
+		amount = int(GameStateService.get_money())
+	_set_money_label_text(_format_money(amount))
+
+
+func set_money_panel_visible(show_panel: bool) -> void:
+	_set_money_panel_visible(show_panel)
+	if show_panel:
+		refresh_money()
+
+
+func set_browse_details_visible(visible_details: bool) -> void:
+	if _description_label:
+		_description_label.visible = visible_details
+	if _item_icon:
+		_item_icon.visible = visible_details
+
+
+func _set_money_panel_visible(show_panel: bool) -> void:
+	if _money_panel:
+		_money_panel.visible = show_panel
+
+
+func _set_money_label_text(text: String) -> void:
+	if _money_data == null:
+		return
+	if _money_data.has_method("setText"):
+		_money_data.setText(text)
+	else:
+		_money_data.text = text
+
+
+func _format_money(amount: int) -> String:
+	return "$%s" % _format_thousands(amount)
+
+
+func _format_thousands(amount: int) -> String:
+	var negative := amount < 0
+	var n := absi(amount)
+	var s := str(n)
+	var out := ""
+	var i := 0
+	for c_i in range(s.length() - 1, -1, -1):
+		if i > 0 and i % 3 == 0:
+			out = "," + out
+		out = s[c_i] + out
+		i += 1
+	if negative:
+		out = "-" + out
+	return out
+
+
 ## Tras mutar el Bag (p. ej. consumir ítem); sin señales globales.
 func refresh_from_controller() -> void:
 	if _controller == null or not visible:
@@ -200,6 +274,7 @@ func refresh_from_controller() -> void:
 func _refresh_current_pocket() -> void:
 	if _controller == null or _pockets.is_empty():
 		_current_items = [BAG_LIST_ENTRY_SCRIPT.create_exit_entry()]
+		_apply_sell_mode_exit_label()
 		_render_background(ItemEnums.Pocket.ITEMS)
 		_render_bag_sprite(ItemEnums.Pocket.ITEMS)
 		_restore_selection_for_current_pocket()
@@ -210,10 +285,21 @@ func _refresh_current_pocket() -> void:
 	_render_background(pocket)
 	_render_bag_sprite(pocket)
 	_current_items = _controller.get_items_in_pocket(pocket)
+	_apply_sell_mode_exit_label()
 	_restore_selection_for_current_pocket()
 	_render_items()
 	_render_pocket_name()
 	_render_arrows()
+
+
+func _apply_sell_mode_exit_label() -> void:
+	if not _sell_mode:
+		return
+	for item in _current_items:
+		if item != null and item.is_exit:
+			item.display_name = "SALIR"
+			item.description = "Salir."
+			return
 
 func _restore_selection_for_current_pocket() -> void:
 	if _pockets.is_empty():
@@ -518,7 +604,7 @@ func _confirm_selection() -> void:
 	if selected_item.is_exit:
 		_request_back()
 		return
-	if _hold_pick_mode or _pc_deposit_mode:
+	if _hold_pick_mode or _pc_deposit_mode or _sell_mode:
 		_play_select_sound()
 		use_requested.emit(int(selected_item.item_id))
 		return
