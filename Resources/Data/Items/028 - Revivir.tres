@@ -3,12 +3,10 @@
 [ext_resource type="Resource" path="res://Resources/BattleCategories/Items/BattleReviveItemCategory.tres" id="1_1p6cf"]
 [ext_resource type="Texture2D" uid="uid://dvs3t7asjewij" path="res://Sprites/Iconos/Items/items_atlas_000.png" id="1_hy55n"]
 [ext_resource type="Script" uid="uid://bdxbue0jidsv7" path="res://Scripts/Resources/Classes/ItemData.gd" id="1_il1ry"]
-[ext_resource type="Script" uid="uid://cjrveitemfx01pk" path="res://Scripts/Resources/Effects/ReviveItemEffect.gd" id="2_revive"]
+[ext_resource type="Script" uid="uid://dukt3xnvdb0ns" path="res://Scripts/Resources/Effects/ReviveItemEffect.gd" id="2_revive"]
 
 [sub_resource type="Resource" id="Resource_revfx"]
 script = ExtResource("2_revive")
-revive_mode = 0
-revive_hp_percentage = 50
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hy55n"]
 atlas = ExtResource("1_hy55n")
@@ -27,4 +25,6 @@ item_category_id = 29
 category = ExtResource("1_1p6cf")
 allowed_contexts = 7
 target_type = 1
+buy_price = 1500
+sell_price = 750
 effect = SubResource("Resource_revfx")

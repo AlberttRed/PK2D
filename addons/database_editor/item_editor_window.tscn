@@ -125,6 +125,53 @@ text = "Tipo:"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="EconomySection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection"]
+layout_mode = 2
+text = "Economía (tienda)"
+theme_override_font_sizes/font_size = 16
+
+[node name="BuyPriceContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection"]
+layout_mode = 2
+
+[node name="BuyPriceLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/BuyPriceContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Precio compra:"
+
+[node name="BuyPriceSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/BuyPriceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 999999.0
+step = 1.0
+rounded = true
+allow_greater = false
+prefix = "$"
+
+[node name="SellPriceContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection"]
+layout_mode = 2
+
+[node name="SellPriceLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/SellPriceContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(200, 0)
+text = "Precio venta:"
+
+[node name="SellPriceSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/SellPriceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 999999.0
+step = 1.0
+rounded = true
+allow_greater = false
+prefix = "$"
+tooltip_text = "0 = no vendible (key items, etc.)"
+
 [node name="IconSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 

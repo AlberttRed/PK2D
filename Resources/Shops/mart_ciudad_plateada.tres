@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ShopData" format=3 uid="uid://b578b1acd0c34"]
+
+[ext_resource type="Script" uid="uid://bko2e7p5l0wnp" path="res://Scripts/Resources/Classes/ShopData.gd" id="1_shop"]
+
+[resource]
+script = ExtResource("1_shop")
+shop_id = "mart_ciudad_plateada"
+display_name = "Tienda Pokémon — Ciudad Plateada"
+item_ids = Array[int]([4, 17, 18, 19, 21, 22, 78, 79])

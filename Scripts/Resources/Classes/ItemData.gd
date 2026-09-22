@@ -107,6 +107,16 @@ class_name ItemData
 @export var stack_limit: int = 99
 
 # ============================================================================
+# Economía (tienda) — AB#832
+# ============================================================================
+
+## Coste al comprar en tienda (0 = no comprable / sin precio definido).
+@export var buy_price: int = 0
+
+## Lo que paga la tienda al vender. Convención: `0` → no vendible (key items, etc.).
+@export var sell_price: int = 0
+
+# ============================================================================
 # AC-05: Hook a lógica de efecto
 # ============================================================================
 
@@ -129,6 +139,14 @@ func requires_target() -> bool:
 ## Verifica si es un key item (no consumible y stack_limit = 1)
 func is_key_item() -> bool:
 	return stack_limit == 1 and not is_consumable
+
+## True si la tienda puede comprar este ítem al jugador (`sell_price > 0`).
+func is_sellable() -> bool:
+	return sell_price > 0
+
+## True si tiene precio de compra definido (`buy_price > 0`).
+func is_buyable() -> bool:
+	return buy_price > 0
 
 ## Obtiene el nombre para mostrar (fallback a display_name o internal_name)
 func get_display_name() -> String:

@@ -25,4 +25,6 @@ item_category_id = 27
 category = ExtResource("1_864ov")
 allowed_contexts = 3
 target_type = 1
+buy_price = 300
+sell_price = 150
 effect = SubResource("Resource_healfx")

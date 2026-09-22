@@ -25,4 +25,6 @@ item_category_id = 34
 category = ExtResource("1_yd41b")
 allowed_contexts = 4
 target_type = 1
+buy_price = 200
+sell_price = 100
 effect = SubResource("Resource_ballfx")

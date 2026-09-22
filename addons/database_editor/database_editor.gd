@@ -5,6 +5,8 @@ extends Window
 ## Contiene pestañas para gestionar diferentes tipos de recursos
 ## También puede funcionar en modo "picker" para seleccionar recursos desde otros editores
 
+const ItemLookup := preload("res://addons/database_editor/database_editor_item_lookup.gd")
+
 ## Tipos de recursos soportados en el picker
 ## Extensible: Para añadir nuevos tipos (ej: TRAINER), agregar aquí y en _configure_picker_tabs
 enum ResourceType {
@@ -32,6 +34,7 @@ signal picker_cancelled
 @onready var ability_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("AbilityTab")
 @onready var ailment_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("AilmentTab")
 @onready var weather_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("WeatherTab")
+@onready var shop_tab: Control = $VBoxContainer/TabContainer.get_node_or_null("ShopTab")
 
 var pokemon_editor_scene: PackedScene = null
 var current_pokemon_editor: Window = null
@@ -49,6 +52,8 @@ var ability_editor_scene: PackedScene = null
 var current_ability_editor: Window = null
 var weather_editor_scene: PackedScene = null
 var current_weather_editor: Window = null
+var shop_editor_scene: PackedScene = null
+var current_shop_editor: Window = null
 
 # Modo picker
 var is_picker_mode: bool = false
@@ -79,6 +84,7 @@ func _ready() -> void:
 	ailment_editor_scene = load("res://addons/database_editor/ailment_editor_window.tscn")
 	ability_editor_scene = load("res://addons/database_editor/ability_editor_window.tscn")
 	weather_editor_scene = load("res://addons/database_editor/weather_editor_window.tscn")
+	shop_editor_scene = load("res://addons/database_editor/shop_editor_window.tscn")
 
 	# Conectar señal de cierre
 	close_requested.connect(_on_close_requested)
@@ -90,7 +96,7 @@ func _ready() -> void:
 	if tab_container:
 		tab_container.tab_selected.connect(_on_tab_selected)
 		# Establecer títulos de los tabs de forma segura.
-		var titles := ["Pokémon", "Movimientos", "Items", "Trainers", "Tipos", "Ailments", "Habilidades", "Weather"]
+		var titles := ["Pokémon", "Movimientos", "Items", "Trainers", "Tipos", "Ailments", "Habilidades", "Weather", "Tiendas"]
 		var tab_count := tab_container.get_tab_count()
 		for i in range(min(tab_count, titles.size())):
 			tab_container.set_tab_title(i, titles[i])
@@ -422,6 +428,9 @@ func _on_tab_selected(tab_index: int) -> void:
 		7:  # Weather
 			if weather_tab:
 				_load_simple_resources_directly(current_tab_node, "weather")
+		8:  # Tiendas (ShopData)
+			if shop_tab:
+				_load_simple_resources_directly(current_tab_node, "shop")
 
 ## Refresca la pestaña de Pokémon
 ## Carga recursos de Pokémon directamente sin depender de que el script se ejecute
@@ -3133,8 +3142,89 @@ func _open_weather_editor_duplicate(tab_node: Control, weather_data: WeatherData
 			_load_simple_resources_directly(tab_node, "weather")
 		)
 
+func _open_shop_editor_create(tab_node: Control) -> void:
+	if not shop_editor_scene:
+		_show_warning("No se pudo cargar shop_editor_window.tscn")
+		return
+	if current_shop_editor and is_instance_valid(current_shop_editor):
+		current_shop_editor.queue_free()
+	await get_tree().process_frame
+	var editor := shop_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar ShopEditorWindow")
+		return
+	add_child(editor)
+	current_shop_editor = editor
+	if editor.has_method("open_create"):
+		editor.open_create(func():
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_shop_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_shop_editor = null
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+
+func _open_shop_editor_edit(tab_node: Control, shop_data: ShopData) -> void:
+	if not shop_editor_scene:
+		_show_warning("No se pudo cargar shop_editor_window.tscn")
+		return
+	if current_shop_editor and is_instance_valid(current_shop_editor):
+		current_shop_editor.queue_free()
+	await get_tree().process_frame
+	var editor := shop_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar ShopEditorWindow")
+		return
+	add_child(editor)
+	current_shop_editor = editor
+	if editor.has_method("open_edit"):
+		editor.open_edit(shop_data, func():
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_shop_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_shop_editor = null
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+
+func _open_shop_editor_duplicate(tab_node: Control, shop_data: ShopData) -> void:
+	if not shop_editor_scene:
+		_show_warning("No se pudo cargar shop_editor_window.tscn")
+		return
+	if current_shop_editor and is_instance_valid(current_shop_editor):
+		current_shop_editor.queue_free()
+	await get_tree().process_frame
+	var editor := shop_editor_scene.instantiate()
+	if not editor:
+		_show_warning("No se pudo instanciar ShopEditorWindow")
+		return
+	add_child(editor)
+	current_shop_editor = editor
+	if editor.has_method("open_duplicate"):
+		editor.open_duplicate(shop_data, func():
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+	if editor.has_signal("cancelled"):
+		editor.cancelled.connect(func():
+			current_shop_editor = null
+		)
+	if editor.has_signal("saved"):
+		editor.saved.connect(func(_res, _was_new):
+			current_shop_editor = null
+			_load_simple_resources_directly(tab_node, "shop")
+		)
+
 ## ============================================
-## FUNCIONES PARA TYPES / AILMENTS / ABILITIES / WEATHER
+## FUNCIONES PARA TYPES / AILMENTS / ABILITIES / WEATHER / SHOPS
 ## ============================================
 
 func _load_simple_resources_directly(tab_node: Control, kind: String) -> void:
@@ -3280,6 +3370,26 @@ func _on_simple_item_selected(index: int, tab_node: Control, kind: String) -> vo
 		_add_detail_row(detail_container, "Descripción", str(resource.get("description")))
 	elif kind == "weather":
 		_add_detail_row(detail_container, "Nombre interno", str(resource.get("internal_name")))
+	elif kind == "shop":
+		var shop := resource as ShopData
+		var shop_id_text := str(shop.shop_id) if shop else str(resource.get("shop_id"))
+		_add_detail_row(detail_container, "shop_id", shop_id_text)
+		var item_ids: Array = []
+		if shop != null:
+			for item_id_any in shop.item_ids:
+				item_ids.append(int(item_id_any))
+		else:
+			var raw_ids = resource.get("item_ids")
+			if raw_ids != null:
+				for item_id_any in raw_ids:
+					item_ids.append(int(item_id_any))
+		_add_detail_row(detail_container, "Ítems en catálogo", str(item_ids.size()))
+		_add_section_header(detail_container, "CATÁLOGO")
+		if item_ids.is_empty():
+			_add_detail_label(detail_container, "(vacío)")
+		else:
+			for item_id_any in item_ids:
+				_add_detail_label(detail_container, ItemLookup.format_item_line(int(item_id_any)))
 
 	_add_section_header(detail_container, "ARCHIVO")
 	_add_detail_label(detail_container, file_path)
@@ -3325,6 +3435,9 @@ func _on_simple_create_button_pressed(tab_node: Control, kind: String) -> void:
 	if kind == "weather":
 		_open_weather_editor_create(tab_node)
 		return
+	if kind == "shop":
+		_open_shop_editor_create(tab_node)
+		return
 
 	var script := load(_get_simple_resource_script_path(kind))
 	if script == null:
@@ -3361,6 +3474,9 @@ func _on_simple_edit_button_pressed(tab_node: Control, kind: String) -> void:
 	if kind == "weather":
 		_open_weather_editor_edit(tab_node, resource as WeatherData)
 		return
+	if kind == "shop":
+		_open_shop_editor_edit(tab_node, resource as ShopData)
+		return
 	EditorInterface.edit_resource(resource)
 
 func _on_simple_duplicate_button_pressed(tab_node: Control, kind: String) -> void:
@@ -3379,6 +3495,9 @@ func _on_simple_duplicate_button_pressed(tab_node: Control, kind: String) -> voi
 		return
 	if kind == "weather":
 		_open_weather_editor_duplicate(tab_node, resource as WeatherData)
+		return
+	if kind == "shop":
+		_open_shop_editor_duplicate(tab_node, resource as ShopData)
 		return
 	var dup := resource.duplicate(true) as Resource
 	if dup == null:
@@ -3429,6 +3548,8 @@ func _is_expected_simple_resource(resource: Resource, kind: String) -> bool:
 			return resource is AbilityData
 		"weather":
 			return resource is WeatherData
+		"shop":
+			return resource is ShopData
 	return false
 
 func _get_simple_resource_dir(kind: String) -> String:
@@ -3441,6 +3562,8 @@ func _get_simple_resource_dir(kind: String) -> String:
 			return "res://Resources/Data/Abilities"
 		"weather":
 			return "res://Resources/Data/Weather"
+		"shop":
+			return "res://Resources/Shops"
 	return ""
 
 func _get_simple_resource_script_path(kind: String) -> String:
@@ -3453,6 +3576,8 @@ func _get_simple_resource_script_path(kind: String) -> String:
 			return "res://Scripts/Resources/Classes/AbilityData.gd"
 		"weather":
 			return "res://Scripts/Resources/Classes/WeatherData.gd"
+		"shop":
+			return "res://Scripts/Resources/Classes/ShopData.gd"
 	return ""
 
 func _get_simple_resource_id(resource: Resource, kind: String):
@@ -3465,6 +3590,8 @@ func _get_simple_resource_id(resource: Resource, kind: String):
 			return int(resource.get("id"))
 		"weather":
 			return int(resource.get("id"))
+		"shop":
+			return str(resource.get("shop_id"))
 	return ""
 
 func _get_simple_resource_name(resource: Resource, kind: String, fallback_file_name: String = "") -> String:
@@ -3484,6 +3611,12 @@ func _get_simple_resource_name(resource: Resource, kind: String, fallback_file_n
 		"weather":
 			var wn: String = str(resource.get("display_name"))
 			return wn if wn != "" else str(resource.get("internal_name"))
+		"shop":
+			var sn: String = str(resource.get("display_name"))
+			if sn != "":
+				return sn
+			var sid: String = str(resource.get("shop_id"))
+			return sid if sid != "" else fallback_file_name.get_basename()
 	return fallback_file_name.get_basename()
 
 func _initialize_simple_new_resource(resource: Resource, kind: String) -> void:
@@ -3504,6 +3637,10 @@ func _initialize_simple_new_resource(resource: Resource, kind: String) -> void:
 			resource.set("id", _get_next_simple_numeric_id(kind))
 			resource.set("display_name", "Nuevo Weather")
 			resource.set("internal_name", "new_weather")
+		"shop":
+			resource.set("shop_id", "nueva_tienda")
+			resource.set("display_name", "Nueva tienda")
+			resource.set("item_ids", [])
 
 func _initialize_simple_duplicate_resource(resource: Resource, kind: String) -> void:
 	match kind:
@@ -3518,6 +3655,9 @@ func _initialize_simple_duplicate_resource(resource: Resource, kind: String) -> 
 			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
 		"weather":
 			resource.set("id", _get_next_simple_numeric_id(kind))
+			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
+		"shop":
+			resource.set("shop_id", "%s_copy" % str(resource.get("shop_id")))
 			resource.set("display_name", "%s Copia" % str(resource.get("display_name")))
 
 func _get_next_simple_numeric_id(kind: String) -> int:

@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://cesw5xutsmgo2" path="res://Scenes/UI/PCStorageUI.tscn" id="15_pcui"]
 [ext_resource type="PackedScene" uid="uid://bco6fofd1137k" path="res://Scenes/UI/PCItemsUI.tscn" id="16_pcitems"]
 [ext_resource type="PackedScene" uid="uid://cqtypickerpk2d01" path="res://Scenes/UI/QuantityPicker.tscn" id="17_qtypicker"]
+[ext_resource type="PackedScene" uid="uid://yhc1eyvh3xfi" path="res://Scenes/UI/PokeMartUI.tscn" id="18_pokemart"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -145,6 +146,9 @@ visible = false
 visible = false
 
 [node name="PCItemsUI" parent="." instance=ExtResource("16_pcitems")]
+visible = false
+
+[node name="PokeMartUI" parent="." instance=ExtResource("18_pokemart")]
 visible = false
 
 [node name="PokedexUI" parent="." instance=ExtResource("13_pokedexui")]

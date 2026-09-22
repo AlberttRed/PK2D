@@ -29,6 +29,10 @@ var refresh_callback: Callable = Callable()
 @onready var pocket_option_button: OptionButton = $VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/PocketContainer/PocketOptionButton
 @onready var kind_option_button: OptionButton = $VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/KindContainer/KindOptionButton
 
+# Referencias UI - Economía (tienda)
+@onready var buy_price_spin_box: SpinBox = $VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/BuyPriceContainer/BuyPriceSpinBox
+@onready var sell_price_spin_box: SpinBox = $VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/SellPriceContainer/SellPriceSpinBox
+
 # Referencias UI - Icono
 var icon_texture_button: TextureButton = null
 var clear_icon_button: Button = null
@@ -88,6 +92,10 @@ func _initialize_nodes() -> void:
 		pocket_option_button = get_node_or_null("VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/PocketContainer/PocketOptionButton") as OptionButton
 	if not kind_option_button:
 		kind_option_button = get_node_or_null("VBoxContainer/ScrollContainer/VBoxContainer/ClassificationSection/KindContainer/KindOptionButton") as OptionButton
+	if not buy_price_spin_box:
+		buy_price_spin_box = get_node_or_null("VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/BuyPriceContainer/BuyPriceSpinBox") as SpinBox
+	if not sell_price_spin_box:
+		sell_price_spin_box = get_node_or_null("VBoxContainer/ScrollContainer/VBoxContainer/EconomySection/SellPriceContainer/SellPriceSpinBox") as SpinBox
 	if not icon_texture_button:
 		icon_texture_button = get_node_or_null("VBoxContainer/ScrollContainer/VBoxContainer/IconSection/IconContainer/IconTextureButton") as TextureButton
 	if not clear_icon_button:
@@ -165,6 +173,10 @@ func _connect_field_signals() -> void:
 		pocket_option_button.item_selected.connect(func(_index): has_unsaved_changes = true)
 	if kind_option_button:
 		kind_option_button.item_selected.connect(func(_index): has_unsaved_changes = true)
+	if buy_price_spin_box:
+		buy_price_spin_box.value_changed.connect(func(_value): has_unsaved_changes = true)
+	if sell_price_spin_box:
+		sell_price_spin_box.value_changed.connect(func(_value): has_unsaved_changes = true)
 
 ## Abre el editor en modo Edit
 func open_edit(item_data: ItemData, refresh_cb: Callable = Callable()) -> void:
@@ -342,6 +354,12 @@ func _load_item_data_to_ui(item_data: ItemData) -> void:
 				break
 		kind_option_button.selected = kind_index
 
+	# Economía
+	if buy_price_spin_box:
+		buy_price_spin_box.value = item_data.buy_price
+	if sell_price_spin_box:
+		sell_price_spin_box.value = item_data.sell_price
+
 	# Icono - actualizar después de cargar todos los datos
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -375,6 +393,12 @@ func _update_item_data_from_ui() -> void:
 		var selected_index = kind_option_button.selected
 		if selected_index >= 0:
 			current_item_data.kind = kind_option_button.get_item_id(selected_index)
+
+	# Economía
+	if buy_price_spin_box:
+		current_item_data.buy_price = int(buy_price_spin_box.value)
+	if sell_price_spin_box:
+		current_item_data.sell_price = int(sell_price_spin_box.value)
 
 	# Icono (se actualiza cuando se selecciona uno nuevo)
 

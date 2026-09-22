@@ -1,0 +1,113 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/database_editor/shop_editor_window.gd" id="1_script"]
+
+[node name="ShopEditorWindow" type="Window"]
+script = ExtResource("1_script")
+initial_position = 2
+size = Vector2i(720, 520)
+title = "Shop Editor"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme_override_constants/separation = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="GeneralSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SectionTitle" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+text = "Identidad"
+
+[node name="ShopIdContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+
+[node name="ShopIdLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/ShopIdContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "shop_id:"
+
+[node name="ShopIdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/ShopIdContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "mart_ciudad_verde"
+
+[node name="DisplayNameContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/GeneralSection"]
+layout_mode = 2
+
+[node name="DisplayNameLabel" type="Label" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(170, 0)
+text = "Nombre visible:"
+
+[node name="DisplayNameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/Content/GeneralSection/DisplayNameContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Tienda Pokémon — Ciudad Verde"
+
+[node name="CatalogSection" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="CatalogTitle" type="Label" parent="VBoxContainer/ScrollContainer/Content/CatalogSection"]
+layout_mode = 2
+text = "Catálogo (ítems en venta)"
+
+[node name="CatalogList" type="ItemList" parent="VBoxContainer/ScrollContainer/Content/CatalogSection"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="CatalogButtons" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/Content/CatalogSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AddItemButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/CatalogSection/CatalogButtons"]
+layout_mode = 2
+text = "Añadir ítem"
+
+[node name="RemoveItemButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/CatalogSection/CatalogButtons"]
+layout_mode = 2
+text = "Quitar"
+
+[node name="MoveUpButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/CatalogSection/CatalogButtons"]
+layout_mode = 2
+text = "Subir"
+
+[node name="MoveDownButton" type="Button" parent="VBoxContainer/ScrollContainer/Content/CatalogSection/CatalogButtons"]
+layout_mode = 2
+text = "Bajar"
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Guardar"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Cancelar"

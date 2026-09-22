@@ -41,6 +41,69 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 layout_direction = 1
 
+[node name="Price" type="RichTextLabel" parent="Container"]
+visible = false
+layout_mode = 0
+offset_left = 4.0
+offset_top = 12.0
+offset_right = 100.0
+offset_bottom = 49.0
+theme = SubResource("Theme_qty")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "$200"
+scroll_active = false
+autowrap_mode = 0
+tab_size = 2
+script = ExtResource("2_label")
+align = 2
+
+[node name="Outline" type="RichTextLabel" parent="Container/Price"]
+layout_mode = 0
+offset_right = 96.0
+offset_bottom = 37.0
+theme = SubResource("Theme_qty")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 26
+bbcode_enabled = true
+text = "$200"
+scroll_active = false
+tab_size = 2
+visible_characters_behavior = 1
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="Container/Price"]
+layout_mode = 0
+offset_right = 96.0
+offset_bottom = 37.0
+theme = SubResource("Theme_qty")
+theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
+theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 26
+bbcode_enabled = true
+text = "$200"
+scroll_active = false
+tab_size = 2
+visible_characters_behavior = 1
+metadata/_edit_lock_ = true
+
 [node name="LabelHGSS" type="RichTextLabel" parent="Container"]
 layout_mode = 0
 offset_left = 35.0

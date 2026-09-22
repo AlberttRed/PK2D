@@ -18,3 +18,5 @@ icon = SubResource("AtlasTexture_lh2fn")
 kind = 11
 item_category_id = 11
 category = ExtResource("1_65vwm")
+buy_price = 700
+sell_price = 350

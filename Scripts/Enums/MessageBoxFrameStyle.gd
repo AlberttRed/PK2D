@@ -5,7 +5,7 @@ class_name MessageBoxFrameStyle
 enum Values {
 	HGSS = 0,  # HeartGold/SoulSilver (estilo por defecto)
 	SIGN_1 = 1,  # Cartel 1
-	FIRERED = 2 # Estilo FireRed (Portraits/Choices)
+	FIRERED = 2 # Speech FRLG (`SpeechFRLG_MessageBox_Style`)
 }
 
 ## Retorna el path del StyleBox correspondiente al estilo

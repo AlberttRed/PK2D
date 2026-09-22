@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://c7vjqce51w73c"]
+
+[ext_resource type="Texture2D" uid="uid://drr5n134bv0ql" path="res://Sprites/UI/Message Skins/goldskin.png" id="1_wyoji"]
+
+[resource]
+texture = ExtResource("1_wyoji")
+texture_margin_left = 32.0
+texture_margin_top = 8.0
+texture_margin_right = 32.0
+texture_margin_bottom = 8.0
+region_rect = Rect2(4, 4, 40, 40)
