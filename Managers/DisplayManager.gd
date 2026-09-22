@@ -166,11 +166,23 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var _quantity_picker: Control = $QuantityPicker
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
+@onready var _route_name_ui: Panel = $RouteNameUI
+@onready var _route_name_label = $RouteNameUI/MarginContainer/StatsList/ItemCount/Name
 
 @onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
 @onready var _qty_price_label: RichTextLabel = $QuantityPicker/Container/Price
 @onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
 @onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
+
+## Cartel de ubicación (#918): slide desde arriba → 3 s → sale hacia arriba.
+const _ROUTE_NAME_HOLD_SEC := 3.0
+const _ROUTE_NAME_SLIDE_SEC := 0.35
+var _route_name_rest_y: float = 0.0
+var _route_name_hidden_y: float = 0.0
+var _route_name_tween: Tween = null
+var _route_name_prev_map_id: String = ""
+## False hasta el primer set_active_map (omitir cartel en carga inicial).
+var _route_name_has_active_map: bool = false
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -207,6 +219,16 @@ func _ready() -> void:
 	if _quantity_picker:
 		_quantity_picker.process_mode = Node.PROCESS_MODE_ALWAYS
 		_quantity_picker.hide()
+	if _route_name_ui:
+		_route_name_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+		_route_name_ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_route_name_ui.visible = false
+		_route_name_rest_y = _route_name_ui.position.y
+		var panel_h: float = maxf(_route_name_ui.size.y, _route_name_ui.get_combined_minimum_size().y)
+		if panel_h <= 1.0:
+			panel_h = absf(_route_name_ui.offset_bottom - _route_name_ui.offset_top)
+		_route_name_hidden_y = _route_name_rest_y - panel_h - 8.0
+		_route_name_ui.position.y = _route_name_hidden_y
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -462,6 +484,13 @@ static func open_bag_for_sell(with_screen_fade: bool = true) -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance._open_bag_for_sell(with_screen_fade)
+
+
+## Cartel de ubicación al cambiar de mapa outdoor (#918).
+static func notify_active_map_changed(map_scene: Node) -> void:
+	if instance == null:
+		return
+	instance._on_active_map_changed_for_route_name(map_scene)
 
 
 ## QuantityPicker: cantidad 1..max, o 0 si cancela.
@@ -2033,6 +2062,80 @@ func _open_poke_mart_ui(shop: ShopData, with_screen_fade: bool = true) -> void:
 
 func _on_poke_mart_ui_closed() -> void:
 	_on_ui_visibility_changed()
+
+
+## Hook desde WorldSystem.set_active_map (#918).
+func _on_active_map_changed_for_route_name(map_scene: Node) -> void:
+	var map := map_scene as MapScene
+	var map_id := ""
+	if map != null:
+		map_id = map.map_id if not map.map_id.is_empty() else map.name
+	elif map_scene != null:
+		map_id = map_scene.name
+
+	# Carga inicial: recordar mapa y no mostrar cartel.
+	if not _route_name_has_active_map:
+		_route_name_has_active_map = true
+		_route_name_prev_map_id = map_id
+		return
+
+	if map == null or map.is_indoor:
+		_route_name_prev_map_id = map_id
+		_hide_route_name_immediate()
+		return
+
+	var label := map.get_location_display_name()
+	if label.is_empty():
+		_route_name_prev_map_id = map_id
+		return
+
+	# Solo omitir si el active_map outdoor no ha cambiado (notify duplicado).
+	# Indoor → mismo outdoor vuelve a mostrar el cartel.
+	if map_id == _route_name_prev_map_id:
+		return
+
+	_route_name_prev_map_id = map_id
+	_show_route_name_banner(label)
+
+
+func _show_route_name_banner(location_name: String) -> void:
+	if _route_name_ui == null:
+		return
+	if _route_name_label != null and _route_name_label.has_method("setText"):
+		_route_name_label.setText(location_name)
+	elif _route_name_label != null:
+		_route_name_label.text = location_name
+
+	if _route_name_tween != null and is_instance_valid(_route_name_tween):
+		_route_name_tween.kill()
+		_route_name_tween = null
+
+	_route_name_ui.visible = true
+	_route_name_ui.position.y = _route_name_hidden_y
+	_route_name_ui.move_to_front()
+
+	_route_name_tween = create_tween()
+	_route_name_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_route_name_tween.tween_property(
+		_route_name_ui, "position:y", _route_name_rest_y, _ROUTE_NAME_SLIDE_SEC
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_route_name_tween.tween_interval(_ROUTE_NAME_HOLD_SEC)
+	_route_name_tween.tween_property(
+		_route_name_ui, "position:y", _route_name_hidden_y, _ROUTE_NAME_SLIDE_SEC
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_route_name_tween.tween_callback(func() -> void:
+		if _route_name_ui:
+			_route_name_ui.visible = false
+	)
+
+
+func _hide_route_name_immediate() -> void:
+	if _route_name_tween != null and is_instance_valid(_route_name_tween):
+		_route_name_tween.kill()
+		_route_name_tween = null
+	if _route_name_ui:
+		_route_name_ui.visible = false
+		_route_name_ui.position.y = _route_name_hidden_y
 
 
 ## Mochila en modo venta (UI normal + panel dinero). Espera hasta cerrar.

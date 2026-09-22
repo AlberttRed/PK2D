@@ -1208,6 +1208,9 @@ func set_active_map(map_scene: Node) -> void:
 	# BGM: respetar hold de evento / Surf / mapa (vía refresh_map_bgm)
 	refresh_map_bgm()
 
+	# Cartel de ubicación outdoor (#918)
+	DisplayManager.notify_active_map_changed(map_scene)
+
 	# Emitir cambio de grid activo
 	if context and grid:
 		context.emit_active_grid_changed(grid)

@@ -1824,6 +1824,7 @@ editor_description = "  "
 y_sort_enabled = true
 script = ExtResource("1_wr4o0")
 neighbors = Array[String](["Ruta_1", "Ruta_21"])
+display_name = "PUEBLO PALETA"
 bgm = ExtResource("1_bgm")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=1441786050 groups=["OverworldGrid"]]

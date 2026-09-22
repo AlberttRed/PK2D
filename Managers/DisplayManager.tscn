@@ -201,6 +201,8 @@ offset_bottom = 384.0
 color = Color(0, 0, 0, 1)
 
 [node name="RouteNameUI" type="Panel" parent="." unique_id=845062663]
+visible = false
+mouse_filter = 2
 offset_left = 6.0
 offset_top = -6.0
 offset_right = 261.0
