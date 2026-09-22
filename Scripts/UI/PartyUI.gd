@@ -77,8 +77,20 @@ func open(initial_focus_slot: int = -1) -> void:
 
 
 ## Tras elegir «Usar» en la mochila: solo elegir Pokémon objetivo (sin submenú Usar/Dar).
-func open_for_bag_item_target_pick(initial_focus_slot: int = -1) -> void:
+## `help_text` opcional. `hide_fixed_msg`: si true (p. ej. DAR desde PC), oculta FIXED_MSG
+## porque el prompt va en el MessageBox del DisplayManager.
+func open_for_bag_item_target_pick(
+	initial_focus_slot: int = -1,
+	help_text: String = "",
+	hide_fixed_msg: bool = false
+) -> void:
 	_open_party_common(initial_focus_slot, true)
+	if hide_fixed_msg:
+		_set_fixed_msg_visible(false)
+	else:
+		_set_fixed_msg_visible(true)
+		if not help_text.is_empty():
+			_set_help_text(help_text)
 
 
 func open_for_battle_switch_pick(initial_focus_slot: int = -1, force_switch: bool = false) -> void:
@@ -106,6 +118,7 @@ func _open_party_common(initial_focus_slot: int, bag_item_pick: bool) -> void:
 	_apply_menu_mode_all_panels()
 	for panel: PartyPokemonPanel in pokemon_panels:
 		panel.enableFocus()
+	_set_salir_enabled(not bag_item_pick)
 	_wire_salir_neighbors()
 	show()
 	_enable_input()
@@ -127,6 +140,8 @@ func close() -> void:
 	_bag_item_target_pick_mode = false
 	_battle_switch_pick_mode = false
 	_battle_force_switch = false
+	_set_salir_enabled(true)
+	_set_fixed_msg_visible(true)
 	if summary.visible:
 		summary.hide()
 	_disable_input()
@@ -188,6 +203,12 @@ func _set_help_text(text: String) -> void:
 		(lbl as Label).text = text
 
 
+func _set_fixed_msg_visible(visible_flag: bool) -> void:
+	if fixed_msg == null:
+		return
+	fixed_msg.visible = visible_flag
+
+
 func _get_battle_switch_default_help_text() -> String:
 	if _battle_force_switch:
 		return "Elegir un POKéMON."
@@ -238,12 +259,43 @@ func _refresh_slots() -> void:
 func _wire_salir_neighbors() -> void:
 	if pokemon_panels.size() < 6 or _controller == null:
 		return
+	if _bag_item_target_pick_mode:
+		# DAR / objetivo de objeto: SALIR no es seleccionable.
+		for i in SLOT_COUNT:
+			pokemon_panels[i].set_focus_neighbor(SIDE_BOTTOM, NodePath())
+		salir.set_focus_neighbor(SIDE_TOP, NodePath())
+		return
 	var up_slot: int = _first_occupied_salir_up()
 	if up_slot < 0:
 		return
 	var top_path: NodePath = pokemon_panels[up_slot].get_path()
 	salir.set_focus_neighbor(SIDE_TOP, top_path)
 	pokemon_panels[up_slot].set_focus_neighbor(SIDE_BOTTOM, salir.get_path())
+
+
+func _set_salir_enabled(enabled: bool) -> void:
+	if salir == null:
+		return
+	if enabled:
+		salir.focus_mode = Control.FOCUS_ALL
+		salir.modulate = Color(1, 1, 1, 1)
+	else:
+		salir.focus_mode = Control.FOCUS_NONE
+		salir.modulate = Color(1, 1, 1, 0.45)
+		if style_salir:
+			salir.add_theme_stylebox_override("panel", style_salir)
+		var fo: Control = get_viewport().gui_get_focus_owner() as Control
+		if fo != null and (fo == salir or salir.is_ancestor_of(fo)):
+			_focus_first_occupied_only()
+
+
+func _focus_first_occupied_only() -> void:
+	if _controller == null:
+		return
+	for i in SLOT_COUNT:
+		if _controller.is_slot_occupied(i):
+			pokemon_panels[i].grab_focus()
+			return
 
 
 func _focus_first_occupied_or_salir() -> void:
@@ -253,6 +305,8 @@ func _focus_first_occupied_or_salir() -> void:
 		if _controller.is_slot_occupied(i):
 			pokemon_panels[i].grab_focus()
 			return
+	if _bag_item_target_pick_mode:
+		return
 	salir.grab_focus()
 
 
@@ -361,12 +415,16 @@ func _navigate_from_party_slot(from_slot: int, side: Side) -> int:
 	var step := _party_grid_step(cur, side)
 	while step != -1:
 		if step == CANCEL_INDEX:
+			if _bag_item_target_pick_mode:
+				return from_slot
 			return CANCEL_INDEX
 		if _controller.is_slot_occupied(step):
 			return step
 		cur = step
 		step = _party_grid_step(cur, side)
 	if side == SIDE_RIGHT or side == SIDE_BOTTOM:
+		if _bag_item_target_pick_mode:
+			return from_slot
 		return CANCEL_INDEX
 	return from_slot
 
@@ -408,6 +466,9 @@ func _focus_move(side: Side) -> void:
 		_focus_first_occupied_or_salir()
 		return
 	if fo == salir or salir.is_ancestor_of(fo):
+		if _bag_item_target_pick_mode:
+			_focus_first_occupied_only()
+			return
 		if side == SIDE_TOP:
 			var up_slot: int = _first_occupied_salir_up()
 			if up_slot >= 0:
@@ -427,6 +488,8 @@ func _focus_move(side: Side) -> void:
 	if target == slot:
 		return
 	if target == CANCEL_INDEX:
+		if _bag_item_target_pick_mode:
+			return
 		salir.grab_focus()
 	else:
 		pokemon_panels[target].grab_focus()
@@ -515,7 +578,8 @@ func _on_input_accept() -> void:
 	if not _input_enabled or not visible or _suppress_input:
 		return
 	var dm := DisplayManager.instance
-	if dm != null and dm.msg != null and dm.msg.visible:
+	# Prompt estático del MessageBox (p. ej. DAR desde PC) no debe bloquear la selección.
+	if dm != null and dm.msg != null and dm.msg.visible and not _bag_item_target_pick_mode:
 		return
 	if _in_hgss_summary:
 		return

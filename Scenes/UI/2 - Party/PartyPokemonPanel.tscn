@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="15_60258"]
 [ext_resource type="Texture2D" uid="uid://b8fyoc1ue03hn" path="res://Sprites/Pictures/Nv_icon_white.png" id="16_hfvma"]
 [ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="17_ltvh3"]
+[ext_resource type="Texture2D" uid="uid://biekd0edp2k6i" path="res://Sprites/UI/Party/icon_item.png" id="27_cg3cy"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2c3cv"]
 texture = ExtResource("1_ltqyh")
@@ -214,6 +215,11 @@ metadata/_edit_lock_ = true
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=653890942]
 reset_on_save = false
 libraries/party_animations = ExtResource("12_2dkci")
+
+[node name="item" type="Sprite2D" parent="." unique_id=1203658779]
+visible = false
+position = Vector2(68, 56)
+texture = ExtResource("27_cg3cy")
 
 [connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
 [connection signal="focus_exited" from="." to="." method="_on_focus_exited"]

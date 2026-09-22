@@ -1,5 +1,5 @@
 extends Panel
-class_name PCUI
+class_name PCStorageUI
 
 ## UI de almacenamiento del PC (cajas). Modos Bill → #828.
 ## Iconos de caja + cursor de mano (idle point / grab / fist + hold).
@@ -2493,11 +2493,11 @@ func _animate_box_change(new_index: int, slide_dir: int) -> void:
 	_reset_cursor_hold_repeat()
 	_nudge_box_name_arrow(slide_dir)
 
-	# Clip solo durante el slide; mano en PCUI para no recortarla.
+	# Clip solo durante el slide; mano en PCStorageUI para no recortarla.
 	if _box_clip:
 		_box_clip.clip_contents = true
 	_attach_hand_keep_global(self)
-	# Fijar la mano en el chrome de nombre (coords del PCUI) para que no viaje con el panel.
+	# Fijar la mano en el chrome de nombre (coords del PCStorageUI) para que no viaje con el panel.
 	if _cursor != null and _box_panel != null:
 		var name_local := _cursor_rest_position(SEL_BOX_NAME)
 		var g: Vector2 = _box_panel.get_global_transform_with_canvas() * name_local
@@ -3579,7 +3579,7 @@ func _ensure_summary() -> void:
 		return
 	_summary = PARTY_SUMMARY_SCENE.instantiate() as PartySummary
 	if _summary == null:
-		push_error("PCUI: no se pudo instanciar PartySummary.")
+		push_error("PCStorageUI: no se pudo instanciar PartySummary.")
 		return
 	_summary.name = "SUMMARY"
 	_summary.hide()

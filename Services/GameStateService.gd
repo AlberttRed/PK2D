@@ -3,6 +3,7 @@ extends Node
 const BAG_SCRIPT = preload("res://Scripts/Resources/Classes/Bag.gd")
 const PARTY_SCRIPT = preload("res://Scripts/Resources/Classes/Party.gd")
 const PC_STORAGE_SCRIPT = preload("res://Scripts/Resources/Classes/PCStorage.gd")
+const PC_ITEM_STORAGE_SCRIPT = preload("res://Scripts/Resources/Classes/PCItemStorage.gd")
 const POKEDEX_SCRIPT = preload("res://Scripts/Runtime/Pokedex.gd")
 const POKEMON_RUNTIME_SERDE = preload("res://Scripts/Runtime/PokemonRuntimeSerde.gd")
 const SAVE_VERSION: int = 1
@@ -72,6 +73,9 @@ var party = PARTY_SCRIPT.new()
 ## PC de Pokémon (cajas). Persistido en save/load (#826).
 var pc_storage = PC_STORAGE_SCRIPT.new()
 
+## Depósito de ítems del PC (separado del Bag). Persistido (#830).
+var pc_item_storage = PC_ITEM_STORAGE_SCRIPT.new()
+
 # Pokédex global del jugador (por species_id)
 var pokedex = POKEDEX_SCRIPT.new()
 var unlocked_pokedex_ids: Array[String] = []
@@ -100,6 +104,7 @@ func initialize_new_game() -> void:
 	bag = BAG_SCRIPT.new()
 	party = PARTY_SCRIPT.new()
 	pc_storage = PC_STORAGE_SCRIPT.new()
+	pc_item_storage = PC_ITEM_STORAGE_SCRIPT.new()
 	pokedex = POKEDEX_SCRIPT.new()
 	unlocked_pokedex_ids = ["kanto", "updated-johto", "national"]
 	active_pokedex_id = "kanto"
@@ -109,6 +114,7 @@ func initialize_new_game() -> void:
 		_seed_test_bag_items()
 		_seed_test_party_placeholder()
 		_seed_test_pc_box_full()
+		_seed_test_pc_item_storage()
 	#global_flags = {}
 	#game_variables = {}
 	#event_self_flags = {}
@@ -233,6 +239,20 @@ func _seed_test_pc_box_full() -> void:
 	storage.set_box_name(0, "CAJA 1")
 	print("GameStateService: PC caja de prueba (ref) con %d Pokémon." % added)
 	_assign_test_held_items_pc(storage)
+
+
+## Ítems de prueba en el depósito del PC (#830 / UI #831).
+func _seed_test_pc_item_storage() -> void:
+	var storage = get_pc_item_storage()
+	if storage == null:
+		return
+	if storage.get_occupied_count() > 0:
+		return
+	storage.add_item(17, 3)   # Poción
+	storage.add_item(1, 1)    # Master Ball
+	storage.add_item(132, 5)  # Baya Aranja
+	storage.add_item(28, 2)   # Revivir
+	print("GameStateService: PC ítems de prueba: %d entradas." % storage.get_occupied_count())
 
 
 ## Objetos held de prueba (MOVER OBJETOS / PC). Sin integrar aún el flujo completo de held items.
@@ -383,6 +403,13 @@ func get_pc_storage():
 	return pc_storage
 
 
+## Depósito de ítems del PC (separado del Bag).
+func get_pc_item_storage():
+	if pc_item_storage == null:
+		pc_item_storage = PC_ITEM_STORAGE_SCRIPT.new()
+	return pc_item_storage
+
+
 ## Serializa cajas del PC (nombres + slots) para save.
 func get_pc_storage_save_data() -> Array[Dictionary]:
 	return get_pc_storage().to_serializable_data()
@@ -391,6 +418,14 @@ func get_pc_storage_save_data() -> Array[Dictionary]:
 ## Restaura cajas desde save. Array vacío / ausente → PC vacío con capacidad por defecto.
 func load_pc_storage_save_data(boxes_data: Array) -> void:
 	get_pc_storage().load_serializable_data(boxes_data)
+
+
+func get_pc_item_storage_save_data() -> Array[Dictionary]:
+	return get_pc_item_storage().to_serializable_data()
+
+
+func load_pc_item_storage_save_data(entries: Array) -> void:
+	get_pc_item_storage().load_serializable_data(entries)
 
 
 ## True si el equipo está lleno y no hay hueco en el PC (Gen 3: bloquea Poké Ball).
@@ -904,6 +939,7 @@ func _build_save_payload() -> Dictionary:
 		},
 		"party": get_party_save_data(),
 		"pc_storage": get_pc_storage_save_data(),
+		"pc_item_storage": get_pc_item_storage_save_data(),
 		"bag": get_bag_save_data(),
 		"pokedex": get_pokedex_save_data(),
 		"pokedex_registry": get_pokedex_registry_save_data(),
@@ -966,6 +1002,12 @@ func _apply_save_payload(save_data: Dictionary) -> void:
 		load_pc_storage_save_data(pc_any)
 	else:
 		load_pc_storage_save_data([])
+
+	var pc_items_any: Variant = save_data.get("pc_item_storage", [])
+	if pc_items_any is Array:
+		load_pc_item_storage_save_data(pc_items_any)
+	else:
+		load_pc_item_storage_save_data([])
 
 	var pokedex_any: Variant = save_data.get("pokedex", {})
 	var raw_pokedex: Dictionary = pokedex_any if pokedex_any is Dictionary else {}
@@ -1080,6 +1122,7 @@ func get_state_summary() -> String:
 	summary += "Self-switches: %s\n" % event_self_flags
 	summary += "Bag entries: %d\n" % get_bag_save_data().size()
 	summary += "Party Pokémon: %d\n" % get_party().count()
+	summary += "PC item storage entries: %d\n" % get_pc_item_storage_save_data().size()
 	summary += "PC occupied: %d / %d\n" % [get_pc_storage().get_occupied_count(), get_pc_storage().get_capacity()]
 	summary += "Pokédex vistos: %d\n" % get_pokedex().get_seen_count()
 	summary += "Pokédex capturados: %d\n" % get_pokedex().get_caught_count()

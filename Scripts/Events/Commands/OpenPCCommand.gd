@@ -20,6 +20,12 @@ enum BillOption {
 	SEE_YA = 4,
 }
 
+enum PlayerOption {
+	ITEM_STORAGE = 0,
+	MAILBOX = 1,
+	LOG_OFF = 2,
+}
+
 const BILL_OPTIONS: Array[String] = [
 	"SACAR POKéMON",
 	"DEJAR POKéMON",
@@ -34,6 +40,18 @@ const BILL_HELP: Array[String] = [
 	"Ordenar los POKéMON de las CAJAS y de tu equipo.",
 	"Mover los objetos de los POKéMON de las CAJAS o de tu equipo.",
 	"¡Hasta otra!",
+]
+
+const PLAYER_OPTIONS: Array[String] = [
+	"ALMACÉN OBJ.",
+	"BUZÓN",
+	"DESCONEXIÓN",
+]
+
+const PLAYER_HELP: Array[String] = [
+	"Guardar o sacar objetos de tu PC.",
+	"Leer el correo recibido.",
+	"Apagar este PC.",
 ]
 
 
@@ -55,7 +73,7 @@ func execute(context: Node) -> void:
 			RootOption.BILL:
 				await _open_bill_pc()
 			RootOption.PLAYER:
-				await _show_stub("PC de %s" % player_name)
+				await _open_player_pc(player_name)
 			RootOption.OAK:
 				await _show_stub("PC del PROF. OAK")
 			RootOption.HALL_OF_FAME:
@@ -108,7 +126,7 @@ func _prompt_root_menu(player_name: String) -> int:
 	)
 	if cb != null:
 		cb.suppress_confirm_sfx = false
-	if choice == RootOption.BILL:
+	if choice == RootOption.BILL or choice == RootOption.PLAYER:
 		AudioManager.play_ui_pc_access()
 	elif choice >= 0:
 		AudioManager.play_ui_select()
@@ -116,6 +134,88 @@ func _prompt_root_menu(player_name: String) -> int:
 		AudioManager.play_ui_cancel()
 	DisplayManager.close_message()
 	return choice
+
+
+func _open_player_pc(player_name: String) -> void:
+	await DisplayManager.show_message("Accedió al PC de %s." % player_name, {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+	})
+
+	var dm := DisplayManager.instance
+	if dm == null or dm.choice_box == null:
+		return
+	var cb: ChoiceBox = dm.choice_box
+
+	var on_change := func(idx: int) -> void:
+		if idx >= 0 and idx < PLAYER_HELP.size():
+			DisplayManager.set_message_help_instant(PLAYER_HELP[idx])
+
+	await _show_player_menu(cb, on_change, 0)
+	var selected: int = await DisplayManager.await_choices(false)
+
+	while true:
+		if selected < 0 or selected == PlayerOption.LOG_OFF:
+			break
+
+		if selected == PlayerOption.MAILBOX:
+			await DisplayManager.show_message("BUZÓN: pendiente.", {
+				"waitInput": true,
+				"closeAtEnd": false,
+				"showIconAtEnd": false,
+				"typingMode": MessageBox.TypingMode.INSTANT,
+				"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+			})
+			DisplayManager.set_message_help_instant(PLAYER_HELP[selected])
+			selected = await DisplayManager.await_choices(false)
+			continue
+
+		if cb.selection_changed.is_connected(on_change):
+			cb.selection_changed.disconnect(on_change)
+		var restore_idx := selected
+		DisplayManager.set_choice_input_enabled(false)
+
+		var cleanup := func() -> void:
+			DisplayManager.close_choices()
+			DisplayManager.close_message()
+
+		var prepare := _prepare_player_menu_after_pc.bind(cb, on_change, restore_idx)
+
+		if selected == PlayerOption.ITEM_STORAGE:
+			await DisplayManager.open_pc_items(0, prepare, cleanup)
+
+		selected = await DisplayManager.await_choices(false)
+
+	if cb.selection_changed.is_connected(on_change):
+		cb.selection_changed.disconnect(on_change)
+	DisplayManager.close_choices()
+	DisplayManager.close_message()
+
+
+func _prepare_player_menu_after_pc(cb: ChoiceBox, on_change: Callable, restore_idx: int) -> void:
+	await _show_player_menu(cb, on_change, restore_idx)
+	DisplayManager.set_choice_input_enabled(false)
+
+
+func _show_player_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> void:
+	var idx := clampi(initial_idx, 0, PLAYER_OPTIONS.size() - 1)
+	if not cb.selection_changed.is_connected(on_change):
+		cb.selection_changed.connect(on_change)
+	cb.set_next_initial_index(idx)
+	await DisplayManager.show_message(PLAYER_HELP[idx], {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+	})
+	DisplayManager.set_message_help_instant(PLAYER_HELP[idx])
+	DisplayManager.hide_message_wait_indicator()
+	await DisplayManager.open_choices_corner(PLAYER_OPTIONS, ChoiceBox.ChoiceAnchor.TOP_LEFT)
 
 
 func _open_bill_pc() -> void:
@@ -177,13 +277,13 @@ func _open_bill_pc() -> void:
 
 		match selected:
 			BillOption.WITHDRAW:
-				await DisplayManager.open_pc(PCUI.Mode.WITHDRAW, 0, prepare, cleanup)
+				await DisplayManager.open_pc(PCStorageUI.Mode.WITHDRAW, 0, prepare, cleanup)
 			BillOption.DEPOSIT:
-				await DisplayManager.open_pc(PCUI.Mode.DEPOSIT, 0, prepare, cleanup)
+				await DisplayManager.open_pc(PCStorageUI.Mode.DEPOSIT, 0, prepare, cleanup)
 			BillOption.MOVE:
-				await DisplayManager.open_pc(PCUI.Mode.MOVE, 0, prepare, cleanup)
+				await DisplayManager.open_pc(PCStorageUI.Mode.MOVE, 0, prepare, cleanup)
 			BillOption.MOVE_ITEMS:
-				await DisplayManager.open_pc(PCUI.Mode.MOVE_ITEMS, 0, prepare, cleanup)
+				await DisplayManager.open_pc(PCStorageUI.Mode.MOVE_ITEMS, 0, prepare, cleanup)
 
 		selected = await DisplayManager.await_choices(false)
 
