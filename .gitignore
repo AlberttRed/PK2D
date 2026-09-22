@@ -21,3 +21,7 @@ Thumbs.db
 .vscode/
 .idea/
 
+# MkDocs (salida generada + venv local)
+site/
+.venv-docs/
+
