@@ -30,6 +30,8 @@ var side: BattleSide = null  # Se asigna desde el add_participant()
 var intro_message: String = ""
 var defeat_message: String = ""
 var victory_message: String = ""
+## Premio en dinero al derrotar a este entrenador (0 = salvaje / sin premio).
+var reward_money: int = 0
 
 ## Mochila de combate. `null` + `is_player` → `GameStateService.get_bag()`.
 ## Entrenador/aliado con ítems propios: asignar con `set_bag_from_item_ids` o `bag = Bag.new()`.

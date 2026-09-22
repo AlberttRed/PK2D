@@ -724,3 +724,15 @@ func get_player_defeat_messages(player_name: String, money_lost: int) -> Array[D
 			"showIconAtEnd": false
 		},
 	]
+
+
+## Premio de victoria vs entrenador (FRLG ES).
+func get_money_reward_message(player_name: String, amount: int) -> Dictionary:
+	var display_name := player_name.strip_edges()
+	if display_name.is_empty():
+		display_name = "PLAYER"
+	return {
+		"type": "input",
+		"text": "¡%s ganó %d$!" % [display_name, maxi(amount, 0)],
+		"showIconAtEnd": true,
+	}

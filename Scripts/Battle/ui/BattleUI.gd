@@ -1397,6 +1397,18 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 					BattleFieldAnimations.TRAINER_EXIT_DURATION,
 					BattleFieldAnimations.TRAINER_EXIT_SLIDE
 				)
+
+		# Premio en dinero (AB#910): tras defeat_message / exit, antes de cerrar.
+		var reward_total := 0
+		for participant in enemy_participants:
+			if participant is BattleParticipant and participant.is_trainer:
+				reward_total += maxi(int(participant.reward_money), 0)
+		if reward_total > 0 and GameStateService != null:
+			GameStateService.add_money(reward_total)
+			var player_name := str(GameStateService.get_variable("PLAYER_NAME", "PLAYER"))
+			await show_message_from_dict(
+				message_controller.get_money_reward_message(player_name, reward_total)
+			)
 		return
 
 	# Derrota del jugador: secuencia de blanqueo + pérdida de dinero
