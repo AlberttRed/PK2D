@@ -244,13 +244,18 @@ func _strip_leading_align_bbcode(s: String) -> String:
 
 
 func setText(_text):
+	var raw := str(_text)
+	# Sin contenido: no inyectar [left]/[center]/[right] (dejan glifos/artefactos en RTL vacío).
+	if raw.strip_edges().is_empty():
+		_apply_full_richtext("")
+		return
 	var prefix := "[left]"
 	match align:
 		1:
 			prefix = "[center]"
 		2:
 			prefix = "[right]"
-	_apply_full_richtext(prefix + _strip_leading_align_bbcode(str(_text)))
+	_apply_full_richtext(prefix + _strip_leading_align_bbcode(raw))
 
 
 func updateNextLine():

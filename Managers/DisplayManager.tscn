@@ -14,7 +14,9 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/EvolutionUI.tscn" id="12_evolutionui"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/PokedexUI.tscn" id="13_pokedexui"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/SaveUI.tscn" id="14_saveui"]
-[ext_resource type="PackedScene" uid="uid://cesw5xutsmgo2" path="res://Scenes/UI/PCUI.tscn" id="15_pcui"]
+[ext_resource type="PackedScene" uid="uid://cesw5xutsmgo2" path="res://Scenes/UI/PCStorageUI.tscn" id="15_pcui"]
+[ext_resource type="PackedScene" uid="uid://bco6fofd1137k" path="res://Scenes/UI/PCItemsUI.tscn" id="16_pcitems"]
+[ext_resource type="PackedScene" uid="uid://cqtypickerpk2d01" path="res://Scenes/UI/QuantityPicker.tscn" id="17_qtypicker"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -139,7 +141,10 @@ visible = false
 [node name="PartyUI" parent="." unique_id=1406011060 instance=ExtResource("11_partyui")]
 visible = false
 
-[node name="PCUI" parent="." instance=ExtResource("15_pcui")]
+[node name="PCStorageUI" parent="." instance=ExtResource("15_pcui")]
+visible = false
+
+[node name="PCItemsUI" parent="." instance=ExtResource("16_pcitems")]
 visible = false
 
 [node name="PokedexUI" parent="." instance=ExtResource("13_pokedexui")]
@@ -154,6 +159,10 @@ visible = false
 [node name="MSG" parent="." unique_id=1471044678 instance=ExtResource("4")]
 visible = false
 z_index = 200
+
+[node name="QuantityPicker" parent="." instance=ExtResource("17_qtypicker")]
+visible = false
+z_index = 205
 
 [node name="ChoiceBox" parent="." unique_id=279823458 instance=ExtResource("5")]
 visible = false

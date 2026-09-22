@@ -1,0 +1,272 @@
+[gd_scene format=3 uid="uid://bco6fofd1137k"]
+
+[ext_resource type="Script" uid="uid://bpa6s7npqw1qe" path="res://Scripts/UI/PCItemsUI.gd" id="0_pcitems"]
+[ext_resource type="Texture2D" uid="uid://cumwiofrwe8e3" path="res://Sprites/UI/PC/pcItembg.PNG" id="1_ktf3h"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="2_t68rp"]
+[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="3_p4g48"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="4_p4g48"]
+[ext_resource type="Texture2D" uid="uid://d100gf0i5byxn" path="res://Sprites/Pictures/arrowSpriteOK2.png" id="6_43sqn"]
+[ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="7_mq4v7"]
+[ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="8_yd4kl"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n4n3u"]
+texture = ExtResource("1_ktf3h")
+
+[sub_resource type="FontVariation" id="FontVariation_bag_list"]
+base_font = ExtResource("2_t68rp")
+spacing_top = 4
+
+[sub_resource type="Theme" id="Theme_odn8x"]
+default_font = SubResource("FontVariation_bag_list")
+default_font_size = 26
+
+[sub_resource type="FontVariation" id="FontVariation_bag"]
+base_font = ExtResource("2_t68rp")
+
+[sub_resource type="Theme" id="Theme_43sqn"]
+default_font = SubResource("FontVariation_bag")
+default_font_size = 26
+
+[node name="PCItemsUI" type="Panel" unique_id=1212317598]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_n4n3u")
+script = ExtResource("0_pcitems")
+
+[node name="ItemsViewport" type="Control" parent="." unique_id=985196491]
+clip_children = 2
+clip_contents = true
+anchors_preset = 0
+offset_left = 131.0
+offset_top = 16.0
+offset_right = 420.0
+offset_bottom = 254.0
+metadata/_edit_lock_ = true
+
+[node name="ItemsContainer" type="VBoxContainer" parent="ItemsViewport" unique_id=601552096]
+layout_mode = 1
+anchors_preset = -1
+offset_top = 14.0
+offset_right = 278.0
+offset_bottom = 238.0
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+
+[node name="ExitTemplate" type="HBoxContainer" parent="ItemsViewport/ItemsContainer" unique_id=727604469]
+custom_minimum_size = Vector2(260, 32)
+layout_mode = 2
+theme_override_constants/separation = 12
+metadata/_edit_lock_ = true
+
+[node name="Name" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=670018480]
+custom_minimum_size = Vector2(0, 32)
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=2110253844]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Name" unique_id=1966046167]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+text = "SALIR"
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Quantity" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate" unique_id=1053941215]
+custom_minimum_size = Vector2(48, 32)
+clip_contents = false
+layout_mode = 2
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=1771211280]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="ItemsViewport/ItemsContainer/ExitTemplate/Quantity" unique_id=1570845722]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_odn8x")
+theme_override_colors/default_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_colors/font_shadow_color = Color(0.8392157, 0.8392157, 0.80784315, 1)
+theme_override_constants/line_separation = 0
+theme_override_constants/paragraph_separation = 0
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Sacar" parent="." unique_id=1660383657 instance=ExtResource("4_p4g48")]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 19.0
+offset_right = 107.0
+offset_bottom = 53.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+text = "[center]SACAR"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="Objeto" parent="." unique_id=777334683 instance=ExtResource("4_p4g48")]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 47.0
+offset_right = 107.0
+offset_bottom = 81.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+text = "[center]OBJETO"
+align = 1
+metadata/_edit_lock_ = true
+
+[node name="Descripcion" type="RichTextLabel" parent="." unique_id=1871629878]
+layout_mode = 0
+offset_left = 91.0
+offset_top = 295.0
+offset_right = 467.0
+offset_bottom = 383.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_43sqn")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 0
+bbcode_enabled = true
+scroll_active = false
+tab_size = 2
+script = ExtResource("3_p4g48")
+metadata/_edit_lock_ = true
+
+[node name="Outline" type="RichTextLabel" parent="Descripcion" unique_id=2020893447]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_43sqn")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Outline2" type="RichTextLabel" parent="Descripcion" unique_id=1651724338]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_43sqn")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.3882353, 0.3882353, 0.3882353, 1)
+theme_override_constants/line_separation = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+bbcode_enabled = true
+scroll_active = false
+metadata/_edit_lock_ = true
+
+[node name="Item_Sprite" type="Sprite2D" parent="." unique_id=1336675818]
+visible = false
+position = Vector2(50, 334)
+scale = Vector2(1.0833334, 1.0833334)
+metadata/_edit_lock_ = true
+
+[node name="Cursor" type="Sprite2D" parent="." unique_id=807261939]
+texture_filter = 1
+position = Vector2(119, 45)
+texture = ExtResource("6_43sqn")
+
+[node name="U_Arrow" type="Sprite2D" parent="." unique_id=529874720]
+position = Vector2(259, 14)
+texture = ExtResource("7_mq4v7")
+hframes = 8
+
+[node name="D_Arrow" type="Sprite2D" parent="." unique_id=1952143977]
+position = Vector2(259, 266)
+texture = ExtResource("8_yd4kl")
+hframes = 8

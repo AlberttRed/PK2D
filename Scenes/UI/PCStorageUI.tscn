@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://cris4ef6ar561"]
+[gd_scene format=3 uid="uid://cesw5xutsmgo2"]
 
 [ext_resource type="Texture2D" uid="uid://226it5nxk1qm" path="res://Sprites/UI/PC/boxbg.png" id="1_3fq3p"]
-[ext_resource type="Script" path="res://Scripts/UI/PCUI.gd" id="2_pcui"]
+[ext_resource type="Script" uid="uid://biufn5pgtnlkk" path="res://Scripts/UI/PCStorageUI.gd" id="2_pcui"]
 [ext_resource type="Texture2D" uid="uid://c3ovgmbdoxj3i" path="res://Sprites/UI/PC/overlay_main.png" id="3_pe5e7"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="4_x0imx"]
 [ext_resource type="Texture2D" uid="uid://c8kpj8jre1qao" path="res://Sprites/UI/Party/male_icon.png" id="5_iyxkp"]
@@ -39,7 +39,7 @@ texture = ExtResource("13_hbm5c")
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x1yxv"]
 texture = ExtResource("14_upd88")
 
-[node name="PCUI" type="Panel" unique_id=1036020114]
+[node name="PCStorageUI" type="Panel" unique_id=1036020114]
 custom_minimum_size = Vector2(512, 384)
 anchors_preset = 15
 anchor_right = 1.0

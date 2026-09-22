@@ -26,16 +26,19 @@ var pokemon: Pokemon
 var swapping: bool = false
 
 @onready var health_bar: AnimatedProgressBar = $health_bar
+@onready var _item_icon: Sprite2D = $item
 
 func _ready() -> void:
 	self.focus_mode = Control.FOCUS_NONE
 	self.visible = false
+	_set_held_item_visible(false)
 
 func apply_empty_slot(slot_order: int) -> void:
 	self.order = slot_order
 	self.pokemon = null
 	focus_mode = FocusMode.FOCUS_NONE
 	self.visible = false
+	_set_held_item_visible(false)
 	if health_bar:
 		health_bar.clear()
 
@@ -72,9 +75,15 @@ func loadPokemon(pokemon: Pokemon) -> void:
 		$gender.texture = preload("res://Sprites/UI/Party/female_icon.png")
 	else:
 		$gender.texture = null
+	_set_held_item_visible(pokemon.held_item_id > 0)
 	_play_party_icon_idle()
 	# Recalcular estilo tras refrescar datos (p. ej. revivir fuera de combate).
 	update()
+
+
+func _set_held_item_visible(show_icon: bool) -> void:
+	if _item_icon:
+		_item_icon.visible = show_icon
 
 
 ## Animación suave del icono en tarjeta no seleccionada (misma que al quitar foco).
@@ -149,6 +158,7 @@ func clear() -> void:
 		unselect()
 	if health_bar:
 		health_bar.clear()
+	_set_held_item_visible(false)
 	self.order = 0
 	self.pokemon = null
 	for c in selected.get_connections():

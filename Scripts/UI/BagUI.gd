@@ -68,6 +68,7 @@ var _pocket_list_index_by_pocket: Dictionary = {}
 static var _session_navigation: Dictionary = {}
 ## PC / DAR: A confirma el objeto para llevar (no el menú Usar).
 var _hold_pick_mode: bool = false
+var _pc_deposit_mode: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -146,10 +147,11 @@ func open() -> void:
 	_enable_input()
 	_block_player_control()
 
-func close() -> void:
+func close(keep_visible: bool = false) -> void:
 	if not visible:
 		_disable_input()
 		_hold_pick_mode = false
+		_pc_deposit_mode = false
 		return
 
 	_persist_session_navigation()
@@ -157,7 +159,9 @@ func close() -> void:
 	set_process(false)
 	_reset_arrow_frames()
 	_hold_pick_mode = false
-	hide()
+	_pc_deposit_mode = false
+	if not keep_visible:
+		hide()
 	_unblock_player_control()
 	closed.emit()
 
@@ -175,6 +179,14 @@ func set_hold_pick_mode(enabled: bool) -> void:
 
 func is_hold_pick_mode() -> bool:
 	return _hold_pick_mode
+
+
+func set_pc_deposit_mode(enabled: bool) -> void:
+	_pc_deposit_mode = enabled
+
+
+func is_pc_deposit_mode() -> bool:
+	return _pc_deposit_mode
 
 
 ## Tras mutar el Bag (p. ej. consumir ítem); sin señales globales.
@@ -506,7 +518,7 @@ func _confirm_selection() -> void:
 	if selected_item.is_exit:
 		_request_back()
 		return
-	if _hold_pick_mode:
+	if _hold_pick_mode or _pc_deposit_mode:
 		_play_select_sound()
 		use_requested.emit(int(selected_item.item_id))
 		return

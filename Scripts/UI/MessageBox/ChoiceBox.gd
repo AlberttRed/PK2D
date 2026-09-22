@@ -42,9 +42,8 @@ const CURSOR_Y_IN_ROW := 6.0
 
 ## Viewport de diseño HGSS sobre el que están calibrados los inset de ChoiceBox.tscn.
 const DESIGN_VIEWPORT := Vector2(512.0, 384.0)
-## Menú party: borde inferior del panel respecto al viewport (diseño 384px alto), escalado.
-## Con ~12px el panel de 4 opciones quedaba con top ≈196; con 4px el borde superior cae ≈204 (viewport base).
-const PARTY_MENU_BOTTOM_INSET := 4.0
+## Menú party: borde inferior alineado con FIXED_MSG / MessageBox del party (offset_bottom 379).
+const PARTY_MENU_BOTTOM_Y := 379.0
 ## En `Scenes/UI/GUI.tscn` el ChoiceBox tiene offset_right = 0 (pegado al borde derecho del viewport), no el inset de ChoiceBox.tscn.
 const CORNER_INSET_RIGHT := 4.0
 const CORNER_INSET_BOTTOM := 4.0
@@ -97,7 +96,7 @@ func enter_party_menu_layout() -> void:
 	_pin_to_canvas_origin_anchors()
 	var s := _scale_xy()
 	var vp := get_viewport().get_visible_rect().size
-	_party_bottom_y = vp.y - PARTY_MENU_BOTTOM_INSET * s.y
+	_party_bottom_y = PARTY_MENU_BOTTOM_Y * s.y
 	_party_right_edge_x = vp.x
 
 
