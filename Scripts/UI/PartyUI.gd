@@ -42,6 +42,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(false)
 	hide()
+	# Ayuda unificada en DisplayManager.MSG (mismo rect que tenía FIXED_MSG).
+	if fixed_msg:
+		fixed_msg.hide()
 	for panel: PartyPokemonPanel in pokemon_panels:
 		if not panel.selected.is_connected(_on_panel_selected):
 			panel.selected.connect(_on_panel_selected)
@@ -77,20 +80,15 @@ func open(initial_focus_slot: int = -1) -> void:
 
 
 ## Tras elegir «Usar» en la mochila: solo elegir Pokémon objetivo (sin submenú Usar/Dar).
-## `help_text` opcional. `hide_fixed_msg`: si true (p. ej. DAR desde PC), oculta FIXED_MSG
-## porque el prompt va en el MessageBox del DisplayManager.
+## `help_text` opcional (MessageBox del party).
 func open_for_bag_item_target_pick(
 	initial_focus_slot: int = -1,
 	help_text: String = "",
-	hide_fixed_msg: bool = false
+	_hide_fixed_msg: bool = false
 ) -> void:
 	_open_party_common(initial_focus_slot, true)
-	if hide_fixed_msg:
-		_set_fixed_msg_visible(false)
-	else:
-		_set_fixed_msg_visible(true)
-		if not help_text.is_empty():
-			_set_help_text(help_text)
+	if not help_text.is_empty():
+		_set_help_text(help_text)
 
 
 func open_for_battle_switch_pick(initial_focus_slot: int = -1, force_switch: bool = false) -> void:
@@ -141,7 +139,6 @@ func close() -> void:
 	_battle_switch_pick_mode = false
 	_battle_force_switch = false
 	_set_salir_enabled(true)
-	_set_fixed_msg_visible(true)
 	if summary.visible:
 		summary.hide()
 	_disable_input()
@@ -194,19 +191,13 @@ func _on_panel_selected(_order: int) -> void:
 
 
 func _set_help_text(text: String) -> void:
-	var lbl := fixed_msg.get_node_or_null("Label") if fixed_msg else null
-	if lbl == null:
-		return
-	if lbl.has_method("setText"):
-		lbl.setText(text)
-	elif lbl is Label:
-		(lbl as Label).text = text
+	DisplayManager.set_party_help_instant(text)
 
 
-func _set_fixed_msg_visible(visible_flag: bool) -> void:
-	if fixed_msg == null:
-		return
-	fixed_msg.visible = visible_flag
+func _set_fixed_msg_visible(_visible_flag: bool) -> void:
+	# Compat: el FIXED_MSG ya no se usa; la ayuda va en DisplayManager.MSG.
+	if fixed_msg:
+		fixed_msg.hide()
 
 
 func _get_battle_switch_default_help_text() -> String:
@@ -577,10 +568,8 @@ func _on_input_right() -> void:
 func _on_input_accept() -> void:
 	if not _input_enabled or not visible or _suppress_input:
 		return
-	var dm := DisplayManager.instance
-	# Prompt estático del MessageBox (p. ej. DAR desde PC) no debe bloquear la selección.
-	if dm != null and dm.msg != null and dm.msg.visible and not _bag_item_target_pick_mode:
-		return
+	# La ayuda del party usa el MessageBox (visible); no bloquear por eso.
+	# Los diálogos con waitInput desactivan input del party / usan _suppress_input.
 	if _in_hgss_summary:
 		return
 	if _choice_in_flight:
@@ -754,29 +743,36 @@ func _run_party_action_menu(slot: int) -> void:
 				_enter_switch_mode(slot)
 				return
 			&"use_item":
-				_set_help_text("¿Qué quieres hacer con él?")
+				_set_help_text("¿Qué quieres hacer?")
 				_suppress_input = true
-				var item_sub: Array[String] = ["Usar", "Dar", "Salir"]
+				var item_sub: Array[String] = ["DAR", "QUITAR", "SALIR"]
 				var sub_idx: int = await DisplayManager.show_party_action_choices(item_sub)
 				_suppress_input = false
 				if sub_idx < 0 or sub_idx >= item_sub.size():
 					_set_help_text("Elige a un Pokémon.")
 					return
 				match sub_idx:
-					0:
-						use_item_requested.emit(slot)
-					1:
+					0: # DAR
 						_suppress_input = true
-						await DisplayManager.show_message("Dar: pendiente de implementar.", {
-							"waitInput": false,
-							"closeAtEnd": true,
-							"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-							"typingMode": "instant"
-						})
+						await DisplayManager.party_give_held_from_bag(slot)
 						_suppress_input = false
+						if not visible:
+							return
+						_grab_slot_focus(slot)
 						_set_help_text("Elige a un Pokémon.")
-					2:
+						return
+					1: # QUITAR
+						_suppress_input = true
+						await DisplayManager.party_take_held_item(slot)
+						_suppress_input = false
+						if not visible:
+							return
+						_grab_slot_focus(slot)
 						_set_help_text("Elige a un Pokémon.")
+						return
+					2: # SALIR
+						_set_help_text("Elige a un Pokémon.")
+						return
 				return
 			&"cancel":
 				_set_help_text("Elige a un Pokémon.")
@@ -827,6 +823,7 @@ func _open_hgss_summary(slot: int) -> void:
 	_disable_input()
 
 	await DisplayManager.fade_in(_SUMMARY_FADE_DURATION)
+	DisplayManager.close_message()
 
 	summary.loadedParty = members
 	summary.movingIndex = slot

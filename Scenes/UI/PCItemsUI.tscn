@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://d100gf0i5byxn" path="res://Sprites/Pictures/arrowSpriteOK2.png" id="6_43sqn"]
 [ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="7_mq4v7"]
 [ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="8_yd4kl"]
-[ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/Choice Styles/ChoicesBox_Style.tres" id="10_lj2x6"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_n4n3u"]
 texture = ExtResource("1_ktf3h")
@@ -26,14 +25,6 @@ base_font = ExtResource("2_t68rp")
 
 [sub_resource type="Theme" id="Theme_43sqn"]
 default_font = SubResource("FontVariation_bag")
-default_font_size = 26
-
-[sub_resource type="FontVariation" id="FontVariation_djhwc"]
-base_font = ExtResource("2_t68rp")
-spacing_top = 4
-
-[sub_resource type="Theme" id="Theme_ptu05"]
-default_font = SubResource("FontVariation_djhwc")
 default_font_size = 26
 
 [node name="PCItemsUI" type="Panel" unique_id=1212317598]
@@ -277,107 +268,5 @@ hframes = 8
 
 [node name="D_Arrow" type="Sprite2D" parent="." unique_id=1952143977]
 position = Vector2(259, 266)
-texture = ExtResource("8_yd4kl")
-hframes = 8
-
-[node name="QuantityPicker" type="Panel" parent="." unique_id=1331915694]
-visible = false
-z_index = 20
-custom_minimum_size = Vector2(144, 28)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -145.0
-offset_top = -95.0
-offset_right = -1.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_styles/panel = ExtResource("10_lj2x6")
-
-[node name="Container" type="Control" parent="QuantityPicker" unique_id=1647576782]
-custom_minimum_size = Vector2(0, 32)
-anchors_preset = 0
-offset_left = 12.0
-offset_top = 17.0
-offset_right = 132.0
-offset_bottom = 82.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-layout_direction = 1
-
-[node name="LabelHGSS" type="RichTextLabel" parent="QuantityPicker/Container" unique_id=1061566757]
-layout_mode = 0
-offset_left = 35.0
-offset_top = 12.0
-offset_right = 134.0
-offset_bottom = 49.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme = SubResource("Theme_ptu05")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 0
-bbcode_enabled = true
-text = "x001"
-scroll_active = false
-tab_size = 2
-script = ExtResource("3_p4g48")
-
-[node name="Outline" type="RichTextLabel" parent="QuantityPicker/Container/LabelHGSS" unique_id=711130553]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-size_flags_stretch_ratio = 0.0
-theme = SubResource("Theme_ptu05")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "x001"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="Outline2" type="RichTextLabel" parent="QuantityPicker/Container/LabelHGSS" unique_id=451912992]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-size_flags_stretch_ratio = 0.0
-theme = SubResource("Theme_ptu05")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "x001"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="QtyUp" type="Sprite2D" parent="QuantityPicker" unique_id=214469260]
-position = Vector2(72, 10)
-texture = ExtResource("7_mq4v7")
-hframes = 8
-
-[node name="QtyDown" type="Sprite2D" parent="QuantityPicker" unique_id=1518763151]
-position = Vector2(72, 84)
 texture = ExtResource("8_yd4kl")
 hframes = 8

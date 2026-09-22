@@ -75,9 +75,19 @@ var _suppress_bag_closed_effects: bool = false
 ## PC → DAR/OBJETO: elegir un ítem de la mochila para held.
 var _bag_hold_pick_active: bool = false
 var _bag_hold_pick_result: int = -1
+## PC → DEJAR OBJETO: sesión de depósito desde la mochila.
+var _bag_pc_deposit_active: bool = false
 ## PC ítems → DAR: elegir Pokémon del party para held desde el depósito.
 var _party_give_pick_active: bool = false
 var _party_give_pick_result: int = -1
+## QuantityPicker compartido (PC ítems / mochila depósito).
+signal _quantity_picked(value: int)
+var _qty_pick_active: bool = false
+var _qty_prompt_layout_active: bool = false
+var _qty_pick_value: int = 1
+var _qty_pick_max: int = 1
+var _qty_arrow_anim_time: float = 0.0
+const _QTY_ARROW_ANIM_FPS: float = 18.0
 ## Mensaje de resultado de ítem sin diálogo de bolsa activo (p. ej. party → aplicar): snapshot del MSG.
 var _item_feedback_msg_layout_saved: bool = false
 var _item_feedback_saved_msg_layout: Dictionary = {}
@@ -85,6 +95,11 @@ var _item_feedback_saved_msg_layout: Dictionary = {}
 var _pc_msg_layout_saved: bool = false
 var _pc_msg_saved_layout: Dictionary = {}
 var _pc_msg_saved_scroll: Dictionary = {}
+## Party abierto: MessageBox en el rect del antiguo FIXED_MSG (ayuda + diálogos).
+var _party_msg_layout_saved: bool = false
+var _party_msg_saved_layout: Dictionary = {}
+var _party_msg_saved_scroll: Dictionary = {}
+var _party_help_text: String = ""
 
 ## Viewport base del UI overworld/pausa (MessageBox anclado en píxeles de escena).
 const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
@@ -102,6 +117,14 @@ const _PC_ITEMS_MSG_LEFT_PX := 8.0
 const _PC_ITEMS_SIDE_GAP_PX := 4.0
 const _PC_ITEMS_QTY_RESERVE_PX := 145.0
 const _PC_CHOICE_GAP_ABOVE_MSG_PX := 8.0
+## Party: mismo rect que FIXED_MSG en PartyUI.tscn (0,313)-(370,379).
+const _PARTY_MSG_LEFT_PX := 0.0
+const _PARTY_MSG_RIGHT_PX := 370.0
+const _PARTY_MSG_BOTTOM_PX := 379.0
+const _PARTY_MSG_HEIGHT_PX := 66.0
+## Mismos insets que MessageBox.tscn (16 / 96−79=17) para centrar 1 línea en el marco.
+const _PARTY_MSG_SCROLL_TOP_PX := 16.0
+const _PARTY_MSG_SCROLL_BOTTOM_INSET_PX := 17.0
 ## Reserva horizontal actual a la derecha del MessageBox en PC ítems (0 = default qty).
 var _pc_items_side_reserve_px: float = 0.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
@@ -122,8 +145,13 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var _evolution_ui = $EvolutionUI
 @onready var _pc_storage_ui = $PCStorageUI
 @onready var _pc_items_ui = $PCItemsUI
+@onready var _quantity_picker: Control = $QuantityPicker
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
+
+@onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
+@onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
+@onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -155,6 +183,9 @@ func _ready() -> void:
 		_pc_storage_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _pc_items_ui:
 		_pc_items_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _quantity_picker:
+		_quantity_picker.process_mode = Node.PROCESS_MODE_ALWAYS
+		_quantity_picker.hide()
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -332,7 +363,18 @@ static func set_message_help_instant(text: String) -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	instance.msg.set_help_text_instant(text)
-	instance._adapt_pc_msg_height_to_lines()
+	if instance._is_party_ui_open():
+		instance._adapt_party_msg_height_to_lines()
+	else:
+		instance._adapt_pc_msg_height_to_lines()
+
+
+## Ayuda del party (sustituye al FIXED_MSG): MessageBox en el rect del party, sin esperar input.
+static func set_party_help_instant(text: String) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	instance._set_party_help_instant(text)
 
 ## Oculta el indicador de espera del MessageBox (p. ej. ayudas estáticas del PC).
 static func hide_message_wait_indicator() -> void:
@@ -368,12 +410,47 @@ static func open_pc_items(
 	await instance._open_pc_items_ui(mode, prepare_before_reveal, cleanup_under_cover)
 
 
+## PC → DEJAR OBJETO: abre la mochila para depositar ítems. Misma máscara CRT que `open_pc_items`.
+static func open_bag_for_pc_deposit(
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._open_bag_for_pc_deposit(prepare_before_reveal, cleanup_under_cover)
+
+
+## QuantityPicker: cantidad 1..max, o 0 si cancela. Si max<=1 no pregunta (devuelve max).
+static func prompt_quantity(max_qty: int, prompt: String = "¿Qué cantidad?") -> int:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return 0
+	return await instance._prompt_quantity(max_qty, prompt)
+
+
 ## PC: abre la mochila para elegir un objeto a dar (held). Devuelve item_id o -1 si cancela.
 static func pick_held_item_from_bag() -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
 	return await instance._pick_held_item_from_bag()
+
+
+## Party → Objeto → DAR: mochila sobre el party; al elegir aplica held y mensajes (party permanece).
+static func party_give_held_from_bag(slot_index: int) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._party_give_held_from_bag(slot_index)
+
+
+## Party → Objeto → QUITAR: quita held a la mochila (o mensaje si no lleva nada).
+static func party_take_held_item(slot_index: int) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._party_take_held_item(slot_index)
 
 
 ## PC ítems → DAR: abre el party para elegir a quién dar. Devuelve slot o -1 si cancela.
@@ -631,10 +708,28 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	# fullWidth: mensaje a pantalla completa aunque haya PC ítems/cajas abierto.
 	var force_full_width: bool = bool(cfg.get("fullWidth", false))
 	var want_expand: bool = bool(cfg.get("expandHeight", false))
+	var use_party_layout: bool = _is_party_ui_open()
+	if use_party_layout and _pc_msg_layout_saved:
+		_pop_pc_msg_layout()
 	if force_full_width and _pc_msg_layout_saved:
 		_pop_pc_msg_layout()
 	var used_pc_layout := false
-	if not force_full_width:
+	var used_party_layout := false
+	if use_party_layout:
+		# Party: rect FIXED_MSG. Sin expandHeight interno (rompe offsets/altura).
+		cfg["expandHeight"] = false
+		want_expand = false
+		if msg.has_method("restore_expanded_height"):
+			msg.restore_expanded_height()
+		var est_h: float = _estimate_party_msg_bar_height_for_text(text)
+		if _party_msg_layout_saved:
+			_apply_party_msg_box_rect(est_h)
+			used_party_layout = true
+		else:
+			used_party_layout = _push_party_msg_layout_if_needed(est_h)
+		if not "frameStyle" in config:
+			cfg["frameStyle"] = MessageBoxFrameStyle.Values.FIRERED
+	elif not force_full_width:
 		# Altura correcta ANTES de pintar (evita flash 2 líneas → 1).
 		var est_h: float = _estimate_pc_msg_bar_height_for_text(text)
 		if _pc_msg_layout_saved:
@@ -650,14 +745,19 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	await msg.show_custom(text, cfg)
 	if paused_choices and choice_box != null and choice_box.visible:
 		choice_box.set_menu_input_enabled(true)
-	# Si el mensaje se cerró solo (closeAtEnd), restaurar layout del PC.
-	if used_pc_layout and msg != null and not msg.visible:
-		_pop_pc_msg_layout()
+	# Si el mensaje se cerró solo (closeAtEnd), restaurar layout.
+	if msg != null and not msg.visible:
+		if used_pc_layout:
+			_pop_pc_msg_layout()
+		if used_party_layout:
+			_pop_party_msg_layout()
 	elif msg != null and msg.visible:
 		# Refinar tras layout real (2 frames: RTL ya tiene ancho y wraps).
 		await get_tree().process_frame
 		await get_tree().process_frame
-		if used_pc_layout:
+		if used_party_layout:
+			_adapt_party_msg_height_to_lines()
+		elif used_pc_layout:
 			_adapt_pc_msg_height_to_lines()
 		elif force_full_width or want_expand:
 			_fit_visible_msg_height_to_content()
@@ -741,7 +841,7 @@ func _pc_choice_bottom_clearance() -> float:
 
 
 func _push_pc_msg_layout_if_needed(bar_h: float = -1.0) -> bool:
-	if not _is_any_pc_screen_open() or msg == null:
+	if not (_is_any_pc_screen_open() or _qty_prompt_layout_active) or msg == null:
 		return _pc_msg_layout_saved
 	if _pc_msg_layout_saved:
 		# Reajustar ancho; altura = pedida o la actual (no forzar 96).
@@ -806,7 +906,7 @@ func _apply_pc_msg_box_rect(bar_h: float = -1.0) -> void:
 		bar_h = _MSG_BAR_HEIGHT_PX
 	var left_x: float = _PC_MSG_LEFT_PX
 	var right_x: float = _PC_MSG_RIGHT_PX
-	if _is_pc_items_ui_open():
+	if _is_pc_items_ui_open() or _qty_prompt_layout_active:
 		left_x = _PC_ITEMS_MSG_LEFT_PX
 		var reserve: float = _pc_items_side_reserve_px
 		if reserve <= 0.0:
@@ -905,7 +1005,7 @@ static func set_pc_items_message_side_reserve(width_px: float) -> void:
 	if instance == null:
 		return
 	instance._pc_items_side_reserve_px = maxf(0.0, width_px)
-	if instance._pc_msg_layout_saved and instance._is_pc_items_ui_open() and instance.msg != null:
+	if instance._pc_msg_layout_saved and (instance._is_pc_items_ui_open() or instance._qty_prompt_layout_active) and instance.msg != null:
 		var keep_h: float = instance.msg.size.y if instance.msg.size.y > 8.0 else instance._MSG_BAR_HEIGHT_PX
 		instance._apply_pc_msg_box_rect(keep_h)
 
@@ -1003,6 +1103,7 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 		msg.clear()
 		msg.restore_expanded_height()
 		_pop_pc_msg_layout()
+		_pop_party_msg_layout()
 
 	return selected_index
 
@@ -1012,6 +1113,142 @@ func _close_message() -> void:
 		msg.clear()
 		msg.restore_expanded_height()
 	_pop_pc_msg_layout()
+	_pop_party_msg_layout()
+
+
+func _is_party_ui_open() -> bool:
+	return _party_ui != null and _party_ui.visible
+
+
+func _set_party_help_instant(text: String) -> void:
+	_party_help_text = text
+	if not _is_party_ui_open() or msg == null:
+		return
+	# Tras un diálogo de 2 líneas, resetear expansión y forzar altura FIXED_MSG (66).
+	if msg.has_method("restore_expanded_height"):
+		msg.restore_expanded_height()
+	# La ayuda del party es siempre 1 línea en el rect FIXED_MSG (no escalar a 96).
+	var bar_h: float = _PARTY_MSG_HEIGHT_PX
+	_push_party_msg_layout_if_needed(bar_h)
+	_apply_party_msg_box_rect(bar_h)
+	msg.set_frame_style(MessageBoxFrameStyle.Values.FIRERED)
+	# Ayuda estática: no consumir ui_accept ni mostrar indicador.
+	msg.waitInput = false
+	msg.closeAtEnd = false
+	msg.showIconAtEnd = false
+	msg._expand_height = false
+	msg.set_help_text_instant(text)
+	hide_message_wait_indicator()
+	# Reaplicar tras pintar (set_help / adjust_container no deben cambiar el alto del panel).
+	_apply_party_msg_box_rect(bar_h)
+
+
+func _push_party_msg_layout_if_needed(bar_h: float = -1.0) -> bool:
+	if not _is_party_ui_open() or msg == null:
+		return _party_msg_layout_saved
+	if _party_msg_layout_saved:
+		var keep_h: float = bar_h
+		if keep_h < 0.0:
+			keep_h = msg.size.y if msg.size.y > 8.0 else _PARTY_MSG_HEIGHT_PX
+		_apply_party_msg_box_rect(keep_h)
+		return true
+	_party_msg_saved_layout = _snapshot_msg_panel_layout()
+	if msg.scroll != null:
+		_party_msg_saved_scroll = {
+			"left": msg.scroll.offset_left,
+			"right": msg.scroll.offset_right,
+			"top": msg.scroll.offset_top,
+			"bottom": msg.scroll.offset_bottom,
+		}
+	_apply_party_msg_box_rect(bar_h if bar_h > 0.0 else _PARTY_MSG_HEIGHT_PX)
+	_party_msg_layout_saved = true
+	return true
+
+
+func _pop_party_msg_layout() -> void:
+	if not _party_msg_layout_saved or msg == null:
+		_party_msg_layout_saved = false
+		return
+	_restore_msg_panel_layout(_party_msg_saved_layout)
+	if msg.scroll != null and not _party_msg_saved_scroll.is_empty():
+		msg.scroll.offset_left = float(_party_msg_saved_scroll.get("left", 32.0))
+		msg.scroll.offset_right = float(_party_msg_saved_scroll.get("right", 465.0))
+		msg.scroll.offset_top = float(_party_msg_saved_scroll.get("top", 16.0))
+		msg.scroll.offset_bottom = float(_party_msg_saved_scroll.get("bottom", 79.0))
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
+	_party_msg_saved_layout = {}
+	_party_msg_saved_scroll = {}
+	_party_msg_layout_saved = false
+
+
+func _apply_party_msg_box_rect(bar_h: float = -1.0) -> void:
+	if msg == null:
+		return
+	if bar_h < 0.0:
+		bar_h = _PARTY_MSG_HEIGHT_PX
+	var left_x: float = _PARTY_MSG_LEFT_PX
+	var right_x: float = _PARTY_MSG_RIGHT_PX
+	var bottom_y: float = _PARTY_MSG_BOTTOM_PX
+	var top_y: float = bottom_y - bar_h
+	var bar_w: float = right_x - left_x
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	# Forzar alto exacto (el MSG de escena trae min 96 y no debe ganar).
+	msg.custom_minimum_size = Vector2(bar_w, bar_h)
+	msg.size = Vector2(bar_w, bar_h)
+	msg.offset_left = left_x
+	msg.offset_top = top_y
+	msg.offset_right = right_x
+	msg.offset_bottom = bottom_y
+	# Reasignar size tras offsets (algunos Control crecen con min_size previo).
+	msg.size = Vector2(bar_w, bar_h)
+	if msg.scroll != null:
+		msg.scroll.offset_top = _PARTY_MSG_SCROLL_TOP_PX
+		msg.scroll.offset_bottom = maxf(
+			msg.scroll.offset_top + 8.0,
+			bar_h - _PARTY_MSG_SCROLL_BOTTOM_INSET_PX
+		)
+	msg.fit_scroll_width_to_panel()
+	if msg.has_method("_adjust_container_size"):
+		msg._adjust_container_size()
+	# Por si _adjust_container_size / fit alteran el panel.
+	msg.custom_minimum_size = Vector2(bar_w, bar_h)
+	msg.size = Vector2(bar_w, bar_h)
+	msg.offset_left = left_x
+	msg.offset_top = top_y
+	msg.offset_right = right_x
+	msg.offset_bottom = bottom_y
+
+
+func _estimate_party_msg_bar_height_for_text(text: String) -> float:
+	var plain := String(text).replace("\r", "")
+	if plain.find("\n") >= 0:
+		return maxf(_PARTY_MSG_HEIGHT_PX, _MSG_BAR_HEIGHT_PX)
+	if not _party_msg_layout_saved:
+		_push_party_msg_layout_if_needed(_PARTY_MSG_HEIGHT_PX)
+	else:
+		_apply_party_msg_box_rect(_PARTY_MSG_HEIGHT_PX)
+	if _message_text_fits_one_line_at_current_width(plain):
+		return _PARTY_MSG_HEIGHT_PX
+	return maxf(_PARTY_MSG_HEIGHT_PX, _MSG_BAR_HEIGHT_PX)
+
+
+func _adapt_party_msg_height_to_lines() -> void:
+	if msg == null or not _party_msg_layout_saved:
+		return
+	var plain := ""
+	if msg.label != null:
+		plain = String(msg.label.get_parsed_text() if msg.label.has_method("get_parsed_text") else msg.label.text)
+	plain = plain.replace("\r", "")
+	var bar_h: float = _PARTY_MSG_HEIGHT_PX
+	if plain.find("\n") >= 0 or not _message_text_fits_one_line_at_current_width(plain):
+		bar_h = maxf(_PARTY_MSG_HEIGHT_PX, _MSG_BAR_HEIGHT_PX)
+	_apply_party_msg_box_rect(bar_h)
 
 func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
@@ -1705,6 +1942,233 @@ func _on_pc_items_ui_closed() -> void:
 	_on_ui_visibility_changed()
 
 
+## QuantityPicker compartido. Devuelve 1..max o 0 si cancela. Si max<=1 no pregunta.
+func _prompt_quantity(max_qty: int, prompt: String) -> int:
+	if max_qty <= 1:
+		return maxi(max_qty, 1)
+	if _qty_pick_active:
+		return 0
+	if _quantity_picker == null:
+		push_error("DisplayManager._prompt_quantity: QuantityPicker no disponible")
+		return 0
+
+	var qty_reserve := _PC_ITEMS_QTY_RESERVE_PX
+	qty_reserve = absf(_quantity_picker.offset_left)
+	if qty_reserve < 8.0:
+		qty_reserve = maxf(_quantity_picker.size.x, _quantity_picker.custom_minimum_size.x)
+		if qty_reserve < 8.0:
+			qty_reserve = _PC_ITEMS_QTY_RESERVE_PX
+
+	_qty_prompt_layout_active = true
+	set_pc_items_message_side_reserve(qty_reserve)
+	await _show_message_with_config(prompt, {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+	})
+	hide_message_wait_indicator()
+
+	_qty_pick_max = max_qty
+	_qty_pick_value = 1
+	_qty_pick_active = true
+	_qty_arrow_anim_time = 0.0
+	_refresh_quantity_picker_label()
+	_quantity_picker.show()
+	_quantity_picker.move_to_front()
+	if msg != null:
+		msg.move_to_front()
+		_quantity_picker.move_to_front()
+	_connect_qty_picker_input()
+	set_process(true)
+	AudioManager.play_ui_cursor()
+
+	var picked: int = await _quantity_picked
+	_qty_pick_active = false
+	_disconnect_qty_picker_input()
+	_quantity_picker.hide()
+	_close_message()
+	clear_pc_items_message_side_reserve()
+	_qty_prompt_layout_active = false
+	if _pc_msg_layout_saved and not _is_any_pc_screen_open():
+		_pop_pc_msg_layout()
+	set_process(false)
+	return picked
+
+
+func _refresh_quantity_picker_label() -> void:
+	if _qty_amount_label == null:
+		return
+	var text := "x%03d" % _qty_pick_value
+	if _qty_amount_label.has_method("setText"):
+		_qty_amount_label.setText(text)
+	else:
+		_qty_amount_label.text = text
+	_qty_amount_label.visible_characters = -1
+	_qty_amount_label.visible_ratio = 1.0
+	for child in _qty_amount_label.get_children():
+		if child is RichTextLabel:
+			(child as RichTextLabel).visible_characters = -1
+			(child as RichTextLabel).visible_ratio = 1.0
+	if _qty_amount_label.has_method("_sync_outline_visual_immediate"):
+		_qty_amount_label._sync_outline_visual_immediate()
+
+
+func _qty_change(delta: int) -> void:
+	if not _qty_pick_active:
+		return
+	var next := _qty_pick_value + delta
+	if next < 1:
+		next = _qty_pick_max
+	elif next > _qty_pick_max:
+		next = 1
+	if next == _qty_pick_value:
+		return
+	_qty_pick_value = next
+	_refresh_quantity_picker_label()
+	AudioManager.play_ui_cursor()
+
+
+func _qty_confirm() -> void:
+	if not _qty_pick_active:
+		return
+	AudioManager.play_ui_select()
+	_quantity_picked.emit(_qty_pick_value)
+
+
+func _qty_cancel() -> void:
+	if not _qty_pick_active:
+		return
+	AudioManager.play_ui_cancel()
+	_quantity_picked.emit(0)
+
+
+func _connect_qty_picker_input() -> void:
+	if not input_up.is_connected(_on_qty_input_up):
+		input_up.connect(_on_qty_input_up)
+	if not input_down.is_connected(_on_qty_input_down):
+		input_down.connect(_on_qty_input_down)
+	if not input_accept.is_connected(_on_qty_input_accept):
+		input_accept.connect(_on_qty_input_accept)
+	if not input_cancel.is_connected(_on_qty_input_cancel):
+		input_cancel.connect(_on_qty_input_cancel)
+
+
+func _disconnect_qty_picker_input() -> void:
+	if input_up.is_connected(_on_qty_input_up):
+		input_up.disconnect(_on_qty_input_up)
+	if input_down.is_connected(_on_qty_input_down):
+		input_down.disconnect(_on_qty_input_down)
+	if input_accept.is_connected(_on_qty_input_accept):
+		input_accept.disconnect(_on_qty_input_accept)
+	if input_cancel.is_connected(_on_qty_input_cancel):
+		input_cancel.disconnect(_on_qty_input_cancel)
+
+
+func _on_qty_input_up() -> void:
+	_qty_change(1)
+
+
+func _on_qty_input_down() -> void:
+	_qty_change(-1)
+
+
+func _on_qty_input_accept() -> void:
+	_qty_confirm()
+
+
+func _on_qty_input_cancel() -> void:
+	_qty_cancel()
+
+
+func _process(delta: float) -> void:
+	if not _qty_pick_active:
+		return
+	_qty_arrow_anim_time += delta
+	var period := 1.0 / maxf(_QTY_ARROW_ANIM_FPS, 0.001)
+	var frame := int(floor(_qty_arrow_anim_time / period)) % 8
+	if _qty_up_arrow:
+		_qty_up_arrow.frame = frame
+	if _qty_down_arrow:
+		_qty_down_arrow.frame = frame
+
+
+func _open_bag_for_pc_deposit(
+	prepare_before_reveal: Callable = Callable(),
+	cleanup_under_cover: Callable = Callable()
+) -> void:
+	if _bag_ui == null:
+		push_error("DisplayManager: Nodo BagUI no disponible en la escena.")
+		return
+	if _bag_ui.visible or _bag_pc_deposit_active:
+		return
+	if _pc_items_ui != null and _pc_items_ui.visible:
+		return
+	if _pc_storage_ui != null and _pc_storage_ui.visible:
+		return
+	if _party_ui != null and _party_ui.visible:
+		return
+
+	_bag_pc_deposit_active = true
+
+	var fade_z := fade_layer.z_index
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	const PC_MASK_CLOSE := "res://Sprites/Transiciones/PC/computertrclose.png"
+	const PC_MASK_DUR := 0.8
+	const PC_SOLID_FADE_DUR := 0.4
+	await fade_layer.fade_in(PC_SOLID_FADE_DUR)
+	if cleanup_under_cover.is_valid():
+		await cleanup_under_cover.call()
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	var context := _resolve_overworld_context()
+	_bag_controller = BAG_CONTROLLER_SCRIPT.new(context)
+	_bag_controller.reset_list_context_to_overworld()
+	_bag_ui.setup(_bag_controller)
+	if _bag_ui.has_method("set_pc_deposit_mode"):
+		_bag_ui.set_pc_deposit_mode(true)
+	_bag_ui.z_index = _BAG_OVER_PC_Z
+	_bag_ui.move_to_front()
+	_bag_ui.open()
+	_on_ui_visibility_changed()
+	AudioManager.play_ui_pc_access()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, false, PC_MASK_DUR):
+		await fade_layer.fade_out(PC_SOLID_FADE_DUR)
+	fade_layer.z_index = fade_z
+
+	await _bag_ui.closed
+
+	fade_layer.z_index = _UI_FADE_COVER_Z
+	AudioManager.play_ui_pc_close()
+	if not await fade_layer.play_mask_transition(PC_MASK_CLOSE, true, PC_MASK_DUR):
+		await fade_layer.fade_in(PC_SOLID_FADE_DUR)
+	_close_message()
+	_close_choices()
+	if _qty_pick_active:
+		_qty_pick_active = false
+		_quantity_picked.emit(0)
+	if _quantity_picker:
+		_quantity_picker.hide()
+	_qty_prompt_layout_active = false
+	clear_pc_items_message_side_reserve()
+	if _bag_ui.visible:
+		_bag_ui.hide()
+	if _bag_ui.has_method("set_pc_deposit_mode"):
+		_bag_ui.set_pc_deposit_mode(false)
+	_bag_ui.z_index = 0
+	_bag_controller = null
+	_bag_pc_deposit_active = false
+	_on_ui_visibility_changed()
+	if prepare_before_reveal.is_valid():
+		await prepare_before_reveal.call()
+	await fade_layer.fade_out(PC_SOLID_FADE_DUR)
+	fade_layer.z_index = fade_z
+	_on_ui_visibility_changed()
+
+
 func _open_party_ui(with_screen_fade: bool = true) -> void:
 	if _bag_ui != null and _bag_ui.visible:
 		return
@@ -1737,6 +2201,8 @@ func _open_party_ui(with_screen_fade: bool = true) -> void:
 func _close_party_ui() -> void:
 	if _party_ui == null:
 		return
+	_close_message()
+	_party_help_text = ""
 	_party_ui.close()
 
 
@@ -1894,6 +2360,12 @@ func _on_bag_back_requested() -> void:
 			_bag_ui.set_input_enabled(false)
 		await _finish_bag_hold_pick(-1)
 		return
+	if _bag_pc_deposit_active:
+		if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(false)
+		# Mantener visible para la máscara CRT (igual que PCItemsUI).
+		_bag_ui.close(true)
+		return
 	await _transition_fade_bag_to_pause_menu()
 
 
@@ -1904,7 +2376,7 @@ func _transition_fade_bag_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_bag_closed() -> void:
-	if _suppress_bag_closed_effects or _bag_hold_pick_active:
+	if _suppress_bag_closed_effects or _bag_hold_pick_active or _bag_pc_deposit_active:
 		_on_ui_visibility_changed()
 		return
 	var resume_party_slot := -1
@@ -1948,7 +2420,120 @@ func _on_bag_use_requested(item_id: int) -> void:
 			return
 		await _finish_bag_hold_pick(item_id)
 		return
+	if _bag_pc_deposit_active:
+		await _run_pc_deposit_item_flow(item_id)
+		return
 	await _run_bag_item_use_flow(item_id)
+
+
+## True si el ítem puede depositarse en el PC (HGSS: todo excepto objetos clave).
+func _can_deposit_item_to_pc(item_id: int) -> bool:
+	if item_id <= 0 or DatabaseService == null:
+		return false
+	var item: ItemData = DatabaseService.get_item_by_id(item_id)
+	if item == null:
+		return false
+	if int(item.pocket) == ItemEnums.Pocket.KEY_ITEMS:
+		return false
+	if int(item.kind) == ItemEnums.Kind.KEY:
+		return false
+	return true
+
+
+func _run_pc_deposit_item_flow(item_id: int) -> void:
+	if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
+		_bag_ui.set_input_enabled(false)
+	if msg != null:
+		msg.move_to_front()
+
+	if not _can_deposit_item_to_pc(item_id):
+		await _show_message_with_config("No se puede dejar ese objeto.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"expandHeight": true,
+			"fullWidth": true,
+		})
+		if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+			_bag_ui.move_to_front()
+			if _bag_ui.has_method("set_input_enabled"):
+				_bag_ui.set_input_enabled(true)
+		return
+
+	if GameStateService == null:
+		if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+			if _bag_ui.has_method("set_input_enabled"):
+				_bag_ui.set_input_enabled(true)
+		return
+
+	var bag: Bag = GameStateService.get_bag()
+	var storage = GameStateService.get_pc_item_storage()
+	if bag == null or storage == null:
+		if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+			if _bag_ui.has_method("set_input_enabled"):
+				_bag_ui.set_input_enabled(true)
+		return
+
+	var available := bag.get_quantity(item_id)
+	if available <= 0:
+		if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+			if _bag_ui.has_method("set_input_enabled"):
+				_bag_ui.set_input_enabled(true)
+		return
+
+	var qty: int = 0
+	if available <= 1:
+		await _show_message_with_config("Has dejado 1 unidad.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"playConfirmSound": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"fullWidth": true,
+		})
+		qty = 1
+	else:
+		qty = await _prompt_quantity(available, "¿Qué cantidad?")
+		if qty <= 0:
+			if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+				_bag_ui.move_to_front()
+				if _bag_ui.has_method("set_input_enabled"):
+					_bag_ui.set_input_enabled(true)
+			return
+		await _show_message_with_config("Has dejado %d." % qty, {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"playOpenSound": false,
+			"playConfirmSound": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"fullWidth": true,
+		})
+
+	if not _bag_pc_deposit_active:
+		return
+
+	var moved: int = int(storage.deposit_from_bag(bag, item_id, qty))
+	if moved <= 0:
+		await _show_message_with_config("No se pudo guardar el objeto.", {
+			"waitInput": true,
+			"closeAtEnd": true,
+			"showIconAtEnd": false,
+			"playConfirmSound": true,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+			"fullWidth": true,
+		})
+	elif _bag_ui != null and _bag_ui.has_method("refresh_from_controller"):
+		_bag_ui.refresh_from_controller()
+
+	if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
+		_bag_ui.move_to_front()
+		if _bag_ui.has_method("set_input_enabled"):
+			_bag_ui.set_input_enabled(true)
 
 
 ## True si el ítem puede equiparse como held (no claves / MT-MO).
@@ -1979,6 +2564,10 @@ func _pick_held_item_from_bag() -> int:
 
 	_bag_hold_pick_active = true
 	_bag_hold_pick_result = -1
+
+	# El MSG del party (z alto) taparía la mochila; cerrarlo bajo el fundido.
+	if _is_party_ui_open():
+		_close_message()
 
 	var fade_z := fade_layer.z_index
 	fade_layer.z_index = _UI_FADE_COVER_Z
@@ -2019,8 +2608,12 @@ func _finish_bag_hold_pick(item_id: int) -> void:
 	_bag_hold_pick_active = false
 	if _bag_ui != null:
 		_bag_ui.z_index = 0
-	if _pc_storage_ui != null and _pc_storage_ui.visible:
+	if _pc_items_ui != null and _pc_items_ui.visible:
+		_pc_items_ui.move_to_front()
+	elif _pc_storage_ui != null and _pc_storage_ui.visible:
 		_pc_storage_ui.move_to_front()
+	elif _party_ui != null and _party_ui.visible:
+		_party_ui.move_to_front()
 	_on_ui_visibility_changed()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 	fade_layer.z_index = fade_z
@@ -2045,24 +2638,12 @@ func _pick_party_slot_for_give_held() -> int:
 	if pause_menu and pause_menu.visible:
 		pause_menu.close(false)
 
-	await _show_message_with_config(GIVE_PROMPT, {
-		"waitInput": false,
-		"closeAtEnd": false,
-		"showIconAtEnd": false,
-		"playOpenSound": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-		"typingMode": MessageBox.TypingMode.INSTANT,
-		"fullWidth": true,
-	})
-	set_message_help_instant(GIVE_PROMPT)
-	hide_message_wait_indicator()
-
 	var context := _resolve_overworld_context()
 	_party_controller = PARTY_CONTROLLER_SCRIPT.new(context)
 	_party_ui.setup(_party_controller)
 	_party_ui.z_index = _BAG_OVER_PC_Z
 	_party_ui.move_to_front()
-	_party_ui.open_for_bag_item_target_pick(-1, GIVE_PROMPT, true)
+	_party_ui.open_for_bag_item_target_pick(-1, GIVE_PROMPT)
 	if msg != null:
 		msg.move_to_front()
 	_on_ui_visibility_changed()
@@ -2106,6 +2687,174 @@ func _close_party_give_held() -> void:
 	_on_ui_visibility_changed()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 	fade_layer.z_index = fade_z
+
+
+## Party → DAR: pick en mochila y aplicar held (mensajes HGSS; el party sigue abierto).
+func _party_give_held_from_bag(slot_index: int) -> void:
+	if _party_ui == null or not _party_ui.visible:
+		return
+	if slot_index < 0 or GameStateService == null:
+		return
+	if _party_ui.has_method("set_input_enabled"):
+		_party_ui.set_input_enabled(false)
+
+	var item_id: int = await _pick_held_item_from_bag()
+	if item_id <= 0:
+		if _party_ui != null and _party_ui.visible and _party_ui.has_method("set_input_enabled"):
+			_party_ui.set_input_enabled(true)
+		return
+
+	if not _party_ui.visible:
+		return
+
+	await _apply_give_held_from_bag_to_slot(slot_index, item_id)
+
+	if _party_ui != null and _party_ui.visible:
+		_party_ui.move_to_front()
+		if _party_ui.has_method("set_input_enabled"):
+			_party_ui.set_input_enabled(true)
+
+
+func _apply_give_held_from_bag_to_slot(slot_index: int, item_id: int) -> void:
+	if GameStateService == null or item_id <= 0:
+		return
+	var party: Party = GameStateService.get_party()
+	var bag: Bag = GameStateService.get_bag()
+	if party == null or bag == null:
+		return
+	var mon: Pokemon = party.get_pokemon(slot_index)
+	if mon == null:
+		return
+	if bag.get_quantity(item_id) <= 0:
+		return
+
+	var mon_name := mon.get_display_name()
+	var given_name := _item_display_name(item_id)
+	var msg_cfg_wait := {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"playConfirmSound": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+	}
+
+	if msg != null:
+		msg.move_to_front()
+
+	if mon.held_item_id > 0:
+		var held_name := _item_display_name(mon.held_item_id)
+		await _show_message_with_config(
+			"¡%s ya lleva una unidad de %s!" % [mon_name, held_name],
+			msg_cfg_wait
+		)
+		if _party_ui == null or not _party_ui.visible:
+			return
+
+		var swap_options: Array[String] = ["SI", "NO"]
+		await _show_message_with_config("¿Quieres cambiar un objeto por otro?", {
+			"waitInput": false,
+			"closeAtEnd": false,
+			"showIconAtEnd": false,
+			"playOpenSound": false,
+			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"typingMode": MessageBox.TypingMode.INSTANT,
+		})
+		hide_message_wait_indicator()
+		if choice_box != null:
+			choice_box.set_next_initial_index(1)  # NO
+		var choice: int = await show_choices_corner(
+			swap_options,
+			ChoiceBox.ChoiceAnchor.BOTTOM_RIGHT
+		)
+		_close_message()
+		if _party_ui == null or not _party_ui.visible or choice != 0:
+			return
+
+		var removed: int = bag.remove_item(item_id, 1)
+		if removed < 1:
+			await _show_message_with_config("No hay ese objeto.", msg_cfg_wait)
+			return
+
+		var old_id: int = mon.held_item_id
+		var old_name := held_name
+		bag.add_item(old_id, 1)
+		mon.held_item_id = item_id
+		refresh_party_slots_display()
+		await _show_message_with_config(
+			"¡Se ha sustituido %s por %s!" % [old_name, given_name],
+			msg_cfg_wait
+		)
+		return
+
+	var removed_empty: int = bag.remove_item(item_id, 1)
+	if removed_empty < 1:
+		await _show_message_with_config("No hay ese objeto.", msg_cfg_wait)
+		return
+
+	mon.held_item_id = item_id
+	refresh_party_slots_display()
+	await _show_message_with_config(
+		"¡%s lleva ahora %s!" % [mon_name, given_name],
+		msg_cfg_wait
+	)
+
+
+func _party_take_held_item(slot_index: int) -> void:
+	if GameStateService == null or slot_index < 0:
+		return
+	var party: Party = GameStateService.get_party()
+	var bag: Bag = GameStateService.get_bag()
+	if party == null:
+		return
+	var mon: Pokemon = party.get_pokemon(slot_index)
+	if mon == null:
+		return
+
+	var mon_name := mon.get_display_name()
+	var msg_cfg := {
+		"waitInput": true,
+		"closeAtEnd": true,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"playConfirmSound": true,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+	}
+
+	if _party_ui != null and _party_ui.has_method("set_input_enabled"):
+		_party_ui.set_input_enabled(false)
+	if msg != null:
+		msg.move_to_front()
+
+	if mon.held_item_id <= 0:
+		await _show_message_with_config("%s no lleva nada." % mon_name, msg_cfg)
+	else:
+		var item_id: int = mon.held_item_id
+		var item_name := _item_display_name(item_id)
+		if bag != null:
+			bag.add_item(item_id, 1)
+		mon.held_item_id = 0
+		refresh_party_slots_display()
+		await _show_message_with_config(
+			"Recibiste %s de %s." % [item_name, mon_name],
+			msg_cfg
+		)
+
+	if _party_ui != null and _party_ui.visible:
+		_party_ui.move_to_front()
+		if _party_ui.has_method("set_input_enabled"):
+			_party_ui.set_input_enabled(true)
+
+
+func _item_display_name(item_id: int) -> String:
+	if item_id <= 0 or DatabaseService == null:
+		return "???"
+	var data: ItemData = DatabaseService.get_item_by_id(item_id)
+	if data == null:
+		return "???"
+	return data.get_display_name()
 
 
 ## Tras cerrar la bolsa bajo negro: abre party (mochila → party) y descubre. Sin fade_in previo (ya estamos a negro).
@@ -2209,7 +2958,8 @@ func _finish_pending_bag_party_session() -> void:
 func _await_bag_use_feedback_messages(use_result: Dictionary) -> void:
 	var feedback: String = str(use_result.get("message", "No se puede usar."))
 	var popped_item_layout := false
-	if not _bag_dialog_layout_saved:
+	# Con party abierto el MSG usa el rect FIXED_MSG; no forzar barra full-width.
+	if not _bag_dialog_layout_saved and not _is_party_ui_open():
 		_push_item_feedback_msg_layout()
 		popped_item_layout = true
 	## Mismo comportamiento que diálogos de campo: typing + confirmar con input antes de seguir.

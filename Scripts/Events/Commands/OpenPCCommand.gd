@@ -26,6 +26,12 @@ enum PlayerOption {
 	LOG_OFF = 2,
 }
 
+enum ItemStorageOption {
+	WITHDRAW = 0,
+	DEPOSIT = 1,
+	EXIT = 2,
+}
+
 const BILL_OPTIONS: Array[String] = [
 	"SACAR POKéMON",
 	"DEJAR POKéMON",
@@ -52,6 +58,18 @@ const PLAYER_HELP: Array[String] = [
 	"Guardar o sacar objetos de tu PC.",
 	"Leer el correo recibido.",
 	"Apagar este PC.",
+]
+
+const ITEM_STORAGE_OPTIONS: Array[String] = [
+	"SACAR OBJETO",
+	"DEJAR OBJETO",
+	"SALIR",
+]
+
+const ITEM_STORAGE_HELP: Array[String] = [
+	"Sacar objetos del PC.",
+	"Almacenar objetos en el PC.",
+	"Volver al menú anterior.",
 ]
 
 
@@ -173,19 +191,13 @@ func _open_player_pc(player_name: String) -> void:
 			selected = await DisplayManager.await_choices(false)
 			continue
 
-		if cb.selection_changed.is_connected(on_change):
-			cb.selection_changed.disconnect(on_change)
-		var restore_idx := selected
-		DisplayManager.set_choice_input_enabled(false)
-
-		var cleanup := func() -> void:
-			DisplayManager.close_choices()
-			DisplayManager.close_message()
-
-		var prepare := _prepare_player_menu_after_pc.bind(cb, on_change, restore_idx)
-
 		if selected == PlayerOption.ITEM_STORAGE:
-			await DisplayManager.open_pc_items(0, prepare, cleanup)
+			if cb.selection_changed.is_connected(on_change):
+				cb.selection_changed.disconnect(on_change)
+			await _open_item_storage_menu(cb)
+			await _show_player_menu(cb, on_change, PlayerOption.ITEM_STORAGE)
+			selected = await DisplayManager.await_choices(false)
+			continue
 
 		selected = await DisplayManager.await_choices(false)
 
@@ -195,9 +207,83 @@ func _open_player_pc(player_name: String) -> void:
 	DisplayManager.close_message()
 
 
-func _prepare_player_menu_after_pc(cb: ChoiceBox, on_change: Callable, restore_idx: int) -> void:
-	await _show_player_menu(cb, on_change, restore_idx)
+func _open_item_storage_menu(cb: ChoiceBox) -> void:
+	var on_change := func(idx: int) -> void:
+		if idx >= 0 and idx < ITEM_STORAGE_HELP.size():
+			DisplayManager.set_message_help_instant(ITEM_STORAGE_HELP[idx])
+
+	await _show_item_storage_menu(cb, on_change, 0)
+	var selected: int = await DisplayManager.await_choices(false)
+
+	while true:
+		if selected < 0 or selected == ItemStorageOption.EXIT:
+			break
+
+		if selected == ItemStorageOption.WITHDRAW and _is_pc_item_storage_empty():
+			await DisplayManager.show_message("No hay objetos.", {
+				"waitInput": true,
+				"closeAtEnd": false,
+				"showIconAtEnd": false,
+				"typingMode": MessageBox.TypingMode.INSTANT,
+				"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+			})
+			DisplayManager.set_message_help_instant(ITEM_STORAGE_HELP[selected])
+			selected = await DisplayManager.await_choices(false)
+			continue
+
+		if cb.selection_changed.is_connected(on_change):
+			cb.selection_changed.disconnect(on_change)
+		var restore_idx := selected
+		DisplayManager.set_choice_input_enabled(false)
+
+		var cleanup := func() -> void:
+			DisplayManager.close_choices()
+			DisplayManager.close_message()
+
+		var prepare := _prepare_item_storage_menu_after_pc.bind(cb, on_change, restore_idx)
+
+		match selected:
+			ItemStorageOption.WITHDRAW:
+				await DisplayManager.open_pc_items(PCItemsUI.Mode.WITHDRAW, prepare, cleanup)
+			ItemStorageOption.DEPOSIT:
+				await DisplayManager.open_bag_for_pc_deposit(prepare, cleanup)
+
+		selected = await DisplayManager.await_choices(false)
+
+	if cb.selection_changed.is_connected(on_change):
+		cb.selection_changed.disconnect(on_change)
+
+
+func _prepare_item_storage_menu_after_pc(cb: ChoiceBox, on_change: Callable, restore_idx: int) -> void:
+	await _show_item_storage_menu(cb, on_change, restore_idx)
 	DisplayManager.set_choice_input_enabled(false)
+
+
+func _is_pc_item_storage_empty() -> bool:
+	if GameStateService == null:
+		return true
+	var storage = GameStateService.get_pc_item_storage()
+	if storage == null:
+		return true
+	return int(storage.get_occupied_count()) <= 0
+
+
+func _show_item_storage_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> void:
+	var idx := clampi(initial_idx, 0, ITEM_STORAGE_OPTIONS.size() - 1)
+	if not cb.selection_changed.is_connected(on_change):
+		cb.selection_changed.connect(on_change)
+	cb.set_next_initial_index(idx)
+	await DisplayManager.show_message(ITEM_STORAGE_HELP[idx], {
+		"waitInput": false,
+		"closeAtEnd": false,
+		"showIconAtEnd": false,
+		"playOpenSound": false,
+		"typingMode": MessageBox.TypingMode.INSTANT,
+		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+	})
+	DisplayManager.set_message_help_instant(ITEM_STORAGE_HELP[idx])
+	DisplayManager.hide_message_wait_indicator()
+	await DisplayManager.open_choices_corner(ITEM_STORAGE_OPTIONS, ChoiceBox.ChoiceAnchor.TOP_LEFT)
 
 
 func _show_player_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> void:

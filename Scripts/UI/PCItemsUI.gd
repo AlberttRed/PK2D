@@ -4,7 +4,6 @@ class_name PCItemsUI
 ## UI depósito de ítems del PC (#831). Lista estilo Bag; la fila activa la marca el cursor.
 
 signal closed()
-signal _quantity_picked(value: int)
 
 const BAG_LIST_ENTRY_SCRIPT = preload("res://Scripts/UI/BagListEntry.gd")
 const ITEM_BACK_TEXTURE: Texture2D = preload("res://Sprites/UI/Bag/itemBack.png")
@@ -19,7 +18,6 @@ enum Mode {
 const _LIST_VISIBLE_ROWS: int = 7
 const _ROW_HEIGHT: float = 32.0
 const _ARROW_ANIM_FPS: float = 18.0
-const _PC_ITEMS_QTY_RESERVE_FALLBACK: float = 145.0
 
 var _mode: Mode = Mode.WITHDRAW
 var _current_items: Array = []
@@ -31,9 +29,6 @@ var _items_container_base_offset_top: float = 14.0
 var _item_icon_back_texture: Texture2D = null
 var _in_action_menu: bool = false
 var _arrow_anim_time: float = 0.0
-var _qty_pick_active: bool = false
-var _qty_pick_value: int = 1
-var _qty_pick_max: int = 1
 
 @onready var _description_label: RichTextLabel = $Descripcion
 @onready var _items_viewport: Control = $ItemsViewport
@@ -45,18 +40,12 @@ var _qty_pick_max: int = 1
 @onready var _objeto_label = $Objeto
 @onready var _up_arrow: Sprite2D = $U_Arrow
 @onready var _down_arrow: Sprite2D = $D_Arrow
-@onready var _quantity_picker: Control = $QuantityPicker
-@onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
-@onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
-@onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(false)
 	hide()
-	if _quantity_picker:
-		_quantity_picker.hide()
 	if _items_container:
 		_items_container_base_offset_top = _items_container.offset_top
 	if _cursor:
@@ -87,7 +76,7 @@ func _apply_viewport_clip_height() -> void:
 
 
 func open(mode: Mode = Mode.WITHDRAW) -> void:
-	_mode = Mode.WITHDRAW
+	_mode = mode
 	show()
 	_arrow_anim_time = 0.0
 	set_process(true)
@@ -106,11 +95,6 @@ func close() -> void:
 		return
 	_disable_input()
 	_in_action_menu = false
-	if _qty_pick_active:
-		_qty_pick_active = false
-		if _quantity_picker:
-			_quantity_picker.hide()
-		_quantity_picked.emit(0)
 	set_process(false)
 	_reset_arrow_frames()
 	_update_list_scroll_arrows(0, 0)
@@ -132,9 +116,8 @@ func refresh() -> void:
 
 
 func _refresh_mode_labels() -> void:
-	# Una sola lista (depósito PC). SACAR activo; OBJETO solo indicador visual.
-	_set_mode_label_active(_sacar_label, true)
-	_set_mode_label_active(_objeto_label, false)
+	_set_mode_label_active(_sacar_label, _mode == Mode.WITHDRAW)
+	_set_mode_label_active(_objeto_label, _mode == Mode.DEPOSIT)
 
 
 func _set_mode_label_active(label: Node, active: bool) -> void:
@@ -149,7 +132,10 @@ func _set_mode_label_active(label: Node, active: bool) -> void:
 
 func _refresh_list() -> void:
 	_current_items.clear()
-	_build_pc_storage_list()
+	if _mode == Mode.DEPOSIT:
+		_build_deposit_list()
+	else:
+		_build_pc_storage_list()
 	if _selected_item_index >= _current_items.size():
 		_selected_item_index = maxi(_current_items.size() - 1, 0)
 	if _selected_item_index < 0:
@@ -174,8 +160,24 @@ func _build_withdraw_list() -> void:
 
 
 func _build_deposit_list() -> void:
-	# Reservado: depositar desde mochila será otra entrada, no un cambio izq/der aquí.
-	_build_pc_storage_list()
+	var bag: Bag = null
+	if GameStateService != null:
+		bag = GameStateService.get_bag()
+	if bag != null:
+		for pocket_entry in bag.to_serializable_data():
+			if pocket_entry == null or not (pocket_entry is Dictionary):
+				continue
+			var item_id := int(pocket_entry.get("item_id", 0))
+			var quantity := int(pocket_entry.get("quantity", 0))
+			if item_id <= 0 or quantity <= 0:
+				continue
+			# Los objetos clave no se depositan en el PC.
+			if DatabaseService != null:
+				var data: ItemData = DatabaseService.get_item_by_id(item_id)
+				if data != null and int(data.pocket) == int(ItemEnums.Pocket.KEY_ITEMS):
+					continue
+			_current_items.append(_make_list_entry(item_id, quantity))
+	_current_items.append(_make_exit_entry())
 
 
 func _make_exit_entry() -> BagListEntry:
@@ -302,12 +304,6 @@ func _process(delta: float) -> void:
 	var frame_count := _get_arrow_frame_count()
 	var period := 1.0 / maxf(_ARROW_ANIM_FPS, 0.001)
 	var frame := int(floor(_arrow_anim_time / period)) % frame_count
-	if _qty_pick_active:
-		if _qty_up_arrow:
-			_qty_up_arrow.frame = frame
-		if _qty_down_arrow:
-			_qty_down_arrow.frame = frame
-		return
 	if _up_arrow and _up_arrow.visible:
 		_up_arrow.frame = frame
 	if _down_arrow and _down_arrow.visible:
@@ -535,7 +531,7 @@ func _do_withdraw(entry: BagListEntry) -> void:
 	if storage == null or bag == null:
 		return
 	var max_qty := maxi(int(entry.quantity), 1)
-	var qty := await _prompt_withdraw_quantity(max_qty)
+	var qty := await DisplayManager.prompt_quantity(max_qty, "¿Cuántos quieres sacar?")
 	if qty <= 0:
 		return
 	var moved: int = int(storage.withdraw_to_bag(bag, int(entry.item_id), qty))
@@ -562,110 +558,6 @@ func _do_withdraw(entry: BagListEntry) -> void:
 	})
 
 
-## Devuelve cantidad elegida (1..max) o 0 si cancela. Si max<=1 no pregunta.
-func _prompt_withdraw_quantity(max_qty: int) -> int:
-	if max_qty <= 1:
-		return maxi(max_qty, 1)
-	var qty_reserve := _PC_ITEMS_QTY_RESERVE_FALLBACK
-	if _quantity_picker != null:
-		qty_reserve = absf(_quantity_picker.offset_left)
-		if qty_reserve < 8.0:
-			qty_reserve = maxf(_quantity_picker.size.x, _quantity_picker.custom_minimum_size.x)
-			if qty_reserve < 8.0:
-				qty_reserve = _PC_ITEMS_QTY_RESERVE_FALLBACK
-	DisplayManager.set_pc_items_message_side_reserve(qty_reserve)
-	await DisplayManager.show_message("¿Cuántos quieres sacar?", {
-		"waitInput": false,
-		"closeAtEnd": false,
-		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-		"typingMode": MessageBox.TypingMode.INSTANT,
-	})
-	DisplayManager.hide_message_wait_indicator()
-	_qty_pick_max = max_qty
-	_qty_pick_value = 1
-	_qty_pick_active = true
-	_refresh_quantity_picker_label()
-	if _quantity_picker:
-		_quantity_picker.show()
-	# El menú de acciones desconecta input; hay que reconectar solo para el picker.
-	_connect_display_manager_input()
-	set_process(true)
-	_play_cursor_sound()
-	var picked: int = await _quantity_picked
-	_qty_pick_active = false
-	if _quantity_picker:
-		_quantity_picker.hide()
-	DisplayManager.close_message()
-	return picked
-
-
-func _refresh_quantity_picker_label() -> void:
-	if _qty_amount_label == null:
-		return
-	var text := "x%03d" % _qty_pick_value
-	if _qty_amount_label.has_method("setText"):
-		_qty_amount_label.setText(text)
-	else:
-		_qty_amount_label.text = text
-	# El label de escena puede venir con visible_characters=0 (texto invisible).
-	_qty_amount_label.visible_characters = -1
-	_qty_amount_label.visible_ratio = 1.0
-	for child in _qty_amount_label.get_children():
-		if child is RichTextLabel:
-			(child as RichTextLabel).visible_characters = -1
-			(child as RichTextLabel).visible_ratio = 1.0
-	if _qty_amount_label.has_method("_sync_outline_visual_immediate"):
-		_qty_amount_label._sync_outline_visual_immediate()
-
-
-func _qty_change(delta: int) -> void:
-	if not _qty_pick_active:
-		return
-	var next := _qty_pick_value + delta
-	if next < 1:
-		next = _qty_pick_max
-	elif next > _qty_pick_max:
-		next = 1
-	if next == _qty_pick_value:
-		return
-	_qty_pick_value = next
-	_refresh_quantity_picker_label()
-	_play_cursor_sound()
-
-
-func _qty_confirm() -> void:
-	if not _qty_pick_active:
-		return
-	_play_select_sound()
-	_quantity_picked.emit(_qty_pick_value)
-
-
-func _qty_cancel() -> void:
-	if not _qty_pick_active:
-		return
-	_play_cancel_sound()
-	_quantity_picked.emit(0)
-
-
-func _connect_display_manager_input() -> void:
-	var dm := DisplayManager.instance
-	if dm == null:
-		return
-	if not dm.input_up.is_connected(_on_input_up):
-		dm.input_up.connect(_on_input_up)
-	if not dm.input_down.is_connected(_on_input_down):
-		dm.input_down.connect(_on_input_down)
-	if not dm.input_left.is_connected(_on_input_left):
-		dm.input_left.connect(_on_input_left)
-	if not dm.input_right.is_connected(_on_input_right):
-		dm.input_right.connect(_on_input_right)
-	if not dm.input_accept.is_connected(_on_input_accept):
-		dm.input_accept.connect(_on_input_accept)
-	if not dm.input_cancel.is_connected(_on_input_cancel):
-		dm.input_cancel.connect(_on_input_cancel)
-
-
 func _do_deposit(entry: BagListEntry) -> void:
 	if GameStateService == null:
 		return
@@ -673,7 +565,10 @@ func _do_deposit(entry: BagListEntry) -> void:
 	var bag: Bag = GameStateService.get_bag()
 	if storage == null or bag == null:
 		return
-	var qty := maxi(int(entry.quantity), 1)
+	var max_qty := maxi(int(entry.quantity), 1)
+	var qty := await DisplayManager.prompt_quantity(max_qty, "¿Qué cantidad?")
+	if qty <= 0:
+		return
 	var moved: int = int(storage.deposit_from_bag(bag, int(entry.item_id), qty))
 	if moved <= 0:
 		await DisplayManager.show_message("No se pudo guardar el objeto.", {
@@ -685,7 +580,7 @@ func _do_deposit(entry: BagListEntry) -> void:
 			"typingMode": MessageBox.TypingMode.INSTANT,
 		})
 		return
-	await DisplayManager.show_message("Guardaste %d %s." % [moved, entry.display_name], {
+	await DisplayManager.show_message("Has dejado %d." % moved, {
 		"waitInput": true,
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
@@ -846,6 +741,24 @@ func _disable_input() -> void:
 	_disconnect_display_manager_input(dm)
 
 
+func _connect_display_manager_input() -> void:
+	var dm := DisplayManager.instance
+	if dm == null:
+		return
+	if not dm.input_up.is_connected(_on_input_up):
+		dm.input_up.connect(_on_input_up)
+	if not dm.input_down.is_connected(_on_input_down):
+		dm.input_down.connect(_on_input_down)
+	if not dm.input_left.is_connected(_on_input_left):
+		dm.input_left.connect(_on_input_left)
+	if not dm.input_right.is_connected(_on_input_right):
+		dm.input_right.connect(_on_input_right)
+	if not dm.input_accept.is_connected(_on_input_accept):
+		dm.input_accept.connect(_on_input_accept)
+	if not dm.input_cancel.is_connected(_on_input_cancel):
+		dm.input_cancel.connect(_on_input_cancel)
+
+
 func _disconnect_display_manager_input(dm: DisplayManager) -> void:
 	if dm.input_up.is_connected(_on_input_up):
 		dm.input_up.disconnect(_on_input_up)
@@ -862,17 +775,11 @@ func _disconnect_display_manager_input(dm: DisplayManager) -> void:
 
 
 func _on_input_up() -> void:
-	if _qty_pick_active:
-		_qty_change(1)
-		return
 	if _input_enabled and not _in_action_menu:
 		_navigate_up()
 
 
 func _on_input_down() -> void:
-	if _qty_pick_active:
-		_qty_change(-1)
-		return
 	if _input_enabled and not _in_action_menu:
 		_navigate_down()
 
@@ -886,17 +793,11 @@ func _on_input_right() -> void:
 
 
 func _on_input_accept() -> void:
-	if _qty_pick_active:
-		_qty_confirm()
-		return
 	if _input_enabled and not _in_action_menu:
 		_confirm_selection()
 
 
 func _on_input_cancel() -> void:
-	if _qty_pick_active:
-		_qty_cancel()
-		return
 	if _input_enabled and not _in_action_menu:
 		_play_cancel_sound()
 		close()
