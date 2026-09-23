@@ -130,6 +130,18 @@ func cleanup() -> void:
 		queue_free()
 
 
+## Fundido de la ball en el suelo tras captura exitosa (antes del fade a ficha/showcase).
+func fade_out_ball(duration: float = 0.45) -> void:
+	if ball == null or not is_instance_valid(ball):
+		return
+	if not ball.visible:
+		return
+	var tw := create_tween()
+	tw.tween_property(ball, "modulate:a", 0.0, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	ball.visible = false
+
+
 func restore_target_sprite() -> void:
 	if _target_spot == null or not is_instance_valid(_target_spot):
 		return

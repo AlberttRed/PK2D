@@ -117,6 +117,17 @@ func get_list_entry(index: int) -> Dictionary:
 	return _entries[index]
 
 
+## Índice de lista para `species_id`, o -1 si no está en la dex activa.
+func find_index_by_species_id(species_id: int) -> int:
+	if species_id <= 0:
+		return -1
+	for i in range(_entries.size()):
+		var entry: Dictionary = _entries[i]
+		if int(entry.get("species_id", 0)) == species_id:
+			return i
+	return -1
+
+
 func is_entry_discovered(index: int) -> bool:
 	if index < 0 or index >= _entries.size():
 		return false

@@ -112,7 +112,7 @@ func visualize(ui: BattleUI) -> void:
 
 	if result.success:
 		await _show_success_dialogue(ui)
-		_cleanup_throw_visual(false)
+		await _fade_out_and_cleanup_throw_visual()
 		return
 
 	# Escape ya restauró el sprite en play_escape_open.
@@ -126,6 +126,14 @@ func _resolve_shake_log(shake_count: int, success: bool) -> String:
 	if success:
 		return ">>> Captura: %d balanceos → éxito." % shake_count
 	return ">>> Captura: %d balanceos → escape." % shake_count
+
+
+func _fade_out_and_cleanup_throw_visual() -> void:
+	if _throw_visual == null:
+		return
+	await _throw_visual.fade_out_ball(0.5)
+	_throw_visual.cleanup()
+	_throw_visual = null
 
 
 func _cleanup_throw_visual(restore_sprite: bool) -> void:

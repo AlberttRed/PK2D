@@ -74,8 +74,7 @@ func _visualize(ui: BattleUI) -> void:
 		return
 	if _runtime_capture != null:
 		await _runtime_capture.visualize(ui)
-		if item_use_result.battle_continuation == ItemUseResult.BattleContinuation.BLOCKING_SEQUENCE:
-			_choice.battle_controller.apply_capture_field_cleanup(_target_bp)
+		# Tras éxito: no retirar HP bar aquí; se limpia bajo el fade a ficha/showcase.
 		return
 	if item_use_result.outcome in [ItemUseResult.Outcome.BLOCKED, ItemUseResult.Outcome.ERROR]:
 		await show_battle_result_message(ui, item_use_result)

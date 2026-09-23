@@ -145,6 +145,9 @@ const _PARTY_MSG_SCROLL_BOTTOM_INSET_PX := 17.0
 ## Reserva horizontal actual a la derecha del MessageBox en PC ítems (0 = default qty).
 var _pc_items_side_reserve_px: float = 0.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
+## Fades del flujo post-captura / ficha Pokédex (×3 respecto al UI normal). No afecta salida de combate.
+const _CAPTURE_SCREEN_FADE_DURATION: float = _UI_SCREEN_FADE_DURATION * 3.0
+const _CAPTURE_REVEAL_FADE_DURATION: float = 0.9
 ## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
 const _UI_FADE_COVER_Z: int = 220
 ## Bag sobre PC (sprites del party/cursor usan z_index > 0 y quedarían encima si Bag=0).
@@ -183,6 +186,8 @@ var _route_name_tween: Tween = null
 var _route_name_prev_map_id: String = ""
 ## False hasta el primer set_active_map (omitir cartel en carga inicial).
 var _route_name_has_active_map: bool = false
+## True mientras la Pokédex está en revisión post-captura (no reabrir pause al cerrar).
+var _pokedex_capture_review: bool = false
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -1512,6 +1517,10 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Fundido a negro: oculta la batalla; mantenemos pantalla negra hasta evoluciones (si hay).
 	await fade_layer.fade_in(1.0)
 
+	# Bajo negro: quitar showcase de captura (debe permanecer visible durante el fade).
+	if BattleNew != null and BattleNew.battle_ui != null:
+		BattleNew.battle_ui.clear_capture_showcase()
+
 	BattleNew.cleanup_battle()
 
 	if _winner_side == "enemy":
@@ -1890,6 +1899,8 @@ func _close_pokedex_ui() -> void:
 	_pokedex_ui.close()
 
 func _on_pokedex_back_requested() -> void:
+	if _pokedex_capture_review:
+		return
 	await _transition_fade_pokedex_to_pause_menu()
 
 func _transition_fade_pokedex_to_pause_menu() -> void:
@@ -1899,10 +1910,70 @@ func _transition_fade_pokedex_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_pokedex_closed() -> void:
+	if _pokedex_capture_review:
+		_pokedex_controller = null
+		_on_ui_visibility_changed()
+		return
 	_pokedex_controller = null
 	if pause_menu and not pause_menu.visible:
 		pause_menu.open(0, false) # Mantener cursor en "POKéDEX"
 	_on_ui_visibility_changed()
+
+
+## Tras primera captura: muestra ficha Pokédex y al cerrar prepara showcase en batalla (AB#921).
+## `prepare_under_black` se llama tras fade a negro y antes de abrir la ficha.
+## `prepare_battle_showcase(payload)` se llama bajo negro tras el exit de la ficha.
+static func show_pokedex_capture_entry(
+	species_id: int,
+	prepare_battle_showcase: Callable = Callable(),
+	prepare_under_black: Callable = Callable()
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._show_pokedex_capture_entry(species_id, prepare_battle_showcase, prepare_under_black)
+
+
+func _show_pokedex_capture_entry(
+	species_id: int,
+	prepare_battle_showcase: Callable,
+	prepare_under_black: Callable
+) -> void:
+	if _pokedex_ui == null:
+		push_error("DisplayManager: Nodo PokedexUI no disponible en la escena.")
+		return
+	if species_id <= 0:
+		return
+
+	_pokedex_capture_review = true
+	await fade_layer.fade_in(_CAPTURE_SCREEN_FADE_DURATION)
+
+	if prepare_under_black.is_valid():
+		await prepare_under_black.call()
+
+	_pokedex_controller = POKEDEX_CONTROLLER_SCRIPT.new()
+	_pokedex_ui.setup(_pokedex_controller)
+	_pokedex_ui.open_capture_review(species_id)
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_CAPTURE_SCREEN_FADE_DURATION)
+
+	var payload: Dictionary = await _pokedex_ui.capture_review_exit_ready
+
+	# Showcase encima del fade (z=15) → negro debajo → cerrar ficha sin perder el sprite.
+	if prepare_battle_showcase.is_valid():
+		await prepare_battle_showcase.call(payload)
+	fade_layer.visible = true
+	fade_layer.modulate.a = 1.0
+	_pokedex_ui.finish_capture_review()
+	_pokedex_controller = null
+	_pokedex_capture_review = false
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_CAPTURE_REVEAL_FADE_DURATION)
+	if BattleNew != null and BattleNew.battle_ui != null:
+		BattleNew.battle_ui.set_capture_showcase_under_fade()
+
 
 func _on_pause_bag_requested() -> void:
 	await _open_bag_ui()

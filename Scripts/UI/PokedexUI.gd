@@ -3,6 +3,8 @@ class_name PokedexUI
 
 signal back_requested()
 signal closed()
+## Tras dismiss de ficha en modo captura (AB#921): overlay negro + sprite en centro.
+signal capture_review_exit_ready(payload: Dictionary)
 
 const _VISIBLE_ROWS: int = 9
 const _REGION_EXIT_INDEX: int = 3
@@ -35,6 +37,8 @@ const _SEARCH_ORDER_MODE_DESCRIPTIONS: Array[String] = [
 const _ENTRY_TRANSITION_FADE_OUT: float = 0.4
 const _ENTRY_TRANSITION_MOVE: float = 0.5
 const _ENTRY_TRANSITION_FADE_IN: float = 0.3
+## Cierre de ficha post-captura (×3). No afecta navegación normal de la Pokédex.
+const _CAPTURE_ENTRY_FADE_OUT: float = _ENTRY_TRANSITION_FADE_OUT * 3.0
 const _SCREEN_TRANSITION_FADE_OUT: float = 0.3
 const _SCREEN_TRANSITION_FADE_IN: float = 0.3
 const _ENTRY_TRANSITION_OVERLAY_Z: int = 50
@@ -59,6 +63,8 @@ var _selected_index: int = 0
 var _selected_region_index: int = 0
 var _view_mode: ViewMode = ViewMode.REGIONS
 var _active_detail_panel: DetailPanel = DetailPanel.ENTRY
+## True: ficha abierta tras primera captura; cancel/accept cierra hacia batalla.
+var _capture_review_mode: bool = false
 
 @onready var _regions_panel: VBoxContainer = $PokedexRegions
 @onready var _regions_cursor: Sprite2D = $RegionCursor
@@ -194,6 +200,7 @@ func close() -> void:
 	if not visible:
 		return
 	_reset_entry_transition()
+	_capture_review_mode = false
 	_disable_input()
 	set_process(false)
 	_reset_arrow_frames()
@@ -201,6 +208,74 @@ func close() -> void:
 	hide()
 	_unblock_player_control()
 	closed.emit()
+
+
+## Abre solo la ficha ENTRY de `species_id` (datos completos si caught). Usado tras primera captura.
+func open_capture_review(species_id: int) -> void:
+	if _controller == null:
+		push_error("PokedexUI: No se puede abrir captura sin controller.")
+		return
+	_capture_review_mode = true
+	show()
+	set_process(true)
+	AudioManager.play_ui_pokedex_open()
+	_arrow_anim_time = 0.0
+	_reset_held_navigation()
+	_active_detail_panel = DetailPanel.ENTRY
+	_controller.refresh()
+	var idx: int = _controller.find_index_by_species_id(species_id)
+	if idx < 0:
+		push_warning("PokedexUI: species_id=%d no está en la dex activa." % species_id)
+		idx = 0
+	_selected_index = idx
+	_enter_capture_entry_mode()
+	_enable_input()
+	_block_player_control()
+
+
+## Cierra tras handoff a batalla (overlay ya negro). No emite `back_requested`.
+func finish_capture_review() -> void:
+	_reset_entry_transition()
+	_capture_review_mode = false
+	_disable_input()
+	set_process(false)
+	_reset_arrow_frames()
+	_reset_held_navigation()
+	hide()
+	_unblock_player_control()
+
+
+func _enter_capture_entry_mode() -> void:
+	_view_mode = ViewMode.ENTRY
+	_active_detail_panel = DetailPanel.ENTRY
+	$PokedexRegions.z_index = -1
+	$PokedexList.z_index = -1
+	_search_panel.z_index = -1
+	_entry_panel.z_index = 0
+	_nest_panel.z_index = -1
+	_form_panel.z_index = -1
+	$PokedexRegions.hide()
+	$PokedexList.hide()
+	_search_panel.hide()
+	if _regions_cursor != null:
+		_regions_cursor.hide()
+	if _search_cursor != null:
+		_search_cursor.hide()
+	if _search_data_cursor != null:
+		_search_data_cursor.hide()
+	_update_search_data_scroll_arrows()
+	if _up_arrow:
+		_up_arrow.visible = false
+	if _down_arrow:
+		_down_arrow.visible = false
+	_reset_arrow_frames()
+	_render_detail_panels()
+	_apply_active_detail_panel()
+	if _entry_panel != null:
+		_entry_panel.modulate = Color.WHITE
+	if _entry_sprite != null:
+		_entry_sprite.visible = _entry_sprite.texture != null
+	_play_pokemon_cry_for_current()
 
 
 func _collect_rows() -> void:
@@ -579,19 +654,27 @@ func _disable_input() -> void:
 
 
 func _on_input_up() -> void:
-	if _input_enabled and not _entry_transition_busy:
-		_reset_held_navigation()
-		_navigate_up()
+	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode:
+		return
+	_reset_held_navigation()
+	_navigate_up()
 
 
 func _on_input_down() -> void:
-	if _input_enabled and not _entry_transition_busy:
-		_reset_held_navigation()
-		_navigate_down()
+	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode:
+		return
+	_reset_held_navigation()
+	_navigate_down()
 
 
 func _on_input_left() -> void:
 	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode:
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _search_data_focus:
@@ -604,6 +687,8 @@ func _on_input_left() -> void:
 
 func _on_input_right() -> void:
 	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode:
 		return
 	if _view_mode == ViewMode.SEARCH:
 		if _selected_search_index == 5 or _selected_search_index == 7:
@@ -623,6 +708,10 @@ func _on_input_right() -> void:
 
 func _on_input_accept() -> void:
 	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode and _view_mode == ViewMode.ENTRY:
+		_play_select_sound()
+		await _play_capture_review_exit_transition()
 		return
 	if _view_mode == ViewMode.REGIONS:
 		_accept_region_selection()
@@ -658,6 +747,10 @@ func _on_input_accept() -> void:
 func _on_input_cancel() -> void:
 	if not _input_enabled or _entry_transition_busy:
 		return
+	if _capture_review_mode and _view_mode == ViewMode.ENTRY:
+		_play_cancel_sound()
+		await _play_capture_review_exit_transition()
+		return
 	if _view_mode == ViewMode.ENTRY:
 		_play_cancel_sound()
 		await _play_entry_close_transition()
@@ -685,6 +778,10 @@ func _on_input_cancel() -> void:
 
 func _on_input_start() -> void:
 	if not _input_enabled or _entry_transition_busy:
+		return
+	if _capture_review_mode and _view_mode == ViewMode.ENTRY:
+		_play_cancel_sound()
+		await _play_capture_review_exit_transition()
 		return
 	if _view_mode == ViewMode.ENTRY:
 		_play_cancel_sound()
@@ -935,6 +1032,66 @@ func _play_entry_close_transition() -> void:
 	_entry_panel.modulate = Color.WHITE
 	_entry_transition_busy = false
 	_enable_input()
+
+
+## Cierre tras primera captura: fade a negro con sprite encima → sprite al centro.
+## La ficha permanece debajo del negro (no se desvanece) para no revelar el bg de regiones.
+func _play_capture_review_exit_transition() -> void:
+	if _entry_transition_busy:
+		return
+	_entry_transition_busy = true
+	_disable_input()
+
+	var source_sprite: Sprite2D = _entry_sprite
+	if _entry_sprite == null or _entry_sprite.texture == null:
+		capture_review_exit_ready.emit({
+			"texture": null,
+			"global_position": get_viewport().get_visible_rect().size * 0.5,
+			"scale": Vector2.ONE,
+		})
+		_entry_transition_busy = false
+		return
+
+	_prepare_transition_sprite_from(source_sprite)
+	_entry_sprite.visible = false
+	_show_entry_transition_overlay(0.0)
+
+	# Asegurar solo ENTRY visible bajo el overlay.
+	_active_detail_panel = DetailPanel.ENTRY
+	_apply_active_detail_panel()
+	if _entry_panel != null:
+		_entry_panel.modulate = Color.WHITE
+		_entry_panel.show()
+		_entry_panel.z_index = 0
+
+	var viewport_center: Vector2 = get_viewport().get_visible_rect().size * 0.5
+	var fade_out := create_tween()
+	fade_out.set_parallel(true)
+	fade_out.tween_property(
+		_entry_transition_overlay,
+		"color:a",
+		1.0,
+		_CAPTURE_ENTRY_FADE_OUT
+	)
+	fade_out.tween_property(
+		_entry_transition_sprite,
+		"global_position",
+		viewport_center,
+		_CAPTURE_ENTRY_FADE_OUT
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await fade_out.finished
+
+	capture_review_exit_ready.emit({
+		"texture": _entry_transition_sprite.texture,
+		"global_position": _entry_transition_sprite.global_position,
+		"scale": _entry_transition_sprite.scale,
+		"flip_h": _entry_transition_sprite.flip_h,
+		"flip_v": _entry_transition_sprite.flip_v,
+		"centered": _entry_transition_sprite.centered,
+		"offset": _entry_transition_sprite.offset,
+	})
+	# Overlay negro + sprite + ficha se mantienen hasta finish_capture_review().
+	_entry_transition_busy = false
 
 
 func _prepare_transition_sprite_from(source: Sprite2D) -> void:
@@ -1225,6 +1382,8 @@ func _shift_detail_panel(direction: int) -> void:
 
 func _navigate_discovered_in_detail(direction: int) -> void:
 	if _controller == null:
+		return
+	if _capture_review_mode:
 		return
 	if _form_gender_choice_open:
 		return
