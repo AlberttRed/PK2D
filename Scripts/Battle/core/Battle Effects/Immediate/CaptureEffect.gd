@@ -248,6 +248,8 @@ func _compute_shake_threshold(modified_rate: int) -> int:
 func _clone_captured_pokemon(wild_bp: BattlePokemon) -> Pokemon:
 	if wild_bp == null or wild_bp.base_data == null:
 		return null
+	# PS/estado (y PP vía Move compartido) viven en BattlePokemon; sincronizar antes de clonar (AB#919).
+	wild_bp.write_persistent_state_to_runtime()
 	var serde := PokemonRuntimeSerde.new()
 	var data: Dictionary = wild_bp.base_data.to_serializable_state()
 	data["is_wild"] = false

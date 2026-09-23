@@ -1774,6 +1774,10 @@ func _input(event: InputEvent) -> void:
 		print("DisplayManager start")
 		# Si el menú de pausa no está visible, intentar abrirlo
 		if pause_menu and not pause_menu.visible:
+			# AB#949: no abrir pausa en menú principal ni sin overworld listo.
+			if not _can_open_pause_menu():
+				get_viewport().set_input_as_handled()
+				return
 			# Verificar si el jugador está en movimiento - no abrir menú si está moviéndose
 			var player = get_tree().get_first_node_in_group("Player")
 			if player and player.has_node("GridMotion"):
@@ -1860,6 +1864,16 @@ func _input(event: InputEvent) -> void:
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
 	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
+
+
+## True solo con overworld activo (jugador en escena) y menú principal oculto (AB#949).
+func _can_open_pause_menu() -> bool:
+	var main_menu := get_parent().get_node_or_null("MainMenu") if get_parent() != null else null
+	if main_menu != null and main_menu.visible:
+		return false
+	var player = get_tree().get_first_node_in_group("Player")
+	return player != null and is_instance_valid(player)
+
 
 # === CALLBACKS DEL PAUSE MENU ===
 func _on_pause_pokedex_requested() -> void:

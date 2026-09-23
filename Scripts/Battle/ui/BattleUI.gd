@@ -1372,23 +1372,26 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 				"text": win_msg.get("text", ""),
 				"wait_time": 0.0,
 			})
-		# 2) Entrada automática del rival.
+		# 2–3) Por cada rival: entra → (pausa) → defeat_message → exit solo si no es el último.
+		# El último se queda en pantalla hasta el fade-out de fin de combate (AB#911).
+		var last_trainer_idx := -1
 		for i in enemy_participants.size():
-			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules, i)
-		# 3) Pausa antes del diálogo de derrota.
-		await get_tree().create_timer(1.0).timeout
-
-		# Diálogo de derrota del entrenador → salida.
+			if enemy_participants[i] is BattleParticipant:
+				last_trainer_idx = i
 		for i in enemy_participants.size():
 			var participant = enemy_participants[i]
 			if participant == null or not participant is BattleParticipant:
 				continue
+			await BattleFieldAnimations.play_enemy_trainer_defeat_enter(self, rules, i)
+			await get_tree().create_timer(1.0).timeout
 			if not participant.defeat_message.is_empty():
 				await show_message_from_dict({
 					"type": "input",
 					"text": participant.defeat_message,
 					"showIconAtEnd": true
 				})
+			if i >= last_trainer_idx:
+				continue
 			var trainer: Node2D = field_ui.get_enemy_trainer(i)
 			if trainer != null and is_instance_valid(trainer):
 				await BattleAnimationUtils.trainer_exit(
@@ -1398,7 +1401,7 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 					BattleFieldAnimations.TRAINER_EXIT_SLIDE
 				)
 
-		# Premio en dinero (AB#910): tras defeat_message / exit, antes de cerrar.
+		# Premio en dinero (AB#910): tras defeat_message, antes de cerrar.
 		var reward_total := 0
 		for participant in enemy_participants:
 			if participant is BattleParticipant and participant.is_trainer:

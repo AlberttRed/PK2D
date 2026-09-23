@@ -193,6 +193,7 @@ func add_pokemon(pokemon: Pokemon, preferred_box: int = 0) -> bool:
 
 
 ## Coloca en un slot concreto. Falla si el slot está ocupado (usar `move_pokemon` para intercambiar).
+## Al depositar se cura completo (PS/estado/PP), como en Gen 3/FRLG.
 func set_pokemon(box_index: int, slot_index: int, pokemon: Pokemon) -> bool:
 	if pokemon == null:
 		push_warning("PCStorage.set_pokemon: pokemon es null")
@@ -205,6 +206,7 @@ func set_pokemon(box_index: int, slot_index: int, pokemon: Pokemon) -> bool:
 	var slots: Array = _boxes[box_index]["slots"]
 	if slots[slot_index] != null:
 		return false
+	pokemon.fully_heal()
 	slots[slot_index] = pokemon
 	return true
 
