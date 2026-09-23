@@ -10,6 +10,7 @@ var pokemon: BattlePokemon
 @onready var lbl_level: RichTextLabel = $lblLevel
 @onready var spr_level: Sprite2D = $lblNv
 @onready var status_ui: Sprite2D = $Status
+@onready var owned_icon: Sprite2D = $owned
 @onready var health_bar: AnimatedProgressBar = $health_bar
 @onready var exp_bar: AnimatedProgressBar = $exp_bar
 
@@ -44,6 +45,27 @@ func init(_pokemon: BattlePokemon) -> void:
 
 	# Inicializar UI general
 	refresh_panel_labels()
+	update_owned_icon()
+
+
+## Poké Ball en caja rival: solo salvaje + especie ya capturada en Pokédex (AB#920 / FRLG).
+func update_owned_icon() -> void:
+	if owned_icon == null:
+		return
+	owned_icon.visible = _should_show_owned_icon()
+
+
+func _should_show_owned_icon() -> bool:
+	if pokemon == null or pokemon.base_data == null:
+		return false
+	if not pokemon.is_wild:
+		return false
+	if pokemon.side == null or pokemon.side.type != BattleSide.Types.ENEMY:
+		return false
+	var pokedex = GameStateService.get_pokedex()
+	if pokedex == null:
+		return false
+	return pokedex.is_caught(int(pokemon.base_data.pokemon_id))
 
 
 ## `level_display_override`: si no es null, fija el número de nivel en caja (p. ej. animación EXP: aún el nivel antiguo).
@@ -88,6 +110,8 @@ func clear_ui() -> void:
 	lbl_level.text = ""
 	lbl_gender.text = ""
 	status_ui.visible = false
+	if owned_icon:
+		owned_icon.visible = false
 	health_bar.clear()
 	exp_bar.clear()
 
@@ -217,8 +241,8 @@ func setup_for(side_type: int, mode: int) -> void:
 			_set_enemy_single_box()
 		[BattleSide.Types.ENEMY, BattleRules.BattleModes.DOUBLE]:
 			_set_enemy_double_box()
-			
-			
+	update_owned_icon()
+
 
 #region Set Battle Boxes
 func _set_player_single_box():
@@ -233,6 +257,8 @@ func _set_player_single_box():
 	lbl_level.position = Vector2(70, -31)
 	status_ui.visible = false
 	status_ui.position = Vector2(-50, 1)
+	if owned_icon:
+		owned_icon.visible = false
 	health_bar.visible = true
 	health_bar.set_value_visible(true)
 	health_bar.position = Vector2(-26, -7)
@@ -250,11 +276,13 @@ func _set_player_double_box():
 	lbl_level.position = Vector2(70, -19)
 	status_ui.visible = false
 	status_ui.position = Vector2(-50, 13)
+	if owned_icon:
+		owned_icon.visible = false
 	health_bar.visible = true
 	health_bar.set_value_visible(false)
 	health_bar.position = Vector2(-26, 5)
 	exp_bar.visible = false
-	
+
 func _set_enemy_single_box():
 	self.texture = SPRITE_ENEMY_SINGLE
 	lbl_name.visible = true
@@ -267,11 +295,13 @@ func _set_enemy_single_box():
 	lbl_level.position = Vector2(45, -20)
 	status_ui.visible = false
 	status_ui.position = Vector2(-68, 13)
+	if owned_icon:
+		owned_icon.position = Vector2(-103, 12)
 	health_bar.visible = true
 	health_bar.set_value_visible(false)
 	health_bar.position = Vector2(-44, 5)
 	exp_bar.visible = false
-	
+
 func _set_enemy_double_box():
 	self.texture = SPRITE_ENEMY_DOUBLE
 	lbl_name.visible = true
@@ -284,6 +314,8 @@ func _set_enemy_double_box():
 	lbl_level.position = Vector2(52, -19)
 	status_ui.visible = false
 	status_ui.position = Vector2(-68, 13)
+	if owned_icon:
+		owned_icon.position = Vector2(-103, 12)
 	health_bar.visible = true
 	health_bar.set_value_visible(false)
 	health_bar.position = Vector2(-44, 5)
