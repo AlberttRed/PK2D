@@ -1397,6 +1397,18 @@ func show_battle_end_message(winner_side: String, rules: BattleRules, enemy_part
 					BattleFieldAnimations.TRAINER_EXIT_DURATION,
 					BattleFieldAnimations.TRAINER_EXIT_SLIDE
 				)
+
+		# Premio en dinero (AB#910): tras defeat_message / exit, antes de cerrar.
+		var reward_total := 0
+		for participant in enemy_participants:
+			if participant is BattleParticipant and participant.is_trainer:
+				reward_total += maxi(int(participant.reward_money), 0)
+		if reward_total > 0 and GameStateService != null:
+			GameStateService.add_money(reward_total)
+			var player_name := str(GameStateService.get_variable("PLAYER_NAME", "PLAYER"))
+			await show_message_from_dict(
+				message_controller.get_money_reward_message(player_name, reward_total)
+			)
 		return
 
 	# Derrota del jugador: secuencia de blanqueo + pérdida de dinero
@@ -1668,3 +1680,178 @@ func show_message_from_dict(msg: Dictionary) -> void:
 
 func clear_message_box():
 	message_box.show_clear_text()
+
+
+## Oculta UI de batalla bajo negro antes de la ficha (incluye fondo). AB#921.
+func hide_field_for_capture_review() -> void:
+	_prepare_capture_field_common(false)
+
+
+## Prepara el campo post-Pokédex (fondo + sprite centrado). AB#921.
+## `above_fade`: sprite por encima del FadeLayer durante el handoff/reveal; bajar tras el fade a color.
+func prepare_capture_showcase(payload: Dictionary, above_fade: bool = true) -> void:
+	_prepare_capture_field_common(true)
+	var tex: Texture2D = payload.get("texture") as Texture2D
+	if tex == null:
+		return
+	_apply_capture_showcase_sprite(
+		tex,
+		payload.get("global_position", get_viewport().get_visible_rect().size * 0.5),
+		payload.get("scale", Vector2.ONE),
+		bool(payload.get("flip_h", false)),
+		bool(payload.get("flip_v", false)),
+		bool(payload.get("centered", true)),
+		payload.get("offset", Vector2.ZERO),
+		above_fade
+	)
+
+
+## Especie ya capturada: showcase centrado sin pasar por la ficha (AB#921).
+func prepare_capture_showcase_centered(species_id: int, above_fade: bool = true) -> void:
+	_prepare_capture_field_common(true)
+	if species_id <= 0:
+		return
+	var data := DatabaseService.get_pokemon(species_id) as PokemonData
+	if data == null or data.battle_front_sprite == null:
+		return
+	_apply_capture_showcase_sprite(
+		data.battle_front_sprite,
+		get_viewport().get_visible_rect().size * 0.5,
+		Vector2.ONE,
+		false,
+		false,
+		true,
+		Vector2.ZERO,
+		above_fade
+	)
+
+
+## `with_background`: false en ficha Pokédex; true al revelar fondo+sprite.
+## Con fondo: deja el MessageBox vacío visible para tapar la franja inferior al revelar.
+func _prepare_capture_field_common(with_background: bool) -> void:
+	if actions_menu != null:
+		actions_menu.visible = false
+	if moves_menu != null:
+		moves_menu.visible = false
+	if target_selector_ui != null:
+		target_selector_ui.visible = false
+	var back_panel := get_node_or_null("back") as CanvasItem
+	if back_panel != null:
+		back_panel.visible = false
+
+	var mode: int = BattleRules.BattleModes.SINGLE
+	if battle_controller != null and battle_controller.rules != null:
+		mode = battle_controller.rules.mode
+	field_ui.hide_all_hp_bars(mode)
+	field_ui.hide_all_party_bars()
+	field_ui.hide_all_enemy_trainers()
+	field_ui.hide_battle_bases()
+	field_ui.set_battle_background_visible(with_background)
+	for spot: BattleSpot in field_ui.get_all_spots_for_mode(mode):
+		if spot == null:
+			continue
+		spot.set_pokemon_sprite_visible(false)
+		if spot.hp_bar != null:
+			spot.hp_bar.visible = false
+
+	var player_trainers := [
+		field_ui.get_node_or_null("PlayerBase/TrainerA"),
+		field_ui.get_node_or_null("PlayerBase/TrainerB"),
+	]
+	for t in player_trainers:
+		if t != null:
+			t.visible = false
+
+	if message_box != null:
+		if with_background:
+			# Panel vacío bajo el negro: al revelar fondo+sprite no se ve la franja sin UI.
+			message_box.show_clear_text()
+		elif message_box.has_method("cleanup_and_hide"):
+			message_box.cleanup_and_hide()
+		else:
+			message_box.hide()
+
+
+func _apply_capture_showcase_sprite(
+	tex: Texture2D,
+	global_pos: Vector2,
+	sprite_scale: Vector2,
+	flip_h: bool,
+	flip_v: bool,
+	centered: bool,
+	sprite_offset: Vector2,
+	above_fade: bool = true
+) -> void:
+	var showcase: Sprite2D = field_ui.get_node_or_null("CaptureShowcaseSprite") as Sprite2D
+	if showcase == null:
+		showcase = Sprite2D.new()
+		showcase.name = "CaptureShowcaseSprite"
+		showcase.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		field_ui.add_child(showcase)
+
+	showcase.texture = tex
+	showcase.scale = sprite_scale
+	showcase.flip_h = flip_h
+	showcase.flip_v = flip_v
+	showcase.centered = centered
+	showcase.offset = sprite_offset
+	showcase.global_position = global_pos
+	_set_capture_showcase_fade_layer(above_fade)
+	showcase.visible = true
+
+
+## Por encima del FadeLayer (z=10) durante handoff/reveal; debajo tras volver a color (salida combate).
+func set_capture_showcase_under_fade() -> void:
+	_set_capture_showcase_fade_layer(false)
+
+
+func _set_capture_showcase_fade_layer(above_fade: bool) -> void:
+	var showcase: Sprite2D = field_ui.get_node_or_null("CaptureShowcaseSprite") as Sprite2D
+	if showcase == null:
+		return
+	if above_fade:
+		showcase.z_as_relative = false
+		showcase.z_index = 15
+	else:
+		showcase.z_as_relative = true
+		showcase.z_index = 5
+
+
+func clear_capture_showcase() -> void:
+	var showcase: Sprite2D = field_ui.get_node_or_null("CaptureShowcaseSprite") as Sprite2D
+	if showcase != null:
+		showcase.visible = false
+		showcase.texture = null
+	# Dejar campo listo por si el siguiente combate reutiliza nodos sin reaplicar a tiempo.
+	if field_ui != null:
+		field_ui.set_battle_background_visible(true)
+		field_ui.show_battle_bases()
+
+
+## Cry del showcase (sin espera: el mote cubre el panel enseguida).
+func play_capture_showcase_cry(species_id: int) -> void:
+	if species_id <= 0:
+		return
+	var data := DatabaseService.get_pokemon(species_id) as PokemonData
+	if data != null:
+		AudioManager.play_pokemon_cry_from_data(data)
+
+
+## SI = 0 (placeholder mote), NO = 1 / cancel.
+func prompt_capture_nickname(pokemon_name: String) -> int:
+	var name := pokemon_name.strip_edges()
+	if name.is_empty():
+		name = "POKéMON"
+	var options: Array[String] = ["SI", "NO"]
+	var idx: int = await _show_battle_message_with_choices(
+		"¿Quieres ponerle un mote al %s capturado?" % name,
+		options
+	)
+	clear_message_box()
+	if idx == 0:
+		await show_message_from_dict({
+			"type": "input",
+			"text": "Asignación de mote: pendiente de implementar.",
+			"showIconAtEnd": false,
+		})
+	return idx

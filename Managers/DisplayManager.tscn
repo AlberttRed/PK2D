@@ -11,13 +11,15 @@
 [ext_resource type="Shader" uid="uid://i23gj0rrtxja" path="res://Shaders/overlay_flashlight.gdshader" id="9"]
 [ext_resource type="PackedScene" uid="uid://cjyn725u2m23r" path="res://Scenes/UI/BAG.tscn" id="10_bag"]
 [ext_resource type="PackedScene" uid="uid://btgemydvaapwr" path="res://Scenes/UI/PartyUI.tscn" id="11_partyui"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/EvolutionUI.tscn" id="12_evolutionui"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/PokedexUI.tscn" id="13_pokedexui"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/SaveUI.tscn" id="14_saveui"]
+[ext_resource type="PackedScene" uid="uid://c480jr7hvgjsg" path="res://Scenes/UI/EvolutionUI.tscn" id="12_evolutionui"]
+[ext_resource type="PackedScene" uid="uid://b1mviu1kvw8cg" path="res://Scenes/UI/PokedexUI.tscn" id="13_pokedexui"]
+[ext_resource type="PackedScene" uid="uid://d00ox4vsuch73" path="res://Scenes/UI/SaveUI.tscn" id="14_saveui"]
 [ext_resource type="PackedScene" uid="uid://cesw5xutsmgo2" path="res://Scenes/UI/PCStorageUI.tscn" id="15_pcui"]
 [ext_resource type="PackedScene" uid="uid://bco6fofd1137k" path="res://Scenes/UI/PCItemsUI.tscn" id="16_pcitems"]
-[ext_resource type="PackedScene" uid="uid://cqtypickerpk2d01" path="res://Scenes/UI/QuantityPicker.tscn" id="17_qtypicker"]
+[ext_resource type="PackedScene" uid="uid://dclkyhgakopca" path="res://Scenes/UI/QuantityPicker.tscn" id="17_qtypicker"]
 [ext_resource type="PackedScene" uid="uid://yhc1eyvh3xfi" path="res://Scenes/UI/PokeMartUI.tscn" id="18_pokemart"]
+[ext_resource type="StyleBox" uid="uid://c7vjqce51w73c" path="res://Resources/UI/MessageBox/Message Styles/Gold_MessageBox_Style.tres" id="19_w54fd"]
+[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="20_h43ry"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -142,30 +144,29 @@ visible = false
 [node name="PartyUI" parent="." unique_id=1406011060 instance=ExtResource("11_partyui")]
 visible = false
 
-[node name="PCStorageUI" parent="." instance=ExtResource("15_pcui")]
+[node name="PCStorageUI" parent="." unique_id=2035157434 instance=ExtResource("15_pcui")]
 visible = false
 
-[node name="PCItemsUI" parent="." instance=ExtResource("16_pcitems")]
+[node name="PCItemsUI" parent="." unique_id=442197403 instance=ExtResource("16_pcitems")]
 visible = false
 
-[node name="PokeMartUI" parent="." instance=ExtResource("18_pokemart")]
+[node name="PokeMartUI" parent="." unique_id=750027160 instance=ExtResource("18_pokemart")]
 visible = false
 
-[node name="PokedexUI" parent="." instance=ExtResource("13_pokedexui")]
+[node name="PokedexUI" parent="." unique_id=997549819 instance=ExtResource("13_pokedexui")]
 visible = false
 
-[node name="SaveUI" parent="." instance=ExtResource("14_saveui")]
+[node name="SaveUI" parent="." unique_id=2046138423 instance=ExtResource("14_saveui")]
 visible = false
 
-[node name="EvolutionUI" parent="." instance=ExtResource("12_evolutionui")]
+[node name="EvolutionUI" parent="." unique_id=1256811535 instance=ExtResource("12_evolutionui")]
 visible = false
 
 [node name="MSG" parent="." unique_id=1471044678 instance=ExtResource("4")]
 visible = false
 z_index = 200
 
-[node name="QuantityPicker" parent="." instance=ExtResource("17_qtypicker")]
-visible = false
+[node name="QuantityPicker" parent="." unique_id=147022790 instance=ExtResource("17_qtypicker")]
 z_index = 205
 
 [node name="ChoiceBox" parent="." unique_id=279823458 instance=ExtResource("5")]
@@ -198,3 +199,40 @@ anchors_preset = -1
 offset_right = 512.0
 offset_bottom = 384.0
 color = Color(0, 0, 0, 1)
+
+[node name="RouteNameUI" type="Panel" parent="." unique_id=845062663]
+visible = false
+mouse_filter = 2
+offset_left = 6.0
+offset_top = -6.0
+offset_right = 261.0
+offset_bottom = 52.0
+theme_override_styles/panel = ExtResource("19_w54fd")
+
+[node name="MarginContainer" type="MarginContainer" parent="RouteNameUI" unique_id=757317471]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -121.5
+offset_top = -17.0
+offset_right = 121.5
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsList" type="VBoxContainer" parent="RouteNameUI/MarginContainer" unique_id=116737496]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+
+[node name="ItemCount" type="HBoxContainer" parent="RouteNameUI/MarginContainer/StatsList" unique_id=159319556]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Name" parent="RouteNameUI/MarginContainer/StatsList/ItemCount" unique_id=1667865658 instance=ExtResource("20_h43ry")]
+clip_contents = false
+layout_mode = 2
+text = "[center]RUTA 1"
+align = 1

@@ -145,6 +145,9 @@ const _PARTY_MSG_SCROLL_BOTTOM_INSET_PX := 17.0
 ## Reserva horizontal actual a la derecha del MessageBox en PC ítems (0 = default qty).
 var _pc_items_side_reserve_px: float = 0.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
+## Fades del flujo post-captura / ficha Pokédex (×3 respecto al UI normal). No afecta salida de combate.
+const _CAPTURE_SCREEN_FADE_DURATION: float = _UI_SCREEN_FADE_DURATION * 3.0
+const _CAPTURE_REVEAL_FADE_DURATION: float = 0.9
 ## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
 const _UI_FADE_COVER_Z: int = 220
 ## Bag sobre PC (sprites del party/cursor usan z_index > 0 y quedarían encima si Bag=0).
@@ -166,11 +169,25 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var _quantity_picker: Control = $QuantityPicker
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
+@onready var _route_name_ui: Panel = $RouteNameUI
+@onready var _route_name_label = $RouteNameUI/MarginContainer/StatsList/ItemCount/Name
 
 @onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
 @onready var _qty_price_label: RichTextLabel = $QuantityPicker/Container/Price
 @onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
 @onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
+
+## Cartel de ubicación (#918): slide desde arriba → 3 s → sale hacia arriba.
+const _ROUTE_NAME_HOLD_SEC := 3.0
+const _ROUTE_NAME_SLIDE_SEC := 0.35
+var _route_name_rest_y: float = 0.0
+var _route_name_hidden_y: float = 0.0
+var _route_name_tween: Tween = null
+var _route_name_prev_map_id: String = ""
+## False hasta el primer set_active_map (omitir cartel en carga inicial).
+var _route_name_has_active_map: bool = false
+## True mientras la Pokédex está en revisión post-captura (no reabrir pause al cerrar).
+var _pokedex_capture_review: bool = false
 
 # === INICIALIZACIÓN ===
 func _ready() -> void:
@@ -207,6 +224,16 @@ func _ready() -> void:
 	if _quantity_picker:
 		_quantity_picker.process_mode = Node.PROCESS_MODE_ALWAYS
 		_quantity_picker.hide()
+	if _route_name_ui:
+		_route_name_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+		_route_name_ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_route_name_ui.visible = false
+		_route_name_rest_y = _route_name_ui.position.y
+		var panel_h: float = maxf(_route_name_ui.size.y, _route_name_ui.get_combined_minimum_size().y)
+		if panel_h <= 1.0:
+			panel_h = absf(_route_name_ui.offset_bottom - _route_name_ui.offset_top)
+		_route_name_hidden_y = _route_name_rest_y - panel_h - 8.0
+		_route_name_ui.position.y = _route_name_hidden_y
 	BattleNew.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Conectar señales del MessageBox
@@ -462,6 +489,13 @@ static func open_bag_for_sell(with_screen_fade: bool = true) -> void:
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance._open_bag_for_sell(with_screen_fade)
+
+
+## Cartel de ubicación al cambiar de mapa outdoor (#918).
+static func notify_active_map_changed(map_scene: Node) -> void:
+	if instance == null:
+		return
+	instance._on_active_map_changed_for_route_name(map_scene)
 
 
 ## QuantityPicker: cantidad 1..max, o 0 si cancela.
@@ -1483,6 +1517,10 @@ func _on_battle_finished(_winner_side: String) -> void:
 	# Fundido a negro: oculta la batalla; mantenemos pantalla negra hasta evoluciones (si hay).
 	await fade_layer.fade_in(1.0)
 
+	# Bajo negro: quitar showcase de captura (debe permanecer visible durante el fade).
+	if BattleNew != null and BattleNew.battle_ui != null:
+		BattleNew.battle_ui.clear_capture_showcase()
+
 	BattleNew.cleanup_battle()
 
 	if _winner_side == "enemy":
@@ -1861,6 +1899,8 @@ func _close_pokedex_ui() -> void:
 	_pokedex_ui.close()
 
 func _on_pokedex_back_requested() -> void:
+	if _pokedex_capture_review:
+		return
 	await _transition_fade_pokedex_to_pause_menu()
 
 func _transition_fade_pokedex_to_pause_menu() -> void:
@@ -1870,10 +1910,70 @@ func _transition_fade_pokedex_to_pause_menu() -> void:
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
 
 func _on_pokedex_closed() -> void:
+	if _pokedex_capture_review:
+		_pokedex_controller = null
+		_on_ui_visibility_changed()
+		return
 	_pokedex_controller = null
 	if pause_menu and not pause_menu.visible:
 		pause_menu.open(0, false) # Mantener cursor en "POKéDEX"
 	_on_ui_visibility_changed()
+
+
+## Tras primera captura: muestra ficha Pokédex y al cerrar prepara showcase en batalla (AB#921).
+## `prepare_under_black` se llama tras fade a negro y antes de abrir la ficha.
+## `prepare_battle_showcase(payload)` se llama bajo negro tras el exit de la ficha.
+static func show_pokedex_capture_entry(
+	species_id: int,
+	prepare_battle_showcase: Callable = Callable(),
+	prepare_under_black: Callable = Callable()
+) -> void:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return
+	await instance._show_pokedex_capture_entry(species_id, prepare_battle_showcase, prepare_under_black)
+
+
+func _show_pokedex_capture_entry(
+	species_id: int,
+	prepare_battle_showcase: Callable,
+	prepare_under_black: Callable
+) -> void:
+	if _pokedex_ui == null:
+		push_error("DisplayManager: Nodo PokedexUI no disponible en la escena.")
+		return
+	if species_id <= 0:
+		return
+
+	_pokedex_capture_review = true
+	await fade_layer.fade_in(_CAPTURE_SCREEN_FADE_DURATION)
+
+	if prepare_under_black.is_valid():
+		await prepare_under_black.call()
+
+	_pokedex_controller = POKEDEX_CONTROLLER_SCRIPT.new()
+	_pokedex_ui.setup(_pokedex_controller)
+	_pokedex_ui.open_capture_review(species_id)
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_CAPTURE_SCREEN_FADE_DURATION)
+
+	var payload: Dictionary = await _pokedex_ui.capture_review_exit_ready
+
+	# Showcase encima del fade (z=15) → negro debajo → cerrar ficha sin perder el sprite.
+	if prepare_battle_showcase.is_valid():
+		await prepare_battle_showcase.call(payload)
+	fade_layer.visible = true
+	fade_layer.modulate.a = 1.0
+	_pokedex_ui.finish_capture_review()
+	_pokedex_controller = null
+	_pokedex_capture_review = false
+	_on_ui_visibility_changed()
+
+	await fade_layer.fade_out(_CAPTURE_REVEAL_FADE_DURATION)
+	if BattleNew != null and BattleNew.battle_ui != null:
+		BattleNew.battle_ui.set_capture_showcase_under_fade()
+
 
 func _on_pause_bag_requested() -> void:
 	await _open_bag_ui()
@@ -2033,6 +2133,80 @@ func _open_poke_mart_ui(shop: ShopData, with_screen_fade: bool = true) -> void:
 
 func _on_poke_mart_ui_closed() -> void:
 	_on_ui_visibility_changed()
+
+
+## Hook desde WorldSystem.set_active_map (#918).
+func _on_active_map_changed_for_route_name(map_scene: Node) -> void:
+	var map := map_scene as MapScene
+	var map_id := ""
+	if map != null:
+		map_id = map.map_id if not map.map_id.is_empty() else map.name
+	elif map_scene != null:
+		map_id = map_scene.name
+
+	# Carga inicial: recordar mapa y no mostrar cartel.
+	if not _route_name_has_active_map:
+		_route_name_has_active_map = true
+		_route_name_prev_map_id = map_id
+		return
+
+	if map == null or map.is_indoor:
+		_route_name_prev_map_id = map_id
+		_hide_route_name_immediate()
+		return
+
+	var label := map.get_location_display_name()
+	if label.is_empty():
+		_route_name_prev_map_id = map_id
+		return
+
+	# Solo omitir si el active_map outdoor no ha cambiado (notify duplicado).
+	# Indoor → mismo outdoor vuelve a mostrar el cartel.
+	if map_id == _route_name_prev_map_id:
+		return
+
+	_route_name_prev_map_id = map_id
+	_show_route_name_banner(label)
+
+
+func _show_route_name_banner(location_name: String) -> void:
+	if _route_name_ui == null:
+		return
+	if _route_name_label != null and _route_name_label.has_method("setText"):
+		_route_name_label.setText(location_name)
+	elif _route_name_label != null:
+		_route_name_label.text = location_name
+
+	if _route_name_tween != null and is_instance_valid(_route_name_tween):
+		_route_name_tween.kill()
+		_route_name_tween = null
+
+	_route_name_ui.visible = true
+	_route_name_ui.position.y = _route_name_hidden_y
+	_route_name_ui.move_to_front()
+
+	_route_name_tween = create_tween()
+	_route_name_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_route_name_tween.tween_property(
+		_route_name_ui, "position:y", _route_name_rest_y, _ROUTE_NAME_SLIDE_SEC
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_route_name_tween.tween_interval(_ROUTE_NAME_HOLD_SEC)
+	_route_name_tween.tween_property(
+		_route_name_ui, "position:y", _route_name_hidden_y, _ROUTE_NAME_SLIDE_SEC
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_route_name_tween.tween_callback(func() -> void:
+		if _route_name_ui:
+			_route_name_ui.visible = false
+	)
+
+
+func _hide_route_name_immediate() -> void:
+	if _route_name_tween != null and is_instance_valid(_route_name_tween):
+		_route_name_tween.kill()
+		_route_name_tween = null
+	if _route_name_ui:
+		_route_name_ui.visible = false
+		_route_name_ui.position.y = _route_name_hidden_y
 
 
 ## Mochila en modo venta (UI normal + panel dinero). Espera hasta cerrar.

@@ -78,6 +78,9 @@ func _apply_resolved_field_visuals(resolved: Dictionary) -> void:
 		_player_base_sprite.texture = player_base
 	if enemy_base != null and _enemy_base_sprite != null:
 		_enemy_base_sprite.texture = enemy_base
+	# Tras captura pueden quedar ocultos; cada combate los restaura.
+	set_battle_background_visible(true)
+	show_battle_bases()
 
 
 ## Scroll horizontal del fondo durante reveal + slide de bases (ref. Gen 3).
@@ -492,6 +495,28 @@ func _set_trainer_shown(trainer_root: Node2D, should_show: bool) -> void:
 func hide_all_enemy_trainers() -> void:
 	for i in 2:
 		_set_trainer_shown(get_enemy_trainer(i), false)
+
+
+## Oculta las plataformas de combate (solo fondo + showcase de captura).
+func hide_battle_bases() -> void:
+	if _player_base_sprite != null:
+		_player_base_sprite.visible = false
+	if _enemy_base_sprite != null:
+		_enemy_base_sprite.visible = false
+
+
+func show_battle_bases() -> void:
+	if _player_base_sprite != null:
+		_player_base_sprite.visible = true
+	if _enemy_base_sprite != null:
+		_enemy_base_sprite.visible = true
+
+
+func set_battle_background_visible(is_visible: bool) -> void:
+	if _background_sprite != null:
+		_background_sprite.visible = is_visible
+	if not is_visible:
+		stop_intro_background_scroll()
 
 
 func hide_all_hp_bars(mode: int = BattleRules.BattleModes.SINGLE) -> void:

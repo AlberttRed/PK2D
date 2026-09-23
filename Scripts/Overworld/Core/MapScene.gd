@@ -20,6 +20,9 @@ class_name MapScene
 ## ID del mapa (se auto-detecta del nombre si está vacío)
 @export var map_id: String = ""
 
+## Nombre para el cartel de ubicación (#918). Vacío = no mostrar cartel.
+@export var display_name: String = ""
+
 ## IDs de mapas vecinos (para carga seamless)
 ## Los vecinos se precargan y son visibles desde este mapa
 ## Ejemplo: ["Ruta1", "Ruta21"] para un pueblo con dos rutas
@@ -164,6 +167,14 @@ func _disable_processing() -> void:
 ## Obtiene el OverworldGrid de este mapa
 func get_grid() -> OverworldGrid:
 	return grid
+
+
+## Nombre para UI de ubicación; vacío si no hay cartel.
+func get_location_display_name() -> String:
+	var label := display_name.strip_edges()
+	if not label.is_empty():
+		return label
+	return ""
 
 
 func get_battle_back() -> BattleBackEnum.Values:

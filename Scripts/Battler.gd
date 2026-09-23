@@ -267,6 +267,7 @@ func to_battle_participant() -> BattleParticipant:
 	participant.intro_message = before_battle_message
 	participant.defeat_message = end_battle_message
 	participant.victory_message = ""  # Por si se añade en el futuro
+	participant.reward_money = get_reward_money() if not is_player else 0
 
 	# Mochila de combate: jugador → GameState (bag null). Trainer → TrainerData.battle_items.
 	if not is_player and trainer_data != null and not trainer_data.battle_items.is_empty():

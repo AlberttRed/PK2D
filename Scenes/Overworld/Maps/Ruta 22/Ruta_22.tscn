@@ -1007,6 +1007,7 @@ y_sort_enabled = true
 script = ExtResource("1_vvr7d")
 world_position = Vector2(-1792, -2432)
 neighbors = Array[String](["Ciudad_Verde"])
+display_name = "RUTA 22"
 bgm = ExtResource("bgm_route3")
 
 [node name="OverworldGrid" type="Node2D" parent="." unique_id=534902158 groups=["OverworldGrid"]]

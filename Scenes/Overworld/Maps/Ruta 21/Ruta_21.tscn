@@ -27,6 +27,7 @@ y_sort_enabled = true
 script = ExtResource("1_odm1c")
 world_position = Vector2(-64, 576)
 neighbors = Array[String](["Pueblo_Paleta"])
+display_name = "RUTA 21"
 
 [node name="OverworldGrid" type="Node2D" parent="." groups=["OverworldGrid"]]
 y_sort_enabled = true

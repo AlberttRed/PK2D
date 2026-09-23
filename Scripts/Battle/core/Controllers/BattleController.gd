@@ -20,6 +20,8 @@ var finished := false
 var winner_side: String = ""
 ## Resultado de captura exitosa (persistencia al cerrar combate).
 var successful_capture: CaptureResult = null
+## Spot/rival capturado: limpieza visual aplazada al fade post-captura.
+var successful_capture_target: BattlePokemon = null
 
 func _ready():
 	pass
@@ -212,6 +214,7 @@ func register_successful_capture(capture_result: CaptureResult, target_bp: Battl
 	if capture_result == null or not capture_result.success:
 		return
 	successful_capture = capture_result
+	successful_capture_target = target_bp
 	finished = true
 	winner_side = "capture"
 	# La limpieza visual del rival se aplaza a tras la secuencia de captura (véase `apply_capture_field_cleanup`).
@@ -219,7 +222,9 @@ func register_successful_capture(capture_result: CaptureResult, target_bp: Battl
 
 ## Retira al salvaje del campo tras la animación/mensajes de captura (no en `apply()` del handler).
 func apply_capture_field_cleanup(target_bp: BattlePokemon = null) -> void:
-	_remove_captured_wild_from_field(target_bp)
+	var bp: BattlePokemon = target_bp if target_bp != null else successful_capture_target
+	_remove_captured_wild_from_field(bp)
+	successful_capture_target = null
 
 
 func _remove_captured_wild_from_field(target_bp: BattlePokemon) -> void:
@@ -454,13 +459,54 @@ func _finalize_successful_capture() -> void:
 		successful_capture.captured_pokemon
 	)
 	var dest: Variant = registration.get("destination", CaptureRegistrationService.Destination.FAILED)
-	# Party: solo «¡Ya está! / atrapado!» (CaptureEffect); sin mensajes extra.
-	if dest == CaptureRegistrationService.Destination.PARTY:
-		return
+	var first_catch: bool = bool(registration.get("first_catch", false))
 
 	var display_name: String = str(registration.get("display_name", "")).strip_edges()
 	if display_name.is_empty() and successful_capture.captured_pokemon != null:
 		display_name = successful_capture.captured_pokemon.get_display_name()
+
+	var species_id := 0
+	var captured: Pokemon = successful_capture.captured_pokemon
+	if captured != null:
+		species_id = int(captured.pokemon_id)
+		if species_id <= 0 and captured.base != null:
+			species_id = int(captured.base.id)
+
+	# Primera captura: mensaje + ficha Pokédex + sprite (sale de la ficha al centro).
+	# Ya capturada: fade a negro completo → fondo + sprite ya centrado.
+	# HP bar del rival se mantiene hasta el fade; limpieza bajo negro.
+	if species_id > 0:
+		if first_catch:
+			await ui.show_message_from_dict({
+				"type": "input",
+				"text": "Los datos de %s se han registrado en la POKéDEX." % display_name,
+				"showIconAtEnd": true,
+			})
+			# El MessageBox queda debajo del fade; bajo negro se oculta fondo+UI y se abre la ficha.
+			await DisplayManager.show_pokedex_capture_entry(
+				species_id,
+				func(payload: Dictionary) -> void:
+					ui.prepare_capture_showcase(payload),
+				func() -> void:
+					apply_capture_field_cleanup()
+					ui.hide_field_for_capture_review()
+			)
+		else:
+			# Fade a negro (HP bar visible durante el fade) → limpieza + showcase bajo el FadeLayer.
+			await DisplayManager.fade_in(1.05)
+			apply_capture_field_cleanup()
+			ui.prepare_capture_showcase_centered(species_id, false)
+			await DisplayManager.fade_out(1.05)
+		ui.play_capture_showcase_cry(species_id)
+	else:
+		apply_capture_field_cleanup()
+
+	# Mote de inmediato (panel ya vacío en showcase; no dejar franja de fondo a la vista).
+	# El sprite del showcase se mantiene hasta el fade de salida de combate.
+	await ui.prompt_capture_nickname(display_name)
+
+	if dest == CaptureRegistrationService.Destination.PARTY:
+		return
 
 	if dest == CaptureRegistrationService.Destination.PC:
 		var box_name: String = str(registration.get("box_name", ""))
@@ -492,6 +538,7 @@ func _cleanup_battle_state():
 	finished = false
 	winner_side = ""
 	successful_capture = null
+	successful_capture_target = null
 
 	# Resetear controlador de turnos
 	turn_controller.reset()
