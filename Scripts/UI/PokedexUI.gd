@@ -178,6 +178,8 @@ func open() -> void:
 	if _controller == null:
 		push_error("PokedexUI: No se puede abrir sin controller.")
 		return
+	_capture_review_mode = false
+	_reset_entry_transition()
 	show()
 	set_process(true)
 	AudioManager.play_ui_pokedex_open()
@@ -188,10 +190,10 @@ func open() -> void:
 	_selected_search_index = 0
 	_selected_search_data_index = 0
 	_search_data_focus = false
-	_view_mode = ViewMode.REGIONS
 	_active_detail_panel = DetailPanel.ENTRY
 	_controller.refresh()
-	_render_regions()
+	# Restaura regiones/lista/ficha (tras captura la ENTRY podía quedar visible).
+	_enter_regions_mode()
 	_enable_input()
 	_block_player_control()
 
@@ -241,6 +243,15 @@ func finish_capture_review() -> void:
 	set_process(false)
 	_reset_arrow_frames()
 	_reset_held_navigation()
+	# Dejar paneles en estado regiones para la próxima apertura normal.
+	if _entry_panel != null:
+		_entry_panel.hide()
+		_entry_panel.modulate = Color.WHITE
+	if _nest_panel != null:
+		_nest_panel.hide()
+	if _form_panel != null:
+		_form_panel.hide()
+	_view_mode = ViewMode.REGIONS
 	hide()
 	_unblock_player_control()
 
