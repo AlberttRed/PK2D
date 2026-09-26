@@ -148,7 +148,7 @@ const _UI_SCREEN_FADE_DURATION: float = 0.2
 ## Fades del flujo post-captura / ficha Pokédex (×3 respecto al UI normal). No afecta salida de combate.
 const _CAPTURE_SCREEN_FADE_DURATION: float = _UI_SCREEN_FADE_DURATION * 3.0
 const _CAPTURE_REVEAL_FADE_DURATION: float = 0.9
-## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC.
+## Por encima de MSG (200) / ChoiceBox (210) al restaurar menús bajo el negro del PC / party.
 const _UI_FADE_COVER_Z: int = 220
 ## Bag sobre PC (sprites del party/cursor usan z_index > 0 y quedarían encima si Bag=0).
 const _BAG_OVER_PC_Z: int = 50
@@ -171,10 +171,10 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
 @onready var _route_name_ui: Panel = $RouteNameUI
-@onready var _route_name_label = $RouteNameUI/MarginContainer/StatsList/ItemCount/Name
+@onready var _route_name_label: Label = $RouteNameUI/MarginContainer/StatsList/ItemCount/Name
 
-@onready var _qty_amount_label: RichTextLabel = $QuantityPicker/Container/LabelHGSS
-@onready var _qty_price_label: RichTextLabel = $QuantityPicker/Container/Price
+@onready var _qty_amount_label: Label = $QuantityPicker/Container/Amount
+@onready var _qty_price_label: Label = $QuantityPicker/Container/Price
 @onready var _qty_up_arrow: Sprite2D = $QuantityPicker/QtyUp
 @onready var _qty_down_arrow: Sprite2D = $QuantityPicker/QtyDown
 
@@ -630,6 +630,19 @@ static func fade_in(duration: float = 0.3) -> void:
 	await instance.fade_layer.fade_in(duration)
 
 
+## Sube FadeLayer por encima de MSG/ChoiceBox durante un fade de UI. Devuelve el z previo.
+static func begin_ui_cover_fade() -> int:
+	if instance == null:
+		return 0
+	return instance._begin_ui_cover_fade()
+
+
+static func end_ui_cover_fade(prev_z: int) -> void:
+	if instance == null:
+		return
+	instance._end_ui_cover_fade(prev_z)
+
+
 ## Fade con máscara de pantalla.
 ## to_black=true: cubrir a negro (como FadeCommand IN). to_black=false: revelar (OUT).
 ## DOOR usa wipe horizontal + velo oscuro→claro. Si falla la máscara, fallback a fade sólido.
@@ -1000,14 +1013,20 @@ func _message_text_fits_one_line_at_current_width(text: String) -> bool:
 	if msg == null or msg.label == null:
 		return true
 	msg.fit_scroll_width_to_panel()
-	var rtl: RichTextLabel = msg.label
-	var font: Font = rtl.get_theme_font("normal_font")
-	var font_size: int = rtl.get_theme_font_size("normal_font_size")
+	var body: Label = msg.label
+	var font: Font = null
+	var font_size: int = 26
+	var settings := body.label_settings
+	if settings:
+		font = settings.font
+		font_size = settings.font_size
+	if font == null:
+		font = body.get_theme_default_font()
 	if font == null:
 		return true
-	var avail: float = rtl.size.x
+	var avail: float = body.size.x
 	if avail < 8.0:
-		avail = rtl.custom_minimum_size.x
+		avail = body.custom_minimum_size.x
 	if avail < 8.0 and msg.scroll != null:
 		avail = maxf(1.0, msg.scroll.offset_right - msg.scroll.offset_left)
 	var measured: float = font.get_string_size(
@@ -1064,7 +1083,7 @@ func _adapt_pc_msg_height_to_lines() -> void:
 	if msg.has_method("_adjust_container_size"):
 		msg._adjust_container_size()
 	var lines: int = maxi(1, msg.label.get_line_count())
-	msg.label.nextLineStop = lines
+	msg.nextLineStop = lines
 
 	var bar_h: float = _MSG_BAR_HEIGHT_PX
 	if lines <= 1:
@@ -1073,12 +1092,12 @@ func _adapt_pc_msg_height_to_lines() -> void:
 		var top_m: float = 16.0
 		if msg.scroll != null:
 			top_m = msg.scroll.offset_top
-		var content_h: float = float(msg.label.get_content_height())
+		var content_h: float = float(msg._label_content_height()) if msg.has_method("_label_content_height") else 0.0
 		if content_h < 8.0:
-			var fs: int = msg.label.get_theme_font_size("normal_font_size")
-			if fs <= 0:
-				fs = 26
-			content_h = float(lines) * float(fs + 8)
+			var line_h: float = float(msg.label.get_line_height())
+			if line_h < 1.0:
+				line_h = 34.0
+			content_h = float(lines) * line_h
 		bar_h = top_m + content_h + _MSG_SCROLL_BOTTOM_INSET_PX
 		bar_h = maxf(bar_h, _MSG_BAR_HEIGHT_PX)
 	_apply_pc_msg_box_rect(bar_h)
@@ -1096,7 +1115,7 @@ func _fit_visible_msg_height_to_content() -> void:
 	if msg.has_method("_adjust_container_size"):
 		msg._adjust_container_size()
 	var lines: int = maxi(1, msg.label.get_line_count())
-	msg.label.nextLineStop = lines
+	msg.nextLineStop = lines
 	if msg.has_method("_fit_panel_height_to_all_lines"):
 		msg._fit_panel_height_to_all_lines()
 	# Si el fit encogió de más (1 línea reportada antes del wrap), forzar al menos 2 líneas.
@@ -1235,7 +1254,20 @@ func _close_message() -> void:
 
 
 func _is_party_ui_open() -> bool:
-	return _party_ui != null and _party_ui.visible
+	if _party_ui != null and _party_ui.visible:
+		return true
+	return _is_battle_party_ui_open()
+
+
+## Party instanciado dentro de BattleUI (cambio / ítem en combate).
+func _is_battle_party_ui_open() -> bool:
+	if BattleNew == null or not BattleNew.visible:
+		return false
+	var battle_ui := BattleNew.get_node_or_null("BattleUI")
+	if battle_ui == null:
+		return false
+	var battle_party: Variant = battle_ui.get("party_ui")
+	return battle_party is Control and (battle_party as Control).visible
 
 
 func _set_party_help_instant(text: String) -> void:
@@ -2253,9 +2285,7 @@ func _on_active_map_changed_for_route_name(map_scene: Node) -> void:
 func _show_route_name_banner(location_name: String) -> void:
 	if _route_name_ui == null:
 		return
-	if _route_name_label != null and _route_name_label.has_method("setText"):
-		_route_name_label.setText(location_name)
-	elif _route_name_label != null:
+	if _route_name_label != null:
 		_route_name_label.text = location_name
 
 	if _route_name_tween != null and is_instance_valid(_route_name_tween):
@@ -2424,12 +2454,12 @@ func _apply_quantity_picker_price_layout(with_price: bool) -> void:
 		if _qty_amount_label:
 			_qty_amount_label.offset_left = 4.0
 			_qty_amount_label.offset_right = 90.0
-			_qty_amount_label.set("align", 0)
+			_qty_amount_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		if _qty_price_label:
 			_qty_price_label.visible = true
 			_qty_price_label.offset_left = 96.0
 			_qty_price_label.offset_right = 200.0
-			_qty_price_label.set("align", 2)
+			_qty_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		if _qty_up_arrow:
 			_qty_up_arrow.position.x = _QTY_PRICE_ARROW_X
 		if _qty_down_arrow:
@@ -2463,34 +2493,11 @@ func _refresh_quantity_picker_label() -> void:
 		text = "x%02d" % _qty_pick_value
 	else:
 		text = "x%03d" % _qty_pick_value
-	if _qty_amount_label.has_method("setText"):
-		_qty_amount_label.setText(text)
-	else:
-		_qty_amount_label.text = text
-	_qty_amount_label.visible_characters = -1
-	_qty_amount_label.visible_ratio = 1.0
-	for child in _qty_amount_label.get_children():
-		if child is RichTextLabel:
-			(child as RichTextLabel).visible_characters = -1
-			(child as RichTextLabel).visible_ratio = 1.0
-	if _qty_amount_label.has_method("_sync_outline_visual_immediate"):
-		_qty_amount_label._sync_outline_visual_immediate()
+	_qty_amount_label.text = text
 
 	if _qty_price_label != null and _qty_unit_price > 0:
 		var total := _qty_unit_price * _qty_pick_value
-		var price_text := "$%s" % _format_qty_thousands(total)
-		if _qty_price_label.has_method("setText"):
-			_qty_price_label.setText(price_text)
-		else:
-			_qty_price_label.text = price_text
-		_qty_price_label.visible_characters = -1
-		_qty_price_label.visible_ratio = 1.0
-		for child in _qty_price_label.get_children():
-			if child is RichTextLabel:
-				(child as RichTextLabel).visible_characters = -1
-				(child as RichTextLabel).visible_ratio = 1.0
-		if _qty_price_label.has_method("_sync_outline_visual_immediate"):
-			_qty_price_label._sync_outline_visual_immediate()
+		_qty_price_label.text = "$%s" % _format_qty_thousands(total)
 
 
 func _format_qty_thousands(amount: int) -> String:
@@ -2662,6 +2669,18 @@ func _open_bag_for_pc_deposit(
 	_on_ui_visibility_changed()
 
 
+func _begin_ui_cover_fade() -> int:
+	var prev_z: int = fade_layer.z_index if fade_layer else 0
+	if fade_layer != null:
+		fade_layer.z_index = _UI_FADE_COVER_Z
+	return prev_z
+
+
+func _end_ui_cover_fade(prev_z: int) -> void:
+	if fade_layer != null:
+		fade_layer.z_index = prev_z
+
+
 func _open_party_ui(with_screen_fade: bool = true) -> void:
 	if _bag_ui != null and _bag_ui.visible:
 		return
@@ -2675,7 +2694,9 @@ func _open_party_ui(with_screen_fade: bool = true) -> void:
 		push_error("DisplayManager: Nodo PartyUI no disponible en la escena.")
 		return
 
+	var fade_z: int = 0
 	if with_screen_fade:
+		fade_z = _begin_ui_cover_fade()
 		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 
 	if pause_menu and pause_menu.visible:
@@ -2689,6 +2710,7 @@ func _open_party_ui(with_screen_fade: bool = true) -> void:
 
 	if with_screen_fade:
 		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+		_end_ui_cover_fade(fade_z)
 
 
 func _close_party_ui() -> void:
@@ -2704,10 +2726,12 @@ func _on_party_back_requested() -> void:
 
 
 func _transition_fade_party_to_pause_menu() -> void:
+	var fade_z: int = _begin_ui_cover_fade()
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	_close_party_ui()
 	await _await_ui_control_hidden(_party_ui)
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	_end_ui_cover_fade(fade_z)
 
 
 func _on_party_closed() -> void:
@@ -2733,12 +2757,14 @@ func _on_party_closed() -> void:
 ## Party → mochila (cancelar objetivo o fin de sesión ítem): negro con party aún montado, cerrar, abrir bolsa, descubrir.
 func _fade_close_party_reopen_bag_overworld() -> void:
 	_skip_pause_open_on_party_close = true
+	var fade_z: int = _begin_ui_cover_fade()
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	_close_party_ui()
 	await _await_ui_control_hidden(_party_ui)
 	_skip_pause_open_on_party_close = false
 	_reopen_bag_after_party_flow()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	_end_ui_cover_fade(fade_z)
 
 
 func _reopen_bag_after_party_flow() -> void:
@@ -2774,6 +2800,7 @@ func _on_party_use_item_requested(slot_index: int) -> void:
 
 
 func _transition_fade_party_to_bag_for_use_item() -> void:
+	var fade_z: int = _begin_ui_cover_fade()
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	# Leer slot antes de _close_party_ui: _on_party_closed pone _resume_party_focus_slot en -1.
 	var slot := _resume_party_focus_slot
@@ -2790,17 +2817,21 @@ func _transition_fade_party_to_bag_for_use_item() -> void:
 	_bag_ui.open()
 	_on_ui_visibility_changed()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	_end_ui_cover_fade(fade_z)
 
 
 func _deferred_reopen_party_after_bag() -> void:
+	var fade_z: int = _begin_ui_cover_fade()
 	await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
 	var slot := _resume_party_focus_slot
 	_resume_party_focus_slot = -1
 	if _party_ui != null and _party_ui.visible:
 		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+		_end_ui_cover_fade(fade_z)
 		return
 	if _bag_ui != null and _bag_ui.visible:
 		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+		_end_ui_cover_fade(fade_z)
 		return
 	if pause_menu and pause_menu.visible:
 		pause_menu.close(false)
@@ -2810,6 +2841,7 @@ func _deferred_reopen_party_after_bag() -> void:
 	_party_ui.open(slot)
 	_on_ui_visibility_changed()
 	await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+	_end_ui_cover_fade(fade_z)
 
 
 func _open_bag_ui(with_screen_fade: bool = true) -> void:

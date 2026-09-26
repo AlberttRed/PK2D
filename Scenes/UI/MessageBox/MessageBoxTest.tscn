@@ -1,19 +1,27 @@
-[gd_scene load_steps=13 format=3 uid="uid://cye3jukjtjdkr"]
+[gd_scene load_steps=11 format=3 uid="uid://cye3jukjtjdkr"]
 
-[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_js7it"]
-[ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_hmrit"]
-[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_eax5n"]
-[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="4_xiqp8"]
-[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_7w7r3"]
-[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_a2ici"]
+[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_1g85p"]
+[ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_re8jy"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_15orl"]
+[ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_ugtco"]
+[ext_resource type="Animation" uid="uid://beugpt1ql5na2" path="res://Resources/Animations/UI/MessageBox/next_animation.tres" id="6_thy6l"]
 
-[sub_resource type="FontVariation" id="FontVariation_djhwc"]
-base_font = ExtResource("3_eax5n")
+[sub_resource type="FontVariation" id="FontVariation_msg"]
+base_font = ExtResource("3_15orl")
 spacing_top = 4
 
-[sub_resource type="Theme" id="Theme_x4phv"]
-default_font = SubResource("FontVariation_djhwc")
-default_font_size = 26
+[sub_resource type="LabelSettings" id="LabelSettings_msg"]
+font = SubResource("FontVariation_msg")
+font_size = 26
+line_spacing = 8
+font_color = Color(0.317647, 0.317647, 0.34902, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.65098, 0.65098, 0.682353, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.65098, 0.65098, 0.682353, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.65098, 0.65098, 0.682353, 1)
 
 [sub_resource type="Animation" id="Animation_bs852"]
 length = 0.001
@@ -42,7 +50,7 @@ step = 0.25
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../ScrollContainer/Container/LabelHGSS:visible_ratio")
+tracks/0/path = NodePath("../ScrollContainer/Container/Body:visible_ratio")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -54,7 +62,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5i0nh"]
 _data = {
-&"Idle": ExtResource("6_a2ici"),
+&"Idle": ExtResource("6_thy6l"),
 &"RESET": SubResource("Animation_bs852"),
 &"Scroll": SubResource("Animation_8ajbi"),
 &"Typing": SubResource("Animation_mbf3k")
@@ -68,8 +76,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/panel = ExtResource("1_js7it")
-script = ExtResource("2_hmrit")
+theme_override_styles/panel = ExtResource("1_1g85p")
+script = ExtResource("2_re8jy")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_direction = 1
@@ -89,90 +97,26 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="LabelHGSS" type="RichTextLabel" parent="ScrollContainer/Container"]
+[node name="Body" type="Label" parent="ScrollContainer/Container"]
 layout_mode = 0
 offset_right = 433.0
 offset_bottom = 128.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = SubResource("Theme_x4phv")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 0
-bbcode_enabled = true
 text = "Esta es la primera línea
 Esta es la segunda línea
 Esta es la tercera línea
 Esta es la cuarta línea"
-fit_content = true
-scroll_active = false
-tab_size = 2
+label_settings = SubResource("LabelSettings_msg")
+autowrap_mode = 3
+clip_text = false
 visible_characters = 0
-visible_characters_behavior = 1
-script = ExtResource("4_xiqp8")
-metadata/_edit_lock_ = true
-
-[node name="Outline" type="RichTextLabel" parent="ScrollContainer/Container/LabelHGSS"]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-size_flags_stretch_ratio = 0.0
-theme = SubResource("Theme_x4phv")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "Esta es la primera línea
-Esta es la segunda línea
-Esta es la tercera línea
-Esta es la cuarta línea
-
-"
-fit_content = true
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="Outline2" type="RichTextLabel" parent="ScrollContainer/Container/LabelHGSS"]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-size_flags_stretch_ratio = 0.0
-theme = SubResource("Theme_x4phv")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "Esta es la primera línea
-Esta es la segunda línea
-Esta es la tercera línea
-Esta es la cuarta línea
-
-"
-fit_content = true
-scroll_active = false
-tab_size = 2
 visible_characters_behavior = 1
 metadata/_edit_lock_ = true
 
 [node name="next" type="Sprite2D" parent="."]
 position = Vector2(491, 69)
-texture = ExtResource("5_7w7r3")
+texture = ExtResource("5_ugtco")
 hframes = 4
 
 [node name="Timer" type="Timer" parent="."]

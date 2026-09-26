@@ -47,9 +47,9 @@ func loadPokemon(pokemon: Pokemon) -> void:
 	self.pokemon = pokemon
 	focus_mode = FocusMode.FOCUS_ALL
 
-	$Nombre.setText(pokemon.get_display_name())
+	$Nombre.text = pokemon.get_display_name()
 
-	$dNv.setText(str(pokemon.level))
+	$dNv.text = str(pokemon.level)
 
 	if pokemon.fainted:
 		$Status.visible = true

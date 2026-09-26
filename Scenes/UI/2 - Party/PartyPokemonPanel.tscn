@@ -23,7 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://ch6utj8qsdwjd" path="res://Sprites/UI/Party/partyPanelRectSelFnt.png" id="12_erbtu"]
 [ext_resource type="Texture2D" uid="uid://bpxsiqqkol2sm" path="res://Sprites/UI/Party/partyPanelRectSwap.png" id="13_q38f5"]
 [ext_resource type="Texture2D" uid="uid://bvsra5kkr6mfw" path="res://Sprites/UI/Party/partyPanelRectSelSwap.png" id="14_iirr2"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="15_60258"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="15_hgss"]
 [ext_resource type="Texture2D" uid="uid://b8fyoc1ue03hn" path="res://Sprites/Pictures/Nv_icon_white.png" id="16_hfvma"]
 [ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="17_ltvh3"]
 [ext_resource type="Texture2D" uid="uid://biekd0edp2k6i" path="res://Sprites/UI/Party/icon_item.png" id="27_cg3cy"]
@@ -84,21 +84,53 @@ region_rect = Rect2(0, 0, 256, 98)
 texture = ExtResource("14_iirr2")
 region_rect = Rect2(0, 0, 256, 98)
 
-[sub_resource type="FontVariation" id="FontVariation_hc0lt"]
+[sub_resource type="FontVariation" id="FontVariation_name"]
+base_font = ExtResource("15_hgss")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
+font = SubResource("FontVariation_name")
+font_size = 26
+font_color = Color(1, 1, 1, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.188235, 0.188235, 0.188235, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_level"]
 base_font = ExtResource("17_ltvh3")
 spacing_top = 4
 
-[sub_resource type="Theme" id="Theme_j2fwe"]
-default_font = SubResource("FontVariation_hc0lt")
-default_font_size = 16
+[sub_resource type="LabelSettings" id="LabelSettings_level"]
+font = SubResource("FontVariation_level")
+font_size = 16
+font_color = Color(1, 1, 1, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.188235, 0.188235, 0.188235, 1)
 
-[sub_resource type="FontVariation" id="FontVariation_d888x"]
+[sub_resource type="FontVariation" id="FontVariation_hp"]
 base_font = ExtResource("17_ltvh3")
 spacing_top = 4
 
-[sub_resource type="Theme" id="Theme_cg3cy"]
-default_font = SubResource("FontVariation_d888x")
-default_font_size = 16
+[sub_resource type="LabelSettings" id="LabelSettings_hp"]
+font = SubResource("FontVariation_hp")
+font_size = 16
+font_color = Color(1, 1, 1, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.1882353, 0.1882353, 0.1882353, 1)
 
 [node name="PKMN_0" type="Panel" unique_id=1522250746]
 offset_left = -260.0
@@ -123,15 +155,14 @@ metadata/_edit_vertical_guides_ = [-245.0]
 metadata/_edit_horizontal_guides_ = [84.0]
 metadata/_edit_lock_ = true
 
-[node name="Nombre" parent="." unique_id=1429875419 instance=ExtResource("15_60258")]
+[node name="Nombre" type="Label" parent="." unique_id=1429875419]
 layout_mode = 0
 offset_left = 95.0
 offset_top = 16.0
 offset_right = 266.0
 offset_bottom = 48.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
 text = "Pikachu"
+label_settings = SubResource("LabelSettings_name")
 metadata/_edit_lock_ = true
 
 [node name="lNv" type="Sprite2D" parent="." unique_id=1984843377]
@@ -140,16 +171,14 @@ texture = ExtResource("16_hfvma")
 region_rect = Rect2(0, 16, 44, 16)
 metadata/_edit_lock_ = true
 
-[node name="dNv" parent="." unique_id=890660634 instance=ExtResource("15_60258")]
+[node name="dNv" type="Label" parent="." unique_id=890660634]
 layout_mode = 0
 offset_left = 40.0
 offset_top = 66.0
 offset_right = 99.0
 offset_bottom = 98.0
-theme = SubResource("Theme_j2fwe")
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
 text = "25"
+label_settings = SubResource("LabelSettings_level")
 metadata/_edit_lock_ = true
 
 [node name="Status" type="Sprite2D" parent="." unique_id=1990928173]
@@ -167,21 +196,9 @@ offset_left = 63.0
 offset_top = 58.0
 offset_right = 181.0
 offset_bottom = 76.0
-theme = SubResource("Theme_cg3cy")
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
-
-[node name="Outline" parent="health_bar/Label" index="2"]
-offset_right = 107.0
-offset_bottom = 29.0
-theme = SubResource("Theme_cg3cy")
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
-
-[node name="Outline2" parent="health_bar/Label" index="3"]
-theme = SubResource("Theme_cg3cy")
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+text = "39/39"
+label_settings = SubResource("LabelSettings_hp")
+horizontal_alignment = 1
 
 [node name="TextureProgressBar" parent="health_bar" index="1"]
 offset_left = 39.0
@@ -225,4 +242,3 @@ texture = ExtResource("27_cg3cy")
 [connection signal="focus_exited" from="." to="." method="_on_focus_exited"]
 
 [editable path="health_bar"]
-[editable path="health_bar/Label"]

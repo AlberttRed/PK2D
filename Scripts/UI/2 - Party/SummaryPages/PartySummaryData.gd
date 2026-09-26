@@ -8,9 +8,9 @@ func open() -> void:
 func loadPokemonInfo(pokemon: Pokemon) -> void:
 	if pokemon == null or pokemon.base == null:
 		return
-	$dNumDex.setText(str(int(pokemon.pokemon_id)).pad_zeros(3))
+	$dNumDex.text = str(int(pokemon.pokemon_id)).pad_zeros(3)
 
-	$dEspecie.setText(pokemon.base.Name)
+	$dEspecie.text = pokemon.base.Name
 	$Tipos/pTipo1/dTipo1.vframes = 1
 	var t1 := pokemon.get_type1()
 	if t1 != null and t1.image != null:
@@ -24,22 +24,22 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 	else:
 		$Tipos/pTipo2.visible = false
 
-	$dEO.setText(pokemon.original_trainer)
+	$dEO.text = pokemon.original_trainer
 
-	$dID.setText(str(pokemon.trainer_id))
+	$dID.text = str(pokemon.trainer_id)
 
-	$dExperiencia.setText(str(pokemon.totalExp))
+	$dExperiencia.text = str(pokemon.totalExp)
 
-	$dSigNivel.setText(str(pokemon.nextLevelExpBase - pokemon.totalExp))
+	$dSigNivel.text = str(pokemon.nextLevelExpBase - pokemon.totalExp)
 
 	var exp_seg: Vector2i = pokemon.get_exp_bar_segment_values()
 	$exp_bar.set_values(exp_seg.x, exp_seg.y)
 
 
 func clear() -> void:
-	$dNumDex.setText("")
+	$dNumDex.text = ""
 
-	$dEspecie.setText("")
+	$dEspecie.text = ""
 	$Tipos/pTipo1/dTipo1.vframes = 2
 	$Tipos/pTipo1/dTipo1.texture = null
 
@@ -47,12 +47,12 @@ func clear() -> void:
 	$Tipos/pTipo2/dTipo2.vframes = 2
 	$Tipos/pTipo2/dTipo2.texture = null
 
-	$dEO.setText("")
+	$dEO.text = ""
 
-	$dID.setText("")
+	$dID.text = ""
 
-	$dExperiencia.setText("")
+	$dExperiencia.text = ""
 
-	$dSigNivel.setText("")
+	$dSigNivel.text = ""
 
 	$exp_bar.clear()

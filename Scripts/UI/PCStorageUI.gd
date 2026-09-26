@@ -595,10 +595,7 @@ func _clear_all_slots() -> void:
 func _set_box_name_text(box_name: String) -> void:
 	if _box_name_label == null:
 		return
-	if _box_name_label.has_method("setText"):
-		_box_name_label.setText(box_name)
-	else:
-		_box_name_label.text = "[center]%s" % box_name
+	_box_name_label.text = box_name
 
 
 func _get_box_wallpaper_texture(wallpaper_id: int) -> Texture2D:
@@ -631,32 +628,20 @@ func _apply_box_wallpaper(wallpaper_id: int) -> void:
 func _set_equipo_count(count: int) -> void:
 	if _equipo_label == null:
 		return
-	var msg := "EQUIPO:  %d" % count
-	if _equipo_label.has_method("setText"):
-		_equipo_label.setText(msg)
-	else:
-		_equipo_label.text = "[center]%s" % msg
+	_equipo_label.text = "EQUIPO:  %d" % count
 
 
 func _set_close_button_holding(holding: bool) -> void:
 	if _salir_label == null:
 		return
-	var msg := "CANCELAR" if holding else "SALIR"
-	if _salir_label.has_method("setText"):
-		_salir_label.setText(msg)
-	else:
-		_salir_label.text = "[center]%s" % msg
+	_salir_label.text = "CANCELAR" if holding else "SALIR"
 
 
 func _refresh_party_exit_label() -> void:
 	if _party_salir_label == null:
 		return
 	# DEJAR sale del PC; SACAR/MOVER solo cierran el panel.
-	var msg := "SALIR" if _mode == Mode.DEPOSIT else "CERRAR"
-	if _party_salir_label.has_method("setText"):
-		_party_salir_label.setText(msg)
-	else:
-		_party_salir_label.text = "[center]%s" % msg
+	_party_salir_label.text = "SALIR" if _mode == Mode.DEPOSIT else "CERRAR"
 
 
 func _setup_box_clip() -> void:
@@ -865,10 +850,29 @@ func _attach_hand_keep_global(parent: Node) -> void:
 func _set_label_text(label, msg: String) -> void:
 	if label == null:
 		return
-	if label.has_method("setText"):
-		label.setText(msg)
+	label.text = msg
+
+
+func _set_item_label_style(has_item: bool) -> void:
+	if _info_item == null:
+		return
+	var base: LabelSettings = _info_item.label_settings
+	if base == null:
+		return
+	var settings := base.duplicate() as LabelSettings
+	if has_item:
+		settings.font_color = Color(0.25098, 0.25098, 0.25098, 1)
+		var shadow := Color(0.690196, 0.690196, 0.690196, 1)
+		settings.set("stacked_shadow_0/color", shadow)
+		settings.set("stacked_shadow_1/color", shadow)
+		settings.set("stacked_shadow_2/color", shadow)
 	else:
-		label.text = msg
+		settings.font_color = Color("#D2D2D2")
+		var shadow2 := Color("#E0E0E0")
+		settings.set("stacked_shadow_0/color", shadow2)
+		settings.set("stacked_shadow_1/color", shadow2)
+		settings.set("stacked_shadow_2/color", shadow2)
+	_info_item.label_settings = settings
 
 
 func _is_slot_visually_empty(slot_index: int) -> bool:
@@ -1051,21 +1055,6 @@ func _refresh_info_panel() -> void:
 	_set_item_label_style(has_item)
 
 
-func _set_item_label_style(has_item: bool) -> void:
-	if _info_item == null:
-		return
-	var fill: Color
-	var shadow: Color
-	if has_item:
-		fill = Color(0.25098, 0.25098, 0.25098, 1)
-		shadow = Color(0.690196, 0.690196, 0.690196, 1)
-	else:
-		fill = Color("#D2D2D2")
-		shadow = Color("#E0E0E0")
-	_info_item.set("theme_override_colors/default_color", fill)
-	_info_item.set("theme_override_colors/font_shadow_color", shadow)
-
-
 func _clear_info_panel() -> void:
 	_info_sprite_focus_id = 0
 	_kill_info_depixel_tween()
@@ -1075,6 +1064,7 @@ func _clear_info_panel() -> void:
 	_set_label_text(_info_level, "")
 	_set_label_text(_info_ability, "")
 	_set_label_text(_info_item, "")
+	_set_item_label_style(false)
 	if _info_lvl_icon:
 		_info_lvl_icon.hide()
 	_hide_info_markings()

@@ -9,7 +9,7 @@ signal updated
 @export var animate_duration := 1.0
 
 @onready var progress_bar: TextureProgressBar = $TextureProgressBar
-@onready var lbl_value: RichTextLabel = $Label
+@onready var lbl_value: Label = $Label
 
 var current_value: int = 0
 var max_value: int = 0
@@ -30,7 +30,7 @@ func set_values(current: int, max: int) -> void:
 	progress_bar.max_value = max
 	progress_bar.value = current
 	if show_label:
-		lbl_value.setText("%d/%d" % [current, max])
+		lbl_value.text = "%d/%d" % [current, max]
 	update_color()
 
 func update_color() -> void:
@@ -62,7 +62,7 @@ func animate_to(new_value: int, duration: float = -1.0) -> void:
 func set_label_value(value: float) -> void:
 	# Asegurarse de que el valor mostrado esté entre 0 y max_value
 	var display_value = clamp(round(value), 0, max_value)
-	lbl_value.setText("%d/%d" % [display_value, max_value])
+	lbl_value.text = "%d/%d" % [display_value, max_value]
 	update_color()
 	
 func set_value_visible(state:bool):
@@ -71,6 +71,6 @@ func set_value_visible(state:bool):
 func clear() -> void:
 	progress_bar.value = 0
 	progress_bar.max_value = 0
-	lbl_value.setText("")
+	lbl_value.text = ""
 	current_value = 0
 	max_value = 0

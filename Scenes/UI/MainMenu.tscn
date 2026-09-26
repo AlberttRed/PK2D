@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c42bvqno262a2" path="res://Scripts/UI/MainMenu.gd" id="1_mainmenu_script"]
 [ext_resource type="Texture2D" uid="uid://d11qm531jjlas" path="res://Sprites/UI/Main Menu/loadPanels_big.png" id="1_mjmdf"]
 [ext_resource type="Texture2D" uid="uid://bjndb4hxhlip5" path="res://Sprites/UI/Main Menu/loadPanels_small.png" id="2_72sra"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_t6w0q"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://8rakwsjk6iyv" path="res://Sprites/Overworlds/Characters/Red/red_walk.png" id="3_k8um8"]
 [ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="3_t6w0q"]
 
@@ -57,6 +57,35 @@ animations = [{
 texture = ExtResource("2_72sra")
 region_rect = Rect2(0, 0, 408, 46)
 
+
+[sub_resource type="FontVariation" id="FontVariation_mm"]
+base_font = ExtResource("2_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_gray"]
+font = SubResource("FontVariation_mm")
+font_size = 26
+font_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.53333336, 0.53333336, 0.53333336, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_blue"]
+font = SubResource("FontVariation_mm")
+font_size = 26
+font_color = Color(0.21960784, 0.6313726, 0.98039216, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.21960784, 0.40392157, 0.6509804, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.21960784, 0.40392157, 0.6509804, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.21960784, 0.40392157, 0.6509804, 1)
+
 [node name="MainMenu" type="Panel" unique_id=240508541]
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,40 +137,35 @@ size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_t6w0q")
 metadata/_edit_lock_ = true
 
-[node name="Cont" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1300870979 instance=ExtResource("2_t6w0q")]
+[node name="Cont" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1300870979]
 layout_mode = 0
 offset_left = 34.0
 offset_top = 9.0
 offset_right = 389.0
 offset_bottom = 41.0
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Continuar"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
-[node name="Route" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1755637314 instance=ExtResource("2_t6w0q")]
+[node name="Route" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1755637314]
 layout_mode = 0
 offset_left = 200.0
 offset_top = 9.0
 offset_right = 386.0
 offset_bottom = 41.0
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Ruta 3"
+label_settings = SubResource("LabelSettings_gray")
 horizontal_alignment = 2
-justification_flags = 161
-align = 2
 metadata/_edit_lock_ = true
 
-[node name="Name" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=476510426 instance=ExtResource("2_t6w0q")]
+[node name="Name" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=476510426]
 layout_mode = 0
 offset_left = 108.0
 offset_top = 68.0
 offset_right = 463.0
 offset_bottom = 100.0
-theme_override_colors/default_color = Color(0.21960784, 0.6313726, 0.98039216, 1)
-theme_override_colors/font_shadow_color = Color(0.21960784, 0.40392157, 0.6509804, 1)
 text = "PLAYER"
+label_settings = SubResource("LabelSettings_blue")
 metadata/_edit_lock_ = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=66277008]
@@ -163,22 +187,19 @@ custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=123181972 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=123181972]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Medallas:"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
-[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=1168312102 instance=ExtResource("2_t6w0q")]
+[node name="Data" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Medals" unique_id=1168312102]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "0"
+label_settings = SubResource("LabelSettings_gray")
 horizontal_alignment = 2
-align = 2
 metadata/_edit_lock_ = true
 
 [node name="Pokedex" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats" unique_id=2082712347]
@@ -186,22 +207,19 @@ custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1132156807 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1132156807]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Pokédex:"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
-[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1042211921 instance=ExtResource("2_t6w0q")]
+[node name="Data" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Pokedex" unique_id=1042211921]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "0"
+label_settings = SubResource("LabelSettings_gray")
 horizontal_alignment = 2
-align = 2
 metadata/_edit_lock_ = true
 
 [node name="Time" type="HBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats" unique_id=1480154841]
@@ -209,22 +227,19 @@ custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=806339359 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=806339359]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Tiempo:"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
-[node name="Data" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=1737998071 instance=ExtResource("2_t6w0q")]
+[node name="Data" type="Label" parent="Control/MenuListViewport/VBoxContainer/Continue/Stats/Time" unique_id=1737998071]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "0m"
+label_settings = SubResource("LabelSettings_gray")
 horizontal_alignment = 2
-align = 2
 metadata/_edit_lock_ = true
 
 [node name="Party" type="VBoxContainer" parent="Control/MenuListViewport/VBoxContainer/Continue" unique_id=1518394070]
@@ -298,15 +313,14 @@ size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
 metadata/_edit_lock_ = true
 
-[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/New game" unique_id=973013026 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/New game" unique_id=973013026]
 layout_mode = 0
 offset_left = 34.0
 offset_top = 9.0
 offset_right = 389.0
 offset_bottom = 41.0
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Partida Nueva"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
 [node name="Options" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=1162825797]
@@ -317,15 +331,14 @@ size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
 metadata/_edit_lock_ = true
 
-[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/Options" unique_id=1100389873 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/Options" unique_id=1100389873]
 layout_mode = 0
 offset_left = 34.0
 offset_top = 9.0
 offset_right = 389.0
 offset_bottom = 41.0
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Opciones"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true
 
 [node name="Quit" type="Panel" parent="Control/MenuListViewport/VBoxContainer" unique_id=53193989]
@@ -336,13 +349,12 @@ size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxTexture_k8um8")
 metadata/_edit_lock_ = true
 
-[node name="LabelHGSS" parent="Control/MenuListViewport/VBoxContainer/Quit" unique_id=1857106548 instance=ExtResource("2_t6w0q")]
+[node name="Label" type="Label" parent="Control/MenuListViewport/VBoxContainer/Quit" unique_id=1857106548]
 layout_mode = 0
 offset_left = 34.0
 offset_top = 9.0
 offset_right = 389.0
 offset_bottom = 41.0
-theme_override_colors/default_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-theme_override_colors/font_shadow_color = Color(0.53333336, 0.53333336, 0.53333336, 1)
 text = "Salir del juego"
+label_settings = SubResource("LabelSettings_gray")
 metadata/_edit_lock_ = true

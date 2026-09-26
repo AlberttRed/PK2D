@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dvk3qjfw5vfa5" path="res://Sprites/UI/Party/partyCancelSelNarrow.png" id="16"]
 [ext_resource type="PackedScene" uid="uid://b6bvq2kmkv5sh" path="res://Scenes/UI/2 - Party/PartyPokemonPanel.tscn" id="19_xxnex"]
 [ext_resource type="Texture2D" uid="uid://d0qqsw0yrr3cm" path="res://Sprites/UI/Party/choice 1_old.png" id="26_nib22"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="31"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="31_font"]
 [ext_resource type="PackedScene" uid="uid://gdxd2a726tc0" path="res://Scenes/UI/2 - Party/PartySummary.tscn" id="36_o5y3j"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_oj2bc"]
@@ -37,6 +37,22 @@ texture_margin_top = 14.0
 texture_margin_right = 14.0
 texture_margin_bottom = 14.0
 region_rect = Rect2(0, 0, 48, 48)
+
+[sub_resource type="FontVariation" id="FontVariation_salir"]
+base_font = ExtResource("31_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_salir"]
+font = SubResource("FontVariation_salir")
+font_size = 26
+font_color = Color(1, 1, 1, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.188235, 0.188235, 0.188235, 1)
 
 [node name="PartyUI" type="Panel" unique_id=208291322]
 offset_right = 512.0
@@ -116,34 +132,24 @@ focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_il6w1")
 metadata/_edit_lock_ = true
 
-[node name="Nombre2" parent="Salir" unique_id=1552844581 instance=ExtResource("31")]
+[node name="Nombre2" type="Label" parent="Salir" unique_id=1552844581]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 10.0
 offset_right = 104.0
 offset_bottom = 42.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-theme_override_constants/paragraph_separation = 0
 text = "SALIR"
-fit_content = true
-align = 1
+label_settings = SubResource("LabelSettings_salir")
+horizontal_alignment = 1
 
 [node name="FIXED_MSG" type="Panel" parent="." unique_id=1627524951]
+visible = false
 layout_mode = 0
 offset_top = 313.0
 offset_right = 370.0
 offset_bottom = 379.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_3m2bu")
 metadata/_edit_lock_ = true
-
-[node name="Label" parent="FIXED_MSG" unique_id=1628729124 instance=ExtResource("31")]
-layout_mode = 0
-offset_left = 13.899
-offset_top = 16.848
-offset_right = 521.899
-offset_bottom = 93.848
-text = "Elige a un Pokémon."
 
 [node name="SUMMARY" parent="." unique_id=1556444328 instance=ExtResource("36_o5y3j")]
 visible = false

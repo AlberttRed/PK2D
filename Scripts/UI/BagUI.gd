@@ -40,7 +40,7 @@ var _current_items: Array = []
 var _input_enabled: bool = false
 var _background_stylebox: StyleBoxTexture = null
 
-@onready var _description_label: RichTextLabel = $Descripcion
+@onready var _description_label: Label = $Descripcion
 @onready var _items_viewport: Control = $ItemsViewport
 @onready var _items_container: VBoxContainer = $ItemsViewport/ItemsContainer
 @onready var _item_template: HBoxContainer = $ItemsViewport/ItemsContainer/ExitTemplate
@@ -53,7 +53,7 @@ var _background_stylebox: StyleBoxTexture = null
 @onready var _left_arrow: Sprite2D = $L_Arrow
 @onready var _right_arrow: Sprite2D = $R_Arrow
 
-var _pocket_label = null
+var _pocket_label: Label = null
 var _selection_cursor_base_y: float = 0.0
 var _items_container_base_offset_top: float = 14.0
 var _list_scroll_top: int = 0
@@ -73,7 +73,7 @@ var _pc_deposit_mode: bool = false
 var _sell_mode: bool = false
 
 @onready var _money_panel: Control = get_node_or_null("Dinero")
-@onready var _money_data = get_node_or_null("Dinero/Data")
+@onready var _money_data: Label = get_node_or_null("Dinero/Data") as Label
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -237,10 +237,7 @@ func _set_money_panel_visible(show_panel: bool) -> void:
 func _set_money_label_text(text: String) -> void:
 	if _money_data == null:
 		return
-	if _money_data.has_method("setText"):
-		_money_data.setText(text)
-	else:
-		_money_data.text = text
+	_money_data.text = text
 
 
 func _format_money(amount: int) -> String:
@@ -353,10 +350,7 @@ func _render_pocket_name() -> void:
 
 	var pocket := _pockets[_current_pocket_index]
 	var pocket_text: String = _controller.get_pocket_name(pocket)
-	if _pocket_label.has_method("setText"):
-		_pocket_label.setText(pocket_text)
-	else:
-		_pocket_label.text = pocket_text
+	_pocket_label.text = pocket_text
 
 func _render_arrows() -> void:
 	if _left_arrow:
@@ -432,16 +426,9 @@ func _apply_list_scroll(scroll_top: int, spacing_y: float) -> void:
 
 func _clear_row_labels(row: Node) -> void:
 	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label != null and label.has_method("setText"):
-			label.setText("")
-
-
-func _sync_row_labels(row: Node) -> void:
-	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label != null and label.has_method("_sync_outline_visual_immediate"):
-			label._sync_outline_visual_immediate()
+		var label := row.get_node_or_null(label_name) as Label
+		if label != null:
+			label.text = ""
 
 
 func _render_items() -> void:
@@ -461,39 +448,28 @@ func _render_items() -> void:
 
 		var row := _item_template.duplicate() as HBoxContainer
 		row.visible = true
-		var name_label := row.get_node_or_null("Name")
-		var quantity_label := row.get_node_or_null("Quantity")
+		var name_label := row.get_node_or_null("Name") as Label
+		var quantity_label := row.get_node_or_null("Quantity") as Label
 
 		if name_label:
-			if name_label.has_method("setText"):
-				name_label.setText(str(item.display_name))
-			else:
-				name_label.text = str(item.display_name)
+			name_label.text = str(item.display_name)
 
 		var quantity_text := "" if item.is_exit else ("x %d" % int(item.quantity))
 		if quantity_label:
-			if quantity_label.has_method("setText"):
-				quantity_label.setText(quantity_text)
-			else:
-				quantity_label.text = quantity_text
+			quantity_label.text = quantity_text
 
 		_items_container.add_child(row)
-
-	for child in _items_container.get_children():
-		_sync_row_labels(child)
 
 	_update_selection_visuals()
 	call_deferred("_show_items_viewport")
 
 
 func _show_items_viewport() -> void:
-	for child in _items_container.get_children():
-		_sync_row_labels(child)
 	if _items_viewport:
 		_items_viewport.visible = true
 
 func _get_list_row_spacing() -> float:
-	var row_height := LabelHGSS.MENU_ROW_HEIGHT
+	var row_height := HGSSMenuTypography.ROW_HEIGHT
 	if _item_template:
 		row_height = float(_item_template.custom_minimum_size.y)
 	var separation := float(_items_container.get_theme_constant("separation", "VBoxContainer"))
@@ -540,10 +516,7 @@ func _update_selection_visuals() -> void:
 		_slider.position = Vector2(_slider_base_x, slider_y)
 
 	var selected_item = _current_items[_selected_item_index]
-	if _description_label.has_method("setText"):
-		_description_label.setText(str(selected_item.description))
-	else:
-		_description_label.text = str(selected_item.description)
+	_description_label.text = str(selected_item.description)
 	if _item_icon:
 		if selected_item.is_exit:
 			_item_icon.texture = _item_icon_back_texture

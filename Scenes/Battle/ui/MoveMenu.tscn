@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://dauokklht8873"]
+[gd_scene load_steps=17 format=3 uid="uid://dauokklht8873"]
 
 [ext_resource type="StyleBox" uid="uid://bgsm216aqcccn" path="res://Resources/UI/Battle/BattleMoves_Panel.tres" id="1_3c2lq"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_ayfvv"]
 [ext_resource type="Script" uid="uid://c8eqr3jrxv8fi" path="res://Scripts/Battle/ui/MovesMenu.gd" id="2_vbs0g"]
 [ext_resource type="FontFile" uid="uid://df8fc4j42lsgd" path="res://Resources/UI/Fonts/Raw Fonts/pkmnemn.ttf" id="3_vbs0g"]
 [ext_resource type="Texture2D" uid="uid://8h52o7ms5gha" path="res://Sprites/Pictures/types.png" id="4_tqxhr"]
@@ -55,6 +54,21 @@ axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 region_rect = Rect2(0, 0, 384, 874)
 
+
+[sub_resource type="FontVariation" id="FontVariation_emn"]
+base_font = ExtResource("3_vbs0g")
+
+[sub_resource type="LabelSettings" id="LabelSettings_emn"]
+font = SubResource("FontVariation_emn")
+font_size = 26
+font_color = Color(0.345098, 0.345098, 0.313726, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.658824, 0.721569, 0.721569, 1)
 [node name="MovesMenu" type="Panel"]
 z_index = 6
 z_as_relative = false
@@ -70,15 +84,15 @@ theme_override_styles/panel = ExtResource("1_3c2lq")
 script = ExtResource("2_vbs0g")
 metadata/_edit_lock_ = true
 
-[node name="lblPPs" parent="." instance=ExtResource("2_ayfvv")]
+[node name="lblPPs" type="Label" parent="."]
 layout_mode = 0
 offset_left = 404.0
 offset_top = 54.0
 offset_right = 492.0
 offset_bottom = 86.0
-theme_override_fonts/normal_font = ExtResource("3_vbs0g")
-text = "[center]PP: 40/40"
-align = 1
+text = "PP: 40/40"
+label_settings = SubResource("LabelSettings_emn")
+horizontal_alignment = 1
 
 [node name="MoveType" type="Sprite2D" parent="."]
 position = Vector2(448, 33.6)
@@ -101,14 +115,14 @@ action_mode = 0
 button_mask = 0
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Moves/Move1" instance=ExtResource("2_ayfvv")]
+[node name="Label" type="Label" parent="Moves/Move1"]
 layout_mode = 0
 offset_top = 10.0
 offset_right = 192.0
 offset_bottom = 44.0
-theme_override_fonts/normal_font = ExtResource("3_vbs0g")
-text = "[center]Onda Trueno"
-align = 1
+text = "Onda Trueno"
+label_settings = SubResource("LabelSettings_emn")
+horizontal_alignment = 1
 
 [node name="Move2" type="Button" parent="Moves"]
 offset_left = 192.0
@@ -122,14 +136,14 @@ action_mode = 0
 button_mask = 0
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Moves/Move2" instance=ExtResource("2_ayfvv")]
+[node name="Label" type="Label" parent="Moves/Move2"]
 layout_mode = 0
 offset_top = 10.0
 offset_right = 192.0
 offset_bottom = 44.0
-theme_override_fonts/normal_font = ExtResource("3_vbs0g")
-text = "[center]Placaje"
-align = 1
+text = "Placaje"
+label_settings = SubResource("LabelSettings_emn")
+horizontal_alignment = 1
 
 [node name="Move3" type="Button" parent="Moves"]
 offset_left = 4.0
@@ -143,14 +157,14 @@ action_mode = 0
 button_mask = 0
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Moves/Move3" instance=ExtResource("2_ayfvv")]
+[node name="Label" type="Label" parent="Moves/Move3"]
 layout_mode = 0
 offset_top = 10.0
 offset_right = 192.0
 offset_bottom = 44.0
-theme_override_fonts/normal_font = ExtResource("3_vbs0g")
-text = "[center]Placaje"
-align = 1
+text = "Placaje"
+label_settings = SubResource("LabelSettings_emn")
+horizontal_alignment = 1
 
 [node name="Move4" type="Button" parent="Moves"]
 offset_left = 192.0
@@ -164,11 +178,11 @@ action_mode = 0
 button_mask = 0
 metadata/_edit_lock_ = true
 
-[node name="Label" parent="Moves/Move4" instance=ExtResource("2_ayfvv")]
+[node name="Label" type="Label" parent="Moves/Move4"]
 layout_mode = 0
 offset_top = 10.0
 offset_right = 192.0
 offset_bottom = 44.0
-theme_override_fonts/normal_font = ExtResource("3_vbs0g")
-text = "[center]Placaje"
-align = 1
+text = "Placaje"
+label_settings = SubResource("LabelSettings_emn")
+horizontal_alignment = 1

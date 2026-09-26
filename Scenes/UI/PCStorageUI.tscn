@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://226it5nxk1qm" path="res://Sprites/UI/PC/boxbg.png" id="1_3fq3p"]
 [ext_resource type="Script" uid="uid://biufn5pgtnlkk" path="res://Scripts/UI/PCStorageUI.gd" id="2_pcui"]
 [ext_resource type="Texture2D" uid="uid://c3ovgmbdoxj3i" path="res://Sprites/UI/PC/overlay_main.png" id="3_pe5e7"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="4_x0imx"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="4_font"]
 [ext_resource type="Texture2D" uid="uid://c8kpj8jre1qao" path="res://Sprites/UI/Party/male_icon.png" id="5_iyxkp"]
 [ext_resource type="Texture2D" uid="uid://bwtv36mb8w2lm" path="res://Sprites/UI/Party/types.png" id="5_rwxld"]
 [ext_resource type="Texture2D" uid="uid://bg3jekl6dawi0" path="res://Sprites/Pictures/Nv_icon_black.png" id="6_42h8w"]
@@ -39,6 +39,70 @@ texture = ExtResource("13_hbm5c")
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x1yxv"]
 texture = ExtResource("14_upd88")
 
+[sub_resource type="FontVariation" id="FontVariation_dark"]
+base_font = ExtResource("4_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_dark"]
+font = SubResource("FontVariation_dark")
+font_size = 26
+font_color = Color(0.25098, 0.25098, 0.25098, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.690196, 0.690196, 0.690196, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_white"]
+base_font = ExtResource("4_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_white"]
+font = SubResource("FontVariation_white")
+font_size = 26
+font_color = Color(1, 1, 1, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.188235, 0.188235, 0.188235, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.188235, 0.188235, 0.188235, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_choose"]
+base_font = ExtResource("4_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_choose"]
+font = SubResource("FontVariation_choose")
+font_size = 26
+font_color = Color(0, 0, 0, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.87058824, 0.87058824, 0.87058824, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.87058824, 0.87058824, 0.87058824, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.87058824, 0.87058824, 0.87058824, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_item_empty"]
+base_font = ExtResource("4_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_item_empty"]
+font = SubResource("FontVariation_item_empty")
+font_size = 26
+font_color = Color(0.823529, 0.823529, 0.823529, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.878431, 0.878431, 0.878431, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.878431, 0.878431, 0.878431, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.878431, 0.878431, 0.878431, 1)
+
 [node name="PCStorageUI" type="Panel" unique_id=1036020114]
 custom_minimum_size = Vector2(512, 384)
 anchors_preset = 15
@@ -61,16 +125,15 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_5t4a7")
 metadata/_edit_lock_ = true
 
-[node name="Nickname" parent="Info" unique_id=639224546 instance=ExtResource("4_x0imx")]
+[node name="Nickname" type="Label" parent="Info" unique_id=639224546]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 0
 offset_left = 10.0
 offset_top = 8.0
 offset_right = 170.0
 offset_bottom = 38.0
-theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
-theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
-text = "[left]Nickname"
+text = "Nickname"
+label_settings = SubResource("LabelSettings_dark")
 metadata/_edit_lock_ = true
 
 [node name="Genero" type="Sprite2D" parent="Info" unique_id=1191914565]
@@ -89,16 +152,15 @@ position = Vector2(90, 134)
 texture = ExtResource("7_8uxdb")
 metadata/_edit_lock_ = true
 
-[node name="Nivel" parent="Info" unique_id=1009905287 instance=ExtResource("4_x0imx")]
+[node name="Nivel" type="Label" parent="Info" unique_id=1009905287]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 0
 offset_left = 31.0
 offset_top = 232.0
 offset_right = 71.0
 offset_bottom = 262.0
-theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
-theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
-text = "[left]100"
+text = "100"
+label_settings = SubResource("LabelSettings_dark")
 metadata/_edit_lock_ = true
 
 [node name="Markings" type="Sprite2D" parent="Info" unique_id=1988732714]
@@ -142,55 +204,51 @@ texture = ExtResource("5_rwxld")
 vframes = 24
 metadata/_edit_lock_ = true
 
-[node name="Habilidad" parent="Info" unique_id=883514599 instance=ExtResource("4_x0imx")]
+[node name="Habilidad" type="Label" parent="Info" unique_id=883514599]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 0
 offset_left = 4.0
 offset_top = 306.0
 offset_right = 166.0
 offset_bottom = 336.0
-theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
-theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
-text = "[center]Habilidad"
-align = 1
+text = "Habilidad"
+label_settings = SubResource("LabelSettings_dark")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
-[node name="Objeto" parent="Info" unique_id=1849043528 instance=ExtResource("4_x0imx")]
+[node name="Objeto" type="Label" parent="Info" unique_id=1849043528]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 0
 offset_left = 4.0
 offset_top = 342.0
 offset_right = 166.0
 offset_bottom = 372.0
-theme_override_colors/default_color = Color(0.25098, 0.25098, 0.25098, 1)
-theme_override_colors/font_shadow_color = Color(0.690196, 0.690196, 0.690196, 1)
-text = "[center]Objeto"
-align = 1
+text = "Objeto"
+label_settings = SubResource("LabelSettings_dark")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
-[node name="Equipo" parent="Info" unique_id=755207801 instance=ExtResource("4_x0imx")]
+[node name="Equipo" type="Label" parent="Info" unique_id=755207801]
 layout_mode = 0
 offset_left = 192.0
 offset_top = 326.0
 offset_right = 348.0
 offset_bottom = 360.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]EQUIPO:  0"
-align = 1
+text = "EQUIPO:  0"
+label_settings = SubResource("LabelSettings_white")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
-[node name="Salir" parent="Info" unique_id=1910272134 instance=ExtResource("4_x0imx")]
+[node name="Salir" type="Label" parent="Info" unique_id=1910272134]
 layout_mode = 0
 offset_left = 392.0
 offset_top = 326.0
 offset_right = 500.0
 offset_bottom = 360.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]SALIR"
-align = 1
+text = "SALIR"
+label_settings = SubResource("LabelSettings_white")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
 [node name="Box" type="Panel" parent="." unique_id=257457536]
 custom_minimum_size = Vector2(324, 296)
@@ -202,17 +260,16 @@ offset_bottom = 316.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_n4n3u")
 metadata/_edit_lock_ = true
 
-[node name="Nombre" parent="Box" unique_id=1165752183 instance=ExtResource("4_x0imx")]
+[node name="Nombre" type="Label" parent="Box" unique_id=1165752183]
 layout_mode = 0
 offset_left = 52.0
 offset_top = 8.0
 offset_right = 272.0
 offset_bottom = 42.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]CAJA 1"
-align = 1
+text = "CAJA 1"
+label_settings = SubResource("LabelSettings_white")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
 [node name="Slots" type="Control" parent="Box" unique_id=1619042099]
 anchors_preset = 0
@@ -249,16 +306,15 @@ offset_bottom = 384.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_3fq3p")
 metadata/_edit_lock_ = true
 
-[node name="Salir" parent="Party" unique_id=339177192 instance=ExtResource("4_x0imx")]
+[node name="Salir" type="Label" parent="Party" unique_id=339177192]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 238.0
 offset_right = 148.0
 offset_bottom = 276.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]SALIR"
-align = 1
+text = "SALIR"
+label_settings = SubResource("LabelSettings_white")
+horizontal_alignment = 1
 
 [node name="Marks" type="Panel" parent="." unique_id=112954467]
 visible = false
@@ -269,31 +325,29 @@ offset_right = 512.0
 offset_bottom = 384.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_lqbwt")
 
-[node name="Confirmar" parent="Marks" unique_id=665955083 instance=ExtResource("4_x0imx")]
+[node name="Confirmar" type="Label" parent="Marks" unique_id=665955083]
 layout_mode = 0
 offset_left = 32.0
 offset_top = 138.0
 offset_right = 186.0
 offset_bottom = 189.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]CONFIRMAR"
+text = "CONFIRMAR"
+label_settings = SubResource("LabelSettings_white")
 vertical_alignment = 1
-align = 1
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
-[node name="Cancelar" parent="Marks" unique_id=718970194 instance=ExtResource("4_x0imx")]
+[node name="Cancelar" type="Label" parent="Marks" unique_id=718970194]
 layout_mode = 0
 offset_left = 32.0
 offset_top = 202.0
 offset_right = 186.0
 offset_bottom = 252.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.188235, 0.188235, 0.188235, 1)
-text = "[center]CANCELAR"
+text = "CANCELAR"
+label_settings = SubResource("LabelSettings_white")
 vertical_alignment = 1
-align = 1
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
 [node name="Circle" type="Sprite2D" parent="Marks" unique_id=1034053632]
 position = Vector2(52, 46)
@@ -351,29 +405,27 @@ offset_right = 408.0
 offset_bottom = 233.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_x1yxv")
 
-[node name="Caja" parent="Choose" unique_id=551413155 instance=ExtResource("4_x0imx")]
+[node name="Caja" type="Label" parent="Choose" unique_id=551413155]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 15.0
 offset_right = 130.0
 offset_bottom = 49.0
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0.87058824, 0.87058824, 0.87058824, 1)
-text = "[center]CAJA 1"
-align = 1
+text = "CAJA 1"
+label_settings = SubResource("LabelSettings_choose")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
-[node name="Espacio" parent="Choose" unique_id=1451706779 instance=ExtResource("4_x0imx")]
+[node name="Espacio" type="Label" parent="Choose" unique_id=1451706779]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 48.0
 offset_right = 130.0
 offset_bottom = 82.0
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0.87058824, 0.87058824, 0.87058824, 1)
-text = "[center]30/30"
-align = 1
+text = "30/30"
+label_settings = SubResource("LabelSettings_choose")
 metadata/_edit_lock_ = true
+horizontal_alignment = 1
 
 [node name="Arrow1" type="Sprite2D" parent="Choose" unique_id=1703697443]
 position = Vector2(6, 48)

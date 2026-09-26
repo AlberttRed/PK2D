@@ -12,49 +12,49 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 	var ps_line := str(pokemon.hp_actual) + "/" + str(max_hp)
 	if not pokemon.fainted and pokemon.major_status != CONST.STATUS.OK:
 		ps_line += "  (" + AilmentData.major_status_display_name(pokemon.major_status) + ")"
-	$dPS.setText(ps_line)
+	$dPS.text = ps_line
 
 	$health_bar.set_values(pokemon.hp_actual, max_hp)
 
-	$ValueStats/dAtaque.setText(str(pokemon.get_final_stat(StatsEnum.Values.ATTACK)))
+	$ValueStats/dAtaque.text = str(pokemon.get_final_stat(StatsEnum.Values.ATTACK))
 
-	$ValueStats/dDefensa.setText(str(pokemon.get_final_stat(StatsEnum.Values.DEFENSE)))
+	$ValueStats/dDefensa.text = str(pokemon.get_final_stat(StatsEnum.Values.DEFENSE))
 
-	$ValueStats/dAtEsp.setText(str(pokemon.get_final_stat(StatsEnum.Values.SP_ATTACK)))
+	$ValueStats/dAtEsp.text = str(pokemon.get_final_stat(StatsEnum.Values.SP_ATTACK))
 
-	$ValueStats/dDefEsp.setText(str(pokemon.get_final_stat(StatsEnum.Values.SP_DEFENSE)))
+	$ValueStats/dDefEsp.text = str(pokemon.get_final_stat(StatsEnum.Values.SP_DEFENSE))
 
-	$ValueStats/dVelocidad.setText(str(pokemon.get_final_stat(StatsEnum.Values.SPEED)))
+	$ValueStats/dVelocidad.text = str(pokemon.get_final_stat(StatsEnum.Values.SPEED))
 
 	var ab_idx := int(pokemon.ability_id)
 	var ab_text := "—"
 	if ab_idx >= 0 and ab_idx < CONST.AbilitiesName.size():
 		ab_text = str(CONST.AbilitiesName[ab_idx])
 
-	$dHabilidad.setText(ab_text)
+	$dHabilidad.text = ab_text
 
 	var ab_desc := "—"
 	if ab_idx >= 0 and ab_idx < CONST.AbilitiesDesc.size():
 		ab_desc = str(CONST.AbilitiesDesc[ab_idx])
 
-	$DescHabilidad.setText(ab_desc)
+	$DescHabilidad.text = ab_desc
 
 
 func clear() -> void:
-	$dPS.setText("")
+	$dPS.text = ""
 
 	$health_bar.clear()
 
-	$ValueStats/dAtaque.setText("")
+	$ValueStats/dAtaque.text = ""
 
-	$ValueStats/dDefensa.setText("")
+	$ValueStats/dDefensa.text = ""
 
-	$ValueStats/dAtEsp.setText("")
+	$ValueStats/dAtEsp.text = ""
 
-	$ValueStats/dDefEsp.setText("")
+	$ValueStats/dDefEsp.text = ""
 
-	$ValueStats/dVelocidad.setText("")
+	$ValueStats/dVelocidad.text = ""
 
-	$dHabilidad.setText("")
+	$dHabilidad.text = ""
 
-	$DescHabilidad.setText("")
+	$DescHabilidad.text = ""

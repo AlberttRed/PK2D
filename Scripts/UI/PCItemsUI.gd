@@ -14,7 +14,7 @@ enum Mode {
 }
 
 ## Filas visibles en el viewport (el clip se calcula en código).
-## 32px: mismo spacing visual que acordamos; sin LabelHGSS en filas el texto no se pierde.
+## 32px: mismo spacing visual que acordamos.
 const _LIST_VISIBLE_ROWS: int = 7
 const _ROW_HEIGHT: float = 32.0
 const _ARROW_ANIM_FPS: float = 18.0
@@ -30,14 +30,14 @@ var _item_icon_back_texture: Texture2D = null
 var _in_action_menu: bool = false
 var _arrow_anim_time: float = 0.0
 
-@onready var _description_label: RichTextLabel = $Descripcion
+@onready var _description_label: Label = $Descripcion
 @onready var _items_viewport: Control = $ItemsViewport
 @onready var _items_container: VBoxContainer = $ItemsViewport/ItemsContainer
 @onready var _item_template: HBoxContainer = $ItemsViewport/ItemsContainer/ExitTemplate
 @onready var _cursor: Sprite2D = $Cursor
 @onready var _item_icon: Sprite2D = $Item_Sprite
-@onready var _sacar_label = $Sacar
-@onready var _objeto_label = $Objeto
+@onready var _sacar_label: Label = $Sacar
+@onready var _objeto_label: Label = $Objeto
 @onready var _up_arrow: Sprite2D = $U_Arrow
 @onready var _down_arrow: Sprite2D = $D_Arrow
 
@@ -71,8 +71,6 @@ func _apply_viewport_clip_height() -> void:
 	var h := _items_container_base_offset_top + spacing * float(_LIST_VISIBLE_ROWS)
 	_items_viewport.offset_bottom = _items_viewport.offset_top + h
 	_items_viewport.clip_contents = true
-	# Godot a veces no recorta bien RTL hijos solo con clip_contents.
-	_items_viewport.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
 
 
 func open(mode: Mode = Mode.WITHDRAW) -> void:
@@ -120,14 +118,12 @@ func _refresh_mode_labels() -> void:
 	_set_mode_label_active(_objeto_label, _mode == Mode.DEPOSIT)
 
 
-func _set_mode_label_active(label: Node, active: bool) -> void:
-	if label == null:
+func _set_mode_label_active(label: Label, active: bool) -> void:
+	if label == null or label.label_settings == null:
 		return
-	var color := Color(1, 1, 1, 1) if active else Color(0.55, 0.55, 0.55, 1)
-	if label is RichTextLabel:
-		(label as RichTextLabel).add_theme_color_override("default_color", color)
-	elif label.has_method("set"):
-		label.set("theme_override_colors/default_color", color)
+	var settings := label.label_settings.duplicate() as LabelSettings
+	settings.font_color = Color(1, 1, 1, 1) if active else Color(0.55, 0.55, 0.55, 1)
+	label.label_settings = settings
 
 
 func _refresh_list() -> void:
@@ -222,70 +218,25 @@ func _render_items() -> void:
 		_items_container.add_child(row)
 		_apply_row_item_texts(row, item)
 
-	for child in _items_container.get_children():
-		_sync_row_labels(child)
-
 	_update_selection_visuals()
 	if _items_viewport:
 		_items_viewport.visible = true
 
 
 func _apply_row_item_texts(row: Node, item) -> void:
-	var name_label := row.get_node_or_null("Name")
-	var quantity_label := row.get_node_or_null("Quantity")
+	var name_label := row.get_node_or_null("Name") as Label
+	var quantity_label := row.get_node_or_null("Quantity") as Label
 	if name_label != null:
-		_set_row_richtext(name_label, str(item.display_name), false)
+		name_label.text = str(item.display_name)
 	if quantity_label != null:
-		var quantity_text := "" if item.is_exit else ("x %d" % int(item.quantity))
-		_set_row_richtext(quantity_label, quantity_text, true)
-
-
-## Texto de fila sin LabelHGSS: el sync de outlines a size 0 dejaba la lista en blanco en runtime.
-func _set_row_richtext(label: Node, value: String, align_right: bool) -> void:
-	if label == null:
-		return
-	var bb := value
-	if not value.is_empty():
-		bb = ("[right]%s" % value) if align_right else value
-	if label is RichTextLabel:
-		var rtl := label as RichTextLabel
-		rtl.visible = true
-		rtl.modulate = Color(1, 1, 1, 1)
-		rtl.bbcode_enabled = true
-		rtl.fit_content = false
-		rtl.scroll_active = false
-		rtl.text = bb
-	for child in label.get_children():
-		if child is RichTextLabel:
-			var outline := child as RichTextLabel
-			outline.visible = true
-			outline.modulate = Color(1, 1, 1, 1)
-			outline.bbcode_enabled = true
-			outline.fit_content = false
-			outline.scroll_active = false
-			outline.text = bb
+		quantity_label.text = "" if item.is_exit else ("x %d" % int(item.quantity))
 
 
 func _clear_row_labels(row: Node) -> void:
 	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label == null:
-			continue
-		_set_row_richtext(label, "", false)
-
-
-func _sync_row_labels(row: Node) -> void:
-	# Sin LabelHGSS en filas: no hay sync de outlines que hacer.
-	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label is CanvasItem:
-			(label as CanvasItem).visible = true
-		if label == null:
-			continue
-		for child in label.get_children():
-			if child is CanvasItem:
-				(child as CanvasItem).visible = true
-
+		var label := row.get_node_or_null(label_name) as Label
+		if label != null:
+			label.text = ""
 
 func _get_list_row_spacing() -> float:
 	var row_height := _ROW_HEIGHT
@@ -417,10 +368,7 @@ func _update_selection_visuals() -> void:
 func _set_description(text: String) -> void:
 	if _description_label == null:
 		return
-	if _description_label.has_method("setText"):
-		_description_label.setText(text)
-	else:
-		_description_label.text = text
+	_description_label.text = text
 
 
 func _navigate_up() -> void:

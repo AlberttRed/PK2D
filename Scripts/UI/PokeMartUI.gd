@@ -25,10 +25,10 @@ var _items_container_base_offset_top: float = 14.0
 var _item_icon_back_texture: Texture2D = null
 var _arrow_anim_time: float = 0.0
 
-@onready var _money_data = $Dinero/Data
+@onready var _money_data: Label = $Dinero/Data
 @onready var _mochila_panel: Control = $Mochila
-@onready var _bag_count_data = $Mochila/MarginContainer/StatsList/ItemCount/Data
-@onready var _description_label: RichTextLabel = $Descripcion
+@onready var _bag_count_data: Label = $Mochila/MarginContainer/StatsList/ItemCount/Data
+@onready var _description_label: Label = $Descripcion
 @onready var _items_viewport: Control = $ItemsViewport
 @onready var _items_container: VBoxContainer = $ItemsViewport/ItemsContainer
 @onready var _item_template: HBoxContainer = $ItemsViewport/ItemsContainer/ExitTemplate
@@ -176,58 +176,37 @@ func _render_items() -> void:
 			continue
 		var row := _item_template.duplicate() as HBoxContainer
 		row.visible = true
-		var name_label := row.get_node_or_null("Name")
-		var quantity_label := row.get_node_or_null("Quantity")
+		var name_label := row.get_node_or_null("Name") as Label
+		var quantity_label := row.get_node_or_null("Quantity") as Label
 
 		if name_label:
-			if name_label.has_method("setText"):
-				name_label.setText(str(item.display_name))
-			else:
-				name_label.text = str(item.display_name)
+			name_label.text = str(item.display_name)
 
 		var price_text := "" if item.is_exit else _format_price(int(item.quantity))
 		if quantity_label:
 			if item.is_exit:
 				quantity_label.visible = false
-				if quantity_label.has_method("setText"):
-					quantity_label.setText(" ")
-				else:
-					quantity_label.text = " "
+				quantity_label.text = " "
 			else:
 				quantity_label.visible = true
-				if quantity_label.has_method("setText"):
-					quantity_label.setText(price_text)
-				else:
-					quantity_label.text = price_text
+				quantity_label.text = price_text
 
 		_items_container.add_child(row)
-
-	for child in _items_container.get_children():
-		_sync_row_labels(child)
 
 	_update_selection_visuals()
 	call_deferred("_show_items_viewport")
 
 
 func _show_items_viewport() -> void:
-	for child in _items_container.get_children():
-		_sync_row_labels(child)
 	if _items_viewport:
 		_items_viewport.visible = true
 
 
 func _clear_row_labels(row: Node) -> void:
 	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label != null and label.has_method("setText"):
-			label.setText("")
-
-
-func _sync_row_labels(row: Node) -> void:
-	for label_name in ["Name", "Quantity"]:
-		var label: Node = row.get_node_or_null(label_name)
-		if label != null and label.has_method("_sync_outline_visual_immediate"):
-			label._sync_outline_visual_immediate()
+		var label := row.get_node_or_null(label_name) as Label
+		if label != null:
+			label.text = ""
 
 
 func _get_list_row_spacing() -> float:
@@ -321,10 +300,7 @@ func _bag_qty(item_id: int) -> int:
 func _set_description(text: String) -> void:
 	if _description_label == null:
 		return
-	if _description_label.has_method("setText"):
-		_description_label.setText(text)
-	else:
-		_description_label.text = text
+	_description_label.text = text
 
 
 func _set_item_icon(icon: Texture2D) -> void:
@@ -339,10 +315,7 @@ func _set_item_icon(icon: Texture2D) -> void:
 func _set_label_text(label, text: String) -> void:
 	if label == null:
 		return
-	if label.has_method("setText"):
-		label.setText(text)
-	else:
-		label.text = text
+	label.text = text
 
 
 func _format_money(amount: int) -> String:

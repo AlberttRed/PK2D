@@ -1,7 +1,7 @@
 extends Panel
 signal action_selected(battle_choice: BattleChoice)
 
-@onready var label_question: LabelHGSS = $Label
+@onready var label_question: Label = $Label
 @onready var cmd_luchar = $Commands/Luchar
 @onready var cmd_pokemon = $Commands/Pokemon
 @onready var cmd_mochila = $Commands/Mochila
@@ -22,7 +22,7 @@ func _ready():
 		cmd.focus_entered.connect(_on_command_focus_entered)
 
 func show_for(pokemon: BattlePokemon, preserve_focus: bool = false) -> BattleChoice:
-	label_question.setText("¿Qué debería hacer\n" + pokemon.get_name() + "?")
+	label_question.text = "¿Qué debería hacer\n" + pokemon.get_name() + "?"
 	_suppress_focus_sound = true
 	visible = true
 	if not preserve_focus:

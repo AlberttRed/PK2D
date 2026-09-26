@@ -20,7 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://yhc1eyvh3xfi" path="res://Scenes/UI/PokeMartUI.tscn" id="18_pokemart"]
 [ext_resource type="PackedScene" uid="uid://4vmkrak3html" path="res://Scenes/UI/NameEntryUI.tscn" id="19_nameentry"]
 [ext_resource type="StyleBox" uid="uid://c7vjqce51w73c" path="res://Resources/UI/MessageBox/Message Styles/Gold_MessageBox_Style.tres" id="19_w54fd"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="20_h43ry"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="20_font"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flashlight"]
 shader = ExtResource("9")
@@ -38,6 +38,22 @@ shader_parameter/alpha_steps = 0.0
 shader = ExtResource("3")
 shader_parameter/progress = 0.0
 shader_parameter/smoothness = 0.1
+
+[sub_resource type="FontVariation" id="FontVariation_route"]
+base_font = ExtResource("20_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_route"]
+font = SubResource("FontVariation_route")
+font_size = 26
+font_color = Color(0.345098, 0.345098, 0.313726, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.658824, 0.721569, 0.721569, 1)
 
 [node name="DisplayManager" type="CanvasLayer" unique_id=797032242 groups=["GUI"]]
 script = ExtResource("1")
@@ -154,7 +170,7 @@ visible = false
 [node name="PokeMartUI" parent="." unique_id=750027160 instance=ExtResource("18_pokemart")]
 visible = false
 
-[node name="NameEntryUI" parent="." instance=ExtResource("19_nameentry")]
+[node name="NameEntryUI" parent="." unique_id=959959285 instance=ExtResource("19_nameentry")]
 visible = false
 
 [node name="PokedexUI" parent="." unique_id=997549819 instance=ExtResource("13_pokedexui")]
@@ -206,11 +222,11 @@ color = Color(0, 0, 0, 1)
 
 [node name="RouteNameUI" type="Panel" parent="." unique_id=845062663]
 visible = false
-mouse_filter = 2
 offset_left = 6.0
 offset_top = -6.0
 offset_right = 261.0
 offset_bottom = 52.0
+mouse_filter = 2
 theme_override_styles/panel = ExtResource("19_w54fd")
 
 [node name="MarginContainer" type="MarginContainer" parent="RouteNameUI" unique_id=757317471]
@@ -235,8 +251,10 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="Name" parent="RouteNameUI/MarginContainer/StatsList/ItemCount" unique_id=1667865658 instance=ExtResource("20_h43ry")]
-clip_contents = false
+[node name="Name" type="Label" parent="RouteNameUI/MarginContainer/StatsList/ItemCount" unique_id=1667865658]
+clip_text = false
 layout_mode = 2
-text = "[center]RUTA 1"
-align = 1
+size_flags_horizontal = 3
+text = "RUTA 1"
+label_settings = SubResource("LabelSettings_route")
+horizontal_alignment = 1

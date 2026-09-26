@@ -162,10 +162,7 @@ func _ready() -> void:
 	if _rows_container != null:
 		_rows_base_pos = _rows_container.position
 	if _title != null:
-		if _title.has_method("setText"):
-			_title.setText("Pokédex")
-		else:
-			_title.text = "Pokédex"
+		_title.text = "Pokédex"
 	_owner_white_material = _build_owner_white_material()
 	_setup_entry_transition_nodes()
 
@@ -325,20 +322,11 @@ func _render() -> void:
 	var caught_count: int = int(_controller.get_caught_count())
 	if _title != null:
 		var title_text: String = str(_controller.get_active_dex_name())
-		if _title.has_method("setText"):
-			_title.setText(title_text)
-		else:
-			_title.text = title_text
+		_title.text = title_text
 	if _seen_count != null:
-		if _seen_count.has_method("setText"):
-			_seen_count.setText(str(seen_count))
-		else:
-			_seen_count.text = str(seen_count)
+		_seen_count.text = str(seen_count)
 	if _caught_count != null:
-		if _caught_count.has_method("setText"):
-			_caught_count.setText(str(caught_count))
-		else:
-			_caught_count.text = str(caught_count)
+		_caught_count.text = str(caught_count)
 
 	var scroll_top := _compute_scroll_top(total, _selected_index)
 	_render_rows(scroll_top)
@@ -372,10 +360,7 @@ func _render_rows(scroll_top: int) -> void:
 		var owned_icon_rect := row.get_node_or_null("OwnedIcon") as TextureRect
 		if item_index >= _controller.get_entry_count():
 			if label != null:
-				if label.has_method("setText"):
-					label.setText("")
-				else:
-					label.text = ""
+				label.text = ""
 			if owned_icon_rect != null:
 				owned_icon_rect.visible = true
 				owned_icon_rect.material = null
@@ -391,10 +376,7 @@ func _render_rows(scroll_top: int) -> void:
 		var display_name := str(item.get("name", "---------")) if seen else "---------"
 		var row_text := "%03d %s" % [dex_number, display_name]
 		if label != null:
-			if label.has_method("setText"):
-				label.setText(row_text)
-			else:
-				label.text = row_text
+			label.text = row_text
 		if owned_icon_rect != null:
 			owned_icon_rect.visible = true
 			if caught:
@@ -419,10 +401,7 @@ func _render_detail() -> void:
 	var is_seen: bool = bool(detail.get("seen", false))
 	var detail_text: String = str(detail.get("name", "---------")) if is_seen else "---------"
 	if _detail_name != null:
-		if _detail_name.has_method("setText"):
-			_detail_name.setText(detail_text)
-		else:
-			_detail_name.text = detail_text
+		_detail_name.text = detail_text
 	if _detail_sprite != null:
 		if is_seen:
 			var sprite_tex: Texture2D = detail.get("sprite", null)
@@ -1557,12 +1536,8 @@ func _is_valid_footprint_texture(tex: Texture2D) -> bool:
 func _set_label_text(node: Node, text: String) -> void:
 	if node == null:
 		return
-	if node.has_method("setText"):
-		node.setText(text)
-	elif node is Label:
+	if node is Label:
 		(node as Label).text = text
-	elif node is RichTextLabel:
-		(node as RichTextLabel).text = text
 
 
 func _normalize_single_line_text(text: String) -> String:
@@ -1650,20 +1625,11 @@ func _render_regions() -> void:
 			seen_text = "--"
 			caught_text = "--"
 		if name_label != null:
-			if name_label.has_method("setText"):
-				name_label.setText(row_text)
-			else:
-				name_label.text = row_text
+			name_label.text = row_text
 		if seen_label != null:
-			if seen_label.has_method("setText"):
-				seen_label.setText(seen_text)
-			else:
-				seen_label.text = seen_text
+			seen_label.text = seen_text
 		if caught_label != null:
-			if caught_label.has_method("setText"):
-				caught_label.setText(caught_text)
-			else:
-				caught_label.text = caught_text
+			caught_label.text = caught_text
 	_update_regions_cursor_position()
 
 

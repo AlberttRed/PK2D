@@ -358,7 +358,7 @@ func _confirm_selection() -> void:
 func _set_label_text(node: Node, text: String) -> void:
 	if node == null:
 		return
-	if node.has_method("setText"):
-		node.setText(text)
-	elif node is Label:
+	if node is Label:
 		(node as Label).text = text
+	elif node.has_method("setText"):
+		node.setText(text)

@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dclkyhgakopca"]
 
 [ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="1_font"]
-[ext_resource type="Script" uid="uid://qmvd2w47fx4e" path="res://Scripts/UI/Fonts/LabelHGSS.gd" id="2_label"]
 [ext_resource type="Texture2D" uid="uid://crxx2s4534snf" path="res://Sprites/UI/Bag/uparrow.PNG" id="3_up"]
 [ext_resource type="Texture2D" uid="uid://cyowsxo6xapdm" path="res://Sprites/UI/Bag/downarrow.PNG" id="4_down"]
 [ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/Choice Styles/ChoicesBox_Style.tres" id="5_style"]
@@ -10,9 +9,17 @@
 base_font = ExtResource("1_font")
 spacing_top = 4
 
-[sub_resource type="Theme" id="Theme_qty"]
-default_font = SubResource("FontVariation_qty")
-default_font_size = 26
+[sub_resource type="LabelSettings" id="LabelSettings_qty"]
+font = SubResource("FontVariation_qty")
+font_size = 26
+font_color = Color(0.317647, 0.317647, 0.34902, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.65098, 0.65098, 0.682353, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.65098, 0.65098, 0.682353, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.65098, 0.65098, 0.682353, 1)
 
 [node name="QuantityPicker" type="Panel"]
 visible = false
@@ -41,70 +48,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 layout_direction = 1
 
-[node name="Price" type="RichTextLabel" parent="Container"]
+[node name="Price" type="Label" parent="Container"]
 visible = false
 layout_mode = 0
 offset_left = 4.0
 offset_top = 12.0
 offset_right = 100.0
 offset_bottom = 49.0
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 0
-bbcode_enabled = true
 text = "$200"
-scroll_active = false
-autowrap_mode = 0
-tab_size = 2
-script = ExtResource("2_label")
-align = 2
+label_settings = SubResource("LabelSettings_qty")
+horizontal_alignment = 2
 
-[node name="Outline" type="RichTextLabel" parent="Container/Price"]
-layout_mode = 0
-offset_right = 96.0
-offset_bottom = 37.0
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "$200"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="Outline2" type="RichTextLabel" parent="Container/Price"]
-layout_mode = 0
-offset_right = 96.0
-offset_bottom = 37.0
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "$200"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="LabelHGSS" type="RichTextLabel" parent="Container"]
+[node name="Amount" type="Label" parent="Container"]
 layout_mode = 0
 offset_left = 35.0
 offset_top = 12.0
@@ -112,59 +67,8 @@ offset_right = 134.0
 offset_bottom = 49.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 0
-bbcode_enabled = true
 text = "x001"
-scroll_active = false
-tab_size = 2
-script = ExtResource("2_label")
-
-[node name="Outline" type="RichTextLabel" parent="Container/LabelHGSS"]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "x001"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
-
-[node name="Outline2" type="RichTextLabel" parent="Container/LabelHGSS"]
-layout_mode = 0
-offset_right = 433.0
-offset_bottom = 164.0
-theme = SubResource("Theme_qty")
-theme_override_colors/default_color = Color(0.317647, 0.317647, 0.34902, 1)
-theme_override_colors/font_shadow_color = Color(0.65098, 0.65098, 0.682353, 1)
-theme_override_constants/line_separation = 8
-theme_override_constants/paragraph_separation = 0
-theme_override_constants/shadow_outline_size = 0
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/normal_font_size = 26
-bbcode_enabled = true
-text = "x001"
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-metadata/_edit_lock_ = true
+label_settings = SubResource("LabelSettings_qty")
 
 [node name="QtyUp" type="Sprite2D" parent="."]
 position = Vector2(72, 10)

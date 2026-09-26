@@ -96,9 +96,9 @@ func loadMove(movePanel: Panel, move: Move) -> void:
 	if move == null or move.base == null:
 		return
 	movePanel.visible = true
-	movePanel.get_node("Ataque").setText(move.base.Name)
+	movePanel.get_node("Ataque").text = move.base.Name
 	movePanel.get_node("Tipo").frame = move.base.type_id
-	movePanel.get_node("dPP").setText(str(move.pp_actual) + "/" + str(move.pp))
+	movePanel.get_node("dPP").text = str(move.pp_actual) + "/" + str(move.pp)
 	movePanel.focus_mode = Control.FOCUS_ALL
 	movePanel.get_theme_stylebox("panel").set("texture", null)
 
@@ -130,14 +130,14 @@ func loadMoveInfo(move: Move) -> void:
 			moveInfo.get_node("dCategory").frame = 2
 
 	if move.base.power != 0:
-		moveInfo.get_node("dPower").setText(str(move.base.power))
+		moveInfo.get_node("dPower").text = str(move.base.power)
 	else:
-		moveInfo.get_node("dPower").setText("---")
+		moveInfo.get_node("dPower").text = "---"
 	if move.base.accuracy != 0:
-		moveInfo.get_node("dAccuracy").setText(str(move.base.accuracy))
+		moveInfo.get_node("dAccuracy").text = str(move.base.accuracy)
 	else:
-		moveInfo.get_node("dAccuracy").setText("---")
-	moveInfo.get_node("lDescription").setText(move.base.description)
+		moveInfo.get_node("dAccuracy").text = "---"
+	moveInfo.get_node("lDescription").text = move.base.description
 
 
 func clear() -> void:
@@ -145,10 +145,8 @@ func clear() -> void:
 	for panel: Panel in movePanels:
 		panel.visible = false
 		panel.get_node("Ataque").text = ""
-		panel.get_node("Ataque/Outline").text = ""
 		panel.get_node("Tipo").frame = 0
 		panel.get_node("dPP").text = ""
-		panel.get_node("dPP/Outline").text = ""
 
 
 func setMode(_mode: Modes) -> void:

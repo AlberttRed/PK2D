@@ -3,10 +3,10 @@ class_name SaveMenuUI
 
 signal closed()
 
-@onready var _route_label = $Panel/MarginContainer/StatsList/Route/LabelHGSS
-@onready var _player_data_label = $Panel/MarginContainer/StatsList/Player/Data
-@onready var _time_data_label = $Panel/MarginContainer/StatsList/Time/Data
-@onready var _medals_data_label = $Panel/MarginContainer/StatsList/Medals/Data
+@onready var _route_label: Label = $Panel/MarginContainer/StatsList/Route/RouteLabel
+@onready var _player_data_label: Label = $Panel/MarginContainer/StatsList/Player/Data
+@onready var _time_data_label: Label = $Panel/MarginContainer/StatsList/Time/Data
+@onready var _medals_data_label: Label = $Panel/MarginContainer/StatsList/Medals/Data
 
 var _controller = null
 
@@ -43,10 +43,7 @@ func _refresh_view() -> void:
 	_set_label_text(_medals_data_label, str(vm.get("badges_text", "0")))
 
 
-func _set_label_text(node: Node, text: String) -> void:
+func _set_label_text(node: Label, text: String) -> void:
 	if node == null:
 		return
-	if node.has_method("setText"):
-		node.setText(text)
-	elif node is Label:
-		(node as Label).text = text
+	node.text = text

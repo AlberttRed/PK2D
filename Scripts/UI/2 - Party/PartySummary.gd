@@ -52,7 +52,7 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 
 
 func loadGeneralInfo(pokemon: Pokemon) -> void:
-	generalInfo.get_node("Nombre").setText(pokemon.get_display_name())
+	generalInfo.get_node("Nombre").text = pokemon.get_display_name()
 
 	if pokemon.gender == CONST.GENEROS.MACHO:
 		generalInfo.get_node("Genero").texture = preload("res://Sprites/UI/Party/male_icon.png")
@@ -73,7 +73,7 @@ func loadGeneralInfo(pokemon: Pokemon) -> void:
 	else:
 		generalInfo.get_node("Status").visible = false
 
-	generalInfo.get_node("Nivel").setText(str(pokemon.level))
+	generalInfo.get_node("Nivel").text = str(pokemon.level)
 	generalInfo.get_node("Sprite").texture = pokemon.get_battle_front_sprite()
 
 	var ball_tex := PokeballItemEffect.get_summary_texture(pokemon.captured_ball_id)

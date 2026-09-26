@@ -5,9 +5,9 @@ signal updated
 
 var pokemon: BattlePokemon
 
-@onready var lbl_name: RichTextLabel = $lblName
-@onready var lbl_gender: RichTextLabel = $lblGender
-@onready var lbl_level: RichTextLabel = $lblLevel
+@onready var lbl_name: Label = $lblName
+@onready var lbl_gender: Label = $lblGender
+@onready var lbl_level: Label = $lblLevel
 @onready var spr_level: Sprite2D = $lblNv
 @onready var status_ui: Sprite2D = $Status
 @onready var owned_icon: Sprite2D = $owned
@@ -70,23 +70,31 @@ func _should_show_owned_icon() -> bool:
 
 ## `level_display_override`: si no es null, fija el número de nivel en caja (p. ej. animación EXP: aún el nivel antiguo).
 func refresh_panel_labels(level_display_override = null) -> void:
-	lbl_name.setText(pokemon.get_name())
+	lbl_name.text = pokemon.get_name()
 	if level_display_override != null:
-		lbl_level.setText(str(level_display_override))
+		lbl_level.text = str(level_display_override)
 	else:
-		lbl_level.setText(str(pokemon.get_level()))
+		lbl_level.text = str(pokemon.get_level())
 	print(pokemon.get_name() +":" + str(pokemon.base_data.gender))
 	match pokemon.base_data.gender:
 		CONST.GENEROS.HEMBRA:
-			lbl_gender.setText("♀")
-			lbl_gender.set("theme_override_colors/default_color", Color("FF5D2C"))
+			lbl_gender.text = "♀"
+			_set_label_font_color(lbl_gender, Color("FF5D2C"))
 		CONST.GENEROS.MACHO:
-			lbl_gender.setText("♂")
-			lbl_gender.set("theme_override_colors/default_color", Color("3465DF"))
+			lbl_gender.text = "♂"
+			_set_label_font_color(lbl_gender, Color("3465DF"))
 		_:
 			lbl_gender.text = ""
 
 	update_status_ui()
+
+
+func _set_label_font_color(label: Label, color: Color) -> void:
+	if label == null or label.label_settings == null:
+		return
+	var settings := label.label_settings.duplicate() as LabelSettings
+	settings.font_color = color
+	label.label_settings = settings
 
 
 ## Alinea la barra de PS con `pokemon.hp` / `pokemon.total_hp` (p. ej. tras subir de nivel y `refresh_derived_stats_from_base`).
@@ -118,7 +126,7 @@ func clear_ui() -> void:
 func update_hp(hp: int) -> void:
 	await health_bar.animate_to(min(hp, health_bar.max_value))
 	updated.emit()
-	
+
 func reduce_hp_by(hp: int) -> void:
 	await health_bar.animate_to(max(health_bar.current_value - hp, 0))
 	updated.emit()
@@ -208,7 +216,7 @@ func animate_exp_bar_gain(
 			AudioManager.play_battle_exp_full()
 			e = need
 		var reached: int = L + 1
-		lbl_level.setText(str(reached))
+		lbl_level.text = str(reached)
 		if reached == target_level:
 			sync_health_bar_from_pokemon()
 		var start_new_lvl: Vector2i = mon.get_exp_bar_segment_values_for_level(e, reached)

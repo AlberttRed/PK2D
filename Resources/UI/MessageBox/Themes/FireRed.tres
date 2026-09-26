@@ -7,5 +7,6 @@
 [resource]
 script = ExtResource("1_2jbts")
 frame_stylebox = ExtResource("1_fmodc")
+content_margin_left = 16.0
 wait_indicator_texture = ExtResource("2_next")
 metadata/_custom_type_script = "uid://dnqu4apuujlwo"

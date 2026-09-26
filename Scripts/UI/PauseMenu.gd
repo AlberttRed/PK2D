@@ -116,11 +116,11 @@ func open(initial_index: int = -1, play_sfx: bool = true) -> void:
 	# Crear una fila por opción visible
 	for r in range(_visible_indices.size()):
 		var canonical: int = _visible_indices[r]
-		var label = _create_label_hgss(_FULL_MENU_OPTIONS[canonical])
+		var label := _create_label_settings_row(_FULL_MENU_OPTIONS[canonical])
 		label.name = "Option" + str(r)
 		options_container.add_child(label)
 
-	# Ancho + altura provisional (el RTL real suele medir más que 34px/fila tras Godot 4.x / LabelHGSS)
+	# Ancho + altura provisional
 	_apply_panel_width_and_provisional_height()
 
 	# Visible para que el layout de RTL/fit_content sea fiable; alpha 0 evita el flash de altura provisional.
@@ -162,8 +162,33 @@ func close(play_sfx: bool = true) -> void:
 	# Emitir señal de cierre
 	menu_closed.emit()
 
-func _create_label_hgss(text: String) -> LabelHGSS:
-	return LabelHGSS.create_menu_row(text)
+func _create_label_settings_row(text: String) -> Label:
+	var label := Label.new()
+	label.size_flags_horizontal = Control.SIZE_FILL
+	label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	label.custom_minimum_size = Vector2(0, HGSSMenuTypography.ROW_HEIGHT)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	label.clip_text = false
+	label.text = text
+
+	var font_variation := FontVariation.new()
+	font_variation.base_font = load("res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf") as Font
+	font_variation.spacing_top = HGSSMenuTypography.TEXT_RISE
+
+	var settings := LabelSettings.new()
+	settings.font = font_variation
+	settings.font_size = HGSSMenuTypography.FONT_SIZE
+	settings.font_color = Color(0.317647, 0.317647, 0.34902, 1)
+	settings.stacked_shadow_count = 3
+	var shadow := Color(0.65098, 0.65098, 0.682353, 1)
+	settings.set("stacked_shadow_0/offset", Vector2(2, 0))
+	settings.set("stacked_shadow_0/color", shadow)
+	settings.set("stacked_shadow_1/offset", Vector2(0, 2))
+	settings.set("stacked_shadow_1/color", shadow)
+	settings.set("stacked_shadow_2/offset", Vector2(2, 2))
+	settings.set("stacked_shadow_2/color", shadow)
+	label.label_settings = settings
+	return label
 
 ## Limpia las opciones del contenedor
 func _clear_options() -> void:
@@ -186,7 +211,7 @@ func _apply_panel_width_and_provisional_height() -> void:
 	var mc := $MarginContainer as MarginContainer
 	var mt := float(mc.get_theme_constant("margin_top"))
 	var mb := float(mc.get_theme_constant("margin_bottom"))
-	var provisional_row := LabelHGSS.MENU_ROW_HEIGHT
+	var provisional_row := HGSSMenuTypography.ROW_HEIGHT
 	var row_n := int(_visible_indices.size()) if not _visible_indices.is_empty() else FULL_MENU_OPTION_COUNT
 	var provisional_height := mt + mb + float(row_n) * provisional_row
 
@@ -204,7 +229,7 @@ func _options_stack_content_height() -> float:
 	if n == 0:
 		return 0.0
 	var sep := float(options_container.get_theme_constant("separation"))
-	return float(n) * LabelHGSS.MENU_ROW_HEIGHT + sep * float(max(0, n - 1))
+	return float(n) * HGSSMenuTypography.ROW_HEIGHT + sep * float(max(0, n - 1))
 
 
 ## Ajusta la altura del panel al contenido real (márgenes + pila de filas).

@@ -8,23 +8,23 @@ func loadPokemonInfo(pokemon: Pokemon) -> void:
 	var nname := "—"
 	if nidx >= 0 and nidx < CONST.NaturesName.size():
 		nname = str(CONST.NaturesName[nidx])
-	$Naturaleza.setText(nname + ".")
+	$Naturaleza.text = nname + "."
 
-	$Labels/FechaCaptura.setText(pokemon.capture_date)
+	$Labels/FechaCaptura.text = pokemon.capture_date
 
-	$Labels/RutaCaptura.setText(pokemon.capture_route)
+	$Labels/RutaCaptura.text = pokemon.capture_route
 
-	$Labels/NivelCaptura.setText("Encontrado con Nv. " + str(pokemon.capture_level) + ".")
+	$Labels/NivelCaptura.text = "Encontrado con Nv. " + str(pokemon.capture_level) + "."
 
-	$DescNaturaleza.setText(pokemon.personality)
+	$DescNaturaleza.text = pokemon.personality
 
 func clear():
-	$Naturaleza.setText("")
+	$Naturaleza.text = ""
 
-	$Labels/FechaCaptura.setText("")
+	$Labels/FechaCaptura.text = ""
 
-	$Labels/RutaCaptura.setText("")
+	$Labels/RutaCaptura.text = ""
 
-	$Labels/NivelCaptura.setText("")
+	$Labels/NivelCaptura.text = ""
 
-	$DescNaturaleza.setText("")
+	$DescNaturaleza.text = ""

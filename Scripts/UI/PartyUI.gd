@@ -144,6 +144,8 @@ func close() -> void:
 	_disable_input()
 	for panel: PartyPokemonPanel in pokemon_panels:
 		panel.disableFocus()
+	# Quitar ayuda del MessageBox (también en party de combate vía DisplayManager.MSG).
+	DisplayManager.close_message()
 	hide()
 	_unblock_player_control()
 	closed.emit()
@@ -822,6 +824,7 @@ func _open_hgss_summary(slot: int) -> void:
 	_in_hgss_summary = true
 	_disable_input()
 
+	var fade_z: int = DisplayManager.begin_ui_cover_fade()
 	await DisplayManager.fade_in(_SUMMARY_FADE_DURATION)
 	DisplayManager.close_message()
 
@@ -831,13 +834,16 @@ func _open_hgss_summary(slot: int) -> void:
 	summary.showSummary(PartySummary.DATA)
 
 	await DisplayManager.fade_out(_SUMMARY_FADE_DURATION)
+	DisplayManager.end_ui_cover_fade(fade_z)
 	summary.reveal_with_cry()
 
 	await summary.close_requested
 
+	fade_z = DisplayManager.begin_ui_cover_fade()
 	await DisplayManager.fade_in(_SUMMARY_FADE_DURATION)
 	summary.dismiss()
 	await DisplayManager.fade_out(_SUMMARY_FADE_DURATION)
+	DisplayManager.end_ui_cover_fade(fade_z)
 
 	_in_hgss_summary = false
 	_suppress_input = false

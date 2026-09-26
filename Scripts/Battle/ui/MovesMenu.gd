@@ -4,7 +4,7 @@ signal move_selected(battle_choice: BattleChoice)
 var locked_button: Button = null
 var original_normal_style: StyleBox = null
 
-@onready var lbl_pps = $lblPPs
+@onready var lbl_pps: Label = $lblPPs
 @onready var move_type_icon = $MoveType
 @onready var move_buttons = [
 	$Moves/Move1,
@@ -21,7 +21,7 @@ func _ready():
 	for i in move_buttons.size():
 		move_buttons[i].pressed.connect(_on_move_pressed.bind(i))
 		move_buttons[i].focus_entered.connect(_on_focus_entered.bind(i))
-	
+
 
 func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 	current_pokemon = pokemon
@@ -33,7 +33,7 @@ func show_for(pokemon: BattlePokemon) -> BattleMoveChoice:
 			var move:BattleMove = moves[i]
 			var button = move_buttons[i]
 			button.visible = true
-			button.get_node("Label").setText(move.get_name())
+			(button.get_node("Label") as Label).text = move.get_name()
 			# Solo deshabilitar por PP agotado; Anulación/Encore/etc. validan al elegir (sin cambiar estilo).
 			button.disabled = move.get_pp() <= 0
 			button.modulate = Color.WHITE
@@ -95,18 +95,32 @@ func update_move_info_panel(move: BattleMove):
 	lbl_pps.text = "PP: %d/%d" % [move.get_pp(), move.get_total_pp()]
 
 	var ratio = float(move.get_pp()) / float(move.get_total_pp())
+	var font_c: Color
+	var shadow_c: Color
 	if move.get_pp() == 0:
-		lbl_pps.add_theme_color_override("default_color", Color("FF4A4A"))
-		lbl_pps.add_theme_color_override("font_shadow_color", Color("8C3131"))
+		font_c = Color("FF4A4A")
+		shadow_c = Color("8C3131")
 	elif ratio <= 0.25:
-		lbl_pps.add_theme_color_override("default_color", Color("FF8C21"))
-		lbl_pps.add_theme_color_override("font_shadow_color", Color("944A18"))
+		font_c = Color("FF8C21")
+		shadow_c = Color("944A18")
 	elif ratio <= 0.5:
-		lbl_pps.add_theme_color_override("default_color", Color("FFC600"))
-		lbl_pps.add_theme_color_override("font_shadow_color", Color("946B00"))
+		font_c = Color("FFC600")
+		shadow_c = Color("946B00")
 	else:
-		lbl_pps.add_theme_color_override("default_color", Color("585850"))
-		lbl_pps.add_theme_color_override("font_shadow_color", Color("A8B8B8"))
+		font_c = Color("585850")
+		shadow_c = Color("A8B8B8")
+	_set_pps_colors(font_c, shadow_c)
+
+
+func _set_pps_colors(font_c: Color, shadow_c: Color) -> void:
+	if lbl_pps == null or lbl_pps.label_settings == null:
+		return
+	var settings := lbl_pps.label_settings.duplicate() as LabelSettings
+	settings.font_color = font_c
+	settings.set("stacked_shadow_0/color", shadow_c)
+	settings.set("stacked_shadow_1/color", shadow_c)
+	settings.set("stacked_shadow_2/color", shadow_c)
+	lbl_pps.label_settings = settings
 
 
 func _play_cursor_sound() -> void:

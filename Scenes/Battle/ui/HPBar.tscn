@@ -2,22 +2,56 @@
 
 [ext_resource type="Texture2D" uid="uid://kyij0fo8jh6o" path="res://Sprites/Pictures/battlePlayerBoxS.png" id="1_pin0n"]
 [ext_resource type="Script" uid="uid://bpc8w47kho03v" path="res://Scripts/Battle/ui/HPBar.gd" id="2_pin0n"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="3_smnl1"]
 [ext_resource type="Texture2D" uid="uid://bg3jekl6dawi0" path="res://Sprites/Pictures/Nv_icon_black.png" id="4_stmy4"]
 [ext_resource type="FontFile" uid="uid://bsnwutp46nd20" path="res://Resources/UI/Fonts/Raw Fonts/Pokemon GB.ttf" id="5_ump82"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="6_hgss"]
 [ext_resource type="PackedScene" uid="uid://b0ajmrb8a7e0r" path="res://Scenes/Battle/ui/AnimatedProgressBar.tscn" id="7_pin0n"]
 [ext_resource type="Texture2D" uid="uid://de5gioiilm38q" path="res://Sprites/Pictures/EXPbar_background.png" id="9_83cp1"]
 [ext_resource type="Texture2D" uid="uid://cg27fg41gy8jr" path="res://Sprites/Pictures/EXPbar_overlay.png" id="10_7xxgi"]
 [ext_resource type="Texture2D" uid="uid://dfrw7q71skoqw" path="res://Sprites/Pictures/battleBoxOwned.png" id="10_mpqva"]
 [ext_resource type="Texture2D" uid="uid://cmdjcwgdkilef" path="res://Sprites/Pictures/EXPbar_progress.png" id="11_o1cti"]
 
+[sub_resource type="FontVariation" id="FontVariation_hgss"]
+base_font = ExtResource("6_hgss")
+spacing_top = 4
+
 [sub_resource type="FontVariation" id="FontVariation_kynk5"]
 base_font = ExtResource("5_ump82")
 spacing_top = 4
 
-[sub_resource type="Theme" id="Theme_4f188"]
-default_font = SubResource("FontVariation_kynk5")
-default_font_size = 16
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
+font = SubResource("FontVariation_hgss")
+font_size = 26
+font_color = Color(0.301961, 0.301961, 0.301961, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.745098, 0.745098, 0.745098, 1)
+[sub_resource type="LabelSettings" id="LabelSettings_gender"]
+font = SubResource("FontVariation_hgss")
+font_size = 26
+font_color = Color(0.188235, 0.376471, 0.847059, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.745098, 0.745098, 0.745098, 1)
+[sub_resource type="LabelSettings" id="LabelSettings_level"]
+font = SubResource("FontVariation_kynk5")
+font_size = 16
+font_color = Color(0.301961, 0.301961, 0.301961, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.745098, 0.745098, 0.745098, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.745098, 0.745098, 0.745098, 1)
 
 [node name="HPBar" type="Sprite2D" unique_id=326980858]
 z_index = 6
@@ -26,37 +60,33 @@ texture = ExtResource("1_pin0n")
 script = ExtResource("2_pin0n")
 metadata/_edit_lock_ = true
 
-[node name="lblName" parent="." unique_id=1273754125 instance=ExtResource("3_smnl1")]
+[node name="lblName" type="Label" parent="." unique_id=1273754125]
 offset_left = -90.0
 offset_top = -35.0
 offset_right = 52.0
 offset_bottom = -8.0
-theme_override_colors/default_color = Color(0.301961, 0.301961, 0.301961, 1)
-theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
 text = "TYPHLOSION"
+label_settings = SubResource("LabelSettings_name")
 
-[node name="lblGender" parent="." unique_id=1471504892 instance=ExtResource("3_smnl1")]
+[node name="lblGender" type="Label" parent="." unique_id=1471504892]
 offset_left = 33.0
 offset_top = -37.0
 offset_right = 120.0
 offset_bottom = -12.0
-theme_override_colors/default_color = Color(0.188235, 0.376471, 0.847059, 1)
-theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
 text = "♂"
+label_settings = SubResource("LabelSettings_gender")
 
 [node name="lblNv" type="Sprite2D" parent="." unique_id=1627606006]
 position = Vector2(57.5, -20)
 texture = ExtResource("4_stmy4")
 
-[node name="lblLevel" parent="." unique_id=214137072 instance=ExtResource("3_smnl1")]
+[node name="lblLevel" type="Label" parent="." unique_id=214137072]
 offset_left = 66.0
 offset_top = -31.0
 offset_right = 184.0
 offset_bottom = -13.0
-theme = SubResource("Theme_4f188")
-theme_override_colors/default_color = Color(0.301961, 0.301961, 0.301961, 1)
-theme_override_colors/font_shadow_color = Color(0.745098, 0.745098, 0.745098, 1)
 text = "20"
+label_settings = SubResource("LabelSettings_level")
 
 [node name="Status" type="Sprite2D" parent="." unique_id=86657525]
 visible = false

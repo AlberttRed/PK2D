@@ -2,7 +2,55 @@
 
 [ext_resource type="Script" uid="uid://bljj3l8lm5x2" path="res://Scripts/UI/SaveUI.gd" id="1_smuj4"]
 [ext_resource type="StyleBox" uid="uid://bbmbg4gu8ria3" path="res://Resources/UI/MessageBox/Choice Styles/ChoicesBox_Style.tres" id="1_wh0ap"]
-[ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="2_ufe7s"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="2_font"]
+
+[sub_resource type="FontVariation" id="FontVariation_default"]
+base_font = ExtResource("2_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_default"]
+font = SubResource("FontVariation_default")
+font_size = 26
+font_color = Color(0.345098, 0.345098, 0.313726, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.658824, 0.721569, 0.721569, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.658824, 0.721569, 0.721569, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_green"]
+base_font = ExtResource("2_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_green"]
+font = SubResource("FontVariation_green")
+font_size = 26
+font_color = Color(0.11764706, 0.5921569, 0.023529412, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.51190656, 0.9317889, 0.52149916, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.51190656, 0.9317889, 0.52149916, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.51190656, 0.9317889, 0.52149916, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_blue"]
+base_font = ExtResource("2_font")
+spacing_top = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_blue"]
+font = SubResource("FontVariation_blue")
+font_size = 26
+font_color = Color(0, 0.4392157, 0.972549, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.49411765, 0.73333335, 0.90588236, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.49411765, 0.73333335, 0.90588236, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.49411765, 0.73333335, 0.90588236, 1)
 
 [node name="SaveUI" type="Control" unique_id=1355763459]
 layout_mode = 3
@@ -41,58 +89,57 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="LabelHGSS" parent="Panel/MarginContainer/StatsList/Route" unique_id=1015503900 instance=ExtResource("2_ufe7s")]
+[node name="RouteLabel" type="Label" parent="Panel/MarginContainer/StatsList/Route" unique_id=1015503900]
 layout_mode = 2
-theme_override_colors/default_color = Color(0.11764706, 0.5921569, 0.023529412, 1)
-theme_override_colors/font_shadow_color = Color(0.51190656, 0.9317889, 0.52149916, 1)
+size_flags_horizontal = 3
 text = "Ruta 3"
+label_settings = SubResource("LabelSettings_green")
 horizontal_alignment = 1
-align = 1
 
 [node name="Player" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=779741031]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="Label" parent="Panel/MarginContainer/StatsList/Player" unique_id=1172907091 instance=ExtResource("2_ufe7s")]
+[node name="Label" type="Label" parent="Panel/MarginContainer/StatsList/Player" unique_id=1172907091]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Jugador"
+label_settings = SubResource("LabelSettings_default")
 
-[node name="Data" parent="Panel/MarginContainer/StatsList/Player" unique_id=1060541460 instance=ExtResource("2_ufe7s")]
+[node name="Data" type="Label" parent="Panel/MarginContainer/StatsList/Player" unique_id=1060541460]
 layout_mode = 2
-theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
-theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
 text = "Rojo"
+label_settings = SubResource("LabelSettings_blue")
 horizontal_alignment = 2
-align = 2
 
 [node name="Time" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=1970746451]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="Label" parent="Panel/MarginContainer/StatsList/Time" unique_id=594756960 instance=ExtResource("2_ufe7s")]
+[node name="Label" type="Label" parent="Panel/MarginContainer/StatsList/Time" unique_id=594756960]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Tiempo"
+label_settings = SubResource("LabelSettings_default")
 
-[node name="Data" parent="Panel/MarginContainer/StatsList/Time" unique_id=1441640625 instance=ExtResource("2_ufe7s")]
+[node name="Data" type="Label" parent="Panel/MarginContainer/StatsList/Time" unique_id=1441640625]
 layout_mode = 2
-theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
-theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
 text = "00:00"
+label_settings = SubResource("LabelSettings_blue")
 horizontal_alignment = 2
-align = 2
 
 [node name="Medals" type="HBoxContainer" parent="Panel/MarginContainer/StatsList" unique_id=1403776559]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="Label" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1995771410 instance=ExtResource("2_ufe7s")]
+[node name="Label" type="Label" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1995771410]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Medallas"
+label_settings = SubResource("LabelSettings_default")
 
-[node name="Data" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1069626759 instance=ExtResource("2_ufe7s")]
+[node name="Data" type="Label" parent="Panel/MarginContainer/StatsList/Medals" unique_id=1069626759]
 layout_mode = 2
-theme_override_colors/default_color = Color(0, 0.4392157, 0.972549, 1)
-theme_override_colors/font_shadow_color = Color(0.49411765, 0.73333335, 0.90588236, 1)
 text = "0"
+label_settings = SubResource("LabelSettings_blue")
 horizontal_alignment = 2
-align = 2

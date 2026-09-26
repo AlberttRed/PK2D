@@ -7,7 +7,6 @@ const _MOVE_LEARNING_FLOW := preload("res://Scripts/UI/MoveLearningFlowControlle
 const _PARTY_SUMMARY_SCENE := preload("res://Scenes/UI/2 - Party/PartySummary.tscn")
 const _BAG_SCENE := preload("res://Scenes/UI/BAG.tscn")
 const _BAG_CONTROLLER_SCRIPT := preload("res://Scripts/UI/BagController.gd")
-const _PARTY_SCENE := preload("res://Scenes/UI/2 - Party/PARTY.tscn")
 const _BATTLE_PARTY_SWITCH_CONTROLLER := preload("res://Scripts/Battle/ui/BattlePartySwitchController.gd")
 
 @onready var message_controller:BattleMessageController = $MessageController
@@ -31,8 +30,7 @@ var _move_learning_flow: RefCounted = null
 var _battle_move_forget_summary: PartySummary = null
 ## Mochila solo para el flujo de combate (no comparte sesión con la Bolsa de pausa).
 var _battle_bag_ui: BagUI = null
-## Selector Party reutilizado para elegir objetivo aliado de ítems en combate.
-var _battle_party_ui: PartyUI = null
+## El mismo `$PartyUI` sirve para switch y para elegir objetivo de ítems.
 const FAMILY := MessageFamily.Values
 
 func _ready() -> void:
@@ -165,19 +163,6 @@ func _ensure_battle_bag_ui() -> void:
 		push_error("BattleUI: BAG.tscn debe instanciar BagUI.")
 
 
-func _ensure_battle_party_ui() -> void:
-	if _battle_party_ui != null:
-		return
-	var node: Node = _PARTY_SCENE.instantiate()
-	if node is PartyUI:
-		_battle_party_ui = node
-		add_child(_battle_party_ui)
-		_battle_party_ui.z_index = 31
-		_battle_party_ui.hide()
-	else:
-		push_error("BattleUI: PARTY.tscn debe instanciar PartyUI.")
-
-
 ## Flujo mochila en combate: solo UI; el turno aplica `ItemEffect` vía `BattleItemHandler`.
 func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 	if battle_controller == null:
@@ -291,8 +276,8 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 					out.target_party_slot = slot
 					var preview_target: BattlePokemon = out.resolve_item_target_battle_pokemon()
 					if _is_runtime_target_active_in_battle(preview_target):
-						if _battle_party_ui != null and _battle_party_ui.visible:
-							_battle_party_ui.close()
+						if party_ui != null and party_ui.visible:
+							party_ui.close()
 					_battle_bag_ui.close()
 					return out
 				last_party_focus_slot = slot
@@ -358,14 +343,13 @@ func _pick_ally_party_slot_for_item(actor: BattlePokemon, _item_data: ItemData, 
 	_sync_player_battle_party_to_persistent()
 	# Evita heredar input del ChoiceBox (accept/cancel/direcciones) al abrir Party.
 	await _await_menu_inputs_released()
-	_ensure_battle_party_ui()
-	if _battle_party_ui == null:
+	if party_ui == null:
 		return -1
 
 	var party_ctrl = _BATTLE_PARTY_SWITCH_CONTROLLER.new(
 		battle_controller.player_side, actor, false
 	)
-	_battle_party_ui.setup(party_ctrl)
+	party_ui.setup(party_ctrl)
 	if _battle_bag_ui != null and _battle_bag_ui.visible and _battle_bag_ui.has_method("set_input_enabled"):
 		_battle_bag_ui.set_input_enabled(false)
 
@@ -375,30 +359,30 @@ func _pick_ally_party_slot_for_item(actor: BattlePokemon, _item_data: ItemData, 
 		picked_slot_wrap[0] = slot
 	var on_cancel := func():
 		cancelled_wrap[0] = true
-		_battle_party_ui.close()
-	_battle_party_ui.bag_item_target_selected.connect(on_selected, CONNECT_ONE_SHOT)
-	_battle_party_ui.bag_item_target_cancelled.connect(on_cancel, CONNECT_ONE_SHOT)
+		party_ui.close()
+	party_ui.bag_item_target_selected.connect(on_selected, CONNECT_ONE_SHOT)
+	party_ui.bag_item_target_cancelled.connect(on_cancel, CONNECT_ONE_SHOT)
 
-	_battle_party_ui.open_for_bag_item_target_pick(initial_focus_slot)
-	if _battle_party_ui.has_method("set_input_enabled"):
-		_battle_party_ui.set_input_enabled(false)
+	party_ui.open_for_bag_item_target_pick(initial_focus_slot)
+	if party_ui.has_method("set_input_enabled"):
+		party_ui.set_input_enabled(false)
 	# Guardia adicional para evitar propagación del último input.
 	await _await_menu_inputs_released()
-	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("set_input_enabled"):
-		_battle_party_ui.set_input_enabled(true)
+	if party_ui != null and party_ui.visible and party_ui.has_method("set_input_enabled"):
+		party_ui.set_input_enabled(true)
 	while int(picked_slot_wrap[0]) < 0 and not bool(cancelled_wrap[0]):
 		await get_tree().process_frame
 	if bool(cancelled_wrap[0]):
-		while _battle_party_ui != null and _battle_party_ui.visible:
+		while party_ui != null and party_ui.visible:
 			await get_tree().process_frame
 		if _battle_bag_ui != null and _battle_bag_ui.visible and _battle_bag_ui.has_method("set_input_enabled"):
 			_battle_bag_ui.set_input_enabled(true)
-	if _battle_party_ui.bag_item_target_selected.is_connected(on_selected):
-		_battle_party_ui.bag_item_target_selected.disconnect(on_selected)
-	if _battle_party_ui.bag_item_target_cancelled.is_connected(on_cancel):
-		_battle_party_ui.bag_item_target_cancelled.disconnect(on_cancel)
-	if int(picked_slot_wrap[0]) >= 0 and _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("set_input_enabled"):
-		_battle_party_ui.set_input_enabled(false)
+	if party_ui.bag_item_target_selected.is_connected(on_selected):
+		party_ui.bag_item_target_selected.disconnect(on_selected)
+	if party_ui.bag_item_target_cancelled.is_connected(on_cancel):
+		party_ui.bag_item_target_cancelled.disconnect(on_cancel)
+	if int(picked_slot_wrap[0]) >= 0 and party_ui != null and party_ui.visible and party_ui.has_method("set_input_enabled"):
+		party_ui.set_input_enabled(false)
 	return int(picked_slot_wrap[0])
 
 
@@ -419,13 +403,13 @@ func _await_menu_inputs_released() -> void:
 
 func show_party_item_result_and_close(message_text: String, target_party_slot: int = -1) -> void:
 	_sync_player_battle_party_to_persistent()
-	if _battle_party_ui != null and _battle_party_ui.visible and target_party_slot >= 0 and _battle_party_ui.has_method("animate_item_hp_gain_for_slot"):
-		await _battle_party_ui.animate_item_hp_gain_for_slot(target_party_slot)
-	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("refresh_slots_display"):
-		_battle_party_ui.refresh_slots_display()
+	if party_ui != null and party_ui.visible and target_party_slot >= 0 and party_ui.has_method("animate_item_hp_gain_for_slot"):
+		await party_ui.animate_item_hp_gain_for_slot(target_party_slot)
+	if party_ui != null and party_ui.visible and party_ui.has_method("refresh_slots_display"):
+		party_ui.refresh_slots_display()
 	if message_text.is_empty():
-		if _battle_party_ui != null and _battle_party_ui.visible:
-			_battle_party_ui.close()
+		if party_ui != null and party_ui.visible:
+			party_ui.close()
 		return
 	await DisplayManager.show_message(message_text, {
 		"waitInput": true,
@@ -435,8 +419,8 @@ func show_party_item_result_and_close(message_text: String, target_party_slot: i
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
-	if _battle_party_ui != null and _battle_party_ui.visible:
-		_battle_party_ui.close()
+	if party_ui != null and party_ui.visible:
+		party_ui.close()
 	if _battle_bag_ui != null and _battle_bag_ui.visible and _battle_bag_ui.has_method("set_input_enabled"):
 		_battle_bag_ui.set_input_enabled(true)
 
@@ -495,8 +479,8 @@ func _is_item_usable_on_party_slot_in_battle(actor: BattlePokemon, item_data: It
 
 
 func _show_no_effect_message_while_party_open() -> void:
-	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("set_input_enabled"):
-		_battle_party_ui.set_input_enabled(false)
+	if party_ui != null and party_ui.visible and party_ui.has_method("set_input_enabled"):
+		party_ui.set_input_enabled(false)
 	await DisplayManager.show_message("No tendría ningún efecto.", {
 		"waitInput": true,
 		"closeAtEnd": true,
@@ -505,8 +489,8 @@ func _show_no_effect_message_while_party_open() -> void:
 		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
 		"typingMode": "typing",
 	})
-	if _battle_party_ui != null and _battle_party_ui.visible and _battle_party_ui.has_method("set_input_enabled"):
-		_battle_party_ui.set_input_enabled(true)
+	if party_ui != null and party_ui.visible and party_ui.has_method("set_input_enabled"):
+		party_ui.set_input_enabled(true)
 
 
 func _sync_player_battle_party_to_persistent() -> void:
@@ -1594,7 +1578,7 @@ func has_modal_ui_visible() -> bool:
 		return true
 	if _battle_bag_ui != null and _battle_bag_ui.visible:
 		return true
-	if _battle_party_ui != null and _battle_party_ui.visible:
+	if party_ui != null and party_ui.visible:
 		return true
 	return party_ui != null and party_ui.visible
 

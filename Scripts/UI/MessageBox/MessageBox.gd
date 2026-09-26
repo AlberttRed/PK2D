@@ -16,16 +16,23 @@ signal finished
 
 enum {YES, NO}
 
-@onready var label:RichTextLabel = $ScrollContainer/Container/LabelHGSS
-@onready var label2:RichTextLabel = $ScrollContainer/Container/LabelHGSS/Outline
-@onready var label3:RichTextLabel = $ScrollContainer/Container/LabelHGSS/Outline2
+@onready var label: Label = $ScrollContainer/Container/Body
 @onready var scroll:ScrollContainer = $ScrollContainer
 @onready var container: Control = $ScrollContainer/Container
 @onready var wait_indicator: Sprite2D = $next  ## El indicador de espera (flecha)
 @onready var animation_player: AnimationPlayer = $AnimationPlayer2  ## El AnimationPlayer para el indicador
 
+signal line_displayed
+
 var typingSpeed:float = 5
 var _stop:bool = false
+## Paginación HGSS (2 líneas visibles).
+var actualLine: int = 0
+var nextLineStop: int = 2
+var lastLine: int = 0
+## Mapa char_index → línea 1-based (rebuild al cambiar texto/ancho).
+var _char_line_1based: PackedInt32Array = PackedInt32Array()
+var _line_map_width: float = -1.0
 
 var messageTextList: Array[String] = []
 var actualMessageIndex: int = 0
@@ -64,7 +71,10 @@ var typing:bool:
 
 var messageHasFinished:bool:
 	get:
-		return label.messageHasFinished
+		if label == null:
+			return true
+		var vc := label.visible_characters
+		return vc < 0 or vc >= label.get_total_character_count()
 
 var isLastMessage:bool:
 	get:
@@ -90,14 +100,162 @@ func _ready():
 		#set_physics_process(false)
 		#finsihedTyping.emit()
 func setText(_text):
-	label.text = _text
+	label.text = _strip_bbcode(str(_text))
+	_rebuild_char_line_map()
+
+
+func _strip_bbcode(s: String) -> String:
+	var t := s.replace("[br]", "\n")
+	for tag in ["[left]", "[center]", "[right]", "[/left]", "[/center]", "[/right]"]:
+		t = t.replace(tag, "")
+	return t
+
+
+func _reset_line_state() -> void:
+	lastLine = 0
+	actualLine = 0
+	nextLineStop = 2
+
+
+func _set_visible_characters(value: int) -> void:
+	if label == null:
+		return
+	label.visible_characters = value
+	if value < 0:
+		actualLine = maxi(1, label.get_line_count())
+		line_displayed.emit()
+		lastLine = actualLine
+		return
+	var total := label.get_total_character_count()
+	if total <= 0:
+		actualLine = 0
+		return
+	# Equivalente a get_character_line(vc)+1 / get_character_line(vc+1)+1
+	actualLine = _line_at_char_index(value)
+	var peek_line := _line_at_char_index(value + 1)
+	if peek_line <= 0:
+		peek_line = actualLine
+	if messageHasFinished or peek_line != actualLine:
+		line_displayed.emit()
+		lastLine = actualLine
+
+
+func _label_text_width() -> float:
+	if label == null:
+		return 433.0
+	var width := label.size.x
+	if width < 8.0:
+		width = label.custom_minimum_size.x
+	if width < 8.0 and scroll != null:
+		width = scroll.offset_right - scroll.offset_left
+	if width < 8.0:
+		width = 433.0
+	return width
+
+
+func _label_font_and_size() -> Array:
+	var font: Font = null
+	var font_size := 26
+	if label and label.label_settings:
+		font = label.label_settings.font
+		font_size = label.label_settings.font_size
+	if font == null and label:
+		font = label.get_theme_default_font()
+	return [font, font_size]
+
+
+## Reconstruye el mapa de líneas con TextParagraph (mismo wrap que Label).
+func _rebuild_char_line_map() -> void:
+	_char_line_1based = PackedInt32Array()
+	_line_map_width = -1.0
+	if label == null:
+		return
+	var full := label.text
+	if full.is_empty():
+		return
+	var width := _label_text_width()
+	var fs: Array = _label_font_and_size()
+	var font: Font = fs[0]
+	var font_size: int = int(fs[1])
+	if font == null:
+		# Fallback: solo saltos duros.
+		var line := 1
+		_char_line_1based.resize(full.length())
+		for i in range(full.length()):
+			_char_line_1based[i] = line
+			if full[i] == "\n":
+				line += 1
+		_line_map_width = width
+		return
+
+	var paragraph := TextParagraph.new()
+	paragraph.break_flags = (
+		TextServer.BREAK_MANDATORY
+		| TextServer.BREAK_WORD_BOUND
+		| TextServer.BREAK_ADAPTIVE
+	)
+	paragraph.add_string(full, font, font_size)
+	paragraph.width = width
+	var line_count := paragraph.get_line_count()
+	_char_line_1based.resize(full.length())
+	for i in range(full.length()):
+		_char_line_1based[i] = 1
+	for line_i in range(line_count):
+		var rng: Vector2i = paragraph.get_line_range(line_i)
+		var from_i: int = clampi(rng.x, 0, full.length())
+		var to_i: int = clampi(rng.y, 0, full.length())
+		for c in range(from_i, to_i):
+			_char_line_1based[c] = line_i + 1
+	# Caracteres tras el último rango (p. ej. '\n' final): heredar última línea.
+	var last_line := maxi(1, line_count)
+	for c in range(full.length()):
+		if _char_line_1based[c] <= 0:
+			_char_line_1based[c] = last_line
+	_line_map_width = width
+
+
+func _ensure_char_line_map() -> void:
+	if label == null:
+		return
+	var width := _label_text_width()
+	if _char_line_1based.is_empty() or absf(width - _line_map_width) > 0.5:
+		_rebuild_char_line_map()
+
+
+## Equivalente a RichTextLabel.get_character_line(index) + 1.
+func _line_at_char_index(char_index: int) -> int:
+	if label == null or char_index < 0:
+		return 0
+	_ensure_char_line_map()
+	if _char_line_1based.is_empty():
+		return 0
+	if char_index >= _char_line_1based.size():
+		# Past end: misma línea que el último carácter (como next_line==0 → actualLine).
+		return int(_char_line_1based[_char_line_1based.size() - 1])
+	return int(_char_line_1based[char_index])
+
+
+func _label_line_height() -> float:
+	if label == null:
+		return 32.0
+	var h := float(label.get_line_height())
+	if h > 1.0:
+		return h
+	return 32.0
+
+
+func _label_content_height() -> float:
+	if label == null:
+		return 0.0
+	var lc := maxi(1, label.get_line_count())
+	return float(lc) * _label_line_height()
 
 ## Sustituye el texto visible de golpe (sin typing ni wait). Útil para ayudas de menú.
 func set_help_text_instant(text: String) -> void:
 	hide_wait_indicator()
 	setText(text)
 	if label:
-		label.visible_characters = -1
+		_set_visible_characters(-1)
 	if not visible:
 		show()
 	_adjust_container_size()
@@ -270,7 +428,7 @@ func fit_scroll_width_to_panel() -> void:
 	_sync_text_container_width_to_scroll()
 
 
-## Ancho útil del RTL según offsets actuales del ScrollContainer (tema o escena).
+## Ancho útil del Label según offsets actuales del ScrollContainer (tema o escena).
 func _sync_text_container_width_to_scroll() -> void:
 	if _bag_dialog_text_layout_saved:
 		_bag_apply_inner_text_width()
@@ -279,11 +437,11 @@ func _sync_text_container_width_to_scroll() -> void:
 		return
 	var inner_w: float = maxf(1.0, scroll.offset_right - scroll.offset_left)
 	container.custom_minimum_size.x = inner_w
-	for rtl: RichTextLabel in [label, label2, label3]:
-		rtl.offset_left = 0.0
-		rtl.offset_right = inner_w
-		rtl.custom_minimum_size.x = inner_w
+	label.offset_left = 0.0
+	label.offset_right = inner_w
+	label.custom_minimum_size.x = inner_w
 	label.queue_redraw()
+	_rebuild_char_line_map()
 
 ## Actualiza el WaitIndicator según el tema
 ## @param messagebox_theme: El MessageBoxTheme con la configuración del indicador
@@ -318,100 +476,54 @@ func _update_wait_indicator_inline(messagebox_theme: MessageBoxTheme) -> void:
 	if not wait_indicator or not label:
 		return
 
-	# Obtener el último carácter visible
-	var visible_chars = label.visible_characters
+	var visible_chars: int = label.visible_characters
 	if visible_chars <= 0:
 		visible_chars = label.get_total_character_count()
-
 	if visible_chars <= 0:
 		return
 
-	# Obtener la línea del último carácter visible (0-indexed)
-	var last_char_line = label.get_character_line(visible_chars - 1)
+	var original_text := label.text
+	var last_char_line := maxi(0, _line_at_char_index(visible_chars - 1) - 1)
 
-	# Obtener el contenido del texto original
-	var original_text = label.text
-
-	# Contar cuántos caracteres de BBCode hay al inicio (antes del contenido real)
-	var bbcode_chars = 0
-	if original_text.begins_with("[left]"):
-		bbcode_chars = 6
-	elif original_text.begins_with("[center]"):
-		bbcode_chars = 8
-	elif original_text.begins_with("[right]"):
-		bbcode_chars = 7
-
-	# Ajustar visible_chars para excluir el BBCode al inicio
-	var adjusted_visible_chars = visible_chars
-	if adjusted_visible_chars > bbcode_chars:
-		adjusted_visible_chars -= bbcode_chars
-	else:
-		adjusted_visible_chars = 0
-
-	# Obtener el contenido del texto sin BBCode para calcular el ancho
-	var text_content = original_text
-	# Remover BBCode básico (simplificado) - hacerlo ANTES de dividir en líneas
-	text_content = text_content.replace("[left]", "").replace("[center]", "").replace("[right]", "")
-
-	# Obtener la fuente y tamaño para calcular el ancho del texto
-	var font = label.get_theme_font("normal_font")
-	var font_size = label.get_theme_font_size("normal_font_size")
-	if not font:
-		# Fallback: usar fuente por defecto
-		font = label.get("theme_override_fonts/normal_font")
-		if not font:
-			font = label.get("default_font")
-
-	if not font:
+	var font: Font = null
+	var font_size := 26
+	var settings := label.label_settings
+	if settings:
+		font = settings.font
+		font_size = settings.font_size
+	if font == null:
+		font = label.get_theme_default_font()
+	if font == null:
 		push_warning("MessageBox: No se pudo obtener la fuente para calcular posición INLINE")
 		return
 
-	# Encontrar el primer carácter de la línea actual usando get_character_line()
-	# get_character_line() usa índices del texto original (con BBCode)
-	# Iterar desde bbcode_chars (inicio del contenido real) hasta visible_chars
-	var first_char_of_line_original = visible_chars  # Inicializar con el último carácter visible
-	for i in range(bbcode_chars, visible_chars):
-		if label.get_character_line(i) == last_char_line:
-			first_char_of_line_original = i
+	var first_char_of_line: int = visible_chars
+	for i in range(visible_chars):
+		if _line_at_char_index(i) - 1 == last_char_line:
+			first_char_of_line = i
 			break
 
-	# Calcular cuántos caracteres visibles hay en esta línea visual (en el texto original)
-	var chars_in_line_original = visible_chars - first_char_of_line_original
-	if chars_in_line_original < 0:
-		chars_in_line_original = 0
+	var chars_in_line: int = maxi(0, visible_chars - first_char_of_line)
+	var target_line_text := ""
+	if first_char_of_line < original_text.length():
+		target_line_text = original_text.substr(first_char_of_line, chars_in_line)
 
-	# Obtener el texto desde el primer carácter de la línea hasta el último carácter visible
-	var target_line_text = ""
-	if first_char_of_line_original < original_text.length() and visible_chars <= original_text.length():
-		var line_text_with_bbcode = original_text.substr(first_char_of_line_original, chars_in_line_original)
-		# Remover BBCode del texto de la línea
-		target_line_text = line_text_with_bbcode.replace("[left]", "").replace("[center]", "").replace("[right]", "")
-	elif first_char_of_line_original < original_text.length():
-		var line_text_with_bbcode = original_text.substr(first_char_of_line_original, visible_chars - first_char_of_line_original)
-		target_line_text = line_text_with_bbcode.replace("[left]", "").replace("[center]", "").replace("[right]", "")
-
-	# Calcular el ancho del texto visible de la línea actual (solo esta línea)
-	var text_width = 0.0
+	var text_width := 0.0
 	if target_line_text.length() > 0:
 		text_width = font.get_string_size(target_line_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 
-	# Calcular posición Y: basada en la línea del último carácter visible
-	var line_height = 32.0
+	var line_height := _label_line_height()
 	var scroll_pos = scroll.position
-	var scroll_offset = scroll.scroll_vertical  # Considerar el scroll vertical
+	var scroll_offset = scroll.scroll_vertical
 	var indicator_height = wait_indicator.texture.get_height() if wait_indicator.texture else 16
-
-	# Posición Y: parte superior del ScrollContainer + altura de la línea - scroll offset + centrado vertical
 	var last_line_y = scroll_pos.y + (last_char_line * line_height) - scroll_offset + (line_height / 2.0) - (indicator_height / 2.0) + 10
-
-	# Calcular posición X: inicio del área de texto + ancho del texto hasta el último carácter visible de la línea
 	var text_margin_left: int = int(round(scroll.offset_left))
 	var text_start_x = scroll_pos.x + text_margin_left
-	var text_end_x = text_start_x + text_width - 16  # Ajuste para posicionar correctamente
-
+	var text_end_x = text_start_x + text_width - 16
 	wait_indicator.position = Vector2(text_end_x, last_line_y) + messagebox_theme.wait_indicator_offset
 
-## Fuerza el ancho real del área de texto al interior del ScrollContainer (los RTL de la escena fijan ~433px y rompen el autowrap).
+
+## Fuerza el ancho real del área de texto al interior del ScrollContainer.
 func _bag_apply_inner_text_width() -> void:
 	if not _bag_dialog_text_layout_saved:
 		return
@@ -419,11 +531,11 @@ func _bag_apply_inner_text_width() -> void:
 		return
 	var inner_w: float = maxf(1.0, scroll.offset_right - scroll.offset_left)
 	container.custom_minimum_size.x = inner_w
-	for rtl: RichTextLabel in [label, label2, label3]:
-		rtl.offset_left = 0.0
-		rtl.offset_right = inner_w
-		rtl.custom_minimum_size.x = inner_w
+	label.offset_left = 0.0
+	label.offset_right = inner_w
+	label.custom_minimum_size.x = inner_w
 	label.queue_redraw()
+	_rebuild_char_line_map()
 
 ## Layout de texto para diálogo estrecho (p. ej. mochila): margen izquierdo 16 y mitad de ancho útil + autowrap.
 func apply_bag_dialog_text_layout(enabled: bool) -> void:
@@ -443,17 +555,13 @@ func apply_bag_dialog_text_layout(enabled: bool) -> void:
 		scroll.offset_right = 16.0 + half_content_w
 
 		_bag_dialog_saved_rtl_states.clear()
-		for rtl: RichTextLabel in [label, label2, label3]:
-			_bag_dialog_saved_rtl_states.append({
-				"node": rtl,
-				"fit_content": rtl.fit_content,
-				"autowrap_mode": rtl.autowrap_mode,
-				"offset_left": rtl.offset_left,
-				"offset_right": rtl.offset_right,
-				"custom_minimum_size": rtl.custom_minimum_size,
-			})
-			rtl.fit_content = false
-			rtl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_bag_dialog_saved_rtl_states.append({
+			"autowrap_mode": label.autowrap_mode,
+			"offset_left": label.offset_left,
+			"offset_right": label.offset_right,
+			"custom_minimum_size": label.custom_minimum_size,
+		})
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 		_bag_dialog_text_layout_saved = true
 		_bag_apply_inner_text_width()
@@ -467,13 +575,12 @@ func apply_bag_dialog_text_layout(enabled: bool) -> void:
 
 		container.custom_minimum_size = _bag_saved_container_min_size
 
-		for entry: Dictionary in _bag_dialog_saved_rtl_states:
-			var n: RichTextLabel = entry["node"]
-			n.fit_content = bool(entry["fit_content"])
-			n.autowrap_mode = entry["autowrap_mode"] as TextServer.AutowrapMode
-			n.offset_left = float(entry.get("offset_left", 0.0))
-			n.offset_right = float(entry.get("offset_right", 433.0))
-			n.custom_minimum_size = entry["custom_minimum_size"] as Vector2
+		if not _bag_dialog_saved_rtl_states.is_empty():
+			var entry: Dictionary = _bag_dialog_saved_rtl_states[0]
+			label.autowrap_mode = entry["autowrap_mode"] as TextServer.AutowrapMode
+			label.offset_left = float(entry.get("offset_left", 0.0))
+			label.offset_right = float(entry.get("offset_right", 433.0))
+			label.custom_minimum_size = entry["custom_minimum_size"] as Vector2
 
 		_bag_dialog_saved_rtl_states.clear()
 		_bag_dialog_text_layout_saved = false
@@ -488,29 +595,29 @@ func set_frame_style(style: MessageBoxFrameStyle.Values) -> void:
 func writeText():
 	set_physics_process(true)
 	if _typing_mode == TypingMode.INSTANT:
-		label.visible_characters = -1
+		_set_visible_characters(-1)
 		set_physics_process(false)
 		finsihedTyping.emit()
 		return
-	while label.visible_characters < label.get_total_character_count():
+	while label.visible_characters >= 0 and label.visible_characters < label.get_total_character_count():
 		if _stop:
 			_stop = false
 			return
-		label.visible_characters += 1
+		_set_visible_characters(label.visible_characters + 1)
 		await get_tree().create_timer(typingSpeed/100.0).timeout
 	finsihedTyping.emit()
 
 
 func startText():
 	enable_input_handling()
-	_connect_once(label.line_displayed, Callable(self, "newLine"))
+	_connect_once(line_displayed, Callable(self, "newLine"))
 	_connect_once(finsihedTyping, Callable(self, "_finishedMessage"))
 	_connect_once(finished, Callable(self, "onFinish"))
 
 	# Asegurar scroll en 0 antes de empezar
 	scroll.scroll_vertical = 0
 
-	label.visible_characters = 0
+	_set_visible_characters(0)
 
 	# Esperar frame y resetear scroll de nuevo por si algo lo cambió
 	await get_tree().process_frame
@@ -607,7 +714,12 @@ func resumeText():
 	if !messageHasFinished :
 		await scrollText()
 	elif messageHasFinished and !isLastMessage:
-		label.text = getNextMessage()
+		_reset_line_state()
+		nextLineStop = 2
+		setText(getNextMessage())
+		_set_visible_characters(0)
+		scroll.scroll_vertical = 0
+		_adjust_container_size()
 
 	writeText()
 	#$AnimationPlayer.play("Typing")
@@ -638,8 +750,8 @@ func newLine():
 	if messageHasFinished:
 		return
 
-	if label.actualLine == label.nextLineStop:
-		label.nextLineStop += 1
+	if actualLine == nextLineStop:
+		nextLineStop += 1
 		pauseText()
 		if !waitInput:
 			resumeText()
@@ -655,17 +767,9 @@ func addMessage(message):
 
 func scrollText():
 	_is_scrolling = true
-	# No usar altura media por línea (content_h / n): acumula ~1px de error por scroll y “sube” el texto.
-	# get_line_offset(i) devuelve la Y real del borde superior de la línea i (0-based), alineada con el layout interno.
 	await get_tree().process_frame
-	var line_idx: int = maxi(0, label.actualLine - 1)
-	var target_scroll: int = 0
-	if label.has_method("get_line_offset"):
-		target_scroll = int(round(float(label.get_line_offset(line_idx))))
-	else:
-		var lc: int = maxi(1, label.get_line_count())
-		var content_h: float = label.get_content_height()
-		target_scroll = int(round((content_h / float(lc)) * float(line_idx)))
+	var line_idx: int = maxi(0, actualLine - 1)
+	var target_scroll: int = int(round(_label_line_height() * float(line_idx)))
 	var vs: VScrollBar = scroll.get_v_scroll_bar()
 	if vs:
 		target_scroll = clampi(target_scroll, 0, int(ceil(vs.max_value)))
@@ -728,30 +832,30 @@ func showMessage(message = null):
 
 	# Resetear scroll y estado del label para nuevo mensaje
 	scroll.scroll_vertical = 0
-	label.reset()
-	label.nextLineStop = 2
+	_reset_line_state()
+	nextLineStop = 2
 
-	label.text = getNextMessage()
+	setText(getNextMessage())
 	# CRÍTICO: Establecer visible_characters a 0 inmediatamente para evitar que se vea el texto completo durante un frame
-	label.visible_characters = 0
+	_set_visible_characters(0)
 	hide_wait_indicator()
 
 	if _expand_height:
 		# Layout invisible: medir y crecer antes de revelar (evita el salto).
 		modulate.a = 0.0
 		show()
-		label.visible_characters = -1
+		_set_visible_characters(-1)
 		await get_tree().process_frame
 		await get_tree().process_frame
 		_fit_panel_height_to_all_lines()
-		label.visible_characters = 0
+		_set_visible_characters(0)
 		scroll.scroll_vertical = 0
 		modulate.a = 1.0
 	else:
 		_restore_panel_height_if_needed()
 		show()
 		await get_tree().process_frame
-		label.visible_characters = 0
+		_set_visible_characters(0)
 		_adjust_container_size()
 		scroll.scroll_vertical = 0
 
@@ -813,6 +917,7 @@ func _finish_without_closing() -> void:
 
 	# Restaurar contenido visual para que se mantenga visible
 	label.text = current_text
+	_set_visible_characters(-1)
 	scroll.scroll_vertical = current_scroll_position
 
 	# El await en showMessage() ya se desbloqueó porque clear() pone _is_processing_message = false
@@ -820,8 +925,8 @@ func _finish_without_closing() -> void:
 
 func clear():
 	disable_input_handling()
-	if label.line_displayed.is_connected(newLine):
-		label.line_displayed.disconnect(newLine)
+	if line_displayed.is_connected(newLine):
+		line_displayed.disconnect(newLine)
 	if finsihedTyping.is_connected(_finishedMessage):
 		finsihedTyping.disconnect(_finishedMessage)
 	#$AnimationPlayer.animation_finished.disconnect(_finishedMessage)
@@ -861,9 +966,7 @@ func show_clear_text():
 		animation_player.stop()
 	show()
 
-## Ajusta el tamaño del Container y los RichTextLabel según el texto real.
-## Godot 4.5+ cambió métricas/espaciado de RichTextLabel; evitar altura fija (32px/línea)
-## que desincroniza la primera línea con las siguientes y provoca saltos visuales intermitentes.
+## Ajusta el tamaño del Container y el Label según el texto real.
 func _adjust_container_size() -> void:
 	if not is_node_ready() or not container or not label:
 		return
@@ -872,24 +975,15 @@ func _adjust_container_size() -> void:
 	if line_count <= 0:
 		line_count = 1
 
-	var required_height: int = ceili(label.get_content_height())
+	var required_height: int = ceili(_label_content_height())
 	if required_height < 12:
-		var fs: int = label.get_theme_font_size("normal_font")
-		if fs <= 0:
-			fs = 26
-		required_height = line_count * (fs + 8)
+		required_height = int(round(float(line_count) * _label_line_height()))
 
 	container.custom_minimum_size.y = required_height
 	container.size.y = required_height
 
 	label.custom_minimum_size.y = required_height
 	label.size.y = required_height
-
-	label2.custom_minimum_size.y = required_height
-	label2.size.y = required_height
-
-	label3.custom_minimum_size.y = required_height
-	label3.size.y = required_height
 
 	_bag_apply_inner_text_width()
 
@@ -911,16 +1005,11 @@ func _fit_panel_height_to_all_lines() -> void:
 	_adjust_container_size()
 	var line_count: int = maxi(1, label.get_line_count())
 	# Sin paginar: todas las líneas visibles de golpe.
-	label.nextLineStop = maxi(line_count, 1)
+	nextLineStop = maxi(line_count, 1)
 
-	# Preferir altura real del texto; el min del container de escena (120) no debe forzar 2 líneas.
-	var content_h: float = float(label.get_content_height())
+	var content_h: float = _label_content_height()
 	if content_h < 8.0:
-		var fs: int = label.get_theme_font_size("normal_font_size")
-		if fs <= 0:
-			fs = 26
-		var line_sep: int = label.get_theme_constant("line_separation")
-		content_h = float(line_count) * float(fs + maxi(line_sep, 0))
+		content_h = float(line_count) * _label_line_height()
 	content_h = maxf(content_h, container.custom_minimum_size.y)
 
 	var top_m: float = scroll.offset_top
