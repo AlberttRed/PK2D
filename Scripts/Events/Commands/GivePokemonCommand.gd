@@ -47,13 +47,18 @@ func execute(context: Node) -> void:
 			true
 		)
 		if nickname_choice == 0:
-			await DisplayManager.show_message("Asignacion de mote: pendiente de implementar.", {
-				"waitInput": true,
-				"closeAtEnd": true,
-				"waitTime": 0.0,
-				"showIconAtEnd": false,
-				"frameStyle": MessageBoxFrameStyle.Values.HGSS
-			})
+			var species_name := pokemon.base.Name if pokemon.base != null else pokemon_name
+			var show_gender := (
+				pokemon.gender == CONST.GENEROS.MACHO or pokemon.gender == CONST.GENEROS.HEMBRA
+			)
+			pokemon.nickname = await DisplayManager.prompt_pokemon_nickname(
+				species_name,
+				pokemon.get_icon_sprite(),
+				show_gender,
+				pokemon.gender == CONST.GENEROS.HEMBRA,
+				true
+			)
+			pokemon_name = pokemon.get_display_name()
 
 		if not added_to_party:
 			await DisplayManager.show_message("¡Tu equipo está lleno!", {

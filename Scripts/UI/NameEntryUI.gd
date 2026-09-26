@@ -141,7 +141,8 @@ func open(
 	_start_underscore_bob()
 	if icon_texture != null:
 		_icon.texture = icon_texture
-		_icon.hframes = 1 if icon_texture is AtlasTexture else 2
+		## Los iconos del juego son sheet 2 frames (como PC/Party); AtlasTexture suele cubrir ambos.
+		_icon.hframes = 2
 		_icon.vframes = 1
 		_icon.frame = 0
 		_icon.visible = true

@@ -503,7 +503,9 @@ func _finalize_successful_capture() -> void:
 
 	# Mote de inmediato (panel ya vacío en showcase; no dejar franja de fondo a la vista).
 	# El sprite del showcase se mantiene hasta el fade de salida de combate.
-	await ui.prompt_capture_nickname(display_name)
+	await ui.prompt_capture_nickname(captured)
+	if captured != null:
+		display_name = captured.get_display_name()
 
 	if dest == CaptureRegistrationService.Destination.PARTY:
 		return

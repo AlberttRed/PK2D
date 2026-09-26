@@ -491,18 +491,25 @@ static func open_poke_mart(shop: ShopData, with_screen_fade: bool = true) -> voi
 
 ## NicknameEntry (#890): teclado Gen 3. Devuelve mote o "" si OK con nombre vacío.
 ## El caller asigna species/caja si el resultado es "".
+## `prepare_under_cover`: se ejecuta con la pantalla ya negra (p. ej. ocultar showcase de captura).
 static func prompt_pokemon_nickname(
 	species_name: String = "",
 	icon_texture: Texture2D = null,
 	show_gender: bool = false,
 	is_female: bool = false,
-	with_screen_fade: bool = true
+	with_screen_fade: bool = true,
+	prepare_under_cover: Callable = Callable()
 ) -> String:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return ""
 	return await instance._prompt_pokemon_nickname(
-		species_name, icon_texture, show_gender, is_female, with_screen_fade
+		species_name,
+		icon_texture,
+		show_gender,
+		is_female,
+		with_screen_fade,
+		prepare_under_cover
 	)
 
 
@@ -2177,7 +2184,8 @@ func _prompt_pokemon_nickname(
 	icon_texture: Texture2D,
 	show_gender: bool,
 	is_female: bool,
-	with_screen_fade: bool
+	with_screen_fade: bool,
+	prepare_under_cover: Callable = Callable()
 ) -> String:
 	if _name_entry_ui == null:
 		push_error("DisplayManager: Nodo NameEntryUI no disponible en la escena.")
@@ -2186,17 +2194,22 @@ func _prompt_pokemon_nickname(
 		return ""
 
 	if with_screen_fade:
-		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+		await fade_layer.fade_in(_CAPTURE_SCREEN_FADE_DURATION)
+
+	if prepare_under_cover.is_valid():
+		prepare_under_cover.call()
 
 	if pause_menu and pause_menu.visible:
 		pause_menu.close(false)
 
+	## Por encima del showcase de captura (z absoluto 15) y del FadeLayer.
+	_name_entry_ui.z_index = 30
 	_name_entry_ui.move_to_front()
 	_name_entry_ui.open(species_name, icon_texture, show_gender, is_female)
 	_on_ui_visibility_changed()
 
 	if with_screen_fade:
-		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+		await fade_layer.fade_out(_CAPTURE_SCREEN_FADE_DURATION)
 
 	var result: String = await _name_entry_ui.confirmed
 	_on_ui_visibility_changed()

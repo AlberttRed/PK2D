@@ -1840,9 +1840,26 @@ func play_capture_showcase_cry(species_id: int) -> void:
 		AudioManager.play_pokemon_cry_from_data(data)
 
 
-## SI = 0 (placeholder mote), NO = 1 / cancel.
-func prompt_capture_nickname(pokemon_name: String) -> int:
-	var name := pokemon_name.strip_edges()
+## Oculta sprite centrado + MessageBox vacío antes de NameEntryUI (z del showcase > FadeLayer).
+func _hide_capture_ui_for_nickname() -> void:
+	var showcase: Sprite2D = field_ui.get_node_or_null("CaptureShowcaseSprite") as Sprite2D
+	if showcase != null:
+		showcase.visible = false
+		showcase.texture = null
+	if field_ui != null:
+		field_ui.set_battle_background_visible(false)
+	if message_box != null:
+		if message_box.has_method("cleanup_and_hide"):
+			message_box.cleanup_and_hide()
+		else:
+			message_box.hide()
+
+
+## Pregunta SI/NO de mote tras captura; si SI, abre NameEntryUI (#891).
+func prompt_capture_nickname(pokemon: Pokemon) -> void:
+	if pokemon == null:
+		return
+	var name := pokemon.get_display_name().strip_edges()
 	if name.is_empty():
 		name = "POKéMON"
 	var options: Array[String] = ["SI", "NO"]
@@ -1851,10 +1868,22 @@ func prompt_capture_nickname(pokemon_name: String) -> int:
 		options
 	)
 	clear_message_box()
-	if idx == 0:
-		await show_message_from_dict({
-			"type": "input",
-			"text": "Asignación de mote: pendiente de implementar.",
-			"showIconAtEnd": false,
-		})
-	return idx
+	if idx != 0:
+		return
+	var species_name := ""
+	if pokemon.base != null:
+		species_name = str(pokemon.base.Name).strip_edges()
+	if species_name.is_empty():
+		species_name = name
+	var show_gender := (
+		pokemon.gender == CONST.GENEROS.MACHO or pokemon.gender == CONST.GENEROS.HEMBRA
+	)
+	## Fade como ficha Pokédex post-captura; ocultar showcase/MSG ya en negro.
+	pokemon.nickname = await DisplayManager.prompt_pokemon_nickname(
+		species_name,
+		pokemon.get_icon_sprite(),
+		show_gender,
+		pokemon.gender == CONST.GENEROS.HEMBRA,
+		true,
+		_hide_capture_ui_for_nickname
+	)
