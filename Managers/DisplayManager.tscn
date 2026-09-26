@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://bco6fofd1137k" path="res://Scenes/UI/PCItemsUI.tscn" id="16_pcitems"]
 [ext_resource type="PackedScene" uid="uid://dclkyhgakopca" path="res://Scenes/UI/QuantityPicker.tscn" id="17_qtypicker"]
 [ext_resource type="PackedScene" uid="uid://yhc1eyvh3xfi" path="res://Scenes/UI/PokeMartUI.tscn" id="18_pokemart"]
+[ext_resource type="PackedScene" uid="uid://4vmkrak3html" path="res://Scenes/UI/NameEntryUI.tscn" id="19_nameentry"]
 [ext_resource type="StyleBox" uid="uid://c7vjqce51w73c" path="res://Resources/UI/MessageBox/Message Styles/Gold_MessageBox_Style.tres" id="19_w54fd"]
 [ext_resource type="PackedScene" uid="uid://c4ex854x6yq5d" path="res://Scenes/UI/Fonts/LabelHGSS.tscn" id="20_h43ry"]
 
@@ -151,6 +152,9 @@ visible = false
 visible = false
 
 [node name="PokeMartUI" parent="." unique_id=750027160 instance=ExtResource("18_pokemart")]
+visible = false
+
+[node name="NameEntryUI" parent="." instance=ExtResource("19_nameentry")]
 visible = false
 
 [node name="PokedexUI" parent="." unique_id=997549819 instance=ExtResource("13_pokedexui")]

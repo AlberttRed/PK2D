@@ -166,6 +166,7 @@ const _BAG_OVER_PC_Z: int = 50
 @onready var _pc_storage_ui = $PCStorageUI
 @onready var _pc_items_ui = $PCItemsUI
 @onready var _poke_mart_ui = $PokeMartUI
+@onready var _name_entry_ui: NameEntryUI = $NameEntryUI
 @onready var _quantity_picker: Control = $QuantityPicker
 @onready var overlay_layer: OverlayLayer = $OverlayLayer
 @onready var fade_layer: ColorRect = $FadeLayer
@@ -221,6 +222,8 @@ func _ready() -> void:
 		_pc_items_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _poke_mart_ui:
 		_poke_mart_ui.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _name_entry_ui:
+		_name_entry_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	if _quantity_picker:
 		_quantity_picker.process_mode = Node.PROCESS_MODE_ALWAYS
 		_quantity_picker.hide()
@@ -300,6 +303,9 @@ func _ready() -> void:
 		_poke_mart_ui.closed.connect(_on_poke_mart_ui_closed)
 		if _poke_mart_ui.has_signal("visibility_changed"):
 			_poke_mart_ui.visibility_changed.connect(_on_ui_visibility_changed)
+
+	if _name_entry_ui and _name_entry_ui.has_signal("visibility_changed"):
+		_name_entry_ui.visibility_changed.connect(_on_ui_visibility_changed)
 
 	# Conectar señal de visibilidad de BattleNew
 	if BattleNew.has_signal("visibility_changed"):
@@ -481,6 +487,23 @@ static func open_poke_mart(shop: ShopData, with_screen_fade: bool = true) -> voi
 		push_error("DisplayManager: No hay instancia disponible")
 		return
 	await instance._open_poke_mart_ui(shop, with_screen_fade)
+
+
+## NicknameEntry (#890): teclado Gen 3. Devuelve mote o "" si OK con nombre vacío.
+## El caller asigna species/caja si el resultado es "".
+static func prompt_pokemon_nickname(
+	species_name: String = "",
+	icon_texture: Texture2D = null,
+	show_gender: bool = false,
+	is_female: bool = false,
+	with_screen_fade: bool = true
+) -> String:
+	if instance == null:
+		push_error("DisplayManager: No hay instancia disponible")
+		return ""
+	return await instance._prompt_pokemon_nickname(
+		species_name, icon_texture, show_gender, is_female, with_screen_fade
+	)
 
 
 ## Abre la mochila en modo venta (misma UI que el menú). Espera hasta cerrar. (#834 → #836)
@@ -1342,7 +1365,7 @@ func _is_fading() -> bool:
 	return fading or (fade_layer != null and fade_layer.is_fade_active())
 
 func _is_visible() -> bool:
-	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible) || (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible)
+	return msg.visible || BattleNew.visible || choice_box.visible || (pause_menu != null && pause_menu.visible) || (_bag_ui != null and _bag_ui.visible) || (_party_ui != null and _party_ui.visible) || (_pokedex_ui != null and _pokedex_ui.visible) || (_save_ui != null and _save_ui.visible) || (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible) or (_name_entry_ui != null and _name_entry_ui.visible)
 
 
 func _start_evolution_impl(
@@ -1787,7 +1810,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 			# Solo abrir si no estamos en batalla y no hay otros menús abiertos
-			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible):
+			if not BattleNew.visible and not msg.visible and not choice_box.visible and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_save_ui != null and _save_ui.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible) and not (_name_entry_ui != null and _name_entry_ui.visible):
 				pause_menu.open()
 				get_viewport().set_input_as_handled()
 				return
@@ -1818,7 +1841,7 @@ func _input(event: InputEvent) -> void:
 
 	# Si no hay menús visibles, no procesar ui_accept/ui_cancel aquí
 	# Dejarlos pasar para que el Player pueda usarlos (interact)
-	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
+	if not msg.visible and not choice_box.visible and not (pause_menu != null && pause_menu.visible) and not (_bag_ui != null and _bag_ui.visible) and not (_party_ui != null and _party_ui.visible) and not (_pokedex_ui != null and _pokedex_ui.visible) and not (_current_portrait_box != null && _current_portrait_box.visible) and not ((_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible)) and not (_poke_mart_ui != null and _poke_mart_ui.visible) and not (_name_entry_ui != null and _name_entry_ui.visible) and not battle_message_box_visible and not battle_modal_ui_visible:
 		return
 
 	# Evitar repeticiones automáticas
@@ -1862,7 +1885,7 @@ func _input(event: InputEvent) -> void:
 
 	# Consumir el input SOLO si hay menús visibles y se procesó algún input
 	# Cuando no hay menús visibles, no consumir el input para que el Player pueda usarlo
-	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
+	if input_consumed and (msg.visible or choice_box.visible or (pause_menu != null && pause_menu.visible) or (_bag_ui != null and _bag_ui.visible) or (_party_ui != null and _party_ui.visible) or (_pokedex_ui != null and _pokedex_ui.visible) or (_save_ui != null and _save_ui.visible) or (_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or (_poke_mart_ui != null and _poke_mart_ui.visible) or (_name_entry_ui != null and _name_entry_ui.visible) or battle_message_box_visible or battle_modal_ui_visible):
 		get_viewport().set_input_as_handled()
 
 
@@ -2147,6 +2170,37 @@ func _open_poke_mart_ui(shop: ShopData, with_screen_fade: bool = true) -> void:
 
 func _on_poke_mart_ui_closed() -> void:
 	_on_ui_visibility_changed()
+
+
+func _prompt_pokemon_nickname(
+	species_name: String,
+	icon_texture: Texture2D,
+	show_gender: bool,
+	is_female: bool,
+	with_screen_fade: bool
+) -> String:
+	if _name_entry_ui == null:
+		push_error("DisplayManager: Nodo NameEntryUI no disponible en la escena.")
+		return ""
+	if _name_entry_ui.visible:
+		return ""
+
+	if with_screen_fade:
+		await fade_layer.fade_in(_UI_SCREEN_FADE_DURATION)
+
+	if pause_menu and pause_menu.visible:
+		pause_menu.close(false)
+
+	_name_entry_ui.move_to_front()
+	_name_entry_ui.open(species_name, icon_texture, show_gender, is_female)
+	_on_ui_visibility_changed()
+
+	if with_screen_fade:
+		await fade_layer.fade_out(_UI_SCREEN_FADE_DURATION)
+
+	var result: String = await _name_entry_ui.confirmed
+	_on_ui_visibility_changed()
+	return result
 
 
 ## Hook desde WorldSystem.set_active_map (#918).
@@ -4003,6 +4057,7 @@ func _update_game_pause_state() -> void:
 		(_save_ui != null and _save_ui.visible) or
 		(_pc_storage_ui != null and _pc_storage_ui.visible) or (_pc_items_ui != null and _pc_items_ui.visible) or
 		(_poke_mart_ui != null and _poke_mart_ui.visible) or
+		(_name_entry_ui != null and _name_entry_ui.visible) or
 		(_evolution_ui != null and _evolution_ui.visible) or
 		BattleNew.visible or
 		(_current_portrait_box != null && _current_portrait_box.visible)

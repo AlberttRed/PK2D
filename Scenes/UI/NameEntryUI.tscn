@@ -1,0 +1,1739 @@
+[gd_scene format=3 uid="uid://4vmkrak3html"]
+
+[ext_resource type="Script" uid="uid://dblhotoxtms3w" path="res://Scripts/UI/NameEntryUI.gd" id="1_nameentry"]
+[ext_resource type="Texture2D" uid="uid://cf16kovjpjp0y" path="res://Sprites/UI/Naming/bg.png" id="1_x344p"]
+[ext_resource type="Texture2D" uid="uid://oqq5r8awygxn" path="res://Sprites/UI/Naming/overlay_controls.png" id="2_wsrxr"]
+[ext_resource type="Texture2D" uid="uid://cq4m5xay5q32" path="res://Sprites/UI/Naming/overlay_tab_2.png" id="3_qc1na"]
+[ext_resource type="Texture2D" uid="uid://krkvjyd4ct6d" path="res://Sprites/UI/Naming/overlay_tab_1.png" id="3_y4te2"]
+[ext_resource type="Texture2D" uid="uid://v58562kai84n" path="res://Sprites/UI/Party/female_icon.png" id="4_nu5n4"]
+[ext_resource type="Texture2D" uid="uid://b5jpnkw84r8jl" path="res://Sprites/Iconos/icon025.png" id="4_y4te2"]
+[ext_resource type="Texture2D" uid="uid://dxfwmkvknkl8h" path="res://Sprites/UI/Naming/overlay_tab_3.png" id="5_gq6vq"]
+[ext_resource type="Texture2D" uid="uid://c1j1yqvhlijsg" path="res://Sprites/UI/Naming/icon_shadow.png" id="5_nu5n4"]
+[ext_resource type="Texture2D" uid="uid://bqjniluyqbsa2" path="res://Sprites/UI/Naming/cursor_1.png" id="5_qc7my"]
+[ext_resource type="Texture2D" uid="uid://d2sx2kxqb5u54" path="res://Sprites/UI/Naming/cursor_2.png" id="7_guc4r"]
+[ext_resource type="Texture2D" uid="uid://drexakh61gijn" path="res://Sprites/UI/Naming/cursor_3.png" id="8_in255"]
+[ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="8_qc7my"]
+[ext_resource type="Texture2D" uid="uid://dbx0d0wwxjna2" path="res://Sprites/UI/Naming/icon_mode.png" id="11_6ie0f"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_g6for"]
+texture = ExtResource("1_x344p")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lqbwt"]
+texture = ExtResource("2_wsrxr")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x1yxv"]
+texture = ExtResource("3_qc1na")
+
+[sub_resource type="LabelSettings" id="LabelSettings_n4n3u"]
+font = ExtResource("8_qc7my")
+font_size = 26
+font_color = Color(0.25098, 0.25098, 0.25098, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.690196, 0.690196, 0.690196, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_558oe"]
+texture = ExtResource("3_y4te2")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qc7my"]
+texture = ExtResource("5_gq6vq")
+
+[sub_resource type="LabelSettings" id="LabelSettings_qc7my"]
+font = ExtResource("8_qc7my")
+font_size = 54
+font_color = Color(0.0627451, 0.09411765, 0.12941177, 1)
+stacked_shadow_count = 3
+stacked_shadow_0/offset = Vector2(2, 0)
+stacked_shadow_0/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_1/offset = Vector2(0, 2)
+stacked_shadow_1/color = Color(0.690196, 0.690196, 0.690196, 1)
+stacked_shadow_2/offset = Vector2(2, 2)
+stacked_shadow_2/color = Color(0.690196, 0.690196, 0.690196, 1)
+
+[node name="NameEntryUI" type="Panel" unique_id=1876316228]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -2.0
+offset_right = 1.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_g6for")
+script = ExtResource("1_nameentry")
+metadata/_edit_lock_ = true
+
+[node name="Panel" type="Control" parent="." unique_id=1625665786]
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 96.0
+offset_right = 492.0
+offset_bottom = 316.0
+metadata/_edit_lock_ = true
+
+[node name="Opciones" type="Panel" parent="Panel" unique_id=793148585]
+z_index = 1
+layout_mode = 0
+offset_right = 480.0
+offset_bottom = 206.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_lqbwt")
+metadata/_edit_lock_ = true
+
+[node name="Mayus" type="Panel" parent="Panel" unique_id=1874993317]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 66.0
+offset_right = 478.0
+offset_bottom = 286.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_x1yxv")
+metadata/_edit_lock_ = true
+
+[node name="A" type="Label" parent="Panel/Mayus" unique_id=1726815634]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 26.0
+offset_right = 50.0
+offset_bottom = 49.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="B" type="Label" parent="Panel/Mayus" unique_id=2084564827]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 26.0
+offset_right = 82.0
+offset_bottom = 49.0
+text = "B"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="C" type="Label" parent="Panel/Mayus" unique_id=1561722143]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 26.0
+offset_right = 114.0
+offset_bottom = 49.0
+text = "C"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="D" type="Label" parent="Panel/Mayus" unique_id=1675977338]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 26.0
+offset_right = 146.0
+offset_bottom = 49.0
+text = "D"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="E" type="Label" parent="Panel/Mayus" unique_id=1199830272]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 26.0
+offset_right = 178.0
+offset_bottom = 49.0
+text = "E"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="F" type="Label" parent="Panel/Mayus" unique_id=440800154]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 26.0
+offset_right = 210.0
+offset_bottom = 49.0
+text = "F"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="G" type="Label" parent="Panel/Mayus" unique_id=1520879138]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 26.0
+offset_right = 242.0
+offset_bottom = 49.0
+text = "G"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="H" type="Label" parent="Panel/Mayus" unique_id=287895382]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 26.0
+offset_right = 274.0
+offset_bottom = 49.0
+text = "H"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="I" type="Label" parent="Panel/Mayus" unique_id=112247606]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 26.0
+offset_right = 306.0
+offset_bottom = 49.0
+text = "I"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="J" type="Label" parent="Panel/Mayus" unique_id=1642030765]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 26.0
+offset_right = 338.0
+offset_bottom = 49.0
+text = "J"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Comma" type="Label" parent="Panel/Mayus" unique_id=140281797]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 26.0
+offset_right = 402.0
+offset_bottom = 49.0
+text = ","
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Period" type="Label" parent="Panel/Mayus" unique_id=1143721394]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 26.0
+offset_right = 434.0
+offset_bottom = 49.0
+text = "."
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="K" type="Label" parent="Panel/Mayus" unique_id=1023237343]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 64.0
+offset_right = 50.0
+offset_bottom = 87.0
+text = "K"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="L" type="Label" parent="Panel/Mayus" unique_id=806821801]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 64.0
+offset_right = 82.0
+offset_bottom = 87.0
+text = "L"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="M" type="Label" parent="Panel/Mayus" unique_id=560015140]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 64.0
+offset_right = 114.0
+offset_bottom = 87.0
+text = "M"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="N" type="Label" parent="Panel/Mayus" unique_id=1567051241]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 64.0
+offset_right = 146.0
+offset_bottom = 87.0
+text = "N"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="O" type="Label" parent="Panel/Mayus" unique_id=1010497366]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 64.0
+offset_right = 178.0
+offset_bottom = 87.0
+text = "O"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="P" type="Label" parent="Panel/Mayus" unique_id=389366546]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 64.0
+offset_right = 210.0
+offset_bottom = 87.0
+text = "P"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Q" type="Label" parent="Panel/Mayus" unique_id=1083560230]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 64.0
+offset_right = 242.0
+offset_bottom = 87.0
+text = "Q"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="R" type="Label" parent="Panel/Mayus" unique_id=436861190]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 64.0
+offset_right = 274.0
+offset_bottom = 87.0
+text = "R"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="S" type="Label" parent="Panel/Mayus" unique_id=641643476]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 64.0
+offset_right = 306.0
+offset_bottom = 87.0
+text = "S"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="T" type="Label" parent="Panel/Mayus" unique_id=758154080]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 64.0
+offset_right = 338.0
+offset_bottom = 87.0
+text = "T"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Apostrophe" type="Label" parent="Panel/Mayus" unique_id=212459515]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 64.0
+offset_right = 402.0
+offset_bottom = 87.0
+text = "'"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Hyphen" type="Label" parent="Panel/Mayus" unique_id=1692762963]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 64.0
+offset_right = 434.0
+offset_bottom = 87.0
+text = "-"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="U" type="Label" parent="Panel/Mayus" unique_id=1068466561]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 102.0
+offset_right = 50.0
+offset_bottom = 125.0
+text = "U"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="V" type="Label" parent="Panel/Mayus" unique_id=247825148]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 102.0
+offset_right = 82.0
+offset_bottom = 125.0
+text = "V"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="W" type="Label" parent="Panel/Mayus" unique_id=1280227241]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 102.0
+offset_right = 114.0
+offset_bottom = 125.0
+text = "W"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="X" type="Label" parent="Panel/Mayus" unique_id=41182682]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 102.0
+offset_right = 146.0
+offset_bottom = 125.0
+text = "X"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Y" type="Label" parent="Panel/Mayus" unique_id=1922029629]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 102.0
+offset_right = 178.0
+offset_bottom = 125.0
+text = "Y"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Z" type="Label" parent="Panel/Mayus" unique_id=722888927]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 102.0
+offset_right = 210.0
+offset_bottom = 125.0
+text = "Z"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Male" type="Label" parent="Panel/Mayus" unique_id=1128345192]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 102.0
+offset_right = 402.0
+offset_bottom = 125.0
+text = "♂"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Female" type="Label" parent="Panel/Mayus" unique_id=1344737246]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 102.0
+offset_right = 434.0
+offset_bottom = 125.0
+text = "♀"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Aacute" type="Label" parent="Panel/Mayus" unique_id=1952028811]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 140.0
+offset_right = 50.0
+offset_bottom = 163.0
+text = "Á"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Eacute" type="Label" parent="Panel/Mayus" unique_id=123884126]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 140.0
+offset_right = 82.0
+offset_bottom = 163.0
+text = "É"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Iacute" type="Label" parent="Panel/Mayus" unique_id=1019963415]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 140.0
+offset_right = 114.0
+offset_bottom = 163.0
+text = "Í"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Ntilde" type="Label" parent="Panel/Mayus" unique_id=1264441307]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 140.0
+offset_right = 146.0
+offset_bottom = 163.0
+text = "Ñ"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Oacute" type="Label" parent="Panel/Mayus" unique_id=1625142050]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 140.0
+offset_right = 178.0
+offset_bottom = 163.0
+text = "Ó"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Uacute" type="Label" parent="Panel/Mayus" unique_id=1915973166]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 140.0
+offset_right = 210.0
+offset_bottom = 163.0
+text = "Ú"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Uuml" type="Label" parent="Panel/Mayus" unique_id=2116363248]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 140.0
+offset_right = 242.0
+offset_bottom = 163.0
+text = "Ü"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig0" type="Label" parent="Panel/Mayus" unique_id=1336019765]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 178.0
+offset_right = 50.0
+offset_bottom = 201.0
+text = "0"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig1" type="Label" parent="Panel/Mayus" unique_id=1936211535]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 178.0
+offset_right = 82.0
+offset_bottom = 201.0
+text = "1"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig2" type="Label" parent="Panel/Mayus" unique_id=559536064]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 178.0
+offset_right = 114.0
+offset_bottom = 201.0
+text = "2"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig3" type="Label" parent="Panel/Mayus" unique_id=1563873388]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 178.0
+offset_right = 146.0
+offset_bottom = 201.0
+text = "3"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig4" type="Label" parent="Panel/Mayus" unique_id=393538330]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 178.0
+offset_right = 178.0
+offset_bottom = 201.0
+text = "4"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig5" type="Label" parent="Panel/Mayus" unique_id=161281314]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 178.0
+offset_right = 210.0
+offset_bottom = 201.0
+text = "5"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig6" type="Label" parent="Panel/Mayus" unique_id=204999963]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 178.0
+offset_right = 242.0
+offset_bottom = 201.0
+text = "6"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig7" type="Label" parent="Panel/Mayus" unique_id=1131494124]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 178.0
+offset_right = 274.0
+offset_bottom = 201.0
+text = "7"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig8" type="Label" parent="Panel/Mayus" unique_id=890795039]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 178.0
+offset_right = 306.0
+offset_bottom = 201.0
+text = "8"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Dig9" type="Label" parent="Panel/Mayus" unique_id=907067697]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 178.0
+offset_right = 338.0
+offset_bottom = 201.0
+text = "9"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Minus" type="Panel" parent="Panel" unique_id=419218325]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 66.0
+offset_right = 478.0
+offset_bottom = 286.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_558oe")
+metadata/_edit_lock_ = true
+
+[node name="A" type="Label" parent="Panel/Minus" unique_id=224755712]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 26.0
+offset_right = 50.0
+offset_bottom = 49.0
+text = "a"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="B" type="Label" parent="Panel/Minus" unique_id=1247069729]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 26.0
+offset_right = 82.0
+offset_bottom = 49.0
+text = "b"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="C" type="Label" parent="Panel/Minus" unique_id=201858274]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 26.0
+offset_right = 114.0
+offset_bottom = 49.0
+text = "c"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="D" type="Label" parent="Panel/Minus" unique_id=949442985]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 26.0
+offset_right = 146.0
+offset_bottom = 49.0
+text = "d"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="E" type="Label" parent="Panel/Minus" unique_id=109476498]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 26.0
+offset_right = 178.0
+offset_bottom = 49.0
+text = "e"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="F" type="Label" parent="Panel/Minus" unique_id=731779953]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 26.0
+offset_right = 210.0
+offset_bottom = 49.0
+text = "f"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="G" type="Label" parent="Panel/Minus" unique_id=306204138]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 26.0
+offset_right = 242.0
+offset_bottom = 49.0
+text = "g"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="H" type="Label" parent="Panel/Minus" unique_id=236377397]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 26.0
+offset_right = 274.0
+offset_bottom = 49.0
+text = "h"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="I" type="Label" parent="Panel/Minus" unique_id=534544015]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 26.0
+offset_right = 306.0
+offset_bottom = 49.0
+text = "i"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="J" type="Label" parent="Panel/Minus" unique_id=521563540]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 26.0
+offset_right = 338.0
+offset_bottom = 49.0
+text = "j"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Comma" type="Label" parent="Panel/Minus" unique_id=591928896]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 26.0
+offset_right = 402.0
+offset_bottom = 49.0
+text = ","
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Period" type="Label" parent="Panel/Minus" unique_id=1563262667]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 26.0
+offset_right = 434.0
+offset_bottom = 49.0
+text = "."
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="K" type="Label" parent="Panel/Minus" unique_id=1155174275]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 64.0
+offset_right = 50.0
+offset_bottom = 87.0
+text = "k"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="L" type="Label" parent="Panel/Minus" unique_id=1425065760]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 64.0
+offset_right = 82.0
+offset_bottom = 87.0
+text = "l"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="M" type="Label" parent="Panel/Minus" unique_id=402869423]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 64.0
+offset_right = 114.0
+offset_bottom = 87.0
+text = "m"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="N" type="Label" parent="Panel/Minus" unique_id=229928353]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 64.0
+offset_right = 146.0
+offset_bottom = 87.0
+text = "n"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="O" type="Label" parent="Panel/Minus" unique_id=1059227410]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 64.0
+offset_right = 178.0
+offset_bottom = 87.0
+text = "o"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="P" type="Label" parent="Panel/Minus" unique_id=1366910670]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 64.0
+offset_right = 210.0
+offset_bottom = 87.0
+text = "p"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Q" type="Label" parent="Panel/Minus" unique_id=1336098368]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 64.0
+offset_right = 242.0
+offset_bottom = 87.0
+text = "q"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="R" type="Label" parent="Panel/Minus" unique_id=591805739]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 64.0
+offset_right = 274.0
+offset_bottom = 87.0
+text = "r"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="S" type="Label" parent="Panel/Minus" unique_id=27152363]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 64.0
+offset_right = 306.0
+offset_bottom = 87.0
+text = "s"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="T" type="Label" parent="Panel/Minus" unique_id=563660986]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 64.0
+offset_right = 338.0
+offset_bottom = 87.0
+text = "t"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Apostrophe" type="Label" parent="Panel/Minus" unique_id=190068798]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 64.0
+offset_right = 402.0
+offset_bottom = 87.0
+text = "'"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Hyphen" type="Label" parent="Panel/Minus" unique_id=636616195]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 64.0
+offset_right = 434.0
+offset_bottom = 87.0
+text = "-"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="U" type="Label" parent="Panel/Minus" unique_id=1159619463]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 102.0
+offset_right = 50.0
+offset_bottom = 125.0
+text = "u"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="V" type="Label" parent="Panel/Minus" unique_id=609474800]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 102.0
+offset_right = 82.0
+offset_bottom = 125.0
+text = "v"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="W" type="Label" parent="Panel/Minus" unique_id=795118996]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 102.0
+offset_right = 114.0
+offset_bottom = 125.0
+text = "w"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="X" type="Label" parent="Panel/Minus" unique_id=1382259800]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 102.0
+offset_right = 146.0
+offset_bottom = 125.0
+text = "x"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Y" type="Label" parent="Panel/Minus" unique_id=1123204323]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 102.0
+offset_right = 178.0
+offset_bottom = 125.0
+text = "y"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Z" type="Label" parent="Panel/Minus" unique_id=952667982]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 102.0
+offset_right = 210.0
+offset_bottom = 125.0
+text = "z"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Male" type="Label" parent="Panel/Minus" unique_id=970371948]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 102.0
+offset_right = 402.0
+offset_bottom = 125.0
+text = "♂"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Female" type="Label" parent="Panel/Minus" unique_id=179045993]
+layout_mode = 0
+offset_left = 422.0
+offset_top = 102.0
+offset_right = 434.0
+offset_bottom = 125.0
+text = "♀"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Aacute" type="Label" parent="Panel/Minus" unique_id=1590939444]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 140.0
+offset_right = 50.0
+offset_bottom = 163.0
+text = "á"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Eacute" type="Label" parent="Panel/Minus" unique_id=1364040051]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 140.0
+offset_right = 82.0
+offset_bottom = 163.0
+text = "é"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Iacute" type="Label" parent="Panel/Minus" unique_id=1891192913]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 140.0
+offset_right = 114.0
+offset_bottom = 163.0
+text = "í"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Ntilde" type="Label" parent="Panel/Minus" unique_id=1485618170]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 140.0
+offset_right = 146.0
+offset_bottom = 163.0
+text = "ñ"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Oacute" type="Label" parent="Panel/Minus" unique_id=1318725535]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 140.0
+offset_right = 178.0
+offset_bottom = 163.0
+text = "ó"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Uacute" type="Label" parent="Panel/Minus" unique_id=141021766]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 140.0
+offset_right = 210.0
+offset_bottom = 163.0
+text = "ú"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Uuml" type="Label" parent="Panel/Minus" unique_id=975626943]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 140.0
+offset_right = 242.0
+offset_bottom = 163.0
+text = "ü"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig0" type="Label" parent="Panel/Minus" unique_id=1518564465]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 178.0
+offset_right = 50.0
+offset_bottom = 201.0
+text = "0"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig1" type="Label" parent="Panel/Minus" unique_id=347853608]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 178.0
+offset_right = 82.0
+offset_bottom = 201.0
+text = "1"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig2" type="Label" parent="Panel/Minus" unique_id=879260823]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 178.0
+offset_right = 114.0
+offset_bottom = 201.0
+text = "2"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig3" type="Label" parent="Panel/Minus" unique_id=1142102331]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 178.0
+offset_right = 146.0
+offset_bottom = 201.0
+text = "3"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig4" type="Label" parent="Panel/Minus" unique_id=1887686864]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 178.0
+offset_right = 178.0
+offset_bottom = 201.0
+text = "4"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig5" type="Label" parent="Panel/Minus" unique_id=1045217842]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 178.0
+offset_right = 210.0
+offset_bottom = 201.0
+text = "5"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig6" type="Label" parent="Panel/Minus" unique_id=620056231]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 178.0
+offset_right = 242.0
+offset_bottom = 201.0
+text = "6"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig7" type="Label" parent="Panel/Minus" unique_id=2134999757]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 178.0
+offset_right = 274.0
+offset_bottom = 201.0
+text = "7"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig8" type="Label" parent="Panel/Minus" unique_id=1368465671]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 178.0
+offset_right = 306.0
+offset_bottom = 201.0
+text = "8"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Dig9" type="Label" parent="Panel/Minus" unique_id=470105396]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 178.0
+offset_right = 338.0
+offset_bottom = 201.0
+text = "9"
+label_settings = SubResource("LabelSettings_n4n3u")
+
+[node name="Otros" type="Panel" parent="Panel" unique_id=999014301]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 66.0
+offset_right = 478.0
+offset_bottom = 286.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Comma" type="Label" parent="Panel/Otros" unique_id=636139282]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 26.0
+offset_right = 50.0
+offset_bottom = 49.0
+text = ","
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Period" type="Label" parent="Panel/Otros" unique_id=700738960]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 26.0
+offset_right = 82.0
+offset_bottom = 49.0
+text = "."
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Colon" type="Label" parent="Panel/Otros" unique_id=448837654]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 26.0
+offset_right = 114.0
+offset_bottom = 49.0
+text = ":"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Semicolon" type="Label" parent="Panel/Otros" unique_id=300559427]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 26.0
+offset_right = 146.0
+offset_bottom = 49.0
+text = ";"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Exclaim" type="Label" parent="Panel/Otros" unique_id=2006748282]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 26.0
+offset_right = 178.0
+offset_bottom = 49.0
+text = "!"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Question" type="Label" parent="Panel/Otros" unique_id=221201927]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 26.0
+offset_right = 210.0
+offset_bottom = 49.0
+text = "?"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="IExclaim" type="Label" parent="Panel/Otros" unique_id=1422640787]
+layout_mode = 0
+offset_left = 234.0
+offset_top = 26.0
+offset_right = 246.0
+offset_bottom = 49.0
+text = "¡"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="IQuestion" type="Label" parent="Panel/Otros" unique_id=387007471]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 26.0
+offset_right = 274.0
+offset_bottom = 49.0
+text = "¿"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Male" type="Label" parent="Panel/Otros" unique_id=1368328711]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 26.0
+offset_right = 338.0
+offset_bottom = 49.0
+text = "♂"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Female" type="Label" parent="Panel/Otros" unique_id=1961743919]
+layout_mode = 0
+offset_left = 358.0
+offset_top = 26.0
+offset_right = 370.0
+offset_bottom = 49.0
+text = "♀"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="DQuoteL" type="Label" parent="Panel/Otros" unique_id=1088849519]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 64.0
+offset_right = 50.0
+offset_bottom = 87.0
+text = "“"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="DQuoteR" type="Label" parent="Panel/Otros" unique_id=1749899421]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 64.0
+offset_right = 82.0
+offset_bottom = 87.0
+text = "”"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="SQuoteL" type="Label" parent="Panel/Otros" unique_id=859576672]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 64.0
+offset_right = 114.0
+offset_bottom = 87.0
+text = "‘"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="SQuoteR" type="Label" parent="Panel/Otros" unique_id=49797538]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 64.0
+offset_right = 146.0
+offset_bottom = 87.0
+text = "’"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="ParenL" type="Label" parent="Panel/Otros" unique_id=556981010]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 64.0
+offset_right = 178.0
+offset_bottom = 87.0
+text = "("
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="ParenR" type="Label" parent="Panel/Otros" unique_id=602606649]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 64.0
+offset_right = 210.0
+offset_bottom = 87.0
+text = ")"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Ellipsis" type="Label" parent="Panel/Otros" unique_id=450119989]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 102.0
+offset_right = 50.0
+offset_bottom = 125.0
+text = "…"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Middot" type="Label" parent="Panel/Otros" unique_id=339704621]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 102.0
+offset_right = 82.0
+offset_bottom = 125.0
+text = "·"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Tilde" type="Label" parent="Panel/Otros" unique_id=1838454577]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 102.0
+offset_right = 114.0
+offset_bottom = 125.0
+text = "~"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="At" type="Label" parent="Panel/Otros" unique_id=769085462]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 102.0
+offset_right = 146.0
+offset_bottom = 125.0
+text = "@"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Hash" type="Label" parent="Panel/Otros" unique_id=6869985]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 102.0
+offset_right = 178.0
+offset_bottom = 125.0
+text = "#"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Percent" type="Label" parent="Panel/Otros" unique_id=129375644]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 102.0
+offset_right = 210.0
+offset_bottom = 125.0
+text = "%"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Plus" type="Label" parent="Panel/Otros" unique_id=1451788508]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 102.0
+offset_right = 242.0
+offset_bottom = 125.0
+text = "+"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Minus" type="Label" parent="Panel/Otros" unique_id=1948705947]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 102.0
+offset_right = 274.0
+offset_bottom = 125.0
+text = "-"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Asterisk" type="Label" parent="Panel/Otros" unique_id=1188933750]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 102.0
+offset_right = 306.0
+offset_bottom = 125.0
+text = "*"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Slash" type="Label" parent="Panel/Otros" unique_id=1846506745]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 102.0
+offset_right = 338.0
+offset_bottom = 125.0
+text = "/"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Equals" type="Label" parent="Panel/Otros" unique_id=962215047]
+layout_mode = 0
+offset_left = 358.0
+offset_top = 102.0
+offset_right = 370.0
+offset_bottom = 125.0
+text = "="
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Bullseye" type="Label" parent="Panel/Otros" unique_id=120843094]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 140.0
+offset_right = 50.0
+offset_bottom = 163.0
+text = "◎"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Circle" type="Label" parent="Panel/Otros" unique_id=1658894119]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 140.0
+offset_right = 82.0
+offset_bottom = 163.0
+text = "○"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Square" type="Label" parent="Panel/Otros" unique_id=38654232]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 140.0
+offset_right = 114.0
+offset_bottom = 163.0
+text = "□"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Triangle" type="Label" parent="Panel/Otros" unique_id=1057230811]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 140.0
+offset_right = 146.0
+offset_bottom = 163.0
+text = "△"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Diamond" type="Label" parent="Panel/Otros" unique_id=867009103]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 140.0
+offset_right = 274.0
+offset_bottom = 163.0
+text = "♦"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Spade" type="Label" parent="Panel/Otros" unique_id=1867125743]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 140.0
+offset_right = 210.0
+offset_bottom = 163.0
+text = "♠"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Heart" type="Label" parent="Panel/Otros" unique_id=974505540]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 140.0
+offset_right = 242.0
+offset_bottom = 163.0
+text = "♥"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Club" type="Label" parent="Panel/Otros" unique_id=1329699109]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 140.0
+offset_right = 306.0
+offset_bottom = 163.0
+text = "♣"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Star" type="Label" parent="Panel/Otros" unique_id=1368475945]
+layout_mode = 0
+offset_left = 326.0
+offset_top = 140.0
+offset_right = 338.0
+offset_bottom = 163.0
+text = "★"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="DiamondOutline" type="Label" parent="Panel/Otros" unique_id=88140113]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 140.0
+offset_right = 178.0
+offset_bottom = 163.0
+text = "◇"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Note" type="Label" parent="Panel/Otros" unique_id=333885957]
+layout_mode = 0
+offset_left = 358.0
+offset_top = 140.0
+offset_right = 370.0
+offset_bottom = 163.0
+text = "♪"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Sun" type="Label" parent="Panel/Otros" unique_id=1601046385]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 178.0
+offset_right = 50.0
+offset_bottom = 201.0
+text = "☀"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Cloud" type="Label" parent="Panel/Otros" unique_id=574457237]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 178.0
+offset_right = 82.0
+offset_bottom = 201.0
+text = "☁"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Umbrella" type="Label" parent="Panel/Otros" unique_id=247070829]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 178.0
+offset_right = 114.0
+offset_bottom = 201.0
+text = "☂"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Snowman" type="Label" parent="Panel/Otros" unique_id=1371544808]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 178.0
+offset_right = 146.0
+offset_bottom = 201.0
+text = "☃"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="ArrowUp" type="Label" parent="Panel/Otros" unique_id=842748436]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 178.0
+offset_right = 178.0
+offset_bottom = 201.0
+text = "⤴"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="ArrowDown" type="Label" parent="Panel/Otros" unique_id=1206378708]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 178.0
+offset_right = 210.0
+offset_bottom = 201.0
+text = "⤵"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="SelectLetra" type="Sprite2D" parent="Panel" unique_id=1078421451]
+modulate = Color(0.9372549, 0.19215687, 0, 1)
+position = Vector2(48, 101)
+texture = ExtResource("5_qc7my")
+
+[node name="SelectOpcion" type="Sprite2D" parent="Panel" unique_id=1997417176]
+modulate = Color(0.9372549, 0.19215687, 0, 1)
+z_index = 2
+position = Vector2(58, 46)
+texture = ExtResource("7_guc4r")
+
+[node name="SelectAccion" type="Sprite2D" parent="Panel" unique_id=867810110]
+modulate = Color(0.9372549, 0.19215687, 0, 1)
+z_index = 1
+position = Vector2(335, 46)
+texture = ExtResource("8_in255")
+
+[node name="Option" type="Sprite2D" parent="Panel" unique_id=533910573]
+z_index = 1
+position = Vector2(58, 46)
+texture = ExtResource("11_6ie0f")
+hframes = 4
+
+[node name="gender" type="Sprite2D" parent="." unique_id=876658904]
+position = Vector2(432, 66)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("4_nu5n4")
+metadata/_edit_lock_ = true
+
+[node name="icon" type="Sprite2D" parent="." unique_id=417994008]
+z_index = 1
+position = Vector2(93, 48)
+texture = ExtResource("4_y4te2")
+hframes = 2
+
+[node name="shadow" type="Sprite2D" parent="icon" unique_id=1533493394]
+z_as_relative = false
+position = Vector2(0, 23)
+texture = ExtResource("5_nu5n4")
+
+[node name="Caracters" type="Control" parent="." unique_id=1523165591]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_lock_ = true
+
+[node name="Caracter1" type="Label" parent="Caracters" unique_id=871509402]
+layout_mode = 0
+offset_left = 156.0
+offset_top = 41.0
+offset_right = 181.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter1" unique_id=236792795]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter2" type="Label" parent="Caracters" unique_id=509737305]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 41.0
+offset_right = 206.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter2" unique_id=1972659528]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter3" type="Label" parent="Caracters" unique_id=318625984]
+layout_mode = 0
+offset_left = 206.0
+offset_top = 41.0
+offset_right = 231.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter3" unique_id=299653204]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter4" type="Label" parent="Caracters" unique_id=1375241789]
+layout_mode = 0
+offset_left = 231.0
+offset_top = 41.0
+offset_right = 256.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter4" unique_id=1193045711]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter5" type="Label" parent="Caracters" unique_id=740580576]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 41.0
+offset_right = 281.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter5" unique_id=476998016]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter6" type="Label" parent="Caracters" unique_id=1396577927]
+layout_mode = 0
+offset_left = 281.0
+offset_top = 41.0
+offset_right = 306.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter6" unique_id=649812443]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter7" type="Label" parent="Caracters" unique_id=832374587]
+layout_mode = 0
+offset_left = 306.0
+offset_top = 41.0
+offset_right = 331.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter7" unique_id=771918111]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter8" type="Label" parent="Caracters" unique_id=357417802]
+layout_mode = 0
+offset_left = 331.0
+offset_top = 41.0
+offset_right = 356.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter8" unique_id=1777762282]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter9" type="Label" parent="Caracters" unique_id=1699678728]
+layout_mode = 0
+offset_left = 356.0
+offset_top = 41.0
+offset_right = 381.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter9" unique_id=1944046233]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
+
+[node name="Caracter10" type="Label" parent="Caracters" unique_id=903954918]
+layout_mode = 0
+offset_left = 381.0
+offset_top = 41.0
+offset_right = 406.0
+offset_bottom = 82.0
+text = "_"
+label_settings = SubResource("LabelSettings_qc7my")
+metadata/_edit_lock_ = true
+
+[node name="Letra" type="Label" parent="Caracters/Caracter10" unique_id=484432028]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 13.0
+offset_right = 17.0
+offset_bottom = 36.0
+text = "A"
+label_settings = SubResource("LabelSettings_n4n3u")
+metadata/_edit_lock_ = true
