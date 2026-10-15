@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://b47sphae7cj1b"]
+
+[ext_resource type="PackedScene" uid="uid://38hh62du32y5" path="res://Resources/Overworld3D/Models/Snow.glb" id="1_c0dii"]
+[ext_resource type="PackedScene" uid="uid://nunmgc28qam0" path="res://Resources/Overworld3D/Models/Tree.glb" id="2_m831v"]
+[ext_resource type="PackedScene" uid="uid://bfl6qgr7vua8" path="res://Resources/Overworld3D/Models/Cliff.glb" id="3_kmfr6"]
+[ext_resource type="PackedScene" uid="uid://bur6gjckps6lg" path="res://Resources/Overworld3D/Models/Cliff_Corner.glb" id="4_ywt3f"]
+[ext_resource type="PackedScene" uid="uid://b6basalv544og" path="res://Resources/Overworld3D/Models/Cliff_Floor.glb" id="5_128tl"]
+
+[node name="3DTiles" type="Node3D" unique_id=1083518964]
+
+[node name="Snow" parent="." unique_id=1963295906 instance=ExtResource("1_c0dii")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.27911, 0, 0)
+
+[node name="Tree" parent="." unique_id=1912658742 instance=ExtResource("2_m831v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.603127, 0, 0)
+
+[node name="Cliff" parent="." unique_id=1079343103 instance=ExtResource("3_kmfr6")]
+
+[node name="Cliff_Corner" parent="." unique_id=496060382 instance=ExtResource("4_ywt3f")]
+
+[node name="Cliff_Floor" parent="." unique_id=2052405828 instance=ExtResource("5_128tl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.667847, 0, 0)
