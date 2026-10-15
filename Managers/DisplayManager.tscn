@@ -159,7 +159,6 @@ anchors_preset = 1
 visible = false
 
 [node name="PartyUI" parent="." unique_id=1406011060 instance=ExtResource("11_partyui")]
-visible = false
 
 [node name="PCStorageUI" parent="." unique_id=2035157434 instance=ExtResource("15_pcui")]
 visible = false
@@ -252,7 +251,6 @@ custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
 [node name="Name" type="Label" parent="RouteNameUI/MarginContainer/StatsList/ItemCount" unique_id=1667865658]
-clip_text = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "RUTA 1"

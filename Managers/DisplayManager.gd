@@ -122,6 +122,8 @@ var _party_help_text: String = ""
 const _MSG_VIEWPORT_BASE := Vector2(512.0, 384.0)
 const _MSG_BAR_SAFE_MARGIN_PX := 2.0
 const _MSG_BAR_HEIGHT_PX := 96.0
+## Diálogo ítem en mochila: MSG a la izquierda; ChoiceBox a la derecha (mismo margen que a la izquierda).
+const _BAG_DIALOG_CHOICE_TOP_LEFT := Vector2(400.0, 244.0)
 ## Altura del MessageBox PC ítems cuando el texto cabe en una sola línea.
 const _MSG_BAR_HEIGHT_ONE_LINE_PX := 64.0
 ## Inset inferior del ScrollContainer respecto al panel (96 − 79 en MessageBox.tscn).
@@ -139,9 +141,12 @@ const _PARTY_MSG_LEFT_PX := 0.0
 const _PARTY_MSG_RIGHT_PX := 370.0
 const _PARTY_MSG_BOTTOM_PX := 379.0
 const _PARTY_MSG_HEIGHT_PX := 66.0
-## Mismos insets que MessageBox.tscn (16 / 96−79=17) para centrar 1 línea en el marco.
+## Mismos insets verticales que MessageBox.tscn (16 / 96−79=17).
 const _PARTY_MSG_SCROLL_TOP_PX := 16.0
 const _PARTY_MSG_SCROLL_BOTTOM_INSET_PX := 17.0
+## Horizontal: más aire a la derecha que a la izquierda (evita el bloque centrado del fit estrecho).
+const _PARTY_MSG_SCROLL_LEFT_PX := 24.0
+const _PARTY_MSG_SCROLL_RIGHT_INSET_PX := 16.0
 ## Reserva horizontal actual a la derecha del MessageBox en PC ítems (0 = default qty).
 var _pc_items_side_reserve_px: float = 0.0
 const _UI_SCREEN_FADE_DURATION: float = 0.2
@@ -402,12 +407,12 @@ static func show_message_with_choices(text: String, options: Array[String], clos
 	return await instance._show_message_with_choices(text, options, close_at_end, close_choices_at_end)
 
 
-## Menú de acción de objeto de mochila (Usar/Tirar/Salir) con el mismo layout coordinado de overworld.
-static func show_bag_item_action_menu(item_name: String) -> int:
+## Menú de acción de objeto de mochila (por defecto Usar/Tirar/Salir) con layout coordinado.
+static func show_bag_item_action_menu(item_name: String, options: Array[String] = []) -> int:
 	if instance == null:
 		push_error("DisplayManager: No hay instancia disponible")
 		return -1
-	return await instance._show_bag_item_action_menu(item_name)
+	return await instance._show_bag_item_action_menu(item_name, options)
 
 ## Cierra el MessageBox del overworld si está visible
 static func close_message() -> void:
@@ -830,7 +835,10 @@ static func request_hide_overworld_messagebox() -> void:
 func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 	var cfg := config.duplicate()
 	if not "frameStyle" in cfg:
-		cfg["frameStyle"] = MessageBoxFrameStyle.Values.HGSS
+		if _is_party_ui_open() or _is_bag_ui_open() or _bag_dialog_layout_saved:
+			cfg["frameStyle"] = MessageBoxFrameStyle.Values.GOLD
+		else:
+			cfg["frameStyle"] = MessageBoxFrameStyle.Values.FIRERED
 	# fullWidth: mensaje a pantalla completa aunque haya PC ítems/cajas abierto.
 	var force_full_width: bool = bool(cfg.get("fullWidth", false))
 	var want_expand: bool = bool(cfg.get("expandHeight", false))
@@ -854,7 +862,13 @@ func _show_message_with_config(text: String, config: Dictionary = {}) -> void:
 		else:
 			used_party_layout = _push_party_msg_layout_if_needed(est_h)
 		if not "frameStyle" in config:
-			cfg["frameStyle"] = MessageBoxFrameStyle.Values.FIRERED
+			cfg["frameStyle"] = MessageBoxFrameStyle.Values.GOLD
+		# Adaptar alto cuando el texto ya está en el Label (antes de esperar input).
+		var prev_ready: Variant = cfg.get("onTextVisibleReady", Callable())
+		cfg["onTextVisibleReady"] = func() -> void:
+			_adapt_party_msg_height_to_lines()
+			if prev_ready is Callable and (prev_ready as Callable).is_valid():
+				(prev_ready as Callable).call()
 	elif not force_full_width:
 		# Altura correcta ANTES de pintar (evita flash 2 líneas → 1).
 		var est_h: float = _estimate_pc_msg_bar_height_for_text(text)
@@ -1012,7 +1026,12 @@ func _estimate_pc_msg_bar_height_for_text(text: String) -> float:
 func _message_text_fits_one_line_at_current_width(text: String) -> bool:
 	if msg == null or msg.label == null:
 		return true
-	msg.fit_scroll_width_to_panel()
+	# Party: no llamar fit_scroll_width (pisa insets y falsea el ancho útil).
+	if _party_msg_layout_saved:
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
+	else:
+		msg.fit_scroll_width_to_panel()
 	var body: Label = msg.label
 	var font: Font = null
 	var font_size: int = 26
@@ -1024,11 +1043,14 @@ func _message_text_fits_one_line_at_current_width(text: String) -> bool:
 		font = body.get_theme_default_font()
 	if font == null:
 		return true
-	var avail: float = body.size.x
+	# Preferir offsets del scroll / min_size (size.x puede estar stale un frame).
+	var avail: float = 0.0
+	if msg.scroll != null:
+		avail = maxf(1.0, msg.scroll.offset_right - msg.scroll.offset_left)
 	if avail < 8.0:
 		avail = body.custom_minimum_size.x
-	if avail < 8.0 and msg.scroll != null:
-		avail = maxf(1.0, msg.scroll.offset_right - msg.scroll.offset_left)
+	if avail < 8.0:
+		avail = body.size.x
 	var measured: float = font.get_string_size(
 		text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size
 	).x
@@ -1203,14 +1225,14 @@ func _show_message_with_choices(text: String, options: Array[String], close_at_e
 	# Con waitInput: true, el mensaje esperará input en cada salto de línea
 	# closeAtEnd: false para mantener el mensaje visible cuando se muestren las opciones
 	# Iniciar show_custom y esperar a que termine
-	# frameStyle: HGSS (0) por defecto para aplicar el tema y mostrar el icono
+	# frameStyle: Speech FRLG por defecto para aplicar el tema y mostrar el icono
 	_push_pc_msg_layout_if_needed()
 	await msg.show_custom(text, {
 		"waitInput": true,  # true para esperar input entre líneas
 		"closeAtEnd": false,
 		"waitTime": 0.0,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS  # Aplicar tema para mostrar el icono
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED
 	})
 
 	# Si el mensaje terminó pero aún no se llamó a _finish_without_closing,
@@ -1259,6 +1281,10 @@ func _is_party_ui_open() -> bool:
 	return _is_battle_party_ui_open()
 
 
+func _is_bag_ui_open() -> bool:
+	return _bag_ui != null and _bag_ui.visible
+
+
 ## Party instanciado dentro de BattleUI (cambio / ítem en combate).
 func _is_battle_party_ui_open() -> bool:
 	if BattleNew == null or not BattleNew.visible:
@@ -1281,7 +1307,7 @@ func _set_party_help_instant(text: String) -> void:
 	var bar_h: float = _PARTY_MSG_HEIGHT_PX
 	_push_party_msg_layout_if_needed(bar_h)
 	_apply_party_msg_box_rect(bar_h)
-	msg.set_frame_style(MessageBoxFrameStyle.Values.FIRERED)
+	msg.set_frame_style(MessageBoxFrameStyle.Values.GOLD)
 	# Ayuda estática: no consumir ui_accept ni mostrar indicador.
 	msg.waitInput = false
 	msg.closeAtEnd = false
@@ -1358,21 +1384,41 @@ func _apply_party_msg_box_rect(bar_h: float = -1.0) -> void:
 	# Reasignar size tras offsets (algunos Control crecen con min_size previo).
 	msg.size = Vector2(bar_w, bar_h)
 	if msg.scroll != null:
+		msg.scroll.offset_left = _PARTY_MSG_SCROLL_LEFT_PX
+		msg.scroll.offset_right = maxf(
+			msg.scroll.offset_left + 8.0,
+			bar_w - _PARTY_MSG_SCROLL_RIGHT_INSET_PX
+		)
 		msg.scroll.offset_top = _PARTY_MSG_SCROLL_TOP_PX
 		msg.scroll.offset_bottom = maxf(
 			msg.scroll.offset_top + 8.0,
 			bar_h - _PARTY_MSG_SCROLL_BOTTOM_INSET_PX
 		)
-	msg.fit_scroll_width_to_panel()
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
 	if msg.has_method("_adjust_container_size"):
 		msg._adjust_container_size()
-	# Por si _adjust_container_size / fit alteran el panel.
+	# Por si _adjust_container_size altera el panel.
 	msg.custom_minimum_size = Vector2(bar_w, bar_h)
 	msg.size = Vector2(bar_w, bar_h)
 	msg.offset_left = left_x
 	msg.offset_top = top_y
 	msg.offset_right = right_x
 	msg.offset_bottom = bottom_y
+	# Reaplicar scroll tras adjust (set_frame_style / fit no deben recentrar).
+	if msg.scroll != null:
+		msg.scroll.offset_left = _PARTY_MSG_SCROLL_LEFT_PX
+		msg.scroll.offset_right = maxf(
+			msg.scroll.offset_left + 8.0,
+			bar_w - _PARTY_MSG_SCROLL_RIGHT_INSET_PX
+		)
+		msg.scroll.offset_top = _PARTY_MSG_SCROLL_TOP_PX
+		msg.scroll.offset_bottom = maxf(
+			msg.scroll.offset_top + 8.0,
+			bar_h - _PARTY_MSG_SCROLL_BOTTOM_INSET_PX
+		)
+		if msg.has_method("_sync_text_container_width_to_scroll"):
+			msg._sync_text_container_width_to_scroll()
 
 
 func _estimate_party_msg_bar_height_for_text(text: String) -> float:
@@ -2940,7 +2986,7 @@ func _on_bag_use_requested(item_id: int) -> void:
 			await _show_message_with_config("No se puede dar ese objeto.", {
 				"waitInput": true,
 				"closeAtEnd": true,
-				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 				"typingMode": MessageBox.TypingMode.INSTANT,
 				"expandHeight": true,
 			})
@@ -2984,7 +3030,7 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 		await _show_message_with_config("No se puede dejar ese objeto.", {
 			"waitInput": true,
 			"closeAtEnd": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 			"expandHeight": true,
 			"fullWidth": true,
@@ -3023,13 +3069,13 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 			"closeAtEnd": true,
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 			"fullWidth": true,
 		})
 		qty = 1
 	else:
-		qty = await _prompt_quantity(available, "¿Qué cantidad?")
+		qty = await _prompt_quantity(available, "¿Qué cantidad?", 0, MessageBoxFrameStyle.Values.GOLD)
 		if qty <= 0:
 			if _bag_ui != null and _bag_ui.visible and _bag_pc_deposit_active:
 				_bag_ui.move_to_front()
@@ -3042,7 +3088,7 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 			"showIconAtEnd": false,
 			"playOpenSound": false,
 			"playConfirmSound": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 			"fullWidth": true,
 		})
@@ -3057,7 +3103,7 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 			"closeAtEnd": true,
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 			"fullWidth": true,
 		})
@@ -3070,7 +3116,7 @@ func _run_pc_deposit_item_flow(item_id: int) -> void:
 			_bag_ui.set_input_enabled(true)
 
 
-## Venta desde mochila (tienda). Mensajes FRLG; qty si hay más de 1 unidad.
+## Venta desde mochila (tienda). Mensajes Gold; qty si hay más de 1 unidad.
 func _run_bag_sell_item_flow(item_id: int) -> void:
 	if _bag_ui != null and _bag_ui.has_method("set_input_enabled"):
 		_bag_ui.set_input_enabled(false)
@@ -3095,7 +3141,7 @@ func _run_bag_sell_item_flow(item_id: int) -> void:
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
 			"fullWidth": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.TYPING,
 		})
 		_restore_bag_after_sell_step()
@@ -3121,7 +3167,7 @@ func _run_bag_sell_item_flow(item_id: int) -> void:
 			owned,
 			"¿%s?\n¿Cuántas unidades quieres vender?" % item_name,
 			unit_price,
-			MessageBoxFrameStyle.Values.FIRERED
+			MessageBoxFrameStyle.Values.GOLD
 		)
 		if qty <= 0 or not _bag_sell_active:
 			_restore_bag_after_sell_step()
@@ -3142,7 +3188,7 @@ func _run_bag_sell_item_flow(item_id: int) -> void:
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
 			"fullWidth": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.TYPING,
 		})
 		_restore_bag_after_sell_step()
@@ -3156,7 +3202,7 @@ func _run_bag_sell_item_flow(item_id: int) -> void:
 		"showIconAtEnd": false,
 		"playConfirmSound": true,
 		"fullWidth": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.TYPING,
 		"onTextVisibleReady": func() -> void: AudioManager.play_ui_mart_register(),
 	})
@@ -3172,7 +3218,7 @@ func _confirm_bag_sell_yes_no(prompt: String) -> bool:
 		"closeAtEnd": false,
 		"showIconAtEnd": false,
 		"fullWidth": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.TYPING,
 	})
 	hide_message_wait_indicator()
@@ -3411,7 +3457,7 @@ func _apply_give_held_from_bag_to_slot(slot_index: int, item_id: int) -> void:
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"playConfirmSound": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 	}
 
@@ -3433,7 +3479,7 @@ func _apply_give_held_from_bag_to_slot(slot_index: int, item_id: int) -> void:
 			"closeAtEnd": false,
 			"showIconAtEnd": false,
 			"playOpenSound": false,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 		})
 		hide_message_wait_indicator()
@@ -3494,7 +3540,7 @@ func _party_take_held_item(slot_index: int) -> void:
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"playConfirmSound": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 	}
 
@@ -3638,12 +3684,17 @@ func _await_bag_use_feedback_messages(use_result: Dictionary) -> void:
 		_push_item_feedback_msg_layout()
 		popped_item_layout = true
 	## Mismo comportamiento que diálogos de campo: typing + confirmar con input antes de seguir.
+	var feedback_style: MessageBoxFrameStyle.Values = (
+		MessageBoxFrameStyle.Values.GOLD
+		if _is_party_ui_open() or _is_bag_ui_open() or _bag_dialog_layout_saved
+		else MessageBoxFrameStyle.Values.HGSS
+	)
 	await _show_message_with_config(feedback, {
 		"waitInput": true,
 		"closeAtEnd": true,
 		"waitTime": 0.0,
 		"showIconAtEnd": true,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": feedback_style,
 		"typingMode": "typing",
 	})
 	if popped_item_layout:
@@ -3754,7 +3805,7 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 			await _show_message_with_config("Tirar: pendiente de implementar.", {
 				"waitInput": false,
 				"closeAtEnd": true,
-				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 				"typingMode": "instant"
 			})
 		2:
@@ -3771,19 +3822,24 @@ func _run_bag_item_use_flow(item_id: int) -> void:
 		_pop_bag_item_dialog_layout()
 
 
-func _show_bag_item_action_menu(item_name: String) -> int:
+func _show_bag_item_action_menu(item_name: String, options: Array[String] = []) -> int:
 	var message_text := "Has seleccionado %s." % item_name
-	var options: Array[String] = ["Usar", "Tirar", "Salir"]
-	choice_box.begin_coordinated_choice(options)
+	var menu_options: Array[String] = options
+	if menu_options.is_empty():
+		menu_options = ["Usar", "Tirar", "Salir"]
+	choice_box.begin_coordinated_choice(menu_options)
+	_apply_bag_item_msg_box_rect()
 	await msg.show_custom(message_text, {
 		"waitInput": false,
 		"closeAtEnd": false,
 		"waitTime": 0.0,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": "instant",
 		"onTextVisibleReady": Callable(choice_box, "reveal_when_coordinated_message_visible")
 	})
+	# show_custom / tema pueden tocar min_size; reafirmar hueco para el ChoiceBox.
+	_apply_bag_item_msg_box_rect()
 	return await choice_box.await_coordinated_choice_result()
 
 func _snapshot_msg_panel_layout() -> Dictionary:
@@ -3839,6 +3895,34 @@ func _apply_msg_bottom_bar_viewport_inset() -> void:
 	msg.offset_bottom = vh - m
 
 
+## MessageBox del menú de ítem en mochila: deja hueco a la derecha para el ChoiceBox.
+func _apply_bag_item_msg_box_rect() -> void:
+	if msg == null:
+		return
+	var m: float = _MSG_BAR_SAFE_MARGIN_PX
+	var bar_h: float = _MSG_BAR_HEIGHT_PX
+	var vh: float = _MSG_VIEWPORT_BASE.y
+	var left_x: float = m
+	# Mismo margen izquierdo entre viewport↔MSG y MSG↔ChoiceBox.
+	var right_x: float = _BAG_DIALOG_CHOICE_TOP_LEFT.x - m
+	var bar_w: float = right_x - left_x
+	msg.anchor_left = 0.0
+	msg.anchor_top = 0.0
+	msg.anchor_right = 0.0
+	msg.anchor_bottom = 0.0
+	msg.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	msg.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	msg.custom_minimum_size = Vector2(bar_w, bar_h)
+	msg.size = Vector2(bar_w, bar_h)
+	msg.offset_left = left_x
+	msg.offset_top = vh - m - bar_h
+	msg.offset_right = right_x
+	msg.offset_bottom = vh - m
+	msg.size = Vector2(bar_w, bar_h)
+	if msg.has_method("fit_scroll_width_to_panel"):
+		msg.fit_scroll_width_to_panel()
+
+
 func _push_item_feedback_msg_layout() -> void:
 	if _item_feedback_msg_layout_saved or msg == null:
 		return
@@ -3864,14 +3948,15 @@ func _push_bag_item_dialog_layout() -> void:
 
 	_bag_dialog_saved_choice_layout = _snapshot_choice_box_layout()
 
-	# Texto a ancho útil del tema FireRed (sin columna estrecha “mitad interior” del MSG).
-	_apply_msg_bottom_bar_viewport_inset()
+	_apply_bag_item_msg_box_rect()
 
 	# ChoiceBox: esquina superior izquierda fija (Y alineado tras ajustes del contenedor de opciones).
-	const BAG_CHOICE_TOP_LEFT := Vector2(400.0, 244.0)
 	choice_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	choice_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	choice_box.set_fixed_top_left_position(true, BAG_CHOICE_TOP_LEFT)
+	choice_box.set_fixed_top_left_position(true, _BAG_DIALOG_CHOICE_TOP_LEFT)
+
+	if _bag_ui != null and _bag_ui.has_method("set_item_description_visible"):
+		_bag_ui.set_item_description_visible(false)
 
 	_bag_dialog_layout_saved = true
 
@@ -3886,6 +3971,9 @@ func _pop_bag_item_dialog_layout() -> void:
 
 	choice_box.set_fixed_top_left_position(false)
 	_restore_choice_box_layout(_bag_dialog_saved_choice_layout)
+
+	if _bag_ui != null and _bag_ui.visible and _bag_ui.has_method("set_item_description_visible"):
+		_bag_ui.set_item_description_visible(true)
 
 	_bag_dialog_layout_saved = false
 

@@ -113,6 +113,7 @@ func _setup_ui() -> void:
 	frame_style_option.add_item("HeartGold/SoulSilver")
 	frame_style_option.add_item("Cartel 1")
 	frame_style_option.add_item("FireRed")
+	frame_style_option.add_item("Gold")
 	frame_style_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	frame_style_container.add_child(frame_style_option)
 	vbox.add_child(frame_style_container)
@@ -211,7 +212,7 @@ func _apply_values_to_command() -> void:
 	command.close_at_end = close_at_end_check.button_pressed if close_at_end_check else true
 	command.wait_time = wait_time_spin.value if wait_time_spin else 0.0
 	command.show_icon_at_end = show_icon_at_end_check.button_pressed if show_icon_at_end_check else false
-	command.frame_style = frame_style_option.selected if frame_style_option else MessageBoxFrameStyle.Values.HGSS
+	command.frame_style = frame_style_option.selected if frame_style_option else MessageBoxFrameStyle.Values.FIRERED
 	command.use_custom_color = use_custom_color_check.button_pressed if use_custom_color_check else false
 	command.text_color = text_color_picker.color if text_color_picker else Color.WHITE
 

@@ -59,7 +59,7 @@ func show_overworld_style_result_message(result: ItemUseResult) -> void:
 		"closeAtEnd": true,
 		"waitTime": 0.0,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 		"typingMode": "typing",
 	})
 

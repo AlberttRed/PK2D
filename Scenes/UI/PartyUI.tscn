@@ -30,14 +30,6 @@ region_rect = Rect2(0, 0, 256, 98)
 texture = ExtResource("15")
 region_rect = Rect2(0, 0, 112, 48)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3m2bu"]
-texture = ExtResource("26_nib22")
-texture_margin_left = 14.0
-texture_margin_top = 14.0
-texture_margin_right = 14.0
-texture_margin_bottom = 14.0
-region_rect = Rect2(0, 0, 48, 48)
-
 [sub_resource type="FontVariation" id="FontVariation_salir"]
 base_font = ExtResource("31_font")
 spacing_top = 4
@@ -45,7 +37,6 @@ spacing_top = 4
 [sub_resource type="LabelSettings" id="LabelSettings_salir"]
 font = SubResource("FontVariation_salir")
 font_size = 26
-font_color = Color(1, 1, 1, 1)
 stacked_shadow_count = 3
 stacked_shadow_0/offset = Vector2(2, 0)
 stacked_shadow_0/color = Color(0.188235, 0.188235, 0.188235, 1)
@@ -53,6 +44,14 @@ stacked_shadow_1/offset = Vector2(0, 2)
 stacked_shadow_1/color = Color(0.188235, 0.188235, 0.188235, 1)
 stacked_shadow_2/offset = Vector2(2, 2)
 stacked_shadow_2/color = Color(0.188235, 0.188235, 0.188235, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3m2bu"]
+texture = ExtResource("26_nib22")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+region_rect = Rect2(0, 0, 48, 48)
 
 [node name="PartyUI" type="Panel" unique_id=208291322]
 offset_right = 512.0
@@ -124,10 +123,10 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_dn8fn")
 
 [node name="Salir" type="Panel" parent="." unique_id=125012024]
 layout_mode = 0
-offset_left = 398.0
-offset_top = 325.0
-offset_right = 510.0
-offset_bottom = 377.0
+offset_left = 382.0
+offset_top = 320.0
+offset_right = 494.0
+offset_bottom = 372.0
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_il6w1")
 metadata/_edit_lock_ = true

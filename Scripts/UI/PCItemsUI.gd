@@ -46,6 +46,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(false)
 	hide()
+	_ensure_mode_labels_have_unique_settings()
 	if _items_container:
 		_items_container_base_offset_top = _items_container.offset_top
 	if _cursor:
@@ -114,16 +115,23 @@ func refresh() -> void:
 
 
 func _refresh_mode_labels() -> void:
-	_set_mode_label_active(_sacar_label, _mode == Mode.WITHDRAW)
-	_set_mode_label_active(_objeto_label, _mode == Mode.DEPOSIT)
+	# Ambos títulos siempre blancos: no se cambia de modo dentro de esta UI
+	# (SACAR / DEJAR vienen de menús distintos) y atenuar el inactivo se veía como un bug.
+	_set_mode_label_color(_sacar_label, Color(1, 1, 1, 1))
+	_set_mode_label_color(_objeto_label, Color(1, 1, 1, 1))
 
 
-func _set_mode_label_active(label: Label, active: bool) -> void:
+func _ensure_mode_labels_have_unique_settings() -> void:
+	for label in [_sacar_label, _objeto_label]:
+		if label == null or label.label_settings == null:
+			continue
+		label.label_settings = label.label_settings.duplicate(true) as LabelSettings
+
+
+func _set_mode_label_color(label: Label, color: Color) -> void:
 	if label == null or label.label_settings == null:
 		return
-	var settings := label.label_settings.duplicate() as LabelSettings
-	settings.font_color = Color(1, 1, 1, 1) if active else Color(0.55, 0.55, 0.55, 1)
-	label.label_settings = settings
+	label.label_settings.font_color = color
 
 
 func _refresh_list() -> void:
@@ -435,7 +443,7 @@ func _open_item_action_menu(entry: BagListEntry) -> void:
 		"waitInput": false,
 		"closeAtEnd": false,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 	})
 	DisplayManager.hide_message_wait_indicator()
@@ -479,7 +487,9 @@ func _do_withdraw(entry: BagListEntry) -> void:
 	if storage == null or bag == null:
 		return
 	var max_qty := maxi(int(entry.quantity), 1)
-	var qty := await DisplayManager.prompt_quantity(max_qty, "¿Cuántos quieres sacar?")
+	var qty := await DisplayManager.prompt_quantity(
+		max_qty, "¿Cuántos quieres sacar?", 0, MessageBoxFrameStyle.Values.GOLD
+	)
 	if qty <= 0:
 		return
 	var moved: int = int(storage.withdraw_to_bag(bag, int(entry.item_id), qty))
@@ -490,7 +500,7 @@ func _do_withdraw(entry: BagListEntry) -> void:
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
 			"fullWidth": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 		})
 		return
@@ -501,7 +511,7 @@ func _do_withdraw(entry: BagListEntry) -> void:
 		"playOpenSound": false,
 		"playConfirmSound": true,
 		"fullWidth": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 	})
 
@@ -514,7 +524,9 @@ func _do_deposit(entry: BagListEntry) -> void:
 	if storage == null or bag == null:
 		return
 	var max_qty := maxi(int(entry.quantity), 1)
-	var qty := await DisplayManager.prompt_quantity(max_qty, "¿Qué cantidad?")
+	var qty := await DisplayManager.prompt_quantity(
+		max_qty, "¿Qué cantidad?", 0, MessageBoxFrameStyle.Values.GOLD
+	)
 	if qty <= 0:
 		return
 	var moved: int = int(storage.deposit_from_bag(bag, int(entry.item_id), qty))
@@ -524,7 +536,7 @@ func _do_deposit(entry: BagListEntry) -> void:
 			"closeAtEnd": true,
 			"showIconAtEnd": false,
 			"playConfirmSound": true,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 		})
 		return
@@ -534,7 +546,7 @@ func _do_deposit(entry: BagListEntry) -> void:
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"playConfirmSound": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 	})
 
@@ -568,7 +580,7 @@ func _do_give(entry: BagListEntry) -> void:
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"playConfirmSound": true,
-		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+		"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 		"typingMode": MessageBox.TypingMode.INSTANT,
 		"fullWidth": true,
 		"expandHeight": true,
@@ -585,7 +597,7 @@ func _do_give(entry: BagListEntry) -> void:
 				"showIconAtEnd": false,
 				"playOpenSound": false,
 				"playConfirmSound": true,
-				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+				"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 				"typingMode": MessageBox.TypingMode.INSTANT,
 				"fullWidth": true,
 				"expandHeight": true,
@@ -604,7 +616,7 @@ func _do_give(entry: BagListEntry) -> void:
 			"closeAtEnd": false,
 			"showIconAtEnd": false,
 			"playOpenSound": false,
-			"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
+			"frameStyle": MessageBoxFrameStyle.Values.GOLD,
 			"typingMode": MessageBox.TypingMode.INSTANT,
 		})
 		DisplayManager.hide_message_wait_indicator()

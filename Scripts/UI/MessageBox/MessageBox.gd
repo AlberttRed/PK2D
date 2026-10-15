@@ -473,53 +473,76 @@ func _update_wait_indicator(messagebox_theme: MessageBoxTheme) -> void:
 ## Actualiza la posición del WaitIndicator en modo INLINE_END_OF_TEXT
 ## @param messagebox_theme: El MessageBoxTheme con la configuración
 func _update_wait_indicator_inline(messagebox_theme: MessageBoxTheme) -> void:
-	if not wait_indicator or not label:
+	if not wait_indicator or not label or not scroll:
 		return
 
 	var visible_chars: int = label.visible_characters
-	if visible_chars <= 0:
+	if visible_chars < 0:
 		visible_chars = label.get_total_character_count()
 	if visible_chars <= 0:
 		return
 
 	var original_text := label.text
-	var last_char_line := maxi(0, _line_at_char_index(visible_chars - 1) - 1)
+	var char_idx: int = visible_chars - 1
+	# El salto final no tiene bounds útiles: usar el último glifo visible.
+	while char_idx > 0 and char_idx < original_text.length() and original_text[char_idx] == "\n":
+		char_idx -= 1
 
-	var font: Font = null
-	var font_size := 26
-	var settings := label.label_settings
-	if settings:
-		font = settings.font
-		font_size = settings.font_size
-	if font == null:
-		font = label.get_theme_default_font()
-	if font == null:
-		push_warning("MessageBox: No se pudo obtener la fuente para calcular posición INLINE")
-		return
+	var bounds: Rect2 = label.get_character_bounds(char_idx)
+	var indicator_h: float = 16.0
+	if wait_indicator.texture:
+		indicator_h = float(wait_indicator.texture.get_height())
+		if wait_indicator.vframes > 1:
+			indicator_h /= float(wait_indicator.vframes)
 
-	var first_char_of_line: int = visible_chars
-	for i in range(visible_chars):
-		if _line_at_char_index(i) - 1 == last_char_line:
-			first_char_of_line = i
-			break
+	var text_end_x: float
+	var line_center_y: float
+	if bounds.size != Vector2.ZERO:
+		# bounds en espacio local del Label → Panel (MSG).
+		var label_origin: Vector2 = label.global_position - global_position
+		text_end_x = label_origin.x + bounds.position.x + bounds.size.x
+		line_center_y = label_origin.y + bounds.position.y + bounds.size.y * 0.5
+	else:
+		# Fallback si aún no hay layout (mismo criterio por línea que el mapa de chars).
+		var last_char_line := maxi(0, _line_at_char_index(char_idx) - 1)
+		var font: Font = null
+		var font_size := 26
+		var settings := label.label_settings
+		if settings:
+			font = settings.font
+			font_size = settings.font_size
+		if font == null:
+			font = label.get_theme_default_font()
+		if font == null:
+			push_warning("MessageBox: No se pudo obtener la fuente para calcular posición INLINE")
+			return
 
-	var chars_in_line: int = maxi(0, visible_chars - first_char_of_line)
-	var target_line_text := ""
-	if first_char_of_line < original_text.length():
-		target_line_text = original_text.substr(first_char_of_line, chars_in_line)
+		var first_char_of_line: int = char_idx + 1
+		for i in range(char_idx + 1):
+			if _line_at_char_index(i) - 1 == last_char_line:
+				first_char_of_line = i
+				break
 
-	var text_width := 0.0
-	if target_line_text.length() > 0:
-		text_width = font.get_string_size(target_line_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		var chars_in_line: int = maxi(0, char_idx + 1 - first_char_of_line)
+		var target_line_text := ""
+		if first_char_of_line < original_text.length():
+			target_line_text = original_text.substr(first_char_of_line, chars_in_line)
 
-	var line_height := _label_line_height()
-	var scroll_pos = scroll.position
-	var scroll_offset = scroll.scroll_vertical
-	var indicator_height = wait_indicator.texture.get_height() if wait_indicator.texture else 16
-	var last_line_y = scroll_pos.y + (last_char_line * line_height) - scroll_offset + (line_height / 2.0) - (indicator_height / 2.0) + 10
-	var text_margin_left: int = int(round(scroll.offset_left))
-	var text_start_x = scroll_pos.x + text_margin_left
-	var text_end_x = text_start_x + text_width - 16
+		var text_width := 0.0
+		if target_line_text.length() > 0:
+			text_width = font.get_string_size(target_line_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+
+		var line_height := _label_line_height()
+		# `scroll.position` ya incluye offset_left/top; no sumar offset_left otra vez.
+		text_end_x = scroll.position.x + text_width
+		line_center_y = (
+			scroll.position.y
+			+ float(last_char_line) * line_height
+			- float(scroll.scroll_vertical)
+			+ line_height * 0.5
+		)
+
+	var last_line_y: float = line_center_y - indicator_h * 0.5
 	wait_indicator.position = Vector2(text_end_x, last_line_y) + messagebox_theme.wait_indicator_offset
 
 

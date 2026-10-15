@@ -86,6 +86,7 @@ spacing_top = 1
 [sub_resource type="LabelSettings" id="LabelSettings_default"]
 font = SubResource("FontVariation_default")
 font_size = 26
+line_spacing = 8
 font_color = Color(0.345098, 0.345098, 0.313726, 1)
 stacked_shadow_count = 3
 stacked_shadow_0/offset = Vector2(2, 0)

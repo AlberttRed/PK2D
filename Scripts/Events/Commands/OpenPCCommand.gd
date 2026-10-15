@@ -1,7 +1,7 @@
 extends EventCommand
 class_name OpenPCCommand
 
-## Menú raíz del PC (estilo HGSS) + submenú PC de BILL.
+## Menú raíz del PC (estilo Speech FRLG) + submenú PC de BILL.
 ## UI de cajas → #828.
 
 enum RootOption {
@@ -80,7 +80,7 @@ func execute(context: Node) -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 
 	while true:
@@ -130,7 +130,7 @@ func _prompt_root_menu(player_name: String) -> int:
 		"waitInput": false,
 		"closeAtEnd": false,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 	DisplayManager.hide_message_wait_indicator()
 	var cb: ChoiceBox = null
@@ -160,7 +160,7 @@ func _open_player_pc(player_name: String) -> void:
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
 		"playOpenSound": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 
 	var dm := DisplayManager.instance
@@ -185,7 +185,7 @@ func _open_player_pc(player_name: String) -> void:
 				"closeAtEnd": false,
 				"showIconAtEnd": false,
 				"typingMode": MessageBox.TypingMode.INSTANT,
-				"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 			})
 			DisplayManager.set_message_help_instant(PLAYER_HELP[selected])
 			selected = await DisplayManager.await_choices(false)
@@ -225,7 +225,7 @@ func _open_item_storage_menu(cb: ChoiceBox) -> void:
 				"closeAtEnd": false,
 				"showIconAtEnd": false,
 				"typingMode": MessageBox.TypingMode.INSTANT,
-				"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 			})
 			DisplayManager.set_message_help_instant(ITEM_STORAGE_HELP[selected])
 			selected = await DisplayManager.await_choices(false)
@@ -279,7 +279,7 @@ func _show_item_storage_menu(cb: ChoiceBox, on_change: Callable, initial_idx: in
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"typingMode": MessageBox.TypingMode.INSTANT,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 	DisplayManager.set_message_help_instant(ITEM_STORAGE_HELP[idx])
 	DisplayManager.hide_message_wait_indicator()
@@ -297,7 +297,7 @@ func _show_player_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> 
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"typingMode": MessageBox.TypingMode.INSTANT,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 	DisplayManager.set_message_help_instant(PLAYER_HELP[idx])
 	DisplayManager.hide_message_wait_indicator()
@@ -310,7 +310,7 @@ func _open_bill_pc() -> void:
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
 		"playOpenSound": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 	await DisplayManager.show_message("Acceso al Sistema de Almacenamiento de POKéMON concedido.", {
 		"waitInput": true,
@@ -318,7 +318,7 @@ func _open_bill_pc() -> void:
 		"showIconAtEnd": true,
 		"playOpenSound": false,
 		"playConfirmSound": true,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 
 	var dm := DisplayManager.instance
@@ -343,7 +343,7 @@ func _open_bill_pc() -> void:
 				"closeAtEnd": false,
 				"showIconAtEnd": false,
 				"typingMode": MessageBox.TypingMode.INSTANT,
-				"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+				"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 			})
 			DisplayManager.set_message_help_instant(BILL_HELP[selected])
 			selected = await DisplayManager.await_choices(false)
@@ -402,7 +402,7 @@ func _show_bill_menu(cb: ChoiceBox, on_change: Callable, initial_idx: int) -> vo
 		"showIconAtEnd": false,
 		"playOpenSound": false,
 		"typingMode": MessageBox.TypingMode.INSTANT,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})
 	DisplayManager.set_message_help_instant(BILL_HELP[idx])
 	DisplayManager.hide_message_wait_indicator()
@@ -414,5 +414,5 @@ func _show_stub(label: String) -> void:
 		"waitInput": true,
 		"closeAtEnd": true,
 		"showIconAtEnd": false,
-		"frameStyle": MessageBoxFrameStyle.Values.HGSS,
+		"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
 	})

@@ -8,7 +8,7 @@ var command: DialogueCommand = null
 
 # Valores originales para cancelar cambios
 var original_pages: Array = []
-var original_message_box_theme: int = MessageBoxFrameStyle.Values.HGSS
+var original_message_box_theme: int = MessageBoxFrameStyle.Values.FIRERED
 var original_close_at_end: bool = true
 var original_show_icon: bool = false
 
@@ -121,6 +121,7 @@ func _setup_ui() -> void:
 	frame_style_option.add_item("HeartGold/SoulSilver")
 	frame_style_option.add_item("Cartel 1")
 	frame_style_option.add_item("FireRed")
+	frame_style_option.add_item("Gold")
 	frame_style_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	frame_style_container.add_child(frame_style_option)
 	root.add_child(frame_style_container)
@@ -357,7 +358,7 @@ func _apply_values_to_command() -> void:
 			new_pages.append(null)
 
 	command.pages = new_pages
-	command.message_box_theme = frame_style_option.selected if frame_style_option else MessageBoxFrameStyle.Values.HGSS
+	command.message_box_theme = frame_style_option.selected if frame_style_option else MessageBoxFrameStyle.Values.FIRERED
 	command.close_at_end = close_at_end_check.button_pressed if close_at_end_check else true
 	command.show_icon = show_icon_check.button_pressed if show_icon_check else false
 

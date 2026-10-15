@@ -224,15 +224,8 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 		match action_idx:
 			0:
 				pass # Usar
-			1:
-				await DisplayManager.show_message("Tirar: pendiente de implementar.", {
-					"waitInput": false,
-					"closeAtEnd": true,
-					"frameStyle": MessageBoxFrameStyle.Values.FIRERED,
-					"typingMode": "instant"
-				})
-				continue
 			_:
+				# Salir (en combate no hay Tirar).
 				continue
 
 		var out := BattleBagChoice.new()
@@ -306,19 +299,25 @@ func show_bag_item_selection(pokemon: BattlePokemon) -> BattleChoice:
 
 func _show_battle_bag_item_action_menu(item_id: int, item_data: ItemData) -> int:
 	var item_name: String = item_data.get_display_name() if item_data != null else ("Item #%d" % item_id)
+	var battle_options: Array[String] = ["Usar", "Salir"]
 	var dm := DisplayManager.instance
 	if dm != null and dm.has_method("_show_bag_item_action_menu"):
 		var pushed_layout := false
 		if dm.has_method("_push_bag_item_dialog_layout"):
 			dm._push_bag_item_dialog_layout()
 			pushed_layout = true
-		var idx: int = await dm._show_bag_item_action_menu(item_name)
+		# La mochila de combate es otra instancia: el push del DM solo toca DisplayManager.BagUI.
+		if _battle_bag_ui != null and _battle_bag_ui.has_method("set_item_description_visible"):
+			_battle_bag_ui.set_item_description_visible(false)
+		var idx: int = await dm._show_bag_item_action_menu(item_name, battle_options)
+		if _battle_bag_ui != null and _battle_bag_ui.visible and _battle_bag_ui.has_method("set_item_description_visible"):
+			_battle_bag_ui.set_item_description_visible(true)
 		if pushed_layout and dm.has_method("_pop_bag_item_dialog_layout"):
 			dm._pop_bag_item_dialog_layout()
 		return idx
 	return await DisplayManager.show_message_with_choices(
 		"Has seleccionado %s." % item_name,
-		["Usar", "Tirar", "Salir"],
+		battle_options,
 		true
 	)
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://brvsn2vfev6ng"]
 
-[ext_resource type="StyleBox" uid="uid://08dr8fiwcu28" path="res://Resources/UI/MessageBox/Message Styles/HGSS_MessageBox_Style.tres" id="1_1g85p"]
+[ext_resource type="StyleBox" uid="uid://ff6qesqd3v1q" path="res://Resources/UI/MessageBox/Message Styles/SpeechFRLG_MessageBox_Style.tres" id="1_1g85p"]
 [ext_resource type="Script" uid="uid://km5j0mltfp5v" path="res://Scripts/UI/MessageBox/MessageBox.gd" id="2_re8jy"]
 [ext_resource type="FontFile" uid="uid://ixwnyd5f2cr2" path="res://Resources/UI/Fonts/Raw Fonts/pkmnhgss.ttf" id="3_15orl"]
 [ext_resource type="Texture2D" uid="uid://eekte8huuu0f" path="res://Sprites/UI/Others/next.png" id="5_ugtco"]

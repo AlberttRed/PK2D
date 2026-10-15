@@ -30,7 +30,7 @@ var animation_player: AnimationPlayer = null
 
 var _close_mode: CloseMode = CloseMode.WAIT_INPUT
 var _auto_close_timer: Timer = null
-var _frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.HGSS
+var _frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.FIRERED
 var _messagebox_theme: MessageBoxTheme = null
 
 ## Tamaño del panel (por defecto 200x200, se puede ajustar pasando custom_size a setup())

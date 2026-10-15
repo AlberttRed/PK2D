@@ -3,9 +3,10 @@
 class_name MessageBoxFrameStyle
 
 enum Values {
-	HGSS = 0,  # HeartGold/SoulSilver (estilo por defecto)
+	HGSS = 0,  # HeartGold/SoulSilver
 	SIGN_1 = 1,  # Cartel 1
-	FIRERED = 2 # Speech FRLG (`SpeechFRLG_MessageBox_Style`)
+	FIRERED = 2, # Speech FRLG (`SpeechFRLG_MessageBox_Style`; estilo por defecto)
+	GOLD = 3, # Gold (`Gold_MessageBox_Style`; party / bag)
 }
 
 ## Retorna el path del StyleBox correspondiente al estilo
@@ -14,7 +15,8 @@ static func get_messagebox_theme(style: Values) -> MessageBoxTheme:
 		Values.HGSS: return preload("res://Resources/UI/MessageBox/Themes/Default.tres") as MessageBoxTheme
 		Values.SIGN_1: return preload("res://Resources/UI/MessageBox/Themes/Sign1.tres") as MessageBoxTheme
 		Values.FIRERED: return preload("res://Resources/UI/MessageBox/Themes/FireRed.tres") as MessageBoxTheme
-		_: return preload("res://Resources/UI/MessageBox/Themes/Default.tres") as MessageBoxTheme # Por defecto HGSS
+		Values.GOLD: return preload("res://Resources/UI/MessageBox/Themes/Gold.tres") as MessageBoxTheme
+		_: return preload("res://Resources/UI/MessageBox/Themes/FireRed.tres") as MessageBoxTheme # Por defecto Speech FRLG
 
 ## Retorna el nombre legible del estilo
 static func get_display_name(style: Values) -> String:
@@ -22,4 +24,5 @@ static func get_display_name(style: Values) -> String:
 		Values.HGSS: return "HeartGold/SoulSilver"
 		Values.SIGN_1: return "Cartel 1"
 		Values.FIRERED: return "FireRed"
+		Values.GOLD: return "Gold"
 		_: return "Desconocido"

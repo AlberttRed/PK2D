@@ -229,6 +229,12 @@ func set_browse_details_visible(visible_details: bool) -> void:
 		_item_icon.visible = visible_details
 
 
+## Solo la descripción inferior (p. ej. menú Usar/Tirar sobre el MessageBox).
+func set_item_description_visible(visible_desc: bool) -> void:
+	if _description_label:
+		_description_label.visible = visible_desc
+
+
 func _set_money_panel_visible(show_panel: bool) -> void:
 	if _money_panel:
 		_money_panel.visible = show_panel

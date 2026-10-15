@@ -39,7 +39,7 @@ enum ScaleMode {
 @export var scale_mode: ScaleMode = ScaleMode.PIXEL_PERFECT
 
 ## Estilo de marco del MessageBox
-@export var frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.HGSS
+@export var frame_style: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.FIRERED
 
 ## Posición de la caja
 @export var position: Position = Position.CENTER

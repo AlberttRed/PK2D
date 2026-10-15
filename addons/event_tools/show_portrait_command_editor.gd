@@ -141,6 +141,7 @@ func _ready() -> void:
 	frame_style_option.add_item("HeartGold/SoulSilver")
 	frame_style_option.add_item("Cartel 1")
 	frame_style_option.add_item("FireRed")
+	frame_style_option.add_item("Gold")
 	frame_style_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	frame_style_container.add_child(frame_style_option)
 	vbox.add_child(frame_style_container)

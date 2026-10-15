@@ -4,7 +4,7 @@ class_name DialogueCommand
 ## Comando de diálogo multipágina usando el MessageBox del overworld.
 
 @export var pages: Array[DialoguePage] = []
-@export var message_box_theme: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.HGSS
+@export var message_box_theme: MessageBoxFrameStyle.Values = MessageBoxFrameStyle.Values.FIRERED
 @export var close_at_end: bool = true
 @export var show_icon: bool = false
 
