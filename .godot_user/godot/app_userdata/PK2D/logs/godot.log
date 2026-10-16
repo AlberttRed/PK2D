@@ -1,10 +1,8 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-  Cliff surface 0: kept 6 tris, origin=(3.522499, -0.14702, 0.000395) aabb=[P: (-0.015, 0.0, -2.015), S: (2.03, 2.0, 2.0)]
-Updated item 2 (Cliff) from res://Resources/Overworld3D/Models/Cliff.glb
-  Cliff Corner surface 0: kept 13 tris, origin=(-2.000395, -2.0, -0.000395) aabb=[P: (-0.015, 0.0, -0.015), S: (2.03, 2.0, 2.03)]
-Updated item 3 (Cliff Corner) from res://Resources/Overworld3D/Models/Cliff_Corner.glb
-Cliff meshes rebuilt in res://Resources/Overworld3D/MeshLibraries/3DTiles.tres
+  Tree surface 0: kept 2 tris, aabb=[P: (0.0, 0.0, -2.24264), S: (4.0, 4.24264, 4.24264)]
+Updated item 1 (Tree) from res://Resources/Overworld3D/Models/Tree.glb + BoxShape (4.0, 4.0, 2.0) @ (2.0, 2.0, 1.0)
+Tree mesh rebuilt in res://Resources/Overworld3D/MeshLibraries/3DTiles.tres
 WARNING: res://Resources/Data/Ailments/BURN.tres:4 - ext_resource, invalid UID: uid://drlqj155r5faq - using text path instead: res://Sprites/Pictures/battleStatuses.png
    at: load (scene/resources/resource_format_text.cpp:501)
    GDScript backtrace (most recent call first):

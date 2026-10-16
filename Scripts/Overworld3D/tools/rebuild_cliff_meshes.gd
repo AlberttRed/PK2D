@@ -16,11 +16,11 @@ func _initialize() -> void:
 		quit(1)
 		return
 
-	# Cliff: tras recentrar el export queda en z[0..2]; el GridMap antiguo usaba z[-2..0].
-	if not _rebuild_item(lib, 2, "Cliff", "res://Resources/Overworld3D/Models/Cliff.glb", Vector3(0, 0, -2)):
+	# Ambos recentrados a la celda GridMap [0..2]x[0..2] (mismo footprint que el suelo).
+	if not _rebuild_item(lib, 2, "Cliff", "res://Resources/Overworld3D/Models/Cliff.glb"):
 		quit(1)
 		return
-	if not _rebuild_item(lib, 3, "Cliff Corner", "res://Resources/Overworld3D/Models/Cliff_Corner.glb", Vector3.ZERO):
+	if not _rebuild_item(lib, 3, "Cliff Corner", "res://Resources/Overworld3D/Models/Cliff_Corner.glb"):
 		quit(1)
 		return
 
@@ -122,7 +122,12 @@ func _rebuild_item(
 	lib.set_item_mesh(item_id, new_mesh)
 	lib.set_item_mesh_transform(item_id, Transform3D.IDENTITY)
 	lib.set_item_mesh_cast_shadow(item_id, RenderingServer.SHADOW_CASTING_SETTING_ON)
-	print("Updated item ", item_id, " (", item_name, ") from ", glb_path)
+	# Huella 1×1 celda: caja 2×2×2 centrada en (1,1,1) con cell_center=false / mesh en [0..2].
+	var box := BoxShape3D.new()
+	box.size = Vector3(2, 2, 2)
+	var shape_xf := Transform3D(Basis.IDENTITY, Vector3(1, 1, 1))
+	lib.set_item_shapes(item_id, [box, shape_xf])
+	print("Updated item ", item_id, " (", item_name, ") from ", glb_path, " + BoxShape 2x2x2")
 	return true
 
 

@@ -53,7 +53,8 @@ func _set_floor_item(lib: MeshLibrary, item_id: int, item_name: String, tex_path
 
 	lib.set_item_name(item_id, item_name)
 	lib.set_item_mesh(item_id, am)
-	# PlaneMesh FACE_Y centrado → desplazar a esquina como el tile Crocotile (0..2, -2..0).
-	lib.set_item_mesh_transform(item_id, Transform3D(Basis.IDENTITY, Vector3(1, 0, -1)))
+	# PlaneMesh FACE_Y centrado (-1..1): offset (1,0,1) → cobertor exacto de la celda [0..2]x[0..2].
+	# (Antes era (1,0,-1) → visual en z[-2..0], una celda desfasada vs el índice GridMap.)
+	lib.set_item_mesh_transform(item_id, Transform3D(Basis.IDENTITY, Vector3(1, 0, 1)))
 	lib.set_item_mesh_cast_shadow(item_id, RenderingServer.SHADOW_CASTING_SETTING_OFF)
 	print("Updated item ", item_id, " (", item_name, ")")

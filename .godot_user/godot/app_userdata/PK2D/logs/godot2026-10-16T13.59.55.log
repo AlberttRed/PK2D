@@ -1,10 +1,5 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-  surface 0: kept 6 tris
-Updated item 2 (Cliff)
-  surface 0: kept 13 tris
-Updated item 3 (Cliff Corner)
-Cliff meshes rebuilt in res://Resources/Overworld3D/MeshLibraries/3DTiles.tres
 WARNING: res://Resources/Data/Ailments/BURN.tres:4 - ext_resource, invalid UID: uid://drlqj155r5faq - using text path instead: res://Sprites/Pictures/battleStatuses.png
    at: load (scene/resources/resource_format_text.cpp:501)
    GDScript backtrace (most recent call first):
@@ -45,3 +40,5 @@ WARNING: res://Resources/Data/Ailments/SLEEP.tres:4 - ext_resource, invalid UID:
        [2] _load_moves (res://Services/DatabaseService.gd:98)
        [3] _load_all (res://Services/DatabaseService.gd:66)
        [4] _ready (res://Services/DatabaseService.gd:45)
+blocked_count=4 keys=[(3, 0), (1, 0), (3, 2), (1, 2)]
+objects_used=[(3, 0, 0), (1, 0, 0), (3, 0, 2), (1, 0, 2)]

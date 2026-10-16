@@ -1,8 +1,5 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-Updated item 0 (Snow)
-Updated item 4 (Cliff Floor)
-Floor meshes rebuilt in res://Resources/Overworld3D/MeshLibraries/3DTiles.tres
 WARNING: res://Resources/Data/Ailments/BURN.tres:4 - ext_resource, invalid UID: uid://drlqj155r5faq - using text path instead: res://Sprites/Pictures/battleStatuses.png
    at: load (scene/resources/resource_format_text.cpp:501)
    GDScript backtrace (most recent call first):
@@ -43,3 +40,13 @@ WARNING: res://Resources/Data/Ailments/SLEEP.tres:4 - ext_resource, invalid UID:
        [2] _load_moves (res://Services/DatabaseService.gd:98)
        [3] _load_all (res://Services/DatabaseService.gd:66)
        [4] _ready (res://Services/DatabaseService.gd:45)
+blocked=[(3, 0), (1, 0), (3, 2), (1, 2), (0, 1)]
+cliff shapes_n=2 type0=BoxShape3D
+cell_origin=(0.0, 0.0, 2.0)
+shape_xf=[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (1.0, 1.0, 1.0)]
+cell_basis=[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0)]
+world_aabb=[P: (0.0, 0.0, 2.0), S: (2.0, 2.0, 2.0)]
+map0=(0, 0, 1)
+map1=(0, 1, 1)
+can_enter(0,1)=false
+has(0,1)=true
