@@ -2,15 +2,9 @@
 
 [ext_resource type="Script" path="res://Scripts/Overworld3D/Player3D.gd" id="1_player"]
 [ext_resource type="Script" path="res://Scripts/Overworld3D/GridMotion3D.gd" id="2_grid"]
+[ext_resource type="Resource" path="res://Resources/Actor Styles/Red.tres" id="3_style"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
-radius = 0.35
-height = 1.2
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
-albedo_color = Color(0.85, 0.25, 0.25, 1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
 radius = 0.35
 height = 1.2
 
@@ -20,6 +14,7 @@ collision_mask = 1
 motion_mode = 1
 script = ExtResource("1_player")
 move_mode = 0
+actor_style = ExtResource("3_style")
 
 [node name="GridMotion3D" type="Node" parent="."]
 script = ExtResource("2_grid")
@@ -28,14 +23,20 @@ script = ExtResource("2_grid")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="Visual" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
-material_override = SubResource("StandardMaterial3D_body")
-mesh = SubResource("CapsuleMesh_body")
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Visual"]
+centered = true
+offset = Vector2(0, -8)
+pixel_size = 0.0625
+# 2/32: cell_size / tile_pixels (se recalcula en _ready)
+alpha_cut = 1
+texture_filter = 0
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.7372773, 0.6755902, 0, -0.6755902, 0.7372773, 0, 10, 12)
+transform = Transform3D(1, 0, 0, 0, 0.70710678, 0.70710678, 0, -0.70710678, 0.70710678, 0, 12.794587, 12.794587)
 current = true
 fov = 50.0
 near = 0.5
 far = 200.0
+

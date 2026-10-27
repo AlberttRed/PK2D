@@ -1,8 +1,10 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-  Tree surface 0: kept 2 tris, aabb=[P: (0.0, 0.0, -2.24264), S: (4.0, 4.24264, 4.24264)]
-Updated item 1 (Tree) from res://Resources/Overworld3D/Models/Tree.glb + BoxShape (4.0, 4.0, 2.0) @ (2.0, 2.0, 1.0)
-Tree mesh rebuilt in res://Resources/Overworld3D/MeshLibraries/3DTiles.tres
+ground_z top_ndc=8.13773918151855 bot_ndc=-22.3582611083984
+cells toward -Z (lejos/arriba mapa)≈11.1791305541992
+cells toward +Z (cerca/abajo pantalla)≈4.06886959075928
+total vertical span tiles≈15.2480001449585
+GBA ortho: ~10 metatiles tall (160/16), player roughly centered → ~5 up + ~5 down
 WARNING: res://Resources/Data/Ailments/BURN.tres:4 - ext_resource, invalid UID: uid://drlqj155r5faq - using text path instead: res://Sprites/Pictures/battleStatuses.png
    at: load (scene/resources/resource_format_text.cpp:501)
    GDScript backtrace (most recent call first):

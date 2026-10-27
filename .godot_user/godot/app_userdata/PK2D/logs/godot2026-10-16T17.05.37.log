@@ -1,5 +1,8 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
+R=79.9999999999291 cam=(0,56.5685424948736,56.5685424948736) half_w=66.3193130493164 tiles_w≈66.3193130493164
+basis=[X: (1.0, 0.0, 0.0), Y: (0.0, 0.707107, -0.707107), Z: (0.0, 0.707107, 0.707107)]
+transform=[X: (1.0, 0.0, 0.0), Y: (0.0, 0.707107, -0.707107), Z: (0.0, 0.707107, 0.707107), O: (0.0, 56.56854, 56.56854)]
 WARNING: res://Resources/Data/Ailments/BURN.tres:4 - ext_resource, invalid UID: uid://drlqj155r5faq - using text path instead: res://Sprites/Pictures/battleStatuses.png
    at: load (scene/resources/resource_format_text.cpp:501)
    GDScript backtrace (most recent call first):
@@ -40,15 +43,3 @@ WARNING: res://Resources/Data/Ailments/SLEEP.tres:4 - ext_resource, invalid UID:
        [2] _load_moves (res://Services/DatabaseService.gd:98)
        [3] _load_all (res://Services/DatabaseService.gd:66)
        [4] _ready (res://Services/DatabaseService.gd:45)
-move_mode=0
-objects_grid=Objects:<GridMap#177570056461>
-blocked=[(3, 0), (1, 0), (3, 2), (1, 2)]
-cell=(3, 0, 0) item=1 shapes_n=0 name=Tree
-cell=(1, 0, 0) item=1 shapes_n=0 name=Tree
-cell=(3, 0, 2) item=1 shapes_n=0 name=Tree
-cell=(1, 0, 2) item=1 shapes_n=0 name=Tree
-player_cell=(0, 0) pos=(1.0, 0.0, 1.0)
- can_enter(1, 0)=false floor=0 obj=1
- can_enter(-1, 0)=true floor=0 obj=-1
- can_enter(0, 1)=true floor=0 obj=-1
- can_enter(0, -1)=true floor=0 obj=-1

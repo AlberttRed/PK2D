@@ -40,5 +40,7 @@ WARNING: res://Resources/Data/Ailments/SLEEP.tres:4 - ext_resource, invalid UID:
        [2] _load_moves (res://Services/DatabaseService.gd:98)
        [3] _load_all (res://Services/DatabaseService.gd:66)
        [4] _ready (res://Services/DatabaseService.gd:45)
-blocked_count=4 keys=[(3, 0), (1, 0), (3, 2), (1, 2)]
-objects_used=[(3, 0, 0), (1, 0, 0), (3, 0, 2), (1, 0, 2)]
+cam.global=[X: (1.0, 0.0, 0.0), Y: (0.0, 0.707107, 0.707107), Z: (0.0, -0.707107, 0.707107), O: (1.0, 12.79459, 13.79459)]
+cam -Z=(0.0, 0.707107, -0.707107)
+to_origin=(-0.053075, -0.679074, -0.732149)
+dot=0.03752970695496

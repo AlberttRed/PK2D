@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://bfl6qgr7vua8" path="res://Resources/Overworld3D/Models/Cliff.glb" id="3_kmfr6"]
 [ext_resource type="PackedScene" uid="uid://bur6gjckps6lg" path="res://Resources/Overworld3D/Models/Cliff_Corner.glb" id="4_ywt3f"]
 [ext_resource type="PackedScene" uid="uid://b6basalv544og" path="res://Resources/Overworld3D/Models/Cliff_Floor.glb" id="5_128tl"]
+[ext_resource type="PackedScene" uid="uid://bs7quds43lb35" path="res://Resources/Overworld3D/Models/Stairs.glb" id="6_sja2p"]
+[ext_resource type="PackedScene" uid="uid://dotm4m6swyx0v" path="res://Resources/Overworld3D/Models/House.glb" id="7_yaetd"]
 
 [node name="3DTiles" type="Node3D" unique_id=1083518964]
 
@@ -20,3 +22,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.603127, 0, 0)
 
 [node name="Cliff_Floor" parent="." unique_id=2052405828 instance=ExtResource("5_128tl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.667847, 0, 0)
+
+[node name="Stairs" parent="." unique_id=1697390000 instance=ExtResource("6_sja2p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.891739, 0, 0)
+
+[node name="House" parent="." unique_id=1581546281 instance=ExtResource("7_yaetd")]
