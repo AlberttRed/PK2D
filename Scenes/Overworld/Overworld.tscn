@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://betpd2acygacr"]
+[gd_scene load_steps=34 format=3 uid="uid://betpd2acygacr"]
 
 [ext_resource type="Script" uid="uid://cbeq2k7hem4nw" path="res://Scripts/Events/EventSystem.gd" id="1_fvdb5"]
 [ext_resource type="Script" uid="uid://dayi4vvdj10kc" path="res://Scripts/Overworld/Overworld.gd" id="1_overworld"]
@@ -31,6 +31,8 @@
 [ext_resource type="PackedScene" uid="uid://bbxkyr6wh7s7h" path="res://Scenes/Overworld/Maps/Ciudad Plateada/Edificios/Casas_Plateada.tscn" id="18_t48lp"]
 [ext_resource type="PackedScene" uid="uid://6jesadgjg24s" path="res://Scenes/Overworld/Maps/Ciudad Plateada/Edificios/GYM_Plateada.tscn" id="19_gs4ay"]
 [ext_resource type="PackedScene" uid="uid://ntl1hurrl6j3" path="res://Scenes/Overworld/Maps/Ciudad Plateada/Edificios/Museo_Plateada.tscn" id="20_irihf"]
+[ext_resource type="Script" uid="uid://bsh5y6wkd20on" path="res://Scripts/Overworld3D/World3DSystem.gd" id="21_world3d"]
+[ext_resource type="PackedScene" uid="uid://dkumdunsvhkp2" path="res://Scenes/Overworld3D/Overworld3DTest.tscn" id="22_test3d"]
 
 [node name="Overworld" type="Node"]
 script = ExtResource("1_overworld")
@@ -63,3 +65,7 @@ script = ExtResource("8_wild_encounter")
 
 [node name="TileMotionSystem" type="Node" parent="."]
 script = ExtResource("9_tile_motion")
+
+[node name="World3DSystem" type="Node3D" parent="."]
+script = ExtResource("21_world3d")
+world_map_scenes = Array[PackedScene]([ExtResource("22_test3d")])

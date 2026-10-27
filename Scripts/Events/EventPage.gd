@@ -90,8 +90,9 @@ enum ExecutionMode { QUEUED, PARALLEL }
 @export var awareness_detection_distance: float = 3.0
 
 ## Referencia al Event de origen (no exportada, solo runtime)
-## Se asigna cuando se duplica la página desde un Event
-var source_event: Event = null
+## Se asigna cuando se duplica la página desde un Event (2D) o Event3D (3D).
+## Tipado como Node para ser agnóstico de dimensión (duck typing).
+var source_event: Node = null
 
 # Sistema de sprites
 @export_group("Sprite Configuration")
@@ -221,7 +222,7 @@ func _generate_npc_sprite_frames(texture: Texture2D, frame_size: Vector2 = Vecto
 
 ## Evalúa si las condiciones de esta página se cumplen
 ## Retorna true si la página puede activarse
-func evaluate_conditions(event_id: String = "", source_event: Event = null) -> bool:
+func evaluate_conditions(event_id: String = "", source_event: Node = null) -> bool:
 	# Crear el contexto de evaluación
 	var context = EventConditionContext.new(event_id, GameStateService)
 	context.source_event = source_event

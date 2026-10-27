@@ -30,6 +30,12 @@ const FLAG_HAS_POKEDEX: String = "HAS_POKEDEX"
 ## `Engine.is_editor_hint()` (jugar desde el editor).
 var debug_mode: bool = false
 
+## Spawn de la nueva partida en modo debug. Los fija `Main` (exports `debug_start_*`);
+## la posición es la celda/tile del mapa (en mapas 3D, celda XZ del OverworldGrid3D).
+var debug_start_map_id: String = "Centro_Pokemon"
+var debug_start_position: Vector2i = Vector2i(-29, -10)
+var debug_start_facing: Vector2 = Vector2.UP
+
 # === SEÑALES ===
 signal flag_changed(flag_name: String, new_value: bool)
 signal variable_changed(variable_name: String, new_value: Variant)
@@ -95,10 +101,10 @@ func initialize_new_game() -> void:
 	current_position = Vector2i(27, 4)  # Posición por defecto en el mapa (coordenada de tile)
 	facing_dir = Vector2.UP
 	if debug_mode:
-		# Spawn en Centro Pokémon para iterar PC / curación rápido.
-		current_map_id = "Centro_Pokemon"
-		current_position = Vector2i(-29, -10)
-		facing_dir = Vector2.UP
+		# Spawn de debug configurable en Main (por defecto Centro Pokémon: iterar PC / curación rápido).
+		current_map_id = debug_start_map_id
+		current_position = debug_start_position
+		facing_dir = debug_start_facing
 	money = 0
 	set_respawn_point(current_map_id, current_position, facing_dir)
 	bag = BAG_SCRIPT.new()

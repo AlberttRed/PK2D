@@ -9,13 +9,14 @@ class_name EventTrigger
 ##
 ## Cada EventPage tiene un EventTrigger que determina cómo se activa.
 ## El Event delega en el trigger cuando recibe una señal externa.
+## `event` es Node (no Event) para servir tanto a Event (2D) como a Event3D (3D); se usa duck typing (trigger()).
 
 ## Verifica si este trigger puede activarse con la señal dada
 ## Retorna true si el trigger debe activarse, false en caso contrario
 func can_fire(
 	signal_type: EventTriggerSignal.SignalType,
 	context: OverworldContext,
-	event: Event,
+	event: Node,
 	instigator: Node
 ) -> bool:
 	return false
@@ -25,7 +26,7 @@ func can_fire(
 func fire(
 	signal_type: EventTriggerSignal.SignalType,
 	context: OverworldContext,
-	event: Event,
+	event: Node,
 	instigator: Node
 ) -> void:
 	event.trigger()

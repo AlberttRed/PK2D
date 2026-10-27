@@ -7,6 +7,10 @@
 
 [node name="Main" type="Node" unique_id=1470670327]
 script = ExtResource("1")
+debug_mode = true
+debug_start_map_id = "Overworld3DTest"
+debug_start_position = Vector2i(0, 0)
+debug_start_facing = Vector2(0, 1)
 
 [node name="DisplayManager" parent="." unique_id=1614610019 instance=ExtResource("2")]
 

@@ -1,7 +1,7 @@
 extends Node
 class_name GridMotion3D
 ## Movimiento a pasos en grid 3D para el spike Overworld3D.
-## Usa la API del GridMap (local_to_map / map_to_local) para no desfazar celdas.
+## Solo mueve: las reglas de celda (bloqueos, escaleras, suelo, eventos) viven en OverworldGrid3D.
 
 signal step_started
 signal step_finished(cell: Vector2i)
@@ -26,6 +26,8 @@ var is_colliding: bool = false
 @export var play_bump_sound: bool = true
 ## true solo mientras dura la espera de un bump (no durante giros ni pasos).
 var _bump_active: bool = false
+## true tras disparar COLLISION contra un evento, hasta soltar/cambiar la dirección.
+var _collision_latched: bool = false
 
 ## Celda lógica autoritativa (no se recalcula a ciegas desde floats).
 var _cell: Vector2i = Vector2i.ZERO
@@ -33,153 +35,18 @@ var _cell: Vector2i = Vector2i.ZERO
 var actor_y: float = 0.0
 
 var actor: Node3D
-var floor_grid: GridMap
-var objects_grid: GridMap
+var grid: OverworldGrid3D
 
 var _tween: Tween
 var _end_cell: Vector2i = Vector2i.ZERO
 var _end_y: float = 0.0
 
-## Celdas XZ ocupadas solo a partir de shapes del MeshLibrary (p.ej. BoxShape).
-## Sin shape → no bloquea en GRID (da igual el item_id de la celda).
-var _blocked_cells: Dictionary = {} ## Vector2i -> true
-## Huella Stairs desde shapes (no bloquea): Vector2i -> climb Vector2i.
-var _stairs_cells: Dictionary = {}
-## Alturas de suelo walkable por XZ (capa GridMap Y → world Y = y * cell_size.y).
-var _floor_heights: Dictionary = {} ## Vector2i -> Array[float]
 
-## Stairs (MeshLibrary item 7): huella 2×1 (X×Z) vía BoxShape; subir/bajar en 2 pasos.
-const STAIRS_ITEM_ID := 7
-## Dirección de subida con orientación identidad (hacia -Z / "arriba" en mapa).
-const STAIRS_BASE_CLIMB := Vector2i(0, -1)
-@export var stair_step_height: float = 2.0
-
-
-func setup(p_actor: Node3D, p_floor: GridMap, p_objects: GridMap = null) -> void:
+func setup(p_actor: Node3D, p_grid: OverworldGrid3D) -> void:
 	actor = p_actor
-	floor_grid = p_floor
-	objects_grid = p_objects
+	grid = p_grid
 	if actor != null:
 		actor_y = actor.global_position.y
-	# Player._ready corre antes que los GridMap hermanos; diferir el bake.
-	call_deferred("rebuild_blocked_cells")
-
-
-func rebuild_blocked_cells() -> void:
-	_blocked_cells.clear()
-	_stairs_cells.clear()
-	_floor_heights.clear()
-	_bake_floor_heights(floor_grid)
-	_bake_grid_blockers(objects_grid)
-	_bake_grid_blockers(floor_grid)
-	_bake_grid_stairs(objects_grid)
-	_bake_grid_stairs(floor_grid)
-
-
-func _bake_floor_heights(grid: GridMap) -> void:
-	if grid == null:
-		return
-	var sy: float = grid.cell_size.y
-	for cell in grid.get_used_cells():
-		var xz := Vector2i(cell.x, cell.z)
-		var h: float = float(cell.y) * sy
-		var heights: Array = _floor_heights.get(xz, [])
-		if not heights.has(h):
-			heights.append(h)
-		_floor_heights[xz] = heights
-
-
-func _bake_grid_blockers(grid: GridMap) -> void:
-	if grid == null:
-		return
-	var lib: MeshLibrary = grid.mesh_library
-	if lib == null:
-		return
-	for cell in grid.get_used_cells():
-		var item_id: int = grid.get_cell_item(cell)
-		if item_id == GridMap.INVALID_CELL_ITEM:
-			continue
-		# Stairs: walkable; su shape alimenta _stairs_cells, no blockers.
-		if item_id == STAIRS_ITEM_ID:
-			continue
-		var shapes: Array = lib.get_item_shapes(item_id)
-		if shapes.is_empty():
-			continue
-		var cell_basis: Basis = grid.get_cell_item_basis(cell)
-		var cell_origin: Vector3 = grid.map_to_local(cell)
-		var cell_xf := Transform3D(cell_basis, cell_origin)
-		for i in range(0, shapes.size(), 2):
-			var shape: Shape3D = shapes[i]
-			var shape_xf: Transform3D = shapes[i + 1]
-			var aabb := _shape_local_aabb(shape)
-			if aabb.size == Vector3.ZERO:
-				continue
-			_mark_aabb_cells(grid, (cell_xf * shape_xf) * aabb, _blocked_cells, true)
-
-
-func _bake_grid_stairs(grid: GridMap) -> void:
-	if grid == null:
-		return
-	var lib: MeshLibrary = grid.mesh_library
-	if lib == null:
-		return
-	for cell in grid.get_used_cells():
-		var item_id: int = grid.get_cell_item(cell)
-		if item_id != STAIRS_ITEM_ID:
-			continue
-		var climb := _climb_dir_from_basis(grid.get_cell_item_basis(cell))
-		var shapes: Array = lib.get_item_shapes(item_id)
-		if shapes.is_empty():
-			# Sin shape: solo la celda pintada (fallback).
-			_stairs_cells[Vector2i(cell.x, cell.z)] = climb
-			continue
-		var cell_basis: Basis = grid.get_cell_item_basis(cell)
-		var cell_origin: Vector3 = grid.map_to_local(cell)
-		var cell_xf := Transform3D(cell_basis, cell_origin)
-		for i in range(0, shapes.size(), 2):
-			var shape: Shape3D = shapes[i]
-			var shape_xf: Transform3D = shapes[i + 1]
-			var aabb := _shape_local_aabb(shape)
-			if aabb.size == Vector3.ZERO:
-				continue
-			_mark_aabb_cells(grid, (cell_xf * shape_xf) * aabb, _stairs_cells, climb)
-
-
-func _shape_local_aabb(shape: Shape3D) -> AABB:
-	if shape is BoxShape3D:
-		var s: Vector3 = (shape as BoxShape3D).size
-		return AABB(-s * 0.5, s)
-	if shape is SphereShape3D:
-		var r: float = (shape as SphereShape3D).radius
-		return AABB(Vector3(-r, -r, -r), Vector3(r, r, r) * 2.0)
-	if shape is CapsuleShape3D:
-		var cap := shape as CapsuleShape3D
-		var r2: float = cap.radius
-		var h: float = cap.height
-		return AABB(Vector3(-r2, -h * 0.5, -r2), Vector3(r2 * 2.0, h, r2 * 2.0))
-	if shape is CylinderShape3D:
-		var cyl := shape as CylinderShape3D
-		var cr: float = cyl.radius
-		var ch: float = cyl.height
-		return AABB(Vector3(-cr, -ch * 0.5, -cr), Vector3(cr * 2.0, ch, cr * 2.0))
-	return AABB()
-
-
-func _mark_aabb_cells(grid: GridMap, aabb: AABB, target: Dictionary, value: Variant) -> void:
-	## Muestrear a mitad de altura para no mezclar capas Y del GridMap.
-	var eps := 1e-3
-	var mid_y := aabb.position.y + aabb.size.y * 0.5
-	var p0 := Vector3(aabb.position.x + eps, mid_y, aabb.position.z + eps)
-	var p1 := Vector3(aabb.position.x + aabb.size.x - eps, mid_y, aabb.position.z + aabb.size.z - eps)
-	var c0 := grid.local_to_map(p0)
-	var c1 := grid.local_to_map(p1)
-	var x0 := mini(c0.x, c1.x)
-	var x1 := maxi(c0.x, c1.x)
-	var z0 := mini(c0.z, c1.z)
-	var z1 := maxi(c0.z, c1.z)
-	for x in range(x0, x1 + 1):
-		for z in range(z0, z1 + 1):
-			target[Vector2i(x, z)] = value
 
 
 func get_step_duration() -> float:
@@ -187,25 +54,15 @@ func get_step_duration() -> float:
 
 
 func world_to_cell(world: Vector3) -> Vector2i:
-	if floor_grid == null:
-		var cs := 2.0
-		return Vector2i(floori(world.x / cs), floori(world.z / cs))
-	var local := floor_grid.to_local(world)
-	var map := floor_grid.local_to_map(local)
-	return Vector2i(map.x, map.z)
+	if grid == null:
+		return Vector2i(floori(world.x / 2.0), floori(world.z / 2.0))
+	return grid.world_to_cell(world)
 
 
 func cell_to_world_center(cell: Vector2i, y: float) -> Vector3:
-	if floor_grid == null:
-		var cs := 2.0
-		return Vector3(cell.x * cs + cs * 0.5, y, cell.y * cs + cs * 0.5)
-	# map_to_local con cell_center=false → esquina; sumamos medio cell para el centro.
-	var corner := floor_grid.map_to_local(Vector3i(cell.x, 0, cell.y))
-	var cs := floor_grid.cell_size
-	var local_center := corner + Vector3(cs.x * 0.5, 0.0, cs.z * 0.5)
-	var global := floor_grid.to_global(local_center)
-	global.y = y
-	return global
+	if grid == null:
+		return Vector3(cell.x * 2.0 + 1.0, y, cell.y * 2.0 + 1.0)
+	return grid.cell_to_world_center(cell, y)
 
 
 func current_cell() -> Vector2i:
@@ -235,27 +92,9 @@ func requires_initial_step(d: Vector2i) -> bool:
 
 ## at_y: altura de destino (por defecto la del actor). Debe coincidir con un suelo en esa XZ.
 func can_enter(cell: Vector2i, at_y: float = NAN) -> bool:
-	if floor_grid == null:
+	if grid == null:
 		return true
-	if _floor_heights.is_empty() and _blocked_cells.is_empty() and _stairs_cells.is_empty():
-		rebuild_blocked_cells()
-	# Stairs: transitables sin exigir suelo a esa altura.
-	if _is_stairs_cell(cell):
-		return not _blocked_cells.has(cell)
-	if _blocked_cells.has(cell):
-		return false
-	var y: float = actor_y if is_nan(at_y) else at_y
-	return _has_floor_at_height(cell, y)
-
-
-func _has_floor_at_height(cell: Vector2i, y: float) -> bool:
-	var heights: Variant = _floor_heights.get(cell)
-	if heights == null:
-		return false
-	for h in heights as Array:
-		if absf(y - float(h)) <= 0.05:
-			return true
-	return false
+	return grid.can_enter(cell, actor_y if is_nan(at_y) else at_y)
 
 
 func try_step(d: Vector2i) -> void:
@@ -278,7 +117,7 @@ func try_step(d: Vector2i) -> void:
 		_start_wait(turn_duration, from, actor_y)
 		return
 
-	var stair_move := _resolve_stair_step(from, to, d)
+	var stair_move: Dictionary = grid.resolve_stair_step(from, to, d, actor_y) if grid != null else {}
 	if stair_move.get("blocked", false):
 		_start_bump(from)
 		return
@@ -292,6 +131,11 @@ func try_step(d: Vector2i) -> void:
 		return
 
 	if not can_enter(to):
+		# Igual que 2D: si choca contra un evento cuyo trigger COLLISION se activa, no hay bump.
+		if _try_event_collision(to):
+			is_colliding = true
+			moving = false
+			return
 		_start_bump(from)
 		return
 
@@ -301,6 +145,40 @@ func try_step(d: Vector2i) -> void:
 	_end_y = actor_y
 	step_started.emit()
 	_start_move_to(cell_to_world_center(to, actor_y))
+
+
+## Evento en la celda `offset` pasos por delante (1 = la de delante). Equivalente a event_at_offset 2D.
+func event_at_offset(offset: int = 1) -> Node3D:
+	if grid == null:
+		return null
+	return grid.event_at(_cell + dir * offset)
+
+
+func event_in_front() -> Node3D:
+	return event_at_offset(1)
+
+
+## Equivalente a GridMotion._check_player_collision (2D): solo para el Player (grupo "Player").
+## Retorna true si el evento de la celda destino activó su trigger COLLISION.
+## Latch: tras disparar, no se vuelve a disparar mientras se mantenga la misma dirección
+## (hasta release_collision_latch()), para no repetir el evento cada frame con la tecla pulsada.
+func _try_event_collision(target_cell: Vector2i) -> bool:
+	if actor == null or grid == null or not actor.is_in_group("Player"):
+		return false
+	var ev := grid.event_at(target_cell)
+	if ev == null or not ev.has_method("try_fire"):
+		return false
+	if _collision_latched:
+		return true
+	if ev.try_fire(EventTriggerSignal.SignalType.COLLISION, actor):
+		_collision_latched = true
+		return true
+	return false
+
+
+## Llamar cuando se suelta la dirección o cambia (Player3D).
+func release_collision_latch() -> void:
+	_collision_latched = false
 
 
 ## Choque contra pared/obstáculo. Igual que GridMotion 2D: velocidad 0.5 y se queda
@@ -370,55 +248,3 @@ func cancel_movement() -> void:
 	initial_step = false
 	hold_time = 0.0
 	snap_to_cell_center()
-
-
-func _is_stairs_cell(cell: Vector2i) -> bool:
-	if _stairs_cells.is_empty():
-		rebuild_blocked_cells()
-	return _stairs_cells.has(cell)
-
-
-func _climb_dir_from_basis(basis: Basis) -> Vector2i:
-	var v: Vector3 = basis * Vector3(float(STAIRS_BASE_CLIMB.x), 0.0, float(STAIRS_BASE_CLIMB.y))
-	if absf(v.x) >= absf(v.z):
-		return Vector2i(int(signf(v.x)), 0)
-	return Vector2i(0, int(signf(v.z)))
-
-
-func _climb_dir_at(cell: Vector2i) -> Vector2i:
-	if _stairs_cells.is_empty():
-		rebuild_blocked_cells()
-	var climb: Variant = _stairs_cells.get(cell, STAIRS_BASE_CLIMB)
-	return climb as Vector2i
-
-
-## Devuelve { is_stair, blocked, y } si el paso implica escalera.
-## Climb/-climb: ± half Y. Lateral sobre la huella: misma Y.
-## Al salir a suelo, can_enter usa la Y de destino (no la mid de la escalera).
-func _resolve_stair_step(from: Vector2i, to: Vector2i, d: Vector2i) -> Dictionary:
-	var from_stairs := _is_stairs_cell(from)
-	var to_stairs := _is_stairs_cell(to)
-	if not from_stairs and not to_stairs:
-		return {}
-
-	var half := stair_step_height * 0.5
-	var climb: Vector2i
-	if to_stairs:
-		climb = _climb_dir_at(to)
-	else:
-		climb = _climb_dir_at(from)
-
-	var end_y := actor_y
-	if from_stairs and to_stairs and d != climb and d != -climb:
-		end_y = actor_y
-	elif d == climb:
-		end_y = actor_y + half
-	elif d == -climb:
-		end_y = actor_y - half
-	else:
-		return {"is_stair": true, "blocked": true}
-
-	if not can_enter(to, end_y):
-		return {"is_stair": true, "blocked": true}
-
-	return {"is_stair": true, "blocked": false, "y": end_y}

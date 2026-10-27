@@ -1,4 +1,5 @@
 extends CharacterBody3D
+class_name Player3D
 ## Player sandbox del spike Overworld3D.
 ## Sprite 2D (ActorStyle) en AnimatedSprite3D inclinado ~45° como los árboles.
 
@@ -7,8 +8,6 @@ enum MoveMode { GRID, FREE }
 @export var move_mode: MoveMode = MoveMode.GRID
 @export var walk_speed: float = 4.0
 @export var run_speed: float = 7.0
-@export var floor_grid_path: NodePath
-@export var objects_grid_path: NodePath
 @export var actor_style: ActorStyle
 ## Mismo tamaño de tile 2D (Tileset 32×32). 1 tile 2D = 1 celda GridMap.
 @export var tile_pixels: float = 32.0
@@ -27,11 +26,17 @@ enum MoveMode { GRID, FREE }
 
 var _facing: Vector2i = Vector2i(0, 1)
 
+## Contexto del Overworld (lo inyecta World3DSystem / el coordinador). API de control idéntica al Player 2D.
+var context: OverworldContext = null
+var movement_enabled: bool = true
+## Contador de bloqueos anidados (eventos, UI...). Solo se libera al llegar a 0.
+var _control_block_count: int = 0
+
 
 func _cell_size() -> float:
-	# Preferir cell_size del Floor si ya está enlazado; si no, 2 (default GridMap spike).
-	if _grid_motion != null and _grid_motion.floor_grid != null:
-		return _grid_motion.floor_grid.cell_size.x
+	# cell_size del OverworldGrid3D si está enlazado; si no, 2 (default GridMap spike).
+	if _grid_motion != null and _grid_motion.grid != null:
+		return _grid_motion.grid.cell_size().x
 	return 2.0
 
 
@@ -46,9 +51,17 @@ func _sprite_world_height() -> float:
 
 func _ready() -> void:
 	motion_mode = MOTION_MODE_FLOATING
-	var floor_map := _resolve_grid(floor_grid_path, "Floor")
-	var objects_map := _resolve_grid(objects_grid_path, "Objects")
-	_grid_motion.setup(self, floor_map, objects_map)
+	# Igual que Player 2D: DisplayManager pausa el árbol mientras hay UI (mensajes...);
+	# el player sigue vivo para terminar animaciones y reaccionar al desbloqueo.
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_connect_display_manager_signals()
+	# Igual que Player 2D: CollisionTrigger/TouchTrigger comprueban instigator.is_in_group("Player").
+	if not is_in_group("Player"):
+		add_to_group("Player")
+	var overworld_grid := get_tree().get_first_node_in_group(OverworldGrid3D.GROUP) as OverworldGrid3D
+	if overworld_grid == null:
+		push_error("Player3D: no hay OverworldGrid3D en el mapa (añádelo como hermano de Floor/Objects).")
+	_grid_motion.setup(self, overworld_grid)
 	_setup_sprite()
 	_grid_motion.direction_changed.connect(_on_direction_changed)
 	_grid_motion.step_started.connect(_on_step_started)
@@ -57,7 +70,40 @@ func _ready() -> void:
 		_grid_motion.snap_to_cell_center()
 	_apply_idle_pose()
 	await get_tree().process_frame
-	_grid_motion.rebuild_blocked_cells()
+	if overworld_grid != null:
+		overworld_grid.rebuild()
+
+
+## Re-enlaza al player con el OverworldGrid3D de otro mapa (cambio de mapa con el player ya creado).
+func bind_grid(new_grid: OverworldGrid3D) -> void:
+	_grid_motion.setup(self, new_grid)
+	if new_grid != null:
+		await get_tree().process_frame
+		if is_instance_valid(new_grid):
+			new_grid.rebuild()
+
+
+## Coloca al player en el centro de una celda XZ (cancela cualquier movimiento en curso).
+## `y` NAN = conserva la altura actual. `facing` ZERO = conserva la dirección.
+func place_at_cell(cell: Vector2i, facing: Vector2i = Vector2i.ZERO, y: float = NAN) -> void:
+	_grid_motion.cancel_movement()
+	var ground_y := global_position.y if is_nan(y) else y
+	global_position = _grid_motion.cell_to_world_center(cell, ground_y)
+	_grid_motion.snap_to_cell_center()
+	if facing != Vector2i.ZERO:
+		_grid_motion.face(facing)
+		_facing = facing
+	_apply_idle_pose()
+
+
+## Celda XZ actual del player.
+func current_cell() -> Vector2i:
+	return _grid_motion.current_cell()
+
+
+## Dirección actual (cardinal XZ).
+func facing_dir() -> Vector2i:
+	return _grid_motion.dir
 
 
 func _setup_sprite() -> void:
@@ -101,6 +147,9 @@ func _physics_process(_delta: float) -> void:
 
 func _process(delta: float) -> void:
 	if move_mode == MoveMode.GRID:
+		# Igual que Player 2D: sin input si el juego está pausado o los controles bloqueados.
+		if get_tree().paused or not movement_enabled:
+			return
 		_process_grid_move(delta)
 
 
@@ -144,9 +193,24 @@ func _process_grid_move(delta: float) -> void:
 	# Igual que Player 2D: si está chocando y cambia/suelta la dirección, corta el bump.
 	if _grid_motion.is_colliding and _grid_motion.dir != input_dir:
 		_grid_motion.cancel_bump()
+	# Un evento disparado por COLLISION no se repite hasta soltar/cambiar de dirección.
+	if input_dir == Vector2i.ZERO or input_dir != _grid_motion.dir:
+		_grid_motion.release_collision_latch()
 
 	if input_dir != Vector2i.ZERO and not _grid_motion.moving:
 		_grid_motion.try_step(input_dir)
+
+
+## "interact" frente a un evento → trigger ACTION (como Player 2D).
+func _unhandled_input(event: InputEvent) -> void:
+	if move_mode != MoveMode.GRID or _grid_motion.moving:
+		return
+	if get_tree().paused or not movement_enabled:
+		return
+	if event.is_action_pressed("interact"):
+		var e := _grid_motion.event_in_front()
+		if e != null and e.has_method("on_player_action"):
+			e.on_player_action()
 
 
 func _read_cardinal_input() -> Vector2i:
@@ -172,11 +236,78 @@ func _on_step_started() -> void:
 
 
 func _on_step_finished(_cell: Vector2i) -> void:
-	if not Input.is_action_pressed("move_up") \
+	# Con controles bloqueados no se encadena otro paso: pose idle aunque siga pulsada la tecla.
+	if not movement_enabled \
+	or (not Input.is_action_pressed("move_up") \
 	and not Input.is_action_pressed("move_down") \
 	and not Input.is_action_pressed("move_left") \
-	and not Input.is_action_pressed("move_right"):
+	and not Input.is_action_pressed("move_right")):
 		_apply_idle_pose()
+
+
+# --- API de control (misma que Player 2D; la usan OverworldContext / EventController) ---
+
+func set_movement_enabled(enabled: bool) -> void:
+	movement_enabled = enabled
+	if not enabled and not _grid_motion.moving:
+		_apply_idle_pose()
+
+
+## Bloquea los controles. Usa un contador para permitir bloqueos anidados.
+func block_controls() -> void:
+	_control_block_count += 1
+	set_movement_enabled(false)
+
+
+## Desbloquea los controles; solo se liberan de verdad cuando el contador llega a 0.
+func unblock_controls() -> void:
+	_control_block_count = maxi(0, _control_block_count - 1)
+	if _control_block_count == 0:
+		movement_enabled = true
+
+
+## Fuerza el desbloqueo inmediato (resetea el contador).
+func force_unblock_controls() -> void:
+	_control_block_count = 0
+	movement_enabled = true
+
+
+func are_controls_blocked() -> bool:
+	return not movement_enabled
+
+
+## Establece el contexto del Overworld (llamado desde World3DSystem).
+func set_context(overworld_context: OverworldContext) -> void:
+	context = overworld_context
+	if context:
+		if not context.player_control_blocked.is_connected(_on_player_control_blocked):
+			context.player_control_blocked.connect(_on_player_control_blocked)
+		if not context.player_control_unblocked.is_connected(_on_player_control_unblocked):
+			context.player_control_unblocked.connect(_on_player_control_unblocked)
+	_connect_display_manager_signals()
+
+
+func _on_player_control_blocked() -> void:
+	set_movement_enabled(false)
+
+
+func _on_player_control_unblocked() -> void:
+	# UI (mochila/party/pausa) emite unblock al cerrar; no debe pisar un bloqueo de evento.
+	if _control_block_count > 0:
+		movement_enabled = false
+		return
+	set_movement_enabled(true)
+
+
+## Conecta con las señales de bloqueo del DisplayManager (si existe; no en la escena aislada).
+func _connect_display_manager_signals() -> void:
+	var dm := DisplayManager.instance
+	if dm == null:
+		return
+	if not dm.player_control_blocked.is_connected(_on_player_control_blocked):
+		dm.player_control_blocked.connect(_on_player_control_blocked)
+	if not dm.player_control_unblocked.is_connected(_on_player_control_unblocked):
+		dm.player_control_unblocked.connect(_on_player_control_unblocked)
 
 
 func _play_walk_anim(use_run: bool) -> void:
@@ -247,14 +378,3 @@ func _get_run_frames() -> SpriteFrames:
 	if actor_style and actor_style.run_frames:
 		return actor_style.run_frames
 	return _get_walk_frames()
-
-
-func _resolve_grid(path: NodePath, fallback_name: String) -> GridMap:
-	if path != NodePath(""):
-		var node := get_node_or_null(path)
-		if node is GridMap:
-			return node as GridMap
-	var sibling := get_parent().get_node_or_null(fallback_name) if get_parent() else null
-	if sibling is GridMap:
-		return sibling as GridMap
-	return null

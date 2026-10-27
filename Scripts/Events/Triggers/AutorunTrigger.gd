@@ -16,7 +16,7 @@ class_name AutorunTrigger
 func can_fire(
 	signal_type: EventTriggerSignal.SignalType,
 	context: OverworldContext,
-	event: Event,
+	event: Node,
 	instigator: Node
 ) -> bool:
 	# Solo se activa con PAGE_ACTIVATED

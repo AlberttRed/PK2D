@@ -232,6 +232,10 @@ func _connect_to_player() -> void:
 		_connect_to_player()
 		return
 
+	# Solo actores 2D: el Player3D no usa tiles 2D (sus efectos llegarán por otra vía).
+	if not (player is Node2D):
+		return
+
 	_connect_to_actor(player)
 
 ## Conecta a las señales de un actor (player o NPC/Event)

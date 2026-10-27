@@ -33,8 +33,8 @@ func _ready() -> void:
 	if context:
 		controller.context = context
 
-## Solicita la ejecución de un evento desde un nodo Event
-func request_event(event: Event) -> void:
+## Solicita la ejecución de un evento desde un nodo Event (2D) o Event3D (3D; duck typing)
+func request_event(event: Node) -> void:
 	if not event or not event.current_page:
 		return
 
@@ -141,7 +141,7 @@ func unblock_player_control() -> void:
 		push_warning("EventSystem: Contexto no disponible para desbloquear control del jugador")
 
 ## Verifica si un evento específico ya está en ejecución
-func _is_event_running(event: Event) -> bool:
+func _is_event_running(event: Node) -> bool:
 	# Verificar en el controlador principal
 	if controller and controller.current_page and controller.current_page.source_event == event:
 		return true

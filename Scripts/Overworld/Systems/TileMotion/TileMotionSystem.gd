@@ -171,6 +171,10 @@ func _connect_to_player() -> void:
 		_connect_to_player()
 		return
 
+	# Solo actores 2D: el Player3D no usa tiles 2D (ledges/escaleras 3D llegarán por otra vía).
+	if not (player is Node2D):
+		return
+
 	_connect_to_actor(player)
 
 

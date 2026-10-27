@@ -694,6 +694,10 @@ func _connect_to_player() -> void:
 		_connect_to_player()
 		return
 
+	# Los chunks son 2D: el Player3D no usa este controlador.
+	if not (player is Node2D):
+		return
+
 	var grid_motion = player.get_node_or_null("GridMotion")
 	if not grid_motion:
 		push_warning("WorldChunkController: GridMotion del Player no encontrado")

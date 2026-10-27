@@ -19,9 +19,14 @@ class_name OverworldCoordinator
 @onready var tile_effect_system: TileEffectSystem = $TileEffectSystem
 @onready var tile_motion_system: TileMotionSystem = $TileMotionSystem
 @onready var wild_encounter_system: WildEncounterSystem = $WildEncounterSystem
+## Mundo 3D (opcional): si la escena no lo tiene, el overworld funciona solo en 2D.
+@onready var world_3d_system: World3DSystem = get_node_or_null("World3DSystem") as World3DSystem
 
 # Contexto compartido entre sistemas del Overworld
 var context: OverworldContext = null
+
+## Mundo activo tras `configure_from_gamestate()`: WorldSystem (2D) o World3DSystem (3D).
+var _active_world: Node = null
 
 func _ready() -> void:
 	# Crear el contexto antes de la inicialización
@@ -48,6 +53,11 @@ func _register_systems_in_context() -> void:
 	# Registrar sistemas principales
 	if world_system:
 		context.register_system("World", world_system)
+
+	# "World" sigue siendo el WorldSystem 2D (los sistemas 2D lo resuelven al inicializarse);
+	# el mundo 3D se registra aparte.
+	if world_3d_system:
+		context.register_system("World3D", world_3d_system)
 
 	if event_system:
 		context.register_system("Event", event_system)
@@ -87,6 +97,9 @@ func _inject_dependencies() -> void:
 			world_system.set_context(context)
 		else:
 			world_system.context = context
+
+	if world_3d_system:
+		world_3d_system.set_context(context)
 
 	if warp_system:
 		if warp_system.has_method("set_context"):
@@ -187,15 +200,20 @@ func verify_systems() -> bool:
 ##   ├→ WorldSystem.load_player()
 ##   └→ Posicionar jugador vía OverworldGrid
 func configure_from_gamestate() -> bool:
-	# Verificar que tenemos los sistemas necesarios
-	if not world_system:
-		push_error("OverworldCoordinator: WorldSystem no disponible para configuración")
-		return false
-
 	# Obtener datos del GameStateService
 	var map_id = GameStateService.get_current_map_id()
 	var position = GameStateService.get_current_position()
 	var facing_dir = GameStateService.get_facing_direction()
+
+	# Mapa 3D: lo gestiona World3DSystem (la celda XZ se guarda en `position`).
+	if world_3d_system and world_3d_system.has_map(map_id):
+		return _configure_3d(map_id, position, facing_dir)
+
+	# Verificar que tenemos los sistemas necesarios
+	if not world_system:
+		push_error("OverworldCoordinator: WorldSystem no disponible para configuración")
+		return false
+	_active_world = world_system
 
 	# 1. Cambiar al mapa correcto (vía WorldSystem)
 	var success = world_system.change_to_map(map_id)
@@ -226,6 +244,35 @@ func configure_from_gamestate() -> bool:
 	_sync_indoor_flag_from_active_map()
 
 	return true
+
+
+## Mismo flujo que 2D, contra World3DSystem: mapa → player → posición/orientación.
+func _configure_3d(map_id: String, cell: Vector2i, facing_dir: Vector2) -> bool:
+	if not world_3d_system.change_to_map(map_id):
+		push_error("OverworldCoordinator: No se pudo cargar el mapa 3D: " + map_id)
+		return false
+	_active_world = world_3d_system
+
+	if world_3d_system.get_player() == null and not world_3d_system.load_player():
+		push_error("OverworldCoordinator: No se pudo cargar el jugador 3D")
+		return false
+
+	if not world_3d_system.place_player(cell, facing_dir):
+		push_error("OverworldCoordinator: No se pudo posicionar al jugador 3D")
+		return false
+
+	# Los mapas 3D aún no declaran si son interiores.
+	GameStateService.set_event_flag("indoor", false)
+	return true
+
+
+## Mundo activo (WorldSystem 2D o World3DSystem); null hasta `configure_from_gamestate()`.
+func get_active_world() -> Node:
+	return _active_world
+
+
+func is_3d_active() -> bool:
+	return _active_world != null and _active_world == world_3d_system
 
 
 func _sync_indoor_flag_from_active_map() -> void:

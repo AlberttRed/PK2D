@@ -21,7 +21,7 @@ class_name CollisionTrigger
 func can_fire(
 	signal_type: EventTriggerSignal.SignalType,
 	context: OverworldContext,
-	event: Event,
+	event: Node,
 	instigator: Node
 ) -> bool:
 	# Solo se activa con COLLISION

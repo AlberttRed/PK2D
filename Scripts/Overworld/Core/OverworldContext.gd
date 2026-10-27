@@ -172,7 +172,7 @@ func _connect_system_signals(sys_name: String, system: Node) -> void:
 					system.mo_finished.connect(_on_mo_finished)
 
 ## Wrapper público para solicitar ejecución de eventos
-func request_event(event: Event) -> void:
+func request_event(event: Node) -> void:
 	if event_system:
 		event_system.request_event(event)
 	else:

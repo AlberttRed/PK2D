@@ -13,6 +13,16 @@ class_name Main
 ## atajo de arranque sin menú, y cualquier otra lógica que consulte ese flag).
 @export var debug_mode: bool = false
 
+@export_group("Debug start")
+## Mapa donde empieza la nueva partida en `debug_mode` (id = nombre de la escena; 2D o 3D).
+## Ej. 3D: "Overworld3DTest" con posición (1, 1).
+@export var debug_start_map_id: String = "Centro_Pokemon"
+## Tile (2D) o celda XZ (3D) de inicio.
+@export var debug_start_position: Vector2i = Vector2i(-29, -10)
+## Orientación inicial: (0,-1) arriba/norte, (0,1) abajo/sur, (-1,0) izquierda, (1,0) derecha.
+@export var debug_start_facing: Vector2 = Vector2.UP
+@export_group("")
+
 # Referencia a la sesión activa (GameSession)
 var active_session = null
 
@@ -22,6 +32,9 @@ func _ready() -> void:
 	# Esperar un frame para asegurar que DisplayManager esté listo
 	await get_tree().process_frame
 	GameStateService.debug_mode = self.debug_mode
+	GameStateService.debug_start_map_id = debug_start_map_id
+	GameStateService.debug_start_position = debug_start_position
+	GameStateService.debug_start_facing = debug_start_facing
 	_wire_main_menu()
 	if self.debug_mode:
 		if main_menu != null:
