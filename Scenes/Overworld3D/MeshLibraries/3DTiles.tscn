@@ -14,6 +14,12 @@ size = Vector3(4, 2, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_stairs"]
 size = Vector3(4, 2, 2)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_house_back"]
+size = Vector3(10, 2, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_house_front"]
+size = Vector3(4, 2, 2)
+
 [node name="3DTiles" type="Node3D" unique_id=1083518964]
 
 [node name="Snow" parent="." unique_id=1963295906 instance=ExtResource("1_c0dii")]
@@ -62,6 +68,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tree/Tree/StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1)
 shape = SubResource("BoxShape3D_tree")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="House/House" index="0"]
+
+[node name="CollisionBack" type="CollisionShape3D" parent="House/House/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, -4)
+shape = SubResource("BoxShape3D_house_back")
+
+[node name="CollisionFrontLeft" type="CollisionShape3D" parent="House/House/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -1)
+shape = SubResource("BoxShape3D_house_front")
+
+[node name="CollisionFrontRight" type="CollisionShape3D" parent="House/House/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -1)
+shape = SubResource("BoxShape3D_house_front")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Stairs/Stairs" index="0"]
 

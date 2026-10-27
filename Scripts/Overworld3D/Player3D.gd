@@ -199,6 +199,11 @@ func _read_cardinal_input() -> Vector2i:
 
 func _on_direction_changed(new_dir: Vector2i) -> void:
 	_facing = new_dir
+	# Cambio de dirección sin giro ni paso (p.ej. andando a la izquierda y cambiando a arriba sin soltar
+	# contra un evento COLLISION): esa ruta no emite step_started, así que reflejamos ya la pose.
+	# En pasos/giros/bumps normales step_started reproduce la animación en este mismo frame.
+	if not _grid_motion.moving:
+		_apply_idle_pose()
 
 
 func _on_step_started() -> void:
