@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="6_action"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_d1dgk"]
 [ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="7_collision"]
+[ext_resource type="Texture2D" uid="uid://dgg3dibst0or5" path="res://Sprites/Tilesets/Animated tiles/Floewrs1/tile000.png" id="8_e2kbw"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_showmsg"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/Door3D.tscn" id="9_door3d"]
 
@@ -18,17 +19,19 @@ ambient_light_source = 1
 ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.35
 
-[sub_resource type="Resource" id="Resource_msg_action"]
+[sub_resource type="Resource" id="Resource_jm4mv"]
 script = ExtResource("8_showmsg")
 message = "Hola"
 
-[sub_resource type="Resource" id="Resource_trig_action"]
+[sub_resource type="Resource" id="Resource_5lp1x"]
 script = ExtResource("6_action")
 
-[sub_resource type="Resource" id="Resource_testpage"]
+[sub_resource type="Resource" id="Resource_t7e8b"]
 script = ExtResource("5_page")
-trigger = SubResource("Resource_trig_action")
-commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_msg_action")])
+trigger = SubResource("Resource_5lp1x")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_jm4mv")])
+through = true
+sprite_texture = ExtResource("8_e2kbw")
 
 [sub_resource type="Resource" id="Resource_msg_collision"]
 script = ExtResource("8_showmsg")
@@ -80,7 +83,7 @@ script = ExtResource("3_grid")
 
 [node name="TestAction" parent="OverworldGrid3D/Events" unique_id=623038468 instance=ExtResource("4_event3d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 11)
-pages = Array[ExtResource("5_page")]([SubResource("Resource_testpage")])
+pages = Array[ExtResource("5_page")]([SubResource("Resource_t7e8b")])
 
 [node name="TestCollision" parent="OverworldGrid3D/Events" unique_id=623038469 instance=ExtResource("4_event3d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 11)

@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://b6basalv544og" path="res://Resources/Overworld3D/Models/Cliff_Floor.glb" id="5_128tl"]
 [ext_resource type="PackedScene" uid="uid://bs7quds43lb35" path="res://Resources/Overworld3D/Models/Stairs.glb" id="6_sja2p"]
 [ext_resource type="PackedScene" uid="uid://cwno0cd2eqt7" path="res://Resources/Overworld3D/Models/House.glb" id="7_yaetd"]
+[ext_resource type="PackedScene" uid="uid://b5qraaob4kdpq" path="res://Resources/Overworld3D/Models/Flower.glb" id="8_flwrg"]
+[ext_resource type="Material" path="res://Resources/Overworld3D/Materials/Flower_UVAnimated.tres" id="9_flmat"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tree"]
 size = Vector3(4, 2, 2)
@@ -88,3 +90,10 @@ shape = SubResource("BoxShape3D_house_front")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Stairs/Stairs/StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1)
 shape = SubResource("BoxShape3D_stairs")
+
+[node name="Flower" parent="." unique_id=1357924680 instance=ExtResource("8_flwrg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 0)
+
+[node name="Flower" parent="Flower" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+surface_material_override/0 = ExtResource("9_flmat")
