@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Overworld3D/Events/Event3D.gd" id="1_pnl3m"]
+[ext_resource type="Script" path="res://Scripts/Events/EventPage.gd" id="2_u3ewe"]
+[ext_resource type="Script" path="res://Scripts/Events/EventCommand.gd" id="3_sdvm7"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="4_s4hbh"]
+[ext_resource type="AudioStream" path="res://Audio/SE/Door enter.ogg" id="5_vb7on"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="6_nrvsw"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="7_8fqh2"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/FadeCommand.gd" id="8_dkems"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="9_e8my4"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="10_ph3s5"]
+[ext_resource type="Script" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="11_0641x"]
+[ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/DoorVisual.tscn" id="12_visual"]
+
+[sub_resource type="Resource" id="Resource_h58ln"]
+script = ExtResource("4_s4hbh")
+sound = ExtResource("5_vb7on")
+
+[sub_resource type="Resource" id="Resource_4tntq"]
+script = ExtResource("6_nrvsw")
+animation_name = "open"
+
+[sub_resource type="Resource" id="Resource_3cus0"]
+script = ExtResource("7_8fqh2")
+
+[sub_resource type="Resource" id="Resource_l3keq"]
+script = ExtResource("8_dkems")
+mode = 0
+duration = 0.3
+
+[sub_resource type="Resource" id="Resource_fedk4"]
+script = ExtResource("9_e8my4")
+flag_name = "door3d_test_success"
+
+[sub_resource type="Resource" id="Resource_25myl"]
+script = ExtResource("8_dkems")
+duration = 0.3
+
+[sub_resource type="Resource" id="Resource_18h7r"]
+script = ExtResource("10_ph3s5")
+message = "Puerta 3D: aquí iría el Warp al interior (stub)."
+
+[sub_resource type="Resource" id="Resource_issp2"]
+script = ExtResource("6_nrvsw")
+animation_name = "close"
+
+[sub_resource type="Resource" id="Resource_81e0l"]
+script = ExtResource("7_8fqh2")
+through = false
+
+[sub_resource type="Resource" id="Resource_pu2mn"]
+script = ExtResource("11_0641x")
+
+[sub_resource type="Resource" id="Resource_tvf2d"]
+script = ExtResource("2_u3ewe")
+page_name = "Puerta (stub)"
+trigger = SubResource("Resource_pu2mn")
+commands = Array[ExtResource("3_sdvm7")]([SubResource("Resource_h58ln"), SubResource("Resource_4tntq"), SubResource("Resource_3cus0"), SubResource("Resource_l3keq"), SubResource("Resource_fedk4"), SubResource("Resource_25myl"), SubResource("Resource_18h7r"), SubResource("Resource_issp2"), SubResource("Resource_81e0l")])
+visual_scene = ExtResource("12_visual")
+[node name="Door3D" type="Node3D"]
+script = ExtResource("1_pnl3m")
+pages = Array[ExtResource("2_u3ewe")]([SubResource("Resource_tvf2d")])
+show_placeholder_in_game = false

@@ -1,14 +1,15 @@
 [gd_scene format=3 uid="uid://dkumdunsvhkp2"]
 
-[ext_resource type="MeshLibrary" uid="uid://b3534pe7e5quf" path="res://Resources/Overworld3D/MeshLibraries/3DTiles.tres" id="1_1ofle"]
+[ext_resource type="MeshLibrary" uid="uid://bovgd7t7ostfi" path="res://Resources/Overworld3D/MeshLibraries/3DTiles.tres" id="1_1ofle"]
 [ext_resource type="PackedScene" uid="uid://cukmm12gdhyjw" path="res://Scenes/Overworld3D/Player3D.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://5a1ptn65u224" path="res://Scripts/Overworld3D/OverworldGrid3D.gd" id="3_grid"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/Event3D.tscn" id="4_event3d"]
 [ext_resource type="Script" uid="uid://ddybtc0beib3h" path="res://Scripts/Events/EventPage.gd" id="5_page"]
+[ext_resource type="Script" uid="uid://cgcgdh5botek0" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="6_action"]
 [ext_resource type="Script" uid="uid://bo6557n2i4d87" path="res://Scripts/Events/EventCommand.gd" id="6_d1dgk"]
-[ext_resource type="Script" path="res://Scripts/Events/Triggers/ActionTrigger.gd" id="6_action"]
-[ext_resource type="Script" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="7_collision"]
+[ext_resource type="Script" uid="uid://cenpvman6ylsr" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="7_collision"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_showmsg"]
+[ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/Door3D.tscn" id="9_door3d"]
 
 [sub_resource type="Environment" id="Environment_bg"]
 background_mode = 1
@@ -17,24 +18,24 @@ ambient_light_source = 1
 ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.35
 
-[sub_resource type="Resource" id="Resource_trig_action"]
-script = ExtResource("6_action")
-
-[sub_resource type="Resource" id="Resource_trig_collision"]
-script = ExtResource("7_collision")
-
 [sub_resource type="Resource" id="Resource_msg_action"]
 script = ExtResource("8_showmsg")
 message = "Hola"
 
-[sub_resource type="Resource" id="Resource_msg_collision"]
-script = ExtResource("8_showmsg")
-message = "Colisión: el evento te ha parado"
+[sub_resource type="Resource" id="Resource_trig_action"]
+script = ExtResource("6_action")
 
 [sub_resource type="Resource" id="Resource_testpage"]
 script = ExtResource("5_page")
 trigger = SubResource("Resource_trig_action")
 commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_msg_action")])
+
+[sub_resource type="Resource" id="Resource_msg_collision"]
+script = ExtResource("8_showmsg")
+message = "Colisión: el evento te ha parado"
+
+[sub_resource type="Resource" id="Resource_trig_collision"]
+script = ExtResource("7_collision")
 
 [sub_resource type="Resource" id="Resource_testpage_collision"]
 script = ExtResource("5_page")
@@ -78,9 +79,12 @@ script = ExtResource("3_grid")
 [node name="Events" type="Node3D" parent="OverworldGrid3D" unique_id=31256642]
 
 [node name="TestAction" parent="OverworldGrid3D/Events" unique_id=623038468 instance=ExtResource("4_event3d")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 11)
 pages = Array[ExtResource("5_page")]([SubResource("Resource_testpage")])
 
 [node name="TestCollision" parent="OverworldGrid3D/Events" unique_id=623038469 instance=ExtResource("4_event3d")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 11)
 pages = Array[ExtResource("5_page")]([SubResource("Resource_testpage_collision")])
+
+[node name="TestDoor" parent="OverworldGrid3D/Events" unique_id=1067037489 instance=ExtResource("9_door3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 3)

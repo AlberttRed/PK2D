@@ -40,15 +40,6 @@ func _cell_size() -> float:
 	return 2.0
 
 
-func _pixel_size() -> float:
-	# Exacto: tile_pixels px 2D = 1 celda 3D.
-	return _cell_size() / tile_pixels
-
-
-func _sprite_world_height() -> float:
-	return frame_pixels.y * _pixel_size()
-
-
 func _ready() -> void:
 	motion_mode = MOTION_MODE_FLOATING
 	# Igual que Player 2D: DisplayManager pausa el árbol mientras hay UI (mensajes...);
@@ -108,34 +99,15 @@ func facing_dir() -> Vector2i:
 
 func _setup_sprite() -> void:
 	# Plano fijo inclinado hacia la cámara (como Tree.glb), sin billboard yaw.
-	const TILT := -PI * 0.25
-	_visual.rotation = Vector3(TILT, 0.0, 0.0)
-	_apply_sprite_back_offset()
-	_sprite.centered = true
-	# Mismo offset 2D del Player (0, -8) en píxeles de frame.
-	_sprite.offset = Vector2(0, -8)
-	_sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	_sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	_sprite.alpha_scissor_threshold = 0.5
-	_sprite.shaded = false
-	_sprite.double_sided = false
+	# La configuración (tilt, escala, anclaje) es compartida con Event3D vía ActorSprite3D.
+	ActorSprite3D.setup(_visual, _sprite, _cell_size(), tile_pixels, frame_pixels, sprite_back_offset)
 	_apply_frames(_get_walk_frames())
-	_sprite.pixel_size = _pixel_size()
-	_anchor_sprite_to_ground()
 
 
 func _apply_sprite_back_offset() -> void:
 	if not is_node_ready() or _visual == null:
 		return
-	_visual.position.z = sprite_back_offset
-
-
-func _anchor_sprite_to_ground() -> void:
-	# Con centered, el pie ≈ -H/2 (+ offset) en Y local del sprite.
-	# Subimos en espacio Visual (antes del tilt del padre) para dejar el pie a Y≈0.
-	var half_h := _sprite_world_height() * 0.5
-	var offset_y_world := _sprite.offset.y * _sprite.pixel_size
-	_sprite.position = Vector3(0.0, half_h - offset_y_world, 0.0)
+	ActorSprite3D.apply_back_offset(_visual, sprite_back_offset)
 
 
 func _physics_process(_delta: float) -> void:

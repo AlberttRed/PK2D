@@ -131,6 +131,17 @@ var source_event: Node = null
 ## Si true, este evento mostrará reflejo en el agua cuando esté sobre tiles de agua
 @export var has_water_reflection: bool = false
 
+@export_group("3D Visual (Event3D)")
+## Escena/modelo (.tscn o .glb) que muestra el Event3D mientras esta página está activa.
+## Su origen debe estar en el centro de la celda, a nivel del suelo. Si es null, el Event3D usa
+## `sprite_frames`/`sprite_texture` como sprite plano (misma altura e inclinación que el Player3D).
+## El 2D ignora estos campos.
+@export var visual_scene: PackedScene = null
+## Desplazamiento local (metros) del visual respecto al centro de la celda.
+@export var visual_offset: Vector3 = Vector3.ZERO
+## Giro en Y (grados) del visual.
+@export_range(-180.0, 180.0, 1.0, "degrees") var visual_yaw_degrees: float = 0.0
+
 ## Obtiene los SpriteFrames (asignados o generados automáticamente).
 ## event_node: Nodo Event opcional para detectar si es NPC y generar animaciones apropiadas.
 ## Prioridad: ActorStyle (null aquí) → sprite_frames persistido → generar desde textura/sheet.

@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://cyhjboeep46sk"]
+
+[ext_resource type="PackedScene" uid="uid://dfqyihnwxch8t" path="res://Resources/Overworld3D/Models/Door.glb" id="1_door"]
+[ext_resource type="Texture2D" uid="uid://cwulfsgkjaftq" path="res://Resources/Overworld3D/Models/Door_0.png" id="2_tex"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_door"]
+transparency = 2
+alpha_scissor_threshold = 0.01
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("2_tex")
+texture_filter = 0
+
+[sub_resource type="Animation" id="Animation_close"]
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hinge:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_open"]
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hinge:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -1.7453293, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_door"]
+_data = {
+&"close": SubResource("Animation_close"),
+&"open": SubResource("Animation_open")
+}
+
+[node name="DoorVisual" type="Node3D" unique_id=574271825]
+
+[node name="Hinge" type="Node3D" parent="." unique_id=2034844657]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="Door" parent="Hinge" unique_id=1738258804 instance=ExtResource("1_door")]
+
+[node name="Door" parent="Hinge/Door" index="0" unique_id=2026851409]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+surface_material_override/0 = SubResource("StandardMaterial3D_door")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=854213170]
+libraries/ = SubResource("AnimationLibrary_door")
+
+[editable path="Hinge/Door"]

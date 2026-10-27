@@ -6,24 +6,65 @@
 [ext_resource type="PackedScene" uid="uid://bur6gjckps6lg" path="res://Resources/Overworld3D/Models/Cliff_Corner.glb" id="4_ywt3f"]
 [ext_resource type="PackedScene" uid="uid://b6basalv544og" path="res://Resources/Overworld3D/Models/Cliff_Floor.glb" id="5_128tl"]
 [ext_resource type="PackedScene" uid="uid://bs7quds43lb35" path="res://Resources/Overworld3D/Models/Stairs.glb" id="6_sja2p"]
-[ext_resource type="PackedScene" uid="uid://dotm4m6swyx0v" path="res://Resources/Overworld3D/Models/House.glb" id="7_yaetd"]
+[ext_resource type="PackedScene" uid="uid://cwno0cd2eqt7" path="res://Resources/Overworld3D/Models/House.glb" id="7_yaetd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tree"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stairs"]
+size = Vector3(4, 2, 2)
 
 [node name="3DTiles" type="Node3D" unique_id=1083518964]
 
 [node name="Snow" parent="." unique_id=1963295906 instance=ExtResource("1_c0dii")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.27911, 0, 0)
 
+[node name="Snow" parent="Snow" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+
 [node name="Tree" parent="." unique_id=1912658742 instance=ExtResource("2_m831v")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.603127, 0, 0)
 
+[node name="Tree" parent="Tree" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
 [node name="Cliff" parent="." unique_id=1079343103 instance=ExtResource("3_kmfr6")]
 
+[node name="Cliff New" parent="Cliff" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
 [node name="Cliff_Corner" parent="." unique_id=496060382 instance=ExtResource("4_ywt3f")]
+
+[node name="Cliff Corner New" parent="Cliff_Corner" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Cliff_Floor" parent="." unique_id=2052405828 instance=ExtResource("5_128tl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.667847, 0, 0)
 
+[node name="Cliff Floor" parent="Cliff_Floor" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+
 [node name="Stairs" parent="." unique_id=1697390000 instance=ExtResource("6_sja2p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.891739, 0, 0)
 
-[node name="House" parent="." unique_id=1581546281 instance=ExtResource("7_yaetd")]
+[node name="Stairs" parent="Stairs" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="House" parent="." unique_id=757383103 instance=ExtResource("7_yaetd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.842852, 0, 0)
+
+
+[node name="House" parent="House" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Tree/Tree" index="0"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tree/Tree/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1)
+shape = SubResource("BoxShape3D_tree")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Stairs/Stairs" index="0"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stairs/Stairs/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1)
+shape = SubResource("BoxShape3D_stairs")

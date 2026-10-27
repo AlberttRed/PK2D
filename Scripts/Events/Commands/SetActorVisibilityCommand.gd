@@ -57,7 +57,8 @@ func execute(context: Node) -> void:
 ## Establece la visibilidad de un actor (Event o Player)
 func _set_visibility(actor: Node, is_visible: bool) -> void:
 	# Para Events, usar el método show_sprite()/hide_sprite()
-	if actor is Event:
+	# Event (2D) y Event3D comparten show_sprite()/hide_sprite() (duck typing).
+	if actor is Event or actor.has_method("show_sprite"):
 		if is_visible:
 			actor.show_sprite()
 		else:
@@ -72,7 +73,7 @@ func _set_visibility(actor: Node, is_visible: bool) -> void:
 			actor.visible = is_visible
 
 ## Busca un evento por nombre en la escena
-func _find_event(context: Node, event_name: String) -> Event:
+func _find_event(context: Node, event_name: String) -> Node:
 	var tree = context.get_tree()
 	if not tree:
 		return null

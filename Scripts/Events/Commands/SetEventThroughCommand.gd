@@ -8,7 +8,8 @@ class_name SetEventThroughCommand
 @export var through: bool = true
 
 func execute(context: Node) -> void:
-	var target_event: Event = null
+	# Node (no Event): sirve también a Event3D (duck typing: current_page.through).
+	var target_event: Node = null
 
 	# Si target_event_name está vacío, usar el evento actual (self)
 	if target_event_name.is_empty():
@@ -44,7 +45,7 @@ func execute(context: Node) -> void:
 	# El EventController lo hace automáticamente
 
 ## Busca un evento por nombre en la escena
-func _find_event(context: Node, event_name: String) -> Event:
+func _find_event(context: Node, event_name: String) -> Node:
 	var tree = context.get_tree()
 	if not tree:
 		return null

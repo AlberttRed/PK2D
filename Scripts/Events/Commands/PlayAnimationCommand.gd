@@ -24,6 +24,11 @@ func execute(context: Node) -> void:
 		_finish_if_async(context)
 		return
 
+	# Target 3D (Event3D, Door3D...): animación local con el AnimationPlayer del propio nodo.
+	if target is Node3D:
+		await _play_animation_player(context, target)
+		return
+
 	var actor_animator := _find_actor_animator_in_node(target)
 
 	if not actor_animator:
@@ -61,14 +66,69 @@ func _finish_if_async(context: Node) -> void:
 	if wait_until_finished:
 		context.continue_execution()
 
-## Resuelve el target donde buscar el ActorAnimator
-func _resolve_target(context: Node, name: String) -> Node2D:
+## Reproduce `animation_name` en el AnimationPlayer del target 3D (mismo contrato wait/speed que en 2D).
+func _play_animation_player(context: Node, target: Node) -> void:
+	# Event3D: la animación vive en el visual de su página activa (AnimationPlayer o sprite plano).
+	var anim_player: AnimationPlayer = null
+	if target.has_method("get_animation_player"):
+		anim_player = target.get_animation_player()
+		if (anim_player == null or not anim_player.has_animation(animation_name)) \
+				and target.has_method("get_flat_sprite"):
+			var flat: AnimatedSprite3D = target.get_flat_sprite()
+			if flat != null and flat.sprite_frames != null and flat.sprite_frames.has_animation(animation_name):
+				await _play_flat_sprite(context, target, flat)
+				return
+	else:
+		anim_player = _find_animation_player_in_node(target)
+	if anim_player == null:
+		push_warning("PlayAnimationCommand: El target 3D '%s' no tiene AnimationPlayer. El comando se omite." % target.name)
+		_finish_if_async(context)
+		return
+	if not anim_player.has_animation(animation_name):
+		push_warning("PlayAnimationCommand: La animación '%s' no existe en el AnimationPlayer de '%s'" % [animation_name, target.name])
+		_finish_if_async(context)
+		return
+
+	print("PlayAnimationCommand: Reproduciendo animación 3D '%s' en '%s' (wait=%s, speed=%.1f)" % [animation_name, target.name, wait_until_finished, speed_scale])
+	var previous_speed_scale := anim_player.speed_scale
+	anim_player.speed_scale = maxf(speed_scale, 0.1)
+	anim_player.play(animation_name)
+
+	if wait_until_finished:
+		await anim_player.animation_finished
+		anim_player.speed_scale = previous_speed_scale
+		print("PlayAnimationCommand: Animación 3D '%s' completada" % animation_name)
+		context.continue_execution()
+
+## Reproduce `animation_name` en el AnimatedSprite3D plano de un Event3D (visual por sprite_frames).
+func _play_flat_sprite(context: Node, target: Node, sprite: AnimatedSprite3D) -> void:
+	print("PlayAnimationCommand: Reproduciendo animación sprite 3D '%s' en '%s' (wait=%s)" % [animation_name, target.name, wait_until_finished])
+	var previous_speed_scale := sprite.speed_scale
+	sprite.speed_scale = maxf(speed_scale, 0.1)
+	sprite.play(animation_name)
+	if wait_until_finished:
+		await sprite.animation_finished
+		sprite.speed_scale = previous_speed_scale
+		context.continue_execution()
+
+## Busca recursivamente un AnimationPlayer en un nodo y sus hijos
+func _find_animation_player_in_node(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node
+	for child in node.get_children():
+		var found := _find_animation_player_in_node(child)
+		if found:
+			return found
+	return null
+
+## Resuelve el target donde buscar el ActorAnimator (2D) o el AnimationPlayer (3D)
+func _resolve_target(context: Node, name: String) -> Node:
 	# Si está vacío, usar el evento actual
 	if name.is_empty():
 		if context is EventController and context.current_page:
 			var source_event = context.current_page.source_event
 			if source_event:
-				return source_event as Node2D
+				return source_event
 		push_warning("PlayAnimationCommand: No se especificó target y no se pudo obtener el evento actual")
 		return null
 
@@ -88,9 +148,9 @@ func _resolve_target(context: Node, name: String) -> Node2D:
 	return target
 
 ## Búsqueda recursiva de nodo por nombre
-func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
-	if node.name == name and node is Node2D:
-		return node as Node2D
+func _find_node_by_name_recursive(node: Node, name: String) -> Node:
+	if node.name == name and (node is Node2D or node is Node3D):
+		return node
 
 	for child in node.get_children():
 		var result = _find_node_by_name_recursive(child, name)
