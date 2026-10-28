@@ -69,6 +69,12 @@ func _execute_warp(map_id: String, tile_pos: Vector2i) -> void:
 		is_warping = false
 		return
 
+	# Mundo 3D activo: flujo propio (celdas XZ, Player3D, Event3D).
+	var active_world: Node = context.get_active_world()
+	if active_world is World3DSystem:
+		await _execute_warp_3d(active_world as World3DSystem, map_id, tile_pos)
+		return
+
 	var player: Node = context.get_player()
 
 	if player and player.has_node("GridMotion"):
@@ -164,6 +170,51 @@ func _execute_warp(map_id: String, tile_pos: Vector2i) -> void:
 	return
 
 
+## Warp en el mundo 3D: `tile_pos` es la celda XZ destino (x→X, y→Z).
+## Mismo mapa: recoloca al Player3D. Otro mapa: carga el mapa 3D (si está registrado) y lo coloca.
+## La orientación la aplica después WarpCommand (set_facing_direction). El fade lo hacen los comandos del evento.
+func _execute_warp_3d(ws: World3DSystem, map_id: String, tile_pos: Vector2i) -> void:
+	var player: Node = context.get_player()
+	if player == null:
+		push_error("WarpSystem: Player no disponible para el warp 3D")
+		is_warping = false
+		return
+
+	# Si el player está a mitad de paso, espera a que termine (como en 2D).
+	var motion = player.get("motion")
+	if motion != null and motion.moving:
+		await motion.step_finished
+
+	if ws.get_active_map_id() != map_id:
+		if not ws.has_map(map_id):
+			push_error("WarpSystem: el mapa 3D '%s' no está registrado en World3DSystem" % map_id)
+			is_warping = false
+			return
+		if not ws.change_to_map(map_id):
+			push_error("WarpSystem: no se pudo cambiar al mapa 3D: " + map_id)
+			is_warping = false
+			return
+		# Player3D.bind_grid reconstruye el grid un frame después: esperamos a que termine.
+		await get_tree().process_frame
+		await get_tree().process_frame
+
+	if not ws.place_player(tile_pos):
+		push_error("WarpSystem: no se pudo colocar al Player3D en la celda %s" % tile_pos)
+		is_warping = false
+		return
+
+	# Evento TOUCH en la celda de llegada (diferido para que el warp termine primero).
+	var grid := ws.get_active_grid()
+	if grid != null and player.has_method("current_cell"):
+		var event := grid.event_at(player.current_cell())
+		if event != null and event.has_method("on_player_touch"):
+			event.call_deferred("on_player_touch")
+
+	current_map_id = map_id
+	current_tile_pos = tile_pos
+	call_deferred("_emit_warp_finished", map_id, tile_pos)
+
+
 ## Emisión diferida de warp_finished para evitar carreras con await en comandos
 func _emit_warp_finished(map_id: String, tile_pos: Vector2i) -> void:
 	# Marcar que ya no estamos warpeando justo antes de emitir
@@ -183,7 +234,7 @@ func get_current_warp_info() -> Dictionary:
 func is_ready() -> bool:
 	# Si tenemos contexto, verificar con él
 	if context:
-		return not is_warping and context.get_world_system() != null
+		return not is_warping and context.get_active_world() != null
 
 	# Fallback temporal: actualizar referencias
 	_update_references()

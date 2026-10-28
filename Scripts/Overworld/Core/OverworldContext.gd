@@ -25,6 +25,8 @@ var warp_system: WarpSystem = null
 var mo_system: MOSystem = null
 var event_system: EventSystem = null
 var world_system: WorldSystem = null
+## Mundo activo (WorldSystem 2D o World3DSystem). Lo fija el OverworldCoordinator; null hasta entonces.
+var active_world: Node = null
 var player: Node = null
 var overlay_layer: OverlayLayer = null
 var effects_layer: Node2D = null
@@ -104,6 +106,20 @@ func get_event_system() -> EventSystem:
 ## Obtiene el WorldSystem (acceso directo tipado)
 func get_world_system() -> WorldSystem:
 	return world_system
+
+## Fija el mundo activo (lo llama el OverworldCoordinator al configurar el overworld).
+func set_active_world(world: Node) -> void:
+	active_world = world
+
+
+## Obtiene el mundo activo (WorldSystem 2D o World3DSystem; mismo contrato por duck typing:
+## get_active_map_id / get_active_grid / get_player / change_to_map...).
+## Si el coordinador aún no lo ha fijado, usa el WorldSystem 2D (compatibilidad).
+func get_active_world() -> Node:
+	if active_world != null and is_instance_valid(active_world):
+		return active_world
+	return world_system
+
 
 ## Obtiene la capa de overlays (OverlayLayer)
 func get_overlay_layer() -> OverlayLayer:

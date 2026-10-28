@@ -32,7 +32,8 @@ func execute(_context: Node) -> void:
 		_context.continue_execution()
 		return
 
-	var world_system = overworld_context.get_world_system()
+	# Mundo activo: WorldSystem (2D) o World3DSystem (3D); mismo contrato por duck typing.
+	var world_system: Node = overworld_context.get_active_world()
 	if not world_system:
 		push_error("WarpCommand: WorldSystem no disponible")
 		_context.continue_execution()
@@ -96,13 +97,14 @@ func _apply_facing_direction(actor: Node) -> void:
 	print("WarpCommand: Dirección aplicada correctamente a '%s'" % actor.name)
 
 ## Resuelve el actor a teletransportar
-func _resolve_actor(context: Node, actor_name_to_resolve: String) -> Node2D:
+## Devuelve Node2D (2D) o Node3D (3D): Event/NPC/Player o Event3D/Player3D.
+func _resolve_actor(context: Node, actor_name_to_resolve: String) -> Node:
 	# Si está vacío, usar el evento actual
 	if actor_name_to_resolve.is_empty():
 		if context is EventController and context.current_page:
 			var source_event = context.current_page.source_event
 			if source_event:
-				return source_event as Node2D
+				return source_event
 		push_warning("WarpCommand: No se especificó actor y no se pudo obtener el evento actual")
 		return null
 
@@ -122,9 +124,9 @@ func _resolve_actor(context: Node, actor_name_to_resolve: String) -> Node2D:
 	return actor
 
 ## Búsqueda recursiva de nodo por nombre
-func _find_node_by_name_recursive(node: Node, node_name: String) -> Node2D:
-	if node.name == node_name and node is Node2D:
-		return node as Node2D
+func _find_node_by_name_recursive(node: Node, node_name: String) -> Node:
+	if node.name == node_name and (node is Node2D or node is Node3D):
+		return node
 
 	for child in node.get_children():
 		var result = _find_node_by_name_recursive(child, node_name)
@@ -135,9 +137,14 @@ func _find_node_by_name_recursive(node: Node, node_name: String) -> Node2D:
 
 ## Realiza el warp de un actor dentro del mismo mapa a una coordenada de tile
 func _warp_actor_same_map(actor: Node, tile_pos: Vector2i, overworld_context: OverworldContext) -> void:
-	var world_system = overworld_context.get_world_system()
+	var world_system: Node = overworld_context.get_active_world()
 	if not world_system:
 		push_error("WarpCommand: WorldSystem no disponible")
+		return
+
+	# Event3D: se recoloca en la celda XZ y actualiza su registro en el grid.
+	if actor.has_method("move_to_cell"):
+		actor.move_to_cell(tile_pos)
 		return
 
 	var grid = world_system.get_active_grid()

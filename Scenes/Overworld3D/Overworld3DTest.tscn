@@ -11,6 +11,13 @@
 [ext_resource type="Texture2D" uid="uid://dgg3dibst0or5" path="res://Sprites/Tilesets/Animated tiles/Floewrs1/tile000.png" id="8_e2kbw"]
 [ext_resource type="Script" uid="uid://badx4bswihslg" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="8_showmsg"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/Door3D.tscn" id="9_door3d"]
+[ext_resource type="Script" uid="uid://nr8r6pek166s" path="res://Scripts/Events/Commands/BlockPlayerCommand.gd" id="10_block"]
+[ext_resource type="Script" uid="uid://bocuxh8svpgvc" path="res://Scripts/Events/Commands/UnblockPlayerCommand.gd" id="11_unblock"]
+[ext_resource type="Script" uid="uid://dy36hc326kn7v" path="res://Scripts/Events/Commands/WaitCommand.gd" id="12_wait"]
+[ext_resource type="Script" uid="uid://biam3qn6qasrt" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="13_vis"]
+[ext_resource type="Script" uid="uid://desogu22oifhh" path="res://Scripts/Events/Commands/ConditionalCommand.gd" id="14_cond"]
+[ext_resource type="Script" uid="uid://bhk1tuersl1iy" path="res://Scripts/Resources/EventBranch.gd" id="15_branch"]
+[ext_resource type="Script" uid="uid://crpxml6qmm5w5" path="res://Scripts/Events/Conditions/ActorPositionCondition.gd" id="16_actorpos"]
 
 [sub_resource type="Environment" id="Environment_bg"]
 background_mode = 1
@@ -37,13 +44,94 @@ sprite_texture = ExtResource("8_e2kbw")
 script = ExtResource("8_showmsg")
 message = "Colisión: el evento te ha parado"
 
+[sub_resource type="Resource" id="Resource_t_block"]
+script = ExtResource("10_block")
+
+[sub_resource type="Resource" id="Resource_t_hide"]
+script = ExtResource("13_vis")
+target_type = 1
+visible = false
+
+[sub_resource type="Resource" id="Resource_t_wait"]
+script = ExtResource("12_wait")
+
+[sub_resource type="Resource" id="Resource_t_show"]
+script = ExtResource("13_vis")
+target_type = 1
+
+[sub_resource type="Resource" id="Resource_t_msg_up"]
+script = ExtResource("8_showmsg")
+message = "ActorPositionCondition: el Player esta ARRIBA del evento"
+
+[sub_resource type="Resource" id="Resource_t_cond_up"]
+script = ExtResource("16_actorpos")
+
+[sub_resource type="Resource" id="Resource_t_branch_up"]
+script = ExtResource("15_branch")
+condition = SubResource("Resource_t_cond_up")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_t_msg_up")])
+
+[sub_resource type="Resource" id="Resource_t_msg_down"]
+script = ExtResource("8_showmsg")
+message = "ActorPositionCondition: el Player esta ABAJO del evento"
+
+[sub_resource type="Resource" id="Resource_t_cond_down"]
+script = ExtResource("16_actorpos")
+direction = 1
+
+[sub_resource type="Resource" id="Resource_t_branch_down"]
+script = ExtResource("15_branch")
+condition = SubResource("Resource_t_cond_down")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_t_msg_down")])
+
+[sub_resource type="Resource" id="Resource_t_msg_left"]
+script = ExtResource("8_showmsg")
+message = "ActorPositionCondition: el Player esta a la IZQUIERDA del evento"
+
+[sub_resource type="Resource" id="Resource_t_cond_left"]
+script = ExtResource("16_actorpos")
+direction = 2
+
+[sub_resource type="Resource" id="Resource_t_branch_left"]
+script = ExtResource("15_branch")
+condition = SubResource("Resource_t_cond_left")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_t_msg_left")])
+
+[sub_resource type="Resource" id="Resource_t_msg_right"]
+script = ExtResource("8_showmsg")
+message = "ActorPositionCondition: el Player esta a la DERECHA del evento"
+
+[sub_resource type="Resource" id="Resource_t_cond_right"]
+script = ExtResource("16_actorpos")
+direction = 3
+
+[sub_resource type="Resource" id="Resource_t_branch_right"]
+script = ExtResource("15_branch")
+condition = SubResource("Resource_t_cond_right")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_t_msg_right")])
+
+[sub_resource type="Resource" id="Resource_t_msg_else"]
+script = ExtResource("8_showmsg")
+message = "ActorPositionCondition: el Player esta en la misma posicion"
+
+[sub_resource type="Resource" id="Resource_t_branch_else"]
+script = ExtResource("15_branch")
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_t_msg_else")])
+
+[sub_resource type="Resource" id="Resource_t_conditional"]
+script = ExtResource("14_cond")
+branches = Array[ExtResource("15_branch")]([SubResource("Resource_t_branch_up"), SubResource("Resource_t_branch_down"), SubResource("Resource_t_branch_left"), SubResource("Resource_t_branch_right"), SubResource("Resource_t_branch_else")])
+
+[sub_resource type="Resource" id="Resource_t_unblock"]
+script = ExtResource("11_unblock")
+
 [sub_resource type="Resource" id="Resource_trig_collision"]
 script = ExtResource("7_collision")
 
 [sub_resource type="Resource" id="Resource_testpage_collision"]
 script = ExtResource("5_page")
 trigger = SubResource("Resource_trig_collision")
-commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_msg_collision")])
+commands = Array[ExtResource("6_d1dgk")]([SubResource("Resource_msg_collision"), SubResource("Resource_t_block"), SubResource("Resource_t_hide"), SubResource("Resource_t_wait"), SubResource("Resource_t_show"), SubResource("Resource_t_conditional"), SubResource("Resource_t_unblock")])
 
 [node name="Overworld3dTest" type="Node3D" unique_id=798487042]
 
@@ -72,7 +160,7 @@ cell_center_x = false
 cell_center_y = false
 cell_center_z = false
 data = {
-"cells": PackedInt32Array(3, 0, 1, 1, 0, 1, 3, 2, 1, 1, 2, 1, 65534, 6, 655363, 65531, 7, 1048579, 2, 6, 3, 1, 4, 1441795, 65531, 0, 7, 65529, 65535, 2, 65528, 65535, 2, 65533, 65535, 2, 65534, 65535, 2, 65535, 65535, 2, 0, 65534, 1048578, 0, 65535, 1048578, 0, 0, 1048579, 7, 2, 8)
+"cells": PackedInt32Array(3, 0, 1, 1, 0, 1, 3, 2, 1, 1, 2, 1, 65534, 6, 655363, 65531, 7, 1048579, 2, 6, 3, 1, 4, 1441795, 65531, 0, 7, 65529, 65535, 2, 65528, 65535, 2, 65533, 65535, 2, 65534, 65535, 2, 65535, 65535, 2, 0, 65534, 1048578, 0, 65535, 1048578, 0, 0, 1048579, 7, 2, 8, 4, 8, 655369, 5, 8, 655369)
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 

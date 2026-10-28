@@ -26,6 +26,12 @@ enum MoveMode { GRID, FREE }
 
 var _facing: Vector2i = Vector2i(0, 1)
 
+## Motor de movimiento por celdas. Mismo nombre que en el Player 2D (`player.motion`): lo usan los comandos
+## compartidos (BlockPlayer: espera a `motion.moving` / `motion.step_finished`).
+var motion: GridMotion3D:
+	get:
+		return _grid_motion
+
 ## Contexto del Overworld (lo inyecta World3DSystem / el coordinador). API de control idéntica al Player 2D.
 var context: OverworldContext = null
 var movement_enabled: bool = true
@@ -85,6 +91,20 @@ func place_at_cell(cell: Vector2i, facing: Vector2i = Vector2i.ZERO, y: float = 
 		_grid_motion.face(facing)
 		_facing = facing
 	_apply_idle_pose()
+
+
+## Orientación desde un Vector2 (x→X, y→Z; como `set_facing_direction` del Player 2D, lo usa WarpCommand).
+## Solo cardinales: si es diagonal, prioriza el eje X. ZERO no hace nada.
+func set_facing_direction(direction: Vector2) -> void:
+	var d := Vector2i(signi(int(direction.x)), signi(int(direction.y)))
+	if d.x != 0 and d.y != 0:
+		d.y = 0
+	if d == Vector2i.ZERO:
+		return
+	_grid_motion.face(d)
+	_facing = d
+	if not _grid_motion.moving:
+		_apply_idle_pose()
 
 
 ## Celda XZ actual del player.
@@ -251,6 +271,17 @@ func force_unblock_controls() -> void:
 
 func are_controls_blocked() -> bool:
 	return not movement_enabled
+
+
+## Equivalentes a Event.show_sprite()/hide_sprite() (SetActorVisibilityCommand con target Player).
+func show_sprite() -> void:
+	if _visual != null:
+		_visual.visible = true
+
+
+func hide_sprite() -> void:
+	if _visual != null:
+		_visual.visible = false
 
 
 ## Establece el contexto del Overworld (llamado desde World3DSystem).

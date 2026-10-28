@@ -31,12 +31,13 @@ func evaluate(context: EventConditionContext) -> bool:
 		return false
 
 	# Obtener posiciones
-	var source_pos = context.source_event.global_position
-	var target_pos = target_actor.global_position
+	# En 3D se compara sobre el plano del suelo (X, Z): "arriba" = Z menor.
+	var source_pos := _plane_position(context.source_event)
+	var target_pos := _plane_position(target_actor)
 
 	# Comparar posiciones según la dirección
 	match direction:
-		0: # UP - el actor está arriba (Y menor en pantalla)
+		0: # UP - el actor está arriba (Y menor en pantalla / Z menor en 3D)
 			return target_pos.y < source_pos.y
 		1: # DOWN - el actor está abajo (Y mayor en pantalla)
 			return target_pos.y > source_pos.y
@@ -48,8 +49,18 @@ func evaluate(context: EventConditionContext) -> bool:
 			push_warning("ActorPositionCondition: Dirección inválida %d" % direction)
 			return false
 
-## Busca un actor (Player o NPC/Event) por nombre
-func _find_actor(context: EventConditionContext, name: String) -> Node2D:
+## Posición global sobre el plano del mapa: (x, y) en 2D; (x, z) en 3D.
+func _plane_position(node: Node) -> Vector2:
+	if node is Node3D:
+		var p := (node as Node3D).global_position
+		return Vector2(p.x, p.z)
+	if node is Node2D:
+		return (node as Node2D).global_position
+	return Vector2.ZERO
+
+
+## Busca un actor (Player o NPC/Event) por nombre (Node2D en 2D, Node3D en 3D)
+func _find_actor(context: EventConditionContext, name: String) -> Node:
 	# Si es "Player", obtener del OverworldContext
 	if name == "Player" or name.to_lower() == "player":
 		var overworld_context = _get_overworld_context(context)
@@ -77,9 +88,9 @@ func _get_overworld_context(context: EventConditionContext) -> OverworldContext:
 	return context.source_event.overworld_context
 
 ## Búsqueda recursiva de nodo por nombre
-func _find_node_by_name_recursive(node: Node, node_name: String) -> Node2D:
-	if node.name == node_name and node is Node2D:
-		return node as Node2D
+func _find_node_by_name_recursive(node: Node, node_name: String) -> Node:
+	if node.name == node_name and (node is Node2D or node is Node3D):
+		return node
 
 	for child in node.get_children():
 		var result = _find_node_by_name_recursive(child, node_name)

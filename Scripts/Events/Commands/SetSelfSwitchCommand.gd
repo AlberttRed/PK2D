@@ -75,7 +75,7 @@ func _get_current_event_id(context: Node) -> String:
 	return ""
 
 ## Busca un evento por nombre en la escena
-func _find_event(context: Node, event_name: String) -> Event:
+func _find_event(context: Node, event_name: String) -> Node:
 	var tree = context.get_tree()
 	if not tree:
 		return null

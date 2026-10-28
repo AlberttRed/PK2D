@@ -214,6 +214,7 @@ func configure_from_gamestate() -> bool:
 		push_error("OverworldCoordinator: WorldSystem no disponible para configuración")
 		return false
 	_active_world = world_system
+	context.set_active_world(_active_world)
 
 	# 1. Cambiar al mapa correcto (vía WorldSystem)
 	var success = world_system.change_to_map(map_id)
@@ -252,6 +253,7 @@ func _configure_3d(map_id: String, cell: Vector2i, facing_dir: Vector2) -> bool:
 		push_error("OverworldCoordinator: No se pudo cargar el mapa 3D: " + map_id)
 		return false
 	_active_world = world_3d_system
+	context.set_active_world(_active_world)
 
 	if world_3d_system.get_player() == null and not world_3d_system.load_player():
 		push_error("OverworldCoordinator: No se pudo cargar el jugador 3D")

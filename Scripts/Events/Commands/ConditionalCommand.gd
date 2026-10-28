@@ -39,7 +39,8 @@ func execute(context: Node) -> void:
 	var event_uid = _get_current_event_id(context)
 
 	# Obtener el evento fuente desde el contexto
-	var source_event: Event = null
+	# Node (no Event): puede ser Event (2D) o Event3D.
+	var source_event: Node = null
 	if context is EventController and context.current_page:
 		source_event = context.current_page.source_event
 

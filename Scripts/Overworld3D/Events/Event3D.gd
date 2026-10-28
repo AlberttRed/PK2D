@@ -522,6 +522,12 @@ func on_player_action() -> void:
 		try_fire(EventTriggerSignal.SignalType.ACTION, get_tree().get_first_node_in_group("Player"))
 
 
+## El jugador entra en la celda del evento (p.ej. tras un warp): trigger TOUCH.
+func on_player_touch() -> void:
+	if current_page:
+		try_fire(EventTriggerSignal.SignalType.TOUCH, get_tree().get_first_node_in_group("Player"))
+
+
 ## El jugador intenta entrar en la celda del evento pero choca.
 func on_player_collision() -> void:
 	if current_page:

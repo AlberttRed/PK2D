@@ -91,6 +91,8 @@ func change_to_map(map_id: String) -> bool:
 
 	if active_map != null:
 		var old := active_map
+		# Igual que WorldSystem 2D: aplica los cambios diferidos (defer_until_warp) del mapa que se deja.
+		GameStateService.apply_deferred_changes(String(old.name))
 		active_map = null
 		remove_child(old) # sale del árbol ya: su OverworldGrid3D deja el grupo al instante
 		old.queue_free()

@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://Scripts/Events/Commands/SetEventThroughCommand.gd" id="7_8fqh2"]
 [ext_resource type="Script" path="res://Scripts/Events/Commands/FadeCommand.gd" id="8_dkems"]
 [ext_resource type="Script" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="9_e8my4"]
-[ext_resource type="Script" path="res://Scripts/Events/Commands/ShowMessageCommand.gd" id="10_ph3s5"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/WarpCommand.gd" id="10_warp"]
 [ext_resource type="Script" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="11_0641x"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/DoorVisual.tscn" id="12_visual"]
 
@@ -38,8 +38,11 @@ script = ExtResource("8_dkems")
 duration = 0.3
 
 [sub_resource type="Resource" id="Resource_18h7r"]
-script = ExtResource("10_ph3s5")
-message = "Puerta 3D: aquí iría el Warp al interior (stub)."
+script = ExtResource("10_warp")
+actor_name = "Player"
+target_scene = ""
+target_tile = Vector2i(0, 0)
+facing_direction = 1
 
 [sub_resource type="Resource" id="Resource_issp2"]
 script = ExtResource("6_nrvsw")
@@ -54,9 +57,9 @@ script = ExtResource("11_0641x")
 
 [sub_resource type="Resource" id="Resource_tvf2d"]
 script = ExtResource("2_u3ewe")
-page_name = "Puerta (stub)"
+page_name = "Puerta (warp)"
 trigger = SubResource("Resource_pu2mn")
-commands = Array[ExtResource("3_sdvm7")]([SubResource("Resource_h58ln"), SubResource("Resource_4tntq"), SubResource("Resource_3cus0"), SubResource("Resource_l3keq"), SubResource("Resource_fedk4"), SubResource("Resource_25myl"), SubResource("Resource_18h7r"), SubResource("Resource_issp2"), SubResource("Resource_81e0l")])
+commands = Array[ExtResource("3_sdvm7")]([SubResource("Resource_h58ln"), SubResource("Resource_4tntq"), SubResource("Resource_3cus0"), SubResource("Resource_l3keq"), SubResource("Resource_fedk4"), SubResource("Resource_18h7r"), SubResource("Resource_25myl"), SubResource("Resource_issp2"), SubResource("Resource_81e0l")])
 visual_scene = ExtResource("12_visual")
 [node name="Door3D" type="Node3D"]
 script = ExtResource("1_pnl3m")
