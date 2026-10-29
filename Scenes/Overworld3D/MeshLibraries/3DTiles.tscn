@@ -11,7 +11,7 @@
 [ext_resource type="Material" path="res://Resources/Overworld3D/Materials/Flower_UVAnimated.tres" id="9_flmat"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tree"]
-size = Vector3(4, 2, 2)
+size = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_stairs"]
 size = Vector3(4, 2, 2)
@@ -68,7 +68,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="StaticBody3D" type="StaticBody3D" parent="Tree/Tree" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tree/Tree/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2, 2)
 shape = SubResource("BoxShape3D_tree")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="House/House" index="0"]

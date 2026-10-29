@@ -180,6 +180,22 @@ func event_at(cell: Vector2i) -> Node3D:
 	return null
 
 
+## Un actor acaba de entrar en `cell` (paso completado): dispara el trigger TOUCH del evento de esa celda.
+## Igual que `OverworldGrid.on_enter_tile` (2D): el Player no dispara TOUCH mientras un comando
+## (MoveNPC...) lo mueve.
+func on_enter_tile(actor: Node, cell: Vector2i) -> void:
+	if actor == null:
+		return
+	if actor.is_in_group("Player"):
+		var player_motion: Variant = actor.get("motion")
+		if player_motion != null and player_motion.is_command_controlled:
+			return
+	var ev := event_at(cell)
+	if ev == null or ev == actor or not ev.has_method("try_fire"):
+		return
+	ev.try_fire(EventTriggerSignal.SignalType.TOUCH, actor)
+
+
 ## Celda donde está registrado un evento (o Vector2i.MAX si no lo está).
 func cell_of(event: Node3D) -> Vector2i:
 	for cell in _events.keys():

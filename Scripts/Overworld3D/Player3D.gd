@@ -38,6 +38,27 @@ var movement_enabled: bool = true
 ## Contador de bloqueos anidados (eventos, UI...). Solo se libera al llegar a 0.
 var _control_block_count: int = 0
 
+## Latch de direcciones por eventos press/release. Evita el caso de Godot en el que
+## `Input.is_action_pressed` se queda en true tras soltar (p.ej. tras mantener mucho
+## tiempo, perder foco del game window, o soltar durante fade/pausa).
+const _MOVE_ACTIONS: Array[StringName] = [
+	&"move_up", &"move_down", &"move_left", &"move_right",
+]
+## Teclas físicas actuales del InputMap (flechas). Si la acción se "pega" pero la
+## tecla ya no está abajo, cortamos el movimiento.
+const _MOVE_PHYSICAL_KEYS: Dictionary = {
+	&"move_up": KEY_UP,
+	&"move_down": KEY_DOWN,
+	&"move_left": KEY_LEFT,
+	&"move_right": KEY_RIGHT,
+}
+var _move_held: Dictionary = {
+	&"move_up": false,
+	&"move_down": false,
+	&"move_left": false,
+	&"move_right": false,
+}
+
 
 func _cell_size() -> float:
 	# cell_size del OverworldGrid3D si está enlazado; si no, 2 (default GridMap spike).
@@ -137,9 +158,18 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector3.ZERO
 
 
+func _notification(what: int) -> void:
+	# Al perder el foco del juego, Godot a menudo no recibe el key-up y la acción
+	# queda "pegada". Forzamos release para no seguir caminando solos.
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT \
+	or what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+		_clear_move_held(true)
+
+
 func _process(delta: float) -> void:
 	if move_mode == MoveMode.GRID:
 		# Igual que Player 2D: sin input si el juego está pausado o los controles bloqueados.
+		# (El latch de teclas sí se actualiza en `_input` aunque estemos bloqueados/pausados.)
 		if get_tree().paused or not movement_enabled:
 			return
 		_process_grid_move(delta)
@@ -147,13 +177,14 @@ func _process(delta: float) -> void:
 
 func _process_free_move() -> void:
 	var input_dir := Vector3.ZERO
-	if Input.is_action_pressed("move_up"):
+	var card := _read_cardinal_input()
+	if card == Vector2i(0, -1):
 		input_dir.z -= 1.0
-	if Input.is_action_pressed("move_down"):
+	elif card == Vector2i(0, 1):
 		input_dir.z += 1.0
-	if Input.is_action_pressed("move_left"):
+	elif card == Vector2i(-1, 0):
 		input_dir.x -= 1.0
-	if Input.is_action_pressed("move_right"):
+	elif card == Vector2i(1, 0):
 		input_dir.x += 1.0
 
 	if input_dir != Vector3.ZERO:
@@ -174,6 +205,9 @@ func _process_free_move() -> void:
 
 
 func _process_grid_move(delta: float) -> void:
+	# Un comando (MoveNPC...) mueve al player: el input no debe pisar su velocidad ni sus pasos.
+	if _grid_motion.is_command_controlled:
+		return
 	var input_dir := _read_cardinal_input()
 	_grid_motion.is_running = Input.is_action_pressed("run")
 
@@ -193,6 +227,20 @@ func _process_grid_move(delta: float) -> void:
 		_grid_motion.try_step(input_dir)
 
 
+## Trackea press/release de movimiento siempre (también con UI/fade/pausa), para no
+## perder el key-up y quedar andando eternos.
+func _input(event: InputEvent) -> void:
+	for action in _MOVE_ACTIONS:
+		# Sin ecos de autorepeat: un key-down echo no debe re-armar el latch.
+		if event.is_action_pressed(action, false, true):
+			_move_held[action] = true
+		elif event.is_action_released(action):
+			_move_held[action] = false
+			# Si el singleton Input se desincronizó, forzamos el release.
+			if Input.is_action_pressed(action):
+				Input.action_release(action)
+
+
 ## "interact" frente a un evento → trigger ACTION (como Player 2D).
 func _unhandled_input(event: InputEvent) -> void:
 	if move_mode != MoveMode.GRID or _grid_motion.moving:
@@ -206,15 +254,45 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _read_cardinal_input() -> Vector2i:
-	if Input.is_action_pressed("move_up"):
+	# Latch de evento + estado Input: hace falta ambos. Así un `is_action_pressed`
+	# "pegado" sin key-down reciente no encadena más pasos.
+	if _is_move_active(&"move_up"):
 		return Vector2i(0, -1)
-	if Input.is_action_pressed("move_down"):
+	if _is_move_active(&"move_down"):
 		return Vector2i(0, 1)
-	if Input.is_action_pressed("move_left"):
+	if _is_move_active(&"move_left"):
 		return Vector2i(-1, 0)
-	if Input.is_action_pressed("move_right"):
+	if _is_move_active(&"move_right"):
 		return Vector2i(1, 0)
 	return Vector2i.ZERO
+
+
+func _is_move_active(action: StringName) -> bool:
+	if not bool(_move_held.get(action, false)):
+		return false
+	# Si la tecla física ya no está (acción Input desincronizada), corta aquí.
+	var key: int = int(_MOVE_PHYSICAL_KEYS.get(action, KEY_NONE))
+	if key != KEY_NONE and not Input.is_physical_key_pressed(key):
+		_move_held[action] = false
+		if Input.is_action_pressed(action):
+			Input.action_release(action)
+		return false
+	if not Input.is_action_pressed(action):
+		_move_held[action] = false
+		return false
+	return true
+
+
+func _clear_move_held(release_input: bool = false) -> void:
+	for action in _MOVE_ACTIONS:
+		_move_held[action] = false
+		if release_input and Input.is_action_pressed(action):
+			Input.action_release(action)
+	if _grid_motion != null:
+		_grid_motion.hold_time = 0.0
+		_grid_motion.release_collision_latch()
+		if not _grid_motion.moving and is_node_ready():
+			_apply_idle_pose()
 
 
 func _on_direction_changed(new_dir: Vector2i) -> void:
@@ -227,18 +305,15 @@ func _on_direction_changed(new_dir: Vector2i) -> void:
 
 
 func _on_step_started() -> void:
-	var use_run := _grid_motion.is_running and not _grid_motion.initial_step \
-		and _grid_motion.speed_multiplier > 1.0
+	# Correr = velocidad > 1 (tecla "run" o comandos MoveNPC con SPEED_*); igual que NPC3D y el 2D.
+	var use_run: bool = not _grid_motion.initial_step and _grid_motion.speed_multiplier > 1.0
 	_play_walk_anim(use_run)
 
 
 func _on_step_finished(_cell: Vector2i) -> void:
 	# Con controles bloqueados no se encadena otro paso: pose idle aunque siga pulsada la tecla.
-	if not movement_enabled \
-	or (not Input.is_action_pressed("move_up") \
-	and not Input.is_action_pressed("move_down") \
-	and not Input.is_action_pressed("move_left") \
-	and not Input.is_action_pressed("move_right")):
+	# Usa el mismo latch que el movimiento (no solo Input.is_action_pressed).
+	if not movement_enabled or _read_cardinal_input() == Vector2i.ZERO:
 		_apply_idle_pose()
 
 
@@ -319,48 +394,13 @@ func _connect_display_manager_signals() -> void:
 
 
 func _play_walk_anim(use_run: bool) -> void:
-	_apply_frames(_get_run_frames() if use_run else _get_walk_frames())
-	var dir_name := _dir_name(_facing)
-	var stride := "left" if _grid_motion.stride_is_left else "right"
-	var anim := "%s_%s" % [dir_name, stride]
-	if _sprite.sprite_frames == null or not _sprite.sprite_frames.has_animation(anim):
-		return
-	if _sprite.is_playing():
-		_sprite.stop()
-	_sprite.play(anim)
-	_sprite.speed_scale = 1.0
+	# Lógica de animación compartida con NPC3D (ActorSpriteAnim3D).
+	ActorSpriteAnim3D.play_stride(_sprite, _get_run_frames() if use_run else _get_walk_frames(),
+		_facing, _grid_motion.stride_is_left)
 
 
 func _apply_idle_pose() -> void:
-	_apply_frames(_get_walk_frames())
-	if _sprite.sprite_frames == null:
-		return
-	if _sprite.sprite_frames.has_animation("idle"):
-		_sprite.animation = "idle"
-		_sprite.stop()
-		match _facing:
-			Vector2i(0, -1):
-				_sprite.frame = 3 ## up
-			Vector2i(-1, 0):
-				_sprite.frame = 1 ## left
-			Vector2i(1, 0):
-				_sprite.frame = 2 ## right
-			_:
-				_sprite.frame = 0 ## down
-	else:
-		_sprite.stop()
-
-
-func _dir_name(d: Vector2i) -> String:
-	match d:
-		Vector2i(0, -1):
-			return "up"
-		Vector2i(-1, 0):
-			return "left"
-		Vector2i(1, 0):
-			return "right"
-		_:
-			return "down"
+	ActorSpriteAnim3D.apply_idle(_sprite, _get_walk_frames(), _facing)
 
 
 func _vector3_to_cardinal(v: Vector3) -> Vector2i:

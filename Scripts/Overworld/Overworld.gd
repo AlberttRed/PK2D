@@ -263,9 +263,18 @@ func _configure_3d(map_id: String, cell: Vector2i, facing_dir: Vector2) -> bool:
 		push_error("OverworldCoordinator: No se pudo posicionar al jugador 3D")
 		return false
 
-	# Los mapas 3D aún no declaran si son interiores.
-	GameStateService.set_event_flag("indoor", false)
+	_sync_indoor_flag_from_active_map_3d()
 	return true
+
+
+## Lee `is_indoor` del mapa 3D activo (`MapScene3D` u otro nodo con esa propiedad).
+func _sync_indoor_flag_from_active_map_3d() -> void:
+	var active_map := world_3d_system.get_active_map() if world_3d_system != null else null
+	if active_map == null:
+		GameStateService.set_event_flag("indoor", false)
+		return
+	var indoor: Variant = active_map.get("is_indoor")
+	GameStateService.set_event_flag("indoor", indoor == true)
 
 
 ## Mundo activo (WorldSystem 2D o World3DSystem); null hasta `configure_from_gamestate()`.

@@ -1,0 +1,91 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Overworld3D/Events/Event3D.gd" id="1_pnl3m"]
+[ext_resource type="Script" path="res://Scripts/Events/EventPage.gd" id="2_u3ewe"]
+[ext_resource type="Script" path="res://Scripts/Events/EventCommand.gd" id="3_sdvm7"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/PlaySoundCommand.gd" id="4_s4hbh"]
+[ext_resource type="AudioStream" path="res://Audio/SE/Door enter.ogg" id="5_vb7on"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/PlayAnimationCommand.gd" id="6_nrvsw"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/FadeCommand.gd" id="8_dkems"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/SetFlagCommand.gd" id="9_e8my4"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/WarpCommand.gd" id="10_warp"]
+[ext_resource type="Script" path="res://Scripts/Events/Triggers/TouchTrigger.gd" id="11_touch"]
+[ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/DoorVisual.tscn" id="12_visual"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="14_vis"]
+[ext_resource type="Script" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="15_flagcond"]
+
+[sub_resource type="Resource" id="Cmd_sound"]
+script = ExtResource("4_s4hbh")
+sound = ExtResource("5_vb7on")
+
+[sub_resource type="Resource" id="Cmd_open"]
+script = ExtResource("6_nrvsw")
+animation_name = "open"
+speed_scale = 0.75
+
+[sub_resource type="Resource" id="Cmd_hide_player"]
+script = ExtResource("14_vis")
+target_type = 1
+visible = false
+
+[sub_resource type="Resource" id="Cmd_close"]
+script = ExtResource("6_nrvsw")
+animation_name = "close"
+speed_scale = 0.75
+
+[sub_resource type="Resource" id="Cmd_fade_in"]
+script = ExtResource("8_dkems")
+mode = 0
+duration = 0.3
+
+[sub_resource type="Resource" id="Cmd_warp"]
+script = ExtResource("10_warp")
+actor_name = "Player"
+target_scene = "Overworld3DTest"
+target_tile = Vector2i(7, 2)
+facing_direction = 1
+
+[sub_resource type="Resource" id="Cmd_show_player"]
+script = ExtResource("14_vis")
+target_type = 1
+
+[sub_resource type="Resource" id="Cmd_clear_indoor"]
+script = ExtResource("9_e8my4")
+flag_name = "indoor"
+flag_value = false
+
+[sub_resource type="Resource" id="Cmd_fade_out"]
+script = ExtResource("8_dkems")
+duration = 0.3
+
+[sub_resource type="Resource" id="Cond_indoor"]
+script = ExtResource("15_flagcond")
+flag_name = "indoor"
+
+[sub_resource type="Resource" id="Cond_outdoor"]
+script = ExtResource("15_flagcond")
+flag_name = "indoor"
+expected_value = false
+
+[sub_resource type="Resource" id="Trig_touch"]
+script = ExtResource("11_touch")
+
+[sub_resource type="Resource" id="Page_exit"]
+script = ExtResource("2_u3ewe")
+page_name = "Puerta interior (salir)"
+trigger = SubResource("Trig_touch")
+root_condition = SubResource("Cond_indoor")
+through = true
+commands = Array[ExtResource("3_sdvm7")]([SubResource("Cmd_sound"), SubResource("Cmd_open"), SubResource("Cmd_hide_player"), SubResource("Cmd_close"), SubResource("Cmd_fade_in"), SubResource("Cmd_warp"), SubResource("Cmd_show_player"), SubResource("Cmd_clear_indoor"), SubResource("Cmd_fade_out")])
+visual_scene = ExtResource("12_visual")
+
+[sub_resource type="Resource" id="Page_closed"]
+script = ExtResource("2_u3ewe")
+page_name = "Puerta interior (cerrada, jugador fuera)"
+root_condition = SubResource("Cond_outdoor")
+visual_scene = ExtResource("12_visual")
+
+[node name="DoorInterior3D" type="Node3D"]
+script = ExtResource("1_pnl3m")
+pages = Array[ExtResource("2_u3ewe")]([SubResource("Page_exit"), SubResource("Page_closed")])
+show_placeholder_in_game = false

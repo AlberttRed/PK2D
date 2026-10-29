@@ -1,10 +1,17 @@
 extends EventCommand
 class_name MoveNPCCommand
 
+## Separación (m, en pantalla) entre la cabeza del actor y el borde inferior del frame de la exclamación 3D.
+## Negativo = más baja / pegada a la cabeza; positivo = más alta.
+const EXCLAMATION_HEAD_GAP_3D := -0.5
+
 ## Comando para mover un NPC (o el Player) mediante instrucciones predefinidas
 ##
-## Este comando ejecuta desplazamientos paso a paso utilizando GridMotion,
-## similar al path movement de los NPCs.
+## Este comando ejecuta desplazamientos paso a paso utilizando GridMotion (2D) o GridMotion3D (3D),
+## similar al path movement de los NPCs. Es UN solo comando para los dos mundos: las páginas
+## (EventPage) son un recurso compartido y el mismo `.tres` debe funcionar en 2D y en 3D. El motor
+## se detecta por el actor (GridMotion vs GridMotion3D); `_execute_path` es el flujo 2D original y
+## `_execute_path_3d` su equivalente en celdas XZ.
 
 ## Nombre o identificador del NPC a mover (o "Player" para el jugador)
 ## Si está vacío, usa el evento actual donde se ejecuta el comando
@@ -17,14 +24,14 @@ class_name MoveNPCCommand
 @export var wait_until_finished: bool = true
 
 func execute(context: Node) -> void:
-	var actor: Node2D = null
+	var actor: Node = null
 
 	# Si no se especificó nombre, usar el evento actual
 	if target_name.is_empty():
 		if context is EventController and context.current_page:
 			var source_event = context.current_page.source_event
 			if source_event:
-				actor = source_event as Node2D
+				actor = source_event
 				print("MoveNPCCommand: Usando evento actual '%s' (no se especificó nombre)" % source_event.name)
 			else:
 				push_warning("MoveNPCCommand: No se pudo obtener el evento actual (source_event es nulo)")
@@ -43,8 +50,8 @@ func execute(context: Node) -> void:
 			context.continue_execution()
 			return
 
-	# Verificar que tiene GridMotion
-	var motion: GridMotion = actor.get_node_or_null("GridMotion")
+	# Verificar que tiene motor de movimiento (GridMotion 2D o GridMotion3D)
+	var motion: Object = _get_motion(actor)
 	if not motion:
 		var actor_name: String
 		if not target_name.is_empty():
@@ -53,7 +60,7 @@ func execute(context: Node) -> void:
 			actor_name = actor.name
 		else:
 			actor_name = "desconocido"
-		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion" % actor_name)
+		push_warning("MoveNPCCommand: El actor '%s' no tiene componente GridMotion/GridMotion3D" % actor_name)
 		context.continue_execution()
 		return
 
@@ -68,7 +75,7 @@ func execute(context: Node) -> void:
 	# Ejecutar el movimiento
 	if wait_until_finished:
 		set_state(CommandState.RUNNING)
-		await _execute_path(motion, context)
+		await _run_path(motion, context)
 		set_state(CommandState.IDLE)
 		context.continue_execution()
 	else:
@@ -77,7 +84,7 @@ func execute(context: Node) -> void:
 		_execute_path_background(motion, context)
 
 ## Busca un actor (NPC o Player) por nombre en la escena
-func _find_actor(context: Node, name: String) -> Node2D:
+func _find_actor(context: Node, name: String) -> Node:
 	# Si es "Player", obtener del contexto
 	if name == "Player" or name.to_lower() == "player":
 		var overworld_context = _get_overworld_context(context)
@@ -93,9 +100,9 @@ func _find_actor(context: Node, name: String) -> Node2D:
 	return actor
 
 ## Búsqueda recursiva de nodo por nombre
-func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
-	if node.name == name and node is Node2D:
-		return node as Node2D
+func _find_node_by_name_recursive(node: Node, name: String) -> Node:
+	if node.name == name and (node is Node2D or node is Node3D):
+		return node
 
 	for child in node.get_children():
 		var result = _find_node_by_name_recursive(child, name)
@@ -104,7 +111,27 @@ func _find_node_by_name_recursive(node: Node, name: String) -> Node2D:
 
 	return null
 
-## Ejecuta el path paso a paso (función principal)
+## Motor de movimiento del actor: GridMotion (2D) o GridMotion3D (3D); null si no tiene.
+func _get_motion(actor: Node) -> Object:
+	var motion_2d: Node = actor.get_node_or_null("GridMotion")
+	if motion_2d != null:
+		return motion_2d
+	# Player3D y NPC3D exponen `motion` (el GridMotion3D hijo).
+	var motion_3d: Variant = actor.get("motion")
+	if motion_3d is GridMotion3D:
+		return motion_3d
+	return actor.get_node_or_null("GridMotion3D")
+
+
+## Despacha al flujo 2D o 3D según el motor del actor.
+func _run_path(motion: Object, context: Node) -> void:
+	if motion is GridMotion3D:
+		await _execute_path_3d(motion as GridMotion3D, context)
+	else:
+		await _execute_path(motion as GridMotion, context)
+
+
+## Ejecuta el path paso a paso (función principal, 2D)
 func _execute_path(motion: GridMotion, context: Node) -> void:
 	# Marcar que el movimiento está siendo controlado por comando
 	# Esto evita que el input del jugador modifique is_running
@@ -232,13 +259,13 @@ func _execute_path_internal(motion: GridMotion, context: Node) -> void:
 			await motion.get_tree().create_timer(0.25).timeout
 
 ## Ejecuta el path en background (sin bloquear el EventController)
-func _execute_path_background(motion: GridMotion, context: Node) -> void:
+func _execute_path_background(motion: Object, context: Node) -> void:
 	# Esta función ejecuta el path de forma asíncrona sin esperar
 	# Marca como RUNNING mientras se ejecuta
 	set_state(CommandState.RUNNING)
 	# Ejecutar el path de forma asíncrona
 	var callable = func():
-		await _execute_path(motion, context)
+		await _run_path(motion, context)
 		set_state(CommandState.IDLE)
 		print("MoveNPCCommand: Movimiento en background completado")
 	callable.call()
@@ -369,3 +396,168 @@ func _action_name(action: int) -> String:
 		DirectionEnum.Type.SPEED_FASTEST: return "SPEED_FASTEST"
 		DirectionEnum.Type.EXCLAMATION_ANIM: return "EXCLAMATION_ANIM"
 		_: return "UNKNOWN"
+
+
+# --- Flujo 3D (GridMotion3D, celdas XZ) ---
+
+## Equivalente 3D de `_execute_path`. Direcciones en celdas: arriba = (0,-1).
+func _execute_path_3d(motion: GridMotion3D, context: Node) -> void:
+	var actor = motion.actor # sin tipo: puede ser Player3D o NPC3D (duck typing)
+	var previous_speed := motion.base_speed
+	# Evita que el input del Player pise is_running / encadene pasos propios.
+	motion.is_command_controlled = true
+	motion.is_running = false
+
+	# Un NPC 3D deja de tomar decisiones propias mientras dura el comando.
+	var controls_npc: bool = actor != null and actor.has_method("begin_command_control")
+	if controls_npc:
+		await actor.begin_command_control()
+
+	await _execute_path_3d_internal(motion, context)
+
+	if is_instance_valid(motion):
+		motion.is_command_controlled = false
+		motion.base_speed = previous_speed
+	if controls_npc and is_instance_valid(actor):
+		actor.end_command_control()
+	print("MoveNPCCommand: Path 3D completado")
+
+
+func _execute_path_3d_internal(motion: GridMotion3D, context: Node) -> void:
+	for dir_enum in path:
+		# El actor puede desaparecer a mitad (cambio de mapa).
+		if not is_instance_valid(motion) or motion.actor == null or not is_instance_valid(motion.actor) \
+				or not motion.actor.is_inside_tree():
+			return
+		var tree := motion.get_tree()
+
+		if DirectionEnum.is_turn(dir_enum):
+			# TURN: gira con animación de caminar sin moverse.
+			await motion.try_turn(_cell_dir(dir_enum))
+			await tree.create_timer(0.25).timeout
+		elif DirectionEnum.is_animation(dir_enum):
+			if dir_enum == DirectionEnum.Type.EXCLAMATION_ANIM:
+				await _show_exclamation_3d(motion)
+		elif DirectionEnum.is_speed_change(dir_enum):
+			motion.base_speed = MoveSpeedEnum.to_multiplier(DirectionEnum.to_speed_enum(dir_enum))
+		elif DirectionEnum.is_movement(dir_enum):
+			# Primero orientar (evita el "initial step"), luego dar el paso si es posible.
+			var d := _cell_dir(dir_enum)
+			_face_3d(motion, d)
+			if motion.can_step(d):
+				motion.try_step(d)
+				if motion.moving:
+					await motion.step_finished
+			else:
+				# Bloqueado: igual que en 2D, espera un momento y sigue con el siguiente comando.
+				await tree.create_timer(0.5).timeout
+		elif DirectionEnum.is_wait(dir_enum):
+			await tree.create_timer(DirectionEnum.get_wait_duration(dir_enum)).timeout
+		else:
+			# LOOK: solo girar sin moverse.
+			var d := Vector2i.ZERO
+			if dir_enum == DirectionEnum.Type.LOOK_PLAYER:
+				d = _direction_to_player_3d(motion, context)
+				if d == Vector2i.ZERO:
+					push_warning("MoveNPCCommand: No se pudo calcular dirección hacia el jugador, saltando LOOK_PLAYER")
+					continue
+			else:
+				d = _cell_dir(dir_enum)
+			_face_3d(motion, d)
+			# Breve delay para que se vea el giro.
+			await tree.create_timer(0.25).timeout
+
+
+## DirectionEnum → dirección en celdas XZ (UP = (0,-1)).
+func _cell_dir(dir_enum: int) -> Vector2i:
+	var v := DirectionEnum.to_vector2(dir_enum)
+	return Vector2i(int(v.x), int(v.y))
+
+
+## Gira al actor 3D y actualiza su pose (Player3D / NPC3D: `set_facing_direction`).
+func _face_3d(motion: GridMotion3D, d: Vector2i) -> void:
+	var actor = motion.actor
+	if actor != null and actor.has_method("set_facing_direction"):
+		actor.set_facing_direction(Vector2(d))
+	else:
+		motion.face(d)
+
+
+## Dirección cardinal predominante hacia el Player (misma lógica que 2D, en celdas).
+func _direction_to_player_3d(motion: GridMotion3D, context: Node) -> Vector2i:
+	var overworld_context := _get_overworld_context(context)
+	var player: Node = overworld_context.get_player() if overworld_context != null else null
+	if player == null or not player.has_method("current_cell"):
+		push_warning("MoveNPCCommand: Player 3D no disponible para calcular la dirección")
+		return Vector2i.ZERO
+	return NPCBehavior.direction_toward(motion.current_cell(), player.current_cell())
+
+
+## Altura (en pantalla, metros) del sprite plano del actor: alto del frame * pixel_size.
+func _actor_sprite_height_3d(actor: Node, cell: float) -> float:
+	var found := _find_flat_sprite_3d(actor)
+	if found != null and found.sprite_frames != null:
+		var tex := found.sprite_frames.get_frame_texture(found.animation, 0)
+		if tex != null:
+			return tex.get_height() * found.pixel_size
+	return 48.0 * cell / ActorSprite3D.DEFAULT_TILE_PIXELS
+
+
+func _find_flat_sprite_3d(node: Node) -> AnimatedSprite3D:
+	for child in node.get_children():
+		if child is AnimatedSprite3D and (child as AnimatedSprite3D).billboard != BaseMaterial3D.BILLBOARD_ENABLED:
+			return child
+		var deeper := _find_flat_sprite_3d(child)
+		if deeper != null:
+			return deeper
+	return null
+
+
+## Coloca el billboard justo encima de la cabeza, desplazando en la vertical *de pantalla* (eje Y de la cámara),
+## porque el sprite del actor está inclinado hacia la cámara y subir en Y del mundo lo dejaría solapado.
+func _place_above_head_3d(sprite: AnimatedSprite3D, actor: Node3D, head_height: float,
+		tex: Texture2D, cell: float) -> void:
+	var back_offset = actor.get("sprite_back_offset")
+	var feet := actor.global_position + Vector3(0.0, 0.0, back_offset if back_offset != null else ActorSprite3D.DEFAULT_BACK_OFFSET)
+	var cam := actor.get_viewport().get_camera_3d() if actor.is_inside_tree() else null
+	var up := cam.global_transform.basis.y if cam != null else Vector3(0.0, 0.7071, -0.7071)
+	var half_h := (tex.get_height() * sprite.pixel_size * 0.5) if tex != null else cell
+	sprite.global_position = feet + up * (head_height + EXCLAMATION_HEAD_GAP_3D + half_h)
+
+
+## Exclamación sobre el actor 3D (mismo SpriteFrames y tiempos que en 2D). Billboard sobre la cabeza.
+func _show_exclamation_3d(motion: GridMotion3D) -> void:
+	var frames: SpriteFrames = preload("res://Resources/Animations/Overworld/trainer_exclamation.tres")
+	var actor := motion.actor
+	if frames == null or actor == null:
+		return
+	var anim_name := "default"
+	var cell := motion.grid.cell_size().x if motion.grid != null else 2.0
+
+	var sprite := AnimatedSprite3D.new()
+	sprite.sprite_frames = frames
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	sprite.shaded = false
+	sprite.no_depth_test = true
+	sprite.pixel_size = cell / ActorSprite3D.DEFAULT_TILE_PIXELS
+	var head_height := _actor_sprite_height_3d(actor, cell)
+	actor.add_child(sprite)
+	_place_above_head_3d(sprite, actor, head_height, frames.get_frame_texture(anim_name, 0), cell)
+	sprite.play(anim_name)
+	await sprite.animation_finished
+
+	sprite.stop()
+	var frame_count := frames.get_frame_count(anim_name)
+	if frame_count > 0:
+		sprite.frame = frame_count - 1
+	var animation_duration := 0.0
+	var fps := frames.get_animation_speed(anim_name)
+	if fps > 0.0:
+		animation_duration = frame_count / fps
+	var remaining := maxf(0.0, 1.5 - animation_duration)
+	if remaining > 0.0 and is_instance_valid(actor):
+		await actor.get_tree().create_timer(remaining).timeout
+	if is_instance_valid(sprite):
+		sprite.queue_free()

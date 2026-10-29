@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Overworld3D/Events/NPC3D.gd" id="1_npc3d"]
+[ext_resource type="Script" path="res://Scripts/Overworld3D/GridMotion3D.gd" id="2_motion"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_placeholder"]
+transparency = 1
+albedo_color = Color(0.2, 0.7, 1, 0.55)
+
+[sub_resource type="BoxMesh" id="BoxMesh_placeholder"]
+material = SubResource("StandardMaterial3D_placeholder")
+size = Vector3(1.4, 2, 0.3)
+
+[node name="NPC3D" type="Node3D"]
+script = ExtResource("1_npc3d")
+show_placeholder_in_game = false
+
+[node name="GridMotion3D" type="Node" parent="."]
+script = ExtResource("2_motion")
+play_bump_sound = false
+
+[node name="Placeholder" type="Node3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Placeholder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("BoxMesh_placeholder")
+
+[node name="Label3D" type="Label3D" parent="Placeholder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = true
+pixel_size = 0.0008
+text = "NPC3D"

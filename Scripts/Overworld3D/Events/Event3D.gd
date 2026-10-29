@@ -330,12 +330,20 @@ func _apply_page_visual() -> void:
 	if page.visual_scene != null:
 		_apply_scene_visual(page)
 	else:
-		var frames := page.get_sprite_frames(self)
+		var frames := _frames_for_page(page)
 		if frames != null:
 			_apply_flat_sprite_visual(page, frames)
 		else:
 			_clear_visual()
 	_apply_placeholder_visibility()
+
+
+## SpriteFrames del sprite plano de una página. Con `actor_style` (Player/NPC) usa sus `walk_frames`;
+## `EventPage.get_sprite_frames` devuelve null en ese caso porque el 2D los gestiona con ActorAnimator.
+func _frames_for_page(page: EventPage) -> SpriteFrames:
+	if page.actor_style != null:
+		return page.actor_style.walk_frames
+	return page.get_sprite_frames(self)
 
 
 func _ensure_visual_root() -> Node3D:

@@ -18,6 +18,11 @@ var previous_dir: Vector2i = dir
 var initial_step: bool = false
 var is_running: bool = false
 var speed_multiplier: float = 1.0
+## true mientras un comando de evento (MoveNPC...) controla al actor: el input del Player no debe
+## pisar `is_running` ni encadenar pasos propios.
+var is_command_controlled: bool = false
+## Velocidad base (NPCs: MoveSpeedEnum de la página). Se compone con correr; el Player la deja en 1.
+var base_speed: float = 1.0
 ## Alterna left/right entre pasos (misma lógica que GridMotion 2D).
 var stride_is_left: bool = true
 ## Igual que GridMotion 2D: true desde el primer bump hasta el siguiente paso real.
@@ -117,13 +122,18 @@ func try_step(d: Vector2i) -> void:
 		_start_wait(turn_duration, from, actor_y)
 		return
 
+	# Un NPC no atraviesa al Player (ni la celda a la que este se dirige).
+	if _blocked_by_player(to):
+		_start_bump(from)
+		return
+
 	var stair_move: Dictionary = grid.resolve_stair_step(from, to, d, actor_y) if grid != null else {}
 	if stair_move.get("blocked", false):
 		_start_bump(from)
 		return
 	if stair_move.get("is_stair", false):
 		is_colliding = false
-		speed_multiplier = 2.0 if is_running else 1.0
+		speed_multiplier = base_speed * (2.0 if is_running else 1.0)
 		_end_cell = to
 		_end_y = float(stair_move["y"])
 		step_started.emit()
@@ -140,11 +150,63 @@ func try_step(d: Vector2i) -> void:
 		return
 
 	is_colliding = false
-	speed_multiplier = 2.0 if is_running else 1.0
+	speed_multiplier = base_speed * (2.0 if is_running else 1.0)
 	_end_cell = to
 	_end_y = actor_y
 	step_started.emit()
 	_start_move_to(cell_to_world_center(to, actor_y))
+
+
+## Giro en sitio con animación de caminar (comandos TURN_*). Siempre anima, aunque ya mire en esa
+## dirección. Se puede esperar (`await motion.try_turn(d)`): termina al acabar el giro.
+func try_turn(d: Vector2i) -> void:
+	if actor == null or moving or d == Vector2i.ZERO:
+		return
+	face(d)
+	moving = true
+	initial_step = true
+	is_colliding = false
+	_end_cell = _cell
+	_end_y = actor_y
+	speed_multiplier = 0.5
+	step_started.emit()
+	_start_wait(turn_duration, _cell, actor_y)
+	await step_finished
+
+
+## Celda de destino del paso en curso (la actual si no se está moviendo).
+func target_cell() -> Vector2i:
+	return _end_cell if moving else _cell
+
+
+## true si dar un paso en `d` es posible ahora (suelo, escaleras, eventos y Player). No mueve.
+## Lo usan los NPCs para decidir antes de intentar (evita "andar contra la pared").
+func can_step(d: Vector2i) -> bool:
+	if grid == null:
+		return true
+	var to := _cell + d
+	if _blocked_by_player(to):
+		return false
+	var stair_move: Dictionary = grid.resolve_stair_step(_cell, to, d, actor_y)
+	if stair_move.get("blocked", false):
+		return false
+	if stair_move.get("is_stair", false):
+		return true
+	return can_enter(to)
+
+
+## true si `cell` está ocupada por el Player (su celda o la que está pisando). Solo aplica a actores
+## que no son el Player: el Player ya choca con los NPCs a través de los eventos del grid.
+func _blocked_by_player(cell: Vector2i) -> bool:
+	if actor == null or actor.is_in_group("Player") or not actor.is_inside_tree():
+		return false
+	var player := actor.get_tree().get_first_node_in_group("Player")
+	if player == null or not player.has_method("current_cell"):
+		return false
+	if player.current_cell() == cell:
+		return true
+	var player_motion: Variant = player.get("motion")
+	return player_motion != null and player_motion.moving and player_motion.target_cell() == cell
 
 
 ## Evento en la celda `offset` pasos por delante (1 = la de delante). Equivalente a event_at_offset 2D.
@@ -229,6 +291,7 @@ func _start_wait(duration: float, end_cell: Vector2i, end_y: float = -1.0) -> vo
 func _on_step_tween_finished() -> void:
 	_tween = null
 	_bump_active = false
+	var previous_cell := _cell
 	_cell = _end_cell
 	actor_y = _end_y
 	if actor != null:
@@ -237,6 +300,9 @@ func _on_step_tween_finished() -> void:
 	moving = false
 	step_finished.emit(_cell)
 	stride_is_left = not stride_is_left
+	# Solo si hubo desplazamiento real (no giros ni bumps): trigger TOUCH del evento de la celda.
+	if _cell != previous_cell and grid != null and actor != null and grid.has_method("on_enter_tile"):
+		grid.on_enter_tile(actor, _cell)
 
 
 func cancel_movement() -> void:

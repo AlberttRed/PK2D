@@ -12,56 +12,92 @@
 [ext_resource type="Script" path="res://Scripts/Events/Commands/WarpCommand.gd" id="10_warp"]
 [ext_resource type="Script" path="res://Scripts/Events/Triggers/CollisionTrigger.gd" id="11_0641x"]
 [ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Events/DoorVisual.tscn" id="12_visual"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/MoveNPCCommand.gd" id="13_movenpc"]
+[ext_resource type="Script" path="res://Scripts/Events/Commands/SetActorVisibilityCommand.gd" id="14_vis"]
+[ext_resource type="Script" path="res://Scripts/Events/Conditions/FlagCondition.gd" id="15_flagcond"]
 
-[sub_resource type="Resource" id="Resource_h58ln"]
+[sub_resource type="Resource" id="Cmd_sound"]
 script = ExtResource("4_s4hbh")
 sound = ExtResource("5_vb7on")
 
-[sub_resource type="Resource" id="Resource_4tntq"]
+[sub_resource type="Resource" id="Cmd_open"]
 script = ExtResource("6_nrvsw")
 animation_name = "open"
+speed_scale = 0.75
 
-[sub_resource type="Resource" id="Resource_3cus0"]
+[sub_resource type="Resource" id="Cmd_through_on"]
 script = ExtResource("7_8fqh2")
 
-[sub_resource type="Resource" id="Resource_l3keq"]
+[sub_resource type="Resource" id="Cmd_walk_in"]
+script = ExtResource("13_movenpc")
+target_name = "Player"
+path = Array[int]([0])
+
+[sub_resource type="Resource" id="Cmd_hide_player"]
+script = ExtResource("14_vis")
+target_type = 1
+visible = false
+
+[sub_resource type="Resource" id="Cmd_close"]
+script = ExtResource("6_nrvsw")
+animation_name = "close"
+speed_scale = 0.75
+
+[sub_resource type="Resource" id="Cmd_through_off"]
+script = ExtResource("7_8fqh2")
+through = false
+
+[sub_resource type="Resource" id="Cmd_fade_in"]
 script = ExtResource("8_dkems")
 mode = 0
 duration = 0.3
 
-[sub_resource type="Resource" id="Resource_fedk4"]
-script = ExtResource("9_e8my4")
-flag_name = "door3d_test_success"
+[sub_resource type="Resource" id="Cmd_warp"]
+script = ExtResource("10_warp")
+actor_name = "Player"
+target_scene = "Pueblo_Paleta3D"
+target_tile = Vector2i(10, 10)
+facing_direction = 1
 
-[sub_resource type="Resource" id="Resource_25myl"]
+[sub_resource type="Resource" id="Cmd_show_player"]
+script = ExtResource("14_vis")
+target_type = 1
+
+[sub_resource type="Resource" id="Cmd_set_indoor"]
+script = ExtResource("9_e8my4")
+flag_name = "indoor"
+
+[sub_resource type="Resource" id="Cmd_fade_out"]
 script = ExtResource("8_dkems")
 duration = 0.3
 
-[sub_resource type="Resource" id="Resource_18h7r"]
-script = ExtResource("10_warp")
-actor_name = "Player"
-target_scene = ""
-target_tile = Vector2i(0, 0)
-facing_direction = 1
+[sub_resource type="Resource" id="Cond_outdoor"]
+script = ExtResource("15_flagcond")
+flag_name = "indoor"
+expected_value = false
 
-[sub_resource type="Resource" id="Resource_issp2"]
-script = ExtResource("6_nrvsw")
-animation_name = "close"
+[sub_resource type="Resource" id="Cond_indoor"]
+script = ExtResource("15_flagcond")
+flag_name = "indoor"
 
-[sub_resource type="Resource" id="Resource_81e0l"]
-script = ExtResource("7_8fqh2")
-through = false
-
-[sub_resource type="Resource" id="Resource_pu2mn"]
+[sub_resource type="Resource" id="Trig_collision"]
 script = ExtResource("11_0641x")
 
-[sub_resource type="Resource" id="Resource_tvf2d"]
+[sub_resource type="Resource" id="Page_enter"]
 script = ExtResource("2_u3ewe")
-page_name = "Puerta (warp)"
-trigger = SubResource("Resource_pu2mn")
-commands = Array[ExtResource("3_sdvm7")]([SubResource("Resource_h58ln"), SubResource("Resource_4tntq"), SubResource("Resource_3cus0"), SubResource("Resource_l3keq"), SubResource("Resource_fedk4"), SubResource("Resource_18h7r"), SubResource("Resource_25myl"), SubResource("Resource_issp2"), SubResource("Resource_81e0l")])
+page_name = "Puerta exterior (entrar)"
+trigger = SubResource("Trig_collision")
+root_condition = SubResource("Cond_outdoor")
+commands = Array[ExtResource("3_sdvm7")]([SubResource("Cmd_sound"), SubResource("Cmd_open"), SubResource("Cmd_through_on"), SubResource("Cmd_walk_in"), SubResource("Cmd_hide_player"), SubResource("Cmd_close"), SubResource("Cmd_through_off"), SubResource("Cmd_fade_in"), SubResource("Cmd_warp"), SubResource("Cmd_show_player"), SubResource("Cmd_set_indoor"), SubResource("Cmd_fade_out")])
 visual_scene = ExtResource("12_visual")
+
+[sub_resource type="Resource" id="Page_closed"]
+script = ExtResource("2_u3ewe")
+page_name = "Puerta exterior (cerrada, jugador dentro)"
+root_condition = SubResource("Cond_indoor")
+visual_scene = ExtResource("12_visual")
+
 [node name="Door3D" type="Node3D"]
 script = ExtResource("1_pnl3m")
-pages = Array[ExtResource("2_u3ewe")]([SubResource("Resource_tvf2d")])
+pages = Array[ExtResource("2_u3ewe")]([SubResource("Page_enter"), SubResource("Page_closed")])
 show_placeholder_in_game = false

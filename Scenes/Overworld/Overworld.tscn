@@ -33,6 +33,7 @@
 [ext_resource type="PackedScene" uid="uid://ntl1hurrl6j3" path="res://Scenes/Overworld/Maps/Ciudad Plateada/Edificios/Museo_Plateada.tscn" id="20_irihf"]
 [ext_resource type="Script" uid="uid://bsh5y6wkd20on" path="res://Scripts/Overworld3D/World3DSystem.gd" id="21_world3d"]
 [ext_resource type="PackedScene" uid="uid://dkumdunsvhkp2" path="res://Scenes/Overworld3D/Overworld3DTest.tscn" id="22_test3d"]
+[ext_resource type="PackedScene" path="res://Scenes/Overworld3D/Maps/Pueblo Paleta/Pueblo_Paleta3D.tscn" id="23_pp3d"]
 
 [node name="Overworld" type="Node"]
 script = ExtResource("1_overworld")
@@ -68,4 +69,4 @@ script = ExtResource("9_tile_motion")
 
 [node name="World3DSystem" type="Node3D" parent="."]
 script = ExtResource("21_world3d")
-world_map_scenes = Array[PackedScene]([ExtResource("22_test3d")])
+world_map_scenes = Array[PackedScene]([ExtResource("22_test3d"), ExtResource("23_pp3d")])
